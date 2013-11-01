@@ -54,7 +54,8 @@ abstract class DefaultSocialFormatter extends FormatterBase {
     $entity = $items->getEntity();
     $settings = $this->getSettings();
 
-    $this->type = $entity->bundle();
+    $this->bundle = $entity->bundle();
+    $this->type = $entity->entityType();
     $this->id = $entity->id();
     $this->max_items = $this->getSetting('count');
 

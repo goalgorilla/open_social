@@ -201,6 +201,16 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
       }
     }
 
-    return theme('social_items', array('comments' => $comments));
+    $output = theme(
+      'social_items',
+      array(
+        'comments' => $comments,
+        'bundle' => $this->bundle,
+        'type' => $this->type,
+        'view_mode' => $this->viewMode,
+      )
+    );
+
+    return $output;
   }
 }
