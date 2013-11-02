@@ -17,7 +17,8 @@ use Drupal\Core\Field\WidgetBase;
  *   id = "social",
  *   label = @Translation("Social field"),
  *   field_types = {
- *     "social_google"
+ *     "social_google",
+ *     "social_facebook"
  *   },
  *   settings = {
  *     "placeholder" = ""

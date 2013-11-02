@@ -12,10 +12,6 @@ use Drupal\Component\Utility\Json;
 /**
  * Plugin implementation of the 'social_google' formatter.
  *
- * The 'Default' formatter is different for integer fields on the one hand, and
- * for decimal and float fields on the other hand, in order to be able to use
- * different settings.
- *
  * @FieldFormatter(
  *   id = "social_google",
  *   label = @Translation("Google"),
