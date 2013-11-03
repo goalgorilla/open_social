@@ -7,8 +7,6 @@
 
 namespace Drupal\social\Plugin\Field\FieldType;
 
-use Drupal\field\FieldInterface;
-
 /**
  * Plugin implementation of the 'social_facebook' field type.
  *
@@ -22,19 +20,4 @@ use Drupal\field\FieldInterface;
  */
 class FacebookItem extends SocialItemBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function schema(FieldInterface $field) {
-    return array(
-      'columns' => array(
-        'url' => array(
-          'description' => 'The URL of the link.',
-          'type' => 'varchar',
-          'length' => 2048,
-          'not null' => FALSE,
-        ),
-      ),
-    );
-  }
 }

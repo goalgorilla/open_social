@@ -18,7 +18,8 @@ use Drupal\Core\Field\WidgetBase;
  *   label = @Translation("Social field"),
  *   field_types = {
  *     "social_google",
- *     "social_facebook"
+ *     "social_facebook",
+ *     "social_twitter"
  *   },
  *   settings = {
  *     "placeholder" = ""
@@ -31,13 +32,11 @@ class SocialWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, array &$form_state) {
-    $element['url'] = array(
+    $element += array(
       '#type' => 'url',
-      '#title' => t('URL'),
       '#placeholder' => $this->getSetting('placeholder'),
       '#default_value' => isset($items[$delta]->url) ? $items[$delta]->url : NULL,
       '#maxlength' => 2048,
-      '#required' => $element['#required'],
     );
 
     return $element;

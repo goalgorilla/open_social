@@ -28,15 +28,6 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, array &$form_state) {
-    $elements = parent::settingsForm($form, $form_state);
-
-    return $elements;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function socialCommentRender($url) {
     $config = \Drupal::config('social.settings');
 
