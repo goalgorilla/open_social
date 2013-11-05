@@ -18,6 +18,27 @@ FEATURES
 - use different templates for different view modes and content types
 - integration with Views
 
+TEMPLATE (THEME HOOK) SUGGESTIONS
+
+social_items--[entity_type]
+social_items--[view_mode]
+social_items--[bundle]
+social_items--[bundle]--[view_mode]
+social_items--[entity_type]--[view_mode]
+social_items--[entity_type]--[bundle]--[view_mode]
+social_items--[type]
+social_items--[type]--[bundle]
+social_items--[type]--[view_mode]
+social_items--[type]--[bundle]--[view_mode]
+social_items--[type]--[entity_type]--[view_mode]
+social_items--[type]--[entity_type]--[bundle]--[view_mode]
+
+[entity_type] - name of entity type. E.g. node, taxonomy_term.
+[bundle] - name of bundle. E.g. article, page, tags.
+[type] - is a type of a field. E.g. google or facebook.
+[view_mode] - name of view mode. E.g. full, teaser, token.
+
 CREDITS
 
-The idea and sponsorship by Drucode.
+The idea and sponsorship by Drucode (http://drucode.com).
+Mainteiner Max Petyurenko.

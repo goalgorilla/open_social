@@ -89,7 +89,7 @@ class SocialTwitterFormatter extends DefaultSocialFormatter {
    */
   public function getComments($tweet_id) {
     // Set cache key for each tweet.
-    $cache_key = 'social_comments:' . $this->type . ':' . $this->id . ':' . $this->viewMode . ':twitter:' . $tweet_id;
+    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':twitter:' . $tweet_id;
 
     // Try to get comments fom cache.
     if ($cache = cache()->get($cache_key)) {
@@ -170,7 +170,8 @@ class SocialTwitterFormatter extends DefaultSocialFormatter {
       array(
         'comments' => $comments,
         'bundle' => $this->bundle,
-        'type' => $this->type,
+        'entity_type' => $this->entity_type,
+        'type' => 'twitter',
         'view_mode' => $this->viewMode,
       )
     );

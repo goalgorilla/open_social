@@ -59,7 +59,7 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
     $user_id = isset($args[1]) ? $args[1] : NULL;
     $post_key = isset($args[3]) ? $args[3] : NULL;
 
-    $cache_key = 'social_comments:' . $this->type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $post_key;
+    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $post_key;
     $id = FALSE;
 
     if ($cache = cache()->get($cache_key)) {
@@ -115,7 +115,7 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
    */
   public function getComments($id) {
     $comments = array();
-    $cache_key = 'social_comments:' . $this->type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $id;
+    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $id;
 
     if ($cache = cache()->get($cache_key)) {
       $comments = $cache->data;
@@ -193,7 +193,8 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
       array(
         'comments' => $comments,
         'bundle' => $this->bundle,
-        'type' => $this->type,
+        'entity_type' => $this->entity_type,
+        'type' => 'google',
         'view_mode' => $this->viewMode,
       )
     );

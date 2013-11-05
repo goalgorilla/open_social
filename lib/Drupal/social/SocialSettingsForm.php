@@ -69,7 +69,7 @@ class SocialSettingsForm extends ConfigFormBase {
                 'target' => '_blank',
               ),
             )
-          )
+          ),
         )
       ),
       '#default_value' => $config->get('google_api_key'),

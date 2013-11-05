@@ -31,30 +31,42 @@ function social_theme() {
       'variables' => array(
         'comments' => array(),
         'bundle' => NULL,
+        'entity_type' => NULL,
         'type' => NULL,
         'view_mode' => NULL,
       ),
       'template' => 'social-items',
-    )
+    ),
   );
 }
 
 /**
- * Prepares variables for social-comments-items template.
+ * Prepares variables for social-items template.
  */
 function template_preprocess_social_items(&$variables) {
   $comments = &$variables['comments'];
 
   if (is_array($comments)) {
     foreach ($comments as &$comment) {
-      $comment['timestamp'] = format_date($comment['timestamp'], 'short');
+      $comment['date'] = format_date($comment['timestamp'], 'medium');
       $comment['userphoto'] = theme('image', array('uri' => $comment['userphoto']));
     }
   }
+}
 
-  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'];
-  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['bundle'];
-  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'] . '__' . $variables['view_mode'];
-  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'];
-  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function social_theme_suggestions_social_items(array $variables) {
+  $suggestions = array();
+
+  $suggestions[] = 'social_items__' . $variables['bundle'];
+  $suggestions[] = 'social_items__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'];
+  $suggestions[] = 'social_items__' . $variables['bundle'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
+
+  return $suggestions;
 }

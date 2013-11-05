@@ -128,12 +128,12 @@ class SocialFacebookFormatter extends DefaultSocialFormatter {
    *   Post ID.
    *
    * @return array
-   *  Array with comments.
+   *   Array with comments.
    */
   public function getComments($id) {
     $comments = array();
     // Set cache key for each post id.
-    $cache_key = 'social_comments:' . $this->type . ':' . $this->id . ':' . $this->viewMode . ':facebook:' . $id;
+    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':facebook:' . $id;
 
     // Try to get comments fom cache.
     if ($cache = cache()->get($cache_key)) {
@@ -216,7 +216,8 @@ class SocialFacebookFormatter extends DefaultSocialFormatter {
       array(
         'comments' => $comments,
         'bundle' => $this->bundle,
-        'type' => $this->type,
+        'entity_type' => $this->entity_type,
+        'type' => 'facebook',
         'view_mode' => $this->viewMode,
       )
     );
@@ -224,6 +225,9 @@ class SocialFacebookFormatter extends DefaultSocialFormatter {
     return $output;
   }
 
+  /**
+   * Returns photo of user.
+   */
   public function getUserPhoto($userid) {
     $response_url = 'http://graph.facebook.com/' . $userid . '/picture';
     return $response_url;
