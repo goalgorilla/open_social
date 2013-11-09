@@ -2,10 +2,11 @@
 
 /**
  * @file
- * Defines social field types.
+ * Social comment module.
  */
+require_once('includes/social.google.inc');
 
-use Drupal\Core\Entity\EntityInterface;
+define('SOCIAL_URL_MAX_LENGTH', 2048);
 
 /**
  * Implements hook_menu().
@@ -16,7 +17,10 @@ function social_menu() {
   $items['admin/config/system/social-comments'] = array(
     'title' => 'Social comments',
     'description' => 'Configure social comments',
-    'route_name' => 'social.settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('social_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'includes/social.admin.inc',
   );
 
   return $items;
@@ -26,18 +30,17 @@ function social_menu() {
  * Implements hook_theme().
  */
 function social_theme() {
-  return array(
-    'social_items' => array(
-      'variables' => array(
-        'comments' => array(),
-        'bundle' => NULL,
-        'entity_type' => NULL,
-        'type' => NULL,
-        'view_mode' => NULL,
-      ),
-      'template' => 'social-items',
+  $themes = array();
+
+  $themes['social_items'] = array(
+    'variables' => array(
+      'comments' => array(),
     ),
+    'template' => 'social-items',
+    'path' => drupal_get_path('module', 'social') . '/templates',
   );
+
+  return $themes;
 }
 
 /**
@@ -49,24 +52,190 @@ function template_preprocess_social_items(&$variables) {
   if (is_array($comments)) {
     foreach ($comments as &$comment) {
       $comment['date'] = format_date($comment['timestamp'], 'medium');
-      $comment['userphoto'] = theme('image', array('uri' => $comment['userphoto']));
+      $comment['userphoto'] = theme('image', array('path' => $comment['userphoto']));
     }
   }
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK().
+ * Implements hook_field_info().
  */
-function social_theme_suggestions_social_items(array $variables) {
-  $suggestions = array();
+function social_field_info() {
+  return array(
+    'social_field' => array(
+      'label' => t('Social'),
+      'description' => t('Store an URL string.'),
+      'default_widget' => 'social',
+      'default_formatter' => 'social_google',
+    ),
+  );
+}
 
-  $suggestions[] = 'social_items__' . $variables['bundle'];
-  $suggestions[] = 'social_items__' . $variables['view_mode'];
-  $suggestions[] = 'social_items__' . $variables['type'];
-  $suggestions[] = 'social_items__' . $variables['bundle'] . '__' . $variables['view_mode'];
-  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['view_mode'];
-  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'];
-  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
+/**
+ * Implements hook_field_is_empty().
+ */
+function social_field_is_empty($item, $field) {
+  return empty($item['url']);
+}
 
-  return $suggestions;
+/**
+ * Implements hook_field_insert().
+ */
+function social_field_insert($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  foreach ($items as $delta => $value) {
+    trim($items[$delta]['url']);
+  }
+}
+
+/**
+ * Implements hook_field_update().
+ */
+function social_field_update($entity_type, $entity, $field, $instance, $langcode, &$items) {
+  foreach ($items as $delta => $value) {
+    trim($items[$delta]['url']);
+  }
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function social_field_widget_info() {
+  return array(
+    'social_field' => array(
+      'label' => 'Social field',
+      'field types' => array('social_field'),
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function social_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $element += array(
+    '#type' => $instance['widget']['type'],
+    '#default_value' => isset($items[$delta]) ? $items[$delta] : '',
+  );
+  return $element;
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function social_element_info() {
+  $elements = array();
+  $elements['social_field'] = array(
+    '#input' => TRUE,
+    '#process' => array('social_field_process'),
+    '#theme_wrappers' => array('form_element'),
+  );
+  return $elements;
+}
+
+/**
+ * Processes the link type element before displaying the field.
+ *
+ * Build the form element. When creating a form using FAPI #process,
+ * note that $element['#value'] is already set.
+ *
+ * The $fields array is in $complete_form['#field_info'][$element['#field_name']].
+ */
+function social_field_process($element, $form_state, $complete_form) {
+  $element['url'] = array(
+    '#type' => 'textfield',
+    '#maxlength' => SOCIAL_URL_MAX_LENGTH,
+    '#title' => t('URL'),
+    '#default_value' => isset($element['#value']['url']) ? $element['#value']['url'] : NULL,
+  );
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function social_field_formatter_info() {
+  return array(
+    'social_google' => array(
+      'label' => t('Social (Google)'),
+      'field types' => array('social_field'),
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+      'settings' => array(
+        'count' => 0,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function social_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $element = array();
+  if ($display['type'] == 'social_google') {
+    $element['count'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Count'),
+      '#default_value' => $settings['count'],
+      '#description' => t('Count of items to show. Input 0 to display all.'),
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function social_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $summary = array();
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  if ($display['type'] == 'social_google') {
+    $count = $settings['count'];
+    if (!empty($count)) {
+      $summary[] = t('Display: @count items', array('@count' => $count));
+    }
+    else {
+      $summary[] = t('Display all items');
+    }
+  }
+
+  return implode('</ br>', $summary);
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function social_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $elements = array();
+  $settings = $display['settings'];
+
+  switch ($display['type']) {
+    case 'social_google':
+      foreach ($items as $delta => $item) {
+        $count = $settings['count'];
+        $bundle = $instance['bundle'];
+        $view_mode = 'full';
+
+        $comments = new SocialGoogleFormatter();
+        $comments = $comments->getData($item['url'], $count);
+
+        $elements[$delta] = array(
+          '#theme' => 'social_items',
+          '#comments' => $comments,
+          '#bundle' => $bundle,
+          '#entity_type' => $entity_type,
+          '#type' => 'google',
+          '#view_mode' => $view_mode,
+        );
+      }
+      break;
+  }
+
+  return $elements;
 }

@@ -2,38 +2,24 @@
 
 /**
  * @file
- * Definition of Drupal\social\Plugin\field\formatter\SocialGoogleFormatter.
+ * Google class
  */
 
-namespace Drupal\social\Plugin\Field\FieldFormatter;
-
-use Drupal\Component\Utility\Json;
-
-/**
- * Plugin implementation of the 'social_google' formatter.
- *
- * @FieldFormatter(
- *   id = "social_google",
- *   label = @Translation("Google"),
- *   field_types = {
- *     "social_google"
- *   },
- *   settings = {
- *     "count" = "0"
- *   }
- * )
- */
-class SocialGoogleFormatter extends DefaultSocialFormatter {
+class SocialGoogleFormatter {
 
   /**
    * {@inheritdoc}
    */
-  protected function socialCommentRender($url) {
-    $config = \Drupal::config('social.settings');
+  public function __construct() {
+    $this->api_key = variable_get('google_api_key');
+    $this->expire = variable_get('google_cache');
+  }
 
-    $this->api_key = $config->get('google_api_key');
-    $this->expire = $config->get('google_cache');
-
+  /**
+   * {@inheritdoc}
+   */
+  public function getData($url, $count) {
+    $this->max_items = $count;
     $activity_id = $this->getActivityId($url);
     $comments = $this->getComments($activity_id);
     $output = $this->renderComments($comments);
@@ -50,7 +36,7 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
    * @return string
    *   Activity ID.
    */
-  public function getActivityId($url) {
+  private function getActivityId($url) {
     // Get URL path.
     $url = parse_url($url, PHP_URL_PATH);
     // Explode for arguments.
@@ -59,10 +45,10 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
     $user_id = isset($args[1]) ? $args[1] : NULL;
     $post_key = isset($args[3]) ? $args[3] : NULL;
 
-    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $post_key;
+    $cache_key = 'social_comments:google:' . $post_key;
     $id = FALSE;
 
-    if ($cache = cache()->get($cache_key)) {
+    if ($cache = cache_get($cache_key)) {
       $id = $cache->data;
     }
     else {
@@ -75,18 +61,14 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
         )
       );
 
-      $request = \Drupal::httpClient()->get($response_url);
+      $data = drupal_http_request($response_url);
 
-      try {
-        $response = $request->send();
-        $data = $response->getBody(TRUE);
-      }
-      catch (\Exception $e) {
-        watchdog_exception('social_comments', $e, $e->getMessage(), array(), WATCHDOG_WARNING);
+      if ($data->code != 200) {
+        watchdog('social_comments', $data->error, array(), WATCHDOG_WARNING);
         return FALSE;
       }
 
-      $result = Json::decode($data);
+      $result = drupal_json_decode($data->data);
 
       if (!empty($result['items'])) {
         foreach ($result['items'] as $item) {
@@ -94,7 +76,7 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
             $id = $item['id'];
 
             // Set data to cache.
-            cache()->set($cache_key, $id, $this->expire + REQUEST_TIME);
+            cache_set($cache_key, $id, 'cache', $this->expire + REQUEST_TIME);
             break;
           }
         }
@@ -113,17 +95,17 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
    * @return array
    *   Array with comments.
    */
-  public function getComments($id) {
+  private function getComments($id) {
     $comments = array();
-    $cache_key = 'social_comments:' . $this->entity_type . ':' . $this->id . ':' . $this->viewMode . ':google:' . $id;
+    $cache_key = 'social_comments:google:' . $id;
 
-    if ($cache = cache()->get($cache_key)) {
+    if ($cache = cache_get($cache_key)) {
       $comments = $cache->data;
     }
     else {
       $query = array(
         'key' => $this->api_key,
-        'maxResults' => !empty($this->max_items) ? $this->max_items : NULL,
+//        'maxResults' => !empty($this->max_items) ? $this->max_items : NULL,
       );
       $query = array_filter($query);
 
@@ -134,24 +116,19 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
         )
       );
 
-      $request = \Drupal::httpClient()->get($response_url);
+      $data = drupal_http_request($response_url);
 
-      try {
-        $response = $request->send();
-        $data = $response->getBody(TRUE);
-      }
-      catch (\Exception $e) {
-        drupal_set_message(t('Google comments error'), 'warning');
-        watchdog_exception('social_comments', $e, $e->getMessage(), array(), WATCHDOG_WARNING);
+      if ($data->code != 200) {
+        watchdog('social_comments', $data->error, array(), WATCHDOG_WARNING);
         return FALSE;
       }
 
-      $result = Json::decode($data);
+      $result = drupal_json_decode($data->data);
 
       if (!empty($result['items'])) {
         $comments = $result['items'];
         // Set data to cache.
-        cache()->set($cache_key, $comments, $this->expire + REQUEST_TIME);
+        cache_set($cache_key, $comments, 'cache', $this->expire + REQUEST_TIME);
       }
     }
 
@@ -167,10 +144,11 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
    * @return array
    *   Data with comments.
    */
-  public function renderComments($items) {
+  private function renderComments($items) {
     $comments = array();
 
     if (is_array($items)) {
+      $items = array_slice($items, 0, $this->max_items);
       foreach ($items as $item) {
         $data = array();
         $comment = $item['object'];
@@ -188,17 +166,6 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
       }
     }
 
-    $output = theme(
-      'social_items',
-      array(
-        'comments' => $comments,
-        'bundle' => $this->bundle,
-        'entity_type' => $this->entity_type,
-        'type' => 'google',
-        'view_mode' => $this->viewMode,
-      )
-    );
-
-    return $output;
+    return $comments;
   }
 }

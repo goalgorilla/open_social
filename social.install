@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install file for the social module.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function social_field_schema($field) {
+  return array(
+    'columns' => array(
+      'url' => array(
+        'type' => 'varchar',
+        'length' => 2048,
+        'not null' => FALSE,
+        'sortable' => TRUE,
+      ),
+    ),
+  );
+}

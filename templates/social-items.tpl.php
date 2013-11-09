@@ -1,4 +1,4 @@
-{#
+<?php
 /**
  * @file
  * Theme template for a social comments.
@@ -16,24 +16,24 @@
  *
  * @ingroup themeable
  */
-#}
-{% for comment in comments %}
+?>
+<?php foreach($comments as $comment): ?>
   <article role="article" class="comment clearfix">
     <header class="comment-header">
       <div class="attribution">
         <article>
           <div class="item">
-            {{ comment.userphoto }}
+            <?php print $comment['userphoto']; ?>
           </div>
         </article>
         <div class="submitted">
           <p class="commenter-name">
             <span rel="schema:author">
-              {{ comment.username }}
+              <?php print $comment['username']; ?>
             </span>
           </p>
           <p class="comment-time">
-            {{ comment.date }}
+            <?php print $comment['date']; ?>
           </p>
         </div>
       </div>
@@ -41,8 +41,8 @@
     <div class="comment-text">
       <div class="comment-arrow"></div>
       <div class="content">
-        <div property="schema:text">{{ comment.text }}</div>
+        <div property="schema:text"><?php print $comment['text']; ?></div>
       </div>
     </div>
   </article>
-{% endfor %}
+<?php endforeach; ?>
