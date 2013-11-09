@@ -5,6 +5,7 @@
  * Social comment module.
  */
 require_once('includes/social.google.inc');
+require_once('includes/social.facebook.inc');
 
 define('SOCIAL_URL_MAX_LENGTH', 2048);
 
@@ -35,6 +36,9 @@ function social_theme() {
   $themes['social_items'] = array(
     'variables' => array(
       'comments' => array(),
+      'bundle' => NULL,
+      'entity_type' => NULL,
+      'type' => NULL,
     ),
     'template' => 'social-items',
     'path' => drupal_get_path('module', 'social') . '/templates',
@@ -55,6 +59,11 @@ function template_preprocess_social_items(&$variables) {
       $comment['userphoto'] = theme('image', array('path' => $comment['userphoto']));
     }
   }
+
+  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['entity_type'];
+  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['bundle'];
+  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'];
+  $variables['theme_hook_suggestions'][] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'];
 }
 
 /**
@@ -165,6 +174,14 @@ function social_field_formatter_info() {
         'count' => 0,
       ),
     ),
+    'social_facebook' => array(
+      'label' => t('Social (Facebook)'),
+      'field types' => array('social_field'),
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+      'settings' => array(
+        'count' => 0,
+      ),
+    ),
   );
 }
 
@@ -175,7 +192,7 @@ function social_field_formatter_settings_form($field, $instance, $view_mode, $fo
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
   $element = array();
-  if ($display['type'] == 'social_google') {
+  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook') {
     $element['count'] = array(
       '#type' => 'textfield',
       '#title' => t('Count'),
@@ -195,7 +212,7 @@ function social_field_formatter_settings_summary($field, $instance, $view_mode) 
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
 
-  if ($display['type'] == 'social_google') {
+  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook') {
     $count = $settings['count'];
     if (!empty($count)) {
       $summary[] = t('Display: @count items', array('@count' => $count));
@@ -220,7 +237,6 @@ function social_field_formatter_view($entity_type, $entity, $field, $instance, $
       foreach ($items as $delta => $item) {
         $count = $settings['count'];
         $bundle = $instance['bundle'];
-        $view_mode = 'full';
 
         $comments = new SocialGoogleFormatter();
         $comments = $comments->getData($item['url'], $count);
@@ -231,7 +247,24 @@ function social_field_formatter_view($entity_type, $entity, $field, $instance, $
           '#bundle' => $bundle,
           '#entity_type' => $entity_type,
           '#type' => 'google',
-          '#view_mode' => $view_mode,
+        );
+      }
+      break;
+
+    case 'social_facebook':
+      foreach ($items as $delta => $item) {
+        $count = $settings['count'];
+        $bundle = $instance['bundle'];
+
+        $comments = new SocialFacebookFormatter();
+        $comments = $comments->getData($item['url'], $count);
+
+        $elements[$delta] = array(
+          '#theme' => 'social_items',
+          '#comments' => $comments,
+          '#bundle' => $bundle,
+          '#entity_type' => $entity_type,
+          '#type' => 'google',
         );
       }
       break;
