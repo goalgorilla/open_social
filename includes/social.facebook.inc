@@ -21,10 +21,10 @@ class SocialFacebookFormatter {
    */
   public function getData($url, $count) {
     $this->max_items = $count;
-    $this->getAccessToken();
-    $post_id = $this->getPostId($url);
-    $comments = $this->getComments($post_id);
-    $output = $this->renderComments($comments);
+    $this->access_token = $this->getAccessToken();
+    $post_id = $this->access_token ? $this->getPostId($url) : FALSE;
+    $comments = $post_id ? $this->getComments($post_id) : FALSE;
+    $output = $comments ? $this->renderComments($comments) : array();
 
     return $output;
   }
@@ -72,7 +72,7 @@ class SocialFacebookFormatter {
       }
     }
 
-    $this->access_token = $token;
+    return $token;
   }
 
   /**

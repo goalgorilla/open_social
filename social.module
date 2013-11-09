@@ -237,13 +237,15 @@ function social_field_formatter_view($entity_type, $entity, $field, $instance, $
         $comments = new SocialGoogleFormatter();
         $comments = $comments->getData($item['url'], $count);
 
-        $elements[$delta] = array(
-          '#theme' => 'social_items',
-          '#comments' => $comments,
-          '#bundle' => $bundle,
-          '#entity_type' => $entity_type,
-          '#type' => 'google',
-        );
+        if ($comments) {
+          $elements[$delta] = array(
+            '#theme' => 'social_items',
+            '#comments' => $comments,
+            '#bundle' => $bundle,
+            '#entity_type' => $entity_type,
+            '#type' => 'google',
+          );
+        }
       }
       break;
 
@@ -255,13 +257,15 @@ function social_field_formatter_view($entity_type, $entity, $field, $instance, $
         $comments = new SocialFacebookFormatter();
         $comments = $comments->getData($item['url'], $count);
 
-        $elements[$delta] = array(
-          '#theme' => 'social_items',
-          '#comments' => $comments,
-          '#bundle' => $bundle,
-          '#entity_type' => $entity_type,
-          '#type' => 'google',
-        );
+        if ($comments) {
+          $elements[$delta] = array(
+            '#theme' => 'social_items',
+            '#comments' => $comments,
+            '#bundle' => $bundle,
+            '#entity_type' => $entity_type,
+            '#type' => 'google',
+          );
+        }
       }
       break;
   }

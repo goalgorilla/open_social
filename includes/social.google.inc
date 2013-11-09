@@ -21,8 +21,8 @@ class SocialGoogleFormatter {
   public function getData($url, $count) {
     $this->max_items = $count;
     $activity_id = $this->getActivityId($url);
-    $comments = $this->getComments($activity_id);
-    $output = $this->renderComments($comments);
+    $comments = $activity_id ? $this->getComments($activity_id) : FALSE;
+    $output = $comments ? $this->renderComments($comments) : array();
 
     return $output;
   }
