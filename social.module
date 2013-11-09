@@ -60,13 +60,18 @@ function template_preprocess_social_items(&$variables) {
 function social_theme_suggestions_social_items(array $variables) {
   $suggestions = array();
 
-  $suggestions[] = 'social_items__' . $variables['bundle'];
+  $suggestions[] = 'social_items__' . $variables['entity_type'];
   $suggestions[] = 'social_items__' . $variables['view_mode'];
-  $suggestions[] = 'social_items__' . $variables['type'];
+  $suggestions[] = 'social_items__' . $variables['bundle'];
   $suggestions[] = 'social_items__' . $variables['bundle'] . '__' . $variables['view_mode'];
-  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['entity_type'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['entity_type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'];
   $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['view_mode'];
   $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['entity_type'] . '__' . $variables['view_mode'];
+  $suggestions[] = 'social_items__' . $variables['type'] . '__' . $variables['entity_type'] . '__' . $variables['bundle'] . '__' . $variables['view_mode'];
 
   return $suggestions;
 }
