@@ -4,8 +4,9 @@
  * @file
  * Social comment module.
  */
-require_once('includes/social.google.inc');
-require_once('includes/social.facebook.inc');
+
+require_once ('includes/social.google.inc');
+require_once ('includes/social.facebook.inc');
 
 define('SOCIAL_URL_MAX_LENGTH', 2048);
 
@@ -143,12 +144,7 @@ function social_element_info() {
 }
 
 /**
- * Processes the link type element before displaying the field.
- *
- * Build the form element. When creating a form using FAPI #process,
- * note that $element['#value'] is already set.
- *
- * The $fields array is in $complete_form['#field_info'][$element['#field_name']].
+ * Processes the element before displaying the field.
  */
 function social_field_process($element, $form_state, $complete_form) {
   $element['url'] = array(

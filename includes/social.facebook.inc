@@ -35,7 +35,7 @@ class SocialFacebookFormatter {
    * @return string
    *   String containing access token.
    */
-  public function getAccessToken() {
+  protected function getAccessToken() {
     // Set cache key.
     $cache_key = 'social_comments:facebook_access_token';
 
@@ -84,7 +84,7 @@ class SocialFacebookFormatter {
    * @return string
    *   Post ID.
    */
-  public function getPostId($url) {
+  protected function getPostId($url) {
     $id = FALSE;
 
     if (is_string($url)) {
@@ -111,7 +111,7 @@ class SocialFacebookFormatter {
    * @return array
    *   Array with comments.
    */
-  public function getComments($id) {
+  protected function getComments($id) {
     $comments = array();
     // Set cache key for each post id.
     $cache_key = 'social_comments:facebook:' . $id;
@@ -162,7 +162,7 @@ class SocialFacebookFormatter {
    * @return array
    *   Array with comments.
    */
-  public function renderComments($items) {
+  protected function renderComments($items) {
     $comments = array();
 
     if (isset($items['data'])) {
@@ -195,7 +195,7 @@ class SocialFacebookFormatter {
   /**
    * Returns photo of user.
    */
-  public function getUserPhoto($userid) {
+  protected function getUserPhoto($userid) {
     $response_url = 'http://graph.facebook.com/' . $userid . '/picture';
     return $response_url;
   }

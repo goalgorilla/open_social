@@ -36,7 +36,7 @@ class SocialGoogleFormatter {
    * @return string
    *   Activity ID.
    */
-  private function getActivityId($url) {
+  protected function getActivityId($url) {
     // Get URL path.
     $url = parse_url($url, PHP_URL_PATH);
     // Explode for arguments.
@@ -95,7 +95,7 @@ class SocialGoogleFormatter {
    * @return array
    *   Array with comments.
    */
-  private function getComments($id) {
+  protected function getComments($id) {
     $comments = array();
     $cache_key = 'social_comments:google:' . $id;
 
@@ -105,7 +105,6 @@ class SocialGoogleFormatter {
     else {
       $query = array(
         'key' => $this->api_key,
-//        'maxResults' => !empty($this->max_items) ? $this->max_items : NULL,
       );
       $query = array_filter($query);
 
@@ -144,7 +143,7 @@ class SocialGoogleFormatter {
    * @return array
    *   Data with comments.
    */
-  private function renderComments($items) {
+  protected function renderComments($items) {
     $comments = array();
 
     if (is_array($items)) {
