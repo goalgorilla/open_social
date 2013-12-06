@@ -170,7 +170,9 @@ class SocialFacebookFormatter {
     }
 
     if (is_array($items)) {
-      $items = array_slice($items, 0, $this->max_items);
+      if (!empty($this->max_items)) {
+        $items = array_slice($items, 0, $this->max_items);
+      }
       foreach ($items as $item) {
         $data = array();
 
