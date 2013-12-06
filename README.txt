@@ -6,6 +6,8 @@ Google, Twitter and Facebook.
 
 HOW TO USE
 
+First, please, got to configuration page admin/config/system/social-comments.
+
 Each field formatter provides URL field in which you need to paste link to the
 post. After that on page where content for the selected field is displayed,
 you will see comments being posted (those, that you pasted in URL field).
@@ -41,4 +43,4 @@ social_items--[type]--[entity_type]--[bundle]--[view_mode]
 CREDITS
 
 The idea and sponsorship by Drucode (http://drucode.com).
-Mainteiner Max Petyurenko.
+Developer - Max Petyurenko.
