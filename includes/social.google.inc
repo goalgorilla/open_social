@@ -159,6 +159,7 @@ class SocialGoogleFormatter {
 
         $data['id'] = check_plain($item['id']);
         $data['username'] = !empty($user['displayName']) ? check_plain($user['displayName']) : NULL;
+        $data['user_url'] = !empty($user['url']) ? filter_xss($user['url']) : NULL;
         $data['userphoto'] = !empty($user['image']['url']) ? filter_xss($user['image']['url']) : NULL;
         $data['text'] = filter_xss($comment['content']);
         $data['timestamp'] = strtotime($item['published']);

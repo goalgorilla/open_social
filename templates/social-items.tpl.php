@@ -7,6 +7,7 @@
  * - comments: A list of comments, each one contains:
  *   - id: The ID of the comment.
  *   - username: The name of user.
+ *   - user_url: The URL to the user page.
  *   - userphoto: The photo of user.
  *   - text: The text of the comment.
  *   - date: The date where comment was posted.
@@ -23,13 +24,13 @@
       <div class="attribution">
         <article>
           <div class="item">
-            <?php print $comment['userphoto']; ?>
+            <a href="<?php print $comment['user_url']; ?>"><?php print $comment['userphoto']; ?></a>
           </div>
         </article>
         <div class="submitted">
           <p class="commenter-name">
             <span rel="schema:author">
-              <?php print $comment['username']; ?>
+              <a href="<?php print $comment['user_url']; ?>"><?php print $comment['username']; ?></a>
             </span>
           </p>
           <p class="comment-time">
