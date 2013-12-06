@@ -34,4 +34,4 @@ social_items--[type]--[bundle]
 CREDITS
 
 The idea and sponsorship by Drucode (http://drucode.com).
-Mainteiner Max Petyurenko.
+Developer Max Petyurenko.
