@@ -180,8 +180,8 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
         $user = !empty($item['actor']) ? $item['actor'] : NULL;
 
         $data['id'] = String::checkPlain($item['id']);
-        $data['username'] = !empty($user['displayName']) ? String::checkPlain($user['displayName']) : NULL;
-        $data['userphoto'] = !empty($user['image']['url']) ? filter_xss($user['image']['url']) : NULL;
+        $data['user_name'] = !empty($user['displayName']) ? String::checkPlain($user['displayName']) : NULL;
+        $data['user_photo'] = !empty($user['image']['url']) ? filter_xss($user['image']['url']) : NULL;
         $data['text'] = filter_xss($comment['content']);
         $data['timestamp'] = strtotime($item['published']);
 
