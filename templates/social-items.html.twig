@@ -6,8 +6,8 @@
  * Available variables:
  * - comments: A list of comments, each one contains:
  *   - id: The ID of the comment.
- *   - username: The name of user.
- *   - userphoto: The photo of user.
+ *   - user_name: The name of a user.
+ *   - user_photo: The photo of a user.
  *   - text: The text of the comment.
  *   - date: The date where comment was posted.
 
@@ -23,13 +23,13 @@
       <div class="attribution">
         <article>
           <div class="item">
-            {{ comment.userphoto }}
+            {{ comment.user_photo }}
           </div>
         </article>
         <div class="submitted">
           <p class="commenter-name">
             <span rel="schema:author">
-              {{ comment.username }}
+              {{ comment.user_name }}
             </span>
           </p>
           <p class="comment-time">

@@ -8,6 +8,7 @@
 namespace Drupal\social\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Json;
+use Drupal\Component\Utility\String;
 
 /**
  * Plugin implementation of the 'social_google' formatter.
@@ -178,8 +179,8 @@ class SocialGoogleFormatter extends DefaultSocialFormatter {
         // Get user data.
         $user = !empty($item['actor']) ? $item['actor'] : NULL;
 
-        $data['id'] = check_plain($item['id']);
-        $data['username'] = !empty($user['displayName']) ? check_plain($user['displayName']) : NULL;
+        $data['id'] = String::checkPlain($item['id']);
+        $data['username'] = !empty($user['displayName']) ? String::checkPlain($user['displayName']) : NULL;
         $data['userphoto'] = !empty($user['image']['url']) ? filter_xss($user['image']['url']) : NULL;
         $data['text'] = filter_xss($comment['content']);
         $data['timestamp'] = strtotime($item['published']);

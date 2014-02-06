@@ -52,10 +52,9 @@ abstract class DefaultSocialFormatter extends FormatterBase {
   public function viewElements(FieldItemListInterface $items) {
     $elements = array();
     $entity = $items->getEntity();
-    $settings = $this->getSettings();
 
-    $this->bundle = $entity->bundle();
-    $this->entity_type = $entity->entityType();
+    $this->bundle = $this->fieldDefinition->bundle;
+    $this->entity_type = $this->fieldDefinition->entity_type;
     $this->id = $entity->id();
     $this->max_items = $this->getSetting('count');
 

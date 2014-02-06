@@ -8,7 +8,8 @@
 namespace Drupal\social\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\ConfigFieldItemBase;
-use Drupal\field\FieldInterface;
+use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
  * Base class for 'social' configurable field types.
@@ -27,10 +28,8 @@ abstract class SocialItemBase extends ConfigFieldItemBase {
    */
   public function getPropertyDefinitions() {
     if (!isset(static::$propertyDefinitions)) {
-      static::$propertyDefinitions['url'] = array(
-        'type' => 'uri',
-        'label' => t('URL'),
-      );
+      static::$propertyDefinitions['url'] = DataDefinition::create('uri')
+        ->setLabel(t('URL'));
     }
     return static::$propertyDefinitions;
   }
@@ -38,7 +37,7 @@ abstract class SocialItemBase extends ConfigFieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public static function schema(FieldInterface $field) {
+  public static function schema(FieldDefinitionInterface $field_definition) {
     return array(
       'columns' => array(
         'url' => array(

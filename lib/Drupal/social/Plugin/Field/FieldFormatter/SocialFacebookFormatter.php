@@ -8,6 +8,7 @@
 namespace Drupal\social\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Json;
+use Drupal\Component\Utility\String;
 
 /**
  * Plugin implementation of the 'social_facebook' formatter.
@@ -199,11 +200,11 @@ class SocialFacebookFormatter extends DefaultSocialFormatter {
         // Get user data.
         $user = !empty($item['from']) ? $item['from'] : NULL;
 
-        $userid = !empty($user['id']) ? check_plain($user['id']) : NULL;
+        $userid = !empty($user['id']) ? String::checkPlain($user['id']) : NULL;
 
-        $data['id'] = check_plain($item['id']);
-        $data['username'] = !empty($user['name']) ? check_plain($user['name']) : NULL;
-        $data['userphoto'] = !empty($userid) ? $this->getUserPhoto($userid) : NULL;
+        $data['id'] = String::checkPlain($item['id']);
+        $data['user_name'] = !empty($user['name']) ? String::checkPlain($user['name']) : NULL;
+        $data['user_photo'] = !empty($userid) ? $this->getUserPhoto($userid) : NULL;
         $data['text'] = filter_xss($item['message']);
         $data['timestamp'] = strtotime($item['created_time']);
 

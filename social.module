@@ -5,8 +5,6 @@
  * Defines social field types.
  */
 
-use Drupal\Core\Entity\EntityInterface;
-
 /**
  * Implements hook_menu().
  */
@@ -49,7 +47,7 @@ function template_preprocess_social_items(&$variables) {
   if (is_array($comments)) {
     foreach ($comments as &$comment) {
       $comment['date'] = format_date($comment['timestamp'], 'medium');
-      $comment['userphoto'] = theme('image', array('uri' => $comment['userphoto']));
+      $comment['user_photo'] = theme('image', array('uri' => $comment['user_photo']));
     }
   }
 }

@@ -18,6 +18,4 @@ namespace Drupal\social\Plugin\Field\FieldType;
  *   default_formatter = "social_google"
  * )
  */
-class GoogleItem extends SocialItemBase {
-
-}
+class GoogleItem extends SocialItemBase {}
