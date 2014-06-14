@@ -11,10 +11,6 @@ class SocialTwitterFormatter {
    * {@inheritdoc}
    */
   public function __construct() {
-    $this->consumer_key = variable_get('social_twitter_consumer_key', '');
-    $this->consumer_secret = variable_get('social_twitter_consumer_secret', '');
-    $this->access_token = variable_get('social_twitter_access_token', '');
-    $this->access_token_secret = variable_get('social_twitter_access_token_secret', '');
     $this->expire = variable_get('social_twitter_cache', 600);
   }
 

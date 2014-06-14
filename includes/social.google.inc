@@ -11,8 +11,8 @@ class SocialGoogleFormatter {
    * {@inheritdoc}
    */
   public function __construct() {
-    $this->api_key = variable_get('google_api_key');
-    $this->expire = variable_get('google_cache');
+    $this->api_key = variable_get('social_google_api_key');
+    $this->expire = variable_get('social_google_cache', 600);
   }
 
   /**

@@ -11,9 +11,9 @@ class SocialFacebookFormatter {
    * {@inheritdoc}
    */
   public function __construct() {
-    $this->app_id = variable_get('facebook_app_id');
-    $this->app_secret = variable_get('facebook_app_secret');
-    $this->expire = variable_get('facebook_cache');
+    $this->app_id = variable_get('social_facebook_app_id');
+    $this->app_secret = variable_get('social_facebook_app_secret');
+    $this->expire = variable_get('social_facebook_cache');
   }
 
   /**
