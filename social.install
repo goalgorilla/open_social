@@ -20,3 +20,42 @@ function social_field_schema($field) {
     ),
   );
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function social_requirements($phase) {
+  if ('runtime' != $phase) {
+    return array();
+  }
+
+  $t = get_t();
+
+  $required_library = libraries_detect('acTwitterConversation');
+
+  $requirements = array(
+    'social' => array(
+      'title' => $t('Social'),
+    ),
+  );
+
+  if (!$required_library['installed']) {
+    $requirements['social']['value'] = $t('acTwitterConversation library not found');
+    $requirements['social']['description'] = $t(
+        'Please, download and copy library into the library folder.'
+      ) . '<br/>' .
+      $t(
+        'Visit <a href="@url">acTwitterConversation page</a> to download.',
+        array(
+          '@url' => 'https://github.com/adriancrepaz/acTwitterConversation',
+        )
+      );
+    $requirements['social']['severity'] = REQUIREMENT_ERROR;
+  }
+  else {
+    $requirements['social']['value'] = $t('acTwitterConversation installed successfully');
+    $requirements['social']['severity'] = REQUIREMENT_OK;
+  }
+
+  return $requirements;
+}

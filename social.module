@@ -7,6 +7,7 @@
 
 require_once 'includes/social.google.inc';
 require_once 'includes/social.facebook.inc';
+require_once 'includes/social.twitter.inc';
 
 define('SOCIAL_URL_MAX_LENGTH', 2048);
 
@@ -26,6 +27,23 @@ function social_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_libraries_info().
+ */
+function social_libraries_info() {
+  $libraries['acTwitterConversation'] = array(
+    'name' => 'acTwitterConversation',
+    'vendor url' => 'http://adriancrepaz.com/twitter_conversions_api',
+    'download url' => 'https://github.com/adriancrepaz/acTwitterConversation',
+    'files' => array(
+      'php' => array('acTwitterConversation.php'),
+    ),
+    'version' => '1.0',
+  );
+
+  return $libraries;
 }
 
 /**
@@ -161,24 +179,38 @@ function social_field_process($element, $form_state, $complete_form) {
  * Implements hook_field_formatter_info().
  */
 function social_field_formatter_info() {
-  return array(
-    'social_google' => array(
-      'label' => t('Social (Google)'),
-      'field types' => array('social_field'),
-      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
-      'settings' => array(
-        'count' => 0,
-      ),
-    ),
-    'social_facebook' => array(
-      'label' => t('Social (Facebook)'),
-      'field types' => array('social_field'),
-      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
-      'settings' => array(
-        'count' => 0,
-      ),
+  $formatters = array();
+
+  $formatters['social_google'] = array(
+    'label' => t('Social (Google)'),
+    'field types' => array('social_field'),
+    'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+    'settings' => array(
+      'count' => 0,
     ),
   );
+  $formatters['social_facebook'] = array(
+    'label' => t('Social (Facebook)'),
+    'field types' => array('social_field'),
+    'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+    'settings' => array(
+      'count' => 0,
+    ),
+  );
+
+  $library = libraries_detect('acTwitterConversation');
+  if ($library['installed']) {
+    $formatters['social_twitter'] = array(
+      'label' => t('Social (Twitter)'),
+      'field types' => array('social_field'),
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+      'settings' => array(
+        'count' => 0,
+      ),
+    );
+  }
+
+  return $formatters;
 }
 
 /**
@@ -188,7 +220,7 @@ function social_field_formatter_settings_form($field, $instance, $view_mode, $fo
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
   $element = array();
-  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook') {
+  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook' || $display['type'] == 'social_twitter') {
     $element['count'] = array(
       '#type' => 'textfield',
       '#title' => t('Count'),
@@ -208,7 +240,7 @@ function social_field_formatter_settings_summary($field, $instance, $view_mode) 
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
 
-  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook') {
+  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook' || $display['type'] == 'social_twitter') {
     $count = $settings['count'];
     if (!empty($count)) {
       $summary[] = t('Display: @count items', array('@count' => $count));
@@ -228,46 +260,27 @@ function social_field_formatter_view($entity_type, $entity, $field, $instance, $
   $elements = array();
   $settings = $display['settings'];
 
-  switch ($display['type']) {
-    case 'social_google':
-      foreach ($items as $delta => $item) {
-        $count = $settings['count'];
-        $bundle = $instance['bundle'];
+  if ($display['type'] == 'social_google' || $display['type'] == 'social_facebook' || $display['type'] == 'social_twitter') {
+    $type = str_replace('social_', '', $display['type']);
+    $formatter = 'Social' . drupal_ucfirst($type) . 'Formatter';
 
-        $comments = new SocialGoogleFormatter();
-        $comments = $comments->getData($item['url'], $count);
+    foreach ($items as $delta => $item) {
+      $count = $settings['count'];
+      $bundle = $instance['bundle'];
 
-        if ($comments) {
-          $elements[$delta] = array(
-            '#theme' => 'social_items',
-            '#comments' => $comments,
-            '#bundle' => $bundle,
-            '#entity_type' => $entity_type,
-            '#type' => 'google',
-          );
-        }
+      $comments = new $formatter();
+      $comments = $comments->getData($item['url'], $count);
+
+      if ($comments) {
+        $elements[$delta] = array(
+          '#theme' => 'social_items',
+          '#comments' => $comments,
+          '#bundle' => $bundle,
+          '#entity_type' => $entity_type,
+          '#type' => $type,
+        );
       }
-      break;
-
-    case 'social_facebook':
-      foreach ($items as $delta => $item) {
-        $count = $settings['count'];
-        $bundle = $instance['bundle'];
-
-        $comments = new SocialFacebookFormatter();
-        $comments = $comments->getData($item['url'], $count);
-
-        if ($comments) {
-          $elements[$delta] = array(
-            '#theme' => 'social_items',
-            '#comments' => $comments,
-            '#bundle' => $bundle,
-            '#entity_type' => $entity_type,
-            '#type' => 'google',
-          );
-        }
-      }
-      break;
+    }
   }
 
   return $elements;
