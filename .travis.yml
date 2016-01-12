@@ -1,8 +1,17 @@
 sudo: required
 
+language: php
+
+php:
+  - 5.6
+
 services:
   - docker
 
 before_install:
-- docker-compose up -d
-- docker ps -a
+  - docker-compose up -d
+  - docker ps -a
+
+script:
+  - docker exec -it drupalsocial_web_1 drush site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin
+  - docker exec -it drupalsocial_web_1 drush status
