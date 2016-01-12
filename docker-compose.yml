@@ -1,0 +1,30 @@
+web:
+  build: docker_build/drupal8/development
+  volumes:
+   - ./public_html:/var/www/html
+   - ./docker_build/:/sites/social/docker_build
+   - ./dev-scripts/:/sites/social/dev-scripts
+  links:
+   - db:db
+  environment:
+   - VIRTUAL_HOST=social.dev
+
+db_data:
+  image: mysql:5.6
+  environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=social
+  container_name: db_data
+  command: /bin/true
+  volumes:
+    - /var/lib/mysql
+
+db:
+  image: mysql:5.6
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=social
+  volumes_from:
+    - db_data
+  ports:
+    - "3307:3306"

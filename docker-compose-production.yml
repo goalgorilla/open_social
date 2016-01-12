@@ -1,0 +1,26 @@
+web:
+  image: goalgorilla/drupal-social
+  links:
+    - db:db
+  ports:
+    - "80"
+
+db_data:
+  image: mysql:5.6
+  environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=social
+  container_name: db_data
+  command: /bin/true
+  volumes:
+    - /var/lib/mysql
+
+db:
+  image: mysql:5.6
+  environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=social
+  volumes_from:
+    - db_data
+
+

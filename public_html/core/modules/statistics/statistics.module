@@ -1,0 +1,206 @@
+<?php
+
+/**
+ * @file
+ * Logs and displays content statistics for a site.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function statistics_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.statistics':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Statistics module shows you how often content is viewed. This is useful in determining which pages of your site are most popular. For more information, see the <a href=":statistics_do">online documentation for the Statistics module</a>.', array(':statistics_do' => 'https://www.drupal.org/documentation/modules/statistics/')) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Displaying popular content') . '</dt>';
+      $output .= '<dd>' . t('The module includes a <em>Popular content</em> block that displays the most viewed pages today and for all time, and the last content viewed. To use the block, enable <em>Count content views</em> on the <a href=":statistics-settings">Statistics page</a>, and then you can enable and configure the block on the <a href=":blocks">Block layout page</a>.', array(':statistics-settings' => \Drupal::url('statistics.settings'), ':blocks' => (\Drupal::moduleHandler()->moduleExists('block')) ? \Drupal::url('block.admin_display') : '#')) . '</dd>';
+      $output .= '<dt>' . t('Page view counter') . '</dt>';
+      $output .= '<dd>' . t('The Statistics module includes a counter for each page that increases whenever the page is viewed. To use the counter, enable <em>Count content views</em> on the <a href=":statistics-settings">Statistics page</a>, and set the necessary <a href=":permissions">permissions</a> (<em>View content hits</em>) so that the counter is visible to the users.', array(':statistics-settings' => \Drupal::url('statistics.settings'), ':permissions' => \Drupal::url('user.admin_permissions', array(), array('fragment' => 'module-statistics')))) . '</dd>';
+      $output .= '</dl>';
+      return $output;
+
+    case 'statistics.settings':
+      return '<p>' . t('Settings for the statistical information that Drupal will keep about the site.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for node entities.
+ */
+function statistics_node_view(array &$build, EntityInterface $node, EntityViewDisplayInterface $display, $view_mode) {
+  if (!$node->isNew() && $view_mode == 'full' && node_is_page($node) && empty($node->in_preview)) {
+    $build['#attached']['library'][] = 'statistics/drupal.statistics';
+    $settings = array('data' => array('nid' => $node->id()), 'url' => Url::fromUri('base:' . drupal_get_path('module', 'statistics') . '/statistics.php')->toString());
+    $build['#attached']['drupalSettings']['statistics'] = $settings;
+  }
+}
+
+/**
+ * Implements hook_node_links_alter().
+ */
+function statistics_node_links_alter(array &$node_links, NodeInterface $entity, array &$context) {
+  if ($context['view_mode'] != 'rss') {
+    $node_links['#cache']['contexts'][] = 'user.permissions';
+    if (\Drupal::currentUser()->hasPermission('view post access counter')) {
+      $statistics = statistics_get($entity->id());
+      if ($statistics) {
+        $links['statistics_counter']['title'] = \Drupal::translation()->formatPlural($statistics['totalcount'], '1 view', '@count views');
+        $node_links['statistics'] = array(
+          '#theme' => 'links__node__statistics',
+          '#links' => $links,
+          '#attributes' => array('class' => array('links', 'inline')),
+        );
+      }
+      $node_links['#cache']['max-age'] = \Drupal::config('statistics.settings')->get('display_max_age');
+    }
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function statistics_cron() {
+  $statistics_timestamp = \Drupal::state()->get('statistics.day_timestamp') ?: 0;
+
+  if ((REQUEST_TIME - $statistics_timestamp) >= 86400) {
+    // Reset day counts.
+    db_update('node_counter')
+      ->fields(array('daycount' => 0))
+      ->execute();
+    \Drupal::state()->set('statistics.day_timestamp', REQUEST_TIME);
+  }
+
+  // Calculate the maximum of node views, for node search ranking.
+  \Drupal::state()->set('statistics.node_counter_scale', 1.0 / max(1.0, db_query('SELECT MAX(totalcount) FROM {node_counter}')->fetchField()));
+}
+
+/**
+ * Returns the most viewed content of all time, today, or the last-viewed node.
+ *
+ * @param string $dbfield
+ *   The database field to use, one of:
+ *   - 'totalcount': Integer that shows the top viewed content of all time.
+ *   - 'daycount': Integer that shows the top viewed content for today.
+ *   - 'timestamp': Integer that shows only the last viewed node.
+ * @param int $dbrows
+ *   The number of rows to be returned.
+ *
+ * @return SelectQuery|FALSE
+ *   A query result containing the node ID, title, user ID that owns the node,
+ *   and the username for the selected node(s), or FALSE if the query could not
+ *   be executed correctly.
+ */
+function statistics_title_list($dbfield, $dbrows) {
+  if (in_array($dbfield, array('totalcount', 'daycount', 'timestamp'))) {
+    $query = db_select('node_field_data', 'n');
+    $query->addTag('node_access');
+    $query->join('node_counter', 's', 'n.nid = s.nid');
+    $query->join('users_field_data', 'u', 'n.uid = u.uid');
+
+    return $query
+      ->fields('n', array('nid', 'title'))
+      ->fields('u', array('uid', 'name'))
+      ->condition($dbfield, 0, '<>')
+      ->condition('n.status', 1)
+      // @todo This should be actually filtering on the desired node status
+      //   field language and just fall back to the default language.
+      ->condition('n.default_langcode', 1)
+      ->condition('u.default_langcode', 1)
+      ->orderBy($dbfield, 'DESC')
+      ->range(0, $dbrows)
+      ->execute();
+  }
+  return FALSE;
+}
+
+
+/**
+ * Retrieves a node's "view statistics".
+ *
+ * @param int $nid
+ *   The node ID.
+ *
+ * @return array
+ *   An associative array containing:
+ *   - totalcount: Integer for the total number of times the node has been
+ *     viewed.
+ *   - daycount: Integer for the total number of times the node has been viewed
+ *     "today". For the daycount to be reset, cron must be enabled.
+ *   - timestamp: Integer for the timestamp of when the node was last viewed.
+ */
+function statistics_get($nid) {
+
+  if ($nid > 0) {
+    // Retrieve an array with both totalcount and daycount.
+    return db_query('SELECT totalcount, daycount, timestamp FROM {node_counter} WHERE nid = :nid', array(':nid' => $nid), array('target' => 'replica'))->fetchAssoc();
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete() for node entities.
+ */
+function statistics_node_predelete(EntityInterface $node) {
+  // Clean up statistics table when node is deleted.
+  db_delete('node_counter')
+    ->condition('nid', $node->id())
+    ->execute();
+}
+
+/**
+ * Implements hook_ranking().
+ */
+function statistics_ranking() {
+  if (\Drupal::config('statistics.settings')->get('count_content_views')) {
+    return array(
+      'views' => array(
+        'title' => t('Number of views'),
+        'join' => array(
+          'type' => 'LEFT',
+          'table' => 'node_counter',
+          'alias' => 'node_counter',
+          'on' => 'node_counter.nid = i.sid',
+        ),
+        // Inverse law that maps the highest view count on the site to 1 and 0
+        // to 0. Note that the ROUND here is necessary for PostgreSQL and SQLite
+        // in order to ensure that the :statistics_scale argument is treated as
+        // a numeric type, because the PostgreSQL PDO driver sometimes puts
+        // values in as strings instead of numbers in complex expressions like
+        // this.
+        'score' => '2.0 - 2.0 / (1.0 + node_counter.totalcount * (ROUND(:statistics_scale, 4)))',
+        'arguments' => array(':statistics_scale' => \Drupal::state()->get('statistics.node_counter_scale') ?: 0),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for block templates.
+ */
+function statistics_preprocess_block(&$variables) {
+  if ($variables['configuration']['provider'] == 'statistics') {
+    $variables['attributes']['role'] = 'navigation';
+  }
+}
+
+/**
+ * Implements hook_block_alter().
+ *
+ * Removes the "popular" block from display if the module is not configured
+ * to count content views.
+ */
+function statistics_block_alter(&$definitions) {
+  $statistics_count_content_views = \Drupal::config('statistics.settings')->get('count_content_views');
+  if (empty($statistics_count_content_views)) {
+    unset($definitions['statistics_popular_block']);
+  }
+}

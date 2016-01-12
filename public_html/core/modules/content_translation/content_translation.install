@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Installation functions for Content Translation module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function content_translation_install() {
+  // Assign a fairly low weight to ensure our implementation of
+  // hook_module_implements_alter() is run among the last ones.
+  module_set_weight('content_translation', 10);
+}
+
+/**
+ * Implements hook_enable().
+ */
+function content_translation_enable() {
+  // Translation works when at least two languages are added.
+  if (count(\Drupal::languageManager()->getLanguages()) < 2) {
+    $t_args = array(':language_url' => \Drupal::url('entity.configurable_language.collection'));
+    $message = t('Be sure to <a href=":language_url">add at least two languages</a> to translate content.', $t_args);
+    drupal_set_message($message, 'warning');
+  }
+  // Point the user to the content translation settings.
+  $t_args = array(':settings_url' => \Drupal::url('language.content_settings_page'));
+  $message = t('<a href=":settings_url">Enable translation</a> for <em>content types</em>, <em>taxonomy vocabularies</em>, <em>accounts</em>, or any other element you wish to translate.', $t_args);
+  drupal_set_message($message, 'warning');
+}
+
+/**
+ * @addtogroup updates-8.0.0-rc
+ * @{
+ */
+
+/**
+ * Rebuild the routes as the content translation routes have now new names.
+ */
+function content_translation_update_8001() {
+  \Drupal::service('router.builder')->rebuild();
+}
+
+/**
+ * @} End of "addtogroup updates-8.0.0-rc".
+ */
