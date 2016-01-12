@@ -13,5 +13,5 @@ before_install:
   - docker ps -a
 
 script:
-  - docker exec -it drupalsocial_web_1 drush site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin
-  - docker exec -it drupalsocial_web_1 drush status
+  - docker exec -it drupalsocial_web_1 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin
+  - docker exec -it drupalsocial_web_1 drush -y status
