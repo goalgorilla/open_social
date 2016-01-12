@@ -57,3 +57,5 @@ Now run the install script on your host machine again.
 ```
 sh docker_build/drupal8/install_script.sh
 ```
+
+[![Build Status](https://travis-ci.org/goalgorilla/drupal_social.svg?branch=master)](https://travis-ci.org/goalgorilla/drupal_social)
