@@ -1,0 +1,54 @@
+commands:
+  webprofiler:
+    export:
+      description: Exports Webprofiler profile/s to file.
+      arguments:
+        id: Profile id.
+      options:
+        directory: Destination directory to store exported file/s.
+      messages:
+        success: Succesfully exported to %s
+        exported_count: <info>Exported %s profiles</info>
+        error_writing: Error writing file %s
+        error_no_profile: No profile with id %s
+      progress:
+          exporting: Exporting profiles...
+          archive: Create archive...
+          delete_tmp: Delete temp files...
+          done: Done.
+    list:
+      description: Lists Webprofiler profiles.
+      options:
+        ip: Filter by IP.
+        url: Filter by URL.
+        method: Filter by HTTP method.
+        limit: Limit printed profiles.
+      rows:
+        time: D, m/d/Y - H:i:s
+      header:
+       token: Token
+       ip: IP
+       method: Method
+       url: URL
+       time: Time
+    benchmark:
+      description: Benchmark an url.
+      arguments:
+       url: Url to benchmark.
+      options:
+        runs: Number of runs.
+        file: Save results as file.
+        cache-rebuild: Rebuild cache before start benchmark.
+      messages:
+        not_git: Not in a git repository.
+        error_login: Impossibile to login in the user.
+      progress:
+        cache_rebuild: Rebuilding cache...
+        login: Login user...
+        get: Http request...
+        compute_avg: Compute average...
+        compute_median: Compute median...
+        compute_95percentile: Compute 95 percentile...
+        git_hash: Compute GIT hash...
+        yaml: Generate output...
+        done: Done.

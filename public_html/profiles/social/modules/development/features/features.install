@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the features module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Populates the profile config_packaging settings based on site name and
+ * slogan.
+ */
+function features_install() {
+  $site_config = \Drupal::config('system.site');
+  $site_name = $site_config->get('name');
+  \Drupal::configFactory()->getEditable('features.settings')
+    ->set('profile.machine_name', preg_replace('@[^a-z0-9_]+@', '_', strtolower($site_name)))
+    ->set('profile.name', $site_name)
+    ->set('profile.description', $site_config->get('slogan'))
+    ->save();
+}

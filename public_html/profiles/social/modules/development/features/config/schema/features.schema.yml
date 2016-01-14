@@ -1,0 +1,31 @@
+features.bundle.*:
+  type: config_entity
+  label: 'Features bundle'
+  mapping:
+    machine_name:
+      type: string
+      label: "Machine name"
+    name:
+      type: string
+      label: "Name"
+    description:
+      type: string
+      label: "Description"
+    assignments:
+      type: ignore
+      label: "Assignment"
+      # @todo Profile a proper config schema.
+    settings:
+      # @todo Profile a proper config schema.
+      type: ignore
+    profile_name:
+      type: string
+      label: "Profile name"
+    weights:
+      type: mapping
+      mapping:
+        type: int
+    is_profile:
+      type: boolean
+      label: "Is install profile"
+

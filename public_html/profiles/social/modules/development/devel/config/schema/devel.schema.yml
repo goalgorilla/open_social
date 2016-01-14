@@ -1,0 +1,48 @@
+# Schema for the configuration files of the Devel module.
+
+devel.settings:
+  type: config_object
+  label: 'Devel settings'
+  mapping:
+    api_url:
+      type: string
+      label: 'Drupal.org api url'
+    page_alter:
+      type: boolean
+      label: 'Page alter'
+    raw_names:
+      type: boolean
+      label: 'Raw names'
+    error_handlers:
+      label: 'Error handlers'
+      type: mapping
+      mapping:
+        error_handler_type:
+          type: integer
+          label: 'Error handler type'
+        error_handler_value:
+          type: integer
+          label: 'Error handler value'
+    rebuild_theme:
+      type: boolean
+      label: 'Rebuild theme information'
+    debug_mail_file_format:
+      type: string
+      label: 'Mail debug file format'
+    debug_mail_directory:
+      type: string
+      label: 'Mail debug directory'
+
+block.settings.devel_switch_user:
+  type: block_settings
+  label: 'Switch user block'
+  mapping:
+    list_size:
+      type: integer
+      label: 'List size'
+    include_anon:
+      type: boolean
+      label: 'Include Anonymous user'
+    show_form:
+      type: boolean
+      label: 'Show search form'
