@@ -1,12 +1,17 @@
-web:
+web_scripts:
   build: docker_build/drupal8/development
   volumes:
    - ./public_html:/var/www/html
    - ./dev-scripts/:/root/dev-scripts
+   - ./test-results/:/root/test-results
+
+web:
+  image: goalgorilla/drupal-social
+  volumes:
+   - ./public_html:/var/www/html
   links:
    - db:db
-  environment:
-   - VIRTUAL_HOST=social.dev
+
 
 db_data:
   image: mysql:5.6
