@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the devel module.
+ */
+
+use Drupal\system\Entity\Menu;
+
+/**
+ * Implements hook_uninstall().
+ */
+function devel_uninstall() {
+  // Delete the development menu.
+  if ($devel_menu = Menu::load('devel')) {
+    $devel_menu->delete();
+  }
+}
+

@@ -1,0 +1,12 @@
+services:
+  devel.event_subscriber:
+    class: Drupal\devel\EventSubscriber\DevelEventSubscriber
+    arguments: ['@config.factory', '@current_user', '@module_handler', '@url_generator']
+    tags:
+      - { name: event_subscriber }
+
+  devel.route_subscriber:
+    class: Drupal\devel\Routing\RouteSubscriber
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }

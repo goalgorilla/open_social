@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Allows site administrators to modify configuration.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function features_ui_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'features.assignment':
+      $output = '';
+      $output .= '<p>' . t('Manage bundles and assignment methods and select the order in which they will be run.') . '</p>';
+      return $output;
+
+    case 'features.export':
+      $output = '';
+      $output .= '<p>' . t('Export packages of configuration into modules.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function features_ui_theme() {
+  return array(
+    'features_listing' => array(
+      'render element' => 'form',
+      'file' => 'features_ui.admin.inc',
+      'function' => 'theme_features_listing',
+    ),
+    'features_assignment_configure_form' => array(
+      'render element' => 'form',
+      'file' => 'features_ui.admin.inc',
+      'function' => 'theme_assignment_form',
+    ),
+    'features_items' => array(
+      'variables' => array(
+        'items' => array(),
+      ),
+      'file' => 'features_ui.admin.inc',
+      'function' => 'theme_features_items',
+    ),
+  );
+}

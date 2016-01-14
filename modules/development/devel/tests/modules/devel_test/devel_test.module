@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Support module for Devel testing.
+ */
+
+/**
+ * Implements hook_file_download().
+ */
+function devel_test_file_download($uri) {
+  $default_uri = \Drupal::state()->get('devel.test_file_download') ? : FALSE;
+  if ($default_uri === $uri) {
+    return array('X-Owned-By' => 'devel_test');
+  }
+}
