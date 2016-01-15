@@ -1,0 +1,79 @@
+{% block toolbar %}
+    {% set icon %}
+    <a href="{{ url("webprofiler.dashboard", {profile: token}, {fragment: 'events'}) }}" title="{{ 'Events'|t }}">
+        <img width="20" height="28" alt="{{ 'Events'|t }}"
+             src="data:image/png;base64,{{ collector.icon }}">
+        <span class="sf-toolbar-info-piece-additional sf-toolbar-status">{{ collector.getCalledListenersCount }}</span>
+    </a>
+    {% endset %}
+
+    {% set text %}
+    <div class="sf-toolbar-info-piece">
+        <b>{{ 'Triggered'|t }}</b>
+        <span>{{ collector.getCalledListenersCount }}</span>
+    </div>
+    <div class="sf-toolbar-info-piece">
+        <b>{{ 'Not triggered'|t }}</b>
+        <span>{{ collector.getNotCalledListenersCount }}</span>
+    </div>
+    {% endset %}
+
+    <div class="sf-toolbar-block">
+        <div class="sf-toolbar-icon">{{ icon|default('') }}</div>
+        <div class="sf-toolbar-info">{{ text|default('') }}</div>
+    </div>
+{% endblock %}
+
+{% block panel %}
+    <script id="events" type="text/template">
+
+        <h2 class="panel__title">{{ 'Events'|t }}</h2>
+        <div class="panel__container">
+
+            <table class="table--duo">
+                <thead>
+                <th>{{ 'Called listeners'|t }}</th>
+                <th>{{ 'Class'|t }}</th>
+                <th>{{ 'Priority'|t }}</th>
+                </thead>
+                <tbody> <% _.each( data.called_listeners, function( item ){ %>
+                <tr>
+                    <td><%= item.event %></td>
+                    <% if(item.type == 'Method') { %>
+                    <td>
+                        <%= Drupal.webprofiler.helpers.classLink(item) %>
+                    </td>
+                    <% } else { %>
+                    <td>{{ 'Closure'|t }}</td>
+                    <% } %>
+                    <td><%= item.priority %></td>
+                </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel__container">
+
+            <table class="table--duo">
+                <thead>
+                <th>{{ 'Non called listeners'|t }}</th>
+                <th>{{ 'Class'|t }}</th>
+                </thead>
+                <tbody>
+                <% _.each( data.not_called_listeners, function( item ){ %>
+                <tr>
+                    <td><%= item.event %></td>
+                    <% if(item.type == 'Method') { %>
+                    <td>
+                        <%= Drupal.webprofiler.helpers.classLink(item) %>
+                    </td>
+                    <% } else { %>
+                    <td>{{ 'Closure'|t }}</td>
+                    <% } %>
+                </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </script>
+{% endblock %}

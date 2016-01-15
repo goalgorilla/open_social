@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Contains social_devel.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function social_devel_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the Social Devel module.
+    case 'help.page.social_devel':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Social development modules.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+

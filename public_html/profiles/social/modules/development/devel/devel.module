@@ -1,0 +1,923 @@
+<?php
+
+/**
+ * @file
+ * This module holds functions useful for Drupal development.
+ * Please contribute!
+ */
+
+define('DEVEL_ERROR_HANDLER_NONE', 0);
+define('DEVEL_ERROR_HANDLER_STANDARD', 1);
+define('DEVEL_ERROR_HANDLER_BACKTRACE_KINT', 2);
+define('DEVEL_ERROR_HANDLER_BACKTRACE_DPM', 4);
+
+define('DEVEL_MIN_TEXTAREA', 50);
+
+use Drupal\comment\CommentInterface;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Utility\Error;
+
+/**
+ * Implements hook_help().
+ */
+function devel_help($route_name) {
+  switch ($route_name) {
+    case 'devel.reinstall':
+      $output = '<p>' . t('<strong>Warning</strong> - will delete your module tables and configuration.') . '</p>';
+      $output .= '<p>' . t('Uninstall and then install the selected modules. <code>hook_uninstall()</code> and <code>hook_install()</code> will be executed and the schema version number will be set to the most recent update number.') . '</p>';
+      return $output;
+
+    case 'devel/session':
+      return '<p>' . t('Here are the contents of your <code>$_SESSION</code> variable.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function devel_entity_type_alter(array &$entity_types) {
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
+  foreach ($entity_types as $entity_type_id => $entity_type) {
+    if ($entity_type->hasViewBuilderClass() && $entity_type->hasLinkTemplate('canonical')) {
+      $entity_type->setLinkTemplate('devel-render', "/devel/$entity_type_id/{{$entity_type_id}}/render");
+    }
+    if (($entity_type->getFormClass('default') || $entity_type->getFormClass('edit')) && $entity_type->hasLinkTemplate('edit-form')) {
+      $entity_type->setLinkTemplate('devel-load', "/devel/$entity_type_id/{{$entity_type_id}}");
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function devel_entity_operation(EntityInterface $entity) {
+  $operations = array();
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    if ($entity->hasLinkTemplate('devel-load')) {
+      $operations['devel'] = array(
+        'title' => t('Devel'),
+        'weight' => 100,
+        'url' => $entity->toUrl('devel-load'),
+      );
+    }
+    elseif ($entity->hasLinkTemplate('devel-render')) {
+      $operations['devel'] = array(
+        'title' => t('Devel'),
+        'weight' => 100,
+        'url' => $entity->toUrl('devel-render'),
+      );
+    }
+  }
+  return $operations;
+}
+
+/**
+ * Returns destinations.
+ */
+function devel_menu_need_destination() {
+  return array('devel/cache/clear', 'devel/reinstall', 'devel/menu/reset',
+    'admin/reports/status/run-cron');
+}
+
+/**
+ * Implements hook_menu_link_alter().
+ *
+ * Flag this link as needing alter at display time.
+ * This is more robust than setting alter in hook_menu().
+ * @see devel_translated_menu_link_alter()
+ */
+function devel_menu_link_alter(&$item) {
+  if (in_array($item['link_path'], devel_menu_need_destination()) || $item['link_path'] == 'devel/menu/item') {
+    $item['options']['alter'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_translated_menu_item_alter().
+ *
+ * Append dynamic querystring 'destination' to several of our own menu items.
+ */
+function devel_translated_menu_link_alter(&$item) {
+  if (in_array($item['href'], devel_menu_need_destination())) {
+    $item['localized_options']['query'] = \Drupal::destination()->getAsArray();
+  }
+  elseif ($item['href'] == 'devel/menu/item') {
+    $item['localized_options']['query'] = array('path' => current_path());
+  }
+}
+
+/**
+ * Sets message.
+ */
+function devel_set_message($msg, $type = NULL) {
+  if (function_exists('drush_log')) {
+    drush_log($msg, $type);
+  }
+  else {
+    drupal_set_message($msg, $type, TRUE);
+  }
+}
+
+/**
+ * @return bool. No need for cache here.
+ */
+function has_kint() {
+  if (\Drupal::moduleHandler()->moduleExists('kint') && function_exists('kint_require')) {
+    kint_require();
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Decides whether or not to print a debug variable using Kint.
+ *
+ * @param mixed $input
+ *   The value to check.
+ *
+ * @return boolean
+ */
+function merits_kint($input) {
+  return !is_scalar($input) && has_kint();
+}
+
+/**
+ * Calls the http://www.firephp.org/ fb() function if it is found.
+ */
+function dfb() {
+  if (function_exists('fb') && \Drupal::currentUser()->hasPermission('access devel information') && !headers_sent()) {
+    $args = func_get_args();
+    call_user_func_array('fb', $args);
+  }
+}
+
+/**
+ * Calls dfb() to output a backtrace.
+ */
+function dfbt($label) {
+  dfb($label, FirePHP::TRACE);
+}
+
+/**
+ * Wrapper for ChromePHP Class log method.
+ */
+function dcp() {
+  if (class_exists('ChromePhp', FALSE) && \Drupal::currentUser()->hasPermission('access devel information')) {
+    $args = func_get_args();
+    call_user_func_array(array('ChromePhp', 'log'), $args);
+  }
+}
+
+/**
+ * Gets error handlers.
+ */
+function devel_get_handlers() {
+  $error_handlers = \Drupal::config('devel.settings')->get('error_handlers');
+  if (!empty($error_handlers)) {
+    unset($error_handlers[DEVEL_ERROR_HANDLER_NONE]);
+  }
+  return $error_handlers;
+}
+
+/**
+ * Sets a new error handler or restores the prior one.
+ */
+function devel_set_handler($handlers) {
+  if (empty($handlers)) {
+    restore_error_handler();
+  }
+  elseif (count($handlers) == 1 && isset($handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
+    // Do nothing.
+  }
+  else {
+    if (has_kint()) {
+      set_error_handler('backtrace_error_handler');
+    }
+  }
+}
+
+/**
+ * Displays backtrace showing the route of calls to the current error.
+ *
+ * @param int $error_level
+ *   The level of the error raised.
+ * @param string $message
+ *   The error message.
+ * @param string $filename
+ *   The filename that the error was raised in.
+ * @param int $line
+ *   The line number the error was raised at.
+ * @param array $context
+ *   An array that points to the active symbol table at the point the error
+ *   occurred.
+ */
+function backtrace_error_handler($error_level, $message, $filename, $line, $context) {
+  // Hide stack trace and parameters from unqualified users.
+  if (!\Drupal::currentUser()->hasPermission('access devel information')) {
+    // Do what core does in bootstrap.inc and errors.inc.
+    // (We need to duplicate the core code here rather than calling it
+    // to avoid having the backtrace_error_handler() on top of the call stack.)
+    if ($error_level & error_reporting()) {
+      $types = drupal_error_levels();
+      list($severity_msg, $severity_level) = $types[$error_level];
+      $backtrace = debug_backtrace();
+      $caller = Error::getLastCaller($backtrace);
+
+      // We treat recoverable errors as fatal.
+      _drupal_log_error(array(
+        '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
+        '@message' => $message,
+        '%function' => $caller['function'],
+        '%file' => $caller['file'],
+        '%line' => $caller['line'],
+        'severity_level' => $severity_level,
+        'backtrace' => $backtrace,
+      ), $error_level == E_RECOVERABLE_ERROR);
+    }
+
+    return;
+  }
+
+  // Don't respond to the error if it was suppressed with a '@'
+  if (error_reporting() == 0) {
+    return;
+  }
+
+  // Don't respond to warning caused by ourselves.
+  if (preg_match('#Cannot modify header information - headers already sent by \\([^\\)]*[/\\\\]devel[/\\\\]#', $message)) {
+    return;
+  }
+
+  if ($error_level & error_reporting()) {
+    // Only write each distinct NOTICE message once, as repeats do not give any
+    // further information and can choke the page output.
+    if ($error_level == E_NOTICE) {
+      static $written = array();
+      if (!empty($written[$line][$filename][$message])) {
+        return;
+      }
+      $written[$line][$filename][$message] = TRUE;
+    }
+
+    $types = drupal_error_levels();
+    list($severity_msg, $severity_level) = $types[$error_level];
+
+    $backtrace = debug_backtrace();
+    $caller = Error::getLastCaller($backtrace);
+    $variables = array(
+      '%type' => isset($types[$error_level]) ? $severity_msg : 'Unknown error',
+      '@message' => $message,
+      '%function' => $caller['function'],
+      '%file' => $caller['file'],
+      '%line' => $caller['line'],
+    );
+    $msg = t('%type: @message in %function (line %line of %file).', $variables);
+
+    // Show message if error_level is ERROR_REPORTING_DISPLAY_SOME or higher.
+    // (This is Drupal's error_level, which is different from $error_level,
+    // and we purposely ignore the difference between _SOME and _ALL,
+    // see #970688!)
+    if (\Drupal::config('system.logging')->get('error_level') != 'hide') {
+      $error_handlers = devel_get_handlers();
+      if (!empty($error_handlers[DEVEL_ERROR_HANDLER_STANDARD])) {
+        drupal_set_message($msg, ($severity_level <= RfcLogLevel::NOTICE ? 'error' : 'warning'), TRUE);
+      }
+      if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_KINT])) {
+        print kprint_r(ddebug_backtrace(TRUE, 1), $return = TRUE, $msg);
+      }
+      if (!empty($error_handlers[DEVEL_ERROR_HANDLER_BACKTRACE_DPM])) {
+        dpm(ddebug_backtrace(TRUE, 1), $msg, 'warning');
+      }
+    }
+
+    \Drupal::logger('php')->log($severity_level, $msg);
+  }
+}
+
+/**
+ * Returns the core version.
+ */
+function devel_get_core_version($version) {
+  $version_parts = explode('.', $version);
+  // Map from 4.7.10 -> 4.7
+  if ($version_parts[0] < 5) {
+    return $version_parts[0] . '.' . $version_parts[1];
+  }
+  // Map from 5.5 -> 5 or 6.0-beta2 -> 6
+  else {
+    return $version_parts[0];
+  }
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function devel_page_attachments_alter(&$page) {
+  if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('page_alter')) {
+    dpm($page, 'page');
+  }
+}
+
+/**
+ * Devel's t_safe() function.
+ */
+function t_safe($string, $args) {
+  // get_t() caused problems here with the theme registry after changing on
+  // admin/build/modules. The theme_get_registry() call is needed!
+  if (function_exists('t') && function_exists('theme_get_registry')) {
+    theme_get_registry();
+    return t($string, $args);
+  }
+  else {
+    strtr($string, $args);
+  }
+}
+
+/**
+ * Prints an object using either Kint (if enabled) or devel_print_object().
+ *
+ * @param array|object $object
+ *   An array or object to print.
+ * @param string $prefix
+ * @todo: this parameter is not needed with Kint.
+ *   Prefix for output items.
+ */
+function kdevel_print_object($object, $prefix = NULL) {
+  // @todo: quick fix to avoid Kint output floating. Remove when fixed upstream.
+  $dump = has_kint() ? '<div style="clear:both">' . @Kint::dump($object) . '</div>' : devel_print_object($object, $prefix);
+  return Markup::create($dump);
+}
+
+/**
+ * Displays an object or array.
+ *
+ * @param array|object $object
+ *   The object or array to display.
+ * @param string $prefix
+ *   Prefix for the output items (example "$node->", "$user->", "$").
+ * @param boolean $header
+ *   Set to FALSE to suppress the output of the h3 tag.
+ */
+function devel_print_object($object, $prefix = NULL, $header = TRUE) {
+  $output = '<div class="devel-obj-output">';
+  if ($header) {
+    $output .= '<h3>' . t('Display of @type @obj', array(
+      '@type' => str_replace(array('$', '->'), '', $prefix),
+      '@obj' => gettype($object),
+    )
+    ) . '</h3>';
+  }
+  $output .= _devel_print_object($object, $prefix);
+  $output .= '</div>';
+  return $output;
+}
+
+/**
+ * Returns formatted listing for an array or object.
+ *
+ * Recursive (and therefore magical) function goes through an array or object
+ * and returns a nicely formatted listing of its contents.
+ *
+ * @param array|object $obj
+ *   Array or object to recurse through.
+ * @param string $prefix
+ *   Prefix for the output items (example "$node->", "$user->", "$").
+ * @param string $parents
+ *   Used by recursion.
+ * @param boolean $object
+ *   Used by recursion.
+ *
+ * @return string
+ *   Formatted html.
+ *
+ * @todo
+ *   currently there are problems sending an array with a varname
+ */
+function _devel_print_object($obj, $prefix = NULL, $parents = NULL, $object = FALSE) {
+  static $root_type, $out_format;
+
+  // TODO: support objects with references. See http://drupal.org/node/234581.
+  if (isset($obj->view)) {
+    return;
+  }
+
+  if (!isset($root_type)) {
+    $root_type = gettype($obj);
+    if ($root_type == 'object') {
+      $object = TRUE;
+    }
+  }
+
+  if (is_object($obj)) {
+    $obj = (array) $obj;
+  }
+  if (is_array($obj)) {
+    $output = "<dl>\n";
+    foreach ($obj as $field => $value) {
+      if ($field === 'devel_flag_reference') {
+        continue;
+      }
+      if (!is_null($parents)) {
+        if ($object) {
+          $field = $parents . '->' . $field;
+        }
+        else {
+          if (is_int($field)) {
+            $field = $parents . '[' . $field . ']';
+          }
+          else {
+            $field = $parents . '[\'' . $field . '\']';
+          }
+        }
+      }
+
+      $type = gettype($value);
+
+      $show_summary = TRUE;
+      $summary = NULL;
+      if ($show_summary) {
+        switch ($type) {
+          case 'string':
+          case 'float':
+          case 'integer':
+            if (strlen($value) == 0) {
+              $summary = t("{empty}");
+            }
+            elseif (strlen($value) < 40) {
+              $summary = htmlspecialchars($value);
+            }
+            else {
+              $summary = \Drupal::translation()->formatPlural(Unicode::strlen($value), '1 character', '@count characters');
+            }
+            break;
+
+          case 'array':
+          case 'object':
+            $summary = \Drupal::translation()->formatPlural(count((array) $value), '1 element', '@count elements');
+            break;
+
+          case 'boolean':
+            $summary = $value ? t('TRUE') : t('FALSE');
+            break;
+        }
+      }
+      if (!is_null($summary)) {
+        $typesum = '(' . $type . ', <em>' . $summary . '</em>)';
+      }
+      else {
+        $typesum = '(' . $type . ')';
+      }
+
+      $output .= '<span class="devel-attr">';
+      $output .= "<dt><span class=\"field\">{$prefix}{$field}</span> $typesum</dt>\n";
+      $output .= "<dd>\n";
+      // Check for references.
+      if (is_array($value) && isset($value['devel_flag_reference'])) {
+        $value['devel_flag_reference'] = TRUE;
+      }
+      // Check for references to prevent errors from recursions.
+      if (is_array($value) && isset($value['devel_flag_reference']) && !$value['devel_flag_reference']) {
+        $value['devel_flag_reference'] = FALSE;
+        $output .= _devel_print_object($value, $prefix, $field);
+      }
+      elseif (is_object($value)) {
+        $value->devel_flag_reference = FALSE;
+        $output .= _devel_print_object((array) $value, $prefix, $field, TRUE);
+      }
+      else {
+        $value = is_bool($value) ? ($value ? 'TRUE' : 'FALSE') : $value;
+        $output .= htmlspecialchars(print_r($value, TRUE)) . "\n";
+      }
+      $output .= "</dd></span>\n";
+    }
+    $output .= "</dl>\n";
+  }
+  return $output;
+}
+
+/**
+ * An alias for drupal_debug().
+ */
+function dd($data, $label = NULL) {
+  return drupal_debug($data, $label);
+}
+
+/**
+ * Logs a variable to a drupal_debug.txt in the site's temp directory.
+ *
+ * @param mixed $data
+ *   The variable to log to the drupal_debug.txt log file.
+ * @param string $label
+ *   (optional) If set, a label to output before $data in the log file.
+ *
+ * @return void|false
+ *   Empty if successful, FALSE if the log file could not be written.
+ *
+ * @see dd()
+ * @see http://drupal.org/node/314112
+ */
+function drupal_debug($data, $label = NULL) {
+  $out = ($label ? $label . ': ' : '') . print_r($data, TRUE) . "\n";
+
+  // The temp directory does vary across multiple simpletest instances.
+  $file = file_directory_temp() . '/drupal_debug.txt';
+  if (file_put_contents($file, $out, FILE_APPEND) === FALSE) {
+    drupal_set_message(t('Devel was unable to write to %file.', array('%file' => $file)), 'error');
+    return FALSE;
+  }
+}
+
+/**
+ * Prints the arguments passed into the current function.
+ */
+function dargs($always = TRUE) {
+  static $printed;
+  if ($always || !$printed) {
+    $bt = debug_backtrace();
+    print kdevel_print_object($bt[1]['args']);
+    $printed = TRUE;
+  }
+}
+
+/**
+ * Prints a SQL string from a DBTNG Select object. Includes quoted arguments.
+ *
+ * @param object $query
+ *   An object that implements the SelectInterface interface.
+ * @param string $return
+ *   Whether to return the string. Default is FALSE, meaning to print it
+ *   and return $query instead.
+ * @param string $name
+ *   Optional name for identifying the output.
+ *
+ * @return object|string
+ *   The $query object, or the query string if $return was TRUE.
+ */
+function dpq($query, $return = FALSE, $name = NULL) {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    if (method_exists($query, 'preExecute')) {
+      $query->preExecute();
+    }
+    $sql = (string) $query;
+    $quoted = array();
+    $connection = Database::getConnection();
+    foreach ((array) $query->arguments() as $key => $val) {
+      $quoted[$key] = is_null($val) ? 'NULL' : $connection->quote($val);
+    }
+    $sql = strtr($sql, $quoted);
+    if ($return) {
+      return $sql;
+    }
+    dpm($sql, $name);
+  }
+  return ($return ? NULL : $query);
+}
+
+/**
+ * Prints a variable to the 'message' area of the page.
+ *
+ * Uses drupal_set_message().
+ *
+ * @param $input
+ *   An arbitrary value to output.
+ * @param string $name
+ *   Optional name for identifying the output.
+ * @param string $type
+ *   Optional message type for drupal_set_message(), defaults to 'status'.
+ *
+ * @return input
+ *   The unaltered input value.
+ */
+function dpm($input, $name = NULL, $type = 'status') {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    $export = kprint_r($input, TRUE, $name);
+    drupal_set_message($export, $type, TRUE);
+  }
+  return $input;
+}
+
+/**
+ * Displays a drupal_var_export() variable to the 'message' area of the page.
+ *
+ * Uses drupal_set_message().
+ *
+ * @param $input
+ *   An arbitrary value to output.
+ * @param string $name
+ *   Optional name for identifying the output.
+ *
+ * @return input
+ *   The unaltered input value.
+ */
+function dvm($input, $name = NULL) {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    $export = dprint_r($input, TRUE, $name, ['\Drupal\Component\Utility\Variable', 'export'], FALSE);
+    drupal_set_message($export, 'status', TRUE);
+  }
+  return $input;
+}
+
+/**
+ * An alias for dpm(), for historic reasons.
+ */
+function dsm($input, $name = NULL) {
+  return dpm($input, $name);
+}
+
+/**
+ * An alias for dprint_r(). Saves carpal tunnel syndrome.
+ */
+function dpr($input, $return = FALSE, $name = NULL) {
+  return dprint_r($input, $return, $name);
+}
+
+/**
+ * An alias for kprint_r(). Saves carpal tunnel syndrome.
+ */
+function kpr($input, $return = FALSE, $name = NULL) {
+  return kprint_r($input, $return, $name);
+}
+
+/**
+ * Like dpr(), but uses drupal_var_export() instead.
+ */
+function dvr($input, $return = FALSE, $name = NULL) {
+  return dprint_r($input, $return, $name, 'drupal_var_export', FALSE);
+}
+
+/**
+ * Kint print.
+ */
+function kprint_r($input, $return = FALSE, $name = NULL, $function = 'print_r') {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    // Kint is too heavy to bother with for scalars like strings and integers.
+    if (merits_kint($input)) {
+      // Had to use @d() instead of @Kint::dump() as the latter is ignoring @ modifier.
+      $output = $return ? (isset($name) ? $name . ' => ' : '') . @d($input) : Kint::dump($input);
+    }
+    else {
+      $output = dprint_r($input, $return, $name, $function);
+    }
+
+    return Markup::create($output);
+  }
+}
+
+/**
+ * Pretty-print a variable to the browser (no kint).
+ *
+ * Displays only for users with proper permissions. If
+ * you want a string returned instead of a print, use the 2nd param.
+ */
+function dprint_r($input, $return = FALSE, $name = NULL, $function = 'print_r', $check= TRUE) {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    if ($name) {
+      $name .= ' => ';
+    }
+
+    ob_start();
+    $function($input);
+    $output = ob_get_clean();
+
+    if ($check) {
+      $output = Html::escape($output);
+    }
+    if (count($input, COUNT_RECURSIVE) > DEVEL_MIN_TEXTAREA) {
+      // Don't use fapi here because sometimes fapi will not be loaded.
+      $printed_value = "<textarea rows=30 style=\"width: 100%;\">\n" . $name . $output . '</textarea>';
+    }
+    else {
+      $printed_value = '<pre>' . $name . $output . '</pre>';
+    }
+
+    if ($return) {
+      return $printed_value;
+    }
+    else {
+      print $printed_value;
+    }
+  }
+}
+
+/**
+ * Prints a renderable array element to the screen using kprint_r().
+ *
+ * #pre_render and/or #post_render pass-through callback for kprint_r().
+ *
+ * @todo Investigate appending to #suffix.
+ * @todo Investigate label derived from #id, #title, #name, and #theme.
+ */
+function devel_render() {
+  $args = func_get_args();
+  // #pre_render and #post_render pass the rendered $element as last argument.
+  kprint_r(end($args));
+  // #pre_render and #post_render expect the first argument to be returned.
+  return reset($args);
+}
+
+/**
+ * Prints the function call stack.
+ *
+ * @param $return
+ *   Pass TRUE to return the formatted backtrace rather than displaying it in
+ *   the browser via kprint_r().
+ * @param $pop
+ *   How many items to pop from the top of the stack; useful when calling from
+ *   an error handler.
+ * @param $options
+ *   Options to pass on to PHP's debug_backtrace().
+ *
+ * @return string|NULL
+ *   The formatted backtrace, if requested, or NULL.
+ *
+ * @see http://php.net/manual/en/function.debug-backtrace.php
+ */
+function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_PROVIDE_OBJECT) {
+  if (\Drupal::currentUser()->hasPermission('access devel information')) {
+    $backtrace = debug_backtrace($options);
+    while ($pop-- > 0) {
+      array_shift($backtrace);
+    }
+    $counter = count($backtrace);
+    $path = $backtrace[$counter - 1]['file'];
+    $path = substr($path, 0, strlen($path) - 10);
+    $paths[$path] = strlen($path) + 1;
+    $paths[DRUPAL_ROOT] = strlen(DRUPAL_ROOT) + 1;
+    $nbsp = "\xC2\xA0";
+
+    // Show message if error_level is ERROR_REPORTING_DISPLAY_SOME or higher.
+    // (This is Drupal's error_level, which is different from $error_level,
+    // and we purposely ignore the difference between _SOME and _ALL,
+    // see #970688!)
+    if (\Drupal::config('system.logging')->get('error_level') != 'hide') {
+      while (!empty($backtrace)) {
+        $call = array();
+        if (isset($backtrace[0]['file'])) {
+          $call['file'] = $backtrace[0]['file'];
+          foreach ($paths as $path => $len) {
+            if (strpos($backtrace[0]['file'], $path) === 0) {
+              $call['file'] = substr($backtrace[0]['file'], $len);
+            }
+          }
+          $call['file'] .= ':' . $backtrace[0]['line'];
+        }
+        if (isset($backtrace[1])) {
+          if (isset($backtrace[1]['class'])) {
+            $function = $backtrace[1]['class'] . $backtrace[1]['type'] . $backtrace[1]['function'] . '()';
+          }
+          else {
+            $function = $backtrace[1]['function'] . '()';
+          }
+          $backtrace[1] += array('args' => array());
+          foreach ($backtrace[1]['args'] as $key => $value) {
+            $call['args'][$key] = $value;
+          }
+        }
+        else {
+          $function = 'main()';
+          $call['args'] = $_GET;
+        }
+        $nicetrace[($counter <= 10 ? $nbsp : '') . --$counter . ': ' . $function] = $call;
+        array_shift($backtrace);
+      }
+      if ($return) {
+        return $nicetrace;
+      }
+      kprint_r($nicetrace);
+    }
+  }
+}
+
+/**
+ * Deletes all files in a dir.
+ */
+function devel_empty_dir($dir) {
+  foreach (new DirectoryIterator($dir) as $file_info) {
+    if ($file_info->isFile()) {
+      unlink($file_info->getPathname());
+    }
+  }
+}
+
+/*
+ * Migration-related functions.
+ */
+
+/**
+ * Regenerates the data in node_comment_statistics table.
+ * Technique - http://www.artfulsoftware.com/infotree/queries.php?&bw=1280#101
+ *
+ * @return void
+ */
+function devel_rebuild_node_comment_statistics() {
+  // Empty table.
+  db_truncate('node_comment_statistics')->execute();
+
+  // TODO: DBTNG. Ignore keyword is Mysql only? Is only used in the rare case
+  // when two comments on the same node share same timestamp.
+  $sql = "
+    INSERT IGNORE INTO {node_comment_statistics} (nid, cid, last_comment_timestamp, last_comment_name, last_comment_uid, comment_count) (
+      SELECT c.nid, c.cid, c.created, c.name, c.uid, c2.comment_count FROM {comment} c
+      JOIN (
+        SELECT c.nid, MAX(c.created) AS created, COUNT(*) AS comment_count FROM {comment} c WHERE status = 1 GROUP BY c.nid
+      ) AS c2 ON c.nid = c2.nid AND c.created = c2.created
+    )";
+  db_query($sql, array(':published' => CommentInterface::PUBLISHED));
+
+  // Insert records into the node_comment_statistics for nodes that are missing.
+  $query = db_select('node', 'n');
+  $query->leftJoin('node_comment_statistics', 'ncs', 'ncs.nid = n.nid');
+  $query->addField('n', 'changed', 'last_comment_timestamp');
+  $query->addField('n', 'uid', 'last_comment_uid');
+  $query->addField('n', 'nid');
+  $query->addExpression('0', 'comment_count');
+  $query->addExpression('NULL', 'last_comment_name');
+  $query->isNull('ncs.comment_count');
+
+  db_insert('node_comment_statistics', array('return' => Database::RETURN_NULL))
+    ->from($query)
+    ->execute();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds mouse-over hints on the Permissions page to display
+ * language-independent machine names and module base names.
+ *
+ * @see \Drupal\user\Form\UserPermissionsForm::buildForm()
+ */
+function devel_form_user_admin_permissions_alter(&$form, FormStateInterface $form_state) {
+  if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('raw_names')) {
+    foreach (Element::children($form['permissions']) as $key) {
+      if (isset($form['permissions'][$key][0])) {
+        $form['permissions'][$key][0]['#wrapper_attributes']['title'] = $key;
+      }
+      elseif(isset($form['permissions'][$key]['description'])) {
+        $form['permissions'][$key]['description']['#wrapper_attributes']['title']  = $key;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds mouse-over hints on the Modules page to display module base names.
+ *
+ * @see \Drupal\system\Form\ModulesListForm::buildForm()
+ * @see theme_system_modules_details()
+ */
+function devel_form_system_modules_alter(&$form, FormStateInterface $form_state) {
+  if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('raw_names', FALSE) && isset($form['modules']) && is_array($form['modules'])) {
+    foreach (Element::children($form['modules']) as $group) {
+      if (is_array($form['modules'][$group])) {
+        foreach (Element::children($form['modules'][$group]) as $key) {
+          if (isset($form['modules'][$group][$key]['name']['#markup'])) {
+            $form['modules'][$group][$key]['name']['#markup'] = '<span title="' . $key . '">' . $form['modules'][$group][$key]['name']['#markup'] . '</span>';
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Processes variables for block.tpl.php.
+ *
+ * Adding a module block class.
+ *
+ * @todo remove when http://drupal.org/node/1896098 gets in core.
+ */
+function devel_preprocess_block(&$variables) {
+  if (isset($variables['block']) && $variables['block']->module == 'devel') {
+    $variables['attributes']['class'][] = drupal_html_class('block-' . $variables['elements']['#block']->get('plugin'));
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Makes debugging entity query much easier.
+ *
+ * Example usage:
+ *   $query = \Drupal::entityQuery('node');
+ *   $query->condition('status', 1);
+ *   $query->addTag('debug');
+ *   $query->execute();
+ *
+ */
+function devel_query_debug_alter(AlterableInterface $query) {
+  if (!$query->hasTag('debug-semaphore')) {
+    $query->addTag('debug-semaphore');
+    dpq($query);
+  }
+}
