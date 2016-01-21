@@ -1,0 +1,98 @@
+# Placeholder for the "base-theme" library.
+# @see \Drupal\bootstrap\Plugin\Alter\LibraryInfo
+base-theme:
+  css: {}
+  js:
+    js/drupal.bootstrap.js: {}
+  dependencies:
+    - core/underscore
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+
+theme-settings:
+  js:
+    js/theme-settings.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+
+dropdown:
+  js:
+    js/dropdown.js: {}
+  dependencies:
+    - bootstrap/base-theme
+
+modal:
+  js:
+    js/modal.js: {}
+  dependencies:
+    - bootstrap/base-theme
+
+popover:
+  js:
+    js/popover.js: {}
+  dependencies:
+    - bootstrap/base-theme
+
+tooltip:
+  js:
+    js/tooltip.js: {}
+  dependencies:
+    - bootstrap/base-theme
+
+# libraries-extend
+drupal.ajax:
+  js:
+    js/misc/ajax.js: {}
+
+drupal.form:
+  js:
+    js/misc/form.js: {}
+  dependencies:
+    - bootstrap/base-theme
+
+drupal.progress:
+  js:
+    js/misc/progress.js: {}
+
+drupal.states:
+  js:
+    js/misc/states.js: {}
+
+drupal.tabledrag:
+  js:
+    js/misc/tabledrag.js: {}
+
+# libraries-override
+drupal.dialog:
+  js:
+    js/misc/dialog.js: {}
+  dependencies:
+    - bootstrap/modal
+
+drupal.dialog.ajax:
+  js:
+    js/misc/dialog.ajax.js: {}
+  dependencies:
+    - core/drupal.ajax
+    - bootstrap/drupal.dialog
+
+drupal.text:
+  js:
+    js/text/text.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+
+drupal.vertical-tabs:
+  js:
+    js/misc/vertical-tabs.js: {}
+  dependencies:
+    - bootstrap/base-theme
+    - core/jquery.once
+    - core/drupal.form
+    - core/matchmedia

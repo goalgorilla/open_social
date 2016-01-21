@@ -1,0 +1,56 @@
+# core: 8.x
+type: theme
+base theme: false
+
+name: 'Bootstrap'
+description: 'Built to use Bootstrap, a sleek, intuitive, and powerful front-end framework for faster and easier web development.'
+package: 'Bootstrap'
+
+regions:
+  navigation: 'Navigation'
+  navigation_collapsible: 'Navigation (Collapsible)'
+  header: 'Top Bar'
+  highlighted: 'Highlighted'
+  help: 'Help'
+  content: 'Content'
+  sidebar_first: 'Primary'
+  sidebar_second: 'Secondary'
+  footer: 'Footer'
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+
+libraries:
+  - 'bootstrap/base-theme'
+
+libraries-extend:
+  core/drupal.ajax:
+    - bootstrap/drupal.ajax
+  core/drupal.form:
+    - bootstrap/drupal.form
+  core/drupal.progress:
+    - bootstrap/drupal.progress
+  core/drupal.states:
+    - bootstrap/drupal.states
+  core/drupal.tabledrag:
+    - bootstrap/drupal.tabledrag
+
+libraries-override:
+  core/drupal.collapse: false
+  core/drupal.dropbutton: bootstrap/dropdown
+  core/drupal.vertical-tabs: bootstrap/drupal.vertical-tabs
+  system/admin: false
+  text/drupal.text: bootstrap/drupal.text
+
+# The following are dynamic library overrides based on certain critera,
+# usually a theme setting.
+#
+# @see \Drupal\bootstrap\Plugin\Alter\LibraryInfo::alter()
+#
+#  core/drupal.dialog: bootstrap/drupal.dialog
+#  core/drupal.dialog.ajax: bootstrap/drupal.dialog.ajax
+
+# Information added by Drupal.org packaging script on 2015-12-19
+version: '8.x-3.0-beta2'
+core: '8.x'
+project: 'bootstrap'
+datestamp: 1450531741

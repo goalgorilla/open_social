@@ -1,0 +1,57 @@
+// @todo these should be their own CSS files and only included when
+// specific Drupal libraries are used.
+@import "component/alert";
+@import "component/button";
+@import "component/field";
+@import "component/navbar";
+@import "component/panel";
+@import "component/toolbar";
+@import "component/vertical-tabs";
+
+// Page header.
+.page-header {
+  margin-top: 0;
+}
+
+// Tabs/Local Actions.
+.local-actions {
+  margin: 10px 0 10px -5px;
+}
+.tabs--secondary {
+  margin: 10px 0 5px;
+}
+
+// Footer.
+.footer {
+  margin-top: 45px;
+  padding-top: 35px;
+  padding-bottom: 36px;
+  border-top: 1px solid #E5E5E5;
+}
+
+// Paragraphs.
+p:last-child,
+.form-group:last-child,
+.panel:last-child {
+  margin-bottom: 0;
+}
+
+// Help region.
+.region-help {
+  > .glyphicon {
+    font-size: @font-size-large;
+    float: left;
+    margin: -0.05em 0.5em 0 0;
+  }
+  .block {
+    overflow: hidden;
+  }
+}
+
+
+.help-block, .control-group .help-inline {
+  color: @gray-light;
+  font-size: 12px;
+  margin: 5px 0 10px;
+  padding: 0;
+}

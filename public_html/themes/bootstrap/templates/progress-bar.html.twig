@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a progress bar.
+ *
+ * Note that the core Batch API uses this only for non-JavaScript batch jobs.
+ *
+ * Available variables:
+ * - label: The label of the working task.
+ * - percent: The percentage of the progress.
+ * - message: A string containing information to be displayed.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="progress-wrapper" aria-live="polite">
+  <div id="progress" class="progress progress-striped active" data-drupal-progress>
+    {% if label %}
+      <div class="progress-label">{{ label }}</div>
+    {% endif %}
+    <div class="progress-bar" role="progressbar" style="width: {{ percent }}%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ percent }}">
+      <div class="percentage sr-only">{{ percent }}%</div>
+    </div>
+  </div>
+  <div class="percentage pull-right">{{ percent }}%</div>
+  <div class="message">{{ message }}</div>
+</div>

@@ -1,0 +1,84 @@
+{#
+/**
+ * @file
+ * Default theme implementation for displaying a view as a table.
+ *
+ * Available variables:
+ * - attributes: Remaining HTML attributes for the element.
+ *   - class: HTML classes that can be used to style contextually through CSS.
+ * - title : The title of this group of rows.
+ * - header: The table header columns.
+ *   - attributes: Remaining HTML attributes for the element.
+ *   - content: HTML classes to apply to each header cell, indexed by
+ *   the header's key.
+ * - caption_needed: Is the caption tag needed.
+ * - caption: The caption for this table.
+ * - accessibility_description: Extended description for the table details.
+ * - accessibility_summary: Summary for the table details.
+ * - rows: Table row items. Rows are keyed by row number.
+ *   - attributes: HTML classes to apply to each row.
+ *   - columns: Row column items. Columns are keyed by column number.
+ *     - attributes: HTML classes to apply to each column.
+ *     - content: The column content.
+ *
+ * @see template_preprocess_views_view_table()
+ *
+ * @ingroup templates
+ */
+#}
+{% if theme.settings.table_responsive %}
+  <div class="table-responsive">
+{% endif %}
+{% set classes = [
+  'table',
+  context.bordered is not empty or theme.settings.table_bordered ? 'table-bordered',
+  context.condensed is not empty or theme.settings.table_condensed ? 'table-condensed',
+  context.hover is not empty or theme.settings.table_hover ? 'table-hover',
+  context.striped is not empty or theme.settings.table_striped ? 'table-striped',
+] %}
+<table{{ attributes.addClass(classes) }}>
+  {% if caption_needed %}
+    <caption>
+      {% if caption %}
+        {{ caption }}
+      {% else %}
+        {{ title }}
+      {% endif %}
+      {% if (summary is not empty) or (description is not empty) %}
+        <details>
+          {% if summary is not empty %}
+            <summary>{{ summary }}</summary>
+          {% endif %}
+          {% if description is not empty %}
+            {{ description }}
+          {% endif %}
+        </details>
+      {% endif %}
+    </caption>
+  {% endif %}
+  {% if header %}
+    <thead>
+      <tr>
+        {% for column in header %}
+          <th{{ column.attributes }} scope="col">
+            {{ column.content }}
+          </th>
+        {% endfor %}
+      </tr>
+    </thead>
+  {% endif %}
+  <tbody>
+    {% for row in rows %}
+      <tr{{ row.attributes }}>
+        {% for column in row.columns %}
+          <td{{ column.attributes }}>
+            {{ column.content }}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if theme.settings.table_responsive %}
+  </div>
+{% endif %}

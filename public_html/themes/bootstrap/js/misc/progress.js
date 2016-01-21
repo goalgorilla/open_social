@@ -1,0 +1,67 @@
+/**
+ * @file
+ * Extends methods from core/misc/progress.js.
+ */
+
+(function ($, Drupal) {
+
+  'use strict';
+
+  /**
+   * Theme function for the progress bar.
+   *
+   * @param {string} id
+   *
+   * @return {string}
+   *   The HTML for the progress bar.
+   */
+  Drupal.theme.progressBar = function (id) {
+    return '<div class="progress-wrapper" aria-live="polite">' +
+             '<div id ="' + id + '" class="progress progress-striped active">' +
+               '<div class="progress-label"></div>'+
+               '<div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
+                 '<div class="percentage sr-only"></div>' +
+               '</div>' +
+             '</div>' +
+             '<div class="percentage pull-right"></div>' +
+             '<div class="message">&nbsp;</div>' +
+           '</div>';
+  };
+
+  $.extend(Drupal.ProgressBar.prototype, /** @lends Drupal.ProgressBar# */{
+
+    /**
+     * Set the percentage and status message for the progressbar.
+     *
+     * @param {number} percentage
+     * @param {string} message
+     * @param {string} label
+     */
+    setProgress: function (percentage, message, label) {
+      if (percentage >= 0 && percentage <= 100) {
+        $(this.element).find('.progress-bar').css('width', percentage + '%').attr('aria-valuenow', percentage);
+        $(this.element).find('.percentage').html(percentage + '%');
+      }
+      $('.message', this.element).html(message);
+      $('.progress-label', this.element).html(label);
+      if (this.updateCallback) {
+        this.updateCallback(percentage, message, this);
+      }
+    },
+
+    /**
+     * Display errors on the page.
+     *
+     * @param {string} string
+     */
+    displayError: function (string) {
+      var error = $('<div class="alert alert-block alert-error"><a class="close" data-dismiss="alert" href="#">&times;</a><h4>' + Drupal.t('Error message') + '</h4></div>').append(string);
+      $(this.element).before(error).hide();
+
+      if (this.errorCallback) {
+        this.errorCallback(this);
+      }
+    }
+  });
+
+})(jQuery, Drupal);
