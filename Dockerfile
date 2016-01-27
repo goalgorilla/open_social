@@ -24,6 +24,8 @@ RUN composer global update --prefer-stable
 RUN ln -s /root/.composer/vendor/bin/drush /usr/local/bin/drush
 
 ADD public_html/ /var/www/html/
+WORKDIR /var/www/html/
+RUN chown -R www-data:www-data *
 
 # Install Drupal console
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar
