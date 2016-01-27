@@ -2,10 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - filter.format.basic_html
+    - filter.format.full_html
   module:
     - ckeditor
-format: basic_html
+_core:
+  default_config_hash: 967ijj7p6i7rwrYl7r08WQFeCY_c23YAh0h8u-w_CXM
+format: full_html
 editor: ckeditor
 settings:
   toolbar:
@@ -16,6 +18,11 @@ settings:
           items:
             - Bold
             - Italic
+            - Strike
+            - Superscript
+            - Subscript
+            - '-'
+            - RemoveFormat
         -
           name: Linking
           items:
@@ -31,6 +38,8 @@ settings:
           items:
             - Blockquote
             - DrupalImage
+            - Table
+            - HorizontalRule
         -
           name: 'Block Formatting'
           items:
@@ -38,6 +47,7 @@ settings:
         -
           name: Tools
           items:
+            - ShowBlocks
             - Source
   plugins:
     stylescombo:
