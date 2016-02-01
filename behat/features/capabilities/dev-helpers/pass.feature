@@ -1,6 +1,5 @@
-@stability
-  Feature: Passing test
+Feature: Passing test
 
-    Scenario: Test drupal
-      When I am on the homepage
-      Then I should see "Drupal"
+  Scenario: Test drupal
+    When I am on the homepage
+    Then I should see "Drupal"
