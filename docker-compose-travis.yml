@@ -12,7 +12,6 @@ web:
   links:
    - db:db
 
-
 db_data:
   image: mysql:5.6
   environment:
@@ -56,14 +55,3 @@ behat:
    - web:web
    - db:db
    - selenium:selenium
-
-#X// Add behat configs in behat-test (see Ben) use 1 behat.yml
-#X// make sure we set the document root correctly in behat.yml because we are outside the drupal bootstrap root
-#X// Clean up default.yml (extensions under selenium can be moved under default)
-#X// Use default in functionalstability.sh
-#
-#X// Add folder structure with config / features..
-#X// Add featurecontext
-#// Add first test
-
-#// Write documentation in wiki? look at wiki from GGW add VNC Viewer
