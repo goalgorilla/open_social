@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\user\Plugin\Menu\LoginLogoutMenuLink.
+ * Contains \Drupal\social_user\Plugin\Menu\SignupMenuLink.
  */
 
 namespace Drupal\social_user\Plugin\Menu;
