@@ -1,3 +1,4 @@
+@stability
 Feature: Passing test
 
   Scenario: Test drupal
