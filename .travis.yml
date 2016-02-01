@@ -15,5 +15,5 @@ before_install:
 script:
   - docker exec -it drupalsocial_web_1 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)'
   - docker exec -it drupalsocial_web_1 drush -y status
-  - sh dev-scripts/unit-tests.sh
-  - sh behatstability.sh
+  - docker-compose -f docker-compose-travis.yml run web_scripts sh /root/dev-scripts/unit-tests.sh
+  - docker-compose -f docker-compose-travis.yml run behat sh /root/dev-scripts/behatstability.sh
