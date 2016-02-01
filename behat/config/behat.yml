@@ -1,0 +1,33 @@
+default:
+  autoload:
+    '': /root/behat/features/bootstrap
+  suites:
+    default:
+      parameters:
+        test_users:
+          admin:
+            username: 'admin'
+            password: 'admin'
+            mail: 'info+admin@example.com'
+      paths:
+        features: '/root/behat/features'
+        bootstrap: '/root/behat/features/bootstrap'
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+  extensions:
+      Behat\MinkExtension:
+        default_session: 'selenium2'
+        base_url: 'http://web/'
+        files_path: '/root/files/'
+        goutte: ~
+        selenium2:
+          wd_host: 'http://selenium:4444/wd/hub/'
+          browser: 'firefox'
+      Drupal\DrupalExtension:
+        api_driver: 'drupal'
+        drupal:
+          drupal_root: '/var/www/html'
+
+

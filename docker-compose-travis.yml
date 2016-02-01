@@ -32,3 +32,38 @@ db:
     - db_data
   ports:
     - "3307:3306"
+
+selenium:
+  image: selenium/standalone-firefox-debug
+  links:
+   - web:web
+  ports:
+   - "4444"
+   - "5900"
+  container_name: social_selenium
+  cap_add:
+   - NET_ADMIN
+   - NET_RAW
+
+behat:
+  build: docker_build/drupal8/development
+  container_name: social_behat
+  volumes:
+   - ./public_html/:/var/www/html
+   - ./dev-scripts/:/root/dev-scripts
+   - ./behat/:/root/behat
+  links:
+   - web:web
+   - db:db
+   - selenium:selenium
+
+#X// Add behat configs in behat-test (see Ben) use 1 behat.yml
+#X// make sure we set the document root correctly in behat.yml because we are outside the drupal bootstrap root
+#X// Clean up default.yml (extensions under selenium can be moved under default)
+#X// Use default in functionalstability.sh
+#
+#X// Add folder structure with config / features..
+#X// Add featurecontext
+#// Add first test
+
+#// Write documentation in wiki? look at wiki from GGW add VNC Viewer
