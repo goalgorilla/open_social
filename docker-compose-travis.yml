@@ -12,7 +12,6 @@ web:
   links:
    - db:db
 
-
 db_data:
   image: mysql:5.6
   environment:
@@ -32,3 +31,27 @@ db:
     - db_data
   ports:
     - "3307:3306"
+
+selenium:
+  image: selenium/standalone-firefox-debug
+  links:
+   - web:web
+  ports:
+   - "4444"
+   - "5900"
+  container_name: social_selenium
+  cap_add:
+   - NET_ADMIN
+   - NET_RAW
+
+behat:
+  build: docker_build/drupal8/development
+  container_name: social_behat
+  volumes:
+   - ./public_html/:/var/www/html
+   - ./dev-scripts/:/root/dev-scripts
+   - ./behat/:/root/behat
+  links:
+   - web:web
+   - db:db
+   - selenium:selenium
