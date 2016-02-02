@@ -40,7 +40,7 @@ class SocialUserLoginForm extends UserLoginForm {
     // Display login form:
     $form['name_or_mail'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Username or email'),
+      '#title' => $this->t('Username or email address'),
       '#size' => 60,
       '#maxlength' => USERNAME_MAX_LENGTH,
       '#description' => $this->t('Enter your @s username or email.', array('@s' => $config->get('name'))),
