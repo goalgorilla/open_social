@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter() on behalf of social_user.module.
@@ -34,4 +35,14 @@ function social_user_is_blocked($name_or_mail) {
     return TRUE;
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  // Add the custom Social username constraint.
+  if ($entity_type->id() == 'user' && isset($fields['name'])) {
+    $fields['name']->addConstraint('SocialUserName');
+  }
 }
