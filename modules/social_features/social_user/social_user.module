@@ -12,3 +12,26 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     $form['account']['notify']['#default_value'] = 1;
   }
 }
+
+/**
+ * Check if an users with the input field for name or mail field is blocked.
+ *
+ * @param $name_or_mail string username or email adress.
+ * @return bool TRUE if blocked FALSE if not blocked
+ */
+function social_user_is_blocked($name_or_mail) {
+  $is_blocked_name = (bool) \Drupal::entityQuery('user')
+    ->condition('name', $name_or_mail)
+    ->condition('status', 0)
+    ->execute();
+
+  $is_blocked_mail = (bool) \Drupal::entityQuery('user')
+    ->condition('mail', $name_or_mail)
+    ->condition('status', 0)
+    ->execute();
+
+  if ($is_blocked_name || $is_blocked_mail) {
+    return TRUE;
+  }
+  return FALSE;
+}
