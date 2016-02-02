@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_topic_type
+    - node.type.topic
+    - taxonomy.vocabulary.topic_types
+id: node.topic.field_topic_type
+field_name: field_topic_type
+entity_type: node
+bundle: topic
+label: 'Topic type'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      topic_types: topic_types
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference
