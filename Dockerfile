@@ -34,5 +34,7 @@ RUN chmod +x /usr/local/bin/drupal
 
 RUN if [ ! -f /root/.composer/vendor/drush/drush/lib/Console_Table-1.1.3/Table.php ]; then pear install Console_Table; fi
 
+RUN php -r 'opcache_reset();'
+
 # Fix shell.
 RUN echo "export TERM=xterm" >> ~/.bashrc
