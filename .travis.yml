@@ -18,4 +18,5 @@ script:
   - docker-compose -f docker-compose-travis.yml run web_scripts sh /root/dev-scripts/unit-tests.sh
   - docker ps
   - docker logs social_selenium
+  - sleep 30
   - docker-compose -f docker-compose-travis.yml run behat sh /root/dev-scripts/behatstability.sh
