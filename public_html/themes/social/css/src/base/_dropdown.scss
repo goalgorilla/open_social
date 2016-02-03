@@ -1,0 +1,33 @@
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: white;
+  padding: 90px 0 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 9;
+  padding: 90px 0 0;
+  transform: translateY(-100%);
+  transform-origin: top right;
+  transition: transform 0.3s;
+  backface-visibility: hidden;
+  -webkit-overflow-scrolling: touch;
+
+  &.show {
+    transform: translateY(0);
+    overflow: auto;
+  }
+
+  @include MQ($medium) {
+    position: relative;
+    height: 44px;
+    transform: translateY(0);
+    overflow: visible;
+  }
+
+}
+
+.panel-opened {
+  overflow: hidden;
+}
