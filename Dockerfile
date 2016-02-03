@@ -23,7 +23,9 @@ RUN composer global update --prefer-stable
 # Unfortunately, adding the composer vendor dir to the PATH doesn't seem to work. So:
 RUN ln -s /root/.composer/vendor/bin/drush /usr/local/bin/drush
 
-ADD public_html/ /var/lib/www/
+ADD public_html/ /var/www/html/
+WORKDIR /var/www/html/
+RUN chown -R www-data:www-data *
 
 # Install Drupal console
 RUN curl https://drupalconsole.com/installer -L -o drupal.phar
