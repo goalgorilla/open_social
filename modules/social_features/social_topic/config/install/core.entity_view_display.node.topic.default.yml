@@ -3,9 +3,11 @@ status: true
 dependencies:
   config:
     - field.field.node.topic.body
+    - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
     - node.type.topic
   module:
+    - image
     - text
     - user
 id: node.topic.default
@@ -19,6 +21,14 @@ content:
     weight: 101
     settings: {  }
     third_party_settings: {  }
+  field_topic_image:
+    weight: 104
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
   field_topic_type:
     weight: 103
     label: above

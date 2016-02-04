@@ -3,9 +3,11 @@ status: true
 dependencies:
   config:
     - field.field.node.topic.body
+    - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
     - node.type.topic
   module:
+    - image
     - text
 id: node.topic.default
 targetEntityType: node
@@ -25,6 +27,13 @@ content:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+  field_topic_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
   field_topic_type:
     weight: 3
     settings: {  }
