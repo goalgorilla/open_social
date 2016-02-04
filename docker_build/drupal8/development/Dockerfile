@@ -7,6 +7,12 @@ git \
 nano \
 vim
 
+ADD php.ini /usr/local/etc/php/php.ini
+
+# Install composer dependencies.
+ADD composer.json /root/.composer/composer.json
+RUN composer global update --prefer-stable
+
 # Xdebug.
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
@@ -17,10 +23,6 @@ RUN sed -i '1 a xdebug.remote_connect_back=1 ' /usr/local/etc/php/conf.d/docker-
 RUN sed -i '1 a xdebug.remote_port=9000' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN sed -i '1 a xdebug.remote_host=127.0.0.1' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 RUN sed -i '1 a xdebug.remote_enable=1' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-# Install composer dependencies.
-ADD composer.json /root/.composer/composer.json
-RUN composer global update --prefer-stable
 
 # Unfortunately, adding the composer vendor dir to the PATH doesn't seem to work. So:
 RUN ln -s /root/.composer/vendor/bin/behat /usr/local/bin/behat
