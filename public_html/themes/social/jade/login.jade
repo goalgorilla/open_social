@@ -1,0 +1,14 @@
+- var page = "Login"
+- var pagetype = "template"
+
+doctype html
+html(lang="en")
+  head
+    include layout/_head.jade
+  body
+    include layout/_header-an.jade
+    
+    main.main-container(role='main')
+      .container
+        include page-contents/login_content.jade
+    include layout/_scripts.jade

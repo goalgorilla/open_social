@@ -1,0 +1,52 @@
+.tabs {
+  margin: 0.5rem 0 1rem 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+
+  &.primary {
+    margin: 0;
+    border: 0;
+  }
+
+  @include MQ($small) {
+    display: flex;
+  }
+
+  li {
+    background-color: white;
+    line-height: 1.5rem;
+    padding: 10px 20px;
+    margin: 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+    white-space: nowrap;
+    text-align: center;
+    text-transform: uppercase;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    @include MQ($small) {
+
+    }
+  }
+
+  &.primary li {
+    border: 0;
+  }
+
+  a {
+    color: $base-color;
+    display: block;
+    border-bottom: 2px solid $body-color;
+
+    &:hover,
+    &.is-active {
+      border-bottom-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+}

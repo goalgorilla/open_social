@@ -1,0 +1,29 @@
+.card
+
+  nav(role="navigation" aria-label="Tabs")
+    h2.visually-hidden Primary tabs
+    ul.tabs.primary
+      li.is-active
+        a.is-active(href="/user/login") Log in
+          span.visually-hidden (active tab)
+      li
+        a.waves-effect.waves-blue(href="#0") Create new account
+      li
+        a(href='reset-password') Reset your password
+        
+        // maak hier effect lijn invullen met kleur vanaf links
+        // http://tympanus.net/Development/LineMenuStyles/#Shylock
+
+  form.user-login-form(accept-charset='UTF-8')
+    .form-item.form-type-textfield
+      .input-field
+        input#edit-name.form-text(type='text', autocorrect='none', autofocus='autofocus', required='required')
+        label.form-required(for='edit-name') Username
+
+    .form-item.form-type-textfield
+      .input-field
+        input#edit-pass.form-text(type='password', required='required')
+        label.form-required(for='edit-pass') Password
+        
+    #edit-actions.form-actions.form-wrapper
+      input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Log in')

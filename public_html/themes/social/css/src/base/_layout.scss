@@ -9,11 +9,13 @@ header, main, footer {
 .container {
   margin: 0 auto;
   max-width: 1280px;
-  width: 80%;
+  width: 100%;
+  padding: 0 10px;
 
   @include MQ($small) {
     width: 85%;
     position: relative;
+    padding: 0;
   }
 
 }
@@ -25,4 +27,15 @@ header, main, footer {
   .valign {
     display: block;
   }
+}
+
+.main-container {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 90px;
+  background-image: linear-gradient(5deg, rgba(255,255,255,0) 65%, $primary-color 65%);
+
+
+
 }
