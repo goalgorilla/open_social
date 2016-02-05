@@ -16,6 +16,7 @@ default:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
   extensions:
       Behat\MinkExtension:
         default_session: 'selenium2'
@@ -29,5 +30,7 @@ default:
         api_driver: 'drupal'
         drupal:
           drupal_root: '/var/www/html'
-
-
+        selectors:
+          message_selector: '.messages'
+          error_message_selector: '.messages.messages--error'
+          success_message_selector: '.messages.messages--status'
