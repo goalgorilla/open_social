@@ -24,4 +24,6 @@
 {% endif %}
 {{ title_suffix }}
 
+{% if author_name and created_date_formatted %}
 {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
+{% endif %}
