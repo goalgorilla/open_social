@@ -1,7 +1,9 @@
 <?php
 
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_form_FORM_ID_alter() on behalf of social_user.module.
@@ -45,4 +47,76 @@ function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface 
   if ($entity_type->id() == 'user' && isset($fields['name'])) {
     $fields['name']->addConstraint('SocialUserName');
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_user_preprocess_status_messages(&$variables) {
+  $routeName = \Drupal::request()->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
+
+  // On AN password request, we would like to purge the status messages.
+  if ($routeName == 'user.pass') {
+    $messages = $variables['message_list'];
+    // Remove all the messages that might leak information.
+    $message_list = social_user_no_message_leaking($messages);
+    $variables['message_list'] = $message_list;
+  }
+}
+
+function social_get_messages_to_purge() {
+  $purge_messages= array();
+
+  $purge_messages['error'][] = 'blocked or has not been activated yet';
+  $purge_messages['error'][] = 'not recognized as a username or an email address';
+  $purge_messages['status'][] = 'Further instructions have been sent to your email address.';
+
+  return $purge_messages;
+}
+
+/**
+ * Helper function to remove any messages from the user.pass route
+ * so we don't leak any data.
+ *
+ * @param $messages array with list of messages.
+ * @return array with messages.
+ */
+function social_user_no_message_leaking($messages) {
+  // Create new non leaking message.
+  $default_status_message = t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses.
+  Hence, if you entered a valid email address or username, a password reset link is now being sent to it.
+  If the email address or username you entered does not exist, you will not get a reset link, and will neither get any confirmation or warning about that here.
+  Contact the site administrator if there are any problems.');
+  $didwepurge = FALSE;
+
+  if (!empty($messages)) {
+    // Check if we have messages that need to be purged for a certain status.
+    $purge_messages = social_get_messages_to_purge();
+
+    // Check all the status messages coming from the prepocess_status_message.
+    foreach ($messages as $type => $arr_messages) {
+      foreach ($arr_messages as $key => $message) {
+        // Match it against all the messages we remove per status type.
+        foreach ($purge_messages[$type] as $place => $stringtofind) {
+          if (strpos($message, $stringtofind)) {
+            unset($messages[$type][$key]);
+            if (empty($messages[$type])) {
+              unset($messages[$type]);
+            }
+            // Make sure we add our default message now.
+            $didwepurge = TRUE;
+          }
+        }
+      }
+    }
+  }
+  // Only if we removed one of the status messages we want to do this stuffs.
+  if ($didwepurge) {
+    if (!($default_status_message instanceof Markup) && SafeMarkup::isSafe($default_status_message)) {
+      $message_new = Markup::create((string) $default_status_message);
+      $messages['warning'][] = $message_new;
+    }
+  }
+
+  return $messages;
 }
