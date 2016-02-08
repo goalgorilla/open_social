@@ -14,7 +14,7 @@
  * - author_name
  * - created_date
  * - created_date_formatted
- *
+ * - topic_type
  *
  */
 #}
@@ -26,4 +26,8 @@
 
 {% if author_name and created_date_formatted %}
 {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
+{% endif %}
+
+{% if topic_type %}
+{% trans %}in {{ topic_type }}{% endtrans %}
 {% endif %}

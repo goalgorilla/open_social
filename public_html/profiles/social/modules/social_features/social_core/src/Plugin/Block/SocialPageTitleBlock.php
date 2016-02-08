@@ -29,13 +29,21 @@ class SocialPageTitleBlock extends PageTitleBlock {
     if ($node) {
       $title = $node->getTitle();
       $author = $node->getRevisionAuthor();
-      $author_name = $author->getAccountName();
+      $author_name = $author->link();
+
+      if ($node->getType() === 'topic') {
+        $topic_type = $node->get('field_topic_type');
+      }
+      else {
+        $topic_type = NULL;
+      }
 
       return [
         '#theme' => 'page_hero_data',
         '#title' => $title,
         '#author_name' => $author_name,
         '#created_date' => time(),
+        '#topic_type' => $topic_type,
       ];
     }
     else {
