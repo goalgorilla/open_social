@@ -1,9 +1,7 @@
 <?php
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_form_FORM_ID_alter() on behalf of social_user.module.
@@ -64,6 +62,12 @@ function social_user_preprocess_status_messages(&$variables) {
   }
 }
 
+/**
+ * Helper function with all the statuses and corresponding part of messages
+ * where we can strpos on.
+ *
+ * @return array with all the messages to purge keyed by status type.
+ */
 function social_get_messages_to_purge() {
   $purge_messages= array();
 
@@ -82,11 +86,7 @@ function social_get_messages_to_purge() {
  * @return array with messages.
  */
 function social_user_no_message_leaking($messages) {
-  // Create new non leaking message.
-  $default_status_message = t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses.
-  Hence, if you entered a valid email address or username, a password reset link is now being sent to it.
-  If the email address or username you entered does not exist, you will not get a reset link, and will neither get any confirmation or warning about that here.
-  Contact the site administrator if there are any problems.');
+  // Default value.
   $didwepurge = FALSE;
 
   if (!empty($messages)) {
@@ -100,22 +100,25 @@ function social_user_no_message_leaking($messages) {
         foreach ($purge_messages[$type] as $place => $stringtofind) {
           if (strpos($message, $stringtofind)) {
             unset($messages[$type][$key]);
+            // If there are no other messages of the type we can unset it and
+            // clean the messages type.
             if (empty($messages[$type])) {
               unset($messages[$type]);
             }
-            // Make sure we add our default message now.
+            // Make sure we switch boolean so we add our default message.
             $didwepurge = TRUE;
           }
         }
       }
     }
   }
+
   // Only if we removed one of the status messages we want to do this stuffs.
   if ($didwepurge) {
-    if (!($default_status_message instanceof Markup) && SafeMarkup::isSafe($default_status_message)) {
-      $message_new = Markup::create((string) $default_status_message);
-      $messages['warning'][] = $message_new;
-    }
+    $messages['warning'][] = t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses.
+  Hence, if you entered a valid email address or username, a password reset link is now being sent to it.
+  If the email address or username you entered does not exist, you will not get a reset link, and will neither get any confirmation or warning about that here.
+  Contact the site administrator if there are any problems.');
   }
 
   return $messages;
