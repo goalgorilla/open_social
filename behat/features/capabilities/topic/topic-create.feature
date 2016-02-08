@@ -11,5 +11,10 @@ Feature: Create Topic
          | Title | This is a test topic |
          | Description | Body description text. |
     And I select the radio button "Discussion"
+#    And I attach the file "16787988882_56b85ac11e_k.jpg" to "Image"
+#    And I wait for AJAX to finish
     And I press "Save"
     Then I should see "Topic This is a test topic has been created."
+    And I should see the heading "This is a test topic" in the "Page title block"
+    And I should see "Discussion" in the "Page title block"
+    And I should see "Body description text" in the "Main content"
