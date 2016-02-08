@@ -53,3 +53,25 @@ function template_preprocess_page_hero_data(&$variables) {
     }
   }
 }
+
+/**
+ * Prepares variables for node templates.
+ *
+ * Default template: node.html.twig.
+ *
+ * Most themes use their own copy of node.html.twig. The default is located
+ * inside "/core/modules/node/templates/node.html.twig". Look in there for the
+ * full list of variables.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - node: The node object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_core_preprocess_node(&$variables) {
+  // Only add submitted data on teasers since we have the page hero block.
+  if ($variables['view_mode'] === 'teaser') {
+    $variables['display_submitted'] = TRUE;
+  }
+}
