@@ -1,0 +1,38 @@
+.breadcrumbs-wrapper {
+  min-height: 10px;
+  width: 100%;
+  background: white;
+}
+
+.breadcrumb {
+  display: none;
+
+  @include MQ($small) {
+    display: inline-block;
+    color: $base-color;
+    font-size: 14px;
+    line-height: 64px;
+    height: 64px;
+  }
+
+}
+
+.breadcrumb:before {
+    content: '\E5CC';
+    color: rgba($base-color, 0.7);
+    vertical-align: top;
+    display: inline-block;
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    margin: 0 10px 0 8px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.breadcrumb:first-child:before{
+  display: none
+}
+
+.breadcrumb:last-child {
+  color: $base-color;
+}

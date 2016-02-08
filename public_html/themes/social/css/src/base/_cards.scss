@@ -15,7 +15,14 @@
   background-color: $card-bg-color;
   transition: box-shadow .25s;
   border-radius: $card-border-radius;
+  background-clip: padding-box;
+  overflow: hidden;
+  padding: 20px 0;
   @extend .z-depth-1;
+
+  @include MQ($small) {
+    padding: 30px;
+  }
 
 
   .card-title {

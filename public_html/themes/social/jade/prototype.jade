@@ -1,11 +1,12 @@
 - var no_nav = false
 - var page = "Prototype"
+- var pagetype = "styleguide"
 
 doctype html
 html(lang="en")
   head
     include layout/_head.jade
-  body
+  body(class='#{pagetype}')
     include layout/_navbar.jade
     include layout/_title.jade
     main

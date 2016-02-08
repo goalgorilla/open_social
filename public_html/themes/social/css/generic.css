@@ -1891,12 +1891,12 @@ th {
 /* Progress Bar */
 @font-face {
   font-family: 'montserrat';
-  src: url("../font/montserrat/montserrat-regular.eot");
-  src: url("../font/montserrat/montserrat-regular.eot?#iefix") format('embedded-opentype'),
-       url("../font/montserrat/montserrat-regular.woff") format('woff'),
-       url("../font/montserrat/montserrat-regular.ttf") format('truetype'),
-       url("../font/montserrat/montserrat-regular.svg") format('svg');
-  font-weight: normal;
+  src: url("../font/montserrat/montserrat-normal.eot");
+  src: url("../font/montserrat/montserrat-normal.eot?#iefix") format('embedded-opentype'),
+       url("../font/montserrat/montserrat-normal.woff") format('woff'),
+       url("../font/montserrat/montserrat-normal.ttf") format('truetype'),
+       url("../font/montserrat/montserrat-normal.svg") format('svg');
+  font-weight: 500;
   font-style: normal; }
 
 @font-face {
@@ -1906,7 +1906,17 @@ th {
        url("../font/montserrat/montserrat-bold.woff") format('woff'),
        url("../font/montserrat/montserrat-bold.ttf") format('truetype'),
        url("../font/montserrat/montserrat-bold.svg") format('svg');
-  font-weight: bold;
+  font-weight: 700;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'montserrat';
+  src: url("../font/montserrat/montserrat-light.eot");
+  src: url("../font/montserrat/montserrat-light.eot?#iefix") format('embedded-opentype'),
+       url("../font/montserrat/montserrat-light.woff") format('woff'),
+       url("../font/montserrat/montserrat-light.ttf") format('truetype'),
+       url("../font/montserrat/montserrat-light.svg") format('svg');
+  font-weight: 300;
   font-style: normal; }
 
 
@@ -2036,6 +2046,27 @@ video.responsive-video {
 .no-padding {
   padding: 0 !important; }
 
+.z-depth-0 {
+  box-shadow: none !important; }
+
+.z-depth-1, .btn, .btn-large, .btn-floating, .collapsible, .card-panel, .card {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); }
+
+.z-depth-1-half, .btn:hover, .btn-large:hover, .btn-floating:hover {
+  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15); }
+
+.z-depth-2 {
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+
+.z-depth-3 {
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19); }
+
+.z-depth-4 {
+  box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21); }
+
+.z-depth-5 {
+  box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22); }
+
 .hidden {
   display: none !important; }
 
@@ -2095,7 +2126,7 @@ video.responsive-video {
   padding: 0 2rem;
   text-transform: uppercase;
   vertical-align: middle;
-  font-weight: bold;
+  font-weight: 500;
   -webkit-tap-highlight-color: transparent; }
 
 .btn.disabled, .disabled.btn-large,
@@ -2234,7 +2265,7 @@ button.btn-floating {
 
 .container {
   margin: 0 auto;
-  max-width: 1280px;
+  max-width: 60em;
   width: 100%;
   padding: 0 10px; }
 
@@ -2251,9 +2282,18 @@ button.btn-floating {
 .main-container {
   overflow: hidden;
   width: 100vw;
-  height: 100vh;
-  padding-top: 90px;
-  background-image: linear-gradient(5deg, rgba(255, 255, 255, 0) 65%, #29abe2 65%); }
+  min-height: 100%;
+  min-height: 100vh;
+  padding-top: 64px; }
+  .main-container::before {
+    background: url(../images/background-gradient.svg) 0 100%/100% auto no-repeat;
+    position: absolute;
+    height: 260px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    content: '';
+    z-index: -1; }
 
 .header__wrapper {
   height: 128px;
@@ -2432,7 +2472,7 @@ textarea.materialize-textarea {
   height: 3rem;
   width: 100%;
   font-size: 1rem;
-  margin: 0 0 15px 0;
+  margin: 0;
   padding: 0;
   box-shadow: none;
   box-sizing: content-box;
@@ -2656,6 +2696,7 @@ textarea.materialize-textarea {
     top: 0.8rem;
     font-size: 1rem;
     cursor: text;
+    font-weight: 300;
     transition: .2s ease-out; }
   .input-field label.active {
     font-size: 0.8rem;
@@ -3319,7 +3360,7 @@ a.waves-effect .waves-ripple {
   transition: box-shadow .25s;
   padding: 20px;
   margin: 0.5rem 0 1rem 0;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: #fff; }
 
 .card {
@@ -3327,7 +3368,10 @@ a.waves-effect .waves-ripple {
   margin: 0.5rem 0 1rem 0;
   background-color: #fff;
   transition: box-shadow .25s;
-  border-radius: 5px; }
+  border-radius: 10px;
+  background-clip: padding-box;
+  overflow: hidden;
+  padding: 20px 0; }
   .card .card-title {
     font-size: 24px;
     font-weight: 300; }
@@ -3413,7 +3457,6 @@ a.waves-effect .waves-ripple {
     margin: 0;
     border: 0; }
   .tabs li {
-    background-color: white;
     line-height: 1.5rem;
     padding: 10px 20px;
     margin: 0;
@@ -3433,6 +3476,31 @@ a.waves-effect .waves-ripple {
     .tabs a:hover, .tabs a.is-active {
       border-bottom-color: #29abe2;
       color: #29abe2; }
+
+.breadcrumbs-wrapper {
+  min-height: 10px;
+  width: 100%;
+  background: white; }
+
+.breadcrumb {
+  display: none; }
+
+.breadcrumb:before {
+  content: '\E5CC';
+  color: rgba(77, 77, 77, 0.7);
+  vertical-align: top;
+  display: inline-block;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  margin: 0 10px 0 8px;
+  -webkit-font-smoothing: antialiased; }
+
+.breadcrumb:first-child:before {
+  display: none; }
+
+.breadcrumb:last-child {
+  color: #4d4d4d; }
 
 .header {
   position: fixed;
@@ -3507,6 +3575,7 @@ a.waves-effect .waves-ripple {
     min-width: 34px;
     text-align: center;
     color: white;
+    font-weight: 300;
     transition: 0.3s; }
   .header-menu .panel-open .material-icons {
     color: #29abe2;
@@ -3567,8 +3636,7 @@ a.waves-effect .waves-ripple {
 .block--main-menu .menu__link {
   color: #4d4d4d;
   display: block;
-  padding: 10px 20px;
-  font-weight: bold; }
+  padding: 10px 20px; }
   .block--user-menu .menu__link:hover,
   .block--main-menu .menu__link:hover {
     background-color: rgba(0, 0, 0, 0.05); }
@@ -3601,7 +3669,8 @@ a.waves-effect .waves-ripple {
     left: 20px;
     top: 0.5em;
     width: auto;
-    font-size: 14px; }
+    font-size: 14px;
+    font-weight: 300; }
     .form-type-search label.active {
       -webkit-transform: translateY(-150%);
               transform: translateY(-150%); }
@@ -3662,13 +3731,18 @@ a.waves-effect .waves-ripple {
   -webkit-transform: rotate(-45deg);
           transform: rotate(-45deg); }
 
+.user-signup-form,
 .user-login-form {
-  padding: 30px 20px; }
+  padding: 10px 20px; }
+  .user-signup-form .form-item,
   .user-login-form .form-item {
     margin-top: 1rem; }
+  .user-signup-form .form-actions,
   .user-login-form .form-actions {
     margin-top: 2rem; }
-    .user-login-form .form-actions .btn, .user-login-form .form-actions .btn-large {
+    .user-signup-form .form-actions .btn, .user-signup-form .form-actions .btn-large,
+    .user-login-form .form-actions .btn,
+    .user-login-form .form-actions .btn-large {
       max-width: 100%;
       width: 300px; }
     @media screen and (min-width: 40em) {
@@ -3680,6 +3754,11 @@ a.waves-effect .waves-ripple {
     width: 85%;
     position: relative;
     padding: 0; }
+  .main-container {
+    padding-top: 64px; }
+  .main-container::before {
+    height: 620px;
+    background-position: 0 0; }
   .header__wrapper {
     padding-left: 0;
     padding-top: 40px; }
@@ -3692,17 +3771,35 @@ a.waves-effect .waves-ripple {
     margin: 0 auto; }
   .header__title.is-fixed {
     font-size: 24px; }
+  .card {
+    padding: 30px; }
   .tabs {
     display: -webkit-flex;
     display: -ms-flexbox;
-    display: flex; } }
+    display: flex; }
+  .breadcrumb {
+    display: inline-block;
+    color: #4d4d4d;
+    font-size: 14px;
+    line-height: 64px;
+    height: 64px; }
+  .user-signup-form,
+    .user-login-form {
+    padding-top: 30px;
+    padding-bottom: 30px; }
+  .form-card {
+    max-width: 40em; } }
     @media screen and (min-width: 60em) {
   .only-desktop {
     display: initial; }
   .hidden-desktop {
     display: none; }
-  header, main, footer {
+  .styleguide .header__wrapper,
+  .styleguide main,
+  .styleguide footer {
     padding-left: 240px; }
+  .main-container {
+    padding-top: 88px; }
   .header__innerwrapper.is-fixed {
     height: 64px; }
   .header__innerwrapper {
@@ -3855,6 +3952,11 @@ a.waves-effect .waves-ripple {
   .form-type-search.search-open .search__input,
     .no-js .form-type-search .search__input {
     pointer-events: auto; } }
+    @media screen and (min-width: 64em) {
+  .main-container::before {
+    height: 100%;
+    top: 0;
+    background-position: 0 -200px; } }
     @media only screen and (max-width: 992px) {
   .input-field .prefix ~ input {
     width: 86%;
