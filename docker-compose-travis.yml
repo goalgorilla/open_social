@@ -1,8 +1,9 @@
 web_scripts:
-  build: docker_build/drupal8/development
+  build: docker_build/drupal8/travis
   volumes:
    - ./public_html:/var/www/html
    - ./dev-scripts/:/root/dev-scripts
+   - ./docker_build/drupal8/travis/:/root/travis
    - ./test-results/:/root/test-results
 
 web:
@@ -45,12 +46,13 @@ selenium:
    - NET_RAW
 
 behat:
-  build: docker_build/drupal8/development
+  build: docker_build/drupal8/travis
   container_name: social_behat
   volumes:
    - ./public_html/:/var/www/html
    - ./dev-scripts/:/root/dev-scripts
    - ./behat/:/root/behat
+   - ./docker_build/drupal8/travis/:/root/travis
   links:
    - web:web
    - db:db

@@ -17,19 +17,34 @@ use Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintVali
 class SocialUserNameConstraintTest extends UnitTestCase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected function createValidator() {
-    return new SocialUserNameConstraintValidator();
-  }
-
-  /**
    * @covers ::validate
    *
    * @dataProvider providerTestValidate
    */
-  public function testValidate($items, $expected_violation, $name = FALSE) {
+  public function testValidate($items, $expected_violation, $expected_definition_result = NULL) {
+    // Mock our typed data interface.
+    $manager = $this->getMock('Drupal\Core\TypedData\TypedDataManagerInterface');
+    $definition = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
+
+    if ($expected_definition_result !== NULL) {
+      $manager->expects($this->once())
+        ->method('create')
+        ->willReturn($definition);
+
+      $definition->expects($this->once())
+        ->method('validate')
+        ->willReturn($expected_definition_result);
+    }
+    else {
+      $manager->expects($this->never())
+        ->method('create');
+
+      $definition->expects($this->never())
+        ->method('validate');
+    }
+
     $constraint = new SocialUserNameConstraint();
+    $constraintValidator = new SocialUserNameConstraintValidator($manager);
 
     // If a violation is expected, then the context's addViolation method will
     // be called, otherwise it should not be called.
@@ -38,16 +53,15 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     if ($expected_violation) {
       $context->expects($this->once())
         ->method('addViolation')
-        ->with($constraint->usernameIsEmailMessage, array('%name' => $name));
+        ->with($constraint->usernameIsEmailMessage);
     }
     else {
       $context->expects($this->never())
         ->method('addViolation');
     }
 
-    $validator = $this->createValidator();
-    $validator->initialize($context);
-    $validator->validate($items, $constraint);
+    $constraintValidator->initialize($context);
+    $constraintValidator->validate($items, $constraint);
   }
 
   /**
@@ -66,9 +80,25 @@ class SocialUserNameConstraintTest extends UnitTestCase {
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
     $items->expects($this->once())
-      ->method('getEntity')
+      ->method('first')
       ->willReturn(NULL);
     $cases[] = [$items, FALSE];
+
+    // Case 3: E-mail
+    $name_field = $this->getMock('Drupal\Core\Field\FieldItemInterface');
+    $name_field->expects($this->once())
+      ->method('__get')
+      ->willReturn('email@example.com');
+
+    $field_definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
+    $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+    $items->expects($this->once())
+      ->method('getFieldDefinition')
+      ->willReturn($field_definition);
+    $items->expects($this->once())
+      ->method('first')
+      ->willReturn($name_field);
+    $cases[] = [$items, FALSE, 0];
 
     return $cases;
   }
