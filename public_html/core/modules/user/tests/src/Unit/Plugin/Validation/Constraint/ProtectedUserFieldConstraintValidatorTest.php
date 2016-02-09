@@ -148,6 +148,7 @@ class ProtectedUserFieldConstraintValidatorTest extends UnitTestCase {
       ->willReturn('current-user');
     $account->expects($this->never())
       ->method('checkExistingPassword');
+
     $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
     $items->expects($this->once())
       ->method('getFieldDefinition')
