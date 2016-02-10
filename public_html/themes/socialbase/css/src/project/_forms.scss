@@ -1,0 +1,119 @@
+.user-signup-form,
+.user-login-form,
+.user-pass {
+  padding: 10px 20px;
+
+  @include MQ($small) {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .form-item {
+    margin-top: 1rem;
+  }
+
+  .form-item + .form-item {
+    margin-top: 2rem;
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+
+    .btn {
+      max-width: 100%;
+      width: 300px;
+    }
+  }
+}
+
+@include MQ($small) {
+  .form-card {
+    max-width: $small;
+  }
+}
+
+
+.user-signup-form #edit-pass {
+  color: $base-color;
+  font-weight: 300;
+
+  .password-strength,
+  div.password-confirm {
+    margin-top: 1rem;
+    color: $grey-light-1;
+    font-size: 80%;
+  }
+
+  @include MQ($small) {
+    width: 50%;
+
+    .password-strength,
+    div.password-confirm {
+      position: absolute;
+      left: 110%;
+      top: 1rem;
+      width: 90%;
+      margin-top: 0;
+    }
+
+  }
+}
+
+.password-strength__meter {
+  height: 3px;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: lightgray;
+
+  @include MQ($small) {
+    margin-top: 2rem;
+    position: absolute;
+  }
+}
+.password-strength__indicator {
+  height: 100%;
+  width: 0;
+  background-color: #77b259;
+  transition: width 0.5s ease-out;
+}
+.password-confirm-match {
+  visibility: hidden;
+}
+
+.password-strength__indicator.is-weak {
+  background-color: #a65261;
+}
+.password-strength__indicator.is-fair {
+  background-color: #ffc142;
+}
+.password-strength__indicator.is-good {
+  background-color: #0074bd;
+}
+.password-strength__indicator.is-strong {
+  background-color: #0e927a;
+}
+
+.form-item .password-suggestions {
+  margin: 2rem 0;
+  max-width: 100%;
+}
+.password-suggestions ul {
+  margin: 1em 0;
+  padding-left: 30px;
+
+  li {
+    list-style: square outside;
+    line-height: 1.5;
+  }
+}
+
+/* Styling for the status indicator of the passwords match test.  */
+.password-confirm .ok {
+  color: #0e927a;
+  font-weight: 500;
+}
+.password-confirm .error {
+  color: #a65261;
+  font-weight: 500;
+}
