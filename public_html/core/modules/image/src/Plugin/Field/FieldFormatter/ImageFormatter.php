@@ -14,6 +14,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
@@ -41,7 +42,7 @@ class ImageFormatter extends ImageFormatterBase implements ContainerFactoryPlugi
   /**
    * The image style entity storage.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\image\ImageStyleStorageInterface
    */
   protected $imageStyleStorage;
 
@@ -199,9 +200,16 @@ class ImageFormatter extends ImageFormatterBase implements ContainerFactoryPlugi
     }
 
     foreach ($files as $delta => $file) {
+      $cache_contexts = array();
       if (isset($link_file)) {
         $image_uri = $file->getFileUri();
+        // @todo Wrap in file_url_transform_relative(). This is currently
+        // impossible. As a work-around, we currently add the 'url.site' cache
+        // context to ensure different file URLs are generated for different
+        // sites in a multisite setup, including HTTP and HTTPS versions of the
+        // same site. Fix in https://www.drupal.org/node/2646744.
         $url = Url::fromUri(file_create_url($image_uri));
+        $cache_contexts[] = 'url.site';
       }
       $cache_tags = Cache::mergeTags($cache_tags, $file->getCacheTags());
 
@@ -219,11 +227,49 @@ class ImageFormatter extends ImageFormatterBase implements ContainerFactoryPlugi
         '#url' => $url,
         '#cache' => array(
           'tags' => $cache_tags,
+          'contexts' => $cache_contexts,
         ),
       );
     }
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+    $style_id = $this->getSetting('image_style');
+    /** @var \Drupal\image\ImageStyleInterface $style */
+    if ($style_id && $style = ImageStyle::load($style_id)) {
+      // If this formatter uses a valid image style to display the image, add
+      // the image style configuration entity as dependency of this formatter.
+      $dependencies[$style->getConfigDependencyKey()][] = $style->getConfigDependencyName();
+    }
+    return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onDependencyRemoval(array $dependencies) {
+    $changed = parent::onDependencyRemoval($dependencies);
+    $style_id = $this->getSetting('image_style');
+    /** @var \Drupal\image\ImageStyleInterface $style */
+    if ($style_id && $style = ImageStyle::load($style_id)) {
+      if (!empty($dependencies[$style->getConfigDependencyKey()][$style->getConfigDependencyName()])) {
+        $replacement_id = $this->imageStyleStorage->getReplacementId($style_id);
+        // If a valid replacement has been provided in the storage, replace the
+        // image style with the replacement and signal that the formatter plugin
+        // settings were updated.
+        if ($replacement_id && ImageStyle::load($replacement_id)) {
+          $this->setSetting('image_style', $replacement_id);
+          $changed = TRUE;
+        }
+      }
+    }
+    return $changed;
   }
 
 }
