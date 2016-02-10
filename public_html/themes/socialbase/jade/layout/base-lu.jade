@@ -1,0 +1,39 @@
+- var pagetype = "template"
+
+doctype html
+html(lang="en")
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(charset='utf-8')
+  
+    block title
+      title  Documentation - Drupal Social
+
+    #Favicons
+    link(rel='apple-touch-icon-precomposed', type='image/svg+xml', href='/images/social-logo-blue.svg')
+    link(rel='shortcut icon', type='image/svg+xml', href='/images/social-logo-blue.svg')
+
+    #CSS
+    link(href='css/social.css', type='text/css', rel='stylesheet', media='screen,projection')
+  
+  body(class='#{pagetype}')
+    include _header-lu.jade
+    
+    main.main-container(role='main')
+      include _breadcrumbs.jade
+      
+      .container
+        block content
+
+  block scriptinline
+
+  script(src='js/vendor.js')
+  script(src='js/drupal-core.js')
+  script(src='js/components.js')
+  script(src='js/project.js')
+  script(src='js/init.js')
+  
+  //unless pagetype == "template"
+    script(src='js/prism.js')
