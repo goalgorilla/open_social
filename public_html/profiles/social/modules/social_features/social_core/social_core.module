@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * The Social core module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function social_core_theme() {
+  return array(
+    'page_hero_data' => array(
+      'variables' => array(
+        'title' => NULL,
+        'author_name' => NULL,
+        'created_date' => NULL,
+        'created_date_formatted' => NULL,
+        'topic_type' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Prepares variables for the social page hero data.
+ *
+ * Default template: page-hero-data.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - title: Page title as a string
+ *   - author_name: Author as a string
+ *   - created_date: Timestamp
+ *   - created_date_formatted: Formatted date as a string
+ *   - topic_type: List of topic types as an array or NULL
+ */
+function template_preprocess_page_hero_data(&$variables) {
+  // @todo create $variables['author_formatted']?
+  // @todo Pass in all the page_title variables?
+  if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
+    $variables['created_date_formatted'] = \Drupal::service('date.formatter')->format($variables['created_date']);
+  }
+  if (isset($variables['topic_type'])) {
+    $topic_type_entities = $variables['topic_type']->referencedEntities();
+    if (count($topic_type_entities) === 1) {
+      foreach($topic_type_entities as $topic) {
+        $variables['topic_type'] = $topic->link();
+      }
+    }
+    else {
+      $variables['topic_type'] = NULL;
+    }
+  }
+}
