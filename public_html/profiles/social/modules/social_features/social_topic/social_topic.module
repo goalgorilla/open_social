@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * The Social topic module.
+ */
+
+/**
+* Prepares variables for node templates.
+*
+* Default template: node.html.twig.
+*
+* Most themes use their own copy of node.html.twig. The default is located
+* inside "/core/modules/node/templates/node.html.twig". Look in there for the
+* full list of variables.
+*
+* @param array $variables
+*   An associative array containing:
+*   - elements: An array of elements to display in view mode.
+*   - node: The node object.
+*   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+*/
+function social_topic_preprocess_node(&$variables) {
+
+  if ($variables['view_mode'] === 'teaser') {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $variables['node'];
+    if ($node->getType() === 'topic') {
+      $topic_type = $node->get('field_topic_type');
+      $topic_type_entities = $topic_type->referencedEntities();
+      if (count($topic_type_entities) === 1) {
+        foreach ($topic_type_entities as $topic) {
+          $variables['metadata'] = t('in !topic', array('!topic' => $topic->link()));
+        }
+      }
+      else {
+        $variables['metadata'] = NULL;
+      }
+    }
+  }
+}
