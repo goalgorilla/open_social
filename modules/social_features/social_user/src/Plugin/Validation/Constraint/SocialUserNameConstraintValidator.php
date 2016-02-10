@@ -30,7 +30,7 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
    */
   public static function create(ContainerInterface $container) {
     return new static(
-    // Load the service required to construct this class.
+      // Load the service required to construct this class.
       $container->get('typed_data_manager')
     );
   }
