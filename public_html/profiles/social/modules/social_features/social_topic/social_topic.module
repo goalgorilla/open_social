@@ -21,7 +21,6 @@
 *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
 */
 function social_topic_preprocess_node(&$variables) {
-
   if ($variables['view_mode'] === 'teaser') {
     /** @var \Drupal\node\NodeInterface $node */
     $node = $variables['node'];
@@ -30,7 +29,7 @@ function social_topic_preprocess_node(&$variables) {
       $topic_type_entities = $topic_type->referencedEntities();
       if (count($topic_type_entities) === 1) {
         foreach ($topic_type_entities as $topic) {
-          $variables['metadata'] = t('in !topic', array('!topic' => $topic->link()));
+          $variables['metadata'] = t('in @topic', array('@topic' => $topic->link()));
         }
       }
       else {
@@ -48,9 +47,18 @@ function social_topic_preprocess_node(&$variables) {
 function social_topic_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   if ($form['#id'] === 'views-exposed-form-topics-page-1') {
     $form['type']['#options']['All'] = t('All types');
-    $form['status']['#options']['All'] = t('Published or not published');
-    $form['status']['#options']['1'] = t('Published');
-    $form['status']['#options']['0'] = t('Not published');
+
+    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $current_uid = \Drupal::currentUser()->id();
+
+    if ($account_uid !== $current_uid) {
+      $form['status']['#access'] = FALSE;
+    }
+    else {
+      $form['status']['#options']['All'] = t('Published or not published');
+      $form['status']['#options']['1'] = t('Published');
+      $form['status']['#options']['0'] = t('Not published');
+    }
 
     // @todo move the sort form elements to a different block.
     $form['sort_by']['#access'] = FALSE;
