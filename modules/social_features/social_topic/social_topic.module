@@ -39,3 +39,38 @@ function social_topic_preprocess_node(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_form_form_ID_alter().
+ *
+ * Enhance the exposed filter form of the topic overview.
+ */
+function social_topic_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form['#id'] === 'views-exposed-form-topics-page-1') {
+    $form['type']['#options']['All'] = t('All types');
+    $form['status']['#options']['All'] = t('Published or not published');
+    $form['status']['#options']['1'] = t('Published');
+    $form['status']['#options']['0'] = t('Not published');
+
+    // @todo move the sort form elements to a different block.
+    $form['sort_by']['#access'] = FALSE;
+    $form['sort_order']['#title'] = t('Sorted by publish date');
+
+    // Enable the reset button.
+    // @todo make sure the block content refreshes on submit as well (AJAX).
+    $form['actions']['reset']['#access'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_block_view_alter().
+ *
+ * Add a title to the exposed filter block on the topics overview.
+ */
+function social_topic_block_view_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+  // @todo check out why this happens, is this is a views bug?
+  if ($build['#plugin_id'] === 'views_exposed_filter_block:topics-page_1') {
+    $build['#configuration']['label'] = $build['#configuration']['views_label'];
+  }
+
+}
