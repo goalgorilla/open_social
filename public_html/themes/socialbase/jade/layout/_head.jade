@@ -1,0 +1,24 @@
+meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+meta(name='viewport', content='width=device-width, initial-scale=1')
+meta(http-equiv='X-UA-Compatible', content='IE=edge')
+meta(charset='utf-8')
+
+if meta_descript
+  meta(name='description', content='#{meta_descript}')
+else
+  meta(name='description', content='Materialize is a modern responsive CSS framework based on Material Design by Google. ')
+
+if page
+  title #{page} - Drupal Social
+else
+  title Documentation - Drupal Social
+
+
+// Favicons
+link(rel='apple-touch-icon-precomposed', type='image/svg+xml', href='/images/social-logo-blue.svg')
+link(rel='shortcut icon', type='image/svg+xml', href='/images/social-logo-blue.svg')
+
+// CSS
+unless pagetype = 'template'
+  link(href='css/prism.css', rel='stylesheet')
+link(href='css/social.css', type='text/css', rel='stylesheet', media='screen,projection')

@@ -1,11 +1,34 @@
-# Docker #
+# Drupal Social #
+Check [drupal.org](https://www.drupal.org/project/social) for more information.
+For day to day technical documentation use the [Github Wiki](https://github.com/goalgorilla/drupal_social/wiki).
 
+Useful links for developers:
+- [Roadmap](https://drupalsocial.storiesonboard.com/m/drupal-social-mvp)
+- [Lo-fi prototype](http://prototype.goalgorilla.com/drupalsocial/current/)
+- [Hifi styleguide and prototype](http://goalgorilla.github.io/drupal_social/)
+
+# Commit messages guidelines #
+[Jira](https://goalgorilla.cloudshards.net/secure/Dashboard.jspa) is used for the issue queue. In order to link the commits to profiles at drupal.org when we release the distribution use the following [template](https://www.drupal.org/node/52287):
+
+```
+[DS-#Issue] by [comma-separated usernames]: [Summary of the change]
+```
+For example:
+```
+DS-123 by nielsvandermolen, ronaldtebrake: Login with email and custom validation constraint on create account username field.
+```
+
+To find usernames look on the GoalGorilla page on [drupal.org](https://www.drupal.org/goalgorilla)
+
+# Installation #
+
+## Docker toolbox ##
 Download and install the [toolbox](https://www.docker.com/docker-toolbox).
 
 Note that the docker projects have to be somewhere in your /Users/ directory in order to work (limitation for Mac and Windows). Note that /Users/<name>/Sites/Docker is fine.
 
 
-# Installation #
+## Steps ##
 
 1. Start a docker machine (docker quickstart icon).
 
@@ -32,7 +55,12 @@ Note that the docker projects have to be somewhere in your /Users/ directory in 
     sh docker_build/drupal8/install_script.sh
     ```
 
-# Usage #
+7. Add the proxy container.
+    ```
+    docker run -d -p 80:80 --name=proxy -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy
+    ```
+
+## Usage ##
 
 **If you want to see which containers are running:**
 ```
@@ -53,9 +81,14 @@ rm -f sites/default/settings.local.php
 rm -rf sites/default/files
 ```
 
-Now run the install script on your host machine again.
+**If you want to start the proxy:**
 ```
-sh docker_build/drupal8/install_script.sh
+docker start proxy
+```
+
+**Now run the install script on your host machine again.**
+```
+docker exec -it social_web_1 bash /root/dev-scripts/install/install_script.sh
 ```
 
 [![Build Status](https://travis-ci.org/goalgorilla/drupal_social.svg?branch=master)](https://travis-ci.org/goalgorilla/drupal_social)
