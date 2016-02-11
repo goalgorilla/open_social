@@ -51,7 +51,7 @@ class EntityManagerWrapper extends DefaultPluginManager implements EntityManager
   public function __construct(EntityManagerInterface $entityManager) {
     $this->entityManager = $entityManager;
 
-    $this->disallowedEntities = ['user_role', 'shortcut_set', 'user_role'];
+    $this->disallowedEntities = ['user_role', 'shortcut_set', 'taxonomy_vocabulary'];
   }
 
   /**
