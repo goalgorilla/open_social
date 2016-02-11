@@ -64,13 +64,13 @@ class SocialUserLoginForm extends UserLoginForm {
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array('#type' => 'submit', '#value' => $this->t('Log in'));
 
-    // Validates if a user with a username or email is blocked.
-    $form['#validate'][] = '::validateNameMail';
     // Validates account and sets the form state uid that is used in the
     // submit function.
     $form['#validate'][] = '::validateAuthentication';
     // Validates if the uid is set and display an error message if the input
     // is invalid.
+    // Validates if a user with a username or email is blocked.
+    $form['#validate'][] = '::validateNameMail';
     $form['#validate'][] = '::validateFinal';
 
     $this->renderer->addCacheableDependency($form, $config);
@@ -82,9 +82,15 @@ class SocialUserLoginForm extends UserLoginForm {
    * Sets an error if supplied username or mail has been blocked.
    */
   public function validateNameMail(array &$form, FormStateInterface $form_state) {
-    if (!$form_state->isValueEmpty('name_or_mail') && social_user_is_blocked($form_state->getValue('name_or_mail'))) {
+    $user_blocked = social_user_is_blocked($form_state->getValue('name_or_mail'));
+    if ($user_blocked) {
       // Blocked in user administration.
-      $this->setGeneralErrorMessage($form, $form_state);
+      if (!$form_state->get('uid')) {
+        $this->setGeneralErrorMessage($form, $form_state);
+      }
+      else {
+        $form_state->setErrorByName('name_or_mail', $this->t('The username %name has not been activated or is blocked.', array('%name' => $form_state->getValue('name_or_mail'))));
+      }
     }
   }
 
@@ -192,8 +198,7 @@ class SocialUserLoginForm extends UserLoginForm {
   protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state) {
     $form_state->setErrorByName('name_or_mail', $this->t('
         There was an error :( This could happen for one of for the following reasons: <br>
-        - Unrecognized username/email or password. <br>
-        - The account with the username/email %name_or_email has not been activated or is blocked. <br>
+        - Unrecognized username/email and password combination. <br>
         - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
         - Too many failed login attempts from your IP address. This IP address is temporarily blocked. <br> <br>
         To solve the issue try other credentials, try again later or <a href=":url">request a new password</a>',
