@@ -55,6 +55,11 @@ Note that the docker projects have to be somewhere in your /Users/ directory in 
     sh docker_build/drupal8/install_script.sh
     ```
 
+7. Add the proxy container.
+    ```
+    docker run -d -p 80:80 --name=proxy -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy
+    ```
+
 ## Usage ##
 
 **If you want to see which containers are running:**
@@ -76,7 +81,12 @@ rm -f sites/default/settings.local.php
 rm -rf sites/default/files
 ```
 
-Now run the install script on your host machine again.
+**If you want to start the proxy:**
+```
+docker start proxy
+```
+
+**Now run the install script on your host machine again.**
 ```
 docker exec -it social_web_1 bash /root/dev-scripts/install/install_script.sh
 ```
