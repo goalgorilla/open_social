@@ -38,7 +38,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
-  const NODE_ACCESS = array('@node_access' => 'node_access');
+  private $node_access = array('@node_access' => 'node_access');
 
   use RedirectDestinationTrait;
 
@@ -131,12 +131,12 @@ class DnaBlock extends BlockBase implements ContainerFactoryPluginInterface {
     if (empty(self::visibleNodes())) {
       $request_uri = \Drupal::request()->getRequestUri();
       if ($request_uri === '/' || $request_uri === '/node') {
-        $build['#markup'] = t('@node_access information is not available for the nodes on this page due to caching &mdash; flush your caches to display it.', self::NODE_ACCESS);
+        $build['#markup'] = t('@node_access information is not available for the nodes on this page due to caching &mdash; flush your caches to display it.', $this->node_access);
       }
       return $build;
     }
 
-    $build['#title'] = t('@node_access entries for nodes shown on this page', self::NODE_ACCESS);
+    $build['#title'] = t('@node_access entries for nodes shown on this page', $this->node_access);
 //    $build['test_table'] = array(
 //      '#type' => 'table',
 //      '#header' => $headers,
