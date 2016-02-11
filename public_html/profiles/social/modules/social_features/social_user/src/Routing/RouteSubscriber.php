@@ -29,6 +29,11 @@ class RouteSubscriber extends RouteSubscriberBase {
         '_title' => 'Log in',
       ));
     }
-
+    if ($route = $collection->get('user.pass')) {
+      $route->setDefaults(array(
+        '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
+        '_title' => 'Reset your password',
+      ));
+    }
   }
 }
