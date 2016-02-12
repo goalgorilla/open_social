@@ -54,19 +54,13 @@ function social_topic_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\Fo
     if ($account_uid !== $current_uid) {
       $form['status']['#access'] = FALSE;
     }
-    else {
-      $form['status']['#options']['All'] = t('Published or not published');
-      $form['status']['#options']['1'] = t('Published');
-      $form['status']['#options']['0'] = t('Not published');
-    }
-
-    // @todo move the sort form elements to a different block.
-    $form['sort_by']['#access'] = FALSE;
-    $form['sort_order']['#title'] = t('Sorted by publish date');
 
     // Enable the reset button.
     // @todo make sure the block content refreshes on submit as well (AJAX).
     $form['actions']['reset']['#access'] = TRUE;
+    // @todo make sure exposed form filtering redirects to the proper view
+    // page, when views is updated.
+    $form['#action'] = '/user/' . $account_uid . '/topics';
   }
 }
 
