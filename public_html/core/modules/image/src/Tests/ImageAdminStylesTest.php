@@ -8,6 +8,7 @@
 namespace Drupal\image\Tests;
 
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\image\ImageStyleInterface;
 use Drupal\node\Entity\Node;
@@ -273,6 +274,19 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     $this->assertFalse(ImageStyle::load($style_name), format_string('Image style %style successfully deleted.', array('%style' => $style->label())));
 
+    // Test empty text when there are no image styles.
+
+    // Delete all image styles.
+    foreach (ImageStyle::loadMultiple() as $image_style) {
+      $image_style->delete();
+    }
+
+    // Confirm that the empty text is correct on the image styles page.
+    $this->drupalGet($admin_path);
+    $this->assertRaw(t('There are currently no styles. <a href=":url">Add a new one</a>.', [
+      ':url' => \Drupal::url('image.style_add'),
+    ]));
+
   }
 
   /**
@@ -307,7 +321,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // Test that image is displayed using newly created style.
     $this->drupalGet('node/' . $nid);
-    $this->assertRaw($style->buildUrl($original_uri), format_string('Image displayed using style @style.', array('@style' => $style_name)));
+    $this->assertRaw(file_url_transform_relative($style->buildUrl($original_uri)), format_string('Image displayed using style @style.', array('@style' => $style_name)));
 
     // Rename the style and make sure the image field is updated.
     $new_style_name = strtolower($this->randomMachineName(10));
@@ -322,7 +336,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // Reload the image style using the new name.
     $style = ImageStyle::load($new_style_name);
-    $this->assertRaw($style->buildUrl($original_uri), 'Image displayed using style replacement style.');
+    $this->assertRaw(file_url_transform_relative($style->buildUrl($original_uri)), 'Image displayed using style replacement style.');
 
     // Delete the style and choose a replacement style.
     $edit = array(
@@ -334,7 +348,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     $replacement_style = ImageStyle::load('thumbnail');
     $this->drupalGet('node/' . $nid);
-    $this->assertRaw($replacement_style->buildUrl($original_uri), 'Image displayed using style replacement style.');
+    $this->assertRaw(file_url_transform_relative($replacement_style->buildUrl($original_uri)), 'Image displayed using style replacement style.');
   }
 
   /**
@@ -441,11 +455,16 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // Test that image is displayed using newly created style.
     $this->drupalGet('node/' . $nid);
-    $this->assertRaw($style->buildUrl($original_uri), format_string('Image displayed using style @style.', array('@style' => $style_name)));
+    $this->assertRaw(file_url_transform_relative($style->buildUrl($original_uri)), format_string('Image displayed using style @style.', array('@style' => $style_name)));
 
     // Copy config to sync, and delete the image style.
     $sync = $this->container->get('config.storage.sync');
     $active = $this->container->get('config.storage');
+    // Remove the image field from the display, to avoid a dependency error
+    // during import.
+    EntityViewDisplay::load('node.article.default')
+      ->removeComponent($field_name)
+      ->save();
     $this->copyConfig($active, $sync);
     $sync->delete('image.style.' . $style_name);
     $this->configImporter()->import();

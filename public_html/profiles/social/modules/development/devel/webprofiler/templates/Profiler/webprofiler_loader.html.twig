@@ -53,7 +53,7 @@
                         x.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                         x.setRequestHeader('Content-type', 'application/json');
                         x.onreadystatechange = function () {
-                            x.readyState > 3 && callback && callback(x.responseText, x);
+                            x.readyState > 3 && x.status === 200 && callback && callback(x.responseText, x);
                         };
                         x.send(data);
                     } catch (e) {

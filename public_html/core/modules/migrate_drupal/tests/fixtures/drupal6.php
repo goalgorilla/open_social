@@ -34054,7 +34054,7 @@ $connection->insert('vocabulary')
   'hierarchy' => '1',
   'multiple' => '1',
   'required' => '0',
-  'tags' => '0',
+  'tags' => '1',
   'module' => 'taxonomy',
   'weight' => '5',
 ))
@@ -34079,7 +34079,7 @@ $connection->insert('vocabulary')
   'relations' => '1',
   'hierarchy' => '0',
   'multiple' => '0',
-  'required' => '0',
+  'required' => '1',
   'tags' => '0',
   'module' => 'taxonomy',
   'weight' => '0',
