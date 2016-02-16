@@ -413,7 +413,7 @@
       $('.header__wrapper--placeholder').hide();
     }
 
-    if ($document.scrollTop() >= 28) {
+    if ($document.scrollTop() >= 72) {
       // user scrolled 50 pixels or more;
       // do stuff
       $element2.addClass(className2);
@@ -421,7 +421,7 @@
       $element2.removeClass(className2);
     }
 
-    if ($document.scrollTop() >= 28) {
+    if ($document.scrollTop() >= 72) {
      // user scrolled 50 pixels or more;
      // do stuff
       $element3.addClass(className3);

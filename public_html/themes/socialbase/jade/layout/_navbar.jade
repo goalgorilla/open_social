@@ -1,3 +1,12 @@
+.header__wrapper
+  .header__innerwrapper.container
+    .row
+      .col.s12
+        if page
+          h1.header__title #{page}
+        else
+          h1.header__title Drupal Social
+
 .nav-button-wrapper
   button#js-showSidebar.hamburger-button(role='tab') 
     i.material-icons(title='show navigation') menu

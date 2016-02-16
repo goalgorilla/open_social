@@ -3,47 +3,52 @@ extends ./layout/base-an.jade
 block title
   title Sign up
 
+block pagetitle
+  .page-title 
+    .container
+      h1 Sign up
+
 block content
       
-  h1.page-title Sign up
+  .row
+    .col.s12.l8
+      .card.form-card
 
-  .card.form-card
+        nav(role="navigation" aria-label="Tabs")
+          h2.visually-hidden Primary tabs
+          ul.tabs.primary
+            li
+              a(href="login.html") Log in
+            li.is-active
+              a.is-active(href="sign-up.html") Sign up
+                span.visually-hidden (active tab)
+            li
+              a(href='reset-password.html') Reset password
+              
+        form.user-signup-form(accept-charset='UTF-8')
+          .form-item.form-type-textfield
+            .input-field
+              input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
+              label.form-required(for='edit-email') E-mail address
+              .description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
 
-    nav(role="navigation" aria-label="Tabs")
-      h2.visually-hidden Primary tabs
-      ul.tabs.primary
-        li
-          a(href="login.html") Log in
-        li.is-active
-          a.is-active(href="sign-up.html") Sign up
-            span.visually-hidden (active tab)
-        li
-          a(href='reset-password.html') Reset password
-          
-    form.user-signup-form(accept-charset='UTF-8')
-      .form-item.form-type-textfield
-        .input-field
-          input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
-          label.form-required(for='edit-email') E-mail address
-          .description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
+          .form-item.form-type-textfield
+            .input-field
+              input#edit-username.form-text(type='text', required='required')
+              label.form-required(for='edit-pass') Username
+              .description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
+              
+          #edit-pass.js-form-item.form-item.js-form-type-password-confirm.form-type-password-confirm.js-form-item-pass.form-item-pass.form-no-label
+              .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass1.form-item-pass-pass1.input-field
+                input#edit-pass-pass1.password-field.js-password-field.form-text.required(data-drupal-selector='edit-pass-pass1', type='password', name='pass[pass1]', size='25', maxlength='128', required='required', aria-required='true')
+                label.js-form-required.form-required(for='edit-pass-pass1') Password
+              .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass2.form-item-pass-pass2.input-field
+                input#edit-pass-pass2.password-confirm.js-password-confirm.form-text.required(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true')
+                label.js-form-required.form-required(for='edit-pass-pass2') Confirm password
 
-      .form-item.form-type-textfield
-        .input-field
-          input#edit-username.form-text(type='text', required='required')
-          label.form-required(for='edit-pass') Username
-          .description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
-          
-      #edit-pass.js-form-item.form-item.js-form-type-password-confirm.form-type-password-confirm.js-form-item-pass.form-item-pass.form-no-label
-          .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass1.form-item-pass-pass1.input-field
-            input#edit-pass-pass1.password-field.js-password-field.form-text.required(data-drupal-selector='edit-pass-pass1', type='password', name='pass[pass1]', size='25', maxlength='128', required='required', aria-required='true')
-            label.js-form-required.form-required(for='edit-pass-pass1') Password
-          .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass2.form-item-pass-pass2.input-field
-            input#edit-pass-pass2.password-confirm.js-password-confirm.form-text.required(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true')
-            label.js-form-required.form-required(for='edit-pass-pass2') Confirm password
-
-      #edit-actions.form-actions.form-wrapper
-        input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Sign up')
-  
-block scriptinline
-  script(type='application/json', data-drupal-selector='drupal-settings-json').
-    {"path":{"baseUrl":"\\/","scriptPath":null,"pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","ajaxTrustedUrl":{"form_action_cc611e1d":true},"password":{"confirmTitle":"Passwords match:","confirmSuccess":"yes", "confirmFailure":"no", "showStrengthIndicator":true, "strengthTitle":"Password strength:","hasWeaknesses":"To make your password stronger:","tooShort":"Make it at least 12 characters","addLowerCase":"Add lowercase letters","addUpperCase":"Add uppercase letters","addNumbers":"Add numbers","addPunctuation":"Add punctuation","sameAsUsername":"Make it different from your username","weak":"Weak","fair":"Fair","good":"Good","strong":"Strong","username":""},"user":{"uid":0,"permissionsHash":"9079ad224d4b0fce406984c277ed66ca1008545fc31b1bfc7dfd6d40a4b15c1b"}}
+          #edit-actions.form-actions.form-wrapper
+            input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Sign up')
+      
+    block scriptinline
+      script(type='application/json', data-drupal-selector='drupal-settings-json').
+        {"path":{"baseUrl":"\\/","scriptPath":null,"pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","ajaxTrustedUrl":{"form_action_cc611e1d":true},"password":{"confirmTitle":"Passwords match:","confirmSuccess":"yes", "confirmFailure":"no", "showStrengthIndicator":true, "strengthTitle":"Password strength:","hasWeaknesses":"To make your password stronger:","tooShort":"Make it at least 12 characters","addLowerCase":"Add lowercase letters","addUpperCase":"Add uppercase letters","addNumbers":"Add numbers","addPunctuation":"Add punctuation","sameAsUsername":"Make it different from your username","weak":"Weak","fair":"Fair","good":"Good","strong":"Strong","username":""},"user":{"uid":0,"permissionsHash":"9079ad224d4b0fce406984c277ed66ca1008545fc31b1bfc7dfd6d40a4b15c1b"}}

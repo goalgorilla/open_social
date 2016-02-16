@@ -8,21 +8,17 @@
     padding-top: 40px;
   }
 
-  .container {
-    width: 100%;
-
-    @include MQ($small) {
-      width: 80%;
-    }
-  }
-
   &.moved-up {
     position: fixed;
     box-shadow: 0 2px 5px rgba(0,0,0,0.26);
-    left: 0;
     right: 0;
+    left: 0;
     top: -72px;
     z-index: 2;
+
+    @include MQ($medium) {
+      left: 240px;
+    }
   }
 
 }
@@ -38,36 +34,28 @@
   &.is-fixed {
     height: 56px;
     z-index: 2;
-    position: fixed;
     top: 0;
     left: 56px;
 
     @include MQ($small) {
-      left: 10%;
-    }
-
-    @include MQ($medium) {
-      height: 64px;
+      left: auto;
     }
 
   }
 
-  @include MQ($medium) {
-    padding-left: 240px;
-  }
 }
 
 .header__title {
   color: white;
   white-space: nowrap;
   overflow: hidden;
-  font-size: 24px;
+  font-size: 22px;
   margin: 0;
+  transition: 0.3s;
 
   &.is-fixed {
     height: 56px;
-    font-size: 20px;
-    top: 0;
+    margin-top: 12px;
     z-index: 2;
     line-height: 56px;
   }
@@ -78,6 +66,7 @@
 
     &.is-fixed {
       font-size: 24px;
+      margin-top: 32px;
     }
   }
 }
@@ -142,8 +131,8 @@
   background-color: white;
   transform: translate3d(-241px, 0, 0);
   transition: all 200ms ease;
+  @extend .z-depth-1;
   will-change: left;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
 
   &:hover {
     overflow-y: auto;
@@ -162,31 +151,60 @@
     list-style: none;
     padding: 0 15px;
 
+    &:hover,
     &.active {
       background-color: rgba(0,0,0,0.05);
     }
 
   }
 
-  .collapsible-body li.active {
-    background-color: $primary-color;
-
-    a {
-      color: white;
-    }
-
-  }
-
-  .bold > a {
-    font-weight: bold;
-  }
-
   a {
     display: block;
     font-size: 13px;
+    font-weight: 700;
     line-height: 44px;
     padding: 0 15px;
     color: $base-color;
+  }
+
+  .collapsible {
+    border: none;
+    box-shadow: none;
+    margin: 0;
+
+    li { padding: 0; }
+  }
+
+  .collapsible-header {
+    background-color: transparent;
+    border: none;
+    line-height: inherit;
+    height: inherit;
+    margin: 0 15px;
+  }
+
+  .collapsible-accordion {
+    background-color: white;
+  }
+
+  .collapsible-body {
+    border: 0;
+    background-color: $collapsible-header-color;
+
+    li a {
+      margin: 0 1em 0 2em;
+      font-weight: 300;
+    }
+
+    li.active {
+      background-color: $primary-color;
+
+      a {
+        color: white;
+      }
+
+    }
+
   }
 
   .logo {

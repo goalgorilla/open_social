@@ -1,15 +1,16 @@
-- var no_nav = false
+- var pagetype = "styleguide"
 - var page = "Forms"
 
 doctype html
 html(lang="en")
   head
-    include layout/_head.jade
-
+    include ./layout/_head.jade
   body(class='#{pagetype}')
-    include layout/_navbar.jade
-    include layout/_title.jade
-    main
-      include page-contents/forms_content.html
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
 
-    include layout/_scripts.jade
+    block content
+  
+    include ./layout/_scripts.jade

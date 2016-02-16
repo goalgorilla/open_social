@@ -71,10 +71,59 @@ $gutter-width: 1.5rem !default;
 $element-top-margin: $gutter-width/3 !default;
 $element-bottom-margin: ($gutter-width*2)/3 !default;
 
+// Media queries ================================================================
+$x-small: 480px;
+$small: 640px;
+$medium: 960px;
+$large: 1024px;
+$x-large: 1200px;
+$xx-large: 1440px;
 
-$x-small: 30em; // 480px
-$small: 40em; // 640px
-$medium: 60em; // 960px
-$large: 64em; // 1024px
-$x-large: 75em; // 1200px
-$xx-large: 95em; // 1440px
+// Grid ==========================================================================
+
+$num-cols: 12 !default;
+$gutter-width: 30px !default;
+$element-top-margin: $gutter-width/3 !default;
+$element-bottom-margin: ($gutter-width*2)/3 !default;
+
+// Typography =====================================================================
+
+$off-black: rgba(0, 0, 0, 0.87) !default;
+// Header Styles
+
+$h1-font-sizes: (
+  null : 30px,
+  $medium : 52px
+);
+
+$h2-font-sizes: (
+  null : 24px,
+  $medium : 34px
+);
+
+$h3-font-sizes: (
+  null : 20px,
+  $medium : 28px
+);
+
+$h4-font-sizes: (
+  null: 18px,
+  $medium : 22px
+);
+
+$h5-font-sizes: (
+  null  : 16px,
+  $medium : 20px
+);
+
+$h6-font-sizes: (
+  null  : 14px,
+  $medium : 18px
+);
+
+// Cards ==========================================================================
+
+$card-padding: 20px;
+$card-bg-color: white;
+$card-link-color: $primary-color;
+$card-link-color-light: lighten($card-link-color, 20%);

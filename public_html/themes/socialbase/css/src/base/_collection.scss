@@ -1,0 +1,41 @@
+.collection {
+  margin: 0.5rem 0 1rem 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  padding-left: 0;
+  list-style-type: none;
+  background-color: white;
+}
+
+.collection__item {
+  margin: 0;
+  display: block;
+
+  a {
+    display: block;
+    transition: .25s;
+    color: $primary-color;
+    padding: 10px 20px;
+    background-color: white;
+    line-height: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+
+    &:hover {
+      background-color: rgba(0,0,0,.05);
+    }
+
+  }
+
+  &:last-child a {
+    border-bottom: none;
+  }
+
+}
+
+.collection-header {
+  background-color: white;
+  border-bottom: 1px solid $grey-light-1;
+  padding: 10px 20px;
+}

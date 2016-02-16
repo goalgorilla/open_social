@@ -1,13 +1,104 @@
-- var no_nav = false
+- var pagetype = "styleguide"
 - var page = "Grid"
 
 doctype html
 html(lang="en")
   head
-    include layout/_head.jade
+    include ./layout/_head.jade
   body(class='#{pagetype}')
-    include layout/_navbar.jade
-    include layout/_title.jade
-    main
-      include page-contents/grid_content.html
-    include layout/_scripts.jade
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+        .row 
+          .col.s12
+            .section
+              h2.header Container
+              p The container class is important in laying out content. It allows you to center your page content. The container class is set to a maximum of 960px. It helps you center and contain your page content. We use the container to contain our body content.
+              
+              p 
+                :markdown
+                  To add a container just put your content inside a `<div>` tag with a `container` class. Here's an example of how your page might be set up.
+              
+              pre      
+                code.language-markup.
+                  <main class="main-container">
+                    <div class="container">
+                      <!-- Page Content goes here --> 
+                    </div>
+                  </main>
+        
+            .section
+              h2.header Grid
+              p Our standard grid has 12 columns. No matter the size of the browser, each of these columns will always have an equal width.
+              
+              p Columns are applied with the `.col` class. A column always resides in a `.row` to clearfix the float. On all devices you can use the class `.s1` to `.s12`, where the number stands for the amount of colums to span. This is always based on the 12 column grid.
+              
+              p The letter `s` here stands for small screens. Since we use a mobile-first approach, we define the mobile layout as default.
+              
+              h4 Screen sizes
+              p For the breakpoints $small and $medium, which are defined in the sass file we have individual grid override options. You can use `.m` for the `$small` breakpoint and `.l` for the `$medium breakpoint`. This give you the flexibility to have different layouts on mobile, tablet and desktop screen sizes.
+              
+              .row
+                .col.s12.m8.l6.grid-example
+                  span.flow-text I am full-width on mobile, 75% on tablet and 50% on desktop (col s12 m8 l6)
+                .col.s12.m4.l6.grid-example
+                  span.flow-text I am full-width on mobile, 25% on tablet and 50% on desktop (col s12 m4 l6)
+                
+            .section
+              h2.header Base layout
+              p Our base layout consist of the following regions. Below you can see the layout.
+              
+              ul.list 
+                li Header: primary navigation, user menu, site search
+                li Breadcrumbs 
+                li Hero: displays an overview of the page
+                li Secondary navigation: section specific navigation
+                li Main content: holds the content of the page
+                li Complementary: sidebar with block such as filters or other actions
+                li Footer: closing block of the page
+            
+              .browser-window
+                .top-bar
+                  .circles
+                   #close-circle.circle
+                   #minimize-circle.circle
+                   #maximize-circle.circle
+                .content
+                  .row
+                    #site-layout-example-header.col.s12
+                      p Header
+                  .row.only-desktop
+                    #site-layout-example-breadcrumb.col.l12
+                      p Breadcrumbs
+                  .row
+                    #site-layout-example-hero.col.s12
+                      p Hero
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    #site-layout-example-secondary.col.s12
+                      p Secondary navigation
+                      p.flat-text.inline25 
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    #site-layout-example-main.col.s12.m9
+                      p main content 
+                      p.flat-text-header 
+                      p.flat-text
+                      p.flat-text
+                      p.flat-text
+                    #site-layout-example-aside.col.s12.m3
+                      p Complementary
+                      p.flat-text.small
+                      p.flat-text
+                      p.flat-text
+                  .row
+                    #site-layout-example-footer.col.s12
+                      p Footer
+
+    include ./layout/_scripts.jade

@@ -1,7 +1,41 @@
 script(src='js/vendor.js')
 script(src='js/drupal-core.js')
 script(src='js/components.js')
-script(src='js/project.js')
 script(src='js/init.js')
-unless pagetype = 'template'
-  script(src='js/prism.js')
+script(src='js/components/prism.js')
+
+script.
+  // Escape code
+  // ============================================================
+
+  var $lang_markup       = document.querySelectorAll('pre code.language-markup')
+      $lang_js           = document.querySelectorAll('script.atomic-js'),
+      $lang_jscode       = document.querySelectorAll('pre > code.language-javascript')
+      lang_markupsnippet = [],
+      lang_jsnippet      = [];
+
+
+  // Markup
+  // order matters!
+  // ============================================================
+
+  for(var i = 0, l = $lang_markup.length; i < l; i++) {
+    lang_markupsnippet.push(
+      $lang_markup[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    );
+    $lang_markup[i].innerHTML = lang_markupsnippet[i];
+  }
+
+
+  // JavaScript
+  // order matters!
+  // ============================================================
+  for(var i = 0, l = $lang_js.length; i < l; i++) {
+    lang_jsnippet.push(
+      $lang_js[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    );
+  }
+
+  for(var i = 0, l = $lang_jscode.length; i < l; i++) {
+    $lang_jscode[i].innerHTML = lang_jsnippet[i];
+  }

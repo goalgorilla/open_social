@@ -1,16 +1,27 @@
-- var no_nav = true
-- var page = "Drupal Social"
 - var pagetype = "styleguide"
+- var page = "Drupal social"
 
 doctype html
 html(lang="en")
   head
-    include layout/_head.jade
+    include ./layout/_head.jade
   body(class='#{pagetype}')
-    include layout/_navbar.jade
-    
-    include layout/_title.jade
-    
-    main
-      include page-contents/index_content.html
-    include layout/_scripts.jade
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      #index-banner.section
+        .container
+          .center
+            h4.title.center A modern responsive Drupal theme based on Material Design
+      .repo-link
+        .container
+          .commit
+            span.hidden-mobile Latest commit on Github by &nbsp; &nbsp; 
+            a.sha.hidden-mobile(href='')
+            span.hidden-mobile &nbsp;&nbsp; - &nbsp;&nbsp;
+            span.date.hidden-mobile
+            a#github-button.btn-flat.right.waves-effect.waves-light View repo
+  
+    include ./layout/_scripts.jade
