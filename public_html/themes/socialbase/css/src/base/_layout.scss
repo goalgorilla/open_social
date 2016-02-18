@@ -14,10 +14,20 @@
   display: block;
   width: 100%;
   background: $primary-color;
-  margin-bottom: 20px;
+  padding-bottom: 7em;
 
-  @include MQ($medium) {
-    margin-bottom: 40px;
+  .container {
+    padding: 0 $card-padding-small;
+    transition: 0.3s;
+
+    @include MQ($small) {
+      padding: 0 $card-padding-medium;
+    }
+
+    @include MQ($medium) {
+      padding: 0;
+    }
+
   }
 
   h1 {
@@ -26,6 +36,10 @@
     font-weight: 700;
     padding: 1em 0;
     margin: 0;
+  }
+
+  + .container {
+    margin-top: -7em;
   }
 
 }
