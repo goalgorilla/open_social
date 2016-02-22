@@ -9,7 +9,7 @@ social_nightly_web:
   environment:
     - VIRTUAL_HOST=nightly_build.socialci.goalgorilla.com
   volumes:
-   - ./dev-scripts/:/root/dev-scripts
+   - /root/drupal_social/social-jenkins-data/workspace/nightly_build:/root/dev-scripts
 
 social_nightly_db_data:
   image: mysql:5.6
