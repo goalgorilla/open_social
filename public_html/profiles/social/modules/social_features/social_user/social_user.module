@@ -46,3 +46,16 @@ function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface 
     $fields['name']->addConstraint('SocialUserName');
   }
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_user_form_user_cancel_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Fetch the current user.
+  $account = \Drupal::currentUser();
+  // Check if the user has permissions.
+  if ($account->hasPermission('administer account settings') === FALSE) {
+    // Remove the option to cancel account and delete all related content.
+    unset($form['user_cancel_method']['#options']['user_cancel_delete']);
+  }
+}
