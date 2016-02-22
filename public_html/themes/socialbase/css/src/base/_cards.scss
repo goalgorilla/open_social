@@ -22,5 +22,10 @@
     background-clip: padding-box;
   }
 
+}
 
+.card--nodefull {
+  @include MQ($medium) {
+    padding: (1.5 * $card-padding-medium - 16px) (1.5 * $card-padding-medium);
+  }
 }

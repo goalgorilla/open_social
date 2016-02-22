@@ -1,9 +1,15 @@
 .container {
   margin: 0 auto;
 
+  .styleguide & {
+    width: 90%;
+  }
+
   @include MQ($small) {
     width: 90%;
   }
+
+
 
   @include MQ($large) {
     max-width: $medium;
