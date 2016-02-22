@@ -8,6 +8,8 @@ social_nightly_web:
     - "80"
   environment:
     - VIRTUAL_HOST=nightly_build.socialci.goalgorilla.com
+  volumes:
+   - ./dev-scripts/:/root/dev-scripts
 
 social_nightly_db_data:
   image: mysql:5.6
