@@ -63,25 +63,35 @@
 </header>
 
 
-<main id="content" class="column main-content" role="main">
+<main id="content" class="column main-container" role="main">
   {{ page.breadcrumb }}
+
+  {% if page.hero %}
+    <div class="highlighted">
+      <aside class="layout-container section clearfix" role="complementary">
+        {{ page.hero }}
+      </aside>
+    </div>
+  {% endif %}
+
+  <a id="main-content" tabindex="-1"></a>
+  <div class="page-title">
+    <div class="container">
+      {{ page.title }}
+    </div>
+  </div>
+
   <div class="container">
-    {% if page.hero %}
-      <div class="highlighted">
-        <aside class="layout-container section clearfix" role="complementary">
-          {{ page.hero }}
-        </aside>
-      </div>
-    {% endif %}
-    <a id="main-content" tabindex="-1"></a>
-    {{ page.title }}
+    <div class="row">
+      {% block card %}
+        {{ page.tabs }}
+        {{ page.help }}
+        {{ page.content }}
+      {% endblock %}
 
-    {% block card %}
-      {{ page.tabs }}
-      {{ page.help }}
-      {{ page.content }}
-    {% endblock %}
+      {{ page.sidebar_first }}
 
-    {{ page.sidebar_first }}
+    </div>
+
   </div>
 </main>
