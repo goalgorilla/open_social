@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a menu.
+ *
+ * Available variables:
+ * Links
+ *  Link:
+ *  - classes
+ *  - label
+ *  - url
+ * @ingroup templates
+ */
+#}
+
+<ul class="header-menu">
+{% for item in links %}
+
+    <li class="{{ item.classes }}">
+        <a href="{{ item.url }}" class="menu__link">
+            <div class="b-menu">
+                <i title="{{ item.label }}" class="material-icons">{{ item.label|lower }}</i>
+                <span class="menu__label hidden">{{ item.label }}</span>
+            </div>
+        </a>
+
+    </li>
+
+{% endfor %}
+</ul>
