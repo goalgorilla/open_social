@@ -18,3 +18,4 @@ php -r 'opcache_reset();';
 drush genu 5 --pass=test;
 chmod 444 sites/default/settings.php
 drupal create:nodes topic --limit=250 --title-words=12 --time-range=Y
+drupal create:nodes event --limit=250 --title-words=12 --time-range=Y
