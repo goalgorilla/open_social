@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Provides functionality for handling postal addresses.
+ */
+
+use Drupal\language\Entity\ConfigurableLanguage;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for 'address_format'.
+ */
+function address_configurable_language_insert(ConfigurableLanguage $language) {
+  // Allow the importer to import any found translations for the new language.
+  $importer = \Drupal::service('address.address_format_importer');
+  $importer->importTranslations([$language->getId()]);
+}
+
+ /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Removes the default values form from the field settings page.
+ * Users expect to use the default value form to predefine only certain values
+ * on the widget, but Drupal expects the default value to be complete, and used
+ * whenever an actual address isn't provided. Therefore it's preferable to
+ * hide this functionality and implement our own via custom widget settings.
+ */
+function address_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $field = $form_state->getFormObject()->getEntity();
+  if ($field->getType() == 'address') {
+    $form['default_value']['#access'] = FALSE;
+  }
+}

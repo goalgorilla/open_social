@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Composer Manager module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function composer_manager_requirements($phase) {
+  if ('runtime' != $phase) {
+    return [];
+  }
+
+  $requirements = [
+    'composer_manager' => [
+      'title' => t('Composer Manager'),
+    ],
+  ];
+
+  // Package manager can't run if composer_manager hasn't been initialized,
+  // so check for that first.
+  if (!composer_manager_initialized()) {
+    $instructions = t("Run the module's <code>init.php</code> script on the command line.");
+
+    $requirements['composer_manager']['value'] = t('Not initialized');
+    $requirements['composer_manager']['description'] = $instructions;
+    $requirements['composer_manager']['severity'] = REQUIREMENT_WARNING;
+
+    return $requirements;
+  }
+
+  /* @var $package_manager Drupal\composer_manager\PackageManager */
+  $package_manager = \Drupal::service('composer_manager.package_manager');
+  if ($package_manager->needsComposerUpdate()) {
+    $instructions = t('Run <code>composer drupal-update</code> on the command line to update dependencies.');
+
+    $requirements['composer_manager']['value'] = t('Composer update needed');
+    $requirements['composer_manager']['description'] = $instructions;
+    $requirements['composer_manager']['severity'] = REQUIREMENT_ERROR;
+  }
+  else {
+    $requirements['composer_manager']['value'] = t('Dependencies installed');
+    $requirements['composer_manager']['description'] =  t('Visit the <a href="@url">package status page</a> to view the status of individual packages.', ['@url' => \Drupal::url('composer_manager.packages_page')]);
+    $requirements['composer_manager']['severity'] = REQUIREMENT_INFO;
+  }
+
+  return $requirements;
+}

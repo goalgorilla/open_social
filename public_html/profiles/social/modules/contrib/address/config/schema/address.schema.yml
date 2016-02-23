@@ -1,0 +1,175 @@
+address.address_format.*:
+  type: config_entity
+  label: 'Address format'
+  mapping:
+    countryCode:
+      type: string
+      label: 'Country code'
+    format:
+      type: text
+      label: 'Format'
+    requiredFields:
+      type: sequence
+      label: 'Required fields'
+      sequence:
+        - type: string
+    uppercaseFields:
+      type: sequence
+      label: 'Uppercase Fields'
+      sequence:
+        - type: string
+    administrativeAreaType:
+      type: string
+      label: 'Administrative area type'
+    localityType:
+      type: string
+      label: 'Locality type'
+    dependentLocalityType:
+      type: string
+      label: 'Dependent locality type'
+    postalCodeType:
+      type: string
+      label: 'Postal code type'
+    postalCodePattern:
+      type: string
+      label: 'Postal code pattern'
+    postalCodePrefix:
+      type: string
+      label: 'Postal code prefix'
+
+address.zone.*:
+  type: config_entity
+  label: 'Zone'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: 'Name'
+    scope:
+      type: string
+      label: 'Scope'
+    priority:
+      type: integer
+      label: 'Priority'
+    members:
+      type: sequence
+      label: 'Members'
+      sequence:
+        type: address.zone_member.[plugin]
+
+address.zone_member:
+  type: mapping
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: 'Name'
+    weight:
+      type: integer
+      label: 'Weight'
+    plugin:
+      type: string
+      label: 'Plugin'
+
+address.zone_member.country:
+  type: address.zone_member
+  label: 'Zone member (Country)'
+  mapping:
+    country_code:
+      type: string
+      label: 'Country code'
+    administrative_area:
+      type: string
+      label: 'Administrative area'
+    locality:
+      type: string
+      label: 'Locality'
+    dependent_locality:
+      type: string
+      label: 'Dependent locality'
+    included_postal_codes:
+      type: string
+      label: 'Included postal codes'
+    excluded_postal_codes:
+      type: string
+      label: 'Excluded postal codes'
+
+address.zone_member.eu:
+  type: address.zone_member
+  label: 'Zone member (EU)'
+
+address.zone_member.zone:
+  type: address.zone_member
+  label: 'Zone member (Zone)'
+  mapping:
+    zone:
+      type: string
+      label: 'Zone ID'
+
+field.value.address:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    langcode:
+      type: string
+      label: 'Language code'
+    country_code:
+      type: string
+      label: 'Country code'
+    administrative_area:
+      type: string
+      label: 'Administrative area'
+    locality:
+      type: string
+      label: 'Locality'
+    dependent_locality:
+      type: string
+      label: 'Dependent locality'
+    postal_code:
+      type: string
+      label: 'Postal code'
+    sorting_code:
+      type: string
+      label: 'Sorting code'
+    address_line1:
+      type: string
+      label: 'First line of the address block'
+    address_line2:
+      type: string
+      label: 'Second line of the address block'
+    organization:
+      type: string
+      label: 'Organization'
+    recipient:
+      type: string
+      label: 'Recipient'
+
+field.field_settings.address:
+  type: mapping
+  label: 'Address field settings'
+  mapping:
+    available_countries:
+      type: sequence
+      label: 'Available countries'
+      sequence:
+        - type: string
+    fields:
+      type: sequence
+      label: 'Used fields'
+      sequence:
+        - type: string
+    langcode_override:
+      type: string
+      label: 'Language override'
+
+field.widget.settings.address_default:
+  type: mapping
+  label: 'Default address formatter settings'
+  mapping:
+    default_country:
+      type: string
+      label: 'Default country'
