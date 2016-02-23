@@ -17,9 +17,9 @@ $badge-bg-color: $secondary-color !default;
 /*** Buttons ***/
 // Shared styles
 $button-border: none !default;
-$button-font-size: 1.3rem !default;
+$button-font-size: 1.3em !default;
 $button-height: 36px !default;
-$button-padding: 0 2rem !default;
+$button-padding: 0 2em !default;
 $button-radius: 5px !default;
 
 // Disabled styles
@@ -32,19 +32,19 @@ $button-raised-background-hover: lighten($primary-color, 5%) !default;
 $button-raised-color: #fff !default;
 
 // Large buttons
-$button-large-icon-font-size: 1.6rem !default;
-$button-large-height: $button-height * 1.5 !default;
+$button-large-icon-font-size: 1.4em !default;
+$button-large-height: $button-height * 1.2 !default;
 
 // Flat buttons
 $button-flat-color: #343434 !default;
 $button-flat-disabled-color: lighten(#999, 10%) !default;
 
 // Floating buttons
-$button-floating-background: $secondary-color !default;
+$button-floating-background: $base-color !default;
 $button-floating-background-hover: $button-floating-background !default;
 $button-floating-color: #fff !default;
-$button-floating-size: 37px !default;
-$button-floating-large-size: $button-floating-size * 1.5 !default;
+$button-floating-size: 34px !default;
+$button-floating-large-size: $button-floating-size + 10px !default;
 $button-floating-radius: 50% !default;
 
 /*** Collapsible ***/
@@ -72,12 +72,12 @@ $element-top-margin: $gutter-width/3 !default;
 $element-bottom-margin: ($gutter-width*2)/3 !default;
 
 // Media queries ================================================================
-$x-small: 480px;
-$small: 640px;
-$medium: 960px;
-$large: 1024px;
-$x-large: 1200px;
-$xx-large: 1440px;
+$x-small: 480px !default;
+$small: 640px !default;
+$medium: 960px !default;
+$large: 1024px !default;
+$x-large: 1200px !default;
+$xx-large: 1440px !default;
 
 // Grid ==========================================================================
 
@@ -123,7 +123,8 @@ $h6-font-sizes: (
 
 // Cards ==========================================================================
 
-$card-padding: 20px;
-$card-bg-color: white;
-$card-link-color: $primary-color;
-$card-link-color-light: lighten($card-link-color, 20%);
+$card-padding-small: 20px !default;
+$card-padding-medium: 40px !default;
+$card-bg-color: white !default;
+$card-link-color: $primary-color !default;
+$card-link-color-light: lighten($card-link-color, 20%) !default;

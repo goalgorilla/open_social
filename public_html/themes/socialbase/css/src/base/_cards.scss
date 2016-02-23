@@ -1,6 +1,6 @@
 .card-panel {
   transition: box-shadow .25s;
-  padding: $card-padding;
+  padding: $card-padding-small;
   margin: $element-top-margin 0 $element-bottom-margin 0;
   border-radius: 10px;
   @extend .z-depth-1;
@@ -12,14 +12,20 @@
   margin: $element-top-margin 0 $element-bottom-margin 0;
   background-color: $card-bg-color;
   transition: box-shadow .25s;
-  border-radius: 10px;
-  background-clip: padding-box;
   overflow: hidden;
-  padding: $card-padding 0;
+  padding: $card-padding-small;
   @extend .z-depth-1;
 
   @include MQ($small) {
-    padding: 30px;
+    padding: $card-padding-medium;
+    border-radius: 10px;
+    background-clip: padding-box;
   }
 
+}
+
+.card--nodefull {
+  @include MQ($medium) {
+    padding: (1.5 * $card-padding-medium - 16px) (1.5 * $card-padding-medium);
+  }
 }

@@ -1,0 +1,32 @@
+h1.entry-title {
+  padding-bottom: 0.3em;
+}
+
+.entry-details {
+  color: white;
+  margin: 0;
+  font-size: 14px;
+
+  @include MQ($medium) {
+    font-size: 16px;
+    padding-bottom: 52px; // same as H1 padding top
+  }
+
+  time:before {
+    content: " · ";
+  }
+}
+
+.entry-details a {
+  color: white;
+  font-weight: 500;
+  text-decoration: underline;
+
+  span {
+    padding: 0 0.5em;
+  }
+}
+
+.entry-meta {
+  display: block;
+}
