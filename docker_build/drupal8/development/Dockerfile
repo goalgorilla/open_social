@@ -11,7 +11,8 @@ ADD php.ini /usr/local/etc/php/php.ini
 
 # Install composer dependencies.
 ADD composer.json /root/.composer/composer.json
-RUN composer global update --prefer-stable
+ADD composer.lock /root/.composer/composer.lock
+RUN composer global install --prefer-dist
 
 # Xdebug.
 RUN pecl install xdebug
