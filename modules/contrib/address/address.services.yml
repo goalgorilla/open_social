@@ -1,0 +1,33 @@
+services:
+  address.address_format_importer:
+    class: Drupal\address\AddressFormatImporter
+    arguments: ['@entity.manager', '@language_manager']
+
+  address.address_format_repository:
+    class: Drupal\address\Repository\AddressFormatRepository
+    arguments: ['@entity.manager', '@language_manager']
+
+  address.country_repository:
+    class: Drupal\address\Repository\CountryRepository
+    arguments: ['@cache.data', '@language_manager']
+
+  address.subdivision_repository:
+    class: Drupal\address\Repository\SubdivisionRepository
+    arguments: ['@cache.data', '@language_manager']
+
+  address.zone_repository:
+    class: Drupal\address\Repository\ZoneRepository
+    arguments: ['@entity.manager']
+
+  address.postal_label_formatter:
+    class: CommerceGuys\Addressing\Formatter\PostalLabelFormatter
+    arguments: ['@address.address_format_repository', '@address.country_repository', '@address.subdivision_repository']
+
+  address.zone_matcher:
+    class: CommerceGuys\Zone\Matcher\ZoneMatcher
+    arguments: ['@address.zone_repository']
+
+  plugin.manager.address.zone_member:
+    class: Drupal\address\ZoneMemberManager
+    parent: default_plugin_manager
+    arguments: ['@uuid']
