@@ -3,16 +3,20 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_event_address
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - node.type.event
   module:
+    - address
     - datetime
     - image
     - text
     - user
+_core:
+  default_config_hash: srVEJ8ILSGimrWpnIDP5ZFs7eFgYKBnihjEvY4XClFM
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -24,6 +28,12 @@ content:
     weight: 101
     settings: {  }
     third_party_settings: {  }
+  field_event_address:
+    weight: 106
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
   field_event_date:
     weight: 103
     label: above
