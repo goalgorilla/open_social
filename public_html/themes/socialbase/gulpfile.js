@@ -123,12 +123,12 @@ gulp.task('script-components', function() {
     folder.js_comp + "/jquery.hammer.js",
     folder.js_comp + "/global.js",
     folder.js_comp + "/responsive-dom.js",
+    folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
     folder.js_comp + "/sideNav.js",
     folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",
     folder.js_comp + "/forms.js",
-    folder.js_comp + "/ui-search.js",
     folder.js_comp + "/dropdown.js"
     ])
     .pipe( concat('components.js') )
@@ -141,6 +141,7 @@ gulp.task('script-components', function() {
 // get project scripts and make available for dist in one file
 gulp.task('script-project', function() {
   return gulp.src([
+    folder.js_project + "/ui-search.js",
     folder.js_project + "/main-menu.js"
     ])
     .pipe( concat('project.js') )

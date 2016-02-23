@@ -1,23 +1,36 @@
-extends ./layout/base-styleguide.jade
+- var pagetype = "styleguide"
+- var page = "Prototype pages"
 
-block title
-  title Prototype index
+mixin collection(link, name)
+  li.collection__item.flow-text
+    a(href=link)= name
 
-block header
-  h1.header__title Prototype index
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
 
-
-block content
-
-  .container
-    ul
-      li
-        a(href='login.html') Login
-      li
-        a(href='sign-up.html') Sign up
-      li
-        a(href='sign-up-with-email.html') Sign up with e-mail verification
-      li
-        a(href='reset-password.html') Reset password
-      li
-        a(href='topic.html') Topic
+      .container
+        .row 
+          .col.s12
+            .section
+              ul.collection
+                li.collection-header
+                  h4.flow-text Anonymous users
+                +collection('login.html', 'Login')
+                +collection('sign-up.html', 'Sign up')
+                +collection('sign-up-with-email.html', ' Sign up with e-mail verification')
+                +collection('reset-password.html', 'Reset password')
+            
+            .section
+              ul.collection
+                li.collection-header
+                  h4.flow-text Logged in users
+                +collection('topic.html', 'Topic')
+  
+    include ./layout/_scripts.jade

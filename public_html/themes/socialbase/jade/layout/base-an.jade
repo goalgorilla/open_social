@@ -11,11 +11,11 @@ html(lang="en")
     block title
       title  Documentation - Drupal Social
 
-    #Favicons
+    //Favicons
     link(rel='apple-touch-icon-precomposed', type='image/svg+xml', href='/images/social-logo-blue.svg')
     link(rel='shortcut icon', type='image/svg+xml', href='/images/social-logo-blue.svg')
 
-    #CSS
+    //CSS
     link(href='css/social.css', type='text/css', rel='stylesheet', media='screen,projection')
   
   body(class='#{pagetype}')
@@ -23,6 +23,8 @@ html(lang="en")
     
     main.main-container(role='main')
       include _breadcrumbs.jade
+      
+      block pagetitle
       
       .container
         block content

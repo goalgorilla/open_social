@@ -1,14 +1,16 @@
-- var no_nav = false
-- var page = "Waves"
 - var pagetype = "styleguide"
+- var page = "Waves"
 
 doctype html
 html(lang="en")
   head
-    include layout/_head.jade
+    include ./layout/_head.jade
   body(class='#{pagetype}')
-    include layout/_navbar.jade
-    include layout/_title.jade
-    main
-      include page-contents/waves_content.html
-    include layout/_scripts.jade
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+    block content
+  
+    include ./layout/_scripts.jade
