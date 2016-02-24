@@ -10,13 +10,9 @@ dependencies:
     - field.field.node.event.field_event_location
     - node.type.event
   module:
-    - address
-    - datetime
     - image
     - text
     - user
-_core:
-  default_config_hash: srVEJ8ILSGimrWpnIDP5ZFs7eFgYKBnihjEvY4XClFM
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -25,46 +21,20 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 0
     settings: {  }
     third_party_settings: {  }
-  field_event_address:
-    weight: 106
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: address_default
-  field_event_date:
-    weight: 103
-    label: above
-    settings:
-      format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
-    type: datetime_default
-  field_event_date_end:
-    weight: 104
-    label: above
-    settings:
-      format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
-    type: datetime_default
   field_event_image:
-    weight: 102
-    label: above
+    weight: 1
+    label: hidden
     settings:
       image_style: ''
       image_link: ''
     third_party_settings: {  }
     type: image
-  field_event_location:
-    weight: 105
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  links:
-    weight: 100
-hidden: {  }
+hidden:
+  field_event_address: true
+  field_event_date: true
+  field_event_date_end: true
+  field_event_location: true
+  links: true
