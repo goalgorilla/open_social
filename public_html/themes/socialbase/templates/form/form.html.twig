@@ -18,7 +18,14 @@
   ]
 %}
 {% endif %}
-{{ kint()}}
+{% if attributes.hasClass('social-user-password-form') %}
+{%
+  set classes = [
+    'user-pass-form',
+  ]
+%}
+{% endif %}
+
 <form{{ attributes.addClass(classes) }}>
   {{ children }}
 </form>

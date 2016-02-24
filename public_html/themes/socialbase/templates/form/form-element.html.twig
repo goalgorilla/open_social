@@ -47,11 +47,9 @@
 {%
   set classes = [
     'js-form-item',
-    'form-item',
+    'form__item',
     'js-form-type-' ~ type|clean_class,
-    'form-type-' ~ type|clean_class,
-    'js-form-item-' ~ name|clean_class,
-    'form-item-' ~ name|clean_class,
+    'form__type-' ~ type|clean_class,
     title_display not in ['after', 'before'] ? 'form-no-label',
     disabled == 'disabled' ? 'form-disabled',
     errors ? 'form-item--error',
@@ -59,7 +57,7 @@
 %}
 {%
   set description_classes = [
-    'description',
+    'form__item--description',
     description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
@@ -90,7 +88,7 @@
       {{ description.content }}
     </div>
   {% endif %}
-  {% if type|clean_class == 'textfield' %}
+  {% if type|clean_class == ('textfield' or 'password') %}
     </div>
   {% endif %}
 </div>
