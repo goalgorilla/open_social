@@ -3,10 +3,17 @@ MAINTAINER devel@goalgorilla.com
 
 # Install packages.
 RUN apt-get update && apt-get install -y \
-php-pclzip \
-mysql-client
+  php-pclzip \
+  mysql-client \
+  git \
+  ssmtp && \
+  apt-get clean
 
-RUN apt-get clean
+ADD docker_build/drupal8/ssmtp.conf /etc/ssmtp/ssmtp.conf
+
+ARG hostname=goalgorilla.com
+RUN echo "hostname=$hostname" >> /etc/ssmtp/ssmtp.conf
+RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 ADD docker_build/drupal8/php.ini /usr/local/etc/php/php.ini
 
