@@ -192,6 +192,16 @@ th {
 /*** Forms ***/
 @font-face {
   font-family: 'montserrat';
+  src: url("../font/montserrat/montserrat-light.eot");
+  src: url("../font/montserrat/montserrat-light.eot?#iefix") format('embedded-opentype'),
+       url("../font/montserrat/montserrat-light.woff") format('woff'),
+       url("../font/montserrat/montserrat-light.ttf") format('truetype'),
+       url("../font/montserrat/montserrat-light.svg") format('svg');
+  font-weight: 300;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'montserrat';
   src: url("../font/montserrat/montserrat-normal.eot");
   src: url("../font/montserrat/montserrat-normal.eot?#iefix") format('embedded-opentype'),
        url("../font/montserrat/montserrat-normal.woff") format('woff'),
@@ -208,16 +218,6 @@ th {
        url("../font/montserrat/montserrat-bold.ttf") format('truetype'),
        url("../font/montserrat/montserrat-bold.svg") format('svg');
   font-weight: 700;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'montserrat';
-  src: url("../font/montserrat/montserrat-light.eot");
-  src: url("../font/montserrat/montserrat-light.eot?#iefix") format('embedded-opentype'),
-       url("../font/montserrat/montserrat-light.woff") format('woff'),
-       url("../font/montserrat/montserrat-light.ttf") format('truetype'),
-       url("../font/montserrat/montserrat-light.svg") format('svg');
-  font-weight: 300;
   font-style: normal; }
 
 
@@ -371,10 +371,12 @@ a {
 html {
   line-height: 1.5;
   font-size: 16px;
-  font-family: 'montserrat', sans-serif;
+  font-family: sans-serif;
   font-weight: 300;
   color: rgba(0, 0, 0, 0.87);
   -webkit-font-smoothing: antialiased; }
+  html.fonts-loaded {
+    font-family: 'montserrat', sans-serif; }
 
 body {
   font-size: 14px; }
@@ -694,7 +696,7 @@ small {
        url("../font/material-icons/MaterialIcons-Regular.ttf") format('truetype'),
        url("../font/material-icons/MaterialIcons-Regular.svg") format('svg'); }
 
-.material-icons {
+.icon-font-loaded .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;
   font-style: normal;
