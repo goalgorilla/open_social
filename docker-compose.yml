@@ -4,8 +4,8 @@ web:
    - ./public_html:/var/www/html
    - ./dev-scripts/:/root/dev-scripts
   links:
-   - db:db
-   - mailserver:mail
+   - db
+   - mailcatcher
   environment:
    - VIRTUAL_HOST=social.dev
 
@@ -29,13 +29,23 @@ db:
   ports:
     - "3307:3306"
 
-mailserver:
-  image: marvambass/versatile-postfix
+mailcatcher:
+  image: schickling/mailcatcher
   environment:
-    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
+    - VIRTUAL_HOST=mailcatcher.social.dev
+    - VIRTUAL_PORT=1080
   ports:
-    - "25"
-  command: social.dev user:password
+    - "1080"
+
+# Currently disabled because of rate limits.
+# Enable and use the normal ssmtp.conf file to sent emails with postfix.
+#mailserver:
+#  image: marvambass/versatile-postfix
+#  environment:
+#    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
+#  ports:
+#    - "25"
+#  command: social.dev user:password
 
 selenium:
   image: selenium/standalone-firefox-debug:2.48.2
