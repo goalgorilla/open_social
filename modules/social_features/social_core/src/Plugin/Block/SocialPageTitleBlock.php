@@ -31,12 +31,23 @@ class SocialPageTitleBlock extends PageTitleBlock {
       $author = $node->getRevisionAuthor();
       $author_name = $author->link();
 
-      if ($node->getType() === 'topic') {
-        $topic_type = $node->get('field_topic_type');
+      switch($node->getType()) {
+        case 'topic':
+          $topic_type = $node->get('field_topic_type');
+          $hero_node = NULL;
+          break;
+
+        case 'event':
+          // @todo make link to events overview.
+          $topic_type = NULL;
+          $hero_node = node_view($node, 'hero');
+          break;
+
+        default:
+          $topic_type = NULL;
+          $hero_node = NULL;
       }
-      else {
-        $topic_type = NULL;
-      }
+
 
       return [
         '#theme' => 'page_hero_data',
@@ -44,6 +55,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#author_name' => $author_name,
         '#created_date' => time(),
         '#topic_type' => $topic_type,
+        '#hero_node' => $hero_node,
       ];
     }
     else {
