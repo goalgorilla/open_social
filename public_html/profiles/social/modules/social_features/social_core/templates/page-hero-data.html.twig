@@ -15,7 +15,7 @@
  * - created_date
  * - created_date_formatted
  * - topic_type
- *
+ * - hero_node
  */
 #}
 {{ title_prefix }}
@@ -23,6 +23,10 @@
     <h1{{ title_attributes.addClass('page-title') }}>{{ title }}</h1>
 {% endif %}
 {{ title_suffix }}
+
+{% if hero_node %}
+    {{ hero_node }}
+{% endif %}
 
 {% if author_name and created_date_formatted %}
 {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
