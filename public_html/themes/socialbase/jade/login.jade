@@ -3,33 +3,38 @@ extends ./layout/base-an.jade
 block title
   title Login
 
+block pagetitle
+  .page-title 
+    .container
+      h1 Login
+
 block content
 
-  h1.page-title Login
+  .row
+    .col.s12.l8
+      .card.form-card
 
-  .card.form-card
+        nav(role="navigation" aria-label="Tabs")
+          h2.visually-hidden Primary tabs
+          ul.tabs.primary
+            li.is-active
+              a.is-active(href="login.html") Log in
+                span.visually-hidden (active tab)
+            li
+              a(href="sign-up.html") Sign up
+            li
+              a(href='reset-password.html') Reset password
 
-    nav(role="navigation" aria-label="Tabs")
-      h2.visually-hidden Primary tabs
-      ul.tabs.primary
-        li.is-active
-          a.is-active(href="login.html") Log in
-            span.visually-hidden (active tab)
-        li
-          a(href="sign-up.html") Sign up
-        li
-          a(href='reset-password.html') Reset password
+        form.user-login-form(accept-charset='UTF-8')
+          .form-item.form-type-textfield
+            .input-field
+              input#edit-name.form-text(type='text', autocorrect='none', autofocus='autofocus', required='required')
+              label(for='edit-name') Username
 
-    form.user-login-form(accept-charset='UTF-8')
-      .form-item.form-type-textfield
-        .input-field
-          input#edit-name.form-text(type='text', autocorrect='none', autofocus='autofocus', required='required')
-          label(for='edit-name') Username
-
-      .form-item.form-type-textfield
-        .input-field
-          input#edit-pass.form-text(type='password', required='required')
-          label(for='edit-pass') Password
-          
-      #edit-actions.form-actions.form-wrapper
-        input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Log in')
+          .form-item.form-type-textfield
+            .input-field
+              input#edit-pass.form-text(type='password', required='required')
+              label(for='edit-pass') Password
+              
+          #edit-actions.form-actions.form-wrapper
+            input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Log in')

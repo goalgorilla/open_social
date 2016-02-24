@@ -7,7 +7,8 @@ git
 
 # Install composer dependencies.
 ADD composer.json /root/.composer/composer.json
-RUN composer global update --prefer-stable
+ADD composer.lock /root/.composer/composer.lock
+RUN composer global install --prefer-dist
 
 # Unfortunately, adding the composer vendor dir to the PATH doesn't seem to work. So:
 RUN ln -s /root/.composer/vendor/bin/behat /usr/local/bin/behat

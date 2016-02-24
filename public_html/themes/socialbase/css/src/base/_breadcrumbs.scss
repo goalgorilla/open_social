@@ -2,17 +2,33 @@
   min-height: 10px;
   width: 100%;
   background: white;
+
+  .container {
+    width: 100%;
+    max-width: $medium;
+    font-size: 1rem;
+  }
+
+  .row {
+    margin-bottom: 0;
+  }
+
 }
 
 .breadcrumb {
   display: none;
 
-  @include MQ($small) {
+  @include MQ($large) {
     display: inline-block;
-    color: $base-color;
+    color: rgba($base-color, 0.7);
     font-size: 14px;
+    font-weight: 500;
     line-height: 64px;
     height: 64px;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
 }
@@ -23,7 +39,8 @@
     vertical-align: top;
     display: inline-block;
     font-family: 'Material Icons';
-    font-weight: normal;
+    font-weight: 500;
+    font-size: 20px;
     font-style: normal;
     margin: 0 10px 0 8px;
     -webkit-font-smoothing: antialiased;

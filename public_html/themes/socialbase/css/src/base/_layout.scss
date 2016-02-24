@@ -1,67 +1,31 @@
-.styleguide {
-  .header__wrapper,
-  main,
-  footer {
-
-    @include MQ($medium) {
-      padding-left: 240px;
-    }
-
-  }
-
-}
-
-.container {
-  margin: 0 auto;
-  max-width: $medium;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.valign-wrapper {
-  display: flex;
-  align-items: center;
-
-  .valign {
-    display: block;
-  }
-}
-
 .main-container {
   overflow: hidden;
   min-height: 100%;
   min-height: 100vh;
   padding-top: 64px;
 
-  @include MQ($small) {
-    padding-top: 64px;
-  }
-
   @include MQ($medium) {
     padding-top: 88px;
   }
 
-  &::before {
-    background: url(../images/background-gradient.svg) 0 100% / 100% auto no-repeat;
-    position: absolute;
-    height: 260px;
-    width: 100%;
-    left: 0;
-    top: 0;
-    content: '';
-    z-index: -1;
+}
 
-    @include MQ($small) {
-      height: 620px;
-      background-position: 0 0;
-    }
+.page-title {
+  display: block;
+  width: 100%;
+  background: $primary-color;
+  margin-bottom: 20px;
 
-    @include MQ($large) {
-      height: 100%;
-      top: 0;
-      background-position: 0 -200px;
-    }
+  @include MQ($medium) {
+    margin-bottom: 40px;
+  }
 
+  h1 {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 1em 0;
+    margin: 0;
   }
 
 }
