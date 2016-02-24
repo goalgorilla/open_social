@@ -5,6 +5,7 @@ web:
    - ./dev-scripts/:/root/dev-scripts
   links:
    - db:db
+   - mailserver:mail
   environment:
    - VIRTUAL_HOST=social.dev
 
@@ -27,6 +28,14 @@ db:
     - db_data
   ports:
     - "3307:3306"
+
+mailserver:
+  image: marvambass/versatile-postfix
+  environment:
+    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
+  ports:
+    - "25"
+  command: social.dev user:password
 
 selenium:
   image: selenium/standalone-firefox-debug:2.48.2

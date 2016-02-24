@@ -4,6 +4,7 @@ social_nightly_web:
   image: goalgorilla/drupal_social
   links:
     - social_nightly_db:db
+    - social_nightly_mailserver:mail
   ports:
     - "80"
   environment:
@@ -28,5 +29,13 @@ social_nightly_db:
      - MYSQL_DATABASE=social
   volumes_from:
     - social_nightly_db_data
+
+social_nightly_mailserver:
+  image: marvambass/versatile-postfix
+  environment:
+    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
+  ports:
+    - "25"
+  command: goalgorilla.com user:password
 
 

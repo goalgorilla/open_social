@@ -3,10 +3,21 @@ MAINTAINER devel@goalgorilla.com
 
 # Install packages.
 RUN apt-get update && apt-get install -y \
-php-pclzip \
-mysql-client
+  php-pclzip \
+  mysql-client \
+  git \
+  ssmtp && \
+  apt-get clean
 
-RUN apt-get clean
+ADD docker_build/drupal8/ssmtp.conf /etc/ssmtp/ssmtp.conf
+
+# Dockerhub currently runs on docker 1.8 and does not support the ARG command.
+# Reset the logic after the dockerhub is updated.
+# https://docs.docker.com/v1.8/reference/builder/
+# ARG hostname=goalgorilla.com
+
+RUN echo "hostname=goalgorilla.com" >> /etc/ssmtp/ssmtp.conf
+RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 ADD docker_build/drupal8/php.ini /usr/local/etc/php/php.ini
 
