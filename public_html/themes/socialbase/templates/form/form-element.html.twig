@@ -77,7 +77,9 @@
   {% if suffix is not empty %}
     <span class="field-suffix">{{ suffix }}</span>
   {% endif %}
+  {% if label_display in ['before', 'after', 'invisible'] %}
     {{ label }}
+  {% endif %}
   {% if errors %}
     <div class="form-item--error-message">
       <strong>{{ errors }}</strong>
