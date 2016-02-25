@@ -16,7 +16,7 @@
 
   li {
     line-height: 1.5rem;
-    padding: 10px 20px;
+    padding: 10px 0;
     display: block;
     border-bottom: 1px solid #e0e0e0;
     font-size: 14px;
@@ -29,7 +29,12 @@
     }
 
     @include MQ($small) {
+      margin-left: 20px;
+      margin-right: 20px;
 
+      &:first-child {
+        margin-left: 0;
+      }
     }
   }
 

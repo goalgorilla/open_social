@@ -11,7 +11,7 @@ block pagetitle
 block content
 
   .row
-    .col.s12.l8
+    .col.s12.l9
       .card.form-card
 
         nav(role="navigation" aria-label="Tabs")
@@ -26,15 +26,15 @@ block content
               a(href='reset-password.html') Reset password
 
         form.user-login-form(accept-charset='UTF-8')
-          .form-item.form-type-textfield
+          .form__item.form__type-textfield
             .input-field
               input#edit-name.form-text(type='text', autocorrect='none', autofocus='autofocus', required='required')
               label(for='edit-name') Username
 
-          .form-item.form-type-textfield
+          .form__item.form__type-textfield
             .input-field
               input#edit-pass.form-text(type='password', required='required')
               label(for='edit-pass') Password
               
           #edit-actions.form-actions.form-wrapper
-            input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Log in')
+            input#edit-submit.waves-effect.waves-light.btn.form__submit(type='submit', value='Log in')
