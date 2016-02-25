@@ -29,19 +29,31 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-    {% if menu_level == 0 %}
-      <ul{{ attributes.addClass('main-menu') }}>
-    {% else %}
-      <ul class="menu">
-    {% endif %}
+      <ul{{ attributes.addClass('header-menu') }}>
     {% for item in items %}
-      <li{{ item.attributes.addClass('menu__item') }}>
-        {{ link(item.title, item.url, { 'class':['menu__link']}) }}
+    {%
+      set classes = [
+        'menu__item',
+        item.in_active_trail ? 'menu__item--active-trail',
+      ]
+    %}
+      <li{{ item.attributes.addClass(classes) }}>
+        {{ link(item.title, item.url, { 'class':['menu__link']})  }}
         {% if item.below %}
           {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
         {% endif %}
       </li>
     {% endfor %}
+      <li class="menu__item hidden-desktop">
+        <a class="menu__link panel-trigger" href="#0" data-panel="#menu-panel" title="Show menu">
+          <span class="b-menu">
+            <span class="b-bun b-bun--top"></span>
+            <span class="b-bun b-bun--mid"></span>
+            <span class="b-bun b-bun--bottom"></span>
+          </span>
+          <span class="menu__label hidden">menu</span>
+        </a>
+      </li>
     </ul>
   {% endif %}
 {% endmacro %}

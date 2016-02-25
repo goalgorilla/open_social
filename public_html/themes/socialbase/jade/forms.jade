@@ -11,6 +11,419 @@ html(lang="en")
       
     main.styleguide-container(role='main')
 
-    block content
+      .container
+        .row
+          .col.s12.m9.l10
+            #input.section.scrollspy
+              p.caption Forms are the standard way to receive user inputted data. The transitions and smoothness of these elements are very important because of the inherent user interaction associated with forms.
+              
+              h2.header Input fields
+              p
+                :markdown
+                  Text fields allow user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have a `.input-field` div wrapping your input and label. This helps our jQuery animate the label. This is only used in our input and textarea form elements.
+                
+              .row
+                form.col.s12
+                  .row
+                    .input-field.col.s6
+                      input#first_name(placeholder='Placeholder', type='text')
+                      label(for='first_name') First Name
+                    .input-field.col.s6
+                      input#last_name(type='text')
+                      label(for='last_name') Last Name
+                  .row
+                    .input-field.col.s12
+                      input#disabled(disabled='', value='I am not editable', type='text')
+                      label(for='disabled') Disabled
+                  .row
+                    .input-field.col.s12
+                      input#password(type='password')
+                      label(for='password') Password
+                  .row
+                    .input-field.col.s12
+                      input#email(type='email')
+                      label(for='email') Email
+              pre      
+                code.language-markup.
+                  <div class="row">
+                    <form class="col s12">
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input placeholder="Placeholder" id="first_name" type="text" class="form-text">
+                          <label for="first_name">First Name</label>
+                        </div>
+                        <div class="input-field col s6">
+                          <input id="last_name" type="text" class="form-text">
+                          <label for="last_name">Last Name</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <input disabled value="I am not editable" id="disabled" type="text" class="form-text">
+                          <label for="disabled">Disabled</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <input id="password" type="password" class="form-text">
+                          <label for="password">Password</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <input id="email" type="email" class="form-text">
+                          <label for="email">Email</label>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+              br
+              h4 Prefilling Text Inputs
+              p If you are having trouble with the labels overlapping prefilled content, Try adding `class="active"` to the label. 
+              .row
+                .input-field.col.s6
+                  input#first_name2.form-text(value='Bart Simpson', type='text')
+                  label.active(for='first_name2') First Name
+              pre
+                code.language-markup.
+                  <div class="row">
+                    <div class="input-field col s6">
+                      <input id="first_name2" type="text" class="form-text" value="Bart Simpson">
+                      <label class="active" for="first_name2">First Name</label>
+                    </div>
+                  </div>
+                
+            // Textarea Section
+            #textarea.section.scrollspy
+              h2.header Textarea
+              p Textareas allow larger expandable user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have a `.input-field` div wrapping your input and label. This helps our jQuery animate the label. This is only used in our Input and Textarea form elements.
+              p
+                strong Textareas will auto resize to the text inside.
+              .row
+                form.col.s12
+                  .row
+                    .input-field.col.s12
+                      textarea#textarea1.materialize-textarea
+                      label(for='textarea1') Textarea
+              pre
+                code.language-markup.
+                
+              p
+                | advanced note: When dynamically changing the value of a textarea with methods like jQuery's 
+                code.language-markup .val()
+                | , you must trigger an autoresize on it afterwords because .val() does not automatically trigger the events we've binded to the textarea.
+              pre.
+              br
+              h4 Icon Prefixes
+              p
+                | You can add an icon prefix to make the form input label even more clear. Just add an icon with the class 
+                code.language-markup prefix
+                |  before the input and label.
+              br
+              .row
+                form.col.s12
+                  .row
+                    .input-field.col.s12
+                      i.material-icons.prefix mode_edit
+                      textarea#icon_prefix2.materialize-textarea
+                      label(for='icon_prefix2') Message
+              pre.
+            #select.section.scrollspy
+              h2.header Select
+              p
+                | Select allows user input through specified options. Make sure you wrap it in a 
+                code.language-markup .input-field
+                |  for proper alignment with other text fields.
+              .row
+                form.col.s12
+                  .row
+                    .input-field.col.s12.m6
+                      select
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                      label Materialize Select
+                    .col.s12
+                      br
+                      p
+                        | You can add the property 
+                        code.language-markup multiple
+                        |  to get the multiple select and select several options.
+                    .input-field.col.s12.m6
+                      select(multiple='')
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                      label Materialize Multiple Select
+                    .col.s12
+                      br
+                      p We also support optgroups in our selects.
+                    .input-field.col.s12.m6
+                      select
+                        optgroup(label='team 1')
+                          option(value='1') Option 1
+                          option(value='2') Option 2
+                        optgroup(label='team 2')
+                          option(value='3') Option 3
+                          option(value='4') Option 4
+                      label Optgroups
+                    .col.s12
+                      br
+                      p
+                        | You can add icons to your options in any type of select. In the option you add the image source with the 
+                        code.language-markup data-icon
+                        |  attribute. You can add the 
+                        code.language-markup left
+                        |  or 
+                        code.language-markup right
+                        |  class to align your icon. You can also add the 
+                        code.language-markup circle
+                        |  class to your icon.
+                    .input-field.col.s12.m6
+                      select.icons
+                        option(value='', disabled='', selected='') Choose your option
+                        option.circle(value='', data-icon='images/sample-1.jpg') example 1
+                        option.circle(value='', data-icon='images/office.jpg') example 2
+                        option.circle(value='', data-icon='images/yuna.jpg') example 1
+                      label Images in select
+                    .input-field.col.s12.m6
+                      select.icons
+                        option(value='', disabled='', selected='') Choose your option
+                        option.left.circle(value='', data-icon='images/sample-1.jpg') example 1
+                        option.left.circle(value='', data-icon='images/office.jpg') example 2
+                        option.left.circle(value='', data-icon='images/yuna.jpg') example 3
+                      label Images in select
+                    .col.s12
+                      br
+                      p
+                        | You can add the class 
+                        code.language-markup browser-default
+                        |  to get the browser default.
+                    .col.s12.m6
+                      label Browser Select
+                      select.browser-default
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                .col.s12
+                  pre.
+                .col.s12
+                  br
+                  br
+                  h4 Disabled Styles
+                  p
+                    | You can also add 
+                    code.language-markup disabled
+                    |  to the select element to make the whole thing disabled. Or if you add 
+                    code.language-markup disabled
+                    |  to the options, the individual options will be unselectable.
+                form.col.s12.m6
+                  .row
+                    .col.s12
+                      label Materialize Disabled
+                      select(disabled='')
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                      label Browser Disabled
+                      select.browser-default(disabled='')
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
+                .col.s12
+                  pre.
+                .col.s12
+                  h4 Initialization
+                  p
+                    | You must initialize the select element as shown below. In addition, you will need a separate call for any dynamically generated select elements your page generates.
+                  pre.
+                .col.s12
+                  h4 Updating/Destroying Select
+                  p
+                    | If you want to update the items inside the select, just rerun the initialization code from above after editing the original select. Or you can destroy the material select with this function below, and create a new select altogether
+                  pre.
+            #radio.section.scrollspy
+              h2.header Radio Buttons
+              p
+                | Radio Buttons are used when the user must make only one selection out of a group of items
+              form(action='#')
+                p
+                  input#test1(name='group1', type='radio', checked='')
+                  label(for='test1') Red
+                p
+                  input#test2(name='group1', type='radio')
+                  label(for='test2') Yellow
+                p
+                  input#test3.with-gap(name='group1', type='radio')
+                  label(for='test3') Green
+                p
+                  input#test4(name='group1', type='radio', disabled='disabled')
+                  label(for='test4') Brown
+              p
+                | Add radio buttons to a group by adding the name attribute along with the same corresponding value for each of the radio  buttons in the group. Create disabled radio buttons by adding the disabled attribute as shown below.
+              pre.
+              h4 Options
+              p
+                | To create a radio button with a gap, add 
+                code.language-markup class="with-gap"
+                |  to your input. See the example below.
+              p
+                input#test5.with-gap(name='group3', type='radio', checked='')
+                label(for='test5') Red
+              pre.
+            // Checkboxes
+            #checkbox.section.scrollspy
+              h2.header Checkboxes
+              p
+                | Use checkboxes when looking for yes or no answers. The 
+                code.language-markup for
+                |  attribute is necessary to bind the our custom checkbox with the input. Add the input's 
+                code.language-markup id
+                |  as the value of the 
+                code.language-markup for
+                |  attribute of the label.
+              form(action='#')
+                p
+                  input#test9(type='checkbox')
+                  label(for='test9') Red
+                p
+                  input#test6(type='checkbox', checked='checked')
+                  label(for='test6') Yellow
+                p
+                  input#filled-in-box.filled-in(type='checkbox', checked='checked')
+                  label(for='filled-in-box') Filled in
+                p
+                  input#indeterminate-checkbox(type='checkbox')
+                  label(for='indeterminate-checkbox') Indeterminate Style
+                p
+                  input#test7(type='checkbox', checked='checked', disabled='disabled')
+                  label(for='test7') Green
+                p
+                  input#test8(type='checkbox', disabled='disabled')
+                  label(for='test8') Brown
+              pre.
+            // Switches
+            #switches.section.scrollspy
+              h2.header Switches
+              form(action='#')
+                p
+                  .switch
+                    label
+                      | Off
+                      input(checked='', type='checkbox')
+                      span.lever
+                      |               On
+                p
+                  .switch
+                    label
+                      | Off
+                      input(disabled='', type='checkbox')
+                      span.lever
+                      |                 On
+              pre.
+            #file.section.scrollspy
+              h2.header File Input
+              p
+                | If you want to style an input button with a path input we provide this structure.
+              form(action='#')
+                .file-field.input-field
+                  .btn
+                    span File
+                    input(type='file')
+                  .file-path-wrapper
+                    input.file-path.validate(type='text')
+              pre.
+              p
+                | You can also use the 
+                code.language-markup multiple
+                |  attribute to allow multiple file uploads.
+              form(action='#')
+                .file-field.input-field
+                  .btn
+                    span File
+                    input(type='file', multiple='')
+                  .file-path-wrapper
+                    input.file-path.validate(type='text', placeholder='Upload one or more files')
+              pre.
+            #range.section.scrollspy
+              h2.header Range
+              p
+                | Add a range slider for values with a wide range. This one is set to be a number between 0 and 100. We have two different types of sliders. nouiSlider is a 3rd party plugin which we've modified. To use the noUiSlider, you will have to manually link the 
+                code.language-markup nouislider.css
+                |  and 
+                code.language-markup nouislider.js
+                |  files located in the extras folder.
+              h4 noUiSlider
+              p
+                | See noUiSlider's official documentation 
+                a(href='http://refreshless.com/nouislider/') here
+                |  to see a variety of slider options
+              #range-input
+              p  
+              pre.
+              h4 HTML5 Range
+              form(action='#')
+                p.range-field
+                  input(type='range', name='points', min='0', max='100')
+              pre.
+            #date-picker.section.scrollspy
+              h2.header Date Picker
+              p
+                | We use a modified version of pickadate.js to create a materialized date picker. Test it out below!
+              label(for='birthdate') Birthdate
+              input#birthdate.datepicker(type='text')
+              pre.
+              h4 Initialization
+              p At this time, not all pickadate.js options are working with our implementation
+              pre.
+            #character-counter.section.scrollspy
+              h2.header Character Counter
+              p.caption Use a character counter in fields where a character restriction is in place.
+              .row
+                form.col.s12
+                  .row
+                    .input-field.col.s6
+                      input#input_text(type='text', length='10')
+                      label(for='input_text') Input text
+                  br
+                  .row
+                    .input-field.col.s12
+                      textarea#textarea1.materialize-textarea(length='120')
+                      label(for='textarea1') Textarea
+              pre.
+              br
+              h4 Initialization
+              p
+                | There are no options for this plugin, but if you are adding these dynamically, you can use this to initialize them.
+              pre.
+          .col.hide-on-small-only.m3.l2
+            .toc-wrapper
+              ul.section.table-of-contents
+                li
+                  a(href='#input') Input Fields
+                li
+                  a(href='#textarea') Textareas
+                li
+                  a(href='#select') Select
+                li
+                  a(href='#radio') Radio Buttons
+                li
+                  a(href='#checkbox') Checkboxes
+                li
+                  a(href='#switches') Switches
+                li
+                  a(href='#file') File Input Button
+                li
+                  a(href='#range') Range
+                li
+                  a(href='#date-picker') Date Picker
+                li
+                  a(href='#character-counter') Character Counter
+
   
     include ./layout/_scripts.jade
