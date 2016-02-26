@@ -127,6 +127,7 @@ gulp.task('script-components', function() {
     folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
     folder.js_comp + "/scrollspy.js",
+    folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
     folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",

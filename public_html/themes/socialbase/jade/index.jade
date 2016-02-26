@@ -13,15 +13,41 @@ html(lang="en")
 
       #index-banner.section
         .container
-          .center
-            h4.title.center A modern responsive Drupal theme based on Material Design
-      .repo-link
-        .container
-          .commit
-            span.hidden-mobile Latest commit on Github by &nbsp; &nbsp; 
-            a.sha.hidden-mobile(href='')
-            span.hidden-mobile &nbsp;&nbsp; - &nbsp;&nbsp;
-            span.date.hidden-mobile
-            a#github-button.btn-flat.right.waves-effect.waves-light View repo
+          br
+          br
+          br
+          .row.center
+            h5.header.col.s12.light A modern responsive Drupal theme based on Material Design
+
   
     include ./layout/_scripts.jade
+    
+    footer.styleguide-footer.social-blue
+      .repo-link
+        .container
+          .row
+            .col.s12
+              .commit
+                span.hidden-mobile Latest commit on Github by &nbsp; &nbsp; 
+                a.sha.hidden-mobile(href='')
+                span.hidden-mobile -&nbsp;
+                span.date.hidden-mobile
+                a#github-button.btn-flat.right.waves-effect.waves-light(href='https://github.com/goalgorilla/drupal_social/tree/gh-pages') View repo
+      .container
+        .row
+          .col.l6.s12
+            h5.white-text Help wanted!
+            p.grey-text.text-lighten-4 Do you want to join us in this effort? We are welcoming your feedback, (development) time and/or financial support. For <a href="https://www.drupal.org/project/issues/social?categories=All" class="social-blue-text text-lighten-4"> feedback we will use D.O</a> for other questions or suggestions please <a href="mailto:taco@goalgorilla.com" class="social-blue-text text-lighten-4">contact us</a>.
+          .col.l3.s12.push-l3
+            h5.white-text Connect
+            ul
+              li
+                a.white-text(href='https://www.drupal.org/project/social') Drupal project page
+              li
+                a.white-text(href='https://github.com/goalgorilla/drupal_social/tree/gh-pages') Drupal repo 
+              li
+                a.white-text(href='https://github.com/goalgorilla/drupal_social/issues/new') Report issues
+      .footer-copyright
+        .container 
+          a.grey-text.text-lighten-4(href='http://www.goalgorilla.com') GoalGorilla is Founder and lead of the Drupal Social project 
+          a.grey-text.text-lighten-4.right(href='https://github.com/goalgorilla/drupal_social/blob/master/LICENSE') MIT License
