@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
   ssmtp && \
   apt-get clean
 
-ADD docker_build/drupal8/ssmtp.conf /etc/ssmtp/ssmtp.conf
+ADD docker_build/drupal8/mailcatcher-ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 # Dockerhub currently runs on docker 1.8 and does not support the ARG command.
 # Reset the logic after the dockerhub is updated.

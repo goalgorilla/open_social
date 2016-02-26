@@ -1,0 +1,42 @@
+- var pagetype = "styleguide"
+- var page = "Breadcrumbs"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+    body(class='#{pagetype}')
+      header.styleguide-header
+        include ./layout/_navbar.jade
+        
+      main.styleguide-container(role='main')
+
+        .container
+          .row 
+            .col.s12
+              .section
+                p Breadcrumbs are a good way to display your current location. This is usually used when you have multiple layers of content. They are hidden on small screens.
+                
+                nav
+                  .breadcrumbs-wrapper
+                    .container
+                      .col.s12
+                        a.breadcrumb(href='#!') First
+                        a.breadcrumb(href='#!') Second
+                        a.breadcrumb(href='#!') Third
+                
+                pre      
+                  code.language-markup.
+                    <nav>
+                      <div class="breadcrumbs-wrapper">
+                        <div class="col s12">
+                          <a href="#!" class="breadcrumb">First</a>
+                          <a href="#!" class="breadcrumb">Second</a>
+                          <a href="#!" class="breadcrumb">Third</a>
+                        </div>
+                      </div>
+                    </nav>
+                
+                
+  
+    include ./layout/_scripts.jade

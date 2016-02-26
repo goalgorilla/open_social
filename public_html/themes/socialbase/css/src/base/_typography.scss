@@ -9,15 +9,26 @@ a {
 
 html{
   line-height: 1.5;
-  font-size: 16px;
-  font-family: 'montserrat', sans-serif;
+  font-size: 62.5%;
+  font-family: sans-serif;
   font-weight: 300;
   color: rgba(0,0,0,0.87);
   -webkit-font-smoothing: antialiased;
+
+	&.fonts-loaded {
+		font-family: 'montserrat', sans-serif;
+	}
+
 }
 
 body {
 	font-size: 14px;
+	font-size: 1.4rem;
+
+	@include MQ($small) {
+		font-size: 16px;
+		font-size: 1.6rem;
+	}
 }
 
 p {
@@ -27,6 +38,7 @@ p {
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 700;
 	line-height: 1.1;
+	transition: 0.3s;
 
 	a {
 		font-weight: inherit;
@@ -61,6 +73,14 @@ h6, .h6 {
 	font-weight: 500;
 }
 
+//  Blockquote
+
+blockquote {
+  margin: 20px 0;
+  padding-left: 1.5rem;
+  border-left: 3px solid $primary-color;
+	font-weight: 500;
+}
 
 
 // Text Styles
@@ -75,8 +95,8 @@ small { font-size: 75%; }
 }
 
 .caption {
-  font-size: 1.25rem;
-  font-weight: 300;
+  font-size: 1.2em;
+  font-weight: 500;
   margin-bottom: 30px;
 }
 
@@ -88,4 +108,12 @@ small { font-size: 75%; }
   li {
     list-style-type: square;
   }
+}
+
+
+.page-title h1 {
+	color: white;
+	font-weight: 700;
+	padding: 1em 0;
+	margin: 0;
 }

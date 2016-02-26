@@ -54,9 +54,9 @@ textarea.materialize-textarea {
   border-bottom: 1px solid $input-border-color;
   border-radius: 0;
   outline: none;
-  height: 3rem;
+  height: 3em;
   width: 100%;
-  font-size: 1rem;
+  font-size: 1em;
   margin: 0;
   padding: 0;
   box-shadow: none;
@@ -119,12 +119,12 @@ textarea.materialize-textarea {
 // Styling for input field wrapper
 .input-field {
   position: relative;
-  margin-top: 1rem;
+  margin-top: 1em;
 
   label {
     position: absolute;
-    top: 0.8rem;
-    font-size: 1rem;
+    top: 0.8em;
+    font-size: 1em;
     cursor: text;
     font-weight: 300;
     transition: .2s ease-out;
@@ -137,20 +137,20 @@ textarea.materialize-textarea {
   // Prefix Icons
   .prefix {
     position: absolute;
-    width: 3rem;
-    font-size: 2rem;
+    width: 3em;
+    font-size: 2em;
     transition: color .2s;
 
     &.active { color: $primary-color; }
   }
   .prefix ~ input,
   .prefix ~ textarea {
-    margin-left: 3rem;
+    margin-left: 3em;
     width: 92%;
-    width: calc(100% - 3rem);
+    width: calc(100% - 3em);
   }
-  .prefix ~ textarea { padding-top: .8rem; }
-  .prefix ~ label { margin-left: 3rem; }
+  .prefix ~ textarea { padding-top: .8em; }
+  .prefix ~ label { margin-left: 3em; }
 
 }
 
@@ -159,14 +159,14 @@ textarea.materialize-textarea {
 // Default textarea
 textarea {
    width: 100%;
-   height: 3rem;
+   height: 3em;
    background-color: transparent;
 
   &.materialize-textarea {
     overflow-y: hidden; /* prevents scroll bar flash */
-    padding: 1.6rem 0; /* prevents text jump on Enter keypress */
+    padding: 1.6em 0; /* prevents text jump on Enter keypress */
     resize: none;
-    min-height: 3rem;
+    min-height: 3em;
   }
 }
 
@@ -185,7 +185,6 @@ input[type="button"],
 input[type="reset"],
 input[type="submit"] {
   font-family: 'montserrat', sans-serif;
-  letter-spacing: 0.05em;
 }
 
 /***************
@@ -208,7 +207,7 @@ input[type="submit"] {
   display: inline-block;
   height: 25px;
   line-height: 25px;
-  font-size: 1rem;
+  font-size: 1em;
   transition: .28s ease;
 
   -khtml-user-select: none; /* webkit (konqueror) browsers */
@@ -738,13 +737,20 @@ select {
   margin: 0 5px;
 }
 
-.form-item {
+.form__item {
   position: relative;
 }
 
-.form-item .description {
+.form__item--description {
   font-size: 12px;
   margin-top: 7px;
+  color: $grey-light-1;
+  font-weight: 300;
+}
+
+.form__description {
+  font-size: 14px;
+  margin: 20px 0;
   color: $grey-light-1;
   font-weight: 300;
 }

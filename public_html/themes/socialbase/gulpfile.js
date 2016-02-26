@@ -47,7 +47,8 @@ var glob = {
   js: folder.js + '/**/*.js',
   data: folder.data + '/**/*.json',
   font: 'font/**/*',
-  images: 'images/**/*'
+  images: 'images/**/*',
+  content: 'content/**/*'
 };
 
 var onError = function(err) {
@@ -75,13 +76,13 @@ gulp.task('css', function () {
     .pipe(plumber({
       errorHandler: onError
     }))
+    .pipe( sourcemaps.init() )
     .pipe( sass() )
-    //.pipe( sourcemaps.init() )
-    //.pipe( sourcemaps.write('.') )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
-    .pipe( gulp.dest(folder.css) )
     .pipe( cssnano() )
+    .pipe( sourcemaps.write('.') )
+    .pipe( gulp.dest(folder.css) )
     .pipe( gulp.dest(folder.dist + '/css') )
     .pipe( connect.reload() );
   return stream;
@@ -203,6 +204,13 @@ gulp.task('images', function() {
   return stream;
 });
 
+gulp.task('content', function() {
+  stream = gulp.src(glob.content)
+    .pipe( gulp.dest(folder.dist + '/content') )
+    .pipe( connect.reload() );
+  return stream;
+});
+
 
 
 // ===================================================
@@ -250,6 +258,10 @@ gulp.task('watch', function() {
   gulp.watch([
     glob.images
   ], ['images']);
+
+  gulp.watch([
+    glob.content
+  ], ['content']);
 
 });
 
