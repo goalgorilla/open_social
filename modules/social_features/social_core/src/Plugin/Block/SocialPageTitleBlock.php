@@ -48,7 +48,6 @@ class SocialPageTitleBlock extends PageTitleBlock {
           $hero_node = NULL;
       }
 
-
       return [
         '#theme' => 'page_hero_data',
         '#title' => $title,
