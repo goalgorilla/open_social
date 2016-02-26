@@ -48,7 +48,8 @@ var glob = {
   data: folder.data + '/**/*.json',
   font: 'font/**/*',
   images: 'images/**/*',
-  content: 'content/**/*'
+  content: 'content/**/*',
+  extras: 'extras/**/*'
 };
 
 var onError = function(err) {
@@ -126,12 +127,14 @@ gulp.task('script-components', function() {
     folder.js_comp + "/responsive-dom.js",
     folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
+    folder.js_comp + "/droppanel.js",
     folder.js_comp + "/scrollspy.js",
     folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
     folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",
     folder.js_comp + "/forms.js",
+    folder.js_comp + "/character_counter.js",
     folder.js_comp + "/dropdown.js"
     ])
     .pipe( concat('components.js') )
@@ -213,6 +216,15 @@ gulp.task('content', function() {
   return stream;
 });
 
+// ===================================================
+// Extras
+// ===================================================
+
+gulp.task('extras', function() {
+  stream = gulp.src(glob.extras)
+    .pipe( gulp.dest(folder.dist + '/extras') )
+  return stream;
+});
 
 
 // ===================================================

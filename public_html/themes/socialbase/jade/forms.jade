@@ -26,22 +26,22 @@ html(lang="en")
                 form.col.s12
                   .row
                     .input-field.col.s6
-                      input#first_name(placeholder='Placeholder', type='text')
+                      input#first_name.form-text(placeholder='Placeholder', type='text')
                       label(for='first_name') First Name
                     .input-field.col.s6
-                      input#last_name(type='text')
+                      input#last_name.form-text(type='text')
                       label(for='last_name') Last Name
                   .row
                     .input-field.col.s12
-                      input#disabled(disabled='', value='I am not editable', type='text')
+                      input#disabled.form-text(disabled='', value='I am not editable', type='text')
                       label(for='disabled') Disabled
                   .row
                     .input-field.col.s12
-                      input#password(type='password')
+                      input#password.form-text(type='password')
                       label(for='password') Password
                   .row
                     .input-field.col.s12
-                      input#email(type='email')
+                      input#email.form-text(type='email')
                       label(for='email') Email
               pre      
                 code.language-markup.
@@ -96,44 +96,43 @@ html(lang="en")
             // Textarea Section
             #textarea.section.scrollspy
               h2.header Textarea
-              p Textareas allow larger expandable user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have a `.input-field` div wrapping your input and label. This helps our jQuery animate the label. This is only used in our Input and Textarea form elements.
+              :markdown
+                Textareas allow larger expandable user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have a `.input-field` div wrapping your input and label. This helps our jQuery animate the label. This is only used in our Input and Textarea form elements.
               p
                 strong Textareas will auto resize to the text inside.
               .row
                 form.col.s12
                   .row
                     .input-field.col.s12
-                      textarea#textarea1.materialize-textarea
+                      textarea#textarea1.form-text.form-textarea.materialize-textarea
                       label(for='textarea1') Textarea
               pre
                 code.language-markup.
+                  <div class="row">
+                    <form class="col s12">
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <textarea id="textarea1" class="form-text form-textarea materialize-textarea"></textarea>
+                          <label for="textarea1">Textarea</label>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 
-              p
-                | advanced note: When dynamically changing the value of a textarea with methods like jQuery's 
-                code.language-markup .val()
-                | , you must trigger an autoresize on it afterwords because .val() does not automatically trigger the events we've binded to the textarea.
-              pre.
-              br
-              h4 Icon Prefixes
-              p
-                | You can add an icon prefix to make the form input label even more clear. Just add an icon with the class 
-                code.language-markup prefix
-                |  before the input and label.
-              br
-              .row
-                form.col.s12
-                  .row
-                    .input-field.col.s12
-                      i.material-icons.prefix mode_edit
-                      textarea#icon_prefix2.materialize-textarea
-                      label(for='icon_prefix2') Message
-              pre.
+              :markdown
+                advanced note: When dynamically changing the value of a textarea with methods like jQuery's `.val()`, you must trigger an autoresize on it afterwords because `.val()` does not automatically trigger the events we've binded to the textarea.
+              
+              pre
+                code.language-javascript.
+                  $('#textarea1').val('New Text');
+                  $('#textarea1').trigger('autoresize');
+              
+              
             #select.section.scrollspy
               h2.header Select
-              p
-                | Select allows user input through specified options. Make sure you wrap it in a 
-                code.language-markup .input-field
-                |  for proper alignment with other text fields.
+              :markdown
+                Select allows user input through specified options. Make sure you wrap it in a `.input-field` for proper alignment with other text fields.
+              
               .row
                 form.col.s12
                   .row
@@ -144,12 +143,11 @@ html(lang="en")
                         option(value='2') Option 2
                         option(value='3') Option 3
                       label Materialize Select
+                      
                     .col.s12
-                      br
-                      p
-                        | You can add the property 
-                        code.language-markup multiple
-                        |  to get the multiple select and select several options.
+                      :markdown
+                        You can add the property `multiple` to get the multiple select and select several options.
+
                     .input-field.col.s12.m6
                       select(multiple='')
                         option(value='', disabled='', selected='') Choose your option
@@ -171,36 +169,27 @@ html(lang="en")
                       label Optgroups
                     .col.s12
                       br
-                      p
-                        | You can add icons to your options in any type of select. In the option you add the image source with the 
-                        code.language-markup data-icon
-                        |  attribute. You can add the 
-                        code.language-markup left
-                        |  or 
-                        code.language-markup right
-                        |  class to align your icon. You can also add the 
-                        code.language-markup circle
-                        |  class to your icon.
+                      :markdown
+                        You can add icons to your options in any type of select. In the option you add the image source with the `data-icon` attribute. You can add the 
+                        `left` or `right` class to align your icon. You can also add the `circle` class to your icon.
                     .input-field.col.s12.m6
                       select.icons
                         option(value='', disabled='', selected='') Choose your option
-                        option.circle(value='', data-icon='images/sample-1.jpg') example 1
-                        option.circle(value='', data-icon='images/office.jpg') example 2
-                        option.circle(value='', data-icon='images/yuna.jpg') example 1
+                        option.circle(value='', data-icon='content/images/animals1.jpg') example 1
+                        option.circle(value='', data-icon='content/images/food1.jpg') example 2
+                        option.circle(value='', data-icon='content/images/nature9.jpg') example 1
                       label Images in select
                     .input-field.col.s12.m6
                       select.icons
                         option(value='', disabled='', selected='') Choose your option
-                        option.left.circle(value='', data-icon='images/sample-1.jpg') example 1
-                        option.left.circle(value='', data-icon='images/office.jpg') example 2
-                        option.left.circle(value='', data-icon='images/yuna.jpg') example 3
+                        option.left.circle(value='', data-icon='content/images/animals4.jpg') example 1
+                        option.left.circle(value='', data-icon='content/images/people3.jpg') example 2
+                        option.left.circle(value='', data-icon='content/images/nature4.jpg') example 3
                       label Images in select
                     .col.s12
                       br
-                      p
-                        | You can add the class 
-                        code.language-markup browser-default
-                        |  to get the browser default.
+                      :markdown
+                        You can add the class `browser-default` to get the browser default.
                     .col.s12.m6
                       label Browser Select
                       select.browser-default
@@ -209,48 +198,134 @@ html(lang="en")
                         option(value='2') Option 2
                         option(value='3') Option 3
                 .col.s12
-                  pre.
+                  pre
+                    code.language-markup.
+                      <div class="input-field col s12">
+                        <select>
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="1">Option 1</option>
+                          <option value="2">Option 2</option>
+                          <option value="3">Option 3</option>
+                        </select>
+                        <label>Materialize Select</label>
+                      </div>
+
+                      <div class="input-field col s12">
+                        <select multiple>
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="1">Option 1</option>
+                          <option value="2">Option 2</option>
+                          <option value="3">Option 3</option>
+                        </select>
+                        <label>Materialize Multiple Select</label>
+                      </div>
+
+                      <div class="input-field col s12">
+                        <select multiple>
+                          <optgroup label="team 1">
+                            <option value="1">Option 1</option>
+                            <option value="2">Option 2</option>
+                          </optgroup>
+                          <optgroup label="team 2">
+                            <option value="3">Option 3</option>
+                            <option value="4">Option 4</option>
+                          </optgroup>
+                        </select>
+                        <label>Optgroups</label>
+                      </div>
+
+                      <div class="input-field col s12 m6">
+                        <select class="icons">
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="" data-icon="images/sample-1.jpg" class="circle">example 1</option>
+                          <option value="" data-icon="images/office.jpg" class="circle">example 2</option>
+                          <option value="" data-icon="images/yuna.jpg" class="circle">example 1</option>
+                        </select>
+                        <label>Images in select</label>
+                      </div>
+                      <div class="input-field col s12 m6">
+                        <select class="icons">
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="" data-icon="images/sample-1.jpg" class="left circle">example 1</option>
+                          <option value="" data-icon="images/office.jpg" class="left circle">example 2</option>
+                          <option value="" data-icon="images/yuna.jpg" class="left circle">example 3</option>
+                        </select>
+                        <label>Images in select</label>
+                      </div>
+
+                      <label>Browser Select</label>
+                      <select class="browser-default">
+                        <option value="" disabled selected>Choose your option</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                        <option value="3">Option 3</option>
+                      </select>
                 .col.s12
                   br
                   br
                   h4 Disabled Styles
-                  p
-                    | You can also add 
-                    code.language-markup disabled
-                    |  to the select element to make the whole thing disabled. Or if you add 
-                    code.language-markup disabled
-                    |  to the options, the individual options will be unselectable.
-                form.col.s12.m6
-                  .row
-                    .col.s12
-                      label Materialize Disabled
-                      select(disabled='')
-                        option(value='', disabled='', selected='') Choose your option
-                        option(value='1') Option 1
-                        option(value='2') Option 2
-                        option(value='3') Option 3
-                      label Browser Disabled
-                      select.browser-default(disabled='')
-                        option(value='', disabled='', selected='') Choose your option
-                        option(value='1') Option 1
-                        option(value='2') Option 2
-                        option(value='3') Option 3
+                  :markdown
+                    You can also add `disabled` to the select element to make the whole thing disabled. Or if you add `disabled` to the options, the individual options will be unselectable.
+              .row
+                form
+                  .input-field.col.s12.m6
+                    select(disabled='')
+                      option(value='', disabled='', selected='') Choose your option
+                      option(value='1') Option 1
+                      option(value='2') Option 2
+                      option(value='3') Option 3
+                    label Materialize Disabled
+                  
+                  .col.s12.m6
+                    label Browser Disabled
+                    select.browser-default(disabled='')
+                      option(value='', disabled='', selected='') Choose your option
+                      option(value='1') Option 1
+                      option(value='2') Option 2
+                      option(value='3') Option 3
+
                 .col.s12
-                  pre.
+                  pre
+                    code.language-markup.
+                      <div class="input-field col s12 m6">
+                        <label>Materialize Disabled</label>
+                        <select disabled>
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="1">Option 1</option>
+                          <option value="2">Option 2</option>
+                          <option value="3">Option 3</option>
+                        </select>
+                      </div>
+
+                      <div class="col s12 m6">
+                        <label>Browser Disabled</label>
+                        <select class="browser-default" disabled>
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="1">Option 1</option>
+                          <option value="2">Option 2</option>
+                          <option value="3">Option 3</option>
+                        </select>
+                      </div>
+                      
                 .col.s12
                   h4 Initialization
-                  p
-                    | You must initialize the select element as shown below. In addition, you will need a separate call for any dynamically generated select elements your page generates.
-                  pre.
+                  p You must initialize the select element as shown below. In addition, you will need a separate call for any dynamically generated select elements your page generates.
+                  pre
+                    code.language-javascript.
+                      $(document).ready(function() {
+                        $('select').material_select();
+                      });
+                      
                 .col.s12
                   h4 Updating/Destroying Select
-                  p
-                    | If you want to update the items inside the select, just rerun the initialization code from above after editing the original select. Or you can destroy the material select with this function below, and create a new select altogether
-                  pre.
+                  p If you want to update the items inside the select, just rerun the initialization code from above after editing the original select. Or you can destroy the material select with this function below, and create a new select altogether
+                  pre
+                    code.language-javascript.
+                      $('select').material_select('destroy');
+                      
             #radio.section.scrollspy
               h2.header Radio Buttons
-              p
-                | Radio Buttons are used when the user must make only one selection out of a group of items
+              p Radio Buttons are used when the user must make only one selection out of a group of items
               form(action='#')
                 p
                   input#test1(name='group1', type='radio', checked='')
@@ -264,49 +339,94 @@ html(lang="en")
                 p
                   input#test4(name='group1', type='radio', disabled='disabled')
                   label(for='test4') Brown
-              p
-                | Add radio buttons to a group by adding the name attribute along with the same corresponding value for each of the radio  buttons in the group. Create disabled radio buttons by adding the disabled attribute as shown below.
-              pre.
+              p Add radio buttons to a group by adding the name attribute along with the same corresponding value for each of the radio  buttons in the group. Create disabled radio buttons by adding the disabled attribute as shown below.
+              pre
+                code.language-markup.
+                  <form action="#">
+                    <p>
+                      <input name="group1" type="radio" id="test1" />
+                      <label for="test1">Red</label>
+                    </p>
+                    <p>
+                      <input name="group1" type="radio" id="test2" />
+                      <label for="test2">Yellow</label>
+                    </p>
+                    <p>
+                      <input class="with-gap" name="group1" type="radio" id="test3"  />
+                      <label for="test3">Green</label>
+                    </p>
+                      <p>
+                        <input name="group1" type="radio" id="test4" disabled="disabled" />
+                        <label for="test4">Brown</label>
+                    </p>
+                  </form>
+                
               h4 Options
-              p
-                | To create a radio button with a gap, add 
-                code.language-markup class="with-gap"
-                |  to your input. See the example below.
+              :markdown
+                To create a radio button with a gap, add `class="with-gap"` to your input. See the example below.
               p
                 input#test5.with-gap(name='group3', type='radio', checked='')
                 label(for='test5') Red
-              pre.
+              pre
+                code.language-markup.
+                  <p>
+                    <input class="with-gap" name="group3" type="radio" id="test5" checked />
+                    <label for="test5">Red</label>
+                  </p>
+              
             // Checkboxes
             #checkbox.section.scrollspy
               h2.header Checkboxes
-              p
-                | Use checkboxes when looking for yes or no answers. The 
-                code.language-markup for
-                |  attribute is necessary to bind the our custom checkbox with the input. Add the input's 
-                code.language-markup id
-                |  as the value of the 
-                code.language-markup for
-                |  attribute of the label.
+              :markdown
+                Use checkboxes when looking for yes or no answers. The `for` attribute is necessary to bind the our custom checkbox with the input. Add the input's `id` as the value of the `for` attribute of the label.
               form(action='#')
                 p
                   input#test9(type='checkbox')
                   label(for='test9') Red
                 p
-                  input#test6(type='checkbox', checked='checked')
+                  input#test6(type='checkbox', checked)
                   label(for='test6') Yellow
                 p
-                  input#filled-in-box.filled-in(type='checkbox', checked='checked')
+                  input#filled-in-box.filled-in(type='checkbox', checked)
                   label(for='filled-in-box') Filled in
                 p
                   input#indeterminate-checkbox(type='checkbox')
                   label(for='indeterminate-checkbox') Indeterminate Style
                 p
-                  input#test7(type='checkbox', checked='checked', disabled='disabled')
+                  input#test7(type='checkbox', checked, disabled='disabled')
                   label(for='test7') Green
                 p
                   input#test8(type='checkbox', disabled='disabled')
                   label(for='test8') Brown
-              pre.
+              pre
+                code.language-markup.
+                
+                  <form action="#">
+                    <p>
+                      <input type="checkbox" id="test5" />
+                      <label for="test5">Red</label>
+                    </p>
+                    <p>
+                      <input type="checkbox" id="test6" checked />
+                      <label for="test6">Yellow</label>
+                    </p>
+                    <p>
+                      <input type="checkbox" class="filled-in" id="filled-in-box" checked />
+                      <label for="filled-in-box">Filled in</label>
+                    </p>
+                    <p>
+                      <input type="checkbox" id="indeterminate-checkbox">
+                      <label for="indeterminate-checkbox">Indeterminate Style</label>
+                    </p>
+                    <p>
+                      <input type="checkbox" id="test7" checked disabled="disabled" />
+                      <label for="test7">Green</label>
+                    </p>
+                      <p>
+                        <input type="checkbox" id="test8" disabled="disabled" />
+                        <label for="test8">Brown</label>
+                    </p>
+                  </form>
             // Switches
             #switches.section.scrollspy
               h2.header Switches
@@ -317,70 +437,142 @@ html(lang="en")
                       | Off
                       input(checked='', type='checkbox')
                       span.lever
-                      |               On
+                      | On
                 p
                   .switch
                     label
                       | Off
                       input(disabled='', type='checkbox')
                       span.lever
-                      |                 On
-              pre.
+                      | On
+              pre
+                code.language-markup.
+                  <!-- Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+
+                  <!-- Disabled Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input disabled type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                  
             #file.section.scrollspy
               h2.header File Input
-              p
-                | If you want to style an input button with a path input we provide this structure.
+              p If you want to style an input button with a path input we provide this structure.
               form(action='#')
                 .file-field.input-field
                   .btn
                     span File
                     input(type='file')
                   .file-path-wrapper
-                    input.file-path.validate(type='text')
-              pre.
-              p
-                | You can also use the 
-                code.language-markup multiple
-                |  attribute to allow multiple file uploads.
+                    input.file-path.form-text(type='text')
+              pre
+                code.language-markup.
+                  <form action="#">
+                    <div class="file-field input-field">
+                      <div class="btn">
+                        <span>File</span>
+                        <input type="file">
+                      </div>
+                      <div class="file-path-wrapper">
+                        <input class="file-path form-text" type="text">
+                      </div>
+                    </div>
+                  </form>
+                
+              :markdown
+                You can also use the `multiple` attribute to allow multiple file uploads.
+              
               form(action='#')
                 .file-field.input-field
                   .btn
                     span File
                     input(type='file', multiple='')
                   .file-path-wrapper
-                    input.file-path.validate(type='text', placeholder='Upload one or more files')
-              pre.
+                    input.file-path.form-text(type='text', placeholder='Upload one or more files')
+              pre
+                code.language-markup.
+                  <form action="#">
+                    <div class="file-field input-field">
+                      <div class="btn">
+                        <span>File</span>
+                        <input type="file" multiple>
+                      </div>
+                      <div class="file-path-wrapper">
+                        <input class="file-path form-text" type="text" placeholder="Upload one or more files">
+                      </div>
+                    </div>
+                  </form>
+                
             #range.section.scrollspy
               h2.header Range
-              p
-                | Add a range slider for values with a wide range. This one is set to be a number between 0 and 100. We have two different types of sliders. nouiSlider is a 3rd party plugin which we've modified. To use the noUiSlider, you will have to manually link the 
-                code.language-markup nouislider.css
-                |  and 
-                code.language-markup nouislider.js
-                |  files located in the extras folder.
+              :markdown
+                Add a range slider for values with a wide range. This one is set to be a number between 0 and 100. We have two different types of sliders. nouiSlider is a 3rd party plugin which we've modified. To use the noUiSlider, you will have to manually link the `nouislider.css` and `nouislider.js` files located in the extras folder.
               h4 noUiSlider
-              p
-                | See noUiSlider's official documentation 
-                a(href='http://refreshless.com/nouislider/') here
+              p See noUiSlider's official documentation 
+                a.social-blue-text(href='http://refreshless.com/nouislider/') here
                 |  to see a variety of slider options
               #range-input
-              p  
-              pre.
+              br
+              pre
+                code.language-javascript.
+                  var slider = document.getElementById('test5');
+                  noUiSlider.create(slider, {
+                   start: [20, 80],
+                   connect: true,
+                   step: 1,
+                   range: {
+                     'min': 0,
+                     'max': 100
+                   },
+                   format: wNumb({
+                     decimals: 0
+                   })
+                  });
+                  
               h4 HTML5 Range
               form(action='#')
                 p.range-field
                   input(type='range', name='points', min='0', max='100')
-              pre.
+              pre
+                code.language-markup.
+                  <form action="#">
+                    <p class="range-field">
+                      <input type="range" id="test5" min="0" max="100" />
+                    </p>
+                  </form>
+                  
             #date-picker.section.scrollspy
               h2.header Date Picker
-              p
-                | We use a modified version of pickadate.js to create a materialized date picker. Test it out below!
+              p We use a modified version of pickadate.js to create a materialized date picker. Test it out below!
               label(for='birthdate') Birthdate
-              input#birthdate.datepicker(type='text')
-              pre.
+              input#birthdate.datepicker.form-text(type='text')
+              pre
+                code.language-markup.
+                  <input type="date" class="form-text datepicker">
+                  
               h4 Initialization
               p At this time, not all pickadate.js options are working with our implementation
-              pre.
+              
+              pre
+                code.language-javascript.
+                  $('.datepicker').pickadate({
+                    selectMonths: true, // Creates a dropdown to control month
+                    selectYears: 15 // Creates a dropdown of 15 years to control year
+                  });
+        
+                  
             #character-counter.section.scrollspy
               h2.header Character Counter
               p.caption Use a character counter in fields where a character restriction is in place.
@@ -388,19 +580,43 @@ html(lang="en")
                 form.col.s12
                   .row
                     .input-field.col.s6
-                      input#input_text(type='text', length='10')
+                      input#input_text.form-text(type='text', length='10')
                       label(for='input_text') Input text
                   br
                   .row
                     .input-field.col.s12
-                      textarea#textarea1.materialize-textarea(length='120')
+                      textarea#textarea1.form-text.form-textarea.materialize-textarea(length='120')
                       label(for='textarea1') Textarea
-              pre.
+              
+              pre
+                code.language-markup.
+                  <div class="row">
+                    <form class="col s12">
+                      <div class="row">
+                        <div class="input-field col s6">
+                          <input id="input_text" type="text" length="10">
+                          <label for="input_text">Input text</label>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <textarea id="textarea1" class="form-text form-textarea materialize-textarea" length="120"></textarea>
+                          <label for="textarea1">Textarea</label>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+              
               br
               h4 Initialization
-              p
-                | There are no options for this plugin, but if you are adding these dynamically, you can use this to initialize them.
-              pre.
+              p There are no options for this plugin, but if you are adding these dynamically, you can use this to initialize them.
+              
+              pre
+                code.language-javascript.
+                  $(document).ready(function() {
+                   $('input#input_text, textarea#textarea1').characterCounter();
+                  });
+                
           .col.m3.l2.hidden-mobile
             .toc-wrapper
               ul.section.table-of-contents
@@ -421,9 +637,30 @@ html(lang="en")
                 li
                   a(href='#range') Range
                 li
-                  a(href='#date-picker') Date Picker
+                  a(href='#date-picker') Date picker
                 li
-                  a(href='#character-counter') Character Counter
+                  a(href='#character-counter') Character counter
 
   
     include ./layout/_scripts.jade
+    script(src="extras/date_picker/picker.js")
+    script(src="extras/date_picker/picker.date.js")
+    link(href='extras/noUiSlider/nouislider.css', rel='stylesheet')
+    script(src="extras/noUiSlider/nouislider.js")
+    script(type='text/javascript').
+      var slider = document.getElementById('range-input');
+      noUiSlider.create(slider, {
+       start: [20, 80],
+       connect: true,
+       step: 1,
+       range: {
+         'min': 0,
+         'max': 100
+       },
+       format: wNumb({
+         decimals: 0
+       })
+      });
+      (function($){
+        $('.datepicker').pickadate({selectYears: 20});
+      })(jQuery); // end of jQuery name space
