@@ -1,0 +1,70 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.event.body
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - node.type.event
+  module:
+    - address
+    - datetime
+    - image
+    - text
+    - user
+_core:
+  default_config_hash: srVEJ8ILSGimrWpnIDP5ZFs7eFgYKBnihjEvY4XClFM
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+  field_event_address:
+    weight: 106
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+  field_event_date:
+    weight: 103
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+  field_event_date_end:
+    weight: 104
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+  field_event_image:
+    weight: 102
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_event_location:
+    weight: 105
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  links:
+    weight: 100
+hidden: {  }

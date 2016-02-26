@@ -4,6 +4,11 @@
 # Only should be used for local development!
 # See docker_build for install scripts for other environments.
 cd /var/www/html/;
+
+# php profiles/social/modules/contrib/composer_manager/scripts/init.php
+# composer drupal-rebuild
+# composer update --lock
+
 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)';
 chmod 777 sites/default/settings.php;
 
@@ -18,3 +23,4 @@ php -r 'opcache_reset();';
 drush genu 5 --pass=test;
 chmod 444 sites/default/settings.php
 drupal create:nodes topic --limit=250 --title-words=12 --time-range=Y
+drupal create:nodes event --limit=250 --title-words=12 --time-range=Y
