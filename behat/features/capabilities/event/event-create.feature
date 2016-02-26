@@ -16,4 +16,3 @@ Feature: Create Event
     Then I should see "This is a test event has been created."
     And I should see the heading "This is a test event" in the "Page title block"
     And I should see "Body description text" in the "Main content"
-    And I should see "Wed, 01/01/2025 - 11:00" in the "Main content" 
