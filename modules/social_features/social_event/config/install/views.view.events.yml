@@ -9,6 +9,8 @@ dependencies:
     - datetime
     - node
     - user
+_core:
+  default_config_hash: dxf5z_1uKEr9wjfvYdrOJmYzMfi1C8is-PkN7mLfo9w
 id: events
 label: Events
 module: views
@@ -216,22 +218,24 @@ display:
           value:
             min: ''
             max: ''
-            value: now
-            type: offset
+            value: ''
+            type: date
           group: 1
-          exposed: false
+          exposed: true
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: field_event_date_value_op
+            label: 'Start date from'
             description: ''
             use_operator: false
-            operator: ''
-            identifier: ''
+            operator: field_event_date_value_op
+            identifier: field_event_date_value
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
