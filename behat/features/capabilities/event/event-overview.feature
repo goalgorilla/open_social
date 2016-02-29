@@ -17,7 +17,7 @@ Feature: Overview
     Given I am on "user/1"
     When I click "Events"
     Then I should see the heading "Events"
-    And I should see the heading "Event filter" in the "Sidebar second"
+    And I should see the heading "Events filter" in the "Sidebar second"
     And I should not see text matching "Publish status"
 
   #@TODO make a scenario for filters to work.
