@@ -1,33 +1,57 @@
-.panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: white;
-  padding: 90px 0 0;
-  width: 100%;
-  overflow: hidden;
-  z-index: 9;
-  padding: 90px 0 0;
-  transform: translateY(-100%);
-  transform-origin: top right;
-  transition: transform 0.3s;
-  backface-visibility: hidden;
-  -webkit-overflow-scrolling: touch;
+.dropdown-content {
+  @extend .z-depth-1;
+  background-color: $dropdown-bg-color;
+  margin: 0;
+  display: none;
+  min-width: 100px;
+  max-height: 650px;
+  overflow-y: auto;
+  opacity: 0;
+  position: absolute;
+  z-index: 999;
+  will-change: width, height;
 
-  &.show {
-    transform: translateY(0);
-    overflow: auto;
+  li {
+    clear: both;
+    color: $off-black;
+    cursor: pointer;
+    min-height: $dropdown-item-height;
+    line-height: 1.5em;
+    width: 100%;
+    text-align: left;
+    text-transform: none;
+
+    &:hover, &.active, &.selected {
+      background-color: $dropdown-hover-bg-color;
+    }
+
+    &.active.selected {
+      background-color: darken($dropdown-hover-bg-color, 5%);
+    }
+
+    &.divider {
+      min-height: 0;
+      height: 1px;
+    }
+
+    & > a, & > span {
+      font-size: 16px;
+      color: $dropdown-color;
+      display: block;
+      line-height: 22px;
+      padding: (($dropdown-item-height - 22) / 2) 16px;
+    }
+
+    & > span > label {
+      top: 1px;
+      left: 3px;
+      height: 18px;
+    }
+
+    // Icon alignment override
+    & > a > i {
+      height: inherit;
+      line-height: inherit;
+    }
   }
-
-  @include MQ($medium) {
-    position: relative;
-    height: 44px;
-    transform: translateY(0);
-    overflow: visible;
-  }
-
-}
-
-.panel-opened {
-  overflow: hidden;
 }

@@ -1,11 +1,12 @@
 /*** Colors ***/
+$primary-color: color("social-blue", "base") !default;
+$primary-color-light: lighten($primary-color, 15%) !default;
+$primary-color-dark: darken($primary-color, 15%) !default;
 
-$secondary-color: #1f80aa !default;
-$success-color: #1f80aa !default;
-$error-color: red;
-$link-color: #29abe2 !default;
-
-$primary-color: #29abe2 !default;
+$secondary-color: color("social-blue", "darken-1") !default;
+$success-color: color("green", "base") !default;
+$error-color: color("red", "base") !default;
+$link-color: color("social-blue", "darken-1") !default;
 
 $body-color: #e6e6e6;
 $grey-light-1: #adadad;
@@ -47,10 +48,24 @@ $button-floating-size: 34px !default;
 $button-floating-large-size: $button-floating-size + 10px !default;
 $button-floating-radius: 50% !default;
 
+/*** Dropdown ***/
+$dropdown-bg-color: #fff !default;
+$dropdown-hover-bg-color: #eee !default;
+$dropdown-color: $secondary-color !default;
+$dropdown-item-height: 50px !default;
+
 /*** Collapsible ***/
 $collapsible-height: 3rem !default;
 $collapsible-header-color: #fff !default;
 $collapsible-border-color: #ddd !default;
+
+/*** Date Picker ***/
+$datepicker-weekday-bg: darken($secondary_color, 7%) !default;
+$datepicker-date-bg: $secondary_color !default;
+$datepicker-year: rgba(255, 255, 255, .4) !default;
+$datepicker-focus: rgba(0,0,0, .05) !default;
+$datepicker-selected: $secondary-color !default;
+$datepicker-selected-outfocus: desaturate(lighten($secondary-color, 35%), 15%) !default;
 
 /*** Forms ***/
 // Text Inputs + Textarea
@@ -66,6 +81,13 @@ $input-disabled-solid-color: #BDBDBD !default;
 $radio-fill-color: $secondary-color !default;
 $radio-empty-color: #5a5a5a !default;
 $radio-border: 2px solid $radio-fill-color !default;
+
+// Switches
+$switch-bg-color: $secondary-color !default;
+$switch-checked-lever-bg: desaturate(lighten($secondary-color, 25%), 25%) !default;
+$switch-unchecked-bg: #F1F1F1 !default;
+$switch-unchecked-lever-bg: #818181 !default;
+
 
 $gutter-width: 1.5rem !default;
 $element-top-margin: $gutter-width/3 !default;
@@ -128,3 +150,8 @@ $card-padding-medium: 40px !default;
 $card-bg-color: white !default;
 $card-link-color: $primary-color !default;
 $card-link-color-light: lighten($card-link-color, 20%) !default;
+
+
+// Tables ==========================================================================
+$table-border-color: #d0d0d0 !default;
+$table-striped-color: #f2f2f2 !default;

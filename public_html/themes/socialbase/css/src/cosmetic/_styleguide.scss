@@ -2,6 +2,16 @@
   font-weight: 300;
 }
 
+.styleguide {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.styleguide-container {
+  flex: 1;
+}
+
 .styleguide-header,
 .styleguide-container,
 .styleguide-footer {
@@ -12,8 +22,19 @@
 
 }
 
+.styleguide-footer {
+  margin-top: 20px;
+}
+
+.footer-copyright {
+  overflow: hidden;
+  height: 50px;
+  line-height: 50px;
+  color: rgba(255,255,255,0.8);
+  background-color: rgba(51,51,51,0.08);
+}
+
 #index-banner {
-  background-color: $primary-color;
 
   .container {
     position: relative;
@@ -52,6 +73,7 @@
   background-color: #5c5757;
   color: #e6e6e6;
   font-size: .9em;
+  margin-bottom: 20px;
 
   .sha {
     color: #f0f0f0;
