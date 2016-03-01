@@ -17,6 +17,7 @@ function social_core_theme() {
         'created_date' => NULL,
         'created_date_formatted' => NULL,
         'topic_type' => NULL,
+        'hero_node' => NULL,
       ),
     ),
   );
@@ -34,6 +35,7 @@ function social_core_theme() {
  *   - created_date: Timestamp
  *   - created_date_formatted: Formatted date as a string
  *   - topic_type: List of topic types as an array or NULL
+ *   - hero_node: Rendered hero display of the current active node or NULL
  */
 function template_preprocess_page_hero_data(&$variables) {
   // @todo create $variables['author_formatted']?
@@ -73,5 +75,8 @@ function social_core_preprocess_node(&$variables) {
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
     $variables['display_submitted'] = TRUE;
+  }
+  if ($variables['view_mode'] === 'hero') {
+    unset($variables['label']);
   }
 }
