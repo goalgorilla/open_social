@@ -46,7 +46,7 @@ class FeatureContext extends MinkContext
     public function iWaitForTheLocationToAppear()
     {
         $this->spin(function($context) {
-            $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+            $context->assertPageContainsText('Postal code');
             return true;
         });
     }
