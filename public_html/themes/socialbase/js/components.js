@@ -533,6 +533,453 @@ if ($) {
   });
 }( jQuery ));
 
+/*
+ * jQuery dropdown: A simple dropdown plugin
+ *
+ * Inspired by Bootstrap: http://twitter.github.com/bootstrap/javascript.html#dropdowns
+ * Copyright 2013 Cory LaViska for A Beautiful Site, LLC. (http://abeautifulsite.net/)
+ * Dual licensed under the MIT / GPL Version 2 licenses
+ *
+*/
+if(jQuery) (function($) {
+
+    $.extend($.fn, {
+        panel: function(method, data) {
+
+            switch( method ) {
+                case 'hide':
+                    hide();
+                    return $(this);
+                case 'attach':
+                    console('test');
+                    return $(this).attr('data-panel', data);
+                case 'detach':
+                    hide();
+                    return $(this).removeAttr('data-panel');
+                case 'disable':
+                    return $(this).addClass('panel-disabled');
+                case 'enable':
+                    hide();
+                    return $(this).removeClass('panel-disabled');
+            }
+
+        }
+    });
+
+    function show(event) {
+
+        var trigger = $(this),
+            panel = $(trigger.attr('data-panel')),
+            isOpen = trigger.hasClass('panel-open');
+
+        // In some cases we don't want to show it
+        if( trigger !== event.target && $(event.target).hasClass('panel-ignore') ) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        hide();
+
+        if( isOpen || trigger.hasClass('panel-disabled') ) return;
+
+        // Show it
+        trigger.addClass('panel-open');
+        panel
+            .data('panel-trigger', trigger)
+            .addClass('show');
+
+        // Trigger the show callback
+        panel
+            .trigger('show', {
+                panel: panel,
+                trigger: trigger
+            });
+
+    }
+
+    function hide(event) {
+
+        // In some cases we don't hide them
+        var targetGroup = event ? $(event.target).parents().addBack() : null;
+
+        // Are we clicking anywhere in a panel?
+        if( targetGroup && targetGroup.is('.panel') ) {
+            // Is it a panel menu?
+            if( targetGroup.is('.panel-list') ) {
+                // Did we click on an option? If so close it.
+                if( !targetGroup.is('a') ) return;
+            } else {
+                // Nope, it's a panel. Leave it open.
+                return;
+            }
+        }
+
+        // Hide any panel that may be showing
+        $(document).find('.panel:visible').each( function() {
+            var panel = $(this);
+            panel
+                .removeClass('show')
+                .removeData('panel-trigger')
+                .trigger('hide', { panel: panel });
+        });
+
+        // Remove all panel-open classes
+        $(document).find('.panel-open').removeClass('panel-open');
+
+    }
+
+
+    $(document).on('click.panel', '[data-panel]', show);
+    $(document).on('click.panel', hide);
+
+})(jQuery);
+
+/**
+ * Extend jquery with a scrollspy plugin.
+ * This watches the window scroll and fires events when elements are scrolled into viewport.
+ *
+ * throttle() and getTime() taken from Underscore.js
+ * https://github.com/jashkenas/underscore
+ *
+ * @author Copyright 2013 John Smart
+ * @license https://raw.github.com/thesmart/jquery-scrollspy/master/LICENSE
+ * @see https://github.com/thesmart
+ * @version 0.1.2
+ */
+(function($) {
+
+	var jWindow = $(window);
+	var elements = [];
+	var elementsInView = [];
+	var isSpying = false;
+	var ticks = 0;
+	var unique_id = 1;
+	var offset = {
+		top : 0,
+		right : 0,
+		bottom : 0,
+		left : 0,
+	}
+
+	/**
+	 * Find elements that are within the boundary
+	 * @param {number} top
+	 * @param {number} right
+	 * @param {number} bottom
+	 * @param {number} left
+	 * @return {jQuery}		A collection of elements
+	 */
+	function findElements(top, right, bottom, left) {
+		var hits = $();
+		$.each(elements, function(i, element) {
+			if (element.height() > 0) {
+				var elTop = element.offset().top,
+					elLeft = element.offset().left,
+					elRight = elLeft + element.width(),
+					elBottom = elTop + element.height();
+
+				var isIntersect = !(elLeft > right ||
+					elRight < left ||
+					elTop > bottom ||
+					elBottom < top);
+
+				if (isIntersect) {
+					hits.push(element);
+				}
+			}
+		});
+
+		return hits;
+	}
+
+
+	/**
+	 * Called when the user scrolls the window
+	 */
+	function onScroll() {
+		// unique tick id
+		++ticks;
+
+		// viewport rectangle
+		var top = jWindow.scrollTop(),
+			left = jWindow.scrollLeft(),
+			right = left + jWindow.width(),
+			bottom = top + jWindow.height();
+
+		// determine which elements are in view
+//        + 60 accounts for fixed nav
+		var intersections = findElements(top+offset.top + 200, right+offset.right, bottom+offset.bottom, left+offset.left);
+		$.each(intersections, function(i, element) {
+
+			var lastTick = element.data('scrollSpy:ticks');
+			if (typeof lastTick != 'number') {
+				// entered into view
+				element.triggerHandler('scrollSpy:enter');
+			}
+
+			// update tick id
+			element.data('scrollSpy:ticks', ticks);
+		});
+
+		// determine which elements are no longer in view
+		$.each(elementsInView, function(i, element) {
+			var lastTick = element.data('scrollSpy:ticks');
+			if (typeof lastTick == 'number' && lastTick !== ticks) {
+				// exited from view
+				element.triggerHandler('scrollSpy:exit');
+				element.data('scrollSpy:ticks', null);
+			}
+		});
+
+		// remember elements in view for next tick
+		elementsInView = intersections;
+	}
+
+	/**
+	 * Called when window is resized
+	*/
+	function onWinSize() {
+		jWindow.trigger('scrollSpy:winSize');
+	}
+
+	/**
+	 * Get time in ms
+   * @license https://raw.github.com/jashkenas/underscore/master/LICENSE
+	 * @type {function}
+	 * @return {number}
+	 */
+	var getTime = (Date.now || function () {
+		return new Date().getTime();
+	});
+
+	/**
+	 * Returns a function, that, when invoked, will only be triggered at most once
+	 * during a given window of time. Normally, the throttled function will run
+	 * as much as it can, without ever going more than once per `wait` duration;
+	 * but if you'd like to disable the execution on the leading edge, pass
+	 * `{leading: false}`. To disable execution on the trailing edge, ditto.
+	 * @license https://raw.github.com/jashkenas/underscore/master/LICENSE
+	 * @param {function} func
+	 * @param {number} wait
+	 * @param {Object=} options
+	 * @returns {Function}
+	 */
+	function throttle(func, wait, options) {
+		var context, args, result;
+		var timeout = null;
+		var previous = 0;
+		options || (options = {});
+		var later = function () {
+			previous = options.leading === false ? 0 : getTime();
+			timeout = null;
+			result = func.apply(context, args);
+			context = args = null;
+		};
+		return function () {
+			var now = getTime();
+			if (!previous && options.leading === false) previous = now;
+			var remaining = wait - (now - previous);
+			context = this;
+			args = arguments;
+			if (remaining <= 0) {
+				clearTimeout(timeout);
+				timeout = null;
+				previous = now;
+				result = func.apply(context, args);
+				context = args = null;
+			} else if (!timeout && options.trailing !== false) {
+				timeout = setTimeout(later, remaining);
+			}
+			return result;
+		};
+	};
+
+	/**
+	 * Enables ScrollSpy using a selector
+	 * @param {jQuery|string} selector  The elements collection, or a selector
+	 * @param {Object=} options	Optional.
+        throttle : number -> scrollspy throttling. Default: 100 ms
+        offsetTop : number -> offset from top. Default: 0
+        offsetRight : number -> offset from right. Default: 0
+        offsetBottom : number -> offset from bottom. Default: 0
+        offsetLeft : number -> offset from left. Default: 0
+	 * @returns {jQuery}
+	 */
+	$.scrollSpy = function(selector, options) {
+		var visible = [];
+		selector = $(selector);
+		selector.each(function(i, element) {
+			elements.push($(element));
+			$(element).data("scrollSpy:id", i);
+			// Smooth scroll to section
+		  $('a[href=#' + $(element).attr('id') + ']').click(function(e) {
+		    e.preventDefault();
+		    var offset = $(this.hash).offset().top + 1;
+
+//          offset - 200 allows elements near bottom of page to scroll
+			
+	    	$('html, body').animate({ scrollTop: offset - 200 }, {duration: 400, queue: false, easing: 'easeOutCubic'});
+			
+		  });
+		});
+		options = options || {
+			throttle: 100
+		};
+
+		offset.top = options.offsetTop || 0;
+		offset.right = options.offsetRight || 0;
+		offset.bottom = options.offsetBottom || 0;
+		offset.left = options.offsetLeft || 0;
+
+		var throttledScroll = throttle(onScroll, options.throttle || 100);
+		var readyScroll = function(){
+			$(document).ready(throttledScroll);
+		};
+
+		if (!isSpying) {
+			jWindow.on('scroll', readyScroll);
+			jWindow.on('resize', readyScroll);
+			isSpying = true;
+		}
+
+		// perform a scan once, after current execution context, and after dom is ready
+		setTimeout(readyScroll, 0);
+
+
+		selector.on('scrollSpy:enter', function() {
+			visible = $.grep(visible, function(value) {
+	      return value.height() != 0;
+	    });
+
+			var $this = $(this);
+
+			if (visible[0]) {
+				$('a[href=#' + visible[0].attr('id') + ']').removeClass('active');
+				if ($this.data('scrollSpy:id') < visible[0].data('scrollSpy:id')) {
+					visible.unshift($(this));
+				}
+				else {
+					visible.push($(this));
+				}
+			}
+			else {
+				visible.push($(this));
+			}
+
+
+			$('a[href=#' + visible[0].attr('id') + ']').addClass('active');
+		});
+		selector.on('scrollSpy:exit', function() {
+			visible = $.grep(visible, function(value) {
+	      return value.height() != 0;
+	    });
+
+			if (visible[0]) {
+				$('a[href=#' + visible[0].attr('id') + ']').removeClass('active');
+				var $this = $(this);
+				visible = $.grep(visible, function(value) {
+	        return value.attr('id') != $this.attr('id');
+	      });
+	      if (visible[0]) { // Check if empty
+					$('a[href=#' + visible[0].attr('id') + ']').addClass('active');
+	      }
+			}
+		});
+
+		return selector;
+	};
+
+	/**
+	 * Listen for window resize events
+	 * @param {Object=} options						Optional. Set { throttle: number } to change throttling. Default: 100 ms
+	 * @returns {jQuery}		$(window)
+	 */
+	$.winSizeSpy = function(options) {
+		$.winSizeSpy = function() { return jWindow; }; // lock from multiple calls
+		options = options || {
+			throttle: 100
+		};
+		return jWindow.on('resize', throttle(onWinSize, options.throttle || 100));
+	};
+
+	/**
+	 * Enables ScrollSpy on a collection of elements
+	 * e.g. $('.scrollSpy').scrollSpy()
+	 * @param {Object=} options	Optional.
+											throttle : number -> scrollspy throttling. Default: 100 ms
+											offsetTop : number -> offset from top. Default: 0
+											offsetRight : number -> offset from right. Default: 0
+											offsetBottom : number -> offset from bottom. Default: 0
+											offsetLeft : number -> offset from left. Default: 0
+	 * @returns {jQuery}
+	 */
+	$.fn.scrollSpy = function(options) {
+		return $.scrollSpy($(this), options);
+	};
+
+})(jQuery);
+(function ($) {
+  $(document).ready(function() {
+
+    $.fn.pushpin = function (options) {
+
+      var defaults = {
+        top: 0,
+        bottom: Infinity,
+        offset: 0
+      }
+      options = $.extend(defaults, options);
+
+      $index = 0;
+      return this.each(function() {
+        var $uniqueId = Materialize.guid(),
+            $this = $(this),
+            $original_offset = $(this).offset().top;
+
+        function removePinClasses(object) {
+          object.removeClass('pin-top');
+          object.removeClass('pinned');
+          object.removeClass('pin-bottom');
+        }
+
+        function updateElements(objects, scrolled) {
+          objects.each(function () {
+            // Add position fixed (because its between top and bottom)
+            if (options.top <= scrolled && options.bottom >= scrolled && !$(this).hasClass('pinned')) {
+              removePinClasses($(this));
+              $(this).css('top', options.offset);
+              $(this).addClass('pinned');
+            }
+
+            // Add pin-top (when scrolled position is above top)
+            if (scrolled < options.top && !$(this).hasClass('pin-top')) {
+              removePinClasses($(this));
+              $(this).css('top', 0);
+              $(this).addClass('pin-top');
+            }
+
+            // Add pin-bottom (when scrolled position is below bottom)
+            if (scrolled > options.bottom && !$(this).hasClass('pin-bottom')) {
+              removePinClasses($(this));
+              $(this).addClass('pin-bottom');
+              $(this).css('top', options.bottom - $original_offset);
+            }
+          });
+        }
+
+        updateElements($this, $(window).scrollTop());
+        $(window).on('scroll.' + $uniqueId, function () {
+          var $scrolled = $(window).scrollTop() + options.offset;
+          updateElements($this, $scrolled);
+        });
+
+      });
+
+    };
+
+
+  });
+}( jQuery ));
+
 (function ($) {
 
   var methods = {
@@ -1671,7 +2118,81 @@ if ($) {
         thumb.removeClass('active');
       }
     });
+
+
+  /**************************
+		 * Auto complete plugin  *
+		 *************************/
+		$(input_selector).each(function() {
+			var $input = $(this);
+
+				if( $input.hasClass('autocomplete') ) {
+					var $array = $input.data('array'),
+							$inputDiv = $input.closest('.input-field'); // Div to append on
+
+					// Check if "data-array" isn't empty
+					if( $array !== '' ) {
+						// Create html element
+						var $html = '<ul class="autocomplete-content hidden">';
+
+						for( var i = 0; i < $array.length; i++ ) {
+							// If path and class aren't empty add image to auto complete else create normal element
+							if( $array[i]['path'] !== '' && $array[i]['class'] !== '' ) {
+								$html += '<li class="autocomplete-option"><img src="'+$array[i]['path']+'" class="'+$array[i]['class']+'"><span>'+$array[i]['value']+'</span></li>';
+							} else {
+								$html += '<li class="autocomplete-option"><span>'+$array[i]['value']+'</span></li>';
+							}
+						}
+
+						$html += '</ul>';
+						$inputDiv.append($html); // Set ul in body
+						// End create html element
+
+						function highlight(string) {
+							$('.autocomplete-content li').each(function () {
+								var matchStart = $(this).text().toLowerCase().indexOf("" + string.toLowerCase() + ""),
+									 	matchEnd = matchStart + string.length - 1,
+									 	beforeMatch = $(this).text().slice(0, matchStart),
+									 	matchText = $(this).text().slice(matchStart, matchEnd + 1),
+									 	afterMatch = $(this).text().slice(matchEnd + 1);
+								$(this).html("<span>" + beforeMatch + "<span class='highlight'>" + matchText + "</span>" + afterMatch + "</span>");
+							});
+						}
+
+						// Perform search
+						$(document).on('keyup', $input, function () {
+							var $val = $input.val().trim(),
+									$select = $('.autocomplete-content');
+							// Check if the input isn't empty
+							if ($val != '') {
+								$select.children('li').addClass('hidden');
+								$select.children('li').filter(function() {
+									$select.removeClass('hidden'); // Show results
+
+									// If text needs to highlighted
+									if( $input.hasClass('highlight-matching') ) {
+										highlight($val);
+									}
+
+									return $(this).text().indexOf($val) !== -1;
+								}).removeClass('hidden');
+							} else {
+								$select.children().addClass('hidden');
+							}
+						});
+
+						// Set input value
+						$('.autocomplete-option').click(function() {
+							$input.val($(this).text().trim());
+						});
+					} else {
+						return false;
+					}
+				}
+			});
+
   }); // End of $(document).ready
+
 
   /*******************
    *  Select Plugin  *
@@ -1994,102 +2515,299 @@ if ($) {
 
 }( jQuery ));
 
-/*
- * jQuery dropdown: A simple dropdown plugin
- *
- * Inspired by Bootstrap: http://twitter.github.com/bootstrap/javascript.html#dropdowns
- * Copyright 2013 Cory LaViska for A Beautiful Site, LLC. (http://abeautifulsite.net/)
- * Dual licensed under the MIT / GPL Version 2 licenses
- *
-*/
-if(jQuery) (function($) {
+(function ($) {
 
-    $.extend($.fn, {
-        panel: function(method, data) {
+  $.fn.characterCounter = function(){
+    return this.each(function(){
 
-            switch( method ) {
-                case 'hide':
-                    hide();
-                    return $(this);
-                case 'attach':
-                    console('test');
-                    return $(this).attr('data-panel', data);
-                case 'detach':
-                    hide();
-                    return $(this).removeAttr('data-panel');
-                case 'disable':
-                    return $(this).addClass('panel-disabled');
-                case 'enable':
-                    hide();
-                    return $(this).removeClass('panel-disabled');
-            }
+      var itHasLengthAttribute = $(this).attr('length') !== undefined;
 
-        }
+      if(itHasLengthAttribute){
+        $(this).on('input', updateCounter);
+        $(this).on('focus', updateCounter);
+        $(this).on('blur', removeCounterElement);
+
+        addCounterElement($(this));
+      }
+
     });
+  };
 
-    function show(event) {
+  function updateCounter(){
+    var maxLength     = +$(this).attr('length'),
+    actualLength      = +$(this).val().length,
+    isValidLength     = actualLength <= maxLength;
 
-        var trigger = $(this),
-            panel = $(trigger.attr('data-panel')),
-            isOpen = trigger.hasClass('panel-open');
+    $(this).parent().find('span[class="character-counter"]')
+                    .html( actualLength + '/' + maxLength);
 
-        // In some cases we don't want to show it
-        if( trigger !== event.target && $(event.target).hasClass('panel-ignore') ) return;
+    addInputStyle(isValidLength, $(this));
+  }
 
-        event.preventDefault();
-        event.stopPropagation();
-        hide();
+  function addCounterElement($input){
+    var $counterElement = $('<span/>')
+                        .addClass('character-counter')
+                        .css('float','right')
+                        .css('font-size','12px')
+                        .css('height', 1);
 
-        if( isOpen || trigger.hasClass('panel-disabled') ) return;
+    $input.parent().append($counterElement);
+  }
 
-        // Show it
-        trigger.addClass('panel-open');
-        panel
-            .data('panel-trigger', trigger)
-            .addClass('show');
+  function removeCounterElement(){
+    $(this).parent().find('span[class="character-counter"]').html('');
+  }
 
-        // Trigger the show callback
-        panel
-            .trigger('show', {
-                panel: panel,
-                trigger: trigger
-            });
+  function addInputStyle(isValidLength, $input){
+    var inputHasInvalidClass = $input.hasClass('invalid');
+    if (isValidLength && inputHasInvalidClass) {
+      $input.removeClass('invalid');
+    }
+    else if(!isValidLength && !inputHasInvalidClass){
+      $input.removeClass('valid');
+      $input.addClass('invalid');
+    }
+  }
 
+  $(document).ready(function(){
+    $('input, textarea').characterCounter();
+  });
+
+}( jQuery ));
+
+(function ($) {
+
+  // Add posibility to scroll to selected option
+  // usefull for select for example
+  $.fn.scrollTo = function(elem) {
+    $(this).scrollTop($(this).scrollTop() - $(this).offset().top + $(elem).offset().top);
+    return this;
+  };
+
+  $.fn.dropdown = function (option) {
+    var defaults = {
+      inDuration: 300,
+      outDuration: 225,
+      constrain_width: true, // Constrains width of dropdown to the activator
+      hover: false,
+      gutter: 0, // Spacing from edge
+      belowOrigin: false,
+      alignment: 'left'
+    };
+
+    this.each(function(){
+    var origin = $(this);
+    var options = $.extend({}, defaults, option);
+    var isFocused = false;
+
+    // Dropdown menu
+    var activates = $("#"+ origin.attr('data-activates'));
+
+    function updateOptions() {
+      if (origin.data('induration') !== undefined)
+        options.inDuration = origin.data('inDuration');
+      if (origin.data('outduration') !== undefined)
+        options.outDuration = origin.data('outDuration');
+      if (origin.data('constrainwidth') !== undefined)
+        options.constrain_width = origin.data('constrainwidth');
+      if (origin.data('hover') !== undefined)
+        options.hover = origin.data('hover');
+      if (origin.data('gutter') !== undefined)
+        options.gutter = origin.data('gutter');
+      if (origin.data('beloworigin') !== undefined)
+        options.belowOrigin = origin.data('beloworigin');
+      if (origin.data('alignment') !== undefined)
+        options.alignment = origin.data('alignment');
     }
 
-    function hide(event) {
+    updateOptions();
 
-        // In some cases we don't hide them
-        var targetGroup = event ? $(event.target).parents().addBack() : null;
+    // Attach dropdown to its activator
+    origin.after(activates);
 
-        // Are we clicking anywhere in a panel?
-        if( targetGroup && targetGroup.is('.panel') ) {
-            // Is it a panel menu?
-            if( targetGroup.is('.panel-list') ) {
-                // Did we click on an option? If so close it.
-                if( !targetGroup.is('a') ) return;
-            } else {
-                // Nope, it's a panel. Leave it open.
-                return;
-            }
+    /*
+      Helper function to position and resize dropdown.
+      Used in hover and click handler.
+    */
+    function placeDropdown(eventType) {
+      // Check for simultaneous focus and click events.
+      if (eventType === 'focus') {
+        isFocused = true;
+      }
+
+      // Check html data attributes
+      updateOptions();
+
+      // Set Dropdown state
+      activates.addClass('active');
+      origin.addClass('active');
+
+      // Constrain width
+      if (options.constrain_width === true) {
+        activates.css('width', origin.outerWidth());
+
+      } else {
+        activates.css('white-space', 'nowrap');
+      }
+
+      // Offscreen detection
+      var windowHeight = window.innerHeight;
+      var originHeight = origin.innerHeight();
+      var offsetLeft = origin.offset().left;
+      var offsetTop = origin.offset().top - $(window).scrollTop();
+      var currAlignment = options.alignment;
+      var activatesLeft, gutterSpacing;
+
+      // Below Origin
+      var verticalOffset = 0;
+      if (options.belowOrigin === true) {
+        verticalOffset = originHeight;
+      }
+
+      // Check for scrolling positioned container.
+      var scrollOffset = 0;
+      var wrapper = origin.parent();
+      if (!wrapper.is('body') && wrapper[0].scrollHeight > wrapper[0].clientHeight) {
+        scrollOffset = wrapper[0].scrollTop;
+      }
+
+
+      if (offsetLeft + activates.innerWidth() > $(window).width()) {
+        // Dropdown goes past screen on right, force right alignment
+        currAlignment = 'right';
+
+      } else if (offsetLeft - activates.innerWidth() + origin.innerWidth() < 0) {
+        // Dropdown goes past screen on left, force left alignment
+        currAlignment = 'left';
+      }
+      // Vertical bottom offscreen detection
+      if (offsetTop + activates.innerHeight() > windowHeight) {
+        // If going upwards still goes offscreen, just crop height of dropdown.
+        if (offsetTop + originHeight - activates.innerHeight() < 0) {
+          var adjustedHeight = windowHeight - offsetTop - verticalOffset;
+          activates.css('max-height', adjustedHeight);
+        } else {
+          // Flow upwards.
+          if (!verticalOffset) {
+            verticalOffset += originHeight;
+          }
+          verticalOffset -= activates.innerHeight();
         }
+      }
 
-        // Hide any panel that may be showing
-        $(document).find('.panel:visible').each( function() {
-            var panel = $(this);
-            panel
-                .removeClass('show')
-                .removeData('panel-trigger')
-                .trigger('hide', { panel: panel });
-        });
+      // Handle edge alignment
+      if (currAlignment === 'left') {
+        gutterSpacing = options.gutter;
+        leftPosition = origin.position().left + gutterSpacing;
+      }
+      else if (currAlignment === 'right') {
+        var offsetRight = origin.position().left + origin.outerWidth() - activates.outerWidth();
+        gutterSpacing = -options.gutter;
+        leftPosition =  offsetRight + gutterSpacing;
+      }
 
-        // Remove all panel-open classes
-        $(document).find('.panel-open').removeClass('panel-open');
+      // Position dropdown
+      activates.css({
+        position: 'absolute',
+        top: origin.position().top + verticalOffset + scrollOffset,
+        left: leftPosition
+      });
 
+
+      // Show dropdown
+      activates.stop(true, true).css('opacity', 0)
+        .slideDown({
+        queue: false,
+        duration: options.inDuration,
+        easing: 'easeOutCubic',
+        complete: function() {
+          $(this).css('height', '');
+        }
+      })
+        .animate( {opacity: 1}, {queue: false, duration: options.inDuration, easing: 'easeOutSine'});
     }
 
+    function hideDropdown() {
+      // Check for simultaneous focus and click events.
+      isFocused = false;
+      activates.fadeOut(options.outDuration);
+      activates.removeClass('active');
+      origin.removeClass('active');
+      setTimeout(function() { activates.css('max-height', ''); }, options.outDuration);
+    }
 
-    $(document).on('click.panel', '[data-panel]', show);
-    $(document).on('click.panel', hide);
+    // Hover
+    if (options.hover) {
+      var open = false;
+      origin.unbind('click.' + origin.attr('id'));
+      // Hover handler to show dropdown
+      origin.on('mouseenter', function(e){ // Mouse over
+        if (open === false) {
+          placeDropdown();
+          open = true;
+        }
+      });
+      origin.on('mouseleave', function(e){
+        // If hover on origin then to something other than dropdown content, then close
+        var toEl = e.toElement || e.relatedTarget; // added browser compatibility for target element
+        if(!$(toEl).closest('.dropdown-content').is(activates)) {
+          activates.stop(true, true);
+          hideDropdown();
+          open = false;
+        }
+      });
 
-})(jQuery);
+      activates.on('mouseleave', function(e){ // Mouse out
+        var toEl = e.toElement || e.relatedTarget;
+        if(!$(toEl).closest('.dropdown-button').is(origin)) {
+          activates.stop(true, true);
+          hideDropdown();
+          open = false;
+        }
+      });
+
+    // Click
+    } else {
+      // Click handler to show dropdown
+      origin.unbind('click.' + origin.attr('id'));
+      origin.bind('click.'+origin.attr('id'), function(e){
+        if (!isFocused) {
+          if ( origin[0] == e.currentTarget &&
+               !origin.hasClass('active') &&
+               ($(e.target).closest('.dropdown-content').length === 0)) {
+            e.preventDefault(); // Prevents button click from moving window
+            placeDropdown('click');
+          }
+          // If origin is clicked and menu is open, close menu
+          else if (origin.hasClass('active')) {
+            hideDropdown();
+            $(document).unbind('click.'+ activates.attr('id') + ' touchstart.' + activates.attr('id'));
+          }
+          // If menu open, add click close handler to document
+          if (activates.hasClass('active')) {
+            $(document).bind('click.'+ activates.attr('id') + ' touchstart.' + activates.attr('id'), function (e) {
+              if (!activates.is(e.target) && !origin.is(e.target) && (!origin.find(e.target).length) ) {
+                hideDropdown();
+                $(document).unbind('click.'+ activates.attr('id') + ' touchstart.' + activates.attr('id'));
+              }
+            });
+          }
+        }
+      });
+
+    } // End else
+
+    // Listen to open and close event - useful for select component
+    origin.on('open', function(e, eventType) {
+      placeDropdown(eventType);
+    });
+    origin.on('close', hideDropdown);
+
+
+   });
+  }; // End dropdown plugin
+
+  $(document).ready(function(){
+    $('.dropdown-button').dropdown();
+  });
+}( jQuery ));

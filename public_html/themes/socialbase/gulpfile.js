@@ -47,7 +47,9 @@ var glob = {
   js: folder.js + '/**/*.js',
   data: folder.data + '/**/*.json',
   font: 'font/**/*',
-  images: 'images/**/*'
+  images: 'images/**/*',
+  content: 'content/**/*',
+  extras: 'extras/**/*'
 };
 
 var onError = function(err) {
@@ -75,13 +77,13 @@ gulp.task('css', function () {
     .pipe(plumber({
       errorHandler: onError
     }))
+    .pipe( sourcemaps.init() )
     .pipe( sass() )
-    //.pipe( sourcemaps.init() )
-    //.pipe( sourcemaps.write('.') )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
-    .pipe( gulp.dest(folder.css) )
     .pipe( cssnano() )
+    .pipe( sourcemaps.write('.') )
+    .pipe( gulp.dest(folder.css) )
     .pipe( gulp.dest(folder.dist + '/css') )
     .pipe( connect.reload() );
   return stream;
@@ -125,10 +127,14 @@ gulp.task('script-components', function() {
     folder.js_comp + "/responsive-dom.js",
     folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
+    folder.js_comp + "/droppanel.js",
+    folder.js_comp + "/scrollspy.js",
+    folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
     folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",
     folder.js_comp + "/forms.js",
+    folder.js_comp + "/character_counter.js",
     folder.js_comp + "/dropdown.js"
     ])
     .pipe( concat('components.js') )
@@ -203,6 +209,22 @@ gulp.task('images', function() {
   return stream;
 });
 
+gulp.task('content', function() {
+  stream = gulp.src(glob.content)
+    .pipe( gulp.dest(folder.dist + '/content') )
+    .pipe( connect.reload() );
+  return stream;
+});
+
+// ===================================================
+// Extras
+// ===================================================
+
+gulp.task('extras', function() {
+  stream = gulp.src(glob.extras)
+    .pipe( gulp.dest(folder.dist + '/extras') )
+  return stream;
+});
 
 
 // ===================================================
@@ -250,6 +272,10 @@ gulp.task('watch', function() {
   gulp.watch([
     glob.images
   ], ['images']);
+
+  gulp.watch([
+    glob.content
+  ], ['content']);
 
 });
 

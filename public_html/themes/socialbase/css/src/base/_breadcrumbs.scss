@@ -1,16 +1,12 @@
 .breadcrumbs-wrapper {
-  min-height: 10px;
+  height: 20px;
   width: 100%;
   background: white;
 
-  .container {
-    width: 100%;
-    max-width: $medium;
-    font-size: 1rem;
-  }
-
-  .row {
-    margin-bottom: 0;
+  @include MQ($small) {
+    color: rgba($base-color, 0.7);
+    height: 56px;
+    line-height: 56px;
   }
 
 }
@@ -18,13 +14,10 @@
 .breadcrumb {
   display: none;
 
-  @include MQ($large) {
-    display: inline-block;
+  @include MQ($small) {
+    display: inline;
     color: rgba($base-color, 0.7);
     font-size: 14px;
-    font-weight: 500;
-    line-height: 64px;
-    height: 64px;
 
     &:hover {
       text-decoration: underline;
@@ -46,7 +39,7 @@
     -webkit-font-smoothing: antialiased;
 }
 
-.breadcrumb:first-child:before{
+.breadcrumb:first-of-type:before{
   display: none
 }
 

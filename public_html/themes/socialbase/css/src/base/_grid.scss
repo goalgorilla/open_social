@@ -1,6 +1,15 @@
 .container {
   margin: 0 auto;
-  width: 85%;
+
+  .styleguide & {
+    width: 90%;
+  }
+
+  @include MQ($small) {
+    width: 90%;
+  }
+
+
 
   @include MQ($large) {
     max-width: $medium;
@@ -40,6 +49,7 @@
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
+  position: relative;
   @lost gutter 0;
 
   // Clear floating children
@@ -57,10 +67,29 @@
   margin-left: auto;
   margin-right: auto;
 
+  &[class*="push-"],
+  &[class*="pull-"] {
+    position: relative;
+  }
+
   $i: 1;
   @while $i <= $num-cols {
     &.s#{$i} {
       lost-column: $i/$num-cols;
+    }
+    $i: $i + 1;
+  }
+
+  $i: 1;
+  @while $i <= $num-cols {
+    &.offset-s#{$i} {
+      lost-offset: $i/$num-cols;
+    }
+    &.pull-s#{$i} {
+      lost-move: -$i/$num-cols;
+    }
+    &.push-s#{$i} {
+      lost-move: $i/$num-cols;
     }
     $i: $i + 1;
   }
@@ -75,6 +104,20 @@
       $i: $i + 1
     }
 
+    $i: 1;
+    @while $i <= $num-cols {
+      &.offset-m#{$i} {
+        lost-offset: $i/$num-cols;
+      }
+      &.pull-m#{$i} {
+        lost-move: -$i/$num-cols;
+      }
+      &.push-m#{$i} {
+        lost-move: $i/$num-cols;
+      }
+      $i: $i + 1;
+    }
+
   }
 
   @include MQ($medium) {
@@ -83,6 +126,20 @@
     @while $i <= $num-cols {
       &.l#{$i} {
         lost-column: $i/$num-cols;
+      }
+      $i: $i + 1;
+    }
+
+    $i: 1;
+    @while $i <= $num-cols {
+      &.offset-l#{$i} {
+        lost-offset: $i/$num-cols;
+      }
+      &.pull-l#{$i} {
+        lost-move: -$i/$num-cols;
+      }
+      &.push-l#{$i} {
+        lost-move: $i/$num-cols;
       }
       $i: $i + 1;
     }

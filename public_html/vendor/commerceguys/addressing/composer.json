@@ -1,0 +1,45 @@
+{
+    "name": "commerceguys/addressing",
+    "type": "library",
+    "description": "Addressing library powered by Google's address data.",
+    "keywords": ["postal", "address", "internationalization", "localization"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0",
+        "doctrine/collections": "~1.0",
+        "commerceguys/enum": "~1.0"
+    },
+    "require-dev": {
+        "symfony/validator": ">=2.3",
+        "symfony/intl": ">=2.3",
+        "phpunit/phpunit": "~4.0",
+        "mikey179/vfsStream": "1.*"
+    },
+    "suggest": {
+        "commerceguys/intl": "to use it as the source of country data",
+        "symfony/intl": "to use it as the source of country data",
+        "symfony/form": "to generate Symfony address forms",
+        "symfony/validator": "to validate addresses"
+    },
+    "autoload": {
+        "psr-4": { "CommerceGuys\\Addressing\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CommerceGuys\\Addressing\\Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Bojan Zivanovic"
+        },
+        {
+            "name": "Damien Tournoud"
+        }
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    }
+}
