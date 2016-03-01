@@ -14,7 +14,7 @@ Feature: Create Event
          | Time | 11:00:00 |
          | Location name | GG HQ |
     And I select "NL" from "Country"
-    And I wait for the Location to appear
+    And I wait for the location to appear
     And I fill in the following:
          | Postal code | 7514DR |
          | City | Enschede |
