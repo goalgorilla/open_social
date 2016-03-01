@@ -35,7 +35,7 @@ label {
   height: 3em;
   width: 100%;
   font-size: 1em;
-  margin: 0;
+  margin: 0 0 15px 0;
   padding: 0;
   box-shadow: none;
   box-sizing: content-box;
@@ -74,6 +74,11 @@ label {
   }
 }
 
+.textarea--cke .cke {
+  position: relative;
+  top: 2em;
+}
+
 // Styling for input field wrapper
 .input-field {
   position: relative;
@@ -110,6 +115,46 @@ label {
   .prefix ~ textarea { padding-top: .8em; }
   .prefix ~ label { margin-left: 3em; }
 
+}
+
+// Auto complete
+.autocomplete-content {
+	margin-top: -1em;
+	@extend .z-depth-1;
+  background-color: white;
+
+		li {
+			color: $base-color;
+			cursor: pointer;
+			line-height: 1.5em;
+			width: 100%;
+			text-align: left;
+      @extend %clearfix;
+
+			> span {
+				font-size: 1em;
+				padding: 0.6em;
+				display: block;
+
+				.highlight {
+					color: $input-border-color;
+				}
+			}
+
+			img {
+				height: 52px;
+				width: 52px;
+				padding: 5px;
+				margin: 0 15px;
+			}
+
+
+
+			&:hover {
+				background: #eee;
+				cursor: pointer;
+			}
+		}
 }
 
 

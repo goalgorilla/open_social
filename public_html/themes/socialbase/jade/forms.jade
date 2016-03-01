@@ -92,6 +92,33 @@ html(lang="en")
                       <label class="active" for="first_name2">First Name</label>
                     </div>
                   </div>
+                  
+              h4 Autocomplete
+              :markdown
+                To add autocomplete to an input field you need to add a couple of things. The `input` needs to have class `.autocomplete`. The second thing need is a data attribute `array`. This attribute will hold all data needed.
+              .row
+                .col.s12
+                  p How the array should look:
+                  pre
+                    code.language-markup.
+                      [
+                        {
+                         "value": "Select text",
+                         "path": "Image path",
+                         "class": "Image class"
+                        }
+                      ]
+    
+              p The array is a json array so it's easy to maintain with PHP. 
+                em This might need to be changed because it gets quite long.
+
+              p To get highlighted text add `highlight-matching` class to the input.
+              .row
+                .col.s12
+                  .row
+                    .input-field.col.s12
+                      input#autocomplete.form-text.autocomplete(type='text', data-array='[{"value": "Aaron", "path": "content/images/avatar1.jpg","class": "left circle"},{"value": "Alex Nelson","path": "content/images/avatar2.jpg","class": "right circle"},{"value": "Abbey Christensen", "path": "content/images/avatar3.jpg","class": "right circle"}]')
+                      label(for='autocomplete') Autocomplete with highlighting
                 
             // Textarea Section
             #textarea.section.scrollspy
