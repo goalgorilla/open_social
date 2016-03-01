@@ -16,15 +16,26 @@
 <ul class="header-menu">
 {% for item in links %}
 
-    <li class="{{ item.classes }}">
-        <a href="{{ item.url }}" class="menu__link">
-            <div class="b-menu">
-                <i title="{{ item.label }}" class="material-icons">{{ item.label|lower }}</i>
-                <span class="menu__label hidden">{{ item.label }}</span>
+    <li class="menu__item {{ item.classes }}">
+        <a href="{{ item.url }}" {{item.link_attributes|raw }} class="menu__link {{ item.link_classes }}">
+            <div class="b-menu {{ item.icon_classes }}">
+              <i title="{{ item.label }}" class="material-icons">{{ item.icon_label|lower }}</i>
             </div>
+            <span class="menu__label {{item.label_classes}}">{{ item.label }}</span>
         </a>
 
     </li>
-
 {% endfor %}
+
+  {# This menu item is used to open the main menu for mobile, as the class says it is hidden on desktop. Admins must not disable the main menu. #}
+  <li class="menu__item hidden-desktop">
+    <a href="#0" data-panel="#menu-panel" title="Show menu" class="menu__link panel-trigger">
+      <div class="b-menu">
+        <div class="b-bun b-bun--top"></div>
+        <div class="b-bun b-bun--mid"></div>
+        <div class="b-bun b-bun--bottom"></div>
+      </div>
+      <span class="menu__label hidden">menu</span>
+    </a>
+  </li>
 </ul>
