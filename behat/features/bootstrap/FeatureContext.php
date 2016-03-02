@@ -46,7 +46,7 @@ class FeatureContext extends MinkContext
     public function iWaitForTheLocationToAppear()
     {
         $this->spin(function($context) {
-            $context->assertPageContainsText('Postal code');
+            $context->assertPageContainsText('City');
             return true;
         });
     }

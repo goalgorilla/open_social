@@ -16,9 +16,9 @@ Feature: Create Event
     And I select "NL" from "Country"
     And I wait for the location to appear
     And I fill in the following:
-         | Postal code | 7514DR |
          | City | Enschede |
          | Street address | Oldenzaalsestraat |
+         | Postal code | 7514DR |
     And I press "Save"
     Then I should see "This is a test event has been created."
     And I should see the heading "This is a test event" in the "Page title block"
