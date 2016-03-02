@@ -19,6 +19,12 @@
  * @ingroup templates
  */
 #}
-{% block input %}
-  <input{{ attributes }} />{{ children }}
-{% endblock %}
+
+{%
+  set classes = [
+    element['#type'] == 'email' ? 'form-text',
+    element['#type'] == 'submit' ? 'btn waves-effect waves-light form-submit',
+  ]
+%}
+
+<input{{ attributes.addClass(classes) }} />{{ children }}

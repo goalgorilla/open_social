@@ -16,37 +16,15 @@ label {
    Text Inputs + Textarea
 ****************************/
 
-// Style Placeholders
-::-webkit-input-placeholder {
-   color: lighten($input-border-color, 20%);
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   color: lighten($input-border-color, 20%);
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color: lighten($input-border-color, 20%);
-}
-
+::-webkit-input-placeholder,
+:-moz-placeholder, // Firefox 18-
+::-moz-placeholder, // Firefox 19+
 :-ms-input-placeholder {
    color: lighten($input-border-color, 20%);
 }
 
 // Text inputs
-input:not([type]),
-input[type=text],
-input[type=password],
-input[type=email],
-input[type=url],
-input[type=time],
-input[type=date],
-input[type=datetime],
-input[type=datetime-local],
-input[type=tel],
-input[type=number],
-input[type=search],
-textarea.materialize-textarea {
+.form-text {
 
   // General Styles
   background-color: transparent;
@@ -57,12 +35,11 @@ textarea.materialize-textarea {
   height: 3em;
   width: 100%;
   font-size: 1em;
-  margin: 0;
+  margin: 0 0 15px 0;
   padding: 0;
   box-shadow: none;
   box-sizing: content-box;
   transition: all .3s;
-
 
   // Disabled input style
   &:disabled, &[readonly="readonly"] {
@@ -82,38 +59,24 @@ textarea.materialize-textarea {
   &:focus:not([readonly])+label {
     color: $primary-color;
   }
-  // Valid Input Style
-  &.valid,
-  &:focus.valid {
-    border-bottom: 1px solid $primary-color;
-    box-shadow: 0 2px 0 0 $primary-color;
-  }
-  // Custom Success Message
-  &.valid + label:after,
-  &:focus.valid + label:after {
-    content: attr(data-success);
-    color: $primary-color;
-    opacity: 1;
-  }
-  // Invalid Input Style
-  &.invalid,
-  &:focus.invalid {
-    border-bottom: 1px solid $input-error-color;
-    box-shadow: 0 1px 0 0 $input-error-color;
-  }
-  // Custom Error message
-  &.invalid + label:after,
-  &:focus.invalid + label:after {
-    content: attr(data-error);
-    color: $input-error-color;
-    opacity: 1;
-  }
-  // Full width label when using validate for error messages
-  &.validate + label {
-    width: 100%;
-    z-index: -1;
-  }
 
+}
+
+// Default textarea
+.form-textarea {
+   height: 3em;
+
+  &.materialize-textarea {
+    overflow-y: hidden; // prevents scroll bar flash
+    padding: 1.6em 0; // prevents text jump on Enter keypress
+    resize: none;
+    min-height: 3em;
+  }
+}
+
+.textarea--cke .cke {
+  position: relative;
+  top: 2em;
 }
 
 // Styling for input field wrapper
@@ -154,21 +117,46 @@ textarea.materialize-textarea {
 
 }
 
+// Auto complete
+.autocomplete-content {
+	margin-top: -1em;
+	@extend .z-depth-1;
+  background-color: white;
+
+		li {
+			color: $base-color;
+			cursor: pointer;
+			line-height: 1.5em;
+			width: 100%;
+			text-align: left;
+      @extend %clearfix;
+
+			> span {
+				font-size: 1em;
+				padding: 0.6em;
+				display: block;
+
+				.highlight {
+					color: $input-border-color;
+				}
+			}
+
+			img {
+				height: 52px;
+				width: 52px;
+				padding: 5px;
+				margin: 0 15px;
+			}
 
 
-// Default textarea
-textarea {
-   width: 100%;
-   height: 3em;
-   background-color: transparent;
 
-  &.materialize-textarea {
-    overflow-y: hidden; /* prevents scroll bar flash */
-    padding: 1.6em 0; /* prevents text jump on Enter keypress */
-    resize: none;
-    min-height: 3em;
-  }
+			&:hover {
+				background: #eee;
+				cursor: pointer;
+			}
+		}
 }
+
 
 // For textarea autoresize
 .hiddendiv {
@@ -305,9 +293,6 @@ input[type="submit"] {
 form p {
   margin-bottom: 10px;
   text-align: left;
-}
-form p:last-child {
-  margin-bottom: 0;
 }
 
 /* Remove default checkbox */
@@ -515,6 +500,182 @@ form p:last-child {
 }
 
 
+/***************
+     Switch
+***************/
+.switch,
+.switch * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+}
+
+.switch label {
+    cursor: pointer;
+}
+
+.switch label input[type=checkbox]{
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch label input[type=checkbox]:checked + .lever {
+    background-color: $switch-checked-lever-bg;
+}
+
+.switch label input[type=checkbox]:checked + .lever:after {
+    background-color: $switch-bg-color;
+}
+
+.switch label .lever {
+    content: "";
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 15px;
+    background-color: $switch-unchecked-lever-bg;
+    border-radius: 15px;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+    vertical-align: middle;
+    margin: 0 16px;
+}
+
+.switch label .lever:after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 21px;
+    height: 21px;
+    background-color: $switch-unchecked-bg;
+    border-radius: 21px;
+    box-shadow: 0 1px 3px 1px rgba(0,0,0,.4);
+    left: -5px;
+    top: -3px;
+    transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
+}
+
+// Switch active style
+input[type=checkbox]:checked:not(:disabled) ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,.4), 0 0 0 15px transparentize($switch-bg-color, .9);
+}
+
+input[type=checkbox]:not(:disabled) ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,.4), 0 0 0 15px rgba(0, 0, 0, .08);
+}
+
+.switch label input[type=checkbox]:checked + .lever:after {
+    left: 24px;
+}
+
+// Disabled Styles
+.switch input[type=checkbox][disabled] + .lever{
+  cursor: default;
+}
+.switch label input[type=checkbox][disabled] + .lever:after,
+.switch label input[type=checkbox][disabled]:checked + .lever:after {
+    background-color: $input-disabled-solid-color;
+}
+
+/***************
+  Select Field
+***************/
+.select-label {
+  position: absolute;
+}
+
+.select-wrapper {
+  position: relative;
+
+  input.select-dropdown {
+    position: relative;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid $input-border-color;
+    outline: none;
+    height: 3em;
+    line-height: 3em;
+    width: 100%;
+    font-size: 1em;
+    margin: 0 0 15px 0;
+    padding: 0;
+    display: block;
+  }
+
+  span.caret {
+    color: initial;
+    position: absolute;
+    right: 0;
+    top: 16px;
+    font-size: 10px;
+    &.disabled {
+      color: $input-disabled-color;
+    }
+  }
+
+  & + label {
+    position: absolute;
+    top: -14px;
+    font-size: $label-font-size;
+  }
+}
+
+select { display: none; }
+select.browser-default { display: block; }
+
+// Disabled styles
+select:disabled {
+  color: rgba(0,0,0,.3);
+}
+
+.select-wrapper input.select-dropdown:disabled {
+  color: rgba(0,0,0,.3);
+  cursor: default;
+  border-bottom: 1px solid rgba(0,0,0,.3);
+}
+
+.select-wrapper i {
+  color: rgba(0,0,0,.3);
+}
+
+.select-dropdown li.disabled,
+.select-dropdown li.disabled > span,
+.select-dropdown li.optgroup {
+  color: rgba(0,0,0,.3);
+  background-color: transparent;
+}
+
+// Icons
+.select-dropdown li {
+  img {
+    height: $dropdown-item-height - 10;
+    width: $dropdown-item-height - 10;
+    margin: 5px 15px;
+    float: right;
+  }
+}
+
+// Optgroup styles
+.select-dropdown li.optgroup {
+  border-top: 1px solid $dropdown-hover-bg-color;
+
+  &.selected > span {
+    color: rgba(0, 0, 0, .7);
+  }
+
+  & > span {
+    color: rgba(0, 0, 0, .4);
+  }
+
+  & ~ li:not(.optgroup) {
+    padding-left: 1rem;
+  }
+}
+
+
 /*********************
       File Input
 **********************/
@@ -530,8 +691,8 @@ form p:last-child {
 
   .btn {
     float: left;
-    height: 3rem;
-    line-height: 3rem;
+    height: 3em;
+    line-height: 3em;
   }
 
   span {
@@ -645,7 +806,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 // FireFox
 input[type=range]{
   /* fix for FF unable to apply focus style bug  */
-  border: 1px solid white;
+  border: 1px solid transparent;
 
   /*required for proper track sizing in FF*/
 }

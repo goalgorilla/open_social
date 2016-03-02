@@ -1,0 +1,37 @@
+// Nav List
+.table-of-contents {
+  padding-top: 1em;
+  font-size: 1.4rem;
+
+  &.fixed {
+      position: fixed;
+    }
+
+  li {
+    padding: 2px 0;
+  }
+
+  a {
+    display: block;
+    font-weight: 300;
+    color: #757575;
+    padding-left: 14px;
+    line-height: 1.5em;
+
+    &:hover {
+      color: lighten(#757575, 20%);
+      padding-left: 13px;
+      border-left: 1px solid lighten($primary-color,10%);
+    }
+    &.active {
+      font-weight: 500;
+      padding-left: 13px;
+      border-left: 2px solid lighten($primary-color,10%);
+    }
+  }
+}
+
+.toc-wrapper {
+  position: relative;
+  padding-top: 1rem;
+}

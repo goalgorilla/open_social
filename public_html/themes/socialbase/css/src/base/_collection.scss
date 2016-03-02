@@ -28,6 +28,41 @@
 
   }
 
+  &.avatar {
+    min-height: 84px;
+    padding-left: 72px;
+    position: relative;
+
+    .circle {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      left: 15px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .secondary-content {
+    float: right;
+    color: $secondary-color;
+  }
+
+  &.avatar .secondary-content {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
   &:last-child a {
     border-bottom: none;
   }
