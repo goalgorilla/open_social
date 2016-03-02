@@ -1,11 +1,15 @@
 <?php
 
-use Drupal\DrupalExtension\Context\MinkContext;
+use Behat\Behat\Context\Context;
+use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
+use Drupal\DrupalExtension\Context\DrupalContext;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends MinkContext
+class FeatureContext implements Context, SnippetAcceptingContext
 {
     /**
      * Initializes context.
@@ -17,40 +21,4 @@ class FeatureContext extends MinkContext
     public function __construct()
     {
     }
-
-    public function spin ($lambda, $wait = 60)
-    {
-        for ($i = 0; $i < $wait; $i++)
-        {
-            try {
-                if ($lambda($this)) {
-                    return true;
-                }
-            } catch (Exception $e) {
-                // do nothing
-            }
-
-            sleep(1);
-        }
-
-        $backtrace = debug_backtrace();
-
-        throw new Exception(
-          "Timeout thrown by " . $backtrace[1]['class'] . "::" . $backtrace[1]['function'] . "()\n" . ", line " . $backtrace[1]['line']
-        );
-    }
-
-    /**
-     * @When I wait for the location to appear
-     */
-    public function iWaitForTheLocationToAppear()
-    {
-        $this->spin(function($context) {
-            $context->getSession()->wait(10000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
-            return true;
-        });
-    }
-
 }
-
-
