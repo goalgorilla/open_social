@@ -104,11 +104,6 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       $start_date = $this->createDate($event['field_event_date']);
       $end_date = $this->createDate($event['field_event_date_end']);
 
-//      var_dump($start_date->render());
-//      var_dump($start_date->format('Y-m-d H:i:s'));
-//      var_dump($end_date->render());
-//      continue;
-
       // Let's create some nodes.
       $node = Node::create([
         'uuid' => $event['uuid'],
