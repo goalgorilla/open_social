@@ -46,7 +46,7 @@ class FeatureContext extends MinkContext
     public function iWaitForTheLocationToAppear()
     {
         $this->spin(function($context) {
-            $context->assertPageContainsText('City');
+            $context->getSession()->wait(10000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
             return true;
         });
     }
