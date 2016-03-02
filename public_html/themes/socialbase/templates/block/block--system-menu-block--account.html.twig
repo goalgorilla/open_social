@@ -31,6 +31,7 @@
  * http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  */
 #}
+
 {%
   set classes = [
     logged_in  ? 'block--user-menu' : 'block--headermenu',
@@ -38,6 +39,12 @@
 %}
 
 <nav role="navigation" {{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
+
+  {# Extra wrapper, only when it is a logged in user #}
+  {% if logged_in %}
+    <div class="block--user-menu">
+  {% endif %}
+
   {# Label. If not displayed, we still provide it for screen readers. #}
   {% if not configuration.label_display %}
     {% set title_attributes = title_attributes.addClass('visually-hidden') %}
@@ -47,7 +54,10 @@
   {{ title_suffix }}
 
   {# Menu. #}
-  {% block content %}
-    {{ content }}
-  {% endblock %}
+  {{ content }}
+
+
+  {% if logged_in %}
+    </div>
+  {% endif %}
 </nav>

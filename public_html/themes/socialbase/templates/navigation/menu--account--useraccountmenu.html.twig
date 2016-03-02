@@ -18,6 +18,7 @@
  *   - in_active_trail: TRUE if the link is in the active trail.
  */
 #}
+
 {% import _self as menus %}
 
 {#
@@ -29,8 +30,11 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-      <ul{{ attributes.addClass('header-menu') }}>
+
+    <ul{{ attributes.addClass('user-menu') }}>
+
     {% for item in items %}
+
     {%
       set classes = [
         'menu__item',
@@ -44,16 +48,8 @@
         {% endif %}
       </li>
     {% endfor %}
-      <li class="menu__item hidden-desktop">
-        <a class="menu__link panel-trigger" href="#0" data-panel="#menu-panel" title="Show menu">
-          <span class="b-menu">
-            <span class="b-bun b-bun--top"></span>
-            <span class="b-bun b-bun--mid"></span>
-            <span class="b-bun b-bun--bottom"></span>
-          </span>
-          <span class="menu__label hidden">menu</span>
-        </a>
-      </li>
+
     </ul>
+
   {% endif %}
 {% endmacro %}
