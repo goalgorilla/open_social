@@ -10,7 +10,7 @@ script.
 
   var $lang_markup       = document.querySelectorAll('pre code.language-markup')
       $lang_js           = document.querySelectorAll('script.atomic-js'),
-      $lang_jscode       = document.querySelectorAll('pre > code.language-javascript')
+      $lang_jscode       = document.querySelectorAll('pre code.language-javascript')
       lang_markupsnippet = [],
       lang_jsnippet      = [];
 
@@ -30,12 +30,14 @@ script.
   // JavaScript
   // order matters!
   // ============================================================
-  for(var i = 0, l = $lang_js.length; i < l; i++) {
+  for(var i = 0, l = $lang_jscode.length; i < l; i++) {
     lang_jsnippet.push(
-      $lang_js[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      $lang_jscode[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     );
   }
 
-  for(var i = 0, l = $lang_jscode.length; i < l; i++) {
-    $lang_jscode[i].innerHTML = lang_jsnippet[i];
+  for(var i = 0, l = $lang_js.length; i < l; i++) {
+    $lang_js[i].innerHTML = lang_jsnippet[i];
   }
+
+include _fontfaceobserver.jade

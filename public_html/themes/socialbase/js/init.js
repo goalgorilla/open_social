@@ -29,6 +29,18 @@
       });
     });
 
+    // Floating-Fixed table of contents
+    if ($('.table-of-contents').length) {
+      $('.toc-wrapper').pushpin({ top: $('.table-of-contents').offset().top, offset: 60 });
+    }
+    else if ($('#index-banner').length) {
+      $('.toc-wrapper').pushpin({ top: $('#index-banner').height() });
+    }
+    else {
+      $('.toc-wrapper').pushpin({ top: 0 });
+    }
+
+
 
     // Github Latest Commit
     if ($('.repo-link').length) { // Checks if widget div exists (Index only)
@@ -82,10 +94,9 @@
     //$('.carousel').carousel();
     //$('.slider').slider({full_width: true});
     //$('.modal-trigger').leanModal();
-    //$('.scrollspy').scrollSpy();
+    $('.scrollspy').scrollSpy();
     $('.button-collapse').sideNav({'edge': 'left'});
-    //$('.datepicker').pickadate({selectYears: 20});
-    //$('select').not('.disabled').material_select();
+    $('select').not('.disabled').material_select();
 
 
   }); // end of document ready

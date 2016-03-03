@@ -43,7 +43,7 @@ Note that the docker projects have to be somewhere in your /Users/ directory in 
 
     This will build multiple containers (see the Dockerfile in docker_build/drupal8) and all the dependencies.
 
-5. Add social.dev to your /etc/hosts file based on the ip of the docker machine.
+5. Add social.dev and mailcatcher.social.dev to your /etc/hosts file based on the ip of the docker machine.
 
     If necessary you can find the IP with this command on your host machine:
     ```
@@ -89,6 +89,11 @@ docker start proxy
 **Now run the install script on your host machine again.**
 ```
 docker exec -it social_web_1 bash /root/dev-scripts/install/install_script.sh
+```
+
+**To view emails go to:**
+```
+mailcatcher.social.dev
 ```
 
 [![Build Status](https://travis-ci.org/goalgorilla/drupal_social.svg?branch=master)](https://travis-ci.org/goalgorilla/drupal_social)
