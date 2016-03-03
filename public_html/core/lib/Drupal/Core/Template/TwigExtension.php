@@ -254,7 +254,7 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
-   * Gets a rendered link from an url object.
+   * Gets a rendered link from a url object.
    *
    * @param string $text
    *   The link text for the anchor tag as a translated string.
@@ -313,7 +313,7 @@ class TwigExtension extends \Twig_Extension {
    * Saves the unneeded automatic escaping for performance reasons.
    *
    * The URL generation process percent encodes non-alphanumeric characters.
-   * Thus, the only character within an URL that must be escaped in HTML is the
+   * Thus, the only character within a URL that must be escaped in HTML is the
    * ampersand ("&") which separates query params. Thus we cannot mark
    * the generated URL as always safe, but only when we are sure there won't be
    * multiple query params. This is the case when there are none or only one
@@ -402,6 +402,10 @@ class TwigExtension extends \Twig_Extension {
    * @return string|null
    *   The escaped, rendered output, or NULL if there is no valid output.
    *
+   * @throws \Exception
+   *   When $arg is passed as an object which does not implement __toString(),
+   *   RenderableInterface or toString().
+   *
    * @todo Refactor this to keep it in sync with theme_render_and_autoescape()
    *   in https://www.drupal.org/node/2575065
    */
@@ -433,7 +437,7 @@ class TwigExtension extends \Twig_Extension {
       elseif (method_exists($arg, '__toString')) {
         $return = (string) $arg;
       }
-      // You can't throw exceptions in the magic PHP __toString methods, see
+      // You can't throw exceptions in the magic PHP __toString() methods, see
       // http://php.net/manual/en/language.oop5.magic.php#object.tostring so
       // we also support a toString method.
       elseif (method_exists($arg, 'toString')) {
@@ -471,10 +475,11 @@ class TwigExtension extends \Twig_Extension {
   /**
    * Wrapper around render() for twig printed output.
    *
-   * If an object is passed that has no __toString method an exception is thrown;
-   * other objects are casted to string. However in the case that the object is an
-   * instance of a Twig_Markup object it is returned directly to support auto
-   * escaping.
+   * If an object is passed which does not implement __toString(),
+   * RenderableInterface or toString() then an exception is thrown;
+   * Other objects are casted to string. However in the case that the
+   * object is an instance of a Twig_Markup object it is returned directly
+   * to support auto escaping.
    *
    * If an array is passed it is rendered via render() and scalar values are
    * returned directly.
@@ -484,6 +489,10 @@ class TwigExtension extends \Twig_Extension {
    *
    * @return mixed
    *   The rendered output or an Twig_Markup object.
+   *
+   * @throws \Exception
+   *   When $arg is passed as an object which does not implement __toString(),
+   *   RenderableInterface or toString().
    *
    * @see render
    * @see TwigNodeVisitor
@@ -511,7 +520,7 @@ class TwigExtension extends \Twig_Extension {
       elseif (method_exists($arg, '__toString')) {
         return (string) $arg;
       }
-      // You can't throw exceptions in the magic PHP __toString methods, see
+      // You can't throw exceptions in the magic PHP __toString() methods, see
       // http://php.net/manual/en/language.oop5.magic.php#object.tostring so
       // we also support a toString method.
       elseif (method_exists($arg, 'toString')) {
