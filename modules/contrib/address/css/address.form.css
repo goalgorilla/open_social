@@ -1,0 +1,13 @@
+div.address-container-inline > div.form-item {
+  float: left; /* LTR */
+  margin-right: 1em; /* LTR */
+}
+
+/* Clear-fix markup for the inline container */
+div.address-container-inline:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
