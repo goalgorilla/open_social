@@ -1,4 +1,4 @@
-@api @event @stability
+@api @event @stability @javascript
 Feature: Create Event
   Benefit: In order to connect with other people offline
   Role: As a LU
@@ -15,10 +15,11 @@ Feature: Create Event
          | Location name | GG HQ |
 #    And I select "NL" from "Country"
 #    And I wait for AJAX to finish
+#    Then I should see "City"
 #    And I fill in the following:
-#         | Postal code | 7514DR |
 #         | City | Enschede |
 #         | Street address | Oldenzaalsestraat |
+#         | Postal code | 7514DR |
     And I press "Save"
     Then I should see "This is a test event has been created."
     And I should see the heading "This is a test event" in the "Page title block"
@@ -27,4 +28,3 @@ Feature: Create Event
 #    And I should see "Oldenzaalsestraat" in the "Page title block"
 #    And I should see "7514DR" in the "Page title block"
 #    And I should see "Enschede" in the "Page title block"
-

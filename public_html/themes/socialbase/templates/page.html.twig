@@ -56,11 +56,11 @@
     <a href="{{ path('<front>') }}" title="{{ 'Home'|t }}" rel="home" class="site-logo">
       <object id="header-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
     </a>
-    {{ page.header_menu }}
+    {{ page.header }}
   </div>
 
   {{ page.menu_panel }}
-  {{ page.notifications_panel }}
+  {{ page.notification_panel }}
   {{ page.user_panel }}
 </header>
 
@@ -69,10 +69,16 @@
   {{ page.breadcrumb }}
 
   {% if page.hero %}
-    <div class="highlighted">
+    <div class="hero">
       <aside class="layout-container section clearfix" role="complementary">
         {{ page.hero }}
       </aside>
+    </div>
+  {% endif %}
+
+  {% if page.secondary_navigation %}
+    <div class="secondary_navigation">
+      {{ page.secondary_navigation }}
     </div>
   {% endif %}
 
@@ -86,14 +92,16 @@
   <div class="container">
     <div class="row">
       {% block card %}
-        {{ page.tabs }}
-        {{ page.help }}
         {{ page.content }}
       {% endblock %}
 
-      {{ page.sidebar_first }}
+      {{ page.complementary }}
 
     </div>
 
   </div>
 </main>
+
+<footer role="contentinfo">
+  {{ page.footer }}
+</footer>

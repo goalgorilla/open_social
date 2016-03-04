@@ -10,8 +10,7 @@
 $social-blue: (
   "base":       #29abe2,
   "lighten-4":  #A1D6EC,
-  "darken-1":   #1f80aa,
-
+  "darken-1":   #1f80aa
 );
 
 $red: (
@@ -331,28 +330,30 @@ $shades: (
   "transparent":  transparent
 );
 
+//"red": $red,
+//"pink": $pink,
+//"purple": $purple,
+//"deep-purple": $deep-purple,
+//"indigo": $indigo,
+//"blue": $blue,
+//"light-blue": $light-blue,
+//"cyan": $cyan,
+//"teal": $teal,
+//"green": $green,
+//"light-green": $light-green,
+//"lime": $lime,
+//"yellow": $yellow,
+//"amber": $amber,
+//"orange": $orange,
+//"deep-orange": $deep-orange,
+//"brown": $brown,
+//"blue-grey": $blue-grey,
+//"grey": $grey,
+//"shades": $shades
+
 $colors: (
   "social-blue": $social-blue,
-  "red": $red,
-  "pink": $pink,
-  "purple": $purple,
-  "deep-purple": $deep-purple,
-  "indigo": $indigo,
-  "blue": $blue,
-  "light-blue": $light-blue,
-  "cyan": $cyan,
-  "teal": $teal,
-  "green": $green,
-  "light-green": $light-green,
-  "lime": $lime,
-  "yellow": $yellow,
-  "amber": $amber,
-  "orange": $orange,
-  "deep-orange": $deep-orange,
-  "brown": $brown,
-  "blue-grey": $blue-grey,
-  "grey": $grey,
-  "shades": $shades
+  "red": $red
 );
 
 
@@ -378,17 +379,6 @@ $colors: (
     }
   }
 }
-
-// Shade classes
-@each $color, $color_value in $shades {
-  .#{$color} {
-    background-color: $color_value !important;
-  }
-  .#{$color}-text {
-    color: $color_value !important;
-  }
-}
-
 
 // usage: color("name_of_color", "type_of_color")
 // to avoid to repeating map-get($colors, ...)

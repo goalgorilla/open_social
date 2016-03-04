@@ -1,0 +1,216 @@
+- var pagetype = "styleguide"
+- var page = "Layouts"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+        .row 
+          .col.s12.m9.l10
+            
+            #regions.section.scrollspy
+              h2.header Regions
+              p We have split up the <em>fluid</em> layout of the interface into regions to which in Drupal we can assign blocks to. The following regions are used. When you scroll down we see how these regions are placed in layouts. 
+              
+              ul.collection 
+                li.collection__item.avatar
+                  span.circle(style='background-color: #e1bee7') 
+                  span.title Header
+                  p Primary navigation, user navigation, site search
+                li.collection__item.avatar
+                  span.circle(style='background-color: #80deea')
+                  span.title Breadcrumbs 
+                  p pathway navigation for large screen and 'go back' navigation for mobile 
+                li.collection__item.avatar
+                  span.circle(style='background-color: #ef9a9a')
+                  span.title Hero
+                  p Displays an overview of the main content such as a person, group or event.
+                li.collection__item.avatar
+                  span.circle(style='background-color: #90caf9')
+                  span.title Primary action
+                  p Call to action 
+                li.collection__item.avatar
+                  span.circle(style='background-color: #80cbc4')
+                  span.title Secondary navigation
+                  p section specific navigation
+                li.collection__item.avatar
+                  span.circle(style='background-color: #dce775')
+                  span.title Title 
+                  p Explains what this page or section is about
+                li.collection__item.avatar
+                  span.circle(style='background-color: #a5d6a7')
+                  span.title Main content 
+                  p Content about this section          
+                li.collection__item.avatar
+                  span.circle(style='background-color: #ffe082')
+                  span.title Complementary 
+                  p Complementary content, filters, actions, quick navigations that specific to the section     
+                li.collection__item.avatar
+                  span.circle(style='background-color: #b0bec5')
+                  span.title Footer 
+                  p It is static and contains information about the whole application.
+
+            #layout-a.section.scrollspy
+              h2.header Layout A
+              
+              p This layout is used on all section overviews such as a the dashboard, profile, groups and content types (events overview). It is usually a function t bind content and there are always subcontent pages.
+              
+              .browser-window
+                .top-bar
+                  .circles
+                   #close-circle.circle
+                   #minimize-circle.circle
+                   #maximize-circle.circle
+                .content
+                  .row
+                    .col.s12(style='background-color:#e1bee7; min-height: 80px;')
+                      p Header
+                  .row.only-desktop
+                    .col.l12(style='background-color:#80deea; min-height: 30px;')
+                      p Breadcrumbs
+                  .row
+                    .col.s12(style='background-color:#ef9a9a; min-height: 120px;')
+                      p Hero
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      .col.s12.m3.right(style='background-color:#90caf9; min-height: 60px;')
+                        p Primary action
+                  .row
+                    .col.s12(style='background-color:#80cbc4; min-height: 40px;')
+                      p Secondary navigation
+                      p.flat-text.inline25 
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    .col.s12.m9(style='background-color:#dce775; min-height: 60px;')
+                      p Title 
+                    .col.s12.m3.right(style='background-color:#ffe082; min-height: 250px;')
+                      p Complementary
+                      p.flat-text.small
+                      p.flat-text
+                      p.flat-text
+                    .col.s12.m9(style='background-color:#a5d6a7; min-height: 400px;')
+                      p Main content 
+                      p.flat-text-header 
+                      p.flat-text
+                      p.flat-text
+                      p.flat-text
+                  .row
+                    .col.s12(style='background-color:#b0bec5; min-height: 50px;')
+                      p Footer
+            
+            #layout-b.section.scrollspy
+              h2.header Layout B
+              
+              p This layout is used on sections that has subcontent or has sibling pages in the hierarchy. For example an event node has enrollment as a sibling, but a topic node doesn't have siblings. So we use this template for event, but not for topic.
+              
+              p <strong>Please note</strong> that the difference here is only seen on smaller screens compared to Layout A. The hero area will be hidden and instead of the secondary navigation there is a "Back to main page" button which leads back to  Layout A.
+              
+              .browser-window
+                .top-bar
+                  .circles
+                   #close-circle.circle
+                   #minimize-circle.circle
+                   #maximize-circle.circle
+                .content
+                  .row
+                    .col.s12(style='background-color:#e1bee7; min-height: 80px;')
+                      p Header
+                  .row
+                    .col.l12.only-desktop(style='background-color:#80deea; min-height: 30px;')
+                      p Breadcrumbs
+                    .col.s12.hidden-tablet(style='background-color:#80deea; min-height: 30px;')
+                        p Back to main page
+                  .row.hidden-mobile
+                    .col.s12(style='background-color:#ef9a9a; min-height: 120px;')
+                      p Hero
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      .col.s12.m3.right(style='background-color:#90caf9; min-height: 60px;')
+                        p Primary action
+                  .row.hidden-mobile
+                    .col.s12(style='background-color:#80cbc4; min-height: 40px;')
+                      p Secondary navigation
+                      p.flat-text.inline25 
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    .col.s12.m9(style='background-color:#dce775; min-height: 60px;')
+                      p Title 
+                    .col.s12.m3.right(style='background-color:#ffe082; min-height: 250px;')
+                      p Complementary
+                      p.flat-text.small
+                      p.flat-text
+                      p.flat-text
+                    .col.s12.m9(style='background-color:#a5d6a7; min-height: 400px;')
+                      p Main content 
+                      p.flat-text-header 
+                      p.flat-text
+                      p.flat-text
+                      p.flat-text
+                  .row
+                    .col.s12(style='background-color:#b0bec5; min-height: 50px;')
+                      p Footer
+          
+            #layout-c.section.scrollspy
+              h2.header Layout C
+              
+              p This layout is used on sections that has <strong>no</strong> subcontent nor has sibling pages in the hierarchy. For example a topic node, or and edit node page. Compared to the other layouts we do not have a Secondary navigation nor Title region here. The title will be displayed in the Hero.
+              
+              .browser-window
+                .top-bar
+                  .circles
+                   #close-circle.circle
+                   #minimize-circle.circle
+                   #maximize-circle.circle
+                .content
+                  .row
+                    .col.s12(style='background-color:#e1bee7; min-height: 80px;')
+                      p Header
+                  .row.only-desktop
+                    .col.l12(style='background-color:#80deea; min-height: 30px;')
+                      p Breadcrumbs
+                  .row
+                    .col.s12(style='background-color:#ef9a9a; min-height: 120px;')
+                      p Hero
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      .col.s12.m3.right(style='background-color:#90caf9; min-height: 60px;')
+                        p Primary action
+                  .row
+                    .col.s12.m3.right(style='background-color:#ffe082; min-height: 250px;')
+                      p Complementary
+                      p.flat-text.small
+                      p.flat-text
+                      p.flat-text
+                    .col.s12.m9(style='background-color:#a5d6a7; min-height: 400px;')
+                      p Main content 
+                      p.flat-text-header 
+                      p.flat-text
+                      p.flat-text
+                      p.flat-text
+                  .row
+                    .col.s12(style='background-color:#b0bec5; min-height: 50px;')
+                      p Footer
+          
+          
+          .col.m3.l2.hidden-mobile
+            .toc-wrapper
+              ul.section.table-of-contents
+                li
+                  a(href='#regions') Regions
+                li
+                  a(href='#layout-a') Layout A
+                li
+                  a(href='#layout-b') Layout B
+                li
+                  a(href='#layout-c') Layout C
+
+    include ./layout/_scripts.jade

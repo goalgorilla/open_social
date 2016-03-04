@@ -40,7 +40,11 @@ ul#nav-mobile.side-nav.fixed
               a(href='breadcrumbs.html') Breadcrumbs
             li(class=(page == "Forms" ? "active" : ""))
               a(href='forms.html') Forms
-
+  li.bold(class=(page == "Layouts" ? "active" : ""))
+    a.waves-effect.waves-teal(href='layouts.html') Layouts
+  
+  li.no-padding
+    ul.collapsible.collapsible-accordion
       li.bold
         a.collapsible-header(class=(page == "Dialogs" || page == "Modals" || page == "Dropdown" || page == "Tabs" || page == "ScrollFire" || page == "Scrollspy" || page == "SideNav" || page == "Pushpin" || page == "Waves" || page == "Media" || page == "Transitions" || page == "Parallax" || page == "Collapsible" ? "active" : "")+" waves-effect waves-teal")
           | JavaScript
