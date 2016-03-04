@@ -78,7 +78,9 @@
 
   {% if page.secondary_navigation %}
     <div class="secondary_navigation">
-      {{ page.secondary_navigation }}
+      <div class="container">
+        {{ page.secondary_navigation }}
+      </div>
     </div>
   {% endif %}
 
@@ -91,14 +93,19 @@
 
   <div class="container">
     <div class="row">
-      {% block card %}
-        {{ page.content }}
-      {% endblock %}
+      <div class="col s12 l9">
+        {% block card %}
+          {{ page.content }}
+        {% endblock %}
+      </div>
 
-      {{ page.complementary }}
+      {% if page.complementary %}
+        <div role="complementary" class="col s12 l3">
+          {{ page.complementary }}
+        </div>
+      {% endif %}
 
     </div>
-
   </div>
 </main>
 
