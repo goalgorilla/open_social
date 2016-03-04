@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.events
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - bartik
+id: exposedformeventsevents_overview
+theme: bartik
+region: sidebar_second
+weight: -6
+provider: null
+plugin: 'views_exposed_filter_block:events-events_overview'
+settings:
+  id: 'views_exposed_filter_block:events-events_overview'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: 'Events filter'
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+  request_path:
+    id: request_path
+    pages: '/user/*/events'
+    negate: false
+    context_mapping: {  }
