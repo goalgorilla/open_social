@@ -94,8 +94,8 @@
 /*****************
   Chrome Browser
 *****************/
-$bottomColor: $grey-light-1;
-$topColor: lighten($bottomColor, 2%);
+$bottomColor: $grey-light-2;
+$topColor: $grey-light-3;
 
 .browser-window {
   text-align: left;
@@ -109,8 +109,8 @@ $topColor: lighten($bottomColor, 2%);
   .top-bar {
     height: 30px;
     border-radius: 5px 5px 0 0;
-    border-top: thin solid lighten($topColor, 1%);
-    border-bottom: thin solid darken($bottomColor, 1%);
+    border-top: thin solid $topColor;
+    border-bottom: thin solid $bottomColor;
     background: linear-gradient($topColor, $bottomColor);
   }
 }
@@ -145,11 +145,10 @@ $topColor: lighten($bottomColor, 2%);
   width: 100%;
   display: inline-block;
   border-radius: 0 0 5px 5px;
-  background-color: #fafafa;
+  background-color: $grey-light-4;
 
   p {
     text-align: center;
-    font-weight: bold;
   }
 }
 
@@ -158,50 +157,10 @@ $topColor: lighten($bottomColor, 2%);
   text-align: center;
 }
 
-/*******************
-  Flat Site Mockup
-*******************/
-
-#site-layout-example-header {
-  background-color: #E57373;
-  height: 80px;
-}
-
-#site-layout-example-breadcrumb {
-  background-color: #ffe57f;
-  height: 60px;
-}
-
-#site-layout-example-hero {
-  background-color: #b39ddb;
-  height: 120px;
-}
-
-#site-layout-example-secondary {
-  background-color: #e0f2f1;
-}
-
-#site-layout-example-main {
-  background-color: #2196f3;
-  height: 400px;
-}
-
-#site-layout-example-aside {
-  background-color: #ffa726;
-
-  @include MQ($small) {
-    height: 400px;
-  }
-}
-
-#site-layout-example-footer {
-  background-color: #90a4ae;
-}
-
 .flat-text-header {
   height: 35px;
   width: 80%;
-  background-color: rgba(255,255,255,.15);
+  background-color: rgba(0,0,0,.25);
   display: block;
   margin: 27px auto;
 }
