@@ -80,3 +80,17 @@ function social_core_preprocess_node(&$variables) {
     unset($variables['label']);
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * For Site information Site details form.
+ */
+function social_core_form_system_site_information_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Hide site slogan field and make it disabled as well whenever the user
+  // is able to fill out the textfield.
+  if (!empty($form['site_information']['site_slogan'])) {
+    $form['site_information']['site_slogan']['#type'] = 'hidden';
+    $form['site_information']['site_slogan']['#disabled'] = TRUE;
+  }
+}
