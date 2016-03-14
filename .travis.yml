@@ -13,7 +13,7 @@ services:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install docker-engine
+  - sudo apt-get -y install docker-engine
   - docker --version
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
