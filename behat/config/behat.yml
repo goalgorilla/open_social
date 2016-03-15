@@ -31,9 +31,9 @@ default:
         drupal:
           drupal_root: '/var/www/html'
         selectors:
-          message_selector: '.messages'
-          error_message_selector: '.messages.messages--error'
-          success_message_selector: '.messages.messages--status'
+          message_selector: 'div[role=contentinfo]'
+          error_message_selector: 'div[role=contentinfo]'
+          success_message_selector: 'div[role=contentinfo]'
         text:
           username_field: 'Username or email address'
         region_map:
