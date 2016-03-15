@@ -4,12 +4,14 @@ dependencies:
   config:
     - field.field.node.event.body
     - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - node.type.event
   module:
+    - comment
     - image
     - text
     - user
@@ -24,6 +26,13 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+  field_event_comments:
+    weight: 2
+    label: above
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
   field_event_image:
     weight: 1
     label: hidden

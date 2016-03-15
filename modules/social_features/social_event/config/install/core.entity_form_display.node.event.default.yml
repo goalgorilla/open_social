@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.event.body
     - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_image
@@ -12,6 +13,7 @@ dependencies:
     - node.type.event
   module:
     - address
+    - comment
     - datetime
     - image
     - text
@@ -41,6 +43,11 @@ content:
       default_country: ''
     third_party_settings: {  }
     type: address_default
+  field_event_comments:
+    weight: 32
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
   field_event_date:
     weight: 28
     settings: {  }
