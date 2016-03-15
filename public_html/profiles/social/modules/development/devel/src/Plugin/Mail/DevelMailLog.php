@@ -1,18 +1,8 @@
 <?php
+
 /**
  * @file
- * MailSystemInterface for logging mails to the filesystem.
- *
- * To enable, save a variable in settings.php (or otherwise) whose value
- * can be as simple as:
- *
- * $config['system.mail']['interface']['default'] = 'devel_mail_log';
- *
- * Saves to temporary://devel-mails dir by default. Can be changed using
- * 'debug_mail_directory' config setting. Filename pattern controlled by
- * 'debug_mail_file_format' config setting.
- * NOTE: Config settings are currently broken: see
- * https://www.drupal.org/node/2385971.
+ * Contains \Drupal\devel\Plugin\Mail\DevelMailLog.
  */
 
 namespace Drupal\devel\Plugin\Mail;
@@ -24,6 +14,29 @@ use Exception;
 
 /**
  * Defines a mail backend that saves emails as temporary files.
+ *
+ * To enable, save a variable in settings.php (or otherwise) whose value
+ * can be as simple as:
+ * @code
+ * $config['system.mail']['interface']['default'] = 'devel_mail_log';
+ * @endcode
+ *
+ * By default the mails are saved in 'temporary://devel-mails'. This setting
+ * can be changed using 'debug_mail_directory' config setting. For example,
+ * @code
+ * $config['devel.settings']['debug_mail_directory'] = 'temporary://my-directory';
+ * @endcode
+ *
+ * The default filename pattern used is '%to-%subject-%datetime.mail.txt'. This
+ * setting can be changed using 'debug_mail_directory' config setting. For example,
+ * @code
+ * $config['devel.settings']['debug_mail_file_format'] = 'devel-mail-%to-%subject-%datetime.mail.txt';
+ * @endcode
+ *
+ * The following placeholders can be used in the filename pattern:
+ *   - %to: the email recipient.
+ *   - %subject: the email subject.
+ *   - %datetime: the current datetime in 'y-m-d_his' format.
  *
  * @Mail(
  *   id = "devel_mail_log",
@@ -68,15 +81,7 @@ class DevelMailLog extends PhpMail {
   }
 
   /**
-   * Save an e-mail message to a file, using Drupal variables and default settings.
-   *
-   * @see http://php.net/manual/en/function.mail.php
-   * @see drupal_mail()
-   *
-   * @param array $message
-   *   A message array, as described in hook_mail_alter().
-   * @return bool|int TRUE if the mail was successfully accepted, otherwise FALSE.
-   * TRUE if the mail was successfully accepted, otherwise FALSE.
+   * {@inheritdoc}
    */
   public function mail(array $message) {
     $output = $this->composeMessage($message);
