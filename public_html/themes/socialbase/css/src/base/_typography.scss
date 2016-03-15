@@ -78,8 +78,7 @@ h6, .h6 {
 	font-weight: 300;
 }
 
-//  Blockquote
-
+// Blockquote
 blockquote {
   margin: 20px 0;
   padding-left: 1.5rem;
@@ -118,7 +117,25 @@ small { font-size: 75%; }
 
 .page-title h1 {
 	color: white;
-	font-weight: 700;
-	padding: 1em 0;
+	font-weight: 300;
+	padding: 0.5em 0 1em;
 	margin: 0;
+}
+
+.page-title {
+	color: white;
+	font-weight: 300;
+	margin: 0;
+	margin: 12px 0 18px;
+}
+
+.section-title {
+	@include font-size($h4-font-sizes);
+	color: $base-color;
+	text-transform: uppercase;
+	margin: 22px 0 18px;
+
+	@include MQ($medium) {
+		margin: 44px 0 36px;
+	}
 }

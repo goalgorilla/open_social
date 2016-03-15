@@ -16,7 +16,7 @@ html(lang="en")
     link(rel='shortcut icon', type='image/svg+xml', href='/images/social-logo-blue.svg')
 
     //CSS
-    link(href='css/social.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='css/generic.css', type='text/css', rel='stylesheet', media='screen,projection')
   
   body(class='#{pagetype}')
     include _header-lu.jade
@@ -26,8 +26,11 @@ html(lang="en")
       
       block pagetitle
       
-      .container
-        block content
+      block secondary-nav
+      
+      .main-content
+        .container
+          block content
 
   block scriptinline
 
@@ -39,5 +42,5 @@ html(lang="en")
   script(src='js/project.js')
   script(src='js/init.js')
   
-  //unless pagetype == "template"
+  unless pagetype == "template"
     script(src='js/prism.js')
