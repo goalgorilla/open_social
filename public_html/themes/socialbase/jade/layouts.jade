@@ -27,19 +27,19 @@ html(lang="en")
                 li.collection__item.avatar
                   span.circle(style='background-color: #80deea')
                   span.title Breadcrumbs 
-                  p pathway navigation for large screen and 'go back' navigation for mobile 
+                  p Pathway navigation for large screen and 'go back' navigation for mobile 
                 li.collection__item.avatar
                   span.circle(style='background-color: #ef9a9a')
                   span.title Hero
-                  p Displays an overview of the main content such as a person, group or event.
+                  p Provides a summary of the main content of this page, for example a person, a group or an event.
                 li.collection__item.avatar
                   span.circle(style='background-color: #90caf9')
                   span.title Primary action
-                  p Call to action 
+                  p Provides actions that are relevant to the main content such as follow a person, join a group, enrol to an event 
                 li.collection__item.avatar
                   span.circle(style='background-color: #80cbc4')
                   span.title Secondary navigation
-                  p section specific navigation
+                  p Navigation options to the sub contents of a main content.
                 li.collection__item.avatar
                   span.circle(style='background-color: #dce775')
                   span.title Title 
@@ -58,9 +58,10 @@ html(lang="en")
                   p It is static and contains information about the whole application.
 
             #layout-a.section.scrollspy
-              h2.header Layout A
+              h2.header Layout A | Parents
               
-              p This layout is used on all section overviews such as a the dashboard, profile, groups and content types (events overview). It is usually a function t bind content and there are always subcontent pages.
+              p This layout is used on the section's parent pages. The parents form the landing pages of the platform such as the timeline page of a person or group or the detail page of an event. These pages always have child pages. 
+
               
               .browser-window
                 .top-bar
@@ -107,9 +108,9 @@ html(lang="en")
                       p Footer
             
             #layout-b.section.scrollspy
-              h2.header Layout B
-              
-              p This layout is used on sections that has subcontent or has sibling pages in the hierarchy. For example an event node has enrollment as a sibling, but a topic node doesn't have siblings. So we use this template for event, but not for topic.
+              h2.header Layout B | Children
+
+              p This layout is used on section's child pages. For example an event node has enrollment as a child, but a topic node doesn't have children. So we use this template for event enrollment, but not for topic.
               
               p <strong>Please note</strong> that the difference here is only seen on smaller screens compared to Layout A. The hero area will be hidden and instead of the secondary navigation there is a "Back to main page" button which leads back to  Layout A.
               
@@ -160,9 +161,9 @@ html(lang="en")
                       p Footer
           
             #layout-c.section.scrollspy
-              h2.header Layout C
+              h2.header Layout C | Orphans
               
-              p This layout is used on sections that has <strong>no</strong> subcontent nor has sibling pages in the hierarchy. For example a topic node, or and edit node page. Compared to the other layouts we do not have a Secondary navigation nor Title region here. The title will be displayed in the Hero.
+              p This layout is used on sections that has <strong>no</strong> sub content nor has sibling pages in the hierarchy. For example a topic node, or and edit node page. Compared to the other layouts we do not have a secondary navigation nor title region here. The title will be displayed in the Hero region.
               
               .browser-window
                 .top-bar
