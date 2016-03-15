@@ -1,0 +1,28 @@
+uuid: 0b97f7aa-fba4-4af5-a000-ce28c4e54768
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.event_enrollment.field_account
+  module:
+    - social_event
+id: event_enrollment.event_enrollment.field_account
+field_name: field_account
+entity_type: event_enrollment
+bundle: event_enrollment
+label: Account
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+field_type: entity_reference
