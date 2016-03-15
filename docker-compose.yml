@@ -1,41 +1,42 @@
-web:
-  build: docker_build/drupal8/development
-  volumes:
-   - ./public_html:/var/www/html
-   - ./dev-scripts/:/root/dev-scripts
-  links:
-   - db
-   - mailcatcher
-  environment:
-   - VIRTUAL_HOST=social.dev
+version: "2"
 
-db_data:
-  image: mysql:5.6
-  environment:
-     - MYSQL_ROOT_PASSWORD=root
-     - MYSQL_DATABASE=social
-  container_name: db_data
-  command: /bin/true
-  volumes:
-    - /var/lib/mysql
+services:
+  web:
+    build: docker_build/drupal8/development
+    volumes:
+     - ./public_html:/var/www/html
+     - ./dev-scripts/:/root/dev-scripts
+    links:
+     - db
+     - mailcatcher
+    environment:
+     - VIRTUAL_HOST=social.dev
+    ports:
+     - "80"
+    networks:
+     - social
 
-db:
-  image: mysql:5.6
-  environment:
-    - MYSQL_ROOT_PASSWORD=root
-    - MYSQL_DATABASE=social
-  volumes_from:
-    - db_data
-  ports:
-    - "3307:3306"
+  db:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=social
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - social
 
-mailcatcher:
-  image: schickling/mailcatcher
-  environment:
-    - VIRTUAL_HOST=mailcatcher.social.dev
-    - VIRTUAL_PORT=1080
-  ports:
-    - "1080"
+  mailcatcher:
+    image: schickling/mailcatcher
+    environment:
+      - VIRTUAL_HOST=mailcatcher.social.dev
+      - VIRTUAL_PORT=1080
+    ports:
+      - "1080"
+    networks:
+      - social
 
 # Currently disabled because of rate limits.
 # Enable and use the normal ssmtp.conf file to sent emails with postfix.
@@ -47,26 +48,36 @@ mailcatcher:
 #    - "25"
 #  command: social.dev user:password
 
-selenium:
-  image: selenium/standalone-firefox-debug:2.48.2
-  links:
-   - web:web
-  ports:
-   - "4444"
-   - "5900"
-  container_name: social_selenium
-  cap_add:
-   - NET_ADMIN
-   - NET_RAW
+  selenium:
+    image: selenium/standalone-firefox-debug:2.48.2
+    links:
+     - web:web
+    ports:
+     - "4444"
+     - "5900"
+    container_name: social_selenium
+    cap_add:
+     - NET_ADMIN
+     - NET_RAW
+    networks:
+     - social
 
-behat:
-  build: docker_build/drupal8/development
-  container_name: social_behat
-  volumes:
-   - ./public_html/:/var/www/html
-   - ./dev-scripts/:/root/dev-scripts
-   - ./behat/:/root/behat
-  links:
-   - web:web
-   - db:db
-   - selenium:selenium
+  behat:
+    build: docker_build/drupal8/development
+    container_name: social_behat
+    volumes:
+     - ./public_html/:/var/www/html
+     - ./dev-scripts/:/root/dev-scripts
+     - ./behat/:/root/behat
+    links:
+     - web:web
+     - db:db
+     - selenium:selenium
+    networks:
+     - social
+
+volumes:
+  db_data:
+
+networks:
+  social:
