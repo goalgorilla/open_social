@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\social_event\Entity\EventEnrollment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,7 +31,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $routeMath;
 
   /**
-   * The node storage.
+   * The node storage for event enrollments.
    *
    * @var \Drupal\Core\entity\EntityStorageInterface
    */
@@ -68,8 +69,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    global $user;
-
     $nid = $this->routeMatch->getRawParameter('node');
 
     $form['event'] = array(
@@ -77,9 +76,35 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#value' => $nid,
     );
 
+    $submit_text = $this->t('Enroll for this event');
+
+    $current_user = \Drupal::currentUser();
+    $uid = $current_user->id();
+
+    $conditions = array(
+      'field_account' => $uid,
+      'field_event' => $nid,
+    );
+
+    $to_enroll_status = '1';
+
+    if ($enrollment = array_pop($this->entityStorage->loadByProperties($conditions))) {
+      $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      if ($current_enrollment_status ==='1') {
+        $submit_text = $this->t('Cancel enrollment');
+        $to_enroll_status = '0';
+      }
+    }
+
+    $form['to_enroll_status'] = array(
+      '#type' => 'hidden',
+      '#value' => $to_enroll_status,
+    );
+
+
     $form['enroll_for_this_event'] = array(
       '#type' => 'submit',
-      '#value' => $this->t('Enroll for this event'),
+      '#value' => $submit_text,
     );
 
     return $form;
@@ -89,20 +114,38 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    var_dump($form);
+    $current_user = \Drupal::currentUser();
+    $uid = $current_user->id();
 
-    // Let's create some entities.
-//    $enrollment = EventEnrollment::create([
-//      'langcode' => $eventenrollment['language'],
-//      'name' => substr($eventenrollment['title'], 0, 50),
-//      'user_id' => $user_id,
-//      'created' => REQUEST_TIME,
-//      'field_event' => $event_id,
-//      'field_enrollment_status' => $eventenrollment['field_enrollment_status'],
-//      'field_account' => $user_id
-//    ]);
-//
-//    $enrollment->save();
+    $nid = $form_state->getValue('event');
+    $to_enroll_status = $form_state->getValue('to_enroll_status');
+
+    $conditions = array(
+      'field_account' => $uid,
+      'field_event' => $nid,
+    );
+
+    if ($enrollment = array_pop($this->entityStorage->loadByProperties($conditions))) {
+      $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      if ($to_enroll_status === '0' && $current_enrollment_status ==='1') {
+        $enrollment->field_enrollment_status->value = '0';
+        $enrollment->save();
+      }
+      elseif ($to_enroll_status === '1' && $current_enrollment_status ==='0') {
+        $enrollment->field_enrollment_status->value = '1';
+        $enrollment->save();
+      }
+    }
+    else {
+      // Create a new enrollment for the event.
+      $enrollment = EventEnrollment::create([
+        'user_id' => $uid,
+        'field_event' => $nid,
+        'field_enrollment_status' => '1',
+        'field_account' => $uid
+      ]);
+      $enrollment->save();
+    }
   }
 
 }
