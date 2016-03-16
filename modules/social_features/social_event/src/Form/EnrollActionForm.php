@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -88,7 +89,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     $to_enroll_status = '1';
 
-    if ($enrollment = array_pop($this->entityStorage->loadByProperties($conditions))) {
+    $enrollments = $this->entityStorage->loadByProperties($conditions);
+
+    if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($current_enrollment_status ==='1') {
         $submit_text = $this->t('Cancel enrollment');
@@ -125,7 +128,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       'field_event' => $nid,
     );
 
-    if ($enrollment = array_pop($this->entityStorage->loadByProperties($conditions))) {
+    $enrollments = $this->entityStorage->loadByProperties($conditions);
+
+    if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($to_enroll_status === '0' && $current_enrollment_status ==='1') {
         $enrollment->field_enrollment_status->value = '0';
