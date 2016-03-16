@@ -31,23 +31,33 @@
  * http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  */
 #}
+
 {%
   set classes = [
-    'block--headermenu',
+    logged_in  ? 'block--user-menu' : 'block--headermenu',
   ]
 %}
-{% set heading_id = attributes.id ~ '-menu'|clean_id %}
-<nav role="navigation" aria-labelledby="{{ heading_id }}"{{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
+
+<nav role="navigation" {{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
+
+  {# Extra wrapper, only when it is a logged in user #}
+  {% if logged_in %}
+    <div class="block--user-menu">
+  {% endif %}
+
   {# Label. If not displayed, we still provide it for screen readers. #}
   {% if not configuration.label_display %}
     {% set title_attributes = title_attributes.addClass('visually-hidden') %}
   {% endif %}
   {{ title_prefix }}
-  <h2{{ title_attributes.setAttribute('id', heading_id) }}>{{ configuration.label }}</h2>
+  <h2{{ title_attributes }}>{{ configuration.label }}</h2>
   {{ title_suffix }}
 
   {# Menu. #}
-  {% block content %}
-    {{ content }}
-  {% endblock %}
+  {{ content }}
+
+
+  {% if logged_in %}
+    </div>
+  {% endif %}
 </nav>
