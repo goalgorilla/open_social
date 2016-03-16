@@ -8,22 +8,24 @@ block pagetitle
     .container
       h1 Login
 
+block secondary_navigation
+  
+  nav(role="navigation" aria-label="Tabs")
+    h2.visually-hidden Primary tabs
+    ul.tabs.primary
+      li.is-active
+        a.is-active(href="login.html") Log in
+          span.visually-hidden (active tab)
+      li
+        a(href="sign-up.html") Sign up
+      li
+        a(href='reset-password.html') Reset password
+
 block content
 
   .row
     .col.s12.l9
       .card.form-card
-
-        nav(role="navigation" aria-label="Tabs")
-          h2.visually-hidden Primary tabs
-          ul.tabs.primary
-            li.is-active
-              a.is-active(href="login.html") Log in
-                span.visually-hidden (active tab)
-            li
-              a(href="sign-up.html") Sign up
-            li
-              a(href='reset-password.html') Reset password
 
         form.user-login-form(accept-charset='UTF-8')
           .form__item.form__type-textfield

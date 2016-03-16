@@ -12,6 +12,8 @@ web:
    - ./public_html:/var/www/html
   links:
    - db:db
+  ports:
+   - "80"
 
 db_data:
   image: mysql:5.6
