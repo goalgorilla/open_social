@@ -13,13 +13,13 @@ before_install:
   - docker ps -a
 
 script:
-  - docker exec -it drupalsocial_web_1 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)'
-  - chmod 777 -R public_html/sites/default/files/
-  - chmod 777 public_html/sites/default/files
+  - docker exec -i drupalsocial_web_1 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)'
+  - docker exec -i drupalsocial_web_1 chmod 777 -R public_html/sites/default/files/
+  - docker exec -i drupalsocial_web_1 chmod 777 public_html/sites/default/files
   - docker exec -i drupalsocial_web_1 chown -R www-data:www-data /var/www/html/
-  - docker exec -it drupalsocial_web_1 drush -y status
-  - docker-compose -f docker-compose-travis.yml run web_scripts sh /root/travis/unit-tests.sh
+  - docker exec -i drupalsocial_web_1 drush -y status
+  - docker exec -i drupalsocial_web_scripts_1 sh /root/travis/unit-tests.sh
   - docker ps
   - docker logs social_selenium
   - sleep 30
-  - docker exec -it social_behat sh /root/travis/behatstability.sh
+  - docker exec -i social_behat sh /root/travis/behatstability.sh
