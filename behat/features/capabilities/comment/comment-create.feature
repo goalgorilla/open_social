@@ -6,7 +6,7 @@ Feature: Create Comments
 
   Scenario: Successfully create comment
     Given I am logged in as an "authenticated user"
-    And I am on "node/1"
+    And I am viewing an "topic" content with the title "Comment test topic"
     When I fill in the following:
          | Add a comment | This is a test comment |
     And I press "Comment"
