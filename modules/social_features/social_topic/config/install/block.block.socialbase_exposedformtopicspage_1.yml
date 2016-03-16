@@ -1,26 +1,29 @@
+uuid: 0e419f97-5b0d-4758-8622-341c32d894bc
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.events
+    - views.view.topics
   module:
     - system
     - user
     - views
   theme:
     - socialbase
-id: exposedformeventsevents_overview
+_core:
+  default_config_hash: sK4DzKduf_BMqn1caif-GOg3ygxfQSJR7n7B0736GVI
+id: socialbase_exposedformtopicspage_1
 theme: socialbase
 region: complementary
-weight: null
+weight: -5
 provider: null
-plugin: 'views_exposed_filter_block:events-events_overview'
+plugin: 'views_exposed_filter_block:topics-page_1'
 settings:
-  id: 'views_exposed_filter_block:events-events_overview'
+  id: 'views_exposed_filter_block:topics-page_1'
   label: ''
   provider: views
   label_display: visible
-  views_label: 'Events filter'
+  views_label: 'I want to see topics that'
 visibility:
   user_role:
     id: user_role
@@ -31,6 +34,6 @@ visibility:
       user: '@user.current_user_context:current_user'
   request_path:
     id: request_path
-    pages: '/user/*/events'
+    pages: '/user/*/topics'
     negate: false
     context_mapping: {  }
