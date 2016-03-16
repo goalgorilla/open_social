@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.enrollments
+  module:
+    - node
+    - views
+  theme:
+    - bartik
+id: views_block__enrollments_block_enrollments
+theme: bartik
+region: sidebar_second
+weight: -8
+provider: null
+plugin: 'views_block:enrollments-block_enrollments'
+settings:
+  id: 'views_block:enrollments-block_enrollments'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
