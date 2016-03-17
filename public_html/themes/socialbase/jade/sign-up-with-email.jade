@@ -8,33 +8,35 @@ block pagetitle
     .container
       h1 Sign up
 
+block secondary_navigation
+
+  nav(role="navigation" aria-label="Tabs")
+    h2.visually-hidden Primary tabs
+    ul.tabs.primary
+      li
+        a(href="login.html") Log in
+      li.is-active
+        a.is-active(href="sign-up.html") Sign up
+          span.visually-hidden (active tab)
+      li
+        a(href='reset-password.html') Reset password
+
 block content
 
   .row
     .col.s12.l9
       .card.form-card
-
-        nav(role="navigation" aria-label="Tabs")
-          h2.visually-hidden Primary tabs
-          ul.tabs.primary
-            li
-              a(href="login.html") Log in
-            li.is-active
-              a.is-active(href="sign-up.html") Sign up
-                span.visually-hidden (active tab)
-            li
-              a(href='reset-password.html') Reset password
               
         form.user-register-form(accept-charset='UTF-8')
           .form__item.form__type-textfield
             .input-field
-              input#edit-email.form__text(type='email', autocorrect='none', autofocus='autofocus', required='required')
+              input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
               label.form-required(for='edit-email') E-mail address
               .description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
 
           .form__item.form__type-textfield
             .input-field
-              input#edit-username.form__text(type='text', required='required')
+              input#edit-username.form-text(type='text', required='required')
               label.form-required(for='edit-username') Username
               .form__description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
               

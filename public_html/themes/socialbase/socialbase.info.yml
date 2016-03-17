@@ -3,23 +3,26 @@ type: theme
 base theme: stable
 description: Theme layer for drupal social.
 core: 8.x
+
 libraries:
   - socialbase/global-styling
+
 stylesheets-remove:
   - '@classy/css/components/tabs.css'
   - core/assets/vendor/normalize-css/normalize.css
+
 regions:
-  header_menu: Header menu
-  menu_panel: Menu panel
+  header: Header
+  menu_panel: Main navigation panel
   notification_panel: Notifications panel
-  user_panel: User panel
+  user_panel: User navigation panel
   breadcrumb: Breadcrumb
-  title: Title block
-  tabs: Tabs
-  help: Help
   hero: Hero
+  primary_action: Primary action
+  secondary_navigation: Secondary navigation
+  title: Section title
   content: Content
-  sidebar_first: 'Sidebar first'
+  complementary: Complementary
   footer: Footer
 
-debug: true
+debug: false

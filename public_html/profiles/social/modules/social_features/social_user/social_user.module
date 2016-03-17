@@ -59,3 +59,30 @@ function social_user_form_user_cancel_form_alter(&$form, \Drupal\Core\Form\FormS
     unset($form['user_cancel_method']['#options']['user_cancel_delete']);
   }
 }
+
+
+/**
+ * Implements hook_theme().
+ */
+function social_user_theme() {
+  return array(
+    'account_header_links' => array(
+      'variables' => array(
+        'links' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Prepares variables for the account header links.
+ *
+ * Default template: account-header-links.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *    - links
+ */
+function template_preprocess_account_header_links(&$variables) {
+
+}
