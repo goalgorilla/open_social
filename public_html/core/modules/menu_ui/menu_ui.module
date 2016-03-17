@@ -139,12 +139,20 @@ function _menu_ui_node_save(NodeInterface $node, array $values) {
   /** @var \Drupal\menu_link_content\MenuLinkContentInterface $entity */
   if (!empty($values['entity_id'])) {
     $entity = MenuLinkContent::load($values['entity_id']);
+    if ($entity->isTranslatable()) {
+      if (!$entity->hasTranslation($node->language()->getId())) {
+        $entity = $entity->addTranslation($node->language()->getId(), $entity->toArray());
+      }
+      else {
+        $entity = $entity->getTranslation($node->language()->getId());
+      }
+    }
   }
   else {
     // Create a new menu_link_content entity.
     $entity = entity_create('menu_link_content', array(
       'link' => ['uri' => 'entity:node/' . $node->id()],
-      'langcode' => $node->getUntranslated()->language()->getId(),
+      'langcode' => $node->language()->getId(),
     ));
     $entity->enabled->value = 1;
   }
@@ -216,10 +224,12 @@ function menu_ui_get_menu_link_defaults(NodeInterface $node) {
     }
     if ($id) {
       $menu_link = MenuLinkContent::load($id);
+      $menu_link = \Drupal::service('entity.repository')->getTranslationFromContext($menu_link);
       $defaults = array(
         'entity_id' => $menu_link->id(),
         'id' => $menu_link->getPluginId(),
         'title' => $menu_link->getTitle(),
+        'title_max_length' => $menu_link->getFieldDefinitions()['title']->getSetting('max_length'),
         'description' => $menu_link->getDescription(),
         'menu_name' => $menu_link->getMenuName(),
         'parent' => $menu_link->getParentId(),
@@ -229,10 +239,15 @@ function menu_ui_get_menu_link_defaults(NodeInterface $node) {
   }
 
   if (!$defaults) {
+    // Get the default max_length of a menu link title from the base field
+    // definition.
+    $field_definitions = \Drupal::entityManager()->getBaseFieldDefinitions('menu_link_content');
+    $max_length = $field_definitions['title']->getSetting('max_length');
     $defaults = array(
       'entity_id' => 0,
       'id' => '',
       'title' => '',
+      'title_max_length' => $max_length,
       'description' => '',
       'menu_name' => $menu_name,
       'parent' => '',
@@ -313,6 +328,7 @@ function menu_ui_form_node_form_alter(&$form, FormStateInterface $form_state) {
     '#type' => 'textfield',
     '#title' => t('Menu link title'),
     '#default_value' => $defaults['title'],
+    '#maxlength' => $defaults['title_max_length'],
   );
 
   $form['menu']['link']['description'] = array(
