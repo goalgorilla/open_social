@@ -1,51 +1,45 @@
-# Currently behind a firewall and not available for the public.
-# Uses the nginx/jwilder proxy to link to the correct docker container.
-social_nightly_web:
-  image: goalgorilla/drupal_social
-  links:
-    - social_nightly_db:db
-    - social_nightly_mailcatcher:mailcatcher
-  ports:
-    - "80"
-  environment:
-    - VIRTUAL_HOST=nightly_build.socialci.goalgorilla.com
-  volumes:
-   - /root/drupal_social/social-jenkins-data/workspace/nightly_build/dev-scripts:/root/dev-scripts
+version: "2"
 
-social_nightly_db_data:
-  image: mysql:5.6
-  environment:
-     - MYSQL_ROOT_PASSWORD=root
-     - MYSQL_DATABASE=social
-  container_name: social_nightly_db_data
-  command: /bin/true
-  volumes:
-    - /var/lib/mysql
+services:
+  # Currently behind a firewall and not available for the public.
+  # Uses the nginx/jwilder proxy to link to the correct docker container.
+  social_nightly_web:
+    image: goalgorilla/drupal_social
+    links:
+      - social_nightly_db:db
+      - social_nightly_mailcatcher:mailcatcher
+    ports:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=nightly_build.socialci.goalgorilla.com
+    volumes:
+     - /root/drupal_social/social-jenkins-data/workspace/nightly_build/dev-scripts:/root/dev-scripts
 
-social_nightly_db:
-  image: mysql:5.6
-  environment:
-     - MYSQL_ROOT_PASSWORD=root
-     - MYSQL_DATABASE=social
-  volumes_from:
-    - social_nightly_db_data
+  social_nightly_db:
+    image: mysql:5.6
+    environment:
+       - MYSQL_ROOT_PASSWORD=root
+       - MYSQL_DATABASE=social
+    volumes_from:
+      - social_nightly_db_data
 
-social_nightly_mailcatcher:
-  image: schickling/mailcatcher
-  environment:
-    - VIRTUAL_HOST=mailcatcher.nightly_build.socialci.goalgorilla.com
-    - VIRTUAL_PORT=1080
-  ports:
-    - "1080"
+  social_nightly_mailcatcher:
+    image: schickling/mailcatcher
+    environment:
+      - VIRTUAL_HOST=mailcatcher.nightly_build.socialci.goalgorilla.com
+      - VIRTUAL_PORT=1080
+    ports:
+      - "1080"
 
-# Currently disabled because of rate limits.
-# Enable and use the normal ssmtp.conf file to sent emails with postfix.
-#social_nightly_mailserver:
-#  image: marvambass/versatile-postfix
-#  environment:
-#    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
-#  ports:
-#    - "25"
-#  command: socialci.goalgorilla.com user:password
+  # Currently disabled because of rate limits.
+  # Enable and use the normal ssmtp.conf file to sent emails with postfix.
+  #social_nightly_mailserver:
+  #  image: marvambass/versatile-postfix
+  #  environment:
+  #    - ALIASES=postmaster:root;hostmaster:root;webmaster:root
+  #  ports:
+  #    - "25"
+  #  command: socialci.goalgorilla.com user:password
 
-
+volumes:
+  db_data:
