@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -121,6 +122,21 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $uid = $current_user->id();
 
     $nid = $form_state->getValue('event');
+
+
+    // Redirect anonymous use to login page before enrolling to an event.
+    if ($uid === 0) {
+      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->getInternalPath();
+      $form_state->setRedirect('user.login',
+        array(),
+        array('query' => array(
+          'destination' => $node_url,
+          ))
+        );
+      drupal_set_message('Please log in or create a new account so that you can enroll to the event');
+      return;
+    }
+
     $to_enroll_status = $form_state->getValue('to_enroll_status');
 
     $conditions = array(
