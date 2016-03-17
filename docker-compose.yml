@@ -13,8 +13,7 @@ services:
      - VIRTUAL_HOST=social.dev
     ports:
      - "80"
-    networks:
-     - social
+    network_mode: "bridge"
 
   db:
     image: mysql:5.6
@@ -25,8 +24,7 @@ services:
       - db_data:/var/lib/mysql
     ports:
       - "3307:3306"
-    networks:
-      - social
+    network_mode: "bridge"
 
   mailcatcher:
     image: schickling/mailcatcher
@@ -35,8 +33,7 @@ services:
       - VIRTUAL_PORT=1080
     ports:
       - "1080"
-    networks:
-      - social
+    network_mode: "bridge"
 
 # Currently disabled because of rate limits.
 # Enable and use the normal ssmtp.conf file to sent emails with postfix.
@@ -59,8 +56,7 @@ services:
     cap_add:
      - NET_ADMIN
      - NET_RAW
-    networks:
-     - social
+    network_mode: "bridge"
 
   behat:
     build: docker_build/drupal8/development
@@ -73,11 +69,7 @@ services:
      - web:web
      - db:db
      - selenium:selenium
-    networks:
-     - social
+    network_mode: "bridge"
 
 volumes:
   db_data:
-
-networks:
-  social:
