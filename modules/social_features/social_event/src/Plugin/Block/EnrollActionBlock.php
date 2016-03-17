@@ -25,10 +25,18 @@ class EnrollActionBlock extends BlockBase {
   public function build() {
     $form = \Drupal::formBuilder()->getForm('Drupal\social_event\Form\EnrollActionForm');
 
-
-    return array(
+    $render_array = array(
       'enroll_action_form' => $form
     );
+
+    // Add extra text to
+    if ($form['to_enroll_status']['#value'] === '0') {
+      $render_array['feedback_user_has_enrolled'] = array(
+        '#markup' => '<div><b>You have enrolled to this event</b></div>',
+      );
+    }
+
+    return $render_array;
   }
 
 }
