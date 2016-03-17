@@ -23,11 +23,11 @@ block secondary_navigation
             a(href="#") Timeline  
           li
             a(href="#") Information
-          li.is-active
-            a.is-active(href='#') Topics
-              span.visually-hidden (active tab)
           li
-            a(href="#") Events
+            a(href='my-topics.html') Topics
+          li.is-active
+            a.is-active(href='my-events.html') Events
+              span.visually-hidden (active tab)
           li
             a(href="#") Groups
       
@@ -36,12 +36,12 @@ block content
   .row
   
     .col.s12
-      h2.section-title My topics
+      h2.section-title My events
     
     .col.s12.l3.right
       a.waves-effect.waves-light.btn.btn--block.btn--black(href='#!') 
         i.material-icons.left add
-        | Add a topic
+        | Add an event
 
       a.btn.btn--block.hidden-desktop.js-open-canvas
         i.material-icons.left tune
@@ -55,32 +55,28 @@ block content
               i.material-icons close
     
         form
-          .form-item
-            .input-field
-              select
-                option(value="", selected="") All types
-                option(value="blog") Blog
-                option(value="discussion") Discussion
-                option(value="topic") Topic
-              label Topic type
-              
-          .form-item
-            .input-field
-              select
-                option(value="", selected="") All statusses
-                option(value="published") Published
-                option(value="unpublished") Unpublished
-              label Status
+          .form__item.form__item-radios
+            label.form__label Event status 
+            .form__radios
+              .form__item.form__item-radio
+                input.form__radio#radio1(name='event', type='radio', checked)
+                label.label--option(for='radio1') Upcoming
+              .form__item.form__item-radio
+                input.form__radio#radio2(name='event', type='radio')
+                label.label--option(for='radio2') Past 
+              .form__item.form__item-radio
+                input.form__radio#radio3(name='event', type='radio')
+                label.label--option(for='radio3') Unpublished
           
           .form-actions.form-wrapper
-            input.waves-effect.waves-light.btn.btn--block.disabled(type="submit", value="Reset")
+            button.btn.js-close-canvas.hidden-desktop Done
 
     .col.s12.l9
       .card--wrapper
-        include molecules/_topic1.jade
-        include molecules/_topic2.jade
-        include molecules/_topic3.jade
-        include molecules/_topic4.jade
+        include molecules/_event1.jade
+        include molecules/_event2.jade
+        include molecules/_event3.jade
+        include molecules/_event4.jade
         
       ul.pagination
         li.disabled

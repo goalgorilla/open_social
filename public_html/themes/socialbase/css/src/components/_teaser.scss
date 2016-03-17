@@ -1,13 +1,12 @@
 .teaser {
-  padding: 0;
   color: $base-color;
   display: block;
   margin-bottom: 10px;
-  padding-bottom: 10px;
+  padding: 0 0 10px;
   border-bottom: 2px solid $grey-light-3;
 
   @include MQ($small) {
-    padding: 0;
+    padding-bottom: 0;
     margin-top: 20px;
     border: 0;
     display: flex;
@@ -73,9 +72,14 @@
 
 .teaser__content {
   flex: 1 1 auto;
-  padding: 20px;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
+
+  @include MQ($small) {
+    padding: 20px;
+  }
+  
 }
 
 .teaser__image {
@@ -106,22 +110,49 @@
 }
 
 .teaser__enrolled {
-  position: absolute;
-  bottom: 20px;
   color: $primary-color;
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: 700;
+
+  @include MQ($small) {
+    position: absolute;
+    bottom: 20px;
+  }
+}
+
+.teaser__event-date {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  color: white;
+  font-size: 3.5em;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: center;
+  line-height: 100%;
+  white-space: nowrap;
+}
+
+.teaser__event-date-month {
+  font-size: 0.4em;
+  line-height: 100%;
+  display: block;
 }
 
 .teaser__read-more {
   font-weight: 300;
   text-transform: uppercase;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   color: $grey-light-1;
   font-size: 0.9em;
+  text-align: right;
+
+  @include MQ($small) {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
 
   &:after {
     content: '\E5CC';
