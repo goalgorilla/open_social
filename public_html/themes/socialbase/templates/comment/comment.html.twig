@@ -76,7 +76,8 @@
   <mark class="hidden" data-comment-timestamp="{{ new_indicator_timestamp }}"></mark>
 
   <footer>
-    {{ user_picture }}
+    {# Need to replace  {{ author }} with {{ user_picture }} when user profile will be ready. #}
+    {{ author }}
     <p>{{ submitted }}</p>
 
     {#
@@ -87,16 +88,10 @@
     {% if parent %}
       <p class="visually-hidden">{{ parent }}</p>
     {% endif %}
-
-    {{ permalink }}
   </footer>
 
   <div{{ content_attributes }}>
-    {% if title %}
-      {{ title_prefix }}
-      <h3{{ title_attributes }}>{{ title }}</h3>
-      {{ title_suffix }}
-    {% endif %}
     {{ content }}
   </div>
+  {{ permalink }}
 </article>
