@@ -7,6 +7,7 @@ services:
       - db:db
     ports:
       - "80"
+    network_mode: "bridge"
 
   db:
     image: mysql:5.6
@@ -15,6 +16,7 @@ services:
        - MYSQL_DATABASE=social
     volumes_from:
       - db_data
+    network_mode: "bridge"
 
 volumes:
   db_data:

@@ -14,6 +14,7 @@ services:
       - VIRTUAL_HOST=nightly_build.socialci.goalgorilla.com
     volumes:
      - /root/drupal_social/social-jenkins-data/workspace/nightly_build/dev-scripts:/root/dev-scripts
+    network_mode: "bridge"
 
   social_nightly_db:
     image: mysql:5.6
@@ -22,6 +23,7 @@ services:
        - MYSQL_DATABASE=social
     volumes_from:
       - social_nightly_db_data
+    network_mode: "bridge"
 
   social_nightly_mailcatcher:
     image: schickling/mailcatcher
@@ -30,6 +32,7 @@ services:
       - VIRTUAL_PORT=1080
     ports:
       - "1080"
+    network_mode: "bridge"
 
   # Currently disabled because of rate limits.
   # Enable and use the normal ssmtp.conf file to sent emails with postfix.
