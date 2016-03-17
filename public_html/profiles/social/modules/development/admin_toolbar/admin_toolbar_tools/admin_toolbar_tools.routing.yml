@@ -1,0 +1,80 @@
+admin_toolbar_tools.flush:
+  path: '/admin/flush'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::flushAll'
+    _title: 'Flush all caches'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.cssjs:
+  path: '/admin/flush/cssjs'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::flush_js_css'
+    _title: 'Flush Css and Javascript'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.plugin:
+  path: '/admin/flush/plugin'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::flush_plugins'
+    _title: 'Plugin'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.flush_static:
+  path: '/admin/flush/static-caches'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::flush_static'
+    _title: 'Static caches'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.flush_menu:
+  path: '/admin/flush/menu'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::flush_menu'
+    _title: 'Menu'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.drupalorg:
+  path: '/admin/drupal8'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::drupal_org'
+    _title: 'Drupal'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.listchanges:
+  path: '/admin/drupal/list-changes'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::list_changes'
+    _title: 'List changes'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar_tools.doc:
+  path: '/admin/drupal/documentation'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::documentation'
+    _title: 'Documentation D8'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_development:
+  path: '/admin/development'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::development'
+    _title: 'Development'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
+admin_toolbar.run.cron:
+  path: '/run-cron'
+  defaults:
+    _controller: '\Drupal\admin_toolbar_tools\Controller\ToolbarController::runCron'
+    _title: 'Run cron'
+  requirements:
+    _permission: 'access administration pages'
+    _csrf_token: 'TRUE'
