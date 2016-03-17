@@ -55,17 +55,18 @@ block content
               i.material-icons close
     
         form
-          .form-item.form-type-radios
-            .form-radios
-              .form-item.form-type-radio
-                input.form-radio#radio1(name='event', type='radio', checked)
-                label.option(for='radio1') Upcoming events
-              .form-item.form-type-radio
-                input.form-radio#radio2(name='event', type='radio')
-                label.option(for='radio2') Past events
-              .form-item.form-type-radio
-                input.form-radio#radio3(name='event', type='radio')
-                label.option(for='radio3') Unpublished events
+          .form__item.form-type-radios
+            label.form__label Event status 
+            .form__radios
+              .form__item.form__item-radio
+                input.form__radio#radio1(name='event', type='radio', checked)
+                label.label--option(for='radio1') Upcoming
+              .form__item.form__item-radio
+                input.form__radio#radio2(name='event', type='radio')
+                label.label--option(for='radio2') Past 
+              .form__item.form__item-radio
+                input.form__radio#radio3(name='event', type='radio')
+                label.label--option(for='radio3') Unpublished
           
           .form-actions.form-wrapper
             button.btn.js-close-canvas.hidden-desktop Done
