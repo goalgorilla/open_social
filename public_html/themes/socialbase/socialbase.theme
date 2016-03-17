@@ -8,3 +8,33 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
   $form['mail']['#prefix'] = '<div class="form__description">';
   $form['mail']['#suffix'] = '</div>';
 }
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function socialbase_preprocess_block(&$variables) {
+  $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_menu_alter(array &$suggestions, array $variables) {
+  // Remove the block and replace dashes with underscores in the block ID to
+  // use for the hook name.
+  if (isset($variables['attributes']['block'])) {
+    $hook = str_replace(array('block-', '-'), array('', '_'), $variables['attributes']['block']);
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+
+function socialbase_preprocess_page(&$variables) {
+  // if we have the admin toolbar on our screen we need overrides for our styles.
+  if ($variables['is_admin']) {
+    $variables['#attached']['library'][] = 'socialbase/admin';
+  }
+}

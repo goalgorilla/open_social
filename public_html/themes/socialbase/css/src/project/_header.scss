@@ -165,7 +165,7 @@
 
   &.show {
     transform: translateY(0);
-    overflow: auto;
+    overflow: visible;
   }
 
   .container {
@@ -203,22 +203,6 @@
     &.active {
       background-color: rgba($primary-color,0.5);
     }
-  }
-
-  .material-icons {
-    display: inline-block;
-    width: 3rem;
-    font-size: 24px;
-    height: 34px;
-    line-height: 28px;
-    vertical-align: middle;
-  }
-
-  .menu__label {
-    display: inline-block;
-    height: 34px;
-    line-height: 34px;
-    text-transform: uppercase;
   }
 
 }
@@ -292,6 +276,8 @@
 
     .block--user-menu {
       background-color: white;
+      @include z-depth-1;
+      min-width: 25%;
     }
   }
 

@@ -86,10 +86,12 @@ label {
     cursor: text;
     font-weight: 300;
     transition: .2s ease-out;
-  }
-  label.active {
-    font-size: $label-font-size;
-    transform: translateY(-140%);
+
+    &.active {
+      font-size: $label-font-size;
+      transform: translateY(-140%);
+    }
+
   }
 
   // Prefix Icons
@@ -103,12 +105,12 @@ label {
   }
   .prefix ~ input,
   .prefix ~ textarea {
-    margin-left: 3em;
+    margin-left: 42px;
     width: 92%;
-    width: calc(100% - 3em);
+    width: calc(100% - 42px);
   }
   .prefix ~ textarea { padding-top: .8em; }
-  .prefix ~ label { margin-left: 3em; }
+  .prefix ~ label { margin-left: 42px; }
 
 }
 
