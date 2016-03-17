@@ -1,0 +1,74 @@
+<?php
+use Drupal\Core\Menu\MenuTreeParameters;
+/**
+ *  Implements hook_toolbar_alter().
+ */
+function admin_toolbar_toolbar_alter(&$items) {
+  $items['administration']['tray']['toolbar_administration']['#pre_render'] = array('admin_toolbar_prerender_toolbar_administration_tray');
+  $items['administration']['#attached']['library'][] = 'admin_toolbar/toolbar.tree';
+}
+/**
+ * Renders the toolbar's administration tray.
+ * This is a clone of core's toolbar_prerender_toolbar_administration_tray()
+ * function, which uses setMaxDepth(4) instead of setTopLevelOnly()
+ * @param array $element
+ *   A renderable array.
+ *
+ * @return array
+ *   The updated renderable array.
+ *
+ * @see toolbar_prerender_toolbar_administration_tray()
+ */
+function admin_toolbar_prerender_toolbar_administration_tray(array $element) { 
+  $menu_tree = \Drupal::service('toolbar.menu_tree');
+  $parameters = new MenuTreeParameters();
+  $parameters->setRoot('system.admin')->excludeRoot()->setMaxDepth(4)->onlyEnabledLinks();
+  $tree = $menu_tree->load(NULL, $parameters);
+  $manipulators = array(
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+    array('callable' => 'toolbar_tools_menu_navigation_links'),
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $element['administration_menu'] = $menu_tree->build($tree);
+
+  return $element;
+}
+
+
+/**
+ * Adds toolbar-specific attributes to the menu link tree.
+ *
+ * @param \Drupal\Core\Menu\MenuLinkTreeElement[] $tree
+ *   The menu link tree to manipulate.
+ *
+ * @return \Drupal\Core\Menu\MenuLinkTreeElement[]
+ *   The manipulated menu link tree.
+ */
+function toolbar_tools_menu_navigation_links(array $tree) {
+  foreach ($tree as $element) {
+    if ($element->subtree) {
+      toolbar_tools_menu_navigation_links($element->subtree);
+    }
+
+    // Make sure we have a path specific ID in place, so we can attach icons
+    // and behaviors to the menu links.
+    $link = $element->link;
+    $url = $link->getUrlObject();
+    if (!$url->isRouted()) {
+      // This is an unusual case, so just get a distinct, safe string.
+      $id = substr(Crypt::hashBase64($url->getUri()), 0, 16);
+    }
+    else {
+      $id = str_replace(array('.', '<', '>'), array('-', '', ''), $url->getRouteName());
+    }
+
+    // Get the non-localized title to make the icon class.
+    $definition = $link->getPluginDefinition();
+
+    $element->options['attributes']['class'][] = 'toolbar-icon';
+    $element->options['attributes']['class'][] = 'toolbar-icon-' . strtolower(str_replace(array('.', ' ', '_'), array('-', '-', '-'), $definition['id']));
+    $element->options['attributes']['title'] = $link->getDescription();
+  }
+  return $tree;
+}
