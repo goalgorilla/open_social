@@ -14,8 +14,8 @@ services:
     environment:
        - MYSQL_ROOT_PASSWORD=root
        - MYSQL_DATABASE=social
-    volumes_from:
-      - db_data
+    volumes:
+     - db_data:/var/lib/mysql
     network_mode: "bridge"
 
 volumes:
