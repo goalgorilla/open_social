@@ -1,3 +1,8 @@
+button:focus {
+  outline: none;
+  background-color: lighten($button-raised-background, 4%);
+}
+
 // shared styles
 .btn,
 .btn-flat {
@@ -51,6 +56,7 @@
 // Raised Button
 .btn {
   text-decoration: none;
+  font-size: $button-font-size;
   color: $button-raised-color;
   background-color: $button-raised-background;
   text-align: center;
@@ -63,6 +69,7 @@
     background-color: $button-raised-background-hover;
     @extend .z-depth-1-half;
   }
+
 }
 
 // Floating button
@@ -169,6 +176,7 @@ button.btn-floating {
 }
 
 // Flat button
+.btn-icon-toggle,
 .btn-flat {
   box-shadow: none;
   background-color: transparent;
@@ -179,6 +187,11 @@ button.btn-floating {
     color: $button-flat-disabled-color;
     cursor: default;
   }
+
+  &.btn-default-light {
+    color: $grey-light-1;
+  }
+
 }
 
 // Large button
@@ -193,8 +206,13 @@ button.btn-floating {
 }
 
 // Block button
-.btn-block {
-  display: block;
+.btn--block {
+  width: 100%;
+
+  + .btn {
+    margin: 10px 0;
+  }
+
 }
 
 .btn--black {
@@ -203,4 +221,9 @@ button.btn-floating {
   &:hover {
     background-color: lighten($base-color, 5%);
   }
+}
+
+.btn-icon-toggle {
+  padding: 0;
+  width: 1em;
 }

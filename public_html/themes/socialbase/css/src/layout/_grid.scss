@@ -9,11 +9,21 @@
     width: 90%;
   }
 
-
-
   @include MQ($large) {
     max-width: $medium;
   }
+
+}
+
+.main-content .container {
+  padding-left: 12px;
+  padding-right: 12px;
+
+  @include MQ($small) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
 }
 
 .valign-wrapper {
