@@ -27,3 +27,17 @@ function social_comment_comment_links_alter(array &$links, $entity, array &$cont
   }
 }
 
+/**
+ * Implements hook_query_alter().
+ */
+function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
+  // Change sorting to newest reply shown on top.
+  $expressions = &$query->getExpressions();
+  if (isset($expressions['torder'])) {
+    unset($expressions['torder']);
+    $order = &$query->getOrderBy();
+    unset($order['torder']);
+    $query->orderBy('c.thread', 'DESC');
+  }
+}
+
