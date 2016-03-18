@@ -2,7 +2,7 @@
 - var page = "Prototype pages"
 
 mixin collection(link, name)
-  li.collection__item.flow-text
+  li.collection__item
     a(href=link)= name
 
 doctype html
@@ -31,6 +31,7 @@ html(lang="en")
               ul.collection
                 li.collection-header
                   h4.flow-text Logged in users
+                +collection('topic-overview.html', 'Topic overview')
                 +collection('topic.html', 'Topic')
   
     include ./layout/_scripts.jade
