@@ -28,7 +28,7 @@ function social_comment_comment_links_alter(array &$links, $entity, array &$cont
 }
 
 /**
- * Implements hook_query_alter().
+ * Implements hook_query_TAG_alter().
  */
 function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
   // Change sorting to newest reply shown on top.
@@ -39,5 +39,16 @@ function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\Al
     unset($order['torder']);
     $query->orderBy('c.thread', 'DESC');
   }
+}
+
+/**
+ * Implements hook_preprocess_comment().
+ */
+function social_comment_preprocess_comment(&$variables) {
+  $comment = $variables['elements']['#comment'];
+  // Display comment created date in format 'time ago'.
+  $created_time_ago = \Drupal::service('date.formatter')
+    ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+  $variables['submitted'] = t('%time ago', array('%time' => $created_time_ago));
 }
 
