@@ -57,10 +57,12 @@ class EnrollActionBlock extends BlockBase {
       'enroll_action_form' => $form
     );
 
+    $text = t('You have enrolled for this event.');
+
     // Add extra text to
     if ($form['to_enroll_status']['#value'] === '0') {
       $render_array['feedback_user_has_enrolled'] = array(
-        '#markup' => '<div><b>You have enrolled to this event</b></div>',
+        '#markup' => '<div><strong>' . $text . '</strong></div>',
       );
     }
 
