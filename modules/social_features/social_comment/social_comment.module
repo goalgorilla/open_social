@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * The Social comment module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Enhance the comment form.
+ */
+function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Change value of 'Save' button.
+  $form['actions']['submit']['#value'] = t('Comment');
+}
+

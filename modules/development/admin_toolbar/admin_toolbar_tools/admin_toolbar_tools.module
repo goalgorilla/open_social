@@ -1,0 +1,500 @@
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * @file
+ * Prvides extra menu links for admin_toolbar.
+ */
+
+/**
+ * Implements hook_toolbar().
+ */
+function admin_toolbar_tools_toolbar() {
+  $items = array();
+  $items['admin_toolbar_tools'] = array(
+    '#type' => 'toolbar_item',
+    '#attributes' => array(
+      'class' => array('toolbar-icon', 'toolbar-icon-admin-toolbar-tools-help'),
+    ),
+    '#attached' => array(
+      'library' => array(
+        'admin_toolbar_tools/toolbar.icon',
+      ),
+    ),
+  );
+  return $items;
+}
+
+/**
+ *  Implements hook_help().
+ */
+function admin_toolbar_tools_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.admin_toolbar_tools':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Admin Toolbar Tools module allows you to to add more fonctionalities to the toolbar like flush caches, runnig cron.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ *  Implements hook_menu_links_discovered_alter().
+ */
+function admin_toolbar_tools_menu_links_discovered_alter(&$links) {
+  $links['admin_toolbar_tools.help'] = array(
+    'title' => t('Tools'),
+    'route_name' => '<front>',
+    'parent' => 'system.admin',
+    'weight' => -100
+  );
+  // Add system links.
+  $links['system.admin_index'] = array(
+    'title' => t('Index'),
+    'route_name' => 'system.admin_index',
+    'parent' => 'admin_toolbar_tools.help',
+    'weight' => -100,
+  );
+  $links['system.run_cron'] = array(
+    'title' => t('Run cron'),
+    'route_name' => 'admin_toolbar.run.cron',
+    'parent' => 'admin_toolbar_tools.help',
+    'weight' => -8
+  );
+  $links['system.db_update'] = array(
+    'title' => t('Run database updates'),
+    'route_name' => 'system.db_update',
+    'parent' => 'admin_toolbar_tools.help',
+    'weight' => -6
+  );
+  $links['system.modules_uninstall'] = array(
+    'title' => t('Uninstall'),
+    'route_name' => 'system.modules_uninstall',
+    'parent' => 'system.modules_list',
+  );
+  $content_entities = array(
+    "block_content" => array(
+      "content_entity" => "block_content",
+      "config_entity" => "block_content_type"
+    ),
+    "comment" => array(
+      "content_entity" => "comment",
+      "config_entity" => "comment_type"
+    ),
+    "contact" => array(
+      "content_entity" => "contact_message",
+      "config_entity" => "contact_form"
+    ),
+    "node" => array("content_entity" => "node", "config_entity" => "node_type"),
+    "taxonomy" => array(
+      "content_entity" => "taxonomy_term",
+      "config_entity" => "taxonomy_vocabulary"
+    ),
+  );
+  // Add  common links to entities.
+  // The common links for entities are :
+  // - Editing entity, Deleting entity,manage fields for entity
+  //, manage form display for an entity, entity view display and others links relating to entity
+  foreach ($content_entities as $module_name => $entities) {
+    $config_entity = $entities['config_entity'];
+    $content_entity = $entities['content_entity'];
+    foreach (\Drupal::entityManager()
+               ->getBundleInfo($content_entity) as $machine_name => $bundle) {
+      $links["entity." . $config_entity . ".edit_form." . $machine_name] = array(
+        'title' => t($bundle['label']),
+        'route_name' => "entity." . $config_entity . ".edit_form",
+        'parent' => "entity." . $config_entity . ".collection",
+        'route_parameters' => array(
+          $config_entity => $machine_name,
+        ),
+      );
+      $links["entity." . $config_entity . ".delete_form." . $machine_name] = array(
+        'title' => t('Delete'),
+        'route_name' => "entity." . $config_entity . ".delete_form",
+        'parent' => "entity." . $config_entity . ".edit_form." . $machine_name,
+        'route_parameters' => array(
+          $config_entity => $machine_name,
+        ),
+      );
+      if (\Drupal::moduleHandler()->moduleExists('field_ui')) {
+        $links["entity." . $content_entity . ".field_ui_fields" . $machine_name] = array(
+          'title' => t('Manage fields'),
+          'route_name' => "entity." . $content_entity . ".field_ui_fields",
+          'parent' => "entity." . $config_entity . ".edit_form." . $machine_name,
+          'route_parameters' => array(
+            $config_entity => $machine_name,
+          ),
+        );
+        $links["entity.entity_form_display." . $content_entity . ".default" . $machine_name] = array(
+          'title' => t('Manage form display'),
+          'route_name' => "entity.entity_form_display." . $content_entity . ".default",
+          'parent' => "entity." . $config_entity . ".edit_form." . $machine_name,
+          'route_parameters' => array(
+            $config_entity => $machine_name,
+          ),
+        );
+        $links["entity.entity_view_display." . $content_entity . ".default" . $machine_name] = array(
+          'title' => t('Manage display'),
+          'route_name' => "entity.entity_view_display." . $content_entity . ".default",
+          'parent' => "entity." . $config_entity . ".edit_form." . $machine_name,
+          'route_parameters' => array(
+            $config_entity => $machine_name,
+          ),
+        );
+      }
+      if (\Drupal::moduleHandler()->moduleExists('devel')) {
+        $links["entity.$config_entity.devel_load." . $machine_name] = array(
+          'title' => t('Devel'),
+          'route_name' => "entity." . $config_entity . ".devel_load",
+          'parent' => "entity." . $config_entity . ".edit_form." . $machine_name,
+          'route_parameters' => array(
+            $config_entity => $machine_name,
+          ),
+        );
+      }
+    }
+  }
+// Add user links.
+  $links['user.admin_create'] = array(
+    'title' => t('Add user'),
+    'route_name' => 'user.admin_create',
+    'parent' => 'entity.user.collection',
+  );
+  $links['user.admin_permissions'] = array(
+    'title' => t('Permissions'),
+    'route_name' => 'user.admin_permissions',
+    'parent' => 'entity.user.collection',
+  );
+  $links['entity.user_role.collection'] = array(
+    'title' => t('Roles'),
+    'route_name' => 'entity.user_role.collection',
+    'parent' => 'entity.user.collection',
+  );
+  $links['user.logoutt'] = array(
+    'title' => t('Log out'),
+    'route_name' => 'user.logout',
+    'parent' => 'admin_toolbar_tools.help',
+    'weight' => 10,
+  );
+  $links['user.role_add'] = array(
+    'title' => t('Add role'),
+    'route_name' => 'user.role_add',
+    'parent' => 'entity.user_role.collection',
+    'weight' => -5,
+  );
+  if (\Drupal::moduleHandler()->moduleExists('field_ui')) {
+    $links['entity.user.field_ui_fields_'] = array(
+      'title' => t('Manage fields'),
+      'route_name' => 'entity.user.field_ui_fields',
+      'parent' => 'entity.user.admin_form',
+    );
+    $links['entity.entity_form_display.user.default_'] = array(
+      'title' => t('Manage form display'),
+      'route_name' => 'entity.entity_form_display.user.default',
+      'parent' => 'entity.user.admin_form',
+    );
+    $links['entity.entity_view_display.user.default_'] = array(
+      'title' => t('Manage display'),
+      'route_name' => 'entity.entity_view_display.user.default',
+      'parent' => 'entity.user.admin_form',
+    );
+  }
+  foreach (user_roles() as $role) {
+    $links['entity.user_role.edit_form.' . $role->id()] = array(
+      'title' => t($role->label()),
+      'route_name' => 'entity.user_role.edit_form',
+      'parent' => 'entity.user_role.collection',
+      'route_parameters' => array(
+        'user_role' => $role->id(),
+      ),
+    );
+    $links['entity.user_role.edit_permissions_form.' . $role->id()] = array(
+      'title' => t("Edit permissions"),
+      'route_name' => 'entity.user_role.edit_permissions_form',
+      'parent' => 'entity.user_role.edit_form.' . $role->id(),
+      'route_parameters' => array(
+        'user_role' => $role->id(),
+      ),
+    );
+    $links['entity.user_role.delete_form.' . $role->id()] = array(
+      'title' => t("Delete"),
+      'route_name' => 'entity.user_role.delete_form',
+      'parent' => 'entity.user_role.edit_form.' . $role->id(),
+      'route_parameters' => array(
+        'user_role' => $role->id(),
+      ),
+    );
+    if (\Drupal::moduleHandler()->moduleExists('devel')) {
+      $links['entity.user_role.devel_load.' . $role->id()] = array(
+        'title' => t("Devel"),
+        'route_name' => 'entity.user_role.devel_load',
+        'parent' => 'entity.user_role.edit_form.' . $role->id(),
+        'route_parameters' => array(
+          'user_role' => $role->id(),
+        ),
+      );
+    }
+  }
+
+  $links['node.add_page']['parent'] = 'system.admin_content';
+  $links['node.type_add'] = array(
+    'title' => t('Add content type'),
+    'route_name' => 'node.type_add',
+    'parent' => 'entity.node_type.collection',
+    'weight' => -5
+  );
+// Add node links for each content type.
+  foreach (node_type_get_names() as $machine_name => $label) {
+    $links['node.add.' . $machine_name] = array(
+      'title' => t($label),
+      'route_name' => 'node.add',
+      'parent' => 'node.add_page',
+      'route_parameters' => array(
+        'node_type' => $machine_name,
+      ),
+    );
+  }
+  if (\Drupal::moduleHandler()->moduleExists('field_ui')) {
+    $links['field_ui.entity_form_mode_add'] = array(
+      'title' => t('Add new form mode'),
+      'route_name' => 'field_ui.entity_form_mode_add',
+      'parent' => 'entity.entity_form_mode.collection',
+    );
+    $links['field_ui.entity_view_mode_add'] = array(
+      'title' => t('Add new view mode'),
+      'route_name' => 'field_ui.entity_view_mode_add',
+      'parent' => 'entity.entity_view_mode.collection',
+    );
+  }
+  if (\Drupal::moduleHandler()->moduleExists('taxonomy')) {
+
+    $links['entity.taxonomy_vocabulary.add_form'] = array(
+      'title' => t('Add vocabulary'),
+      'route_name' => 'entity.taxonomy_vocabulary.add_form',
+      'parent' => 'entity.taxonomy_vocabulary.collection',
+      'weight' => -5,
+    );
+    foreach (\Drupal::entityManager()
+               ->getBundleInfo('taxonomy_term') as $machine_name => $bundle) {
+      $links['entity.taxonomy_term.add_form.' . $machine_name] = array(
+        'title' => t($bundle['label']),
+        'route_name' => 'entity.taxonomy_term.add_form',
+        'parent' => 'entity.taxonomy_vocabulary.edit_form',
+        'route_parameters' => array(
+          'taxonomy_vocabulary' => $machine_name,
+        ),
+      );
+    }
+  }
+  if (\Drupal::moduleHandler()->moduleExists('menu_ui')) {
+
+    $links['entity.menu.add_form'] = array(
+      'title' => t('Add menu'),
+      'route_name' => 'entity.menu.add_form',
+      'parent' => 'entity.menu.collection',
+      'weight' => -50
+    );
+    // Adding links to /admin/structure/menu.
+    foreach (menu_ui_get_menus() as $machine_name => $label) {
+      $links['entity.menu.edit_form.' . $machine_name] = array(
+        'title' => t($label),
+        'route_name' => 'entity.menu.edit_form',
+        'parent' => 'entity.menu.collection',
+        'route_parameters' => array(
+          'menu' => $machine_name,
+        ),
+      );
+      $links['entity.menu.delete_form.' . $machine_name] = array(
+        'title' => t('Delete'),
+        'route_name' => 'entity.menu.delete_form',
+        'parent' => 'entity.menu.edit_form.' . $machine_name,
+        'route_parameters' => array(
+          'menu' => $machine_name,
+        ),
+      );
+      if (\Drupal::moduleHandler()->moduleExists('devel')) {
+        $links['entity.menu.devel_load.' . $machine_name] = array(
+          'title' => t('Devel'),
+          'route_name' => 'entity.menu.devel_load',
+          'parent' => 'entity.menu.edit_form.' . $machine_name,
+          'route_parameters' => array(
+            'menu' => $machine_name,
+          ),
+        );
+      }
+      $links['entity.menu.add_link_form.' . $machine_name] = array(
+        'title' => t('Add link'),
+        'route_name' => 'entity.menu.add_link_form',
+        'parent' => 'entity.menu.edit_form.' . $machine_name,
+        'route_parameters' => array(
+          'menu' => $machine_name,
+        ),
+      );
+    }
+  }
+  // If module block_content is enabled.
+  if (\Drupal::moduleHandler()->moduleExists('block_content')) {
+    $links['block_content.add_page'] = array(
+      'title' => t('Add custom block'),
+      'route_name' => 'block_content.add_page',
+      'parent' => 'block.admin_display',
+      'weight' => -100
+    );
+    $links['entity.block_content.collection'] = array(
+      'title' => t('Custom block library'),
+      'route_name' => 'entity.block_content.collection',
+      'parent' => 'block.admin_display',
+    );
+    $links['entity.block_content_type.collection'] = array(
+      'title' => t('Types'),
+      'route_name' => 'entity.block_content_type.collection',
+      'parent' => 'block.admin_display',
+    );
+  }
+  // If module contact is enabled.
+  if (\Drupal::moduleHandler()->moduleExists('contact')) {
+    $links['contact.form_add'] = array(
+      'title' => t('Add contact form'),
+      'route_name' => 'contact.form_add',
+      'parent' => 'entity.contact_form.collection',
+      'weight' => -5
+    );
+  }
+  // If module update is enabled.
+  if (\Drupal::moduleHandler()->moduleExists('update')) {
+    $links['update.module_update'] = array(
+      'title' => t('Update'),
+      'route_name' => 'update.module_update',
+      'parent' => 'system.modules_list',
+    );
+    $links['update.module_install'] = array(
+      'title' => t('Install new module'),
+      'route_name' => 'update.module_install',
+      'parent' => 'system.modules_list',
+    );
+  }
+  if (\Drupal::moduleHandler()->moduleExists('devel')) {
+    $links['admin_development'] = array(
+      'title' => ('Development'),
+      'route_name' => 'system.admin_config_development',
+      'parent' => 'admin_toolbar_tools.help',
+      'weight' => -8
+    );
+    $links['devel.admin_settings'] = array(
+      'title' => t('Devel settings'),
+      'route_name' => 'devel.admin_settings',
+      'parent' => 'admin_development'
+    );
+    $links['devel.configs_list'] = array(
+      'title' => t('Config editor'),
+      'route_name' => 'devel.configs_list',
+      'parent' => 'admin_development'
+    );
+    $links['devel.reinstall'] = array(
+      'title' => t('Reinstall Modules'),
+      'route_name' => 'devel.reinstall',
+      'parent' => 'admin_development'
+    );
+    $links['devel.menu_rebuild'] = array(
+      'title' => t('Rebuild Menu'),
+      'route_name' => 'devel.menu_rebuild',
+      'parent' => 'admin_development'
+    );
+    $links['devel.state_system_page'] = array(
+      'title' => t('State editor'),
+      'route_name' => 'devel.state_system_page',
+      'parent' => 'admin_development'
+    );
+    $links['devel.theme_registry'] = array(
+      'title' => t('Theme registry'),
+      'route_name' => 'devel.theme_registry',
+      'parent' => 'admin_development'
+    );
+    $links['devel.entity_info_page'] = array(
+      'title' => t('Entity Info'),
+      'route_name' => 'devel.entity_info_page',
+      'parent' => 'admin_development'
+    );
+    $links['devel.execute_php'] = array(
+      'title' => t('Execute PHP'),
+      'route_name' => 'devel.execute_php',
+      'parent' => 'admin_development'
+    );
+    $links['devel.session'] = array(
+      'title' => t('View Session'),
+      'route_name' => 'devel.session',
+      'parent' => 'admin_development'
+    );
+    $links['devel.elements_page'] = array(
+      'title' => t('Hook_elements'),
+      'route_name' => 'devel.elements_page',
+      'parent' => 'admin_development'
+    );
+  }
+  // If module views_ui enabled.
+  if (\Drupal::moduleHandler()->moduleExists('views_ui')) {
+    $links['views_ui.add'] = array(
+      'title' => t('Add new view'),
+      'route_name' => 'views_ui.add',
+      'parent' => 'entity.view.collection',
+      'weight' => -5,
+    );
+  }
+  $links['system.theme_settings_'] = array(
+    'title' => t('Settings'),
+    'route_name' => 'system.theme_settings',
+    'parent' => 'system.themes_page',
+  );
+  if (\Drupal::moduleHandler()->moduleExists('update')) {
+    $links['update.theme_install_'] = array(
+      'title' => t('Install new theme'),
+      'route_name' => 'update.theme_install',
+      'parent' => 'system.themes_page',
+    );
+    $links['update.theme_update_'] = array(
+      'title' => t('Update'),
+      'route_name' => 'update.theme_update',
+      'parent' => 'system.themes_page',
+    );
+    //List of installed themes.
+    $installed_themes = installedThemes();
+    foreach ($installed_themes as $key_theme => $label_theme) {
+      $links['system.theme_settings_theme' . '.' . $key_theme] = array(
+        'title' => t($label_theme),
+        'route_name' => 'system.theme_settings_theme',
+        'parent' => 'system.theme_settings_',
+        'route_parameters' => array(
+          'theme' => $key_theme,
+        ),
+      );
+    }
+  }
+}
+
+/**
+ * Return installed themes.
+ * @return array
+ */
+function installedThemes() {
+  $all_themes = \Drupal::service('theme_handler')->listInfo();
+  $themes_installed = array();
+  foreach ($all_themes as $key_theme => $theme) {
+    if (\Drupal::service('theme_handler')->hasUi($key_theme)) {
+      $themes_installed[$key_theme] = $theme->getName();
+    }
+  }
+  return $themes_installed;
+}
+
+/**
+ * Get all links related to entity
+ * @param $entity_type_id
+ * @return array
+ */
+function getLinks($entity_type_id) {
+  $entity = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+  //Get all links related to entity.
+  $links = $entity->getLinkTemplates();
+  return $links;
+}

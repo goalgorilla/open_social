@@ -3,10 +3,12 @@ status: true
 dependencies:
   config:
     - field.field.node.topic.body
+    - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
     - node.type.topic
   module:
+    - comment
     - image
     - text
     - user
@@ -21,6 +23,13 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+  field_topic_comments:
+    weight: 2
+    label: above
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
   field_topic_image:
     weight: 1
     label: hidden
