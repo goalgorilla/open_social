@@ -15,3 +15,15 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   $form['actions']['submit']['#value'] = t('Comment');
 }
 
+/**
+ * Implements hook_comment_links_alter().
+ *
+ * Alter the links of a comment.
+ */
+function social_comment_comment_links_alter(array &$links, $entity, array &$context) {
+  // Remove reply links for comments deeper than 1.
+  if (!empty($entity->getParentComment())) {
+    unset($links['comment']['#links']['comment-reply']);
+  }
+}
+
