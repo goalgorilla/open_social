@@ -1,9 +1,10 @@
-@login @security @stability
+@account @login @security @stability @AN @perfect @DS-233
 Feature: Login
   Benefit: In order to participate
   Role: AN
   Goal/desire: Log in with my e-mail
 
+  @critical
   Scenario: Successfully login with e-mail
     Given I am an anonymous user
     And I am on the homepage
@@ -13,7 +14,8 @@ Feature: Login
         | Password | admin |
     And I press "Log in"
     Then I should see "Welcome to Drupal Social"
-    
+
+  @security
   Scenario: unsuccessful login without leaking data
     Given I am an anonymous user
     And I am on the homepage
