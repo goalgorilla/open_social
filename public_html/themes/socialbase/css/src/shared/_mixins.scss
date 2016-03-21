@@ -63,19 +63,3 @@
     transform: translateY(-50%);
   }
 }
-
-
-@mixin font-size($fs-map) {
-  @each $fs-breakpoint, $fs-font-size in $fs-map {
-    @if $fs-breakpoint == null {
-      font-size: $fs-font-size;
-      margin: ($fs-font-size / 2) 0 ($fs-font-size / 2.5) 0;
-    }
-    @else {
-      @media screen and (min-width: $fs-breakpoint) {
-        font-size: $fs-font-size;
-        margin: ($fs-font-size / 2) 0 ($fs-font-size / 2.5) 0;
-      }
-    }
-  }
-}

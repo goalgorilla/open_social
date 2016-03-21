@@ -1,129 +1,155 @@
-(function ($) {
-
-  var methods = {
-    init : function() {
-      return this.each(function() {
-
-      // For each set of tabs, we want to keep track of
-      // which tab is active and its associated content
-      var $this = $(this),
-          window_width = $(window).width();
-
-      $this.width('100%');
-      var $active, $content, $links = $this.find('li.tab a'),
-          $tabs_width = $this.width(),
-          $tab_width = $this.find('li').first().outerWidth(),
-          $index = 0;
-
-      // If the location.hash matches one of the links, use that as the active tab.
-      $active = $($links.filter('[href="'+location.hash+'"]'));
-
-      // If no match is found, use the first link or any with class 'active' as the initial active tab.
-      if ($active.length === 0) {
-          $active = $(this).find('li.tab a.active').first();
-      }
-      if ($active.length === 0) {
-        $active = $(this).find('li.tab a').first();
-      }
-
-      $active.addClass('active');
-      $index = $links.index($active);
-      if ($index < 0) {
-        $index = 0;
-      }
-
-      $content = $($active[0].hash);
-
-      // append indicator then set indicator width to tab width
-      $this.append('<div class="indicator"></div>');
-      var $indicator = $this.find('.indicator');
-      if ($this.is(":visible")) {
-        $indicator.css({"right": $tabs_width - (($index + 1) * $tab_width)});
-        $indicator.css({"left": $index * $tab_width});
-      }
-      $(window).resize(function () {
-        $tabs_width = $this.width();
-        $tab_width = $this.find('li').first().outerWidth();
-        if ($index < 0) {
-          $index = 0;
-        }
-        if ($tab_width !== 0 && $tabs_width !== 0) {
-          $indicator.css({"right": $tabs_width - (($index + 1) * $tab_width)});
-          $indicator.css({"left": $index * $tab_width});
-        }
-      });
-
-      // Hide the remaining content
-      $links.not($active).each(function () {
-        $(this.hash).hide();
-      });
+/* ========================================================================
+ * Bootstrap: tab.js v3.3.6
+ * http://getbootstrap.com/javascript/#tabs
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
 
 
-      // Bind the click event handler
-      $this.on('click', 'a', function(e) {
-        if ($(this).parent().hasClass('disabled')) {
-          e.preventDefault();
-          return;
-        }
++function ($) {
+  'use strict';
 
-        $tabs_width = $this.width();
-        $tab_width = $this.find('li').first().outerWidth();
+  // TAB CLASS DEFINITION
+  // ====================
 
-        // Make the old tab inactive.
-        $active.removeClass('active');
-        $content.hide();
+  var Tab = function (element) {
+    // jscs:disable requireDollarBeforejQueryAssignment
+    this.element = $(element)
+    // jscs:enable requireDollarBeforejQueryAssignment
+  }
 
-        // Update the variables with the new link and content
-        $active = $(this);
-        $content = $(this.hash);
-        $links = $this.find('li.tab a');
+  Tab.VERSION = '3.3.6'
 
-        // Make the tab active.
-        $active.addClass('active');
-        var $prev_index = $index;
-        $index = $links.index($(this));
-        if ($index < 0) {
-          $index = 0;
-        }
-        // Change url to current tab
-        // window.location.hash = $active.attr('href');
+  Tab.TRANSITION_DURATION = 150
 
-        $content.show();
+  Tab.prototype.show = function () {
+    var $this    = this.element
+    var $ul      = $this.closest('ul:not(.dropdown-menu)')
+    var selector = $this.data('target')
 
-        // Update indicator
-        if (($index - $prev_index) >= 0) {
-          $indicator.velocity({"right": $tabs_width - (($index + 1) * $tab_width)}, { duration: 300, queue: false, easing: 'easeOutQuad'});
-          $indicator.velocity({"left": $index * $tab_width}, {duration: 300, queue: false, easing: 'easeOutQuad', delay: 90});
-
-        }
-        else {
-          $indicator.velocity({"left": $index * $tab_width}, { duration: 300, queue: false, easing: 'easeOutQuad'});
-          $indicator.velocity({"right": $tabs_width - (($index + 1) * $tab_width)}, {duration: 300, queue: false, easing: 'easeOutQuad', delay: 90});
-        }
-
-        // Prevent the anchor's default click action
-        e.preventDefault();
-      });
-    });
-
-    },
-    select_tab : function( id ) {
-      this.find('a[href="#' + id + '"]').trigger('click');
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
     }
-  };
 
-  $.fn.tabs = function(methodOrOptions) {
-    if ( methods[methodOrOptions] ) {
-      return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-    } else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
-      // Default to "init"
-      return methods.init.apply( this, arguments );
-    } else {
-      $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.tooltip' );
+    if ($this.parent('li').hasClass('active')) return
+
+    var $previous = $ul.find('.active:last a')
+    var hideEvent = $.Event('hide.bs.tab', {
+      relatedTarget: $this[0]
+    })
+    var showEvent = $.Event('show.bs.tab', {
+      relatedTarget: $previous[0]
+    })
+
+    $previous.trigger(hideEvent)
+    $this.trigger(showEvent)
+
+    if (showEvent.isDefaultPrevented() || hideEvent.isDefaultPrevented()) return
+
+    var $target = $(selector)
+
+    this.activate($this.closest('li'), $ul)
+    this.activate($target, $target.parent(), function () {
+      $previous.trigger({
+        type: 'hidden.bs.tab',
+        relatedTarget: $this[0]
+      })
+      $this.trigger({
+        type: 'shown.bs.tab',
+        relatedTarget: $previous[0]
+      })
+    })
+  }
+
+  Tab.prototype.activate = function (element, container, callback) {
+    var $active    = container.find('> .active')
+    var transition = callback
+      && $.support.transition
+      && ($active.length && $active.hasClass('fade') || !!container.find('> .fade').length)
+
+    function next() {
+      $active
+        .removeClass('active')
+        .find('> .dropdown-menu > .active')
+          .removeClass('active')
+        .end()
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', false)
+
+      element
+        .addClass('active')
+        .find('[data-toggle="tab"]')
+          .attr('aria-expanded', true)
+
+      if (transition) {
+        element[0].offsetWidth // reflow for transition
+        element.addClass('in')
+      } else {
+        element.removeClass('fade')
+      }
+
+      if (element.parent('.dropdown-menu').length) {
+        element
+          .closest('li.dropdown')
+            .addClass('active')
+          .end()
+          .find('[data-toggle="tab"]')
+            .attr('aria-expanded', true)
+      }
+
+      callback && callback()
     }
-  };
 
-  $(document).ready(function(){
-    $('ul.tabs').tabs();
-  });
-}( jQuery ));
+    $active.length && transition ?
+      $active
+        .one('bsTransitionEnd', next)
+        .emulateTransitionEnd(Tab.TRANSITION_DURATION) :
+      next()
+
+    $active.removeClass('in')
+  }
+
+
+  // TAB PLUGIN DEFINITION
+  // =====================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.tab')
+
+      if (!data) $this.data('bs.tab', (data = new Tab(this)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.tab
+
+  $.fn.tab             = Plugin
+  $.fn.tab.Constructor = Tab
+
+
+  // TAB NO CONFLICT
+  // ===============
+
+  $.fn.tab.noConflict = function () {
+    $.fn.tab = old
+    return this
+  }
+
+
+  // TAB DATA-API
+  // ============
+
+  var clickHandler = function (e) {
+    e.preventDefault()
+    Plugin.call($(this), 'show')
+  }
+
+  $(document)
+    .on('click.bs.tab.data-api', '[data-toggle="tab"]', clickHandler)
+    .on('click.bs.tab.data-api', '[data-toggle="pill"]', clickHandler)
+
+}(jQuery);

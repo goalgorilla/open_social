@@ -4,27 +4,33 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero
+  .block-hero.only-desktop
     .container
       .row
-        .col.s12.center
-          img.circle.img-bordered(src='/content/images/avatar0.jpg')
+        .col.s12.center.margin-bottom-xxl
+          img.circle.img-bordered(src='content/images/avatar0.jpg')
           h1.page-title.h2 Michael Angarano
           button.btn.white.social-blue-text following
       
 block secondary_navigation
+  .container
+    .row.hidden-desktop.section-header
+      .col.s12
+        a.btn 
+          i.material-icons.left keyboard_arrow_left
+          | Back to timeline
 
-  .block-secondary-nav.social-blue.darken-1
+  .style-primary-dark.only-desktop
     .container
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.tabs.primary
+        ul.nav.nav-tabs.nav-justified.style-primary-dark.nav-tabs--xl
           li
             a(href="#").disabled Timeline  
           li
             a(href="#") Information
-          li.is-active
-            a.is-active(href='my-topics.html') Topics
+          li.active
+            a(href='my-topics.html') Topics
               span.visually-hidden (active tab)
           li
             a(href="my-events.html") Events
@@ -36,7 +42,7 @@ block content
   .row
   
     .col.s12
-      h2.section-title My topics
+      h2.h3.section-title My topics
     
     .col.s12.l3.right
       a.waves-effect.waves-light.btn.btn--block.btn--black(href='#!') 
