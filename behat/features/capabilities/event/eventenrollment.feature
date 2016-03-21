@@ -23,7 +23,6 @@ Feature: Enroll for an event
     And I should see "You have enrolled for this event"
     And I should see the link "Enrollments"
 
-  @wip
   Scenario: Successfully redirect an AN from an event enrollment action
     Given users:
       | name            | pass            | mail                        | status |
