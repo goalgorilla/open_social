@@ -38,14 +38,3 @@ function socialbase_preprocess_page(&$variables) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
 }
-
-/**
- * Implements template_preprocess_comment().
- */
-function socialbase_preprocess_comment(&$variables) {
-  $comment = $variables['elements']['#comment'];
-  // Display comment created date in format 'time ago'.
-  $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
-  $variables['submitted'] = t('%time ago', array('%time' => $created_time_ago));
-}
