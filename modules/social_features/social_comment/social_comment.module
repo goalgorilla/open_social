@@ -19,6 +19,10 @@ use Drupal\comment\CommentInterface;
 function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Change value of 'Save' button.
   $form['actions']['submit']['#value'] = t('Comment');
+  // Hide title of 'Comment' field.
+  if(!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])){
+    $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'none';
+  }
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
 }
