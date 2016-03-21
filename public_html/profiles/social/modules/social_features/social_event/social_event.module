@@ -5,6 +5,8 @@
  * The Social event module.
  */
 
+use Drupal\node\Entity\Node;
+
 /**
  * Implements hook_form_form_ID_alter().
  *
@@ -38,4 +40,25 @@ function social_event_block_view_alter(array &$build, \Drupal\Core\Block\BlockPl
   if ($build['#plugin_id'] === 'views_exposed_filter_block:events-events_overview') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
   }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_event_menu_local_tasks_alter(&$data, $route_name) {
+  $can_show_enrollments_link = FALSE;
+  if ($route_name === "view.enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
+    $node = \Drupal::service('current_route_match')->getParameter('node');
+    if (!is_null($node) && !is_object($node)) {
+      $node = Node::load($node);
+    }
+    if (is_object($node) && $node->getType() === 'event') {
+      $can_show_enrollments_link = TRUE;
+    }
+
+    if (!$can_show_enrollments_link) {
+      unset($data['tabs'][0]['views_view:view.enrollments.view_enrollments']);
+    }
+  }
+
 }
