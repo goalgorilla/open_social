@@ -12,8 +12,10 @@ Feature: See Comment
     And I am viewing a "topic" with the title "Comment view test topic"
     When I fill in the following:
          | Add a comment | This is a test comment |
+
     And I press "Comment"
     Then I should see "This is a test comment" in the "Main content"
     And I should see "Comment view user"
-    And I should see "seconds ago"
+    And I should see "second"
+    And I should see "ago"
     And I should see the link "Permalink"
