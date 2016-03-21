@@ -1,9 +1,10 @@
-@api @topic @stability @overview
+@wip @api @topic @stability @overview @DS-357 @DS-358
 Feature: Topic Overview
   Benefit: In order to find a Topic from a author
   Role: As a User
   Goal/desire: I want to see an Topic overview
 
+  @perfect @critical
   Scenario: Successfully see the topic overview
     Given I am logged in as an "authenticated user"
     And I am on "user"

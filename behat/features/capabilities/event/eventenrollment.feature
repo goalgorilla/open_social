@@ -4,7 +4,7 @@ Feature: Enroll for an event
   Role: LU
   Goal/desire: I want to enroll for an Event
 
-
+  @LU @perfect @critical
   Scenario: Successfully enroll for an event
     Given I am logged in as an "authenticated user"
     When I am viewing a "event" with the title "Enrollment test event"
@@ -23,6 +23,7 @@ Feature: Enroll for an event
     And I should see "You have enrolled for this event"
     And I should see the link "Enrollments"
 
+  @AN @perfect
   Scenario: Successfully redirect an AN from an event enrollment action
     Given users:
       | name            | pass            | mail                        | status |
