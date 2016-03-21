@@ -3,6 +3,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
 
 /**
@@ -18,6 +19,24 @@ use Drupal\comment\CommentInterface;
 function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Change value of 'Save' button.
   $form['actions']['submit']['#value'] = t('Comment');
+  // Validate replies to comments deeper than 1.
+  $form['#validate'][] = 'social_comment_form_reply_validate';
+}
+
+/**
+ * Form validation handler for comment_form().
+ *
+ * Validate replies to comments deeper than 1.
+ */
+function social_comment_form_reply_validate($form, FormStateInterface $form_state) {
+  // Get parrent comment ID.
+  $pid = \Drupal::routeMatch()->getParameter('pid');
+  if ($pid) {
+    $comment = entity_load('comment', $pid);
+    if (!empty($comment->getParentComment())) {
+      $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
+    }
+  }
 }
 
 /**
