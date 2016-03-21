@@ -15,5 +15,5 @@ Feature: See Comment
     And I press "Comment"
     Then I should see "This is a test comment" in the "Main content"
     And I should see "Comment view user"
-    And I should see "seconds ago"
+    And I should see "ago"
     And I should see the link "Permalink"
