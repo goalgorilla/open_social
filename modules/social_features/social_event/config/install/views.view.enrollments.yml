@@ -334,8 +334,8 @@ display:
           group_type: group
           admin_label: footer_enrollmentlink
           empty: false
-          tokenize: false
-          content: '<a href="enrollments">See all enrollments</a>'
+          tokenize: true
+          content: '<a href="/node/{{ raw_arguments.nid }}/enrollments">See all enrollments</a>'
           plugin_id: text_custom
       filters:
         field_enrollment_status_value:
