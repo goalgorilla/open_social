@@ -1,4 +1,4 @@
-@api @comment @stability
+@api @comment @stability @DS-477
 Feature: See Comment
   Benefit: In order to interact with people on the platform
   Role: As a LU
@@ -21,5 +21,5 @@ Feature: See Comment
     When I fill in the following:
       | Add a comment | This is a second comment |
     And I press "Comment"
-    Then I should see "This is a first comment"
-    And "This is a second comment" should precede "This is a first comment" for the query ".field--name-field-comment-body"
+    Then I should see "This is a second comment"
+    And "This is a second comment" should precede "This is a first comment" for the query ".js-comment div"
