@@ -181,4 +181,23 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     return $date;
 
   }
+
+  /**
+   * Load a file object by uuid.
+   *
+   * @param $uuid
+   *  the uuid of the file.
+   *
+   * @return int $fid
+   */
+  public function loadByUuid($uuid) {
+    $query = \Drupal::entityQuery('node');
+    $query->condition('type', 'event');
+    $query->condition('uuid', $uuid);
+    $fids = $query->execute();
+    // Get a single item
+    $fid = reset($fids);
+    // And return it.
+    return $fid;
+  }
 }

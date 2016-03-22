@@ -1,9 +1,10 @@
-@api @event @stability @javascript
+@api @event @stability @javascript @DS-406
 Feature: Create Event
   Benefit: In order to connect with other people offline
   Role: As a LU
   Goal/desire: I want to create Events
 
+  @LU @perfect @critical @wip
   Scenario: Successfully create event
     Given I am logged in as an "authenticated user"
     And I am on "node/add/event"
