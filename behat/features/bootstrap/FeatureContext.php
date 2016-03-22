@@ -6,6 +6,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
+use PHPUnit_Framework_Assert as PHPUnit;
 
 /**
  * Defines application features from the specific context.
@@ -102,7 +103,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         ");
     }
 
-  /**
+    /**
+     * @Then :textBefore should precede :textAfter for the query :cssQuery
+     */
+    public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery) {
+      $elements = $this->getSession()->getPage()->findAll('css', $cssQuery);
+
+      $items = array_map(
+        function ($element) {
+          return $element->getText();
+        },
+        $elements
+      );
+      PHPUnit::assertGreaterThan(
+        array_search($textBefore, $items),
+        array_search($textAfter, $items),
+        "$textBefore does not proceed $textAfter"
+      );
+    }
+
+    /**
      * @BeforeScenario
      */
     public function resizeWindow()
