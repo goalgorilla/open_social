@@ -24,7 +24,15 @@ class SocialPageTitleBlock extends PageTitleBlock {
    * {@inheritdoc}
    */
   public function build() {
-    $node = \Drupal::routeMatch()->getParameter('node');
+    // Take the raw parameter. We'll load it ourselves.
+    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    $node = FALSE;
+
+    // At this point the parameter could also be a simple string of a nid.
+    // EG: on: /node/%node/enrollments.
+    if (!is_null($nid) && !is_object($nid)) {
+      $node = Node::load($nid);
+    }
 
     if ($node) {
       $title = $node->getTitle();
