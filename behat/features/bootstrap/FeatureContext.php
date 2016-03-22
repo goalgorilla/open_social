@@ -25,6 +25,34 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Get the wysiwyg instance variable to use in Javascript.
+     *
+     * @param string
+     *   The instanceId used by the WYSIWYG module to identify the instance.
+     *
+     * @throws Exception
+     *   Throws an exception if the editor does not exist.
+     *
+     * @return string
+     *   A Javascript expression representing the WYSIWYG instance.
+     */
+    protected function getWysiwygInstance($instanceId) {
+      $instance = "CKEDITOR.instances['$instanceId']";
+      if (!$this->getSession()->evaluateScript("return !!$instance")) {
+        throw new \Exception(sprintf('The editor "%s" was not found on the page %s', $instanceId, $this->getSession()->getCurrentUrl()));
+      }
+      return $instance;
+    }
+
+    /**
+     * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
+     */
+    public function iFillInTheWysiwygEditor($instanceId, $text) {
+      $instance = $this->getWysiwygInstance($instanceId);
+      $this->getSession()->executeScript("$instance.setData(\"$text\");");
+    }
+
+    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
@@ -72,6 +100,14 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         array_search($textAfter, $items),
         "$textBefore does not proceed $textAfter"
       );
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resizeWindow()
+    {
+      $this->getSession()->resizeWindow(1280, 1024, 'current');
     }
 
 }

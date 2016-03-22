@@ -36,7 +36,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
 
     if ($node) {
       $title = $node->getTitle();
-      $author = $node->getRevisionAuthor();
+      $author = $node->getOwner();
       $author_name = $author->link();
 
       switch($node->getType()) {
@@ -60,7 +60,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#theme' => 'page_hero_data',
         '#title' => $title,
         '#author_name' => $author_name,
-        '#created_date' => time(),
+        '#created_date' => $node->getCreatedTime(),
         '#topic_type' => $topic_type,
         '#hero_node' => $hero_node,
       ];

@@ -3,43 +3,44 @@ extends ./layout/base-an.jade
 block title
   title Sign up
 
-block pagetitle
-  .page-title 
-    .container
-      h1 Sign up
-
 block secondary_navigation
-
-  nav(role="navigation" aria-label="Tabs")
-    h2.visually-hidden Primary tabs
-    ul.tabs.primary
-      li
-        a(href="login.html") Log in
-      li.is-active
-        a.is-active(href="sign-up.html") Sign up
-          span.visually-hidden (active tab)
-      li
-        a(href='reset-password.html') Reset password
+  
+  .style-default-bright.only-desktop
+    .container
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.nav-justified.style-default-bright.nav-tabs--xl
+          li
+            a(href="login.html") Log in
+          li.active
+            a(href="sign-up.html") Sign up
+              span.visually-hidden (active tab)
+          li
+            a(href='reset-password.html') Reset password
 
 block content
-
+  
   .row
-    .col.s12.l9
-      .card.form-card
-              
-        form.user-register-form(accept-charset='UTF-8')
-          .form__item.form__type-textfield
-            .input-field
-              input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
-              label.form-required(for='edit-email') E-mail address
-              .description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
+    .col.s12.l9.section-header
+      h2.h3.section-title Sign up
 
-          .form__item.form__type-textfield
-            .input-field
-              input#edit-username.form-text(type='text', required='required')
-              label.form-required(for='edit-username') Username
-              .form__description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
+      .card.form-card
+      
+        .card-body
               
-              
-          #edit-actions.form-actions.form-wrapper
-            input#edit-submit.waves-effect.waves-light.btn.form__submit(type='submit', value='Sign up')
+          form.user-register-form(accept-charset='UTF-8')
+            .form__item.form__type-textfield
+              .input-field
+                input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
+                label.form-required(for='edit-email') E-mail address
+                .description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
+
+            .form__item.form__type-textfield
+              .input-field
+                input#edit-username.form-text(type='text', required='required')
+                label.form-required(for='edit-username') Username
+                .form__description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
+                
+                
+            #edit-actions.form-actions.form-wrapper
+              input#edit-submit.waves-effect.waves-light.btn.form__submit(type='submit', value='Sign up')
