@@ -1,8 +1,8 @@
-@wip @api @topic @stability @perfect @critical @DS-341
-Feature: Create Topic
-  Benefit: In order to share knowledge with people
-  Role: As a LU
-  Goal/desire: I want to create Topics
+@wip @api @topic @stability @perfect @critical @DS-177
+Feature: Un/publish a node
+  Benefit: In order to make drafts
+  Role: as a LU
+  Goal/desire: I want to un/publish
 
   Scenario: Successfully create unpublished topic
     Given I am logged in as an "authenticated user"
