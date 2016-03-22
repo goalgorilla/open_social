@@ -68,13 +68,16 @@
 <main id="content" class="column main-container" role="main">
   {{ page.breadcrumb }}
 
-  {% if page.hero %}
-    <div class="hero">
-      <aside class="layout-container section clearfix" role="complementary">
-        {{ page.hero }}
-      </aside>
+  <div class="block-hero">
+    <div class="container">
+      <div class="row">
+        <div class="col s12 center margin-bottom-xxl">
+          {{ page.title }}
+          {{ page.hero }}
+        </div>
+      </div>
     </div>
-  {% endif %}
+  </div>
 
   {% if page.secondary_navigation %}
     <div class="style-secondary only-desktop">
@@ -86,11 +89,7 @@
 
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
-    <div class="row">
-      <div class="col s12 l9 section-header">
-        {{ page.title }}
-      </div>
-
+    <div class="row margin-top-l">
       <div class="col s12 l9">
         {% block card %}
           {{ page.content }}
