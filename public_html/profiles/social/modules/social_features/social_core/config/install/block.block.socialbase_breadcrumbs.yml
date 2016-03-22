@@ -1,13 +1,11 @@
-uuid: bf638e1a-a040-40ae-8500-a607e600eb5b
 langcode: en
 status: true
 dependencies:
   module:
     - system
+    - user
   theme:
     - socialbase
-_core:
-  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
 id: socialbase_breadcrumbs
 theme: socialbase
 region: breadcrumb
@@ -19,4 +17,12 @@ settings:
   label: Breadcrumbs
   provider: system
   label_display: '0'
-visibility: {  }
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+      administrator: administrator
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

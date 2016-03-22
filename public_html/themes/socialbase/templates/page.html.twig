@@ -77,7 +77,7 @@
   {% endif %}
 
   {% if page.secondary_navigation %}
-    <div class="secondary_navigation">
+    <div class="style-primary-dark only-desktop">
       <div class="container">
         {{ page.secondary_navigation }}
       </div>
@@ -85,14 +85,12 @@
   {% endif %}
 
   <a id="main-content" tabindex="-1"></a>
-  <div class="page-title">
-    <div class="container">
-      {{ page.title }}
-    </div>
-  </div>
-
   <div class="container">
     <div class="row">
+      <div class="col s12 l9 section-header">
+        {{ page.title }}
+      </div>
+
       <div class="col s12 l9">
         {% block card %}
           {{ page.content }}
@@ -107,6 +105,7 @@
 
     </div>
   </div>
+  
 </main>
 
 <footer role="contentinfo">
