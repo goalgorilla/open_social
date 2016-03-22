@@ -1,5 +1,10 @@
 <?php
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\comment\CommentInterface;
+
 /**
  * @file
  * The Social comment module.
@@ -13,5 +18,61 @@
 function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Change value of 'Save' button.
   $form['actions']['submit']['#value'] = t('Comment');
+}
+
+/**
+ * Implements hook_comment_links_alter().
+ *
+ * Alter the links of a comment.
+ */
+function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+  // Remove reply links for comments deeper than 1.
+  if (!empty($entity->getParentComment())) {
+    unset($links['comment']['#links']['comment-reply']);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
+  // Change sorting to newest reply shown on top.
+  $expressions = &$query->getExpressions();
+  if (isset($expressions['torder'])) {
+    unset($expressions['torder']);
+    $order = &$query->getOrderBy();
+    unset($order['torder']);
+    $query->orderBy('c.thread', 'DESC');
+  }
+}
+
+/**
+ * Implements hook_preprocess_comment().
+ */
+function social_comment_preprocess_comment(&$variables) {
+  $comment = $variables['elements']['#comment'];
+  // Display comment created date in format 'time ago'.
+  $created_time_ago = \Drupal::service('date.formatter')
+    ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+  $variables['submitted'] = t('%time ago', array('%time' => $created_time_ago));
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for comment entity.
+ *
+ * Allow users to delete their own comments.
+ */
+function social_comment_comment_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($operation == 'delete') {
+    if ($account->hasPermission('administer comments', $account)) {
+      return AccessResult::allowed()->cachePerPermissions();
+    }
+    else {
+      return AccessResult::allowedIf($account->hasPermission('delete own comments', $account) && ($account->id() == $entity->getOwnerId()))
+        ->cachePerPermissions()
+        ->cachePerUser()
+        ->addCacheableDependency($entity);
+    }
+  }
 }
 

@@ -24,11 +24,19 @@ class SocialPageTitleBlock extends PageTitleBlock {
    * {@inheritdoc}
    */
   public function build() {
-    $node = \Drupal::routeMatch()->getParameter('node');
+    // Take the raw parameter. We'll load it ourselves.
+    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    $node = FALSE;
+
+    // At this point the parameter could also be a simple string of a nid.
+    // EG: on: /node/%node/enrollments.
+    if (!is_null($nid) && !is_object($nid)) {
+      $node = Node::load($nid);
+    }
 
     if ($node) {
       $title = $node->getTitle();
-      $author = $node->getRevisionAuthor();
+      $author = $node->getOwner();
       $author_name = $author->link();
 
       switch($node->getType()) {
@@ -52,7 +60,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#theme' => 'page_hero_data',
         '#title' => $title,
         '#author_name' => $author_name,
-        '#created_date' => time(),
+        '#created_date' => $node->getCreatedTime(),
         '#topic_type' => $topic_type,
         '#hero_node' => $hero_node,
       ];
