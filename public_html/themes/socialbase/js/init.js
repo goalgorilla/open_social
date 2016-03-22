@@ -68,7 +68,7 @@
         });
     });
 
-//    Toggle Containers on page
+    // Toggle Containers on page
     var toggleContainersButton = $('#container-toggle-button');
     toggleContainersButton.click(function(){
       $('body .browser-window .container, .had-container').each(function(){
@@ -88,6 +88,11 @@
     if (indeterminateCheckbox !== null)
       indeterminateCheckbox.indeterminate = true;
 
+
+		$('[data-toggle="tabs"] a').click(function (e) {
+			e.preventDefault();
+		  $(this).tab('show');
+    });
 
     // Plugin initialization
     //$('.carousel.carousel-slider').carousel({full_width: true});

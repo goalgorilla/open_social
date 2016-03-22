@@ -9,9 +9,9 @@
 
 .card {
   position: relative;
-  margin: 0 0 $element-bottom-margin 0;
+  margin: 0 0 24px 0;
   background-color: $card-bg-color;
-  padding: $card-padding-small;
+  @include clearfix;
 
   @include MQ($small) {
     border-radius: 10px;
@@ -20,6 +20,42 @@
     @include z-depth-1;
   }
 
+}
+
+.card-head {
+  position: relative;
+  line-height: 52px;
+  min-height: 56px;
+  vertical-align: middle;
+  border-radius: 10px 10px 0 0;
+  @include clearfix;
+}
+
+.card-underline .card-head {
+  border-bottom: 1px solid $grey-light-2;
+}
+
+.card-body {
+  padding: $card-padding-small;
+  position: relative;
+
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+}
+
+.card-head header {
+  display: inline-block;
+  padding: 11px 24px;
+  vertical-align: middle;
+  line-height: 17px;
+  font-size: 20px;
 }
 
 @include MQ($small) {
@@ -55,4 +91,8 @@
     @include z-depth-1;
   }
 
+}
+
+.card ~ .text-caption {
+  margin-top: -15px;
 }
