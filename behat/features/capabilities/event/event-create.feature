@@ -10,10 +10,10 @@ Feature: Create Event
     And I am on "node/add/event"
     When I fill in the following:
          | Title | This is a test event |
-         | Body | Body description text. |
          | Date | 2025-01-01 |
          | Time | 11:00:00 |
          | Location name | GG HQ |
+    And I fill in wysiwyg on field "edit-body-0-value" with "Body description text."
 #    And I select "NL" from "Country"
 #    And I wait for AJAX to finish
 #    Then I should see "City"

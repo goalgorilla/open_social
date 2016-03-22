@@ -24,6 +24,19 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @Then /^I fill in wysiwyg on field "([^"]*)" with "([^"]*)"$/
+     */
+    public function iFillInWysiwygOnFieldWith($arg, $arg2)
+    {
+      $js = <<<HEREDOC
+          CKEDITOR.instances['$arg'].setData('$arg2');
+HEREDOC;
+
+      $session = $this->getSession();
+      $session->executeScript($js);
+    }
+
+    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
@@ -53,5 +66,13 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $radiobutton->selectOption($value, FALSE);
 
     }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resizeWindow()
+     {
+       $this->getSession()->resizeWindow(1280, 1024, 'current');
+     }
 
 }
