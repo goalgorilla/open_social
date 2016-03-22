@@ -23,6 +23,6 @@ php -r 'opcache_reset();';
 chmod 444 sites/default/settings.php
 drush pm-enable social_demo -y
 drush cc drush
-drush sda file user topic event eventenrollment # Add the demo content
-#drush sdr file user topic event eventenrollment # Remove the demo content
+drush sda file user topic event eventenrollment comment # Add the demo content
+#drush sdr file user topic event eventenrollment comment # Remove the demo content
 drush pm-uninstall social_demo -y
