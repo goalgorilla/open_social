@@ -38,16 +38,20 @@
 .card-body {
   padding: $card-padding-small;
   position: relative;
+  @include MQ($small) {
 
-  &:first-child {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
+    &:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
 
-  &:last-child {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    &:last-child {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
   }
+  
 }
 
 .card-head header {

@@ -73,7 +73,7 @@ button:focus {
 
   &:hover {
     background-color: $button-raised-background-hover;
-    @extend .z-depth-1-half;
+    @include z-depth-1-half;
   }
 
 }
@@ -200,6 +200,28 @@ button.btn-floating {
 
 }
 
+// Button raised
+// --------------------------------------------------
+
+.btn-raised {
+	@include z-depth-1;
+	transition: box-shadow, .15s ease-out;
+
+	&:hover {
+		@include z-depth-1-half;
+	}
+
+	&:active, &.active {
+		@include z-depth-1-half;
+	}
+
+	&.disabled,
+	&[disabled],
+	.pager .disabled & {
+		@include z-depth-0;
+	}
+}
+
 // Large button
 .btn-large {
   @extend .btn;
@@ -232,4 +254,31 @@ button.btn-floating {
 .btn-icon-toggle {
   padding: 0;
   width: 1em;
+}
+
+.btn--primary {
+  background-color: $primary-color;
+  color: white;
+
+  &:hover,
+	&:focus {
+    background-color: $primary-color-dark;
+  }
+
+}
+
+.btn--secondary {
+  background-color: $secondary-color;
+  color: white;
+}
+
+.btn--default-bright {
+  background-color: white;
+  color: $grey-dark-1;
+
+  &:hover,
+  &:focus {
+    background-color: $grey-light-3;
+  }
+
 }
