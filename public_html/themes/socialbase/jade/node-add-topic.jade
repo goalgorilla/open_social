@@ -1,0 +1,42 @@
+extends ./layout/base-lu.jade
+
+- var ckeditor = true
+
+block title
+  title Create Topic
+
+block pagetitle
+  .block-hero
+    .container
+      .row
+        .col.s12.center.margin-bottom-xxl
+          h1.page-title.h2 Create Topic         
+
+      
+block content
+      
+  .row.margin-top-l
+    .col.s12.l9
+      .card        
+        .card-body 
+          
+          form.node-form
+          
+            .form-item.form__type-textfield
+              .input-field
+                input.form-text.required(type="text")
+                label.form__label.form-required Title
+            
+            .form-item.form__type-textarea
+              label.form__label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-text.form-textarea
+        
+block scriptinline  
+  script(src='libs/ckeditor/ckeditor.js')
+  script(src='libs/ckeditor/adapters/jquery.js')
+  
+  script.
+    jQuery(document).ready(function($){
+      $( '#ckeditor' ).ckeditor();  
+    });
