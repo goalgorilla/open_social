@@ -4,7 +4,7 @@ Feature: Edit Comment
   Role: As a LU
   Goal/desire: I want to edit my comments on the platform
 
-  Scenario: Successfully delete comment
+  Scenario: Successfully edit comment
     Given I am logged in as an "authenticated user"
     And I am viewing a "topic" with the title "Comment edit topic"
     When I fill in the following:
