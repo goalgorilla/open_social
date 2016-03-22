@@ -10,7 +10,7 @@ Feature: Create Topic
     When I fill in "Title" with "This is a test topic"
     When I fill in the following:
       | Title | This is a test topic |
-     And I fill in wysiwyg on field "edit-body-0-value" with "Body description text"
+     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I press "Save"
     Then I should see "Topic This is a test topic has been created."

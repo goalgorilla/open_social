@@ -24,16 +24,31 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
-     * @Then /^I fill in wysiwyg on field "([^"]*)" with "([^"]*)"$/
+     * Get the wysiwyg instance variable to use in Javascript.
+     *
+     * @param string
+     *   The instanceId used by the WYSIWYG module to identify the instance.
+     *
+     * @throws Exception
+     *   Throws an exception if the editor does not exist.
+     *
+     * @return string
+     *   A Javascript expression representing the WYSIWYG instance.
      */
-    public function iFillInWysiwygOnFieldWith($arg, $arg2)
-    {
-      $js = <<<HEREDOC
-          CKEDITOR.instances['$arg'].setData('$arg2');
-HEREDOC;
+    protected function getWysiwygInstance($instanceId) {
+      $instance = "CKEDITOR.instances['$instanceId']";
+      if (!$this->getSession()->evaluateScript("return !!$instance")) {
+        throw new \Exception(sprintf('The editor "%s" was not found on the page %s', $instanceId, $this->getSession()->getCurrentUrl()));
+      }
+      return $instance;
+    }
 
-      $session = $this->getSession();
-      $session->executeScript($js);
+    /**
+     * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
+     */
+    public function iFillInTheWysiwygEditor($instanceId, $text) {
+      $instance = $this->getWysiwygInstance($instanceId);
+      $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
 
     /**
