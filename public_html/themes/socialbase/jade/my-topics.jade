@@ -1,0 +1,105 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Michael Angarano
+
+block pagetitle
+  .block-hero.only-desktop
+    .container
+      .row
+        .col.s12.center.margin-bottom-xxl
+          img.circle.img-bordered(src='content/images/avatar0.jpg')
+          h1.page-title.h2 Michael Angarano
+          button.btn.white.social-blue-text following
+      
+block secondary_navigation
+  .container
+    .row.hidden-desktop.section-header
+      .col.s12
+        a.btn 
+          i.material-icons.left keyboard_arrow_left
+          | Back to timeline
+
+  .style-primary-dark.only-desktop
+    .container
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.nav-justified.style-primary-dark.nav-tabs--xl
+          li
+            a(href="#").disabled Timeline  
+          li
+            a(href="#") Information
+          li.active
+            a(href='my-topics.html') Topics
+              span.visually-hidden (active tab)
+          li
+            a(href="my-events.html") Events
+          li
+            a(href="#") Groups
+      
+block content
+  
+  .row
+  
+    .col.s12
+      h2.h3.section-title My topics
+    
+    .col.s12.l3.right
+      a.waves-effect.waves-light.btn.btn--block.btn--black(href='#!') 
+        i.material-icons.left add
+        | Add a topic
+
+      a.btn.btn--block.hidden-desktop.js-open-canvas
+        i.material-icons.left tune
+        | Filters
+      
+      .off-canvas.off-canvas-right.off-canvas-small-only.desktop-card
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.hidden-desktop
+            .js-close-canvas.btn-flat.btn-icon-toggle.btn-default-light.right
+              i.material-icons close
+    
+        form
+          .form-item
+            .input-field
+              select
+                option(value="", selected="") All types
+                option(value="blog") Blog
+                option(value="discussion") Discussion
+                option(value="topic") Topic
+              label Topic type
+              
+          .form-item
+            .input-field
+              select
+                option(value="", selected="") All statusses
+                option(value="published") Published
+                option(value="unpublished") Unpublished
+              label Status
+          
+          .form-actions.form-wrapper
+            input.waves-effect.waves-light.btn.btn--block.disabled(type="submit", value="Reset")
+
+    .col.s12.l9
+      .card--wrapper
+        include molecules/_topic1.jade
+        include molecules/_topic2.jade
+        include molecules/_topic3.jade
+        include molecules/_topic4.jade
+        
+      ul.pagination
+        li.disabled
+          a(href="#0")     
+            i.material-icons chevron_left
+        li.active
+          a(href="#1") 1
+        li 
+          a(href="#1") 2
+        li 
+          a(href="#1") 3          
+        li 
+          a(href="#1") 4
+        li
+          a(href="#0")     
+            i.material-icons chevron_right
