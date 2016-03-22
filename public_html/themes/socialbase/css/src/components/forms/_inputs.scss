@@ -1,0 +1,154 @@
+::-webkit-input-placeholder,
+:-moz-placeholder, // Firefox 18-
+::-moz-placeholder, // Firefox 19+
+:-ms-input-placeholder {
+   color: lighten($input-border-color, 20%);
+}
+
+// Text inputs
+.form-text {
+
+  // General Styles
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid $input-border-color;
+  border-radius: 0;
+  outline: none;
+  height: 3em;
+  width: 100%;
+  font-size: 1em;
+  margin: 0 0 15px 0;
+  padding: 0;
+  box-shadow: none;
+  box-sizing: content-box;
+  transition: all .3s;
+
+  // Disabled input style
+  &:disabled, &[readonly="readonly"] {
+    color: $input-disabled-color;
+    border-bottom: 1px dotted $input-disabled-color;
+  }
+  // Disabled label style
+  &:disabled+label, &[readonly="readonly"]+label {
+    color: $input-disabled-color;
+  }
+  // Focused input style
+  &:focus:not([readonly]) {
+    border-bottom: 1px solid $primary-color;
+    box-shadow: 0 2px 0 0 $primary-color;
+  }
+  // Focused label style
+  &:focus:not([readonly])+label {
+    color: $primary-color;
+  }
+
+}
+
+// Default textarea
+.form-textarea {
+   height: 3em;
+
+  &.materialize-textarea {
+    overflow-y: hidden; // prevents scroll bar flash
+    padding: 1.6em 0; // prevents text jump on Enter keypress
+    resize: none;
+    min-height: 3em;
+  }
+}
+
+.textarea--cke .cke {
+  position: relative;
+  top: 2em;
+}
+
+// Styling for input field wrapper
+.input-field {
+  position: relative;
+  margin-top: 1em;
+
+  label {
+    position: absolute;
+    top: 0.8em;
+    font-size: 1em;
+    cursor: text;
+    font-weight: 300;
+    transition: .2s ease-out;
+
+    &.active {
+      font-size: $label-font-size;
+      transform: translateY(-140%);
+    }
+
+  }
+
+  // Prefix Icons
+  .prefix {
+    position: absolute;
+    width: 3em;
+    font-size: 2em;
+    transition: color .2s;
+
+    &.active {
+      color: $primary-color;
+    }
+
+  }
+
+  .prefix ~ input,
+  .prefix ~ textarea {
+    margin-left: 42px;
+    width: 92%;
+    width: calc(100% - 42px);
+  }
+
+  .prefix ~ textarea { padding-top: .8em; }
+  .prefix ~ label { margin-left: 42px; }
+
+}
+
+// Auto complete
+.autocomplete-content {
+	margin-top: -1em;
+	@include z-depth-1;
+  background-color: white;
+
+		li {
+			color: $base-color;
+			cursor: pointer;
+			line-height: 1.5em;
+			width: 100%;
+			text-align: left;
+      @extend %clearfix;
+
+			> span {
+				font-size: 1em;
+				padding: 0.6em;
+				display: block;
+
+				.highlight {
+					color: $input-border-color;
+				}
+			}
+
+			img {
+				height: 52px;
+				width: 52px;
+				padding: 5px;
+				margin: 0 15px;
+			}
+
+			&:hover {
+				background: #eee;
+				cursor: pointer;
+			}
+		}
+}
+
+// For textarea autoresize
+.hiddendiv {
+  display: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
+  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+}
