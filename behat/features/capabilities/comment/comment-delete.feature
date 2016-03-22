@@ -1,4 +1,4 @@
-@api @comment @stability
+@api @comment @stability @DS-478
 Feature: Delete Comment
   Benefit: In order to manage my content
   Role: As a LU
