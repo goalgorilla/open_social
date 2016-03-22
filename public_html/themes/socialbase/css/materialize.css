@@ -220,7 +220,7 @@ th {
 
 .style-default-bright {
   background-color: white;
-  border-color: white;
+  border-color: #e6e6e6;
   color: #4d4d4d; }
 
 .text-default-bright {
@@ -915,6 +915,8 @@ button.btn-floating {
 .btn--secondary {
   background-color: #1f80aa;
   color: white; }
+  .btn--secondary:hover, .btn--secondary:focus {
+    background-color: #134f69; }
 
 .btn--default-bright {
   background-color: white;
@@ -1383,7 +1385,8 @@ a.waves-effect .waves-ripple {
   color: #4d4d4d; }
 
 .table-of-contents {
-  padding-top: 1em; }
+  padding-top: 1em;
+  list-style: none; }
   .table-of-contents.fixed {
     position: fixed; }
   .table-of-contents li {
@@ -1603,10 +1606,10 @@ a.waves-effect .waves-ripple {
   border-bottom: 1px solid #9e9e9e;
   border-radius: 0;
   outline: none;
-  height: 3em;
+  height: 2em;
   width: 100%;
-  font-size: 1em;
-  margin: 0 0 15px 0;
+  font-size: 1rem;
+  margin: 0;
   padding: 0;
   box-shadow: none;
   box-sizing: content-box;
@@ -1632,38 +1635,31 @@ a.waves-effect .waves-ripple {
 
 .textarea--cke .cke {
   position: relative;
-  top: 2em; }
+  margin-top: 12px; }
 
-.input-field {
-  position: relative;
-  margin-top: 1em; }
-  .input-field label {
-    position: absolute;
-    top: 0.8em;
-    font-size: 1em;
-    cursor: text;
-    font-weight: 300;
-    transition: .2s ease-out; }
-    .input-field label.active {
-      font-size: 0.8em;
-      -webkit-transform: translateY(-140%);
-              transform: translateY(-140%); }
-  .input-field .prefix {
-    position: absolute;
-    width: 3em;
-    font-size: 2em;
-    transition: color .2s; }
-    .input-field .prefix.active {
-      color: #29abe2; }
-  .input-field .prefix ~ input,
-  .input-field .prefix ~ textarea {
-    margin-left: 42px;
-    width: 92%;
-    width: calc(100% - 42px); }
-  .input-field .prefix ~ textarea {
-    padding-top: .8em; }
-  .input-field .prefix ~ label {
-    margin-left: 42px; }
+.form-text:focus ~ .form__label {
+  color: #29abe2;
+  opacity: 1; }
+
+.input-field .prefix {
+  position: absolute;
+  width: 3em;
+  font-size: 2em;
+  transition: color .2s; }
+  .input-field .prefix.active {
+    color: #29abe2; }
+
+.input-field .prefix ~ input,
+.input-field .prefix ~ textarea {
+  margin-left: 42px;
+  width: 92%;
+  width: calc(100% - 42px); }
+
+.input-field .prefix ~ textarea {
+  padding-top: .8em; }
+
+.input-field .prefix ~ label {
+  margin-left: 42px; }
 
 .autocomplete-content {
   margin-top: -1em;
@@ -1701,11 +1697,16 @@ a.waves-effect .waves-ripple {
 
 .form__item-radios .form__label {
   display: block;
-  font-weight: 500;
   margin-bottom: 0.5em; }
 
-.form__radios .form__item {
-  margin: 0; }
+.form__radios .form-item {
+  margin: 0;
+  padding: 0; }
+
+.form__radios .form__item-help-text {
+  text-align: left;
+  margin-left: 35px;
+  margin-bottom: 5px; }
 
 /***************
   Radio Buttons
@@ -2270,7 +2271,14 @@ input[type=range]:focus::-ms-fill-upper {
   color: #4d4d4d; }
 
 .form__label {
-  color: #4d4d4d; }
+  display: block;
+  font-size: 0.875rem;
+  opacity: 0.75;
+  cursor: text;
+  font-weight: 300;
+  transition: .2s ease-out;
+  color: #4d4d4d;
+  margin-bottom: 3px; }
 
 form p {
   margin-bottom: 10px; }
@@ -2284,9 +2292,16 @@ form p {
   height: 6px;
   margin: 0 5px; }
 
-.form__item {
+.form-item {
   position: relative;
-  margin: 2em 0; }
+  margin-bottom: 20px; }
+
+.form__item-help-text {
+  text-align: right;
+  margin: 0;
+  color: inherit;
+  opacity: .7;
+  font-size: 0.75rem; }
 
 .form__item--description {
   font-size: 12px;
@@ -3380,6 +3395,7 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
   padding: 0 20px;
   margin-top: 0; }
   .form-type-search label {
+    position: absolute;
     color: #adadad;
     left: 20px;
     top: 0.5em;
@@ -3556,78 +3572,6 @@ h1.entry-title {
   position: absolute;
   right: 0;
   top: 0; }
-
-.style-default {
-  background-color: #e6e6e6;
-  border-color: #e6e6e6;
-  color: #4d4d4d; }
-
-.text-default {
-  color: #e6e6e6; }
-
-.style-default-light {
-  background-color: #f5f5f5;
-  border-color: #f5f5f5;
-  color: #4d4d4d; }
-
-.text-default-light {
-  color: #f5f5f5; }
-
-.style-default-bright {
-  background-color: white;
-  border-color: white;
-  color: #4d4d4d; }
-
-.text-default-bright {
-  color: white; }
-
-.style-primary {
-  background-color: #29abe2;
-  border-color: #29abe2;
-  color: white; }
-
-.text-primary {
-  color: #29abe2; }
-
-.style-primary-dark {
-  background-color: #177da8;
-  border-color: #177da8;
-  color: white; }
-
-.text-primary-dark {
-  color: #177da8; }
-
-.style-success {
-  background-color: #0e927a;
-  border-color: #0e927a;
-  color: white; }
-
-.text-success {
-  color: #0e927a; }
-
-.style-error {
-  background-color: #a65261;
-  border-color: #a65261;
-  color: white; }
-
-.text-error {
-  color: #a65261; }
-
-.style-warning {
-  background-color: #ffc142;
-  border-color: #ffc142;
-  color: #4d4d4d; }
-
-.text-warning {
-  color: #ffc142; }
-
-.style-info {
-  background-color: #1f80aa;
-  border-color: #1f80aa;
-  color: white; }
-
-.text-info {
-  color: #1f80aa; }
 
 @media screen and (min-width: 640px){
   .hidden-mobile{

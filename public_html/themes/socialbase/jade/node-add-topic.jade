@@ -17,20 +17,68 @@ block content
       
   .row.margin-top-l
     .col.s12.l9
-      .card        
-        .card-body 
-          
-          form.node-form
+    
+      form.node-form
+        
+        .card        
+          .card-body   
           
             .form-item.form__type-textfield
-              .input-field
-                input.form-text.required(type="text")
-                label.form__label.form-required Title
+              label.form__label.form-required Title
+              input.form-text.required(type="text")
             
             .form-item.form__type-textarea
               label.form__label.form-required Description
               .textarea--cke
                 textarea#ckeditor.form-text.form-textarea
+                
+            .form-item.form__item-radios
+              label.form__label.form-required Topic type
+              .form__radios
+                .form-item
+                  input#blog.form-radio(type='radio', checked, name='type')
+                  label.option(for='blog') Blog
+                .form-item
+                  input#discussion.form-radio(type='radio', name='type')
+                  label.option(for='discussion') Discussion
+                .form-item
+                  input#topic.form-radio(type='radio', name='type')
+                  label.option(for='topic') Topic
+                  
+            .form-item.form__type-managed-file
+              label.form__label.form-required Image
+              .file-field.input-field
+                .btn
+                  span file
+                  input(type='file')
+                .file-path-wrapper
+                  input.file-path.form-text(type='text')
+              .form__item-help-text One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              
+      .card.style-default-bright
+        ul.card-head.nav.nav-tabs.style-default-bright(data-toggle="tabs")
+          li.active
+            a(href="#comments") Comment settings
+              
+        .card-body.tab-content
+          #comments.tab-pane.active
+            .form-item.form__item-radios
+              label.form__label.form-required Comments
+              .form__radios
+                .form-item
+                  input#open.form-radio(type='radio', checked, name='comments')
+                  label.option(for='open') Open
+                  .form__item-help-text Users with the "Post comments" permission can post comments.
+                .form-item
+                  input#closed.form-radio(type='radio', name='comments')
+                  label.option(for='closed') Closed
+                  .form__item-help-text Users cannot post comments.
+                  
+      .form-wrapper
+        input.waves-effect.waves-light.btn.btn--primary.btn-raised(type='submit', value='Save') 
+        input.waves-effect.waves-light.btn.btn--secondary.btn-raised(type='submit', value='Preview') 
+
+
         
 block scriptinline  
   script(src='libs/ckeditor/ckeditor.js')
