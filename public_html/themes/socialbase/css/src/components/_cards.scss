@@ -1,0 +1,58 @@
+.card-panel {
+  transition: box-shadow .25s;
+  padding: $card-padding-small;
+  margin: $element-top-margin 0 $element-bottom-margin 0;
+  border-radius: 10px;
+  @include z-depth-1;
+  background-color: $card-bg-color;
+}
+
+.card {
+  position: relative;
+  margin: 0 0 $element-bottom-margin 0;
+  background-color: $card-bg-color;
+  padding: $card-padding-small;
+
+  @include MQ($small) {
+    border-radius: 10px;
+    transition: box-shadow .25s;
+    background-clip: padding-box;
+    @include z-depth-1;
+  }
+
+}
+
+@include MQ($small) {
+  a.card:hover {
+    @include z-depth-1-half;
+  }
+
+}
+
+.card--nodefull {
+  @include MQ($medium) {
+    padding: (1.5 * $card-padding-medium - 16px) (1.5 * $card-padding-medium);
+  }
+}
+
+
+.card__label {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: $base-color;
+
+  @include MQ($medium) {
+    text-align: center;
+  }
+}
+
+.desktop-card {
+
+  @include MQ($medium) {
+    border-radius: 10px;
+    transition: box-shadow .25s;
+    background-clip: padding-box;
+    @include z-depth-1;
+  }
+
+}

@@ -1,4 +1,4 @@
-@api @topic @stability
+@wip @api @topic @stability @perfect @critical @DS-341
 Feature: Create Topic
   Benefit: In order to share knowledge with people
   Role: As a LU
@@ -15,6 +15,6 @@ Feature: Create Topic
 #    And I wait for AJAX to finish
     And I press "Save"
     # Then I should see "Topic This is a test topic has been created."
-    And I should see the heading "THIS IS A TEST TOPIC" in the "Page title block"
+    And I should see the heading "This is a test topic" in the "Page title block"
     And I should see "Discussion" in the "Page title block"
     And I should see "Body description text" in the "Main content"
