@@ -3,30 +3,38 @@ extends ./layout/base-lu.jade
 block title
   title Michael Angarano
 
+
+
 block pagetitle
-  .block-hero
+  .block-hero.only-desktop
     .container
       .row
         .col.s12.center
-          img.circle.img-bordered(src='/content/images/avatar0.jpg')
+          img.circle.img-bordered(src='content/images/avatar0.jpg')
           h1.page-title.h2 Michael Angarano
           button.btn.white.social-blue-text following
       
 block secondary_navigation
+  .container
+    .row.hidden-desktop.section-header
+      .col.s12
+        a.btn 
+          i.material-icons.left keyboard_arrow_left
+          | Back to timeline
 
-  .block-secondary-nav.social-blue.darken-1
+  .style-primary-dark.only-desktop
     .container
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.tabs.primary
+        ul.nav.nav-tabs.nav-justified.style-primary-dark.nav-tabs--xl
           li
             a(href="#") Timeline  
           li
             a(href="#") Information
           li
             a(href='my-topics.html') Topics
-          li.is-active
-            a.is-active(href='my-events.html') Events
+          li.active
+            a(href='my-events.html') Events
               span.visually-hidden (active tab)
           li
             a(href="#") Groups
@@ -36,7 +44,7 @@ block content
   .row
   
     .col.s12
-      h2.section-title My events
+      h2.h3.section-title My events
     
     .col.s12.l3.right
       a.waves-effect.waves-light.btn.btn--block.btn--black(href='#!') 

@@ -81,7 +81,6 @@ gulp.task('css', function () {
     .pipe( sass() )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
-    .pipe( cssnano() )
     .pipe( sourcemaps.write('.') )
     .pipe( gulp.dest(folder.css) )
     .pipe( gulp.dest(folder.dist + '/css') )
@@ -135,6 +134,7 @@ gulp.task('script-components', function() {
     folder.js_comp + "/waves.js",
     folder.js_comp + "/offcanvas.js",
     folder.js_comp + "/forms.js",
+    folder.js_comp + "/tabs.js",
     folder.js_comp + "/character_counter.js",
     folder.js_comp + "/dropdown.js"
     ])
