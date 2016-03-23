@@ -88,6 +88,11 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       $fileClass = new SocialDemoFile();
       $fid = $fileClass->loadByUuid($topic['field_topic_image']);
 
+      // Determine topic type.
+      $term = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->loadByProperties(array('name' => $topic['field_topic_type']));
+      $term = array_pop($term);
+      $topic_type_target = $term->id();
+
       $media_id = '';
       if ($file = File::load($fid)) {
         $media_id = $file->id();
@@ -106,7 +111,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         ],
         'field_topic_type' => [
           [
-            'value' => $topic['field_topic_type'],
+            'target_id' => $topic_type_target,
           ],
         ],
         'field_topic_image' => [
