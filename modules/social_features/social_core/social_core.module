@@ -94,3 +94,12 @@ function social_core_form_system_site_information_settings_alter(&$form, \Drupal
     $form['site_information']['site_slogan']['#disabled'] = TRUE;
   }
 }
+
+/**
+ * Implements hook_node_links_alter().
+ */
+function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+  // Remove the comment links.
+  unset($links['comment__field_topic_comments']);
+  unset($links['comment__field_event_comments']);
+}
