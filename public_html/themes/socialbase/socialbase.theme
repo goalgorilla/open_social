@@ -54,7 +54,7 @@ function socialbase_preprocess_page(&$variables) {
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_core_preprocess_node(&$variables) {
+function socialbase_preprocess_node(&$variables) {
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
     $variables['display_submitted'] = TRUE;
