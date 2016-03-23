@@ -84,6 +84,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Shows hidden button.
+     *
+     * @When /^(?:|I )show hidden buttons$/
+     */
+    public function showHiddenButton()
+    {
+      $session = $this->getSession();
+
+      $session->executeScript(
+        "var inputs = document.getElementsByClassName('secondary-action');
+        for(var i = 0; i < inputs.length; i++) {
+        inputs[i].style.opacity = 1;
+        inputs[i].style.left = 0;
+        inputs[i].style.position = 'relative';
+        inputs[i].style.display = 'block';
+        }
+        ");
+    }
+
+    /**
      * @Then :textBefore should precede :textAfter for the query :cssQuery
      */
     public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery) {
