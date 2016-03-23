@@ -2,14 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.user.compact
     - core.entity_view_mode.user.full
   module:
     - node
     - options
     - social_event
     - user
-_core:
-  default_config_hash: IP-amz-mMuVQzD-mtt4lzaKGc_E8hy6KemLEQwBnz7Q
 id: enrollments
 label: Enrollments
 module: views
@@ -306,7 +305,7 @@ display:
         type: 'entity:user'
         options:
           relationship: none
-          view_mode: full
+          view_mode: compact
       pager:
         type: some
         options:
