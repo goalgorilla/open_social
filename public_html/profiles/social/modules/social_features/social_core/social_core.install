@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_comment module.
+ */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_comment.
+ */
+function social_core_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'view own unpublished content',
+    'override event published option',
+    'override topic published option',
+  ));
+
+}
