@@ -12,7 +12,6 @@ dependencies:
     - node.type.event
   module:
     - comment
-    - image
     - text
     - user
 id: node.event.default
@@ -27,23 +26,16 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_event_comments:
-    weight: 2
+    weight: 1
     label: above
     settings:
       pager_id: 0
     third_party_settings: {  }
     type: comment_default
-  field_event_image:
-    weight: 1
-    label: hidden
-    settings:
-      image_style: ''
-      image_link: ''
-    third_party_settings: {  }
-    type: image
 hidden:
   field_event_address: true
   field_event_date: true
   field_event_date_end: true
+  field_event_image: true
   field_event_location: true
   links: true

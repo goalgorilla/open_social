@@ -6,6 +6,8 @@
  */
 
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * Implements hook_form_form_ID_alter().
@@ -60,5 +62,33 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
       unset($data['tabs'][0]['views_view:view.enrollments.view_enrollments']);
     }
   }
+}
 
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_event_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if ($entity->getType() === 'event' && $display->getMode() === 'teaser') {
+    $current_user = \Drupal::currentUser();
+    $uid = $current_user->id();
+    $nid = $entity->id();
+    $conditions = array(
+      'field_account' => $uid,
+      'field_event' => $nid,
+    );
+
+    $enrollments = \Drupal::service('entity.manager')
+      ->getStorage('event_enrollment')
+      ->loadByProperties($conditions);
+    // Redirect anonymous use to login page before enrolling to an event.
+    if ($enrollment = array_pop($enrollments)) {
+      $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      if ($current_enrollment_status === '1') {
+        $build['enrolled'] = array(
+          '#type' => '#text_field',
+          '#markup' => 'Enrolled',
+        );
+      }
+    }
+  }
 }

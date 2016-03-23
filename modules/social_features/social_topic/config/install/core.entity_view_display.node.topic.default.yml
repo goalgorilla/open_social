@@ -9,7 +9,6 @@ dependencies:
     - node.type.topic
   module:
     - comment
-    - image
     - text
     - user
 id: node.topic.default
@@ -24,20 +23,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_topic_comments:
-    weight: 2
+    weight: 1
     label: above
     settings:
       pager_id: 0
     third_party_settings: {  }
     type: comment_default
-  field_topic_image:
-    weight: 1
-    label: hidden
-    settings:
-      image_style: ''
-      image_link: ''
-    third_party_settings: {  }
-    type: image
 hidden:
+  field_topic_image: true
   field_topic_type: true
   links: true

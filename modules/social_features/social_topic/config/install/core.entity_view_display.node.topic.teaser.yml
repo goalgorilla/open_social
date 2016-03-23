@@ -11,20 +11,12 @@ dependencies:
     - node.type.topic
   module:
     - image
-    - text
     - user
 id: node.topic.teaser
 targetEntityType: node
 bundle: topic
 mode: teaser
 content:
-  body:
-    label: hidden
-    type: text_trimmed
-    weight: 1
-    settings:
-      trim_length: 300
-    third_party_settings: {  }
   field_topic_image:
     type: image
     weight: 0
@@ -35,14 +27,15 @@ content:
     third_party_settings: {  }
   field_topic_type:
     type: entity_reference_label
-    weight: 4
+    weight: 2
     label: hidden
     settings:
       link: false
     third_party_settings: {  }
   links:
-    weight: 2
+    weight: 1
     settings: {  }
     third_party_settings: {  }
 hidden:
+  body: true
   field_topic_comments: true
