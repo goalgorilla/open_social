@@ -65,11 +65,11 @@
  * @ingroup themeable
  */
 #}
-<a href={{ url }}>
-    <div class='teaser media'>
+<a href={{ url }} class="card teaser teaser--topic">
+    <div class='teaser__media'>
         {{ content.field_topic_image }}
     </div>
-    <div class='teaser content'>
+    <div class='teaser__content'>
         {{ title_prefix }}
         {% if not page %}
             <h2{{ title_attributes.addClass('node__title') }}>
@@ -78,8 +78,13 @@
         {% endif %}
         {{ title_suffix }}
         {{ date }}
-        {{ author_name }}
-        {{ content.field_topic_type }}
-        {{ content.links }}
+        <div class="teaser__author">
+            TODO: Author name
+        </div>
+        {#{{ content.field_topic_type }}#}
+        {#TODO: Use content.links here and fix the theming#}
+        <div class="teaser__read-more">
+            TODO:Read more
+        </div>
     </div>
 </a>
