@@ -18,8 +18,6 @@ For example:
 DS-123 by nielsvandermolen, ronaldtebrake: Login with email and custom validation constraint on create account username field.
 ```
 
-To find usernames look on the GoalGorilla page on [drupal.org](https://www.drupal.org/goalgorilla)
-
 # Installation #
 
 ## Docker toolbox ##
