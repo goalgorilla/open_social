@@ -12,6 +12,7 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\file\Entity\File;
 use Drupal\node\NodeStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\Entity\User;
@@ -75,6 +76,15 @@ class SocialDemoUser implements ContainerInjectionInterface {
         continue;
       }
 
+      // Try and fetch the image.
+      $fileClass = new SocialDemoFile();
+      $fid = $fileClass->loadByUuid($account['picture']);
+
+      $media_id = '';
+      if ($file = File::load($fid)) {
+        $media_id = $file->id();
+      }
+
       // Let's create some accounts.
       $user = User::create([
         'uuid' => $account['uuid'],
@@ -85,6 +95,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
         'status' => $account['status'],
         'created' => REQUEST_TIME,
         'changed' => REQUEST_TIME,
+        'field_picture' => $media_id,
       ]);
       $user->setPassword($account['name']);
       $user->enforceIsNew();
