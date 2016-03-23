@@ -67,7 +67,7 @@
 #}
 <a href={{ url }}>
     <div class='teaser media'>
-        {{ content.field_topic_image }}
+        {{ content.field_event_image }}
     </div>
     <div class='teaser content'>
         {{ title_prefix }}
@@ -78,8 +78,9 @@
         {% endif %}
         {{ title_suffix }}
         {{ date }}
-        {{ author_name }}
-        {{ content.field_topic_type }}
+        {% if content.enrolled %}
+            {{  content.enrolled }}
+        {% endif %}
         {{ content.links }}
     </div>
 </a>
