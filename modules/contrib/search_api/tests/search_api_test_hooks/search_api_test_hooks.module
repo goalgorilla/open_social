@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * @file
+ * Tests all the hooks defined by the Search API module.
+ */
+
+/**
+ * Implements hook_search_api_backend_info_alter.
+ */
+function search_api_test_hooks_search_api_backend_info_alter(array &$backend_info) {
+  $backend_info['search_api_test_backend']['label'] = 'Slims return';
+}
+
+/**
+ * Implements hook_search_api_datasource_info_alter.
+ */
+function search_api_test_hooks_search_api_datasource_info_alter(array &$infos) {
+  $infos['entity:node']['label'] = 'Distant land';
+}
+
+/**
+ * Implements hook_search_api_processor_info_alter.
+ */
+function search_api_test_hooks_search_api_processor_info_alter(array &$processors) {
+  $processors['rendered_item']['label'] = 'Mystic bounce';
+}
+
+/**
+ * Implements hook_search_api_index_items_alter.
+ */
+function search_api_test_hooks_search_api_index_items_alter(\Drupal\search_api\IndexInterface $index, array &$items) {
+  unset($items['entity:node/1:en']);
+  drupal_set_message('Stormy');
+}
+
+/**
+ * Implements hook_search_api_items_indexed.
+ */
+function search_api_test_hooks_search_api_items_indexed(\Drupal\search_api\IndexInterface $index, array $item_ids) {
+  drupal_set_message('Please set me at ease');
+}
+
+/**
+ * Implements hook_search_api_query_alter.
+ */
+function search_api_test_hooks_search_api_query_alter(\Drupal\search_api\Query\QueryInterface &$query) {
+  drupal_set_message('Funky blue note');
+  $query->addTag('andrew_hill');
+}
+
+/**
+ * Implements hook_search_api_results_alter.
+ */
+function search_api_test_hooks_search_api_results_alter(\Drupal\search_api\Query\ResultSetInterface &$results) {
+  drupal_set_message('Stepping into tomorrow');
+}
+
+/**
+ * Implements hook_search_api_index_reindex.
+ */
+function search_api_test_hooks_search_api_index_reindex(\Drupal\search_api\IndexInterface $index, $clear = FALSE) {
+  drupal_set_message('Montara');
+}
+
+/**
+ * Implements hook_search_api_data_type_info_alter.
+ */
+function search_api_test_hooks_search_api_data_type_info_alter(array &$data_type_definitions) {
+  if (isset($data_type_definitions['text'])) {
+    $data_type_definitions['text']['label'] = 'Peace/Dolphin dance';
+  }
+}
+
+/**
+ * Implements hook_search_api_field_type_mapping_alter.
+ */
+function search_api_test_hooks_search_api_field_type_mapping_alter(array &$mapping) {
+  $mapping['datetime_iso8601'] = FALSE;
+  $mapping['timestamp'] = FALSE;
+}
+
+/**
+ * Implements hook_search_api_query_TAG_alter.
+ */
+function search_api_test_hooks_search_api_query_andrew_hill_alter(\Drupal\search_api\Query\QueryInterface &$query) {
+  // Exclude the node with ID 2 from the search results.
+  $fields = $query->getIndex()->getFields();
+  foreach ($query->getIndex()->getDatasources() as $datasource_id => $datasource) {
+    if ($datasource->getEntityTypeId() == 'node') {
+      $field = \Drupal\search_api\Utility::createCombinedId($datasource_id, 'nid');
+      if (isset($fields[$field])) {
+        $query->addCondition($field, 2, '<>');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_search_api_results_TAG_alter.
+ */
+function search_api_test_hooks_search_api_results_andrew_hill_alter(\Drupal\search_api\Query\ResultSetInterface &$results) {
+  drupal_set_message('Llama');
+}
