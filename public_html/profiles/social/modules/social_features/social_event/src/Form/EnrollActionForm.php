@@ -7,6 +7,7 @@
 
 namespace Drupal\social_event\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormBase;
@@ -145,6 +146,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     );
 
     $enrollments = $this->entityStorage->loadByProperties($conditions);
+
+    // Invalidate cache for our enrollment cache tag in
+    // social_event_node_view_alter().
+    $cache_tag = 'enrollment:' . $nid . '-' . $uid;
+    Cache::invalidateTags(array($cache_tag));
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
