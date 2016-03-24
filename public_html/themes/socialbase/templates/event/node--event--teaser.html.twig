@@ -65,15 +65,15 @@
  * @ingroup themeable
  */
 #}
-<a href={{ url }} class="card teaser teaser--event">
+<div class="card teaser teaser--event">
     <div class='teaser__media'>
         {{ content.field_event_image }}
     </div>
     <div class='teaser__content'>
         {{ title_prefix }}
         {% if not page %}
-            <h2{{ title_attributes.addClass('node__title') }}>
-                {{ label }}
+            <h2{{ title_attributes }}>
+                <a href="{{ url }}" rel="bookmark">{{ label }}</a>
             </h2>
         {% endif %}
         {{ title_suffix }}
@@ -83,7 +83,7 @@
         {% endif %}
         {#TODO: Use content.links here and fix the theming#}
         <div class="teaser__read-more">
-          TODO: Read more
+          {{ content.links }}
         </div>
     </div>
-</a>
+</div>
