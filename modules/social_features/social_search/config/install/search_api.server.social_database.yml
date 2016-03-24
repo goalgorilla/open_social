@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_db
+_core:
+  default_config_hash: 0eEteO6CF_4LYaOg0sjhgMIqiV8IlKoAl_2I57hmHUg
+id: social_database
+name: 'Social Database'
+description: 'Default database server created for the Drupal Social distribution.'
+backend: search_api_db
+backend_config:
+  database: 'default:default'
+  database_text: ''
+  min_chars: 3
+  partial_matches: true
+  autocomplete:
+    suggest_suffix: true
+    suggest_words: true
