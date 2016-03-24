@@ -6,6 +6,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
+use PHPUnit_Framework_Assert as PHPUnit;
 
 /**
  * Defines application features from the specific context.
@@ -21,6 +22,34 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function __construct()
     {
+    }
+
+    /**
+     * Get the wysiwyg instance variable to use in Javascript.
+     *
+     * @param string
+     *   The instanceId used by the WYSIWYG module to identify the instance.
+     *
+     * @throws Exception
+     *   Throws an exception if the editor does not exist.
+     *
+     * @return string
+     *   A Javascript expression representing the WYSIWYG instance.
+     */
+    protected function getWysiwygInstance($instanceId) {
+      $instance = "CKEDITOR.instances['$instanceId']";
+      if (!$this->getSession()->evaluateScript("return !!$instance")) {
+        throw new \Exception(sprintf('The editor "%s" was not found on the page %s', $instanceId, $this->getSession()->getCurrentUrl()));
+      }
+      return $instance;
+    }
+
+    /**
+     * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
+     */
+    public function iFillInTheWysiwygEditor($instanceId, $text) {
+      $instance = $this->getWysiwygInstance($instanceId);
+      $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
 
     /**
@@ -52,6 +81,53 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       }
       $radiobutton->selectOption($value, FALSE);
 
+    }
+
+    /**
+     * Shows hidden button.
+     *
+     * @When /^(?:|I )show hidden buttons$/
+     */
+    public function showHiddenButton()
+    {
+      $session = $this->getSession();
+
+      $session->executeScript(
+        "var inputs = document.getElementsByClassName('secondary-action');
+        for(var i = 0; i < inputs.length; i++) {
+        inputs[i].style.opacity = 1;
+        inputs[i].style.left = 0;
+        inputs[i].style.position = 'relative';
+        inputs[i].style.display = 'block';
+        }
+        ");
+    }
+
+    /**
+     * @Then :textBefore should precede :textAfter for the query :cssQuery
+     */
+    public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery) {
+      $elements = $this->getSession()->getPage()->findAll('css', $cssQuery);
+
+      $items = array_map(
+        function ($element) {
+          return $element->getText();
+        },
+        $elements
+      );
+      PHPUnit::assertGreaterThan(
+        array_search($textBefore, $items),
+        array_search($textAfter, $items),
+        "$textBefore does not proceed $textAfter"
+      );
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resizeWindow()
+    {
+      $this->getSession()->resizeWindow(1280, 1024, 'current');
     }
 
 }
