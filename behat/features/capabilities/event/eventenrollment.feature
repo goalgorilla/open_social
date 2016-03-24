@@ -71,3 +71,21 @@ Feature: Enroll for an event
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
     And I should see the link "See all enrollments"
+
+  @LU @cache
+  Scenario: Successfully changed enrollment and see changes in teaser
+    Given users:
+      | name            | pass            | mail                        | status |
+      | eventenrollment | eventenrollment | eventenrollment@example.com | 1      |
+    And I am logged in as "eventenrollment"
+    And I am viewing my "event" with the title "Enrollment test event"
+    And I click "eventenrollment"
+    And I click "Events"
+    Then I should not see "Enrolled"
+
+    When I click "Enrollment test event"
+    And I press the "Enroll for this event" button
+    Then I should see the button "Cancel enrollment"
+    And I click "eventenrollment"
+    And I click "Events"
+    Then I should see "Enrolled"
