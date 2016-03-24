@@ -1,0 +1,20 @@
+search_api.backend.plugin.search_api_db:
+  type: mapping
+  label: 'Search API DB settings'
+  mapping:
+    database:
+      type: 'string'
+      label: 'Name of the database we are connecting to'
+    min_chars:
+      type: 'integer'
+      label: '@todo'
+    autocomplete:
+      type: mapping
+      label: Autcomplete configuration
+      mapping:
+        suggest_suffix:
+          type: boolean
+          label: Suggest suffix
+        suggest_words:
+          type: boolean
+          label: Suggest words

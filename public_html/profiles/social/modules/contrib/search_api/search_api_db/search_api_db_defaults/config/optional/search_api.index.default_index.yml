@@ -1,0 +1,225 @@
+id: default_index
+name: 'Default content index'
+description: 'Default content index created by the Database Search Defaults module'
+read_only: false
+field_settings:
+  search_api_language:
+    label: 'Item language'
+    type: string
+    property_path: search_api_language
+    index_locked: true
+    type_locked: true
+  title:
+    label: Title
+    type: text
+    datasource_id: 'entity:node'
+    property_path: title
+    boost: 8
+  rendered_item:
+    label: 'Rendered item'
+    type: text
+    property_path: rendered_item
+  created:
+    label: 'Authored on'
+    type: date
+    datasource_id: 'entity:node'
+    property_path: created
+  changed:
+    label: Changed
+    type: date
+    datasource_id: 'entity:node'
+    property_path: changed
+  status:
+    label: 'Publishing status'
+    type: boolean
+    datasource_id: 'entity:node'
+    property_path: status
+    index_locked: true
+    type_locked: true
+  sticky:
+    label: 'Sticky at top of lists'
+    type: boolean
+    datasource_id: 'entity:node'
+    property_path: sticky
+  field_tags:
+    label: Tags
+    type: string
+    datasource_id: 'entity:node'
+    property_path: 'field_tags:entity:name'
+  author:
+    label: 'Author name'
+    type: string
+    datasource_id: 'entity:node'
+    property_path: 'uid:entity:name'
+  uid:
+    label: 'Author ID'
+    type: integer
+    datasource_id: 'entity:node'
+    property_path: uid
+    index_locked: true
+    type_locked: true
+  search_api_node_grants:
+    label: 'Node access information'
+    type: string
+    property_path: search_api_node_grants
+    index_locked: true
+    type_locked: true
+    hidden: true
+  type:
+    label: 'Content type'
+    type: string
+    datasource_id: 'entity:node'
+    property_path: type
+processor_settings:
+  content_access:
+    plugin_id: content_access
+    settings:
+      weights:
+        preprocess_index: -6
+        preprocess_query: -4
+  highlight:
+    plugin_id: highlight
+    settings:
+      weights:
+        postprocess_query: -9
+      highlight: always
+      excerpt: true
+      excerpt_length: 256
+      prefix: '<strong>'
+      suffix: '</strong>'
+  html_filter:
+    plugin_id: html_filter
+    settings:
+      weights:
+        preprocess_index: -3
+        preprocess_query: -6
+      fields:
+        - rendered_item
+      title: true
+      alt: true
+      tags:
+        h1: 5
+        h2: 3
+        h3: 2
+        string: 2
+        b: 2
+  ignorecase:
+    plugin_id: ignorecase
+    settings:
+      weights:
+        preprocess_index: -5
+        preprocess_query: -8
+      fields:
+        - rendered_item
+        - title
+  language:
+    plugin_id: language
+    settings:
+      weights:
+        preprocess_index: -50
+  node_status:
+    plugin_id: node_status
+    settings:
+      weights:
+        preprocess_index: -10
+  rendered_item:
+    plugin_id: rendered_item
+    settings:
+      weights:
+        preprocess_index: -8
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          article: search_index
+          page: search_index
+  stopwords:
+    plugin_id: stopwords
+    settings:
+      weights:
+        preprocess_query: -10
+        postprocess_query: -10
+      fields:
+        - rendered_item
+        - title
+      stopwords:
+        - a
+        - an
+        - and
+        - are
+        - as
+        - at
+        - be
+        - but
+        - by
+        - for
+        - if
+        - in
+        - into
+        - is
+        - it
+        - 'no'
+        - not
+        - of
+        - 'on'
+        - or
+        - s
+        - such
+        - t
+        - that
+        - the
+        - their
+        - then
+        - there
+        - these
+        - they
+        - this
+        - to
+        - was
+        - will
+        - with
+  tokenizer:
+    plugin_id: tokenizer
+    settings:
+      weights:
+        preprocess_index: -2
+        preprocess_query: -5
+      fields:
+        - rendered_item
+        - title
+      spaces: ''
+      overlap_cjk: 1
+      minimum_word_size: '3'
+  transliteration:
+    plugin_id: transliteration
+    settings:
+      weights:
+        preprocess_index: -4
+        preprocess_query: -7
+      fields:
+        - rendered_item
+        - title
+options:
+  index_directly: true
+  cron_limit: 50
+datasource_settings:
+  'entity:node':
+    plugin_id: 'entity:node'
+    settings:
+      default: '1'
+      bundles:
+        article: '0'
+        page: '0'
+tracker_settings:
+  'default':
+    plugin_id: default
+    settings: {  }
+server: default_server
+status: true
+langcode: en
+dependencies:
+  config:
+    - field.field.node.article.field_tags
+    - search_api.server.default_server
+  module:
+    - node
