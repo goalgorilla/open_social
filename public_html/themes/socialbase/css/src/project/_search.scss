@@ -1,9 +1,10 @@
 .form-type-search {
-  color: $base-color;
+  color: $grey-dark-1;
   padding: 0 20px;
   margin-top: 0;
 
   label {
+    position: absolute;
     color: $grey-light-1;
     left: 20px;
     top: 0.5em;
@@ -18,11 +19,11 @@
   }
 
   .search__icon.active {
-    color: $base-color;
+    color: $grey-dark-1;
   }
 
   input[type=text]:focus+label {
-    color: $secondary-color;
+    color: $primary-color-dark;
   }
 
 }
@@ -47,7 +48,7 @@
 
     &.search-open,
     &:hover {
-      border-bottom-color: #1f80aa;
+      border-bottom-color: $primary-color-dark;
     }
 
   }
@@ -71,11 +72,11 @@
   	height: 29px;
   	z-index: 10;
     color: white;
-    border-bottom: 5px solid #1f80aa;
+    border-bottom: 5px solid $primary-color-dark;
     pointer-events: none;
 
     &:focus {
-      border-bottom: 5px solid #1f80aa;
+      border-bottom: 5px solid $primary-color-dark;
       box-shadow: none;
     }
 

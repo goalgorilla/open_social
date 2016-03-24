@@ -38,16 +38,20 @@
 .card-body {
   padding: $card-padding-small;
   position: relative;
+  @include MQ($small) {
 
-  &:first-child {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
+    &:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
 
-  &:last-child {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+    &:last-child {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
   }
+  
 }
 
 .card-head header {
@@ -75,7 +79,7 @@
 .card__label {
   text-transform: uppercase;
   font-size: 14px;
-  color: $base-color;
+  color: $grey-dark-1;
 
   @include MQ($medium) {
     text-align: center;

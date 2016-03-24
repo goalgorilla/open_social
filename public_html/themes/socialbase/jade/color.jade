@@ -11,6 +11,104 @@ html(lang="en")
       
     main.styleguide-container(role='main')
 
-    block content
+      .container
+          
+        .row
+          .col.s12
+            h2 Color palette
+            p You can use your own brand colors for your version of this application. We have defined a few color names based on the material design guidelines.
+        
+        .row
+          .col.s12
+            h3.text-primary Primary color      
+          .col.m6
+            p When using a primary color in your palette, this color should be the most widely used across all screens and components.
+          .col.m6
+            .card
+              .card-body.style-primary.center Our default primary color is #29abe2.
+        .row
+          .col.s12
+            h3.text-secondary Secondary color     
+          .col.m6
+            p Palettes with a secondary color may use this color to indicate a related action or information.
+            p The secondary color may be a darker or lighter variation of the primary color.
+          .col.m6
+            .card
+              .card-body.style-secondary.center  Our default secondary color is #1f80aa.
+        
+        .row
+          .col.s12
+            h3.text-accent Accent color 
+          .col.m6
+            p The accent should be used for the floating action button and interactive elements, such as:
+            ul
+              li Text fields and cursors
+              li Text selection
+              li Progress bars
+              li Selection controls, buttons, and sliders
+              li Links
+                            
+          .col.m6
+            .card
+              .card-body.style-accent.center  Our default accent color is #4d4d4d.
+          
+      
+        .row
+          .col.s12
+            h3 State color
+            p For states in forms, messages and other feedback we use state colors to indicate whether user actions were performed succesfully or failed for example.
+        .row
+          .col.s12.m6
+            .card
+              .card-body.style-success.center Success color
+          .col.s12.m6
+            .card
+              .card-body.style-error.center Error color
+          .col.s12.m6
+            .card
+              .card-body.style-warning.center Warning color
+          .col.s12.m6
+            .card
+              .card-body.style-info.center Info color
+      
+        .row
+          .col.s12
+            h2.header Usage 
+            br
+            h4 Background color
+            p To apply a background color, just add the color name as a class to the element.
+        .row
+          .col.s12.m6
+            .card
+              .card-body.style-primary.center This is a card with a style-primary class
+          .col.s12.m6
+            .card
+              .card-body.style-primary-dark.center This is a card with a style-primary-dark class
+        .row      
+          .col.s12.m6
+            .card
+              .card-body.style-default.center This is a card with a style-default class
+          .col.s12.m6
+            .card
+              .card-body.style-default-bright.center This is a card with a style-default-light class
+
+        .row
+          .col.s12
+            h4 Text color
+            p To apply a text color, just apply text-{color} to the text element.
+        .row
+          .col.s12.m6
+            .card
+              .card-body
+                p.text-primary.center This is a paragraph with a text-primary class
+          .col.s12.m6
+            .card
+              .card-body
+                p.text-primary-dark.center This is a paragraph with a text-primary-dark class
+          
+        .row
+          .col.s12.l8
+            h2.header Customize
+            p Material has a few basic theme colors. These colors can be changed in the css/ src/theme folder. Simply duplicate the example-theme.scss file and change it to your designed theme name. Then include the new file as import in the base materialize.scss file. 
   
     include ./layout/_scripts.jade

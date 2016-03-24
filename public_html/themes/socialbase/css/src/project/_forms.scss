@@ -28,7 +28,7 @@
 }
 
 .user-register-form #edit-pass {
-  color: $base-color;
+  color: $grey-dark-1;
   font-weight: 300;
 
   .password-strength,
@@ -58,7 +58,7 @@
   width: 100%;
   margin-top: 1em;
   margin-bottom: 0.5em;
-  background-color: lightgray;
+  background-color: $grey-light-1;
 
   @include MQ($small) {
     margin-top: 2em;
@@ -68,7 +68,7 @@
 .password-strength__indicator {
   height: 100%;
   width: 0;
-  background-color: #77b259;
+  background-color: $success-color;
   transition: width 0.5s ease-out;
 }
 .password-confirm-match {
@@ -76,16 +76,16 @@
 }
 
 .password-strength__indicator.is-weak {
-  background-color: #a65261;
+  background-color: $error-color;
 }
 .password-strength__indicator.is-fair {
-  background-color: #ffc142;
+  background-color: $warning-color;
 }
 .password-strength__indicator.is-good {
-  background-color: #0074bd;
+  background-color: $info-color;
 }
 .password-strength__indicator.is-strong {
-  background-color: #0e927a;
+  background-color: $success-color;
 }
 
 .form-item .password-suggestions {
@@ -104,10 +104,10 @@
 
 /* Styling for the status indicator of the passwords match test.  */
 .password-confirm .ok {
-  color: #0e927a;
+  color: $success-color;
   font-weight: 500;
 }
 .password-confirm .error {
-  color: #a65261;
+  color: $error-color;
   font-weight: 500;
 }
