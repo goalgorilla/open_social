@@ -14,10 +14,10 @@
   border-bottom: 1px solid $input-border-color;
   border-radius: 0;
   outline: none;
-  height: 3em;
+  height: 2em;
   width: 100%;
-  font-size: 1em;
-  margin: 0 0 15px 0;
+  font-size: 1rem;
+  margin: 0;
   padding: 0;
   box-shadow: none;
   box-sizing: content-box;
@@ -58,29 +58,15 @@
 
 .textarea--cke .cke {
   position: relative;
-  top: 2em;
+  margin-top: 12px;
 }
 
-// Styling for input field wrapper
+.form-text:focus ~ .form__label {
+  color: $primary-color;
+  opacity: 1;
+}
+
 .input-field {
-  position: relative;
-  margin-top: 1em;
-
-  label {
-    position: absolute;
-    top: 0.8em;
-    font-size: 1em;
-    cursor: text;
-    font-weight: 300;
-    transition: .2s ease-out;
-
-    &.active {
-      font-size: $label-font-size;
-      transform: translateY(-140%);
-    }
-
-  }
-
   // Prefix Icons
   .prefix {
     position: absolute;
@@ -103,7 +89,6 @@
 
   .prefix ~ textarea { padding-top: .8em; }
   .prefix ~ label { margin-left: 42px; }
-
 }
 
 // Auto complete
@@ -113,7 +98,7 @@
   background-color: white;
 
 		li {
-			color: $base-color;
+			color: $grey-dark-1;
 			cursor: pointer;
 			line-height: 1.5em;
 			width: 100%;

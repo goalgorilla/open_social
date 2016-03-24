@@ -49,7 +49,7 @@ var glob = {
   font: 'font/**/*',
   images: 'images/**/*',
   content: 'content/**/*',
-  extras: 'extras/**/*'
+  libs: 'libs/**/*'
 };
 
 var onError = function(err) {
@@ -221,9 +221,9 @@ gulp.task('content', function() {
 // Extras
 // ===================================================
 
-gulp.task('extras', function() {
-  stream = gulp.src(glob.extras)
-    .pipe( gulp.dest(folder.dist + '/extras') )
+gulp.task('libs', function() {
+  stream = gulp.src(glob.libs)
+    .pipe( gulp.dest(folder.dist + '/libs') )
   return stream;
 });
 

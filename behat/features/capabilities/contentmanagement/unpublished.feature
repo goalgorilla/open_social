@@ -15,8 +15,8 @@ Feature: Un/publish a node
       And I show hidden buttons
       And I press "Save as unpublished"
     Then I should see "Topic This is a test topic has been created."
-      And I should see the heading "This is a test topic" in the "Page title block"
-      And I should see "Discussion" in the "Page title block"
+      And I should see the heading "This is a test topic" in the "Hero block"
+      And I should see "Discussion" in the "Hero block"
       And I should see "Body description text" in the "Main content"
 
     When I am on "user"

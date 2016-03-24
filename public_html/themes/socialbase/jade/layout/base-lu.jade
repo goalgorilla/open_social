@@ -16,7 +16,7 @@ html(lang="en")
     link(rel='shortcut icon', type='image/svg+xml', href='/images/social-logo-blue.svg')
 
     //CSS
-    link(href='css/social.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
   
   body(class='#{pagetype}')
     include _header-lu.jade
@@ -33,8 +33,6 @@ html(lang="en")
         .container
           block content
 
-  block scriptinline
-
   include _fontfaceobserver.jade
 
   script(src='js/vendor.js')
@@ -45,3 +43,5 @@ html(lang="en")
   
   unless pagetype == "template"
     script(src='js/prism.js')
+
+  block scriptinline
