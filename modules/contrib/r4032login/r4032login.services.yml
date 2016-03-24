@@ -1,0 +1,6 @@
+services:
+  r4032login.subscriber:
+    class: Drupal\r4032login\EventSubscriber\R4032LoginSubscriber
+    arguments: ['@config.factory', '@current_user', '@redirect.destination']
+    tags:
+      - { name: event_subscriber }
