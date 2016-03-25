@@ -1,0 +1,45 @@
+//
+// Colors variants
+$default: (
+  "default-color-dark": mix(black, $default-color, 30%),
+  "default-color-light": mix(white, $default-color, 30%),
+  "default-color-bright": mix(white, $default-color, 60%)
+);
+
+$primary: (
+  "primary-color-dark": mix(black, $primary-color, 30%),
+  "primary-color-light": mix(white, $primary-color, 30%),
+  "primary-color-bright": mix(white, $primary-color, 60%)
+);
+
+
+$colors: (
+  "default": $default,
+  "primary": $primary
+);
+
+
+@each $color_name, $color in $colors {
+  @each $color_type, $color_value in $color {
+
+    .style-#{$color_name}-#{$color_type} {
+      background-color: $color_value;
+    }
+
+    .#{$color_name}-#{$color_type}-text {
+      color: $color_value;
+    }
+
+  }
+}
+
+@function color($color, $type) {
+  @if map-has-key($colors, $color) {
+    $curr_color: map-get($colors, $color);
+    @if map-has-key($curr_color, $type) {
+      @return map-get($curr_color, $type);
+    }
+  }
+  @warn "Unknown `#{name}` in $colors.";
+  @return null;
+}

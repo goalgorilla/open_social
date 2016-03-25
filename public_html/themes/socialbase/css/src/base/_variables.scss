@@ -1,12 +1,9 @@
 //
 /// Brand colors
+$default-color: #4d4d4d !default;
 $primary-color: #29abe2 !default;
-$primary-color-light: lighten($primary-color, 15%) !default;
-$primary-color-dark: darken($primary-color, 15%) !default;
-
-$secondary-color: #1f80aa;
-
-$accent-color: #4d4d4d;
+$secondary-color: #1f80aa !default;
+$accent-color: #ffc142 !default;
 
 //
 // State colors
@@ -22,15 +19,37 @@ $grey-light-2:   #e6e6e6;
 $grey-light-3:   #f5f5f5;
 $grey-dark-1:    #4d4d4d;
 
+
+$default-color-dark: mix(black, $default-color, 30%) !default;
+$default-color-light: mix(white, $default-color, 30%) !default;
+$default-color-bright: mix(white, $default-color, 60%) !default;
+
+$primary-color-dark: mix(black, $primary-color, 30%) !default;
+$primary-color-light: mix(white, $primary-color, 30%) !default;
+$primary-color-bright: mix(white, $primary-color, 60%) !default;
+
+$secondary-color-dark: mix(black, $secondary-color, 30%) !default;
+$secondary-color-light: mix(white, $secondary-color, 30%) !default;
+$secondary-color-bright: mix(white, $secondary-color, 60%) !default;
+
+$accent-color-dark: mix(black, $accent-color, 30%) !default;
+$accent-color-light: mix(white, $accent-color, 30%) !default;
+$accent-color-bright: mix(white, $accent-color, 60%) !default;
+
+
+
+
+
 /*** Badges ***/
 $badge-bg-color: $primary-color-dark !default;
 
 /*** Buttons ***/
+
 // Shared styles
-$button-border: none !default;
-$button-font-size: 0.9em !default;
-$button-height: 3em !default;
-$button-padding: 0 2em !default;
+$button-border: 0 !default;
+$button-font-size: 0.875em !default;
+$button-height: 1.85em !default;
+$button-padding: 0.4285em 0.857em !default;
 $button-radius: 10px !default;
 
 // Disabled styles
@@ -43,8 +62,7 @@ $button-raised-background-hover: $primary-color-light !default;
 $button-raised-color: white !default;
 
 // Large buttons
-$button-large-icon-font-size: 1.4em !default;
-$button-large-height: $button-height * 1.2 !default;
+$button-large-font-size: 1em;
 
 // Flat buttons
 $button-flat-color: #343434 !default;

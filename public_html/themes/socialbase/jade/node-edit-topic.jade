@@ -3,14 +3,14 @@ extends ./layout/base-lu.jade
 - var ckeditor = true
 
 block title
-  title Create Topic
+  title Edit Topic Where has all the corn in the midwest gone?
 
 block pagetitle
   .block-hero
     .container
       .row
         .col.s12.center.margin-bottom-xxl
-          h1.page-title.h2 Create Topic         
+          h1.page-title.h2 Where has all the corn in the midwest gone?
 
       
 block content
@@ -33,7 +33,7 @@ block content
                   label.form__label.form-required Topic type
                   .form__radios
                     .form-item
-                      input#blog.form-radio(type='radio', name='type')
+                      input#blog.form-radio(type='radio', checked, name='type')
                       label.option(for='blog') Blog
                     .form-item
                       input#discussion.form-radio(type='radio', name='type')
@@ -45,23 +45,29 @@ block content
               .col.s12.m8
                 .form-item.form__type-textfield
                   label.form__label.form-required Title
-                  input.form-text.required(type="text")
+                  input.form-text.required(type="text", value='Where has all the corn in the midwest gone?')
             .row
               .col.s12
                 .form-item.form__type-textarea
                   label.form__label.form-required Description
                   .textarea--cke
                     textarea#ckeditor.form-text.form-textarea
+                      p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cupit enim dícere nihil posse ad beatam vitam deesse sapienti. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Summae mihi videtur inscitiae. Non enim iam stirpis bonum quaeret, sed animalis. Tu vero, inquam, ducas licet, si sequetur; In qua quid est boni praeter summam voluptatem, et eam sempiternam? Duo Reges: constructio interrete. Verba tu fingas et ea dicas, quae non sentias?
+
+
             .row
               .col.s12    
                 .form-item.form__type-managed-file
                   label.form__label Image
                   .image-widget.form-managed-file.clearfix
-                    input.form-text(type='file', value='upload an image')
-                    button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
-                      i.material-icons.left file_upload
-                      | Upload
-                  .form__item-help-text One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+                    img.img-responsive(src='content/images/animals1-square.jpg', width='100')
+                    span.file.file--image
+                      a(href='#', type="image/jpeg; length=158378") animals1-square.jpg
+                    span.file-size (154.78kb)
+                    button.btn.form-submit.style-default(type='submit', value='remove')
+                      i.material-icons.left delete
+                      | Remove
+                  .form__item-help-text(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
         #placement.card.card-underline.scrollspy
         
@@ -78,15 +84,15 @@ block content
                       input#profile.form-radio(type='radio', name='placement')
                       label.option(for='profile') My profile
                     .form-item
-                      input#group.form-radio(type='radio', name='placement', onclick="showMe('selectagroup', this)")
+                      input#group.form-radio(type='radio', checked, name='placement', onclick="showMe('selectagroup', this)")
                       label.option(for='group') A group I am a member of
-            .row#selectagroup(style="display:none")
+            .row#selectagroup
               .form-item.col.s12.m6
                 select.browser-default
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Option 1
-                  option(value='2') Option 2
-                  option(value='3') Option 3
+                  option(value='', disabled='',) Select a group
+                  option(value='1') Group name 1
+                  option(value='2', selected='') Group name 2
+                  option(value='3') Group name 3
             
             .row
               .col.s12      
@@ -98,7 +104,7 @@ block content
                       label.option(for='public') Public
                       .form__item-help-text Community visible to all visitors of the platform
                     .form-item
-                      input#community.form-radio(type='radio', name='visibility')
+                      input#community.form-radio(type='radio', checked, name='visibility')
                       label.option(for='community') Community
                       .form__item-help-text visible only to logged in members
                     .form-item
@@ -120,17 +126,20 @@ block content
               label.form__label.form-required Comments
               .form__radios
                 .form-item
-                  input#open.form-radio(type='radio', checked, name='comments')
+                  input#open.form-radio(type='radio', name='comments')
                   label.option(for='open') Open
                   .form__item-help-text Users with the "Post comments" permission can post comments.
                 .form-item
-                  input#closed.form-radio(type='radio', name='comments')
+                  input#closed.form-radio(type='radio', checked, name='comments')
                   label.option(for='closed') Closed
                   .form__item-help-text Users cannot post comments.
               
-      .form-wrapper
-        input.waves-effect.waves-light.btn.btn-raised.btn--primary(type='submit', value='Save') 
-        input.waves-effect.waves-light.btn.btn-raised.btn--secondary(type='submit', value='Preview') 
+      .form-wrapper.clearfix
+        input.waves-effect.waves-light.btn.btn-raised.btn--secondary.left(type='submit', value='Preview') 
+        a.btn.btn-flat.left(href='#') Delete
+        input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
+        a.waves-effect.waves-light.btn.btn-raised.btn--default-bright.right(href="#") Discard changes
+        
 
     .col.m3.hidden-mobile
       .toc-wrapper
