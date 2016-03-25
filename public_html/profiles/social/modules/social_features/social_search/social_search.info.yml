@@ -1,10 +1,19 @@
 name: Search
-description: 'Provide Search API configuration.'
+description: 'Provide Search API configuration and Search Views.'
 type: module
 core: 8.x
+dependencies:
+  - block
+  - node
+  - search_api
+  - search_api_db
+  - social_event
+  - social_search
+  - system
+  - user
+  - views
+  - social_topic
+  - social_event
 package: Social
 features:
   bundle: social
-  required:
-    - search_api.index.social_content
-    - search_api.server.social_database
