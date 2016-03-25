@@ -173,11 +173,13 @@ gulp.task('script-vendor', function() {
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-drupal', function() {
   return gulp.src([
-  folder.js_drupal + '/misc/drupalSettingsLoader.js',
-  folder.js_drupal + '/misc/drupal.js',
-  folder.js_drupal + '/misc/debounce.js',
-  folder.js_drupal + '/misc/forms.js',
-  folder.js_drupal + '/modules/user/user.js'])
+    folder.js_drupal + '/misc/drupalSettingsLoader.js',
+    folder.js_drupal + '/misc/drupal.js',
+    folder.js_drupal + '/misc/debounce.js',
+    folder.js_drupal + '/misc/forms.js',
+    folder.js_drupal + '/modules/user/user.js',
+    folder.js_drupal + '/modules/file/file.js'
+  ])
   .pipe( concat('drupal-core.js') )
   .pipe( gulp.dest(folder.dist + '/js') );
 });
@@ -236,7 +238,7 @@ gulp.task('connect', function() {
   connect.server({
     root: [folder.dist],
     livereload: true,
-    port: 5002
+    port: 5000
   });
 });
 

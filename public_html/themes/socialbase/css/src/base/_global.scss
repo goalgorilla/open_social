@@ -18,11 +18,11 @@ i {
 
   &.left {
     float: left;
-    margin-right: 15px;
+    margin-right: 5px;
   }
   &.right {
     float: right;
-    margin-left: 15px;
+    margin-left: 5px;
   }
   &.tiny {
     font-size: 1rem;
@@ -40,8 +40,9 @@ i {
 
 
 // Images
-img.responsive-img,
-video.responsive-video {
+img.img-responsive,
+video.video.responsive {
+  display:: block;
   max-width: 100%;
   height: auto;
 }
@@ -123,4 +124,16 @@ hr {
   &.ruler-l {
     margin: 56px 0;
   }
+}
+
+.js .js-hide {
+  display: none;
+}
+
+.js-show {
+  display: none;
+}
+
+.js .js-show {
+  display: block;
 }
