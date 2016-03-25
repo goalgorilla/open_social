@@ -1,0 +1,129 @@
+- var pagetype = "styleguide"
+- var page = "Pagination"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+          
+        .row
+          .col.s12
+            h2 Default
+            p.caption Provide pagination links with the multi-page pagination component. On mobile we only show the pagination items "previous" and "next".
+        
+        .row
+          .col.s12
+            nav.pager-nav.text-center(role="navigation", aria-labelledby="pagination-heading")
+              h4#pagination-heading.visually-hidden Pagination
+              ul.pagination
+                li.pager__item.pager__item--previous
+                  a(href='#', aria-label='Previous') 
+                    span(aria-hidden="true")
+                      i.material-icons chevron_left
+                li.pager__item
+                  a(href='#') 1
+                li.pager__item
+                  a(href='#') 2
+                li.pager__item
+                  a(href='#') 3
+                li.pager__item
+                  a(href='#') 4              
+                li.pager__item
+                  a(href='#') 5
+                li.pager__item.pager__item--next
+                  a(href='#', aria-label='Next')
+                    span(aria-hidden="true")
+                      i.material-icons chevron_right
+                      
+        .row
+          .col.s12
+            pre
+              code.language-markup.
+                <nav role="navigation" aria-labelledby="pagination-heading" class="pager-nav text-center">
+                  <h4 id="pagination-heading" class="visually-hidden">Pagination</h4>
+                  <ul class="pagination">
+                    <li class="pager__item pager__item--previous">
+                      <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">
+                          <i class="material-icons">chevron_left</i>
+                        </span>
+                      </a>
+                    </li>
+                    <li class="pager__item"><a href="#">1</a></li>
+                    <li class="pager__item"><a href="#">2</a></li>
+                    <li class="pager__item"><a href="#">3</a></li>
+                    <li class="pager__item"><a href="#">4</a></li>
+                    <li class="pager__item"><a href="#">5</a></li>
+                    <li class="pager__item pager__item--next"> 
+                      <a href="#" aria-label="Next">
+                        <span aria-hidden="true"> 
+                          <i class="material-icons">chevron_right</i>
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                
+        .row
+          .col.s12
+            h3 Disabled and active states
+            p
+              :markdown
+                Links are customizable for different circumstances. Use `.disabled` for unclickable links and `.active` to indicate the current page.
+        
+        .row
+          .col.s12
+            nav.pager-nav.text-center(role="navigation", aria-labelledby="pagination-heading")
+              h4#pagination-heading.visually-hidden Pagination
+              ul.pagination
+                li.disabled.pager__item.pager__item--previous
+                  a(href='#', aria-label='Previous') 
+                    span(aria-hidden="true")
+                      i.material-icons chevron_left
+                li.pager__item.active
+                  a(href='#') 1
+                    span.sr-only (current)
+                li.pager__item
+                  a(href='#') 2
+                li.pager__item
+                  a(href='#') 3
+                li.pager__item
+                  a(href='#') 4              
+                li.pager__item
+                  a(href='#') 5
+                li.pager__item.pager__item--next
+                  a(href='#', aria-label='Next')
+                    span(aria-hidden="true")
+                      i.material-icons chevron_right
+            
+        .row
+          .col.s12
+            pre
+              code.language-markup.
+                <nav>
+                  <ul class="pagination">
+                    <li class="disabled pager__item pager__item--previous">
+                      <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">
+                          <i class="material-icons">chevron_left</i>
+                        </span>
+                      </a>
+                    </li>
+                    <li class="pager__item active">
+                      <a href="#">1 
+                        <span class="sr-only"> (current) </span>
+                      </a>
+                    </li>
+                    ...
+                  </ul>
+                </nav>
+                      
+    include ./layout/_scripts.jade                
+    include ./layout/_fontfaceobserver.jade
