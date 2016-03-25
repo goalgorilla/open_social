@@ -1,8 +1,14 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - field.field.user.user.field_picture
+    - image.style.thumbnail
   module:
+    - image
     - user
+_core:
+  default_config_hash: 7v20R45JCfPIri8uBIXhcWl_p1McirXZWHzl7G4yaKU
 id: user.user.default
 targetEntityType: user
 bundle: user
@@ -12,6 +18,15 @@ content:
     weight: 0
     settings: {  }
     third_party_settings: {  }
+  contact:
+    weight: 5
+  field_picture:
+    weight: 6
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
   language:
     weight: 1
     settings: {  }

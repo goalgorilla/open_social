@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.user.full
+    - field.field.user.user.field_picture
+    - image.style.teaser
+  module:
+    - image
+    - user
+id: user.user.full
+targetEntityType: user
+bundle: user
+mode: full
+content:
+  field_picture:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: teaser
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+hidden:
+  member_for: true

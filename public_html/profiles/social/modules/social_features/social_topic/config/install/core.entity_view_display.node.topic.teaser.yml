@@ -4,28 +4,38 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.topic.body
+    - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
+    - image.style.teaser
     - node.type.topic
   module:
-    - text
+    - image
     - user
 id: node.topic.teaser
 targetEntityType: node
 bundle: topic
 mode: teaser
 content:
-  body:
-    label: hidden
-    type: text_trimmed
+  field_topic_image:
+    type: image
     weight: 0
+    label: hidden
     settings:
-      trim_length: 300
+      image_style: teaser
+      image_link: content
+    third_party_settings: {  }
+  field_topic_type:
+    type: entity_reference_label
+    weight: 2
+    label: hidden
+    settings:
+      link: false
     third_party_settings: {  }
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_topic_image: true
-  field_topic_type: true
+  body: true
+  field_topic_comments: true
