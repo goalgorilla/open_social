@@ -1,0 +1,185 @@
+- var pagetype = "styleguide"
+- var page = "Cards"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+    body(class='#{pagetype}')
+      header.styleguide-header
+        include ./layout/_navbar.jade
+        
+      main.styleguide-container(role='main')
+
+        .container
+          .row 
+            .col.s12
+              .section 
+                p.caption A card is a sheet of material that serves as an entry point to more detailed information. A card could contain a photo, text, and a link about a single subject.
+                
+                h3.text-primary Usage
+                p Cards are a convenient means of displaying content composed of different elements. They’re also well-suited for showcasing elements whose size or supported actions vary, like photos with captions of variable length.
+                
+                h4 When to use
+                p Use a card layout when displaying content that:
+
+                ul
+                  li As a collection, comprises multiple data types, such as images, videos, and text
+                  li Does not require direct comparison (a user is not directly comparing images or text)
+                  li Supports content of highly variable length, such as comments
+                  li Contains interactive content, such as like buttons or comments
+                  li Would otherwise be in a grid list but needs to display more content to supplement the image
+                  
+              .section
+                h3.text-primary Basic card
+                p A basic card consists of a card header and a card body. The body can hold any information such as text, images and form elements.
+                
+          .row 
+            .col.s12.m6
+              .card
+                .card-head
+                  header Basic card title
+                .card-body
+                  p Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue.
+            .col.s12.m6
+              .card
+                .card-body
+                  p Basic card without an header
+                  
+          .row
+            .col.s12
+              pre
+                code.language-markup.
+                  <!-- Basic card: the .card-head element is optional -->
+                  <div class="card">
+                    <div class="card-head">
+                      <header>Basic card title</header>
+                    </div>
+                    <div class="card-body">
+                      <p>Curabitur blandit tempus porttitor...</p>
+                    </div>
+                  </div>
+  
+
+          .row 
+            .col.s12.m9
+              h3.text-primary Styles
+          
+          .row
+            .col.s12.m6
+              .card
+                .card-body.extra-padding
+                  :markdown
+                    You can add the class `.extra-padding` to double the default padding of the card body. The extra padding is applied for larger screen only.
+                      
+
+              pre
+                code.language-markup.
+
+                  <div class="card">
+                    <div class="card-body extra-padding">
+                      <p>...</p>
+                    </div>
+                  </div>
+                  
+
+            .col.s12.m6
+              .card.card-underline
+                .card-head
+                  header Card with Underlined header
+                .card-body
+                  :markdown
+                    You can add the class `.card-underline` to create a visually seperated box of the card head.
+                      
+              pre
+                code.language-markup.
+
+                  <div class="card card-underline">
+                    <div class="card-head">
+                      <header>Basic card title</header>
+                    </div>
+                    <div class="card-body">
+                      <p>...</p>
+                    </div>
+                  </div>
+
+          .row 
+            .col.s12
+              h3.text-primary Teaser card
+              p A teaser card can be used for Drupal teasers. The teaser can have image but it is not mandatory. Teasers can have one or two buttons which are at the bottom and are flat buttons. Content hierarchy is achieved by the order of fields and the use of typography. Try to limit the amount of information and actions in a teaser. On mobile the image field is not displayed. On tablet and wider the maximum height of the teaser card should match the heigth of the image style.
+
+          .row
+            .col.s12.m9
+              .section
+                .card.card-teaser
+                  .card-image
+                    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+                    img.teaser-type(src='images/icon-topic.svg')
+                  .card-body
+                    .text-default-dark Blog
+                    h2.h3.card-title 
+                      a(href="#") Teaser title
+                    a.text-l.text-grey-dark(href="#") Clive Owen
+                    .text-grey-dark 15 feb 2016
+                    .card-action
+                      a.btn.btn-flat.right(href="#") Read more
+                em.text-caption Example of a topic teaser card
+          
+          .row
+            .col.s12      
+              pre
+                code.language-markup.
+                  <div class="card card-teaser">
+                    <div class="card-image">
+                      <img src="content/images/people3-square.jpg" alt="" class="img-responsive">
+                      <img src="images/icon-topic.svg" class="teaser-type">
+                    </div>
+                    <div class="card-body">
+                      
+                      <div class="text-default-dark">Blog</div>
+                      <h2 class="h3 card-title"> <a href="#">Teaser title</a></h2>
+                      <a href="#" class="text-l text-grey-dark">Clive Owen</a>
+                      <div class="text-grey-dark">15 feb 2016</div>
+                      
+                      <div class="card-action">
+                        <a href="#" class="btn btn-flat right">Read more</a>
+                      </div>
+                      
+                    </div>
+                  </div>
+                
+          .row
+            .col.s12.m9   
+              .card.card-teaser
+                .card-image
+                  img.img-responsive(src='content/images/people3-square.jpg', alt='')
+                  .teaser-date 19-21
+                    .text-xs apr - apr
+                .card-body
+                  h2.h3.card-title 
+                    a(href="#") Event teaser example
+                  .text-grey 15 may 2016 09:00 - 17:00
+                  .text-grey-dark Rembrandtplein, Amsterdam
+                  .card-action
+                    .left.card-status Enrolled
+                    a.btn.btn-flat.right(href="#") Read more
+              em.text-caption Example of a event teaser card
+              
+              .card.card-teaser.unpublished
+                .card-image
+                  img.img-responsive(src='content/images/people3-square.jpg', alt='')
+                  .teaser-date 9
+                    .text-xs jun
+                  .status unpublished
+                    
+                .card-body
+                  h2.h3.card-title 
+                    a(href="#") Example of an unpublished teaser
+                  .text-grey 15 may 2016 09:00 - 17:00
+                  .text-grey-dark Rembrandtplein, Amsterdam
+                  .card-action
+                    .left.card-status Enrolled
+                    a.btn.btn-flat.right(href="#") Read more
+              em.text-caption Example of an unpublished teaser card
+  
+    include ./layout/_scripts.jade

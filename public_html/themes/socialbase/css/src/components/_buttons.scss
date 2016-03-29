@@ -26,6 +26,7 @@ button:focus {
   cursor: pointer;
   user-select: none;
   transition: .2s ease-out;
+  will-change: opacity, transform;
 
   &:hover {
     @include z-depth-1-half;
@@ -56,15 +57,6 @@ button:focus {
   i {
     font-size: $button-font-size;
     line-height: inherit;
-
-    &.left {
-      margin-left: -.25em;
-    }
-
-    &.right {
-      margin-right: -.25em;
-    }
-    
   }
 
 }
@@ -75,10 +67,6 @@ button:focus {
 .btn-raised {
   @include z-depth-1;
 	transition: box-shadow, .15s ease-out;
-
-  &:hover {
-    @include z-depth-1-half;
-  }
 
   &:active, &.active {
     @include z-depth-1-half;
@@ -97,6 +85,7 @@ button:focus {
 
 .btn-flat,
 .btn-icon-toggle {
+  @include z-depth-0;
 	background-color: transparent;
 	border-color: transparent;
   -webkit-tap-highlight-color: transparent;
@@ -132,39 +121,30 @@ button:focus {
 }
 
 // Floating button
+// --------------------------------------------------
+
 .btn-floating {
-  display: inline-block;
-  color: $button-floating-color;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
   width: $button-floating-size;
   height: $button-floating-size;
-  line-height: $button-floating-size;
   padding: 0;
-  background-color: $button-floating-background;
   border-radius: $button-floating-radius;
-  @extend .z-depth-1;
-  transition: .3s;
-  cursor: pointer;
-  vertical-align: middle;
-
-  &:hover {
-    background-color: $button-floating-background-hover;
-    @extend .z-depth-1-half;
-  }
-
-  &:before {
-    border-radius: 0;
-  }
+  font-size: 1.4rem;
 
   &.btn-large {
     width: $button-floating-large-size;
     height: $button-floating-large-size;
-    i {
-      line-height: $button-floating-large-size;
-    }
   }
+}
+
+.icon-font-loaded .btn-floating i {
+  line-height: $button-floating-size;
+  font-size: inherit;
+  width: inherit;
+  text-align: center;
+}
+
+.icon-font-loaded .btn-floating.btn-large i {
+  line-height: $button-floating-large-size;
 }
 
 // button fix
@@ -256,7 +236,7 @@ button.btn-floating {
   display: block;
 
   + .btn {
-    margin-top: 5px 0;
+    margin-top: 5px;
   }
 
 }
@@ -294,6 +274,17 @@ button.btn-floating {
   &:hover,
   &:focus {
     background-color: $grey-light-3;
+  }
+
+}
+
+.btn--default {
+  background-color: $grey-light-2;
+  color: $grey-dark-1;
+
+  &:hover,
+  &:focus {
+    background-color: $grey-light-1;
   }
 
 }
