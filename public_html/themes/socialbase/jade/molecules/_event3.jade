@@ -1,11 +1,13 @@
-a.card.teaser.teaser--event(href="#")
-  .teaser__media
-    img.teaser__image(src="content/images/people3-square.jpg")
-    .teaser__event-date 26
-      span.teaser__event-date-month May
-  .teaser__content
-    h2.h4 London Meetup
-    .teaser__published 26 may 09:00 - 18:00
-    .teaser__location Tower Bridge, London
-    .teaser__enrolled Enrolled
-    .teaser__read-more Read more 
+.card.card--teaser.card-with-actionbar
+  a.card-image(href="#")
+    img.img-responsive(src="content/images/people3-square.jpg")
+    .teaser-date 26
+      .text-xs may
+  .card-body
+    h2.h3.card-title 
+      a(href="#") London Meetup
+    .text-grey 26 may 09:00 - 18:00
+    .text-grey-dark Tower Bridge, London
+    .card-actionbar
+      a.btn.btn-flat.left.btn--primary(href='#') Enrolled
+      a.btn.btn-flat.right(href="#") Read more

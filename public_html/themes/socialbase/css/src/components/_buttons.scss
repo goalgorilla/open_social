@@ -32,7 +32,6 @@ button:focus {
     @include z-depth-1-half;
   }
 
-
   &:active,
   &.active
   &:focus {
@@ -49,9 +48,10 @@ button:focus {
 	&[disabled],
 	[disabled] & {
 		border-color: transparent;
-		background: $button-disabled-background;
-		color: $button-disabled-color;
+		filter: grayscale(1);
+    opacity: 0.6;
 		box-shadow: none;
+    pointer-events: none;
 	}
 
   i {
@@ -106,12 +106,6 @@ button:focus {
 		color: white;
 	}
 
-	&.disabled,
-	&[disabled],
-	[disabled] & {
-    background: $button-disabled-background;
-		color: $button-disabled-color;
-	}
 }
 
 .btn-icon-toggle {
@@ -241,50 +235,73 @@ button.btn-floating {
 
 }
 
-.btn--default-dark {
-  @extend .style-default-dark;
-}
+.btn-raised {
 
-.btn--primary {
-  background-color: $primary-color;
-  color: white;
+  &.btn--default-dark {
+    @extend .style-default-dark;
+  }
 
-  &:hover,
-	&:focus {
-    background-color: $primary-color-dark;
+  &.btn--primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover,
+  	&:focus {
+      background-color: $primary-color-dark;
+    }
+
+  }
+
+  &.btn--secondary {
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover,
+  	&:focus {
+      background-color: darken($secondary-color, 15%);
+    }
+
+  }
+
+  &.btn--default-bright {
+    background-color: white;
+    color: $grey-dark-1;
+
+    &:hover,
+    &:focus {
+      background-color: $grey-light-3;
+    }
+
+  }
+
+  &.btn--default {
+    background-color: $grey-light-2;
+    color: $grey-dark-1;
+
+    &:hover,
+    &:focus {
+      background-color: $grey-light-1;
+    }
+
   }
 
 }
 
-.btn--secondary {
-  background-color: $secondary-color;
-  color: white;
+.btn-flat {
 
-  &:hover,
-	&:focus {
-    background-color: darken($secondary-color, 15%);
+  &.btn--primary {
+    color: $primary-color;
+
+    &:hover,
+    &:focus {
+      color: $primary-color-dark;
+    }
+
   }
 
-}
-
-.btn--default-bright {
-  background-color: white;
-  color: $grey-dark-1;
-
-  &:hover,
-  &:focus {
-    background-color: $grey-light-3;
+  &.btn--default-bright {
+    color: white;
   }
 
-}
-
-.btn--default {
-  background-color: $grey-light-2;
-  color: $grey-dark-1;
-
-  &:hover,
-  &:focus {
-    background-color: $grey-light-1;
-  }
 
 }

@@ -14,9 +14,9 @@ html(lang="en")
         .container
           .row 
             .col.s12
-              .section 
-                p.caption A card is a sheet of material that serves as an entry point to more detailed information. A card could contain a photo, text, and a link about a single subject.
-                
+                p.caption A card is a sheet of material that serves as an entry point to more detailed information. A card could contain a photo, text, and a link about a single subject.          
+          .row 
+            .col.s12.m7
                 h3.text-primary Usage
                 p Cards are a convenient means of displaying content composed of different elements. They’re also well-suited for showcasing elements whose size or supported actions vary, like photos with captions of variable length.
                 
@@ -29,22 +29,16 @@ html(lang="en")
                   li Supports content of highly variable length, such as comments
                   li Contains interactive content, such as like buttons or comments
                   li Would otherwise be in a grid list but needs to display more content to supplement the image
-                  
-              .section
-                h3.text-primary Basic card
-                p A basic card consists of a card header and a card body. The body can hold any information such as text, images and form elements.
+            
+            .col.s12.m5    
+              h3.text-primary Basic card
+              p A basic card consists of a card header and a card body. The body can hold any information such as text, images and form elements.
                 
-          .row 
-            .col.s12.m6
               .card
                 .card-head
                   header Basic card title
                 .card-body
                   p Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue.
-            .col.s12.m6
-              .card
-                .card-body
-                  p Basic card without an header
                   
           .row
             .col.s12
@@ -67,12 +61,28 @@ html(lang="en")
           
           .row
             .col.s12.m6
+              h4 No header
+              .card
+                .card-body
+                  p Curabitur blandit tempus porttitor. Nullam quis risus eget urna mollis ornare vel eu leo. Duis mollis, est non commodo luctus.
+                  p Nisi erat porttitor ligula, eget lacinia odio sem nec elit. Nulla vitae elit libero, a pharetra augue.
+                  
+              pre
+                code.language-markup.
+
+                  <div class="card">
+                    <div class="card-body">
+                      <p>...</p>
+                    </div>
+                  </div>
+
+            .col.s12.m6
+              h4 Extra padding
               .card
                 .card-body.extra-padding
                   :markdown
                     You can add the class `.extra-padding` to double the default padding of the card body. The extra padding is applied for larger screen only.
                       
-
               pre
                 code.language-markup.
 
@@ -81,9 +91,10 @@ html(lang="en")
                       <p>...</p>
                     </div>
                   </div>
-                  
-
+          
+          .row
             .col.s12.m6
+              h4 Header underlined
               .card.card-underline
                 .card-head
                   header Card with Underlined header
@@ -102,6 +113,27 @@ html(lang="en")
                       <p>...</p>
                     </div>
                   </div>
+          
+            .col.s12.m6
+              h4 Card action          
+              .card.card-with-actionbar
+                .card-body
+                  :markdown
+                    Card actions are prefereably put as flat button in a `.card-action` block. You can an extra class of `.card-action--with-border` for the visual border. 
+                  .card-actionbar.card-actionbar--with-border
+                    a.btn.btn-flat.right(href="#") Read more
+                    
+              pre
+                code.language-markup.
+
+                  <div class="card card-with-action-bar">
+                    <div class="card-body">
+                      <p>...</p>
+                      <div class="card-actionbar card-actionbar--with-border">
+                        <a href="#" class="btn btn-flat right"> Read more </a>
+                      </div>
+                    </div>
+                  </div>
 
           .row 
             .col.s12
@@ -110,26 +142,24 @@ html(lang="en")
 
           .row
             .col.s12.m9
-              .section
-                .card.card-teaser
-                  .card-image
-                    img.img-responsive(src='content/images/people3-square.jpg', alt='')
-                    img.teaser-type(src='images/icon-topic.svg')
-                  .card-body
-                    .text-default-dark Blog
-                    h2.h3.card-title 
-                      a(href="#") Teaser title
-                    a.text-l.text-grey-dark(href="#") Clive Owen
-                    .text-grey-dark 15 feb 2016
-                    .card-action
-                      a.btn.btn-flat.right(href="#") Read more
-                em.text-caption Example of a topic teaser card
+              .card.card--teaser.card-with-actionbar
+                a.card-image(href="#")
+                  img.img-responsive(src='content/images/people3-square.jpg', alt='')
+                  img.teaser-type(src='images/icon-topic.svg', alt='')
+                .card-body
+                  .text-default-dark Blog
+                  h2.h3.card-title 
+                    a(href="#") Teaser title
+                  a.text-l.text-grey-dark(href="#") Clive Owen
+                  .text-grey-dark 15 feb 2016
+                  .card-actionbar
+                    a.btn.btn-flat.right(href="#") Read more
+              em.text-caption Example of a topic teaser card
           
-          .row
             .col.s12      
               pre
                 code.language-markup.
-                  <div class="card card-teaser">
+                  <div class="card card-teaser card-with-actionbar">
                     <div class="card-image">
                       <img src="content/images/people3-square.jpg" alt="" class="img-responsive">
                       <img src="images/icon-topic.svg" class="teaser-type">
@@ -141,7 +171,7 @@ html(lang="en")
                       <a href="#" class="text-l text-grey-dark">Clive Owen</a>
                       <div class="text-grey-dark">15 feb 2016</div>
                       
-                      <div class="card-action">
+                      <div class="card-actionbar">
                         <a href="#" class="btn btn-flat right">Read more</a>
                       </div>
                       
@@ -150,8 +180,8 @@ html(lang="en")
                 
           .row
             .col.s12.m9   
-              .card.card-teaser
-                .card-image
+              .card.card--teaser.card-with-actionbar
+                a.card-image(href="#")
                   img.img-responsive(src='content/images/people3-square.jpg', alt='')
                   .teaser-date 19-21
                     .text-xs apr - apr
@@ -160,13 +190,13 @@ html(lang="en")
                     a(href="#") Event teaser example
                   .text-grey 15 may 2016 09:00 - 17:00
                   .text-grey-dark Rembrandtplein, Amsterdam
-                  .card-action
-                    .left.card-status Enrolled
+                  .card-actionbar
+                    a.btn.btn-flat.left.btn--primary(href='#') Enrolled
                     a.btn.btn-flat.right(href="#") Read more
               em.text-caption Example of a event teaser card
               
-              .card.card-teaser.unpublished
-                .card-image
+              .card.card--teaser.unpublished.card-with-actionbar
+                a.card-image(href="#")
                   img.img-responsive(src='content/images/people3-square.jpg', alt='')
                   .teaser-date 9
                     .text-xs jun
@@ -177,8 +207,8 @@ html(lang="en")
                     a(href="#") Example of an unpublished teaser
                   .text-grey 15 may 2016 09:00 - 17:00
                   .text-grey-dark Rembrandtplein, Amsterdam
-                  .card-action
-                    .left.card-status Enrolled
+                  .card-actionbar
+                    a.btn.btn-flat.left.btn--primary(href='#') Enrolled
                     a.btn.btn-flat.right(href="#") Read more
               em.text-caption Example of an unpublished teaser card
   

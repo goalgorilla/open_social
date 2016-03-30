@@ -18,7 +18,7 @@
   @include clearfix;
 }
 
-// This style can be used to separate the card title from the card body. 
+// This style can be used to separate the card title from the card body.
 .card-underline .card-head {
   border-bottom: 1px solid $grey-light-2;
 }
@@ -45,6 +45,11 @@
 
   }
 
+}
+
+.card-with-actionbar .card-body {
+  padding-bottom: 48px;
+  overflow: hidden;
 }
 
 .card-head header {
@@ -92,9 +97,9 @@ a.card:hover {
 }
 
 //
-// Specific Drupal Teaser Cards
+// Specific Drupal teaser cards
 
-.card-teaser {
+.card--teaser {
   display: flex;
 
   @include MQ($small) {
@@ -169,8 +174,6 @@ a.card:hover {
 
   .card-body {
     flex: 1 1 auto;
-    padding-bottom: 48px;
-    overflow: hidden;
   }
 
 }
@@ -203,7 +206,7 @@ a.card:hover {
 
 }
 
-.card-action {
+.card-actionbar {
   @include clearfix; // buttons inside can float
   position: absolute;
   bottom: 0;
@@ -211,5 +214,9 @@ a.card:hover {
   right: 0;
   z-index: 1;
   background-color: inherit;
-  padding: 0 24px 12px 24px;
+  padding: 6px 24px;
+}
+
+.card-actionbar--with-border {
+  border-top: 1px solid $grey-light-2;
 }

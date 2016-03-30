@@ -4,19 +4,19 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero.only-desktop
-    .container
-      .row
-        .col.s12.center.margin-bottom-xxl
-          img.circle.img-bordered(src='content/images/avatar0.jpg')
-          h1.page-title.h2 Michael Angarano
-          button.btn.btn--default-bright Following
+  .block-hero.only-desktop.profile-cover
+    .cover-wrap
+      img.circle.img-bordered(src='content/images/avatar0.jpg')
+      h1.page-title.h2 Michael Angarano
+      button.btn.btn-flat.btn--default-bright
+        i.material-icons.left check
+        | Following
       
 block secondary_navigation
   .container
     .row.hidden-desktop.section-header
       .col.s12
-        a.btn.btn--default-bright
+        a.btn.btn-raised.btn--default-bright 
           i.material-icons.left keyboard_arrow_left
           | Back to timeline
 
@@ -24,7 +24,7 @@ block secondary_navigation
     .container
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.nav-justified.style-secondary.nav-tabs--xl
+        ul.nav.nav-tabs.tabs-center.style-secondary.nav-tabs--xl
           li
             a(href="#").disabled Timeline  
           li
@@ -66,16 +66,16 @@ block content
               .col.s12
                 .form-item
                   label.form__label Topic type
-                    select.browser-default
-                      option(value="", selected="") All types
-                      option(value="blog") Blog
-                      option(value="discussion") Discussion
-                      option(value="topic") Topic
+                  select.browser-default(onchange="enableMe('reset-button', this)")
+                    option(value="", selected="") All types
+                    option(value="blog") Blog
+                    option(value="discussion") Discussion
+                    option(value="topic") Topic
             .row
               .col.s12
                 .form-item
                   label.form__label Status
-                  select.browser-default
+                  select.browser-default(onchange="enableMe('reset-button', this)")
                     option(value="", selected="") All statusses
                     option(value="published") Published
                     option(value="unpublished") Unpublished
@@ -83,7 +83,7 @@ block content
             .row
               .col.s12
                 .form-actions.form-wrapper.right-align
-                  input.waves-effect.waves-light.btn-primary.btn.btn-flat.disabled(type="submit", value="Reset")
+                  input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
 
     .col.s12.l9
       .card--wrapper
@@ -109,3 +109,10 @@ block content
           a(href='#', aria-label='Next')
             span(aria-hidden="true")
               i.material-icons chevron_right
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }
