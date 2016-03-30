@@ -4,19 +4,19 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero.only-desktop
-    .container
-      .row
-        .col.s12.center.margin-bottom-xxl
-          img.circle.img-bordered(src='content/images/avatar0.jpg')
-          h1.page-title.h2 Michael Angarano
-          button.btn.btn--default-bright Following
+  .block-hero.only-desktop.profile-cover
+    .cover-wrap
+      img.circle.img-bordered(src='content/images/avatar0.jpg')
+      h1.page-title.h2 Michael Angarano
+      button.btn.btn-flat.btn--default-bright
+        i.material-icons.left check
+        | Following
       
 block secondary_navigation
   .container
     .row.hidden-desktop.section-header
       .col.s12
-        a.btn 
+        a.btn.btn-raised.btn--default-bright 
           i.material-icons.left keyboard_arrow_left
           | Back to timeline
 
@@ -24,7 +24,7 @@ block secondary_navigation
     .container
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.nav-justified.style-secondary.nav-tabs--xl
+        ul.nav.nav-tabs.tabs-center.style-secondary.nav-tabs--xl
           li
             a(href="#").disabled Timeline  
           li
@@ -44,12 +44,12 @@ block content
     .col.s12
       h2.h3.section-title My topics
     
-    .col.s12.l3.right
-      a.waves-effect.waves-light.btn.btn--block.btn--black.btn-raised(href='#!') 
+    .col.s12.l3.right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn--block.btn--default-dark.btn-raised(href='#!') 
         i.material-icons.left add
         | Add a topic
 
-      a.btn.btn--block.hidden-desktop.js-open-canvas
+      a.btn.btn--block.btn--primary.btn-raised.hidden-desktop.js-open-canvas
         i.material-icons.left tune
         | Filters
       
@@ -57,29 +57,33 @@ block content
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.hidden-desktop
-            .js-close-canvas.btn-flat.btn-icon-toggle.btn-default-light.right
+            .js-close-canvas.btn-icon-toggle.btn-default-light.right
               i.material-icons close
-    
-        form
-          .form-item
-            .input-field
-              select
-                option(value="", selected="") All types
-                option(value="blog") Blog
-                option(value="discussion") Discussion
-                option(value="topic") Topic
-              label Topic type
+        
+        .offcanvas-body
+          form
+            .row
+              .col.s12
+                .form-item
+                  label.form__label Topic type
+                  select.browser-default(onchange="enableMe('reset-button', this)")
+                    option(value="", selected="") All types
+                    option(value="blog") Blog
+                    option(value="discussion") Discussion
+                    option(value="topic") Topic
+            .row
+              .col.s12
+                .form-item
+                  label.form__label Status
+                  select.browser-default(onchange="enableMe('reset-button', this)")
+                    option(value="", selected="") All statusses
+                    option(value="published") Published
+                    option(value="unpublished") Unpublished
               
-          .form-item
-            .input-field
-              select
-                option(value="", selected="") All statusses
-                option(value="published") Published
-                option(value="unpublished") Unpublished
-              label Status
-          
-          .form-actions.form-wrapper
-            input.waves-effect.waves-light.btn-primary.btn-flat.disabled(type="submit", value="Reset")
+            .row
+              .col.s12
+                .form-actions.form-wrapper.right-align
+                  input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
 
     .col.s12.l9
       .card--wrapper
@@ -89,17 +93,26 @@ block content
         include molecules/_topic4.jade
         
       ul.pagination
-        li.disabled
-          a(href="#0")     
-            i.material-icons chevron_left
-        li.active
+        li.pager__item.pager__item--previous.disabled
+          a(href="#0", aria-label='Previous')    
+            span(aria-hidden="true") 
+              i.material-icons chevron_left
+        li.pager__item.active
           a(href="#1") 1
-        li 
+        li.pager__item 
           a(href="#1") 2
-        li 
+        li.pager__item 
           a(href="#1") 3          
-        li 
+        li.pager__item 
           a(href="#1") 4
-        li
-          a(href="#0")     
-            i.material-icons chevron_right
+        li.pager__item.pager__item--next
+          a(href='#', aria-label='Next')
+            span(aria-hidden="true")
+              i.material-icons chevron_right
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

@@ -16,7 +16,7 @@ block pagetitle
 block content
       
   .row.margin-top-l
-    .col.s12.l9
+    .col.s12.m9
     
       form.node-form
       
@@ -60,13 +60,15 @@ block content
                 .form-item.form__type-managed-file
                   label.form__label Image
                   .image-widget.form-managed-file.clearfix
-                    img.img-responsive(src='content/images/animals1-square.jpg', width='100')
-                    span.file.file--image
+                    img.img-responsive.left(src='content/images/animals1-square.jpg', width='100')
+                    .left.padding-s
+                      .file.file--image
                       a(href='#', type="image/jpeg; length=158378") animals1-square.jpg
-                    span.file-size (154.78kb)
-                    button.btn.form-submit.style-default(type='submit', value='remove')
-                      i.material-icons.left delete
-                      | Remove
+                      .file-size (154.78kb)
+                    .left.padding-s
+                      button.btn.form-submit.style-default(type='submit', value='remove')
+                        i.material-icons.left delete
+                        | Remove
                   .form__item-help-text(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
         #placement.card.card-underline.scrollspy
@@ -85,14 +87,14 @@ block content
                       label.option(for='profile') My profile
                     .form-item
                       input#group.form-radio(type='radio', checked, name='placement', onclick="showMe('selectagroup', this)")
-                      label.option(for='group') A group I am a member of
-            .row#selectagroup
-              .form-item.col.s12.m6
-                select.browser-default
-                  option(value='', disabled='',) Select a group
-                  option(value='1') Group name 1
-                  option(value='2', selected='') Group name 2
-                  option(value='3') Group name 3
+                      label.option(for='group') A group I am a member of:
+              #selectagroup
+                .form-item.col.s12.m6.margin-top-s
+                  select.browser-default
+                    option(value='', disabled='',) Select a group
+                    option(value='1') Group name 1
+                    option(value='2', selected='') Group name 2
+                    option(value='3') Group name 3
             
             .row
               .col.s12      
@@ -135,10 +137,10 @@ block content
                   .form__item-help-text Users cannot post comments.
               
       .form-wrapper.clearfix
-        input.waves-effect.waves-light.btn.btn-raised.btn--secondary.left(type='submit', value='Preview') 
-        a.btn.btn-flat.left(href='#') Delete
+        a.waves-effect.waves-light.btn.btn-raised.btn--default-bright(href="#") Discard changes
+        a.btn.btn-flat(href='#') Delete
         input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
-        a.waves-effect.waves-light.btn.btn-raised.btn--default-bright.right(href="#") Discard changes
+        input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
         
 
     .col.m3.hidden-mobile

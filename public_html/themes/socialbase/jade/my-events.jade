@@ -18,7 +18,7 @@ block secondary_navigation
   .container
     .row.hidden-desktop.section-header
       .col.s12
-        a.btn 
+        a.btn.btn-raised.btn--default-bright 
           i.material-icons.left keyboard_arrow_left
           | Back to timeline
 
@@ -46,12 +46,12 @@ block content
     .col.s12
       h2.h3.section-title My events
     
-    .col.s12.l3.right
-      a.waves-effect.waves-light.btn.btn--block.btn--black.btn-raised(href='#!') 
+    .col.s12.l3.right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn--block.btn--default-dark.btn-raised(href='#!') 
         i.material-icons.left add
         | Add an event
 
-      a.btn.btn--block.hidden-desktop.js-open-canvas
+      a.btn.btn--block.btn--primary.btn-raised.hidden-desktop.js-open-canvas
         i.material-icons.left tune
         | Filters
       
@@ -59,25 +59,29 @@ block content
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.hidden-desktop
-            .js-close-canvas.btn-flat.btn-icon-toggle.btn-default-light.right
+            .js-close-canvas.btn.btn-flat.btn-icon-toggle.btn-default-light.right
               i.material-icons close
     
-        form
-          .form__item.form__item-radios
-            label.form__label Event status 
-            .form__radios
-              .form__item.form__item-radio
-                input.form__radio#radio1(name='event', type='radio', checked)
-                label.label--option(for='radio1') Upcoming
-              .form__item.form__item-radio
-                input.form__radio#radio2(name='event', type='radio')
-                label.label--option(for='radio2') Past 
-              .form__item.form__item-radio
-                input.form__radio#radio3(name='event', type='radio')
-                label.label--option(for='radio3') Unpublished
-          
-          .form-actions.form-wrapper
-            button.btn.js-close-canvas.hidden-desktop Done
+        .offcanvas-body
+          form
+            .row
+              .col.s12
+                .form__item.form__item-radios
+                  label.form__label Event status 
+                  .form__radios
+                    .form__item.form__item-radio
+                      input.form__radio#radio1(name='event', type='radio', checked)
+                      label.label--option(for='radio1') Upcoming
+                    .form__item.form__item-radio
+                      input.form__radio#radio2(name='event', type='radio')
+                      label.label--option(for='radio2') Past 
+                    .form__item.form__item-radio
+                      input.form__radio#radio3(name='event', type='radio')
+                      label.label--option(for='radio3') Unpublished
+            .row.hidden-desktop
+              .col.s12
+                .form-actions.form-wrapper.clearfix
+                  button.btn.js-close-canvas.right Done
 
     .col.s12.l9
       .card--wrapper
@@ -87,17 +91,19 @@ block content
         include molecules/_event4.jade
         
       ul.pagination
-        li.disabled
-          a(href="#0")     
-            i.material-icons chevron_left
-        li.active
+        li.pager__item.pager__item--previous.disabled
+          a(href="#0", aria-label='Previous')    
+            span(aria-hidden="true") 
+              i.material-icons chevron_left
+        li.pager__item.active
           a(href="#1") 1
-        li 
+        li.pager__item 
           a(href="#1") 2
-        li 
+        li.pager__item 
           a(href="#1") 3          
-        li 
+        li.pager__item 
           a(href="#1") 4
-        li
-          a(href="#0")     
-            i.material-icons chevron_right
+        li.pager__item.pager__item--next
+          a(href='#', aria-label='Next')
+            span(aria-hidden="true")
+              i.material-icons chevron_right

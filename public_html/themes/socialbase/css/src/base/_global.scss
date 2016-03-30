@@ -49,7 +49,6 @@ video.video.responsive {
 
 .img-bordered {
   border: 5px solid white;
-  @include z-depth-1-half;
 }
 
 // Text Align
@@ -86,22 +85,19 @@ video.video.responsive {
   text-overflow: ellipsis;
 }
 
-.no-padding {
-  padding: 0 !important;
-}
-
-.no-margin {
-	margin: 0 !important;
-}
-
+.no-margin { margin: 0; }
 .margin-bottom-s {	margin-bottom: 5px; }
 .margin-bottom-m {	margin-bottom: 10px; }
 .margin-bottom-l {	margin-bottom: 20px; }
-
 .margin-top-s {	margin-top: 5px; }
 .margin-top-m {	margin-top: 10px; }
 .margin-top-l {	margin-top: 20px; }
 
+.no-padding { padding: 0 !important;}
+.padding-s { padding: 12px; }
+.padding-m { padding: 24px; }
+.padding-l { padding: 48px; }
+.no-side-padding { padding: 24px 0; }
 
 // Pushpin
 .pin-top, .pin-bottom {
@@ -136,4 +132,35 @@ hr {
 
 .js .js-show {
   display: block;
+}
+
+// Only display content to screen readers
+//
+// See: http://a11yproject.com/posts/how-to-hide-content/
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+// Use in conjunction with .sr-only to only display content when it's focused.
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+// Credit: HTML5 Boilerplate
+
+.sr-only-focusable {
+  &:active,
+  &:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
 }

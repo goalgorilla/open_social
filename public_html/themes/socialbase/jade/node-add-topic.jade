@@ -16,7 +16,7 @@ block pagetitle
 block content
       
   .row.margin-top-l
-    .col.s12.l9
+    .col.s12.l9.margin-bottom-l
     
       form.node-form
       
@@ -80,13 +80,13 @@ block content
                     .form-item
                       input#group.form-radio(type='radio', name='placement', onclick="showMe('selectagroup', this)")
                       label.option(for='group') A group I am a member of
-            .row#selectagroup(style="display:none")
-              .form-item.col.s12.m6
-                select.browser-default
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Option 1
-                  option(value='2') Option 2
-                  option(value='3') Option 3
+                #selectagroup.form-item-select(style='display:none;')
+                  .form-item.col.s12.m6.margin-top-s
+                    select.browser-default
+                      option(value='', disabled='', selected='') Select a group
+                      option(value='1') Option 1
+                      option(value='2') Option 2
+                      option(value='3') Option 3
             
             .row
               .col.s12      
@@ -109,28 +109,28 @@ block content
                       
           
             
-      #comment-settings.form-item.card.scrollspy.tabs-left
-        ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
-          li.active
-            a(href="#comments") Comment settings
+        #comment-settings.form-item.card.scrollspy.tabs-left
+          ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
+            li.active
+              a(href="#comments") Comment settings
+                
+          .card-body.tab-content
+            #comments.tab-pane.active
+              .form-item.form__item-radios
+                label.form__label.form-required Comments
+                .form__radios
+                  .form-item
+                    input#open.form-radio(type='radio', checked, name='comments')
+                    label.option(for='open') Open
+                    .form__item-help-text Users with the "Post comments" permission can post comments.
+                  .form-item
+                    input#closed.form-radio(type='radio', name='comments')
+                    label.option(for='closed') Closed
+                    .form__item-help-text Users cannot post comments.
               
-        .card-body.tab-content
-          #comments.tab-pane.active
-            .form-item.form__item-radios
-              label.form__label.form-required Comments
-              .form__radios
-                .form-item
-                  input#open.form-radio(type='radio', checked, name='comments')
-                  label.option(for='open') Open
-                  .form__item-help-text Users with the "Post comments" permission can post comments.
-                .form-item
-                  input#closed.form-radio(type='radio', name='comments')
-                  label.option(for='closed') Closed
-                  .form__item-help-text Users cannot post comments.
-              
-      .form-wrapper
-        input.waves-effect.waves-light.btn.btn-raised.btn--primary(type='submit', value='Save') 
-        input.waves-effect.waves-light.btn.btn-raised.btn--secondary(type='submit', value='Preview') 
+        .form-wrapper.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
 
     .col.m3.hidden-mobile
       .toc-wrapper

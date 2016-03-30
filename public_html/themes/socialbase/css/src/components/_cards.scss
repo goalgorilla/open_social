@@ -1,25 +1,12 @@
-.card-panel {
-  transition: box-shadow .25s;
-  padding: $card-padding-small;
-  margin: $element-top-margin 0 $element-bottom-margin 0;
-  border-radius: 10px;
-  @include z-depth-1;
-  background-color: $card-bg-color;
-}
-
 .card {
-  position: relative;
-  margin: 0 0 24px 0;
-  background-color: $card-bg-color;
   @include clearfix;
-
-  @include MQ($small) {
-    border-radius: 10px;
-    transition: box-shadow .25s;
-    background-clip: padding-box;
-    @include z-depth-1;
-  }
-
+  @include z-depth-1;
+  position: relative;
+  margin: 0.5rem 0 1rem 0;
+  background-color: $card-bg-color;
+  border-radius: 10px;
+  transition: box-shadow .25s;
+  background-clip: padding-box;
 }
 
 .card-head {
@@ -31,32 +18,43 @@
   @include clearfix;
 }
 
+// This style can be used to separate the card title from the card body.
 .card-underline .card-head {
   border-bottom: 1px solid $grey-light-2;
 }
 
 .card-body {
-  padding: $card-padding-small;
   position: relative;
-  @include MQ($small) {
+  padding: $card-padding;
 
-    &:first-child {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
 
-    &:last-child {
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
+  &:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  &.extra-padding {
+
+    @include MQ($small) {
+      padding: $card-padding-large;
     }
 
   }
 
 }
 
+.card-with-actionbar .card-body {
+  padding-bottom: 48px;
+  overflow: hidden;
+}
+
 .card-head header {
   display: inline-block;
-  padding: 11px 24px;
+  padding: 12px 24px;
   vertical-align: middle;
   line-height: 17px;
   font-size: 1em;
@@ -64,30 +62,18 @@
   text-transform: uppercase;
 }
 
-@include MQ($small) {
-  a.card:hover {
-    @include z-depth-1-half;
-  }
-
+a.card:hover {
+  @include z-depth-1-half;
 }
-
-.card--nodefull {
-  @include MQ($medium) {
-    padding: (1.5 * $card-padding-medium - 16px) (1.5 * $card-padding-medium);
-  }
-}
-
 
 .card__label {
   text-transform: uppercase;
   font-size: 14px;
   color: $grey-dark-1;
-
-  @include MQ($medium) {
-    text-align: center;
-  }
 }
 
+
+// Desktop cards are only displayed on desktop.
 .desktop-card {
 
   @include MQ($medium) {
@@ -99,6 +85,138 @@
 
 }
 
-.card ~ .text-caption {
-  margin-top: -15px;
+.card {
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+//
+// Specific Drupal teaser cards
+
+.card--teaser {
+  display: flex;
+
+  @include MQ($small) {
+    height: 220px; // matches width of image
+  }
+
+  .card-image {
+    display: none;
+
+    @include MQ($small) {
+      display: block;
+      height: 220px;
+      flex: 0 0 220px;
+      position: relative;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+
+      &:before {
+        position: absolute;
+        display: block;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(41, 171, 226, 0.8);
+      }
+
+    }
+  }
+
+  .teaser-type {
+    position: absolute;
+    @include center(xy);
+    width: 30%;
+    height: auto;
+  }
+
+  .teaser-date {
+    position: absolute;
+    @include center(xy);
+    color: white;
+    font-size: 4em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1;
+    white-space: nowrap;
+
+    div {
+      line-height: 1;
+    }
+  }
+
+  .card-status {
+    line-height: $button-height;
+    font-size: $button-font-size;
+    color: $primary-color;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    color: $primary-color;
+
+    &:hover {
+      color: $primary-color-dark;
+    }
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+  }
+
+}
+
+@include MQ($small) {
+
+  .unpublished .card-image:before {
+    background-color: rgba($grey-dark-1, 0.8);
+  }
+
+  .unpublished .status {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: white;
+    bottom: 10px;
+    left: 0;
+    font-weight: 300;
+
+    &:before {
+      border-top: 1px solid white;
+      margin: 5px auto;
+      width: 40px;
+      height: 0;
+      content: '';
+      display: block;
+    }
+
+  }
+
+}
+
+.card-actionbar {
+  @include clearfix; // buttons inside can float
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background-color: inherit;
+  padding: 6px 24px;
+}
+
+.card-actionbar--with-border {
+  border-top: 1px solid $grey-light-2;
 }

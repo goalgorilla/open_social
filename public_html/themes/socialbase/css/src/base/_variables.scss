@@ -18,6 +18,7 @@ $grey-light-1:   #adadad;
 $grey-light-2:   #e6e6e6;
 $grey-light-3:   #f5f5f5;
 $grey-dark-1:    #4d4d4d;
+$grey-dark-2:    #666666;
 
 
 $default-color-dark: mix(black, $default-color, 30%) !default;
@@ -44,12 +45,13 @@ $accent-color-bright: mix(white, $accent-color, 60%) !default;
 $badge-bg-color: $primary-color-dark !default;
 
 /*** Buttons ***/
+$border-radius-base: 10px;
 
 // Shared styles
 $button-border: 0 !default;
-$button-font-size: 0.875em !default;
-$button-height: 1.85em !default;
-$button-padding: 0.4285em 0.857em !default;
+$button-font-size: 0.875rem !default;
+$button-height: 36px !default;
+$button-padding: 0 1em !default;
 $button-radius: 10px !default;
 
 // Disabled styles
@@ -69,11 +71,8 @@ $button-flat-color: #343434 !default;
 $button-flat-disabled-color: lighten(#999, 10%) !default;
 
 // Floating buttons
-$button-floating-background: $grey-dark-1 !default;
-$button-floating-background-hover: $button-floating-background !default;
-$button-floating-color: #fff !default;
-$button-floating-size: 34px !default;
-$button-floating-large-size: $button-floating-size + 10px !default;
+$button-floating-size: 44px !default;
+$button-floating-large-size: $button-floating-size + 12px !default;
 $button-floating-radius: 50% !default;
 
 /*** Dropdown ***/
@@ -123,7 +122,7 @@ $element-bottom-margin: ($gutter-width*2)/3 !default;
 
 // Media queries ================================================================
 $x-small: 480px !default;
-$small: 640px !default;
+$small: 768px !default;
 $medium: 960px !default;
 $large: 1024px !default;
 $x-large: 1200px !default;
@@ -143,8 +142,8 @@ $off-black: rgba(0, 0, 0, 0.87) !default;
 
 // Cards ==========================================================================
 
-$card-padding-small: 20px !default;
-$card-padding-medium: 40px !default;
+$card-padding: 24px !default;
+$card-padding-large: 48px !default;
 $card-radius: 10px !default;
 $card-bg-color: white !default;
 $card-link-color: $primary-color !default;
