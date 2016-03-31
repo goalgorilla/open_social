@@ -1,0 +1,108 @@
+search_api.index.*:
+  type: config_entity
+  label : 'Search index'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: Name'
+    uuid:
+      type: string
+      label: 'UUID'
+    description:
+      type: text
+      label: 'Description'
+    read_only:
+      type: boolean
+      label: 'Read-only'
+    field_settings:
+      type: sequence
+      label: 'Indexed fields'
+      sequence:
+        type: mapping
+        label: field
+        mapping:
+          label:
+            type: string
+            label: 'A label for the field'
+          datasource_id:
+            type: string
+            label: 'The datasource ID of the field'
+          property_path:
+            type: string
+            label: 'The property path of the field'
+          type:
+            type: string
+            label: 'The data type of the field'
+          boost:
+            type: float
+            label: 'The boost of the field'
+          indexed_locked:
+            type: boolean
+            label: 'Whether the field is locked or can be removed'
+          type_locked:
+            type: boolean
+            label: 'Whether the field''s data type is locked or can be changed'
+          hidden:
+            type: boolean
+            label: 'Whether the field should appear in the UI'
+    processor_settings:
+      type: sequence
+      label: 'Processor settings'
+      sequence:
+        type: mapping
+        label: 'A processor'
+        mapping:
+          plugin_id:
+            type: string
+            label: 'The plugin ID of the processor'
+          settings:
+            type: plugin.plugin_configuration.search_api_processor.[%parent.plugin_id]
+    options:
+      type: mapping
+      label: 'Options'
+      mapping:
+        cron_limit:
+          type: integer
+          label: 'Cron batch size'
+        index_directly:
+          type: boolean
+          label: 'Index items immediately'
+    datasource_settings:
+      type: sequence
+      label: 'Datasource settings'
+      sequence:
+        type: mapping
+        label: 'A datasource'
+        mapping:
+          plugin_id:
+            type: string
+            label: 'The plugin ID of the datasource config'
+          settings:
+            type: plugin.plugin_configuration.search_api_datasource.[%parent.plugin_id]
+    tracker_settings:
+      type: sequence
+      label: 'Tracker settings'
+      sequence:
+        type: mapping
+        label: 'A tracker'
+        mapping:
+          plugin_id:
+            type: string
+            label: 'The plugin ID of the tracker config'
+          settings:
+            type: plugin.plugin_configuration.search_api_tracker.[%parent.plugin_id]
+    server:
+      type: string
+      label: 'Server ID'
+    status:
+      type: boolean
+      label: 'Status'
+    langcode:
+      type: string
+      label: 'Language code'
+    dependencies:
+      type: config_dependencies
+      label: 'Dependencies'

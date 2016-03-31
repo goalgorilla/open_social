@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the DB Search Defaults module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function search_api_db_defaults_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'install') {
+    $node_types = \Drupal\node\Entity\NodeType::loadMultiple();
+    $required_types = array(
+      'article' => array('body', 'comment', 'field_tags', 'field_image'),
+      'page' => array('body'),
+    );
+
+    /** @var \Drupal\Core\Entity\EntityFieldManager $entity_field_manager */
+    $entity_field_manager = \Drupal::service('entity_field.manager');
+
+    foreach ($required_types as $required_type_id => $required_fields) {
+      if (!isset($node_types[$required_type_id])) {
+        $requirements['search_api_db_defaults:' . $required_type_id] = array(
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('Content type @content_type not found. Database Search Defaults module could not be installed.', array('@content_type' => $required_type_id)),
+        );
+      }
+      else {
+        // Check if all the fields are here.
+        $fields = $entity_field_manager->getFieldDefinitions('node', $required_type_id);
+        foreach ($required_fields as $required_field) {
+          if (!isset($fields[$required_field])) {
+            $requirements['search_api_db_defaults:' . $required_type_id . ':' . $required_field] = array(
+              'severity' => REQUIREMENT_ERROR,
+              'description' => t('Field @field in content type @node_type not found. Database Search Defaults module could not be installed', array('@node_type' => $required_type_id, '@field' => $required_field)),
+            );
+          }
+        }
+      }
+    }
+
+    if (\Drupal::moduleHandler()->moduleExists('search_api_db')) {
+      $entities_to_check = array(
+        'search_api_index' => 'default_index',
+        'search_api_server' => 'default_server',
+        'view' => 'search_content',
+      );
+
+      /** @var \Drupal\Core\Entity\EntityTypeManager $entity_type_manager */
+      $entity_type_manager = \Drupal::service('entity_type.manager');
+      foreach ($entities_to_check as $entity_type => $entity_id) {
+        // Find out if the entity is already in place. If so, fail to install the
+        // module.
+        $entity_storage = $entity_type_manager->getStorage($entity_type);
+        $entity_storage->resetCache();
+        $entity = $entity_storage->load($entity_id);
+
+        if ($entity) {
+          $requirements['search_api_db_defaults:defaults_exist'] = array(
+            'severity' => REQUIREMENT_ERROR,
+            'description' => t('It looks like the default setup provided by this module already exists on your site. Cannot re-install module.'),
+          );
+          break;
+        }
+      }
+    }
+  }
+
+  return $requirements;
+}
