@@ -31,26 +31,27 @@ block content
           form.user-register-form(accept-charset='UTF-8')
             .form-item.form-type-textfield
               .input-field
-                input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
                 label.form__required(for='edit-email') E-mail address
+                input#edit-email.form-text(type='email', autocorrect='none', autofocus='autofocus', required='required')
                 .form__item--description A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
 
             .form-item.form-type-textfield
               .input-field
-                input#edit-username.form-text(type='text', required='required')
                 label.form-required(for='edit-username') Username
+                input#edit-username.form-text(type='text', required='required')
                 .form__item--description Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
                 
             #edit-pass.js-form-item.form-item.js-form-type-password-confirm.form-type-password-confirm.js-form-item-pass.form-item-pass.form-no-label
                 .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass1.form-item-pass-pass1.input-field
-                  input#edit-pass-pass1.password-field.js-password-field.form-text.required(data-drupal-selector='edit-pass-pass1', type='password', name='pass[pass1]', size='25', maxlength='128', required='required', aria-required='true')
                   label.js-form-required.form-required(for='edit-pass-pass1') Password
+                  input#edit-pass-pass1.password-field.js-password-field.form-text.required(data-drupal-selector='edit-pass-pass1', type='password', name='pass[pass1]', size='25', maxlength='128', required='required', aria-required='true')
                 .js-form-item.form-item.js-form-type-password.form-type-password.js-form-item-pass-pass2.form-item-pass-pass2.input-field
-                  input#edit-pass-pass2.password-confirm.js-password-confirm.form-text.required(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true')
                   label.js-form-required.form-required(for='edit-pass-pass2') Confirm password
+                  input#edit-pass-pass2.password-confirm.js-password-confirm.form-text.required(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true')
+
 
             #edit-actions.form-actions.form-wrapper
-              input#edit-submit.waves-effect.waves-light.btn.form-submit(type='submit', value='Sign up')
+              input#edit-submit.btn.btn-flat.form-submit(type='submit', value='Sign up')
       
     block scriptinline
       script(type='application/json', data-drupal-selector='drupal-settings-json').
