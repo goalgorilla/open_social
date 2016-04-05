@@ -95,10 +95,6 @@
     });
 
     // Plugin initialization
-    //$('.carousel.carousel-slider').carousel({full_width: true});
-    //$('.carousel').carousel();
-    //$('.slider').slider({full_width: true});
-    //$('.modal-trigger').leanModal();
     $('.scrollspy').scrollSpy();
     $('.button-collapse').sideNav({'edge': 'left'});
     $('select').not('.disabled').material_select();

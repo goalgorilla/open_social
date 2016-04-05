@@ -9,48 +9,59 @@
 .clearfix:after {
   clear: both; }
 
-/*** Badges ***/
-/*** Buttons ***/
-/*** Dropdown ***/
-/*** Collapsible ***/
-/*** Date Picker ***/
-/*** Forms ***/
-.style-default-default-color-dark {
-  background-color: #363636; }
-
-.default-default-color-dark-text {
-  color: #363636; }
-
-.style-default-default-color-light {
-  background-color: #828282; }
-
-.default-default-color-light-text {
-  color: #828282; }
-
-.style-default-default-color-bright {
-  background-color: #b8b8b8; }
-
-.default-default-color-bright-text {
-  color: #b8b8b8; }
-
-.style-primary-primary-color-dark {
-  background-color: #1d789e; }
-
-.primary-primary-color-dark-text {
-  color: #1d789e; }
-
-.style-primary-primary-color-light {
-  background-color: #69c4eb; }
-
-.primary-primary-color-light-text {
-  color: #69c4eb; }
-
-.style-primary-primary-color-bright {
-  background-color: #a9ddf3; }
-
-.primary-primary-color-bright-text {
-  color: #a9ddf3; }
-
+/* ==========================================================================
+   Materialize variables
+   ========================================================================== */
+/**
+ * Table of Contents:
+ *
+ *  1. Colors
+ *  2. Scaffolding
+ *  2. Typography
+ *  2. Badges
+ *  3. Buttons
+ *  4. Cards
+ *  5. Collapsible
+ *  8. Dropdown
+ *  10. Forms
+ *  12. Media queries
+ *  13. Grid system
+ *  14. Breadcrumbs
+ *  15. Navigation Bar
+ *  17. Tabs
+ *  18. Tables
+ *  22. Flow Text
+ */
+/* 1. Colors
+    ========================================================================== */
+/* 2. Scaffolding
+    ========================================================================== */
+/* 3. Typography
+    ========================================================================== */
+/* 4. Badges
+    ========================================================================== */
+/* 5. Buttons
+    ========================================================================== */
+/* 6. Cards
+    ========================================================================== */
+/* 5. Collapsible
+    ========================================================================== */
+/* 8. Dropdown
+    ========================================================================== */
+/* 10. Forms
+    ========================================================================== */
+/* 12. Media queries
+     ========================================================================== */
+/* 13. Grid system
+     ========================================================================== */
+/* 18. Tables
+     ========================================================================== */
+/* !. Date picker
+    ========================================================================== */
+/* 14. Breadcrumbs
+    ========================================================================== */
+/* 15. Navigation bar
+    ========================================================================== */
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif;
@@ -237,6 +248,21 @@ table {
 td,
 th {
   padding: 0; }
+
+.breadcrumb {
+  padding: 8px 15px;
+  margin-bottom: 20px;
+  list-style: none;
+  background-color: #f5f5f5;
+  border-radius: 10px; }
+  .breadcrumb > li {
+    display: inline-block; }
+    .breadcrumb > li + li:before {
+      content: "/ ";
+      padding: 0 5px;
+      color: #ccc; }
+  .breadcrumb > .active {
+    color: #666666; }
 
 .style-default {
   background-color: #e6e6e6;
@@ -1254,7 +1280,7 @@ a.waves-effect .waves-ripple {
   transition: box-shadow .25s;
   background-clip: padding-box; }
   .card:before, .card:after {
-    content: '';
+    content: " ";
     display: table; }
   .card:after {
     clear: both; }
@@ -1266,7 +1292,7 @@ a.waves-effect .waves-ripple {
   vertical-align: middle;
   border-radius: 10px 10px 0 0; }
   .card-head:before, .card-head:after {
-    content: '';
+    content: " ";
     display: table; }
   .card-head:after {
     clear: both; }
@@ -1370,7 +1396,7 @@ a.card:hover {
   background-color: inherit;
   padding: 6px 24px; }
   .card-actionbar:before, .card-actionbar:after {
-    content: '';
+    content: " ";
     display: table; }
   .card-actionbar:after {
     clear: both; }
@@ -1384,7 +1410,7 @@ a.card:hover {
   border-bottom-style: solid;
   list-style: none; }
   .nav-tabs:before, .nav-tabs:after {
-    content: '';
+    content: " ";
     display: table; }
   .nav-tabs:after {
     clear: both; }

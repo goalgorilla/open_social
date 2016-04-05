@@ -28,24 +28,26 @@ var gulp          = require('gulp'),
 // ===================================================
 
 var folder = {
-  dist: 'dist',
-  jade: 'jade',
   css: 'css',
   scss: 'css/src',
+  bootstrap_scss: 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap',
+  bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
   js: 'js',
   js_comp: 'js/components',
   js_project: 'js/project',
-  data: 'locales',
   js_vendor: '../../core/assets/vendor',
-  js_drupal: '../../core'
+  js_drupal: '../../core',
+  jade: 'jade',
+  dist: 'dist'
 }
 
 var glob = {
-  jade: folder.jade + '/*.jade',
   css: folder.css + '/*.css',
   scss: folder.css + '/src/**/*.scss',
+  bootstrap_scss: folder.bootstrap_scss + '/**/*.scss',
+  bootstrap_js: folder.bootstrap_js + '/*.js',
   js: folder.js + '/**/*.js',
-  data: folder.data + '/**/*.json',
+  jade: folder.jade + '/*.jade',
   font: 'font/**/*',
   images: 'images/**/*',
   content: 'content/**/*',
@@ -226,6 +228,26 @@ gulp.task('content', function() {
 gulp.task('libs', function() {
   stream = gulp.src(glob.libs)
     .pipe( gulp.dest(folder.dist + '/libs') )
+  return stream;
+});
+
+
+// ===================================================
+// Import Bootstrap assets
+// ===================================================
+
+gulp.task('bootstrap-sass', function() {
+  stream = gulp.src(glob.bootstrap_scss)
+    .pipe( gulp.dest(folder.scss + '/bootstrap') )
+  return stream;
+});
+
+gulp.task('bootstrap-js', function() {
+  stream = gulp.src(glob.bootstrap_js)
+    .pipe( gulp.dest(folder.js + '/bootstrap') )
+    .pipe( concat('bootstrap.js') )
+    .pipe( gulp.dest(folder.js) )
+    .pipe( gulp.dest(folder.dist + '/js') )
   return stream;
 });
 
