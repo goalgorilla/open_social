@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Contains facets.module
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\search_api\Query\QueryInterface;
+
+/**
+ * Implements hook_help().
+ */
+function facets_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the facets module.
+    case 'help.page.facets':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Facets test') . '</p>';
+      return $output;
+    case 'facets.overview':
+      return t('Below is a list of facets grouped by facetsources they are associated with. A facetsource is the instance where the facet does the actual filtering, e.g. a View on a Search API index.');
+  }
+}
+
+/**
+ * Implementation of hook_search_api_query_alter.
+ *
+ * @param \Drupal\search_api\Query\QueryInterface $query
+ */
+function facets_search_api_query_alter(QueryInterface &$query) {
+  /** @var \Drupal\facets\FacetManager\DefaultFacetManager $facet_manager */
+  $facet_manager = \Drupal::service('facets.manager');
+
+  $search_id = $query->getOption('search id');
+
+  // Add the active filters.
+  $facet_manager->alterQuery($query, $search_id);
+
+}

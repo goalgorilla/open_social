@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Tests all the hooks defined by the core_search_facets module.
+ */
+
+/**
+ * Implements hook_facets_core_allowed_field_types().
+ */
+function core_search_facets_test_hooks_facets_core_allowed_field_types(array $allowed_field_types) {
+  $allowed_field_types[] = 'float';
+
+  return $allowed_field_types;
+}
+

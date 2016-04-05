@@ -1,0 +1,97 @@
+facets.facet.*:
+  type: config_entity
+  label : 'Facet'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: label
+      label: Name'
+    uuid:
+      type: string
+      label: 'UUID'
+    weight:
+      type: integer
+      label: 'Weight'
+    status:
+      type: boolean
+      label: 'Status'
+    url_alias:
+      type: string
+      label: 'Name of facet as used in the URL'
+    facet_source_id:
+      type: string
+      label: 'Facet source id'
+    field_identifier:
+      type: string
+      label: 'Field identifier'
+    query_type_name:
+      type: string
+      label: 'Query Type Name'
+    query_operator:
+      type: string
+      label: 'Query Operator'
+    exclude:
+      type: boolean
+      label: 'Exclude'
+    widget:
+      type: string
+      label: 'Widget identifier'
+    empty_behavior:
+      type: mapping
+      label: 'Empty behavior'
+      mapping:
+        behavior:
+          type: string
+          label: 'The empty behavior identifier'
+        text_format:
+          type: string
+          label: 'Text format'
+        text:
+          type: string
+          label: 'Text'
+    widget_configs:
+      type: sequence
+      label: 'Widget plugin configurations'
+      sequence:
+        type: string
+        label: 'Widget plugin configurations'
+    only_visible_when_facet_source_is_visible:
+      type: boolean
+      label: 'Show this facet only when the facet source is visible.'
+    show_only_one_result:
+      type: boolean
+      label: 'Show only one result'
+    processor_configs:
+      type: sequence
+      label: 'Processor settings'
+      sequence:
+        type: mapping
+        label: 'A processor'
+        mapping:
+          processor_id:
+            type: string
+            label: 'The plugin ID of the processor'
+          weights:
+            type: sequence
+            label: 'The processor''s weights for the different processing stages'
+            sequence:
+              type: integer
+              label: 'The processor''s weight for this stage'
+          settings:
+            type: plugin.plugin_configuration.facets_processor.[%parent.processor_id]
+    facet_configs:
+      type: sequence
+      label: 'Facet plugin-specific options'
+      sequence:
+        type: plugin.plugin_configuration.facets_facet_options.[%key]
+        label: 'Facet plugin options'
+
+condition.plugin.other_facet:
+  type: condition.plugin
+  mapping:
+    facet_value:
+      type: string
+    facets:
+      type: string
