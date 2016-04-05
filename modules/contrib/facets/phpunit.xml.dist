@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true">
+  <php>
+    <!-- Set error reporting to E_ALL. -->
+    <ini name="error_reporting" value="32767"/>
+    <!-- Do not limit the amount of memory tests take to run. -->
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="Facets Test Suite">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
+  <!-- Filter for coverage reports. -->
+  <filter>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory>./src</directory>
+      <exclude>
+        <directory>./src/Tests</directory>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>
