@@ -1,0 +1,17 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * @file
+ * The Social search module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Enhance the Search Content Filter form.
+ */
+function social_search_form_facets_dropdown_widget__search_content_filter_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $form['type']['#attributes']['class'][] = 'browser-default';
+}
