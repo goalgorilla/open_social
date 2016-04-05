@@ -10,15 +10,7 @@ cd /var/www/html/;
 # composer update --lock
 
 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)';
-chmod 777 sites/default/settings.php;
-
-# TODO, can probably improve this by using drupal_rewrite_settings?
-PATTERN="\$settings['trusted_host_patterns'] = array('[\s\S]*');";
-HOSTED_PATTERN_EXISTS=`grep -Fxq "$PATTERN" sites/default/settings.php; echo $?;`;
-if [ "$HOSTED_PATTERN_EXISTS" -eq 1 ]; then
-  echo "Set to trust all patterns in trusted host patterns config in settings.php";
-  echo ${PATTERN} >> sites/default/settings.php;
-fi
+chown -R www-data:www-data /var/www/html/
 php -r 'opcache_reset();';
 chmod 444 sites/default/settings.php
 drush pm-enable social_demo -y

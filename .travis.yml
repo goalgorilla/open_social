@@ -24,9 +24,7 @@ before_install:
   - docker ps -a
 
 script:
-  - docker exec -i drupalsocial_web_1 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)'
-  - docker exec -i drupalsocial_web_1 chown -R www-data:www-data /var/www/html/
-  - docker exec -i drupalsocial_web_1 drush -y status
+  - docker exec -i drupalsocial_web_1 bash /root/dev-scripts/install/install_script.sh
   - docker exec -i drupalsocial_web_scripts_1 sh /root/travis/unit-tests.sh
   - docker ps
   - docker logs social_selenium
