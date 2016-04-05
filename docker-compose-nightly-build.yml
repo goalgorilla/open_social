@@ -15,6 +15,7 @@ services:
       - DRUPAL_SETTINGS=production
     volumes:
      - /root/drupal_social/social-jenkins-data/workspace/nightly_build/dev-scripts:/root/dev-scripts
+     - sites_default:/var/www/html/sites/default
     network_mode: "bridge"
 
   social_nightly_db:
@@ -47,3 +48,4 @@ services:
 
 volumes:
   db_data:
+  sites_default:
