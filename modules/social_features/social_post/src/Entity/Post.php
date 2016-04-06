@@ -52,7 +52,7 @@ use Drupal\user\UserInterface;
  *   links = {
  *     "canonical" = "/post/{post}",
  *     "add-form" = "/post/add",
- *     "edit-form" = "/{post}/edit",
+ *     "edit-form" = "/post/{post}/edit",
  *     "delete-form" = "/post/{post}/delete",
  *     "collection" = "/admin/content/post",
  *   },
