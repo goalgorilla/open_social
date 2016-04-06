@@ -1,0 +1,28 @@
+uuid: d81b711e-df11-4261-8c00-c23f92a2d1a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.post.field_recipient_user
+  module:
+    - social_post
+id: post.post.field_recipient_user
+field_name: field_recipient_user
+entity_type: post
+bundle: post
+label: Recipient
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+field_type: entity_reference
