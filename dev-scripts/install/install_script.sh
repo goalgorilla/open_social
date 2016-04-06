@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # Install script for in the docker container.
-# Only should be used for local development!
-# See docker_build for install scripts for other environments.
 cd /var/www/html/;
 
 # php profiles/social/modules/contrib/composer_manager/scripts/init.php
