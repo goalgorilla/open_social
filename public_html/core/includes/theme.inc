@@ -11,7 +11,6 @@
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\Config;
@@ -92,6 +91,21 @@ function theme_get_registry($complete = TRUE) {
   else {
     return $theme_registry->getRuntime();
   }
+}
+
+/**
+ * Returns an array of default theme features.
+ *
+ * @see \Drupal\Core\Extension\ThemeHandler::$defaultFeatures
+ */
+function _system_default_theme_features() {
+  return array(
+    'favicon',
+    'logo',
+    'node_user_picture',
+    'comment_user_picture',
+    'comment_user_verification',
+  );
 }
 
 /**
@@ -401,7 +415,7 @@ function theme_render_and_autoescape($arg) {
       $return = (string) $arg;
     }
     // You can't throw exceptions in the magic PHP __toString methods, see
-    // http://php.net/manual/en/language.oop5.magic.php#object.tostring so
+    // http://php.net/manual/language.oop5.magic.php#object.tostring so
     // we also support a toString method.
     elseif (method_exists($arg, 'toString')) {
       $return = $arg->toString();
@@ -413,7 +427,7 @@ function theme_render_and_autoescape($arg) {
 
   // We have a string or an object converted to a string: Escape it!
   if (isset($return)) {
-    return SafeMarkup::isSafe($return, 'html') ? $return : Html::escape($return);
+    return $return instanceof MarkupInterface ? $return : Html::escape($return);
   }
 
   // This is a normal render array, which is safe by definition, with special
@@ -568,9 +582,8 @@ function template_preprocess_datetime_wrapper(&$variables) {
  *
  * @param array $variables
  *   An associative array containing:
- *   - links: An associative array of links to be themed. The key for each link
- *     is used as its CSS class. Each link should be itself an array, with the
- *     following elements:
+ *   - links: An array of links to be themed. Each link should be itself an
+ *     array, with the following elements:
  *     - title: The link text.
  *     - url: (optional) The url object to link to. If omitted, no a tag is
  *       printed out.

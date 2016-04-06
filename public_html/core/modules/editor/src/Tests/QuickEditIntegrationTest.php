@@ -10,6 +10,8 @@ namespace Drupal\editor\Tests;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\editor\Entity\Editor;
+use Drupal\entity_test\Entity\EntityTest;
 use Drupal\quickedit\MetadataGenerator;
 use Drupal\quickedit\Tests\QuickEditTestBase;
 use Drupal\quickedit_test\MockEditEntityFieldAccessCheck;
@@ -17,6 +19,7 @@ use Drupal\editor\EditorController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests Edit module integration (Editor module's inline editing support).
@@ -69,7 +72,6 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
     parent::setUp();
 
     // Install the Filter module.
-    $this->installSchema('system', 'url_alias');
 
     // Create a field.
     $this->fieldName = 'field_textarea';
@@ -86,7 +88,7 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
     );
 
     // Create text format.
-    $full_html_format = entity_create('filter_format', array(
+    $full_html_format = FilterFormat::create(array(
       'format' => 'full_html',
       'name' => 'Full HTML',
       'weight' => 1,
@@ -95,14 +97,14 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
     $full_html_format->save();
 
     // Associate text editor with text format.
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => $full_html_format->id(),
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
 
     // Also create a text format without an associated text editor.
-    entity_create('filter_format', array(
+    FilterFormat::create(array(
       'format' => 'no_editor',
       'name' => 'No Text Editor',
       'weight' => 2,
@@ -142,7 +144,7 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
     $this->editorSelector = $this->container->get('quickedit.editor.selector');
 
     // Create an entity with values for this text field.
-    $entity = entity_create('entity_test');
+    $entity = EntityTest::create();
     $entity->{$this->fieldName}->value = 'Hello, world!';
     $entity->{$this->fieldName}->format = 'filtered_html';
     $entity->save();
@@ -171,7 +173,7 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
     $this->metadataGenerator = new MetadataGenerator($this->accessChecker, $this->editorSelector, $this->editorManager);
 
     // Create an entity with values for the field.
-    $entity = entity_create('entity_test');
+    $entity = EntityTest::create();
     $entity->{$this->fieldName}->value = 'Test';
     $entity->{$this->fieldName}->format = 'full_html';
     $entity->save();
@@ -208,7 +210,7 @@ class QuickEditIntegrationTest extends QuickEditTestBase {
    */
   public function testGetUntransformedTextCommand() {
     // Create an entity with values for the field.
-    $entity = entity_create('entity_test');
+    $entity = EntityTest::create();
     $entity->{$this->fieldName}->value = 'Test';
     $entity->{$this->fieldName}->format = 'full_html';
     $entity->save();

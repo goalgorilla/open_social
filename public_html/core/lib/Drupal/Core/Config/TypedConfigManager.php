@@ -103,7 +103,7 @@ class TypedConfigManager extends TypedDataManager implements TypedConfigManagerI
       unset($definition['type']);
     }
     // Add default values from type definition.
-    $definition += $this->_getDefinitionWithReplacements($type, $replace);
+    $definition += $this->getDefinitionWithReplacements($type, $replace);
 
     $data_definition = $this->createDataDefinition($definition['type']);
 
@@ -127,7 +127,7 @@ class TypedConfigManager extends TypedDataManager implements TypedConfigManagerI
    * @return string
    *   The typed config type for the given plugin ID.
    */
-  protected function _determineType($base_plugin_id, array $definitions) {
+  protected function determineType($base_plugin_id, array $definitions) {
     if (isset($definitions[$base_plugin_id])) {
       $type = $base_plugin_id;
     }
@@ -157,9 +157,9 @@ class TypedConfigManager extends TypedDataManager implements TypedConfigManagerI
    * @return array
    *   A schema definition array.
    */
-  protected function _getDefinitionWithReplacements($base_plugin_id, array $replacements, $exception_on_invalid = TRUE) {
+  protected function getDefinitionWithReplacements($base_plugin_id, array $replacements, $exception_on_invalid = TRUE) {
     $definitions = $this->getDefinitions();
-    $type = $this->_determineType($base_plugin_id, $definitions);
+    $type = $this->determineType($base_plugin_id, $definitions);
     $definition = $definitions[$type];
     // Check whether this type is an extension of another one and compile it.
     if (isset($definition['type'])) {
@@ -170,12 +170,12 @@ class TypedConfigManager extends TypedDataManager implements TypedConfigManagerI
 
       // Replace dynamic portions of the definition type.
       if (!empty($replacements) && strpos($definition['type'], ']')) {
-        $sub_type = $this->_determineType($this->replaceName($definition['type'], $replacements), $definitions);
+        $sub_type = $this->determineType($this->replaceName($definition['type'], $replacements), $definitions);
         // Merge the newly determined subtype definition with the original
         // definition.
         $definition = NestedArray::mergeDeepArray([$definitions[$sub_type], $definition], TRUE);
+        $type = "$type||$sub_type";
       }
-
       // Unset type so we try the merge only once per type.
       unset($definition['type']);
       $this->definitions[$type] = $definition;
@@ -192,7 +192,7 @@ class TypedConfigManager extends TypedDataManager implements TypedConfigManagerI
    * {@inheritdoc}
    */
   public function getDefinition($base_plugin_id, $exception_on_invalid = TRUE) {
-    return $this->_getDefinitionWithReplacements($base_plugin_id, [], $exception_on_invalid);
+    return $this->getDefinitionWithReplacements($base_plugin_id, [], $exception_on_invalid);
   }
 
   /**

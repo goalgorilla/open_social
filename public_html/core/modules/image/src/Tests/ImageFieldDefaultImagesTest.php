@@ -8,7 +8,9 @@
 namespace Drupal\image\Tests;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\file\Entity\File;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests setting up default images both to the field and field field.
@@ -36,12 +38,12 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
       $filename = $this->randomMachineName() . "$i";
       $desired_filepath = 'public://' . $filename;
       file_unmanaged_copy($files[0]->uri, $desired_filepath, FILE_EXISTS_ERROR);
-      $file = entity_create('file', array('uri' => $desired_filepath, 'filename' => $filename, 'name' => $filename));
+      $file = File::create(['uri' => $desired_filepath, 'filename' => $filename, 'name' => $filename]);
       $file->save();
     }
     $default_images = array();
     foreach (array('field', 'field', 'field2', 'field_new', 'field_new') as $image_target) {
-      $file = entity_create('file', (array) array_pop($files));
+      $file = File::create((array) array_pop($files));
       $file->save();
       $default_images[$image_target] = $file;
     }
@@ -82,7 +84,7 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
     $this->assertEqual($field_storage->getSettings()['default_image']['uuid'], $default_images['field']->uuid());
 
     // Add another field with another default image to the page content type.
-    $field2 = entity_create('field_config', array(
+    $field2 = FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => 'page',
       'label' => $field->label(),
@@ -96,7 +98,7 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
           'height' => 0,
         ),
       ),
-    ));
+    ]);
     $field2->save();
 
     $widget_settings = entity_get_form_display('node', $field->getTargetBundle(), 'default')->getComponent($field_name);
@@ -319,7 +321,7 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
    * Tests image field and field having an invalid default image.
    */
   public function testInvalidDefaultImage() {
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'field_name' => Unicode::strtolower($this->randomMachineName()),
       'entity_type' => 'node',
       'type' => 'image',
@@ -334,7 +336,7 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
     // The non-existent default image should not be saved.
     $this->assertNull($settings['default_image']['uuid']);
 
-    $field = entity_create('field_config', array(
+    $field = FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => 'page',
       'label' => $this->randomMachineName(),
@@ -343,7 +345,7 @@ class ImageFieldDefaultImagesTest extends ImageFieldTestBase {
           'uuid' => 100000,
         )
       ),
-    ));
+    ]);
     $field->save();
     $settings = $field->getSettings();
     // The non-existent default image should not be saved.

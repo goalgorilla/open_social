@@ -101,11 +101,7 @@ class NativeSessionStorage implements SessionStorageInterface
         session_cache_limiter(''); // disable by default because it's managed by HeaderBag (if used)
         ini_set('session.use_cookies', 1);
 
-        if (PHP_VERSION_ID >= 50400) {
-            session_register_shutdown();
-        } else {
-            register_shutdown_function('session_write_close');
-        }
+        session_register_shutdown();
 
         $this->setMetadataBag($metaBag);
         $this->setOptions($options);
@@ -260,6 +256,10 @@ class NativeSessionStorage implements SessionStorageInterface
      */
     public function registerBag(SessionBagInterface $bag)
     {
+        if ($this->started) {
+            throw new \LogicException('Cannot register a bag when the session is already started.');
+        }
+
         $this->bags[$bag->getName()] = $bag;
     }
 
@@ -351,7 +351,7 @@ class NativeSessionStorage implements SessionStorageInterface
      * session.save_handler and session.save_path e.g.
      *
      *     ini_set('session.save_handler', 'files');
-     *     ini_set('session.save_path', /tmp');
+     *     ini_set('session.save_path', '/tmp');
      *
      * or pass in a NativeSessionHandler instance which configures session.save_handler in the
      * constructor, for a template see NativeFileSessionHandler or use handlers in

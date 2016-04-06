@@ -10,9 +10,11 @@ use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Render\Markup;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Error;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Minimum supported version of PHP.
@@ -280,7 +282,8 @@ function drupal_get_path($type, $name) {
  *   - 'langcode' (defaults to the current language): A language code, to
  *     translate to a language other than what is used to display the page.
  *   - 'context' (defaults to the empty context): The context the source string
- *     belongs to.
+ *     belongs to. See the @link i18n Internationalization topic @endlink for
+ *     more information about string contexts.
  *
  * @return \Drupal\Core\StringTranslation\TranslatableMarkup
  *   An object that, when cast to a string, returns the translated string.
@@ -292,7 +295,7 @@ function drupal_get_path($type, $name) {
  * @ingroup sanitization
  */
 function t($string, array $args = array(), array $options = array()) {
-  return \Drupal::translation()->translate($string, $args, $options);
+  return new TranslatableMarkup($string, $args, $options);
 }
 
 /**
@@ -440,7 +443,7 @@ function drupal_set_message($message = NULL, $type = 'status', $repeat = FALSE) 
     }
 
     // Convert strings which are safe to the simplest Markup objects.
-    if (!($message instanceof Markup) && SafeMarkup::isSafe($message)) {
+    if (!($message instanceof Markup) && $message instanceof MarkupInterface) {
       $message = Markup::create((string) $message);
     }
 

@@ -128,7 +128,7 @@ class UpdateManagerInstall extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $uploaded_file = $this->getRequest()->files->get('files[project_upload]', NULL, TRUE);
-    if (!($form_state->getValue('project_url') XOR !empty($uploaded_file))) {
+    if (!($form_state->getValue('project_url') xor !empty($uploaded_file))) {
       $form_state->setErrorByName('project_url', $this->t('You must either provide a URL or upload an archive file to install.'));
     }
   }
@@ -245,7 +245,7 @@ class UpdateManagerInstall extends FormBase {
       // The page title must be passed here to ensure it is initially used when
       // authorize.php loads for the first time with the FTP/SSH credentials
       // form.
-      system_authorized_init('update_authorize_run_install', drupal_get_path('module', 'update') . '/update.authorize.inc', $arguments, $this->t('Update manager'));
+      system_authorized_init('update_authorize_run_install', __DIR__ . '/../../update.authorize.inc', $arguments, $this->t('Update manager'));
       $form_state->setRedirectUrl(system_authorized_get_url());
     }
   }

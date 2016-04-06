@@ -7,8 +7,10 @@
 
 namespace Drupal\file\Tests;
 
+use Drupal\file\Entity\File;
 use Drupal\file\FileInterface;
 use Drupal\simpletest\KernelTestBase;
+use Drupal\user\Entity\User;
 
 /**
  * Base class for file unit tests that use the file_test module to test uploads and
@@ -35,7 +37,7 @@ abstract class FileManagedUnitTestBase extends KernelTestBase {
 
     // Make sure that a user with uid 1 exists, self::createFile() relies on
     // it.
-    $user = entity_create('user', array('uid' => 1, 'name' => $this->randomMachineName()));
+    $user = User::create(['uid' => 1, 'name' => $this->randomMachineName()]);
     $user->enforceIsNew();
     $user->save();
     \Drupal::currentUser()->setAccount($user);
@@ -164,10 +166,10 @@ abstract class FileManagedUnitTestBase extends KernelTestBase {
   function createFile($filepath = NULL, $contents = NULL, $scheme = NULL) {
     // Don't count hook invocations caused by creating the file.
     \Drupal::state()->set('file_test.count_hook_invocations', FALSE);
-    $file = entity_create('file', array(
+    $file = File::create([
       'uri' => $this->createUri($filepath, $contents, $scheme),
       'uid' => 1,
-    ));
+    ]);
     $file->save();
     // Write the record directly rather than using the API so we don't invoke
     // the hooks.

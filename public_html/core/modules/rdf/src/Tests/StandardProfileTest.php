@@ -8,10 +8,13 @@
 namespace Drupal\rdf\Tests;
 
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\simpletest\WebTestBase;
+use Drupal\comment\Entity\Comment;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Tests the RDF mappings and RDFa markup of the standard profile.
@@ -109,7 +112,7 @@ class StandardProfileTest extends WebTestBase {
 
     // Use Classy theme for testing markup output.
     \Drupal::service('theme_handler')->install(['classy']);
-    $this->config('system.theme')->set('default', 'classy')->save();
+    \Drupal::service('theme_handler')->setDefault('classy');
 
     $this->baseUri = \Drupal::url('<front>', [], ['absolute' => TRUE]);
 
@@ -130,16 +133,16 @@ class StandardProfileTest extends WebTestBase {
     $this->drupalLogin($this->adminUser);
 
     // Create term.
-    $this->term = entity_create('taxonomy_term', array(
+    $this->term = Term::create([
       'name' => $this->randomMachineName(),
       'description' => $this->randomMachineName(),
       'vid' => 'tags',
-    ));
+    ]);
     $this->term->save();
 
     // Create image.
     file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
-    $this->image = entity_create('file', array('uri' => 'public://example.jpg'));
+    $this->image = File::create(['uri' => 'public://example.jpg']);
     $this->image->save();
 
     // Create article.
@@ -515,7 +518,7 @@ class StandardProfileTest extends WebTestBase {
       $values += $contact;
     }
 
-    $comment = entity_create('comment', $values);
+    $comment = Comment::create($values);
     $comment->save();
     return $comment;
   }

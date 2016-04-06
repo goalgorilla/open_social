@@ -7,38 +7,15 @@
 
 namespace Drupal\menu_test\Plugin\Menu\LocalAction;
 
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Menu\LocalActionDefault;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a test local action plugin class that has cache tags.
+ * Defines a test local action plugin class.
  */
-class TestLocalActionWithConfig extends LocalActionDefault implements CacheableDependencyInterface {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheContexts() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
-    return ['config:menu_test.links.action'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheMaxAge() {
-    return Cache::PERMANENT;
-  }
+class TestLocalActionWithConfig extends LocalActionDefault {
 
   /**
    * @var \Drupal\Core\Config\Config

@@ -7,9 +7,12 @@
 
 namespace Drupal\image\Tests\Views;
 
+use Drupal\field\Entity\FieldConfig;
+use Drupal\file\Entity\File;
 use Drupal\views\Tests\ViewTestBase;
 use Drupal\views\Views;
 use Drupal\views\Tests\ViewTestData;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests image on user relationship handler.
@@ -36,20 +39,20 @@ class RelationshipUserImageDataTest extends ViewTestBase {
     parent::setUp();
 
     // Create the user profile field and instance.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'entity_type' => 'user',
       'field_name' => 'user_picture',
       'type' => 'image',
       'translatable' => '0',
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'label' => 'User Picture',
       'description' => '',
       'field_name' => 'user_picture',
       'entity_type' => 'user',
       'bundle' => 'user',
       'required' => 0,
-    ))->save();
+    ])->save();
 
     ViewTestData::createTestViews(get_class($this), array('image_test_views'));
   }
@@ -58,7 +61,7 @@ class RelationshipUserImageDataTest extends ViewTestBase {
    * Tests using the views image relationship.
    */
   public function testViewsHandlerRelationshipUserImageData() {
-    $file = entity_create('file', array(
+    $file = File::create([
       'fid' => 2,
       'uid' => 2,
       'filename' => 'image-test.jpg',
@@ -67,7 +70,7 @@ class RelationshipUserImageDataTest extends ViewTestBase {
       'created' => 1,
       'changed' => 1,
       'status' => FILE_STATUS_PERMANENT,
-    ));
+    ]);
     $file->enforceIsNew();
     file_put_contents($file->getFileUri(), file_get_contents('core/modules/simpletest/files/image-1.png'));
     $file->save();

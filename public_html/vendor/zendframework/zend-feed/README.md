@@ -10,4 +10,4 @@ structure with the same natural syntax, and turning the result back into XML.
 
 
 - File issues at https://github.com/zendframework/zend-feed/issues
-- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-feed
+- Documentation is at https://zendframework.github.io/zend-feed/

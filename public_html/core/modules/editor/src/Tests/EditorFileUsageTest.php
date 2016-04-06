@@ -7,9 +7,14 @@
 
 namespace Drupal\editor\Tests;
 
+use Drupal\editor\Entity\Editor;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\file\Entity\File;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests tracking of file usage by the Text Editor module.
@@ -33,7 +38,7 @@ class EditorFileUsageTest extends EntityUnitTestBase {
     $this->installConfig(['node']);
 
     // Add text formats.
-    $filtered_html_format = entity_create('filter_format', array(
+    $filtered_html_format = FilterFormat::create(array(
       'format' => 'filtered_html',
       'name' => 'Filtered HTML',
       'weight' => 0,
@@ -47,14 +52,14 @@ class EditorFileUsageTest extends EntityUnitTestBase {
       ->save();
 
     // Set up text editor.
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'filtered_html',
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
 
     // Create a node type for testing.
-    $type = entity_create('node_type', array('type' => 'page', 'name' => 'page'));
+    $type = NodeType::create(['type' => 'page', 'name' => 'page']);
     $type->save();
     node_add_body_field($type);
   }
@@ -71,7 +76,7 @@ class EditorFileUsageTest extends EntityUnitTestBase {
 
     $image_entities = array();
     foreach ($image_paths as $key => $image_path) {
-      $image = entity_create('file');
+      $image = File::create();
       $image->setFileUri($image_path);
       $image->setFilename(drupal_basename($image->getFileUri()));
       $image->save();
@@ -103,12 +108,12 @@ class EditorFileUsageTest extends EntityUnitTestBase {
 
     // Test editor_entity_insert(): increment.
     $this->createUser();
-    $node = entity_create('node', array(
+    $node = $node = Node::create([
       'type' => 'page',
       'title' => 'test',
       'body' => $body,
       'uid' => 1,
-    ));
+    ]);
     $node->save();
     foreach ($image_entities as $key => $image_entity) {
       $this->assertIdentical(array('editor' => array('node' => array(1 => '1'))), $file_usage->listUsage($image_entity), 'The image ' . $image_paths[$key] . ' has 1 usage.');

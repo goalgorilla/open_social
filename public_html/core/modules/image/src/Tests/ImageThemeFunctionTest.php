@@ -9,7 +9,12 @@ namespace Drupal\image\Tests;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Url;
+use Drupal\entity_test\Entity\EntityTest;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests image theme functions.
@@ -40,21 +45,21 @@ class ImageThemeFunctionTest extends WebTestBase {
   protected function setUp() {
     parent::setUp();
 
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'entity_type' => 'entity_test',
       'field_name' => 'image_test',
       'type' => 'image',
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'image_test',
       'bundle' => 'entity_test',
-    ))->save();
+    ])->save();
     file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example.jpg');
-    $this->image = entity_create('file', array(
+    $this->image = File::create([
       'uri' => 'public://example.jpg',
-    ));
+    ]);
     $this->image->save();
     $this->imageFactory = $this->container->get('image.factory');
   }
@@ -72,12 +77,12 @@ class ImageThemeFunctionTest extends WebTestBase {
     $original_uri = file_unmanaged_copy($file->uri, 'public://', FILE_EXISTS_RENAME);
 
     // Create a style.
-    $style = entity_create('image_style', array('name' => 'test', 'label' => 'Test'));
+    $style = ImageStyle::create(array('name' => 'test', 'label' => 'Test'));
     $style->save();
     $url = file_url_transform_relative($style->buildUrl($original_uri));
 
     // Create a test entity with the image field set.
-    $entity = entity_create('entity_test');
+    $entity = EntityTest::create();
     $entity->image_test->target_id = $this->image->id();
     $entity->image_test->alt = NULL;
     $entity->image_test->uri = $original_uri;
@@ -134,7 +139,7 @@ class ImageThemeFunctionTest extends WebTestBase {
     $original_uri = file_unmanaged_copy($file->uri, 'public://', FILE_EXISTS_RENAME);
 
     // Create a style.
-    $style = entity_create('image_style', array('name' => 'image_test', 'label' => 'Test'));
+    $style = ImageStyle::create(array('name' => 'image_test', 'label' => 'Test'));
     $style->save();
     $url = file_url_transform_relative($style->buildUrl($original_uri));
 

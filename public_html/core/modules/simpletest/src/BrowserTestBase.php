@@ -9,7 +9,6 @@ namespace Drupal\simpletest;
 
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Element\Element;
-use Behat\Mink\Exception\Exception;
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use Drupal\Component\Utility\SafeMarkup;
@@ -25,6 +24,8 @@ use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\Core\Test\TestRunnerKernel;
 use Drupal\Core\Url;
+use Drupal\user\Entity\Role;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -187,7 +188,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    *
    * @var string.
    */
-  protected $minkDefaultDriverClass = '\Behat\Mink\Driver\GoutteDriver';
+  protected $minkDefaultDriverClass = GoutteDriver::class;
 
   /*
    * Mink default driver params.
@@ -229,11 +230,17 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    */
   protected function initMink() {
     $driver = $this->getDefaultDriverInstance();
+
+    if ($driver instanceof GoutteDriver) {
+      $driver->getClient()->setClient(\Drupal::httpClient());
+    }
+
     $session = new Session($driver);
     $this->mink = new Mink();
     $this->mink->registerSession('default', $session);
     $this->mink->setDefaultSessionName('default');
     $this->registerSessions();
+
     return $session;
   }
 
@@ -566,7 +573,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
       $edit['roles'] = array($rid);
     }
 
-    $account = entity_create('user', $edit);
+    $account = User::create($edit);
     $account->save();
 
     $this->assertNotNull($account->id(), SafeMarkup::format('User created with name %name and pass %pass', array('%name' => $edit['name'], '%pass' => $edit['pass'])));
@@ -614,7 +621,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
 
     // Create new role.
     /* @var \Drupal\user\RoleInterface $role */
-    $role = entity_create('user_role', array(
+    $role = Role::create(array(
       'id' => $rid,
       'label' => $name,
     ));

@@ -8,6 +8,7 @@
 namespace Drupal\hal\Tests;
 
 use Drupal\Core\Cache\MemoryBackend;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\hal\Encoder\JsonEncoder;
 use Drupal\hal\Normalizer\ContentEntityNormalizer;
 use Drupal\hal\Normalizer\EntityReferenceItemNormalizer;
@@ -22,6 +23,7 @@ use Drupal\serialization\EntityResolver\TargetIdResolver;
 use Drupal\serialization\EntityResolver\UuidResolver;
 use Drupal\simpletest\KernelTestBase;
 use Symfony\Component\Serializer\Serializer;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Test the HAL normalizer.
@@ -61,7 +63,6 @@ abstract class NormalizerTestBase extends KernelTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->installSchema('system', array('url_alias', 'router'));
     $this->installEntitySchema('user');
     $this->installEntitySchema('entity_test');
     // If the concrete test sub-class installs the Node or Comment modules,
@@ -93,33 +94,33 @@ abstract class NormalizerTestBase extends KernelTestBase {
     ))->save();
 
     // Create the test text field.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'field_test_text',
       'entity_type' => 'entity_test',
       'type' => 'text',
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'field_test_text',
       'bundle' => 'entity_test',
       'translatable' => FALSE,
-    ))->save();
+    ])->save();
 
     // Create the test translatable field.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'field_test_translatable_text',
       'entity_type' => 'entity_test',
       'type' => 'text',
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'field_test_translatable_text',
       'bundle' => 'entity_test',
       'translatable' => TRUE,
-    ))->save();
+    ])->save();
 
     // Create the test entity reference field.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'field_test_entity_reference',
       'entity_type' => 'entity_test',
       'type' => 'entity_reference',
@@ -127,12 +128,12 @@ abstract class NormalizerTestBase extends KernelTestBase {
         'target_type' => 'entity_test',
       ),
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => 'entity_test',
       'field_name' => 'field_test_entity_reference',
       'bundle' => 'entity_test',
       'translatable' => TRUE,
-    ))->save();
+    ])->save();
 
     $entity_manager = \Drupal::entityManager();
     $link_manager = new LinkManager(new TypeLinkManager(new MemoryBackend('default'), \Drupal::moduleHandler(), \Drupal::service('config.factory'), \Drupal::service('request_stack')), new RelationLinkManager(new MemoryBackend('default'), $entity_manager, \Drupal::moduleHandler(), \Drupal::service('config.factory'), \Drupal::service('request_stack')));

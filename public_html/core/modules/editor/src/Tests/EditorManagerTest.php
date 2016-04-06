@@ -7,7 +7,9 @@
 
 namespace Drupal\editor\Tests;
 
+use Drupal\editor\Entity\Editor;
 use Drupal\simpletest\KernelTestBase;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests detection of text editors and correct generation of attachments.
@@ -34,17 +36,16 @@ class EditorManagerTest extends KernelTestBase {
     parent::setUp();
 
     // Install the Filter module.
-    $this->installSchema('system', 'url_alias');
 
     // Add text formats.
-    $filtered_html_format = entity_create('filter_format', array(
+    $filtered_html_format = FilterFormat::create(array(
       'format' => 'filtered_html',
       'name' => 'Filtered HTML',
       'weight' => 0,
       'filters' => array(),
     ));
     $filtered_html_format->save();
-    $full_html_format = entity_create('filter_format', array(
+    $full_html_format = FilterFormat::create(array(
       'format' => 'full_html',
       'name' => 'Full HTML',
       'weight' => 1,
@@ -79,10 +80,10 @@ class EditorManagerTest extends KernelTestBase {
     // Case 3: a text editor available & associated (but associated only with
     // the 'Full HTML' text format).
     $unicorn_plugin = $this->editorManager->createInstance('unicorn');
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'full_html',
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
     $this->assertIdentical(array(), $this->editorManager->getAttachments(array()), 'No attachments when one text editor is enabled and retrieving attachments for zero text formats.');
     $expected = array(

@@ -14,6 +14,7 @@ use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\Core\Test\TestRunnerKernel;
 use Drupal\simpletest\Form\SimpletestResultsForm;
 use Drupal\simpletest\TestBase;
+use Drupal\simpletest\TestDiscovery;
 use Symfony\Component\HttpFoundation\Request;
 
 $autoloader = require_once __DIR__ . '/../../autoload.php';
@@ -180,6 +181,12 @@ All arguments are long options.
               Note that ':memory:' cannot be used, because this script spawns
               sub-processes. However, you may use e.g. '/tmpfs/test.sqlite'
 
+  --keep-results-table
+
+              Boolean flag to indicate to not cleanup the simpletest result
+              table. For testbots or repeated execution of a single test it can
+              be helpful to not cleanup the simpletest result table.
+
   --dburl     A URI denoting the database driver, credentials, server hostname,
               and database name to use in tests.
               Required when running tests without a Drupal installation that
@@ -207,6 +214,12 @@ All arguments are long options.
   --file      Run tests identified by specific file names, instead of group names.
               Specify the path and the extension
               (i.e. 'core/modules/user/user.test').
+
+  --types
+
+              Runs just tests from the specified test type, for example
+              run-tests.sh
+              (i.e. --types "Simpletest,PHPUnit-Functional")
 
   --directory Run all tests found within the specified file directory.
 
@@ -292,10 +305,12 @@ function simpletest_script_parse_args() {
     'module' => NULL,
     'class' => FALSE,
     'file' => FALSE,
+    'types' => [],
     'directory' => NULL,
     'color' => FALSE,
     'verbose' => FALSE,
     'keep-results' => FALSE,
+    'keep-results-table' => FALSE,
     'test_names' => array(),
     'repeat' => 1,
     'die-on-fail' => FALSE,
@@ -319,6 +334,10 @@ function simpletest_script_parse_args() {
         $previous_arg = $matches[1];
         if (is_bool($args[$previous_arg])) {
           $args[$matches[1]] = TRUE;
+        }
+        elseif (is_array($args[$previous_arg])) {
+          $value = array_shift($_SERVER['argv']);
+          $args[$matches[1]] = array_map('trim', explode(',', $value));
         }
         else {
           $args[$matches[1]] = array_shift($_SERVER['argv']);
@@ -528,7 +547,8 @@ function simpletest_script_setup_database($new = FALSE) {
 
   // Create the Simpletest schema.
   try {
-    $schema = Database::getConnection('default', 'test-runner')->schema();
+    $connection = Database::getConnection('default', 'test-runner');
+    $schema = $connection->schema();
   }
   catch (\PDOException $e) {
     simpletest_script_print_error($databases['test-runner']['default']['driver'] . ': ' . $e->getMessage());
@@ -538,10 +558,13 @@ function simpletest_script_setup_database($new = FALSE) {
     require_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'simpletest') . '/simpletest.install';
     foreach (simpletest_schema() as $name => $table_spec) {
       try {
-        if ($schema->tableExists($name)) {
-          $schema->dropTable($name);
+        $table_exists = $schema->tableExists($name);
+        if (empty($args['keep-results-table']) && $table_exists) {
+          $connection->truncate($name)->execute();
         }
-        $schema->createTable($name, $table_spec);
+        if (!$table_exists) {
+          $schema->createTable($name, $table_spec);
+        }
       }
       catch (Exception $e) {
         echo (string) $e;
@@ -891,10 +914,12 @@ function simpletest_script_cleanup($test_id, $test_class, $exitcode) {
 function simpletest_script_get_test_list() {
   global $args;
 
+  $types_processed = empty($args['types']);
   $test_list = array();
   if ($args['all'] || $args['module']) {
     try {
-      $groups = simpletest_test_get_all($args['module']);
+      $groups = simpletest_test_get_all($args['module'], $args['types']);
+      $types_processed = TRUE;
     }
     catch (Exception $e) {
       echo (string) $e;
@@ -916,7 +941,7 @@ function simpletest_script_get_test_list() {
         }
         else {
           try {
-            $groups = simpletest_test_get_all();
+            $groups = simpletest_test_get_all(NULL, $args['types']);
           }
           catch (Exception $e) {
             echo (string) $e;
@@ -1017,7 +1042,8 @@ function simpletest_script_get_test_list() {
     }
     else {
       try {
-        $groups = simpletest_test_get_all();
+        $groups = simpletest_test_get_all(NULL, $args['types']);
+        $types_processed = TRUE;
       }
       catch (Exception $e) {
         echo (string) $e;
@@ -1034,6 +1060,15 @@ function simpletest_script_get_test_list() {
         }
       }
     }
+  }
+
+  // If the test list creation does not automatically limit by test type then
+  // we need to do so here.
+  if (!$types_processed) {
+    $test_list = array_filter($test_list, function ($test_class) use ($args) {
+      $test_info = TestDiscovery::getTestInfo($test_class);
+      return in_array($test_info['type'], $args['types'], TRUE);
+    });
   }
 
   if (empty($test_list)) {

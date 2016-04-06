@@ -11,8 +11,9 @@ use Drupal\Core\Cache\Cache;
 use Drupal\comment\CommentInterface;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Drupal\comment\Entity\Comment;
+use Drupal\entity_test\Entity\EntityTest;
 
 /**
  * Tests the bubbling up of comment cache tags when using the Comment list
@@ -42,7 +43,7 @@ class CommentDefaultFormatterCacheTagsTest extends EntityUnitTestBase {
     $request = Request::create('/');
     $request->setSession($session);
 
-    /** @var RequestStack $stack */
+    /** @var \Symfony\Component\HttpFoundation\RequestStack $stack */
     $stack = $this->container->get('request_stack');
     $stack->pop();
     $stack->push($request);
@@ -58,7 +59,6 @@ class CommentDefaultFormatterCacheTagsTest extends EntityUnitTestBase {
     $this->installConfig(array('system', 'filter', 'comment'));
 
     // Comment rendering generates links, so build the router.
-    $this->installSchema('system', array('router'));
     $this->container->get('router.builder')->rebuild();
 
     // Set up a field, so that the entity that'll be referenced bubbles up a
@@ -74,7 +74,7 @@ class CommentDefaultFormatterCacheTagsTest extends EntityUnitTestBase {
     $renderer = $this->container->get('renderer');
 
     // Create the entity that will be commented upon.
-    $commented_entity = entity_create('entity_test', array('name' => $this->randomMachineName()));
+    $commented_entity = EntityTest::create(array('name' => $this->randomMachineName()));
     $commented_entity->save();
 
     // Verify cache tags on the rendered entity before it has comments.
@@ -98,7 +98,7 @@ class CommentDefaultFormatterCacheTagsTest extends EntityUnitTestBase {
     // also exists in the {users} table.
     $user = $this->createUser();
     $user->save();
-    $comment = entity_create('comment', array(
+    $comment = Comment::create(array(
       'subject' => 'Llama',
       'comment_body' => array(
         'value' => 'Llamas are cool!',

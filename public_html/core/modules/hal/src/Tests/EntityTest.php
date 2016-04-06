@@ -8,6 +8,12 @@
 namespace Drupal\hal\Tests;
 
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\comment\Entity\Comment;
+use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
+use Drupal\node\Entity\NodeType;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
  * Tests that nodes and terms are correctly normalized and denormalized.
@@ -42,10 +48,10 @@ class EntityTest extends NormalizerTestBase {
    * Tests the normalization of nodes.
    */
   public function testNode() {
-    $node_type = entity_create('node_type', array('type' => 'example_type'));
+    $node_type = NodeType::create(['type' => 'example_type']);
     $node_type->save();
 
-    $user = entity_create('user', array('name' => $this->randomMachineName()));
+    $user = User::create(['name' => $this->randomMachineName()]);
     $user->save();
 
     // Add comment type.
@@ -57,57 +63,49 @@ class EntityTest extends NormalizerTestBase {
 
     $this->addDefaultCommentField('node', 'example_type');
 
-    $node = entity_create('node', array(
+    $node = Node::create([
       'title' => $this->randomMachineName(),
       'uid' => $user->id(),
       'type' => $node_type->id(),
       'status' => NODE_PUBLISHED,
       'promote' => 1,
       'sticky' => 0,
-      'body' => array(
+      'body' => [
         'value' => $this->randomMachineName(),
-        'format' => $this->randomMachineName(),
-      ),
+        'format' => $this->randomMachineName()
+      ],
       'revision_log' => $this->randomString(),
-    ));
+    ]);
     $node->save();
 
     $original_values = $node->toArray();
-    unset($original_values['nid']);
-    unset($original_values['vid']);
 
     $normalized = $this->serializer->normalize($node, $this->format);
 
+    /** @var \Drupal\node\NodeInterface $denormalized_node */
     $denormalized_node = $this->serializer->denormalize($normalized, 'Drupal\node\Entity\Node', $this->format);
 
-    // Verify that the ID and revision ID were skipped by the normalizer.
-    $this->assertEqual(NULL, $denormalized_node->id());
-    $this->assertEqual(NULL, $denormalized_node->getRevisionId());
-
-    // Loop over the remaining fields and verify that they are identical.
-    foreach ($original_values as $field_name => $field_values) {
-      $this->assertEqual($field_values, $denormalized_node->get($field_name)->getValue());
-    }
+    $this->assertEqual($original_values, $denormalized_node->toArray(), 'Node values are restored after normalizing and denormalizing.');
   }
 
   /**
    * Tests the normalization of terms.
    */
   public function testTerm() {
-    $vocabulary = entity_create('taxonomy_vocabulary', array('vid' => 'example_vocabulary'));
+    $vocabulary = Vocabulary::create(['vid' => 'example_vocabulary']);
     $vocabulary->save();
 
-    $account = entity_create('user', array('name' => $this->randomMachineName()));
+    $account = User::create(['name' => $this->randomMachineName()]);
     $account->save();
 
     // @todo Until https://www.drupal.org/node/2327935 is fixed, if no parent is
     // set, the test fails because target_id => 0 is reserialized to NULL.
-    $term_parent = entity_create('taxonomy_term', array(
+    $term_parent = Term::create([
       'name' => $this->randomMachineName(),
       'vid' => $vocabulary->id(),
-    ));
+    ]);
     $term_parent->save();
-    $term = entity_create('taxonomy_term', array(
+    $term = Term::create([
       'name' => $this->randomMachineName(),
       'vid' => $vocabulary->id(),
       'description' => array(
@@ -115,33 +113,27 @@ class EntityTest extends NormalizerTestBase {
         'format' => $this->randomMachineName(),
       ),
       'parent' => $term_parent->id(),
-    ));
+    ]);
     $term->save();
 
     $original_values = $term->toArray();
-    unset($original_values['tid']);
 
     $normalized = $this->serializer->normalize($term, $this->format, ['account' => $account]);
 
+    /** @var \Drupal\taxonomy\TermInterface $denormalized_term */
     $denormalized_term = $this->serializer->denormalize($normalized, 'Drupal\taxonomy\Entity\Term', $this->format, ['account' => $account]);
 
-    // Verify that the ID and revision ID were skipped by the normalizer.
-    $this->assertEqual(NULL, $denormalized_term->id());
-
-    // Loop over the remaining fields and verify that they are identical.
-    foreach ($original_values as $field_name => $field_values) {
-      $this->assertEqual($field_values, $denormalized_term->get($field_name)->getValue());
-    }
+    $this->assertEqual($original_values, $denormalized_term->toArray(), 'Term values are restored after normalizing and denormalizing.');
   }
 
   /**
    * Tests the normalization of comments.
    */
   public function testComment() {
-    $node_type = entity_create('node_type', array('type' => 'example_type'));
+    $node_type = NodeType::create(['type' => 'example_type']);
     $node_type->save();
 
-    $account = entity_create('user', array('name' => $this->randomMachineName()));
+    $account = User::create(['name' => $this->randomMachineName()]);
     $account->save();
 
     // Add comment type.
@@ -153,21 +145,21 @@ class EntityTest extends NormalizerTestBase {
 
     $this->addDefaultCommentField('node', 'example_type');
 
-    $node = entity_create('node', array(
+    $node = Node::create([
       'title' => $this->randomMachineName(),
       'uid' => $account->id(),
       'type' => $node_type->id(),
       'status' => NODE_PUBLISHED,
       'promote' => 1,
       'sticky' => 0,
-      'body' => array(
+      'body' => [[
         'value' => $this->randomMachineName(),
-        'format' => $this->randomMachineName(),
-      )
-    ));
+        'format' => $this->randomMachineName()
+      ]],
+    ]);
     $node->save();
 
-    $parent_comment = entity_create('comment', array(
+    $parent_comment = Comment::create(array(
       'uid' => $account->id(),
       'subject' => $this->randomMachineName(),
       'comment_body' => [
@@ -180,7 +172,7 @@ class EntityTest extends NormalizerTestBase {
     ));
     $parent_comment->save();
 
-    $comment = entity_create('comment', array(
+    $comment = Comment::create(array(
       'uid' => $account->id(),
       'subject' => $this->randomMachineName(),
       'comment_body' => [
@@ -197,9 +189,9 @@ class EntityTest extends NormalizerTestBase {
     $comment->save();
 
     $original_values = $comment->toArray();
-    // cid will not exist and hostname will always be denied view access.
+    // Hostname will always be denied view access.
     // No value will exist for name as this is only for anonymous users.
-    unset($original_values['cid'], $original_values['hostname'], $original_values['name']);
+    unset($original_values['hostname'], $original_values['name']);
 
     $normalized = $this->serializer->normalize($comment, $this->format, ['account' => $account]);
 
@@ -207,19 +199,13 @@ class EntityTest extends NormalizerTestBase {
     // data.
     $this->assertFalse(array_key_exists('hostname', $normalized), 'Hostname was not found in normalized comment data.');
 
+    /** @var \Drupal\comment\CommentInterface $denormalized_comment */
     $denormalized_comment = $this->serializer->denormalize($normalized, 'Drupal\comment\Entity\Comment', $this->format, ['account' => $account]);
 
-    // Verify that the ID and revision ID were skipped by the normalizer.
-    $this->assertEqual(NULL, $denormalized_comment->id());
-
-    // Loop over the remaining fields and verify that they are identical.
-    foreach ($original_values as $field_name => $field_values) {
-      // The target field comes with revision id which is not set.
-      if (array_key_exists('revision_id', $field_values[0])) {
-        unset($field_values[0]['revision_id']);
-      }
-      $this->assertEqual($field_values, $denormalized_comment->get($field_name)->getValue());
-    }
+    // Before comparing, unset values that are expected to differ.
+    $denormalized_comment_values = $denormalized_comment->toArray();
+    unset($denormalized_comment_values['hostname'], $denormalized_comment_values['name']);
+    $this->assertEqual($original_values, $denormalized_comment_values, 'The expected comment values are restored after normalizing and denormalizing.');
   }
 
 }

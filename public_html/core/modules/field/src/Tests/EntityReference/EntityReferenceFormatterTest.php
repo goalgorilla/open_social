@@ -10,11 +10,13 @@ namespace Drupal\field\Tests\EntityReference;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\RoleInterface;
+use Drupal\entity_test\Entity\EntityTestLabel;
 
 /**
  * Tests the formatters functionality.
@@ -66,7 +68,7 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
 
     // Use Classy theme for testing markup output.
     \Drupal::service('theme_handler')->install(['classy']);
-    $this->config('system.theme')->set('default', 'classy')->save();
+    \Drupal::service('theme_handler')->setDefault('classy');
 
     // Grant the 'view test entity' permission.
     $this->installConfig(array('user'));
@@ -75,25 +77,24 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
       ->save();
 
     // The label formatter rendering generates links, so build the router.
-    $this->installSchema('system', 'router');
     $this->container->get('router.builder')->rebuild();
 
     $this->createEntityReferenceField($this->entityType, $this->bundle, $this->fieldName, 'Field test', $this->entityType, 'default', array(), FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
 
     // Set up a field, so that the entity that'll be referenced bubbles up a
     // cache tag when rendering it entirely.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'body',
       'entity_type' => $this->entityType,
       'type' => 'text',
       'settings' => array(),
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => $this->entityType,
       'bundle' => $this->bundle,
       'field_name' => 'body',
       'label' => 'Body',
-    ))->save();
+    ])->save();
     entity_get_display($this->entityType, $this->bundle, 'default')
       ->setComponent('body', array(
         'type' => 'text_default',
@@ -101,13 +102,15 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
       ))
       ->save();
 
-    entity_create('filter_format', array(
+    FilterFormat::create(array(
       'format' => 'full_html',
       'name' => 'Full HTML',
     ))->save();
 
     // Create the entity to be referenced.
-    $this->referencedEntity = entity_create($this->entityType, array('name' => $this->randomMachineName()));
+    $this->referencedEntity = $this->container->get('entity_type.manager')
+      ->getStorage($this->entityType)
+      ->create(array('name' => $this->randomMachineName()));
     $this->referencedEntity->body = array(
       'value' => '<p>Hello, world!</p>',
       'format' => 'full_html',
@@ -115,7 +118,9 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
     $this->referencedEntity->save();
 
     // Create another entity to be referenced but do not save it.
-    $this->unsavedReferencedEntity = entity_create($this->entityType, array('name' => $this->randomMachineName()));
+    $this->unsavedReferencedEntity = $this->container->get('entity_type.manager')
+      ->getStorage($this->entityType)
+      ->create(array('name' => $this->randomMachineName()));
     $this->unsavedReferencedEntity->body = array(
       'value' => '<p>Hello, unsaved world!</p>',
       'format' => 'full_html',
@@ -133,7 +138,9 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
 
     $field_name = $this->fieldName;
 
-    $referencing_entity = entity_create($this->entityType, array('name' => $this->randomMachineName()));
+    $referencing_entity = $this->container->get('entity_type.manager')
+      ->getStorage($this->entityType)
+      ->create(array('name' => $this->randomMachineName()));
     $referencing_entity->save();
     $referencing_entity->{$field_name}->entity = $this->referencedEntity;
 
@@ -259,7 +266,7 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
     $field_storage_config->setSetting('target_type', 'entity_test_label');
     $field_storage_config->save();
 
-    $referenced_entity_with_no_link_template = entity_create('entity_test_label', array(
+    $referenced_entity_with_no_link_template = EntityTestLabel::create(array(
       'name' => $this->randomMachineName(),
     ));
     $referenced_entity_with_no_link_template->save();
@@ -285,7 +292,9 @@ class EntityReferenceFormatterTest extends EntityUnitTestBase {
    */
   protected function buildRenderArray(array $referenced_entities, $formatter, $formatter_options = array()) {
     // Create the entity that will have the entity reference field.
-    $referencing_entity = entity_create($this->entityType, array('name' => $this->randomMachineName()));
+    $referencing_entity = $this->container->get('entity_type.manager')
+      ->getStorage($this->entityType)
+      ->create(array('name' => $this->randomMachineName()));
 
     $items = $referencing_entity->get($this->fieldName);
 

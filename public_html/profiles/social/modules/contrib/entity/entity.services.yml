@@ -1,0 +1,6 @@
+services:
+  access_checker.entity_revision:
+    class: \Drupal\entity\Access\EntityRevisionRouteAccessChecker
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: access_check, applies_to: _entity_access_revision, needs_request: TRUE }

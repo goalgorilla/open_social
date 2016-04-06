@@ -8,7 +8,9 @@
 namespace Drupal\field\Tests\EntityReference;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests an autocomplete widget with file upload.
@@ -51,7 +53,7 @@ class EntityReferenceFileUploadTest extends WebTestBase {
     $this->referencedType = $referenced->id();
     $this->nodeId = $this->drupalCreateNode(array('type' => $referenced->id()))->id();
 
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'test_field',
       'entity_type' => 'node',
       'translatable' => FALSE,
@@ -63,7 +65,7 @@ class EntityReferenceFileUploadTest extends WebTestBase {
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
     ))->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'label' => 'Entity reference field',
       'field_name' => 'test_field',
       'entity_type' => 'node',
@@ -78,23 +80,23 @@ class EntityReferenceFileUploadTest extends WebTestBase {
           ),
         ),
       ),
-    ))->save();
+    ])->save();
 
 
     // Create a file field.
     $file_field_name = 'file_field';
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'field_name' => $file_field_name,
       'entity_type' => 'node',
       'type' => 'file'
     ));
     $field_storage->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => 'node',
       'field_storage' => $field_storage,
       'bundle' => $referencing->id(),
       'label' => $this->randomMachineName() . '_label',
-    ))->save();
+    ])->save();
 
     entity_get_display('node', $referencing->id(), 'default')
       ->setComponent('test_field')

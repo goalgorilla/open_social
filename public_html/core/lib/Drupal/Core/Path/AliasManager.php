@@ -187,7 +187,11 @@ class AliasManager implements AliasManagerInterface, CacheDecoratorInterface {
    * {@inheritdoc}
    */
   public function getAliasByPath($path, $langcode = NULL) {
+
     if ($path[0] !== '/') {
+      print_r($path);
+      var_dump($langcode);
+      var_dump($path[0]);
       throw new \InvalidArgumentException(sprintf('Source path %s has to start with a slash.', $path));
     }
     // If no language is explicitly specified we default to the current URL

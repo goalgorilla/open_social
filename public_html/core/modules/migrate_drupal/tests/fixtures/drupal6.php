@@ -30532,6 +30532,21 @@ $connection->insert('profile_fields')
   'options' => '',
 ))
 ->values(array(
+  'fid' => '13',
+  'title' => 'Blog',
+  'name' => 'profile_blog',
+  'explanation' => 'Paste the full URL, including http://, of your personal blog.',
+  'category' => 'Personal information',
+  'page' => '',
+  'type' => 'url',
+  'weight' => '3',
+  'required' => '0',
+  'register' => '0',
+  'visibility' => '3',
+  'autocomplete' => '0',
+  'options' => '',
+))
+->values(array(
   'fid' => '14',
   'title' => 'Birthdate',
   'name' => 'profile_birthdate',
@@ -30558,21 +30573,6 @@ $connection->insert('profile_fields')
   'required' => '0',
   'register' => '0',
   'visibility' => '2',
-  'autocomplete' => '0',
-  'options' => '',
-))
-->values(array(
-  'fid' => '16',
-  'title' => 'Blog',
-  'name' => 'profile_blog',
-  'explanation' => 'Paste the full URL, including http://, of your personal blog.',
-  'category' => 'Personal information',
-  'page' => '',
-  'type' => 'url',
-  'weight' => '3',
-  'required' => '0',
-  'register' => '0',
-  'visibility' => '3',
   'autocomplete' => '0',
   'options' => '',
 ))
@@ -34072,7 +34072,7 @@ $connection->insert('vocabulary')
   'help' => '',
   'relations' => '1',
   'hierarchy' => '2',
-  'multiple' => '0',
+  'multiple' => '1',
   'required' => '0',
   'tags' => '0',
   'module' => 'taxonomy',

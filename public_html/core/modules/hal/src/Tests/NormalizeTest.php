@@ -9,6 +9,7 @@ namespace Drupal\hal\Tests;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
+use Drupal\entity_test\Entity\EntityTest;
 
 /**
  * Tests that entities can be normalized in HAL.
@@ -30,9 +31,9 @@ class NormalizeTest extends NormalizerTestBase {
    * Tests the normalize function.
    */
   public function testNormalize() {
-    $target_entity_de = entity_create('entity_test', (array('langcode' => 'de', 'field_test_entity_reference' => NULL)));
+    $target_entity_de = EntityTest::create((array('langcode' => 'de', 'field_test_entity_reference' => NULL)));
     $target_entity_de->save();
-    $target_entity_en = entity_create('entity_test', (array('langcode' => 'en', 'field_test_entity_reference' => NULL)));
+    $target_entity_en = EntityTest::create((array('langcode' => 'en', 'field_test_entity_reference' => NULL)));
     $target_entity_en->save();
 
     // Create a German entity.
@@ -55,7 +56,7 @@ class NormalizeTest extends NormalizerTestBase {
       )
     );
 
-    $entity = entity_create('entity_test', $values);
+    $entity = EntityTest::create($values);
     $entity->save();
     // Add an English value for name and entity reference properties.
     $entity->addTranslation('en')->set('name', array(0 => array('value' => $translation_values['name'])));
@@ -127,6 +128,11 @@ class NormalizeTest extends NormalizerTestBase {
           ),
         ),
       ),
+      'id' => array(
+        array(
+          'value' => $entity->id(),
+        ),
+      ),
       'uuid' => array(
         array(
           'value' => $entity->uuid(),
@@ -159,7 +165,7 @@ class NormalizeTest extends NormalizerTestBase {
     $this->assertEqual($normalized['_links']['self'], $expected_array['_links']['self'], 'self link placed correctly.');
     // @todo Test curies.
     // @todo Test type.
-    $this->assertFalse(isset($normalized['id']), 'Internal id is not exposed.');
+    $this->assertEqual($normalized['id'], $expected_array['id'], 'Internal id is exposed.');
     $this->assertEqual($normalized['uuid'], $expected_array['uuid'], 'Non-translatable fields is normalized.');
     $this->assertEqual($normalized['name'], $expected_array['name'], 'Translatable field with multiple language values is normalized.');
     $this->assertEqual($normalized['field_test_text'], $expected_array['field_test_text'], 'Field with properties is normalized.');

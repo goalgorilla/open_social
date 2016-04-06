@@ -4,7 +4,6 @@
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Parser\Parser;
 use Egulias\EmailValidator\EmailValidator;
 
 class DomainPart extends Parser
@@ -103,8 +102,9 @@ class DomainPart extends Parser
     protected function doParseDomainPart()
     {
         $domain = '';
+        $openedParenthesis = 0;
+        $openBrackets = false;
         do {
-
             $prev = $this->lexer->getPrevious();
 
             if ($this->lexer->token['type'] === EmailLexer::S_SLASH) {
@@ -113,13 +113,25 @@ class DomainPart extends Parser
 
             if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
                 $this->parseComments();
+                $openedParenthesis += $this->getOpenedParenthesis();
                 $this->lexer->moveNext();
+                $tmpPrev = $this->lexer->getPrevious();
+                if ($tmpPrev['type'] === EmailLexer::S_CLOSEPARENTHESIS) {
+                    $openedParenthesis--;
+                }
+            }
+            if ($this->lexer->token['type'] === EmailLexer::S_CLOSEPARENTHESIS) {
+                if ($openedParenthesis === 0) {
+                    throw new \InvalidArgumentException('ERR_UNOPENEDCOMMENT');
+                } else {
+                    $openedParenthesis--;
+                }
             }
 
             $this->checkConsecutiveDots();
             $this->checkDomainPartExceptions($prev);
 
-            if ($this->hasBrackets()) {
+            if ($openBrackets = $this->hasBrackets($openBrackets)) {
                 $this->parseDomainLiteral();
             }
 
@@ -180,7 +192,7 @@ class DomainPart extends Parser
             }
 
             if ($this->lexer->isNextToken(EmailLexer::S_CR)) {
-                throw new \InvalidArgumentException("ERR_CR_NO_LF");
+                throw new \InvalidArgumentException('ERR_CR_NO_LF');
             }
             if ($this->lexer->token['type'] === EmailLexer::S_BACKSLASH) {
                 $this->warnings[] = EmailValidator::RFC5322_DOMLIT_OBSDTEXT;
@@ -276,8 +288,12 @@ class DomainPart extends Parser
         }
     }
 
-    protected function hasBrackets()
+    protected function hasBrackets($openBrackets)
     {
+        if ($this->lexer->token['type'] === EmailLexer::S_CLOSEBRACKET && !$openBrackets) {
+            throw new \InvalidArgumentException('ERR_EXPECTING_OPENBRACKET');
+        }
+
         if ($this->lexer->token['type'] !== EmailLexer::S_OPENBRACKET) {
             return false;
         }

@@ -36,6 +36,7 @@ class Composer {
     'jcalderonzumba/mink-phantomjs-driver' => ['tests'],
     'masterminds/html5' => ['test'],
     'mikey179/vfsStream' => ['src/test'],
+    'paragonie/random_compat' => ['tests'],
     'phpdocumentor/reflection-docblock' => ['tests'],
     'phpunit/php-code-coverage' => ['tests'],
     'phpunit/php-timer' => ['tests'],
@@ -65,7 +66,7 @@ class Composer {
     'symfony/routing' => ['Tests'],
     'symfony/serializer' => ['Tests'],
     'symfony/translation' => ['Tests'],
-    'symfony/validator' => ['Tests'],
+    'symfony/validator' => ['Tests', 'Resources'],
     'symfony/yaml' => ['Tests'],
     'symfony-cmf/routing' => ['Test', 'Tests'],
     'twig/twig' => ['doc', 'ext', 'test'],
@@ -142,7 +143,9 @@ EOT;
   /**
    * Remove possibly problematic test files from vendored projects.
    *
-   * @param \Composer\Script\Event $event
+   * @param \Composer\Installer\PackageEvent $event
+   *   A PackageEvent object to get the configured composer vendor directories
+   *   from.
    */
   public static function vendorTestCodeCleanup(PackageEvent $event) {
     $vendor_dir = $event->getComposer()->getConfig()->get('vendor-dir');
@@ -161,9 +164,6 @@ EOT;
           if (!static::deleteRecursive($dir_to_remove)) {
             throw new \RuntimeException(sprintf("Failure removing directory '%s' in package '%s'.", $path, $package->getPrettyName()));
           }
-        }
-        else {
-          throw new \RuntimeException(sprintf("The directory '%s' in package '%s' does not exist.", $path, $package->getPrettyName()));
         }
       }
     }

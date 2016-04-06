@@ -8,10 +8,14 @@
 namespace Drupal\taxonomy\Tests\Views;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\views\Tests\ViewTestBase;
 use Drupal\views\Tests\ViewTestData;
 use Drupal\views\Views;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Tests taxonomy field filters with translations.
@@ -61,25 +65,25 @@ class TaxonomyFieldFilterTest extends ViewTestBase {
     );
 
     // Create a vocabulary.
-    $this->vocabulary = entity_create('taxonomy_vocabulary', array(
+    $this->vocabulary = Vocabulary::create([
       'name' => 'Views testing tags',
       'vid' => 'views_testing_tags',
-    ));
+    ]);
     $this->vocabulary->save();
 
     // Add a translatable field to the vocabulary.
-    $field = entity_create('field_storage_config', array(
+    $field = FieldStorageConfig::create(array(
       'field_name' => 'field_foo',
       'entity_type' => 'taxonomy_term',
       'type' => 'text',
     ));
     $field->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => 'field_foo',
       'entity_type' => 'taxonomy_term',
       'label' => 'Foo',
       'bundle' => 'views_testing_tags',
-    ))->save();
+    ])->save();
 
     // Create term with translations.
     $taxonomy = $this->createTermWithProperties(array('name' => $this->termNames['en'], 'langcode' => 'en', 'description' => $this->termNames['en'], 'field_foo' => $this->termNames['en']));
@@ -171,13 +175,13 @@ class TaxonomyFieldFilterTest extends ViewTestBase {
       'field_foo' => $this->randomMachineName(),
     );
 
-    $term = entity_create('taxonomy_term', array(
+    $term = Term::create([
       'name' => $properties['name'],
       'description' => $properties['description'],
       'format' => $format->id(),
       'vid' => $this->vocabulary->id(),
       'langcode' => $properties['langcode'],
-    ));
+    ]);
     $term->field_foo->value = $properties['field_foo'];
     $term->save();
     return $term;

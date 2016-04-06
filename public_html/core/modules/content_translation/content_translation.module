@@ -14,7 +14,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\field\FieldConfigInterface;
 
 /**
  * Implements hook_help().
@@ -283,7 +282,7 @@ function content_translation_translate_access(EntityInterface $entity) {
   $condition = $entity instanceof ContentEntityInterface && $entity->access('view') &&
     !$entity->getUntranslated()->language()->isLocked() && \Drupal::languageManager()->isMultilingual() && $entity->isTranslatable() &&
     ($account->hasPermission('create content translations') || $account->hasPermission('update content translations') || $account->hasPermission('delete content translations'));
-  return AccessResult::allowedIf($condition)->cachePerPermissions()->cacheUntilEntityChanges($entity);
+  return AccessResult::allowedIf($condition)->cachePerPermissions()->addCacheableDependency($entity);
 }
 
 /**

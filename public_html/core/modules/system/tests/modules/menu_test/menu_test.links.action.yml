@@ -14,6 +14,8 @@ menu_test.local_action5:
 menu_test.local_action.cache_check:
   route_name: menu_test.local_action5
   class: '\Drupal\menu_test\Plugin\Menu\LocalAction\TestLocalActionWithConfig'
+  cache_tags:
+    - config:menu_test.links.action
   appears_on:
     - menu_test.local_action6
 

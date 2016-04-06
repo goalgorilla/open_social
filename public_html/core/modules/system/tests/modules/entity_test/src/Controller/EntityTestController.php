@@ -10,7 +10,6 @@ namespace Drupal\entity_test\Controller;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Query\QueryFactory;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -42,24 +41,6 @@ class EntityTestController extends ControllerBase {
     return new static(
       $container->get('entity.query')
     );
-  }
-
-  /**
-   * Displays the 'Add new entity_test' form.
-   *
-   * @param string $entity_type_id
-   *   Name of the entity type for which a create form should be displayed.
-   *
-   * @return array
-   *   The processed form for a new entity_test.
-   *
-   * @see \Drupal\entity_test\Routing\EntityTestRoutes::routes()
-   */
-  public function testAdd($entity_type_id) {
-    $entity = entity_create($entity_type_id, array());
-    $form = $this->entityFormBuilder()->getForm($entity);
-    $form['#title'] = $this->t('Create an @type', array('@type' => $entity_type_id));
-    return $form;
   }
 
   /**

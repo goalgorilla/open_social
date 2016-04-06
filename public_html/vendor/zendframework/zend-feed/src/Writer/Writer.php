@@ -105,13 +105,16 @@ class Writer
                 return;
             }
         }
-        if (!$manager->has($feedName)
-            && !$manager->has($entryName)
-            && !$manager->has($feedRendererName)
-            && !$manager->has($entryRendererName)
+        if (! $manager->has($feedName)
+            && ! $manager->has($entryName)
+            && ! $manager->has($feedRendererName)
+            && ! $manager->has($entryRendererName)
         ) {
-            throw new Exception\RuntimeException('Could not load extension: ' . $name
-                . 'using Plugin Loader. Check prefix paths are configured and extension exists.');
+            throw new Exception\RuntimeException(sprintf(
+                'Could not load extension "%s" using Plugin Loader. '
+                . 'Check prefix paths are configured and extension exists.',
+                $name
+            ));
         }
         if ($manager->has($feedName)) {
             static::$extensions['feed'][] = $feedName;

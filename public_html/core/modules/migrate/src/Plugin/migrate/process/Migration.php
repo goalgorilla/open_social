@@ -7,12 +7,13 @@
 
 namespace Drupal\migrate\Plugin\migrate\process;
 
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\migrate\MigrateSkipProcessException;
 use Drupal\migrate\Plugin\MigratePluginManager;
+use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\ProcessPluginBase;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,18 +35,18 @@ class Migration extends ProcessPluginBase implements ContainerFactoryPluginInter
   protected $processPluginManager;
 
   /**
-   * The entity storage manager.
+   * The migration plugin manager.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\migrate\Plugin\MigrationPluginManagerInterface
    */
-  protected $migrationStorage;
+  protected $migrationPluginManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, EntityStorageInterface $storage, MigratePluginManager $process_plugin_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, MigrationPluginManagerInterface $migration_plugin_manager, MigratePluginManager $process_plugin_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->migrationStorage = $storage;
+    $this->migrationPluginManager = $migration_plugin_manager;
     $this->migration = $migration;
     $this->processPluginManager = $process_plugin_manager;
   }
@@ -59,7 +60,7 @@ class Migration extends ProcessPluginBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $migration,
-      $container->get('entity.manager')->getStorage('migration'),
+      $container->get('plugin.manager.migration'),
       $container->get('plugin.manager.migrate.process')
     );
   }
@@ -79,10 +80,10 @@ class Migration extends ProcessPluginBase implements ContainerFactoryPluginInter
     }
     $this->skipOnEmpty($value);
     $self = FALSE;
-    /** @var \Drupal\migrate\Entity\MigrationInterface[] $migrations */
-    $migrations = $this->migrationStorage->loadMultiple($migration_ids);
+    /** @var \Drupal\migrate\Plugin\MigrationInterface[] $migrations */
     $destination_ids = NULL;
     $source_id_values = array();
+    $migrations = $this->migrationPluginManager->createInstances($migration_ids);
     foreach ($migrations as $migration_id => $migration) {
       if ($migration_id == $this->migration->id()) {
         $self = TRUE;
@@ -139,7 +140,11 @@ class Migration extends ProcessPluginBase implements ContainerFactoryPluginInter
         $destination_ids = $destination_plugin->import($stub_row);
       }
       catch (\Exception $e) {
-        $migrate_executable->saveMessage($e->getMessage());
+        $migration->getIdMap()->saveMessage($stub_row->getSourceIdValues(), $e->getMessage());
+      }
+
+      if ($destination_ids) {
+        $migration->getIdMap()->saveIdMapping($stub_row, $destination_ids, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
       }
     }
     if ($destination_ids) {

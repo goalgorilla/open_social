@@ -194,15 +194,15 @@ function comment_field_config_delete(FieldConfigInterface $field) {
 /**
  * Implements hook_node_links_alter().
  */
-function comment_node_links_alter(array &$node_links, NodeInterface $node, array &$context) {
+function comment_node_links_alter(array &$links, NodeInterface $node, array &$context) {
   // Comment links are only added to node entity type for backwards
   // compatibility. Should you require comment links for other entity types you
   // can do so by implementing a new field formatter.
   // @todo Make this configurable from the formatter. See
   //   https://www.drupal.org/node/1901110.
 
-  $links = \Drupal::service('comment.link_builder')->buildCommentedEntityLinks($node, $context);
-  $node_links += $links;
+  $comment_links = \Drupal::service('comment.link_builder')->buildCommentedEntityLinks($node, $context);
+  $links += $comment_links;
 }
 
 /**
@@ -244,10 +244,10 @@ function comment_node_view_alter(array &$build, EntityInterface $node, EntityVie
  *
  * @param \Drupal\comment\CommentInterface $comment
  *   The comment object.
- * @param $view_mode
+ * @param string $view_mode
  *   (optional) View mode; for instance, 'full', 'teaser', etc. Defaults to
  *   'full'.
- * @param $langcode
+ * @param string $langcode
  *   (optional) A language code to use for rendering. Defaults to the global
  *   content language of the current request.
  *
@@ -264,12 +264,12 @@ function comment_view(CommentInterface $comment, $view_mode = 'full', $langcode 
 /**
  * Constructs render array from an array of loaded comments.
  *
- * @param $comments
+ * @param \Drupal\comment\CommentInterface[] $comments
  *   An array of comments as returned by entity_load_multiple().
- * @param $view_mode
+ * @param string $view_mode
  *   (optional) View mode; for instance, 'full', 'teaser', etc. Defaults to
  *   'full'.
- * @param $langcode
+ * @param string $langcode
  *   (optional) A string indicating the language field values are to be shown
  *   in. If no language is provided the current content language is used.
  *   Defaults to NULL.

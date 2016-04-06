@@ -10,7 +10,6 @@ namespace Drupal\Tests\Core\Entity;
 use Drupal\Core\Entity\EntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -311,15 +310,7 @@ class EntityTypeTest extends UnitTestCase {
     $this->assertSame($default_label, $entity_type->getGroupLabel());
 
     $default_label = new TranslatableMarkup('Other', array(), array('context' => 'Entity type group'));
-    $entity_type = $this->setUpEntityType([]);
-
-    $string_translation = $this->getMock(TranslationInterface::class);
-    $string_translation->expects($this->atLeastOnce())
-      ->method('translate')
-      ->with('Other', array(), array('context' => 'Entity type group'))
-      ->willReturn($default_label);
-    $entity_type->setStringTranslation($string_translation);
-
+    $entity_type = $this->setUpEntityType(array('group_label' => $default_label));
     $this->assertSame($default_label, $entity_type->getGroupLabel());
   }
 

@@ -10,6 +10,7 @@ namespace Drupal\ckeditor\Tests;
 use Drupal\simpletest\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\editor\Entity\Editor;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests for the 'CKEditor' text editor plugin.
@@ -43,10 +44,9 @@ class CKEditorTest extends KernelTestBase {
     parent::setUp();
 
     // Install the Filter module.
-    $this->installSchema('system', 'url_alias');
 
     // Create text format, associate CKEditor.
-    $filtered_html_format = entity_create('filter_format', array(
+    $filtered_html_format = FilterFormat::create(array(
       'format' => 'filtered_html',
       'name' => 'Filtered HTML',
       'weight' => 0,
@@ -60,10 +60,10 @@ class CKEditorTest extends KernelTestBase {
       ),
     ));
     $filtered_html_format->save();
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'filtered_html',
       'editor' => 'ckeditor',
-    ));
+    ]);
     $editor->save();
 
     // Create "CKEditor" text editor plugin instance.
@@ -261,12 +261,24 @@ class CKEditorTest extends KernelTestBase {
 
     // Enable the editor_test module, which implements hook_ckeditor_css_alter().
     $this->enableModules(array('ckeditor_test'));
-    $expected[] = file_url_transform_relative(file_create_url('core/modules/ckeditor/tests/modules/ckeditor_test.css'));
+    $expected[] = file_url_transform_relative(file_create_url(drupal_get_path('module', 'ckeditor_test') . '/ckeditor_test.css'));
     $this->assertIdentical($expected, $this->ckeditor->buildContentsCssJSSetting($editor), '"contentsCss" configuration part of JS settings built correctly while a hook_ckeditor_css_alter() implementation exists.');
+
+    // Enable LlamaCss plugin, which adds an additional CKEditor stylesheet.
+    $this->container->get('plugin.manager.editor')->clearCachedDefinitions();
+    $this->ckeditor = $this->container->get('plugin.manager.editor')->createInstance('ckeditor');
+    $this->container->get('plugin.manager.ckeditor.plugin')->clearCachedDefinitions();
+    $settings = $editor->getSettings();
+    // LlamaCss: automatically enabled by adding its 'LlamaCSS' button.
+    $settings['toolbar']['rows'][0][0]['items'][] = 'LlamaCSS';
+    $editor->setSettings($settings);
+    $editor->save();
+    $expected[] = file_url_transform_relative(file_create_url(drupal_get_path('module', 'ckeditor_test') . '/css/llama.css'));
+    $this->assertIdentical($expected, $this->ckeditor->buildContentsCssJSSetting($editor), '"contentsCss" configuration part of JS settings built correctly while a CKEditorPluginInterface implementation exists.');
 
     // Enable the Bartik theme, which specifies a CKEditor stylesheet.
     \Drupal::service('theme_handler')->install(['bartik']);
-    $this->config('system.theme')->set('default', 'bartik')->save();
+    \Drupal::service('theme_handler')->setDefault('bartik');
     $expected[] = file_url_transform_relative(file_create_url('core/themes/bartik/css/base/elements.css'));
     $expected[] = file_url_transform_relative(file_create_url('core/themes/bartik/css/components/captions.css'));
     $expected[] = file_url_transform_relative(file_create_url('core/themes/bartik/css/components/table.css'));
@@ -427,6 +439,7 @@ class CKEditorTest extends KernelTestBase {
       'resize_dir' => 'vertical',
       'justifyClasses' => array('text-align-left', 'text-align-center', 'text-align-right', 'text-align-justify'),
       'entities' => FALSE,
+      'disableNativeSpellChecker' => FALSE,
     );
   }
 
