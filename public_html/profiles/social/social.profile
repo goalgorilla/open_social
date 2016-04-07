@@ -37,8 +37,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
       'social_user' => 'Social User',
       'social_comment' => 'Social Comment',
       'social_search' => 'Social Search',
+      'social_post' => 'Social Post',
     ],
-    '#default_value' => ['social_core', 'social_devel', 'social_editor', 'social_event', 'social_topic', 'social_user', 'social_comment', 'social_search'],
+    '#default_value' => ['social_core', 'social_devel', 'social_editor', 'social_event', 'social_topic', 'social_user', 'social_comment', 'social_search', 'social_post'],
   ];
 
   // Submit handler to enable features.
