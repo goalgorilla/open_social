@@ -1,10 +1,12 @@
 <?php
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
+
 
 /**
  * @file
@@ -36,9 +38,18 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
   // Get parrent comment ID.
   $pid = \Drupal::routeMatch()->getParameter('pid');
   if ($pid) {
-    $comment = entity_load('comment', $pid);
-    if (!empty($comment->getParentComment())) {
-      $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
+    $comment = \Drupal::entityTypeManager()->getStorage('comment')->load($pid);
+    $bundle = $comment->bundle();
+    switch ($bundle) {
+      default:
+        if (!empty($comment->getParentComment())) {
+          $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
+        }
+        break;
+
+      case "post_comment":
+        $form_state->setErrorByName('', t('Replies for comments on posts are not allowed'));
+        break;
     }
   }
 }
@@ -49,9 +60,17 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
  * Alter the links of a comment.
  */
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
-  // Remove reply links for comments deeper than 1.
-  if (!empty($entity->getParentComment())) {
-    unset($links['comment']['#links']['comment-reply']);
+  $bundle = $entity->bundle();
+  switch ($bundle) {
+    default:
+      if (!empty($entity->getParentComment())) {
+        unset($links['comment']['#links']['comment-reply']);
+      }
+      break;
+
+    case "post_comment":
+      unset($links['comment']['#links']['comment-reply']);
+      break;
   }
 }
 
@@ -59,13 +78,16 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
  * Implements hook_query_TAG_alter().
  */
 function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
-  // Change sorting to newest reply shown on top.
-  $expressions = &$query->getExpressions();
-  if (isset($expressions['torder'])) {
-    unset($expressions['torder']);
-    $order = &$query->getOrderBy();
-    unset($order['torder']);
-    $query->orderBy('c.thread', 'DESC');
+  // Change sorting to newest reply shown on top only for post comments.
+  $post = \Drupal::routeMatch()->getParameter('post');
+  if ($post) {
+    $expressions = &$query->getExpressions();
+    if (isset($expressions['torder'])) {
+      unset($expressions['torder']);
+      $order = &$query->getOrderBy();
+      unset($order['torder']);
+      $query->orderBy('c.thread', 'DESC');
+    }
   }
 }
 
