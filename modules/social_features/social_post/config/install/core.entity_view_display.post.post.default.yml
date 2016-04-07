@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.post.post.field_post
+    - field.field.post.post.field_post_comments
+    - field.field.post.post.field_recipient_user
+    - field.field.post.post.field_visibility
+  module:
+    - comment
+    - social_post
+    - user
+id: post.post.default
+targetEntityType: post
+bundle: post
+mode: default
+content:
+  field_post_comments:
+    type: comment_default
+    weight: 2
+    label: hidden
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+  name:
+    label: above
+    type: string
+    weight: 0
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_post: true
+  field_recipient_user: true
+  field_visibility: true
