@@ -9,14 +9,14 @@ block pagetitle
   .block-hero
     .container
       .row
-        .col.s12.center.margin-bottom-xxl
+        .col-xs-12.center.margin-bottom-xxl
           h1.page-title.h2 Create Topic         
 
       
 block content
       
   .row.margin-top-l
-    .col.s12.l9.margin-bottom-l
+    .col-xs-12.col-md-9.margin-bottom-l
     
       form.node-form
       
@@ -28,7 +28,7 @@ block content
           .card-body
 
             .row
-              .col.s12
+              .col-xs-12
                 .form-item.form__item-radios
                   label.form__label.form-required Topic type
                   .form__radios
@@ -42,18 +42,18 @@ block content
                       input#topic.form-radio(type='radio', name='type')
                       label.option(for='topic') Topic  
             .row
-              .col.s12.m8
+              .col-xs-12.col-md-8
                 .form-item.form__type-textfield
                   label.form__label.form-required Title
                   input.form-text.required(type="text")
             .row
-              .col.s12
+              .col-xs-12
                 .form-item.form__type-textarea
                   label.form__label.form-required Description
                   .textarea--cke
                     textarea#ckeditor.form-text.form-textarea
             .row
-              .col.s12    
+              .col-xs-12   
                 .form-item.form__type-managed-file
                   label.form__label Image
                   .image-widget.form-managed-file.clearfix
@@ -70,7 +70,7 @@ block content
       
           .card-body 
             .row
-              .col.s12 
+              .col-xs-12 
                 .form-item.form__item-radios
                   label.form__label.form-required Add topic to
                   .form__radios
@@ -81,7 +81,7 @@ block content
                       input#group.form-radio(type='radio', name='placement', onclick="showMe('selectagroup', this)")
                       label.option(for='group') A group I am a member of
                 #selectagroup.form-item-select(style='display:none;')
-                  .form-item.col.s12.m6.margin-top-s
+                  .form-item.col-xs-12.col-sm-6.margin-top-s
                     select.browser-default
                       option(value='', disabled='', selected='') Select a group
                       option(value='1') Option 1
@@ -89,7 +89,7 @@ block content
                       option(value='3') Option 3
             
             .row
-              .col.s12      
+              .col-xs-12      
                 .form-item.form__item-radios
                   label.form__label.form-required Visibility
                   .form__radios
@@ -132,7 +132,7 @@ block content
           input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
           input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
 
-    .col.m3.hidden-mobile
+    .col-sm-3.hidden-mobile
       .toc-wrapper
         ul.section.table-of-contents
           li

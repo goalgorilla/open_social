@@ -5,11 +5,11 @@ block title
 
 block secondary_navigation
   
-  .style-default-bright.only-desktop
+  .style-default-bright
     .container
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.nav-justified.style-default-bright.nav-tabs--xl
+        ul.nav.nav-tabs.tabs-center.style-default-bright.nav-tabs--xl
           li.active
             a(href="login.html") Log in
               span.visually-hidden (active tab)
@@ -21,10 +21,10 @@ block secondary_navigation
 block content
   
   .row
-    .col.s12.l9.section-header
+    .col-xs-12.col-md-8.section-header
       h2.h3.section-title Login
 
-      .card.form-card
+      .card
       
         .card-body
 
@@ -39,5 +39,5 @@ block content
                 label(for='edit-pass') Password
                 input#edit-pass.form-text(type='password', required='required')
                 
-            #edit-actions.form-actions.form-wrapper
-              input#edit-submit.btn.btn-flat.form__submit(type='submit', value='Log in')
+            #edit-actions.form-actions.form-wrapper.clearfix
+              input#edit-submit.btn.btn-flat.right(type='submit', value='Log in')

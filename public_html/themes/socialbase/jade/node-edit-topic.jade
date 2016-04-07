@@ -9,14 +9,14 @@ block pagetitle
   .block-hero
     .container
       .row
-        .col.s12.center.margin-bottom-xxl
+        .col-xs-12.center.margin-bottom-xxl
           h1.page-title.h2 Where has all the corn in the midwest gone?
 
       
 block content
       
   .row.margin-top-l
-    .col.s12.m9
+    .col-xs-12.col-sm-9
     
       form.node-form
       
@@ -28,7 +28,7 @@ block content
           .card-body
 
             .row
-              .col.s12
+              .col-xs-12
                 .form-item.form__item-radios
                   label.form__label.form-required Topic type
                   .form__radios
@@ -42,12 +42,12 @@ block content
                       input#topic.form-radio(type='radio', name='type')
                       label.option(for='topic') Topic  
             .row
-              .col.s12.m8
+              .col-xs-12.col-sm-8
                 .form-item.form__type-textfield
                   label.form__label.form-required Title
                   input.form-text.required(type="text", value='Where has all the corn in the midwest gone?')
             .row
-              .col.s12
+              .col-xs-12
                 .form-item.form__type-textarea
                   label.form__label.form-required Description
                   .textarea--cke
@@ -56,7 +56,7 @@ block content
 
 
             .row
-              .col.s12    
+              .col-xs-12 
                 .form-item.form__type-managed-file
                   label.form__label Image
                   .image-widget.form-managed-file.clearfix
@@ -66,7 +66,7 @@ block content
                       a(href='#', type="image/jpeg; length=158378") animals1-square.jpg
                       .file-size (154.78kb)
                     .left.padding-s
-                      button.btn.form-submit.style-default(type='submit', value='remove')
+                      button.btn.btn-flat.form-submit(type='submit', value='remove')
                         i.material-icons.left delete
                         | Remove
                   .form__item-help-text(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
@@ -78,7 +78,7 @@ block content
       
           .card-body 
             .row
-              .col.s12 
+              .col-xs-12
                 .form-item.form__item-radios
                   label.form__label.form-required Add topic to
                   .form__radios
@@ -89,7 +89,7 @@ block content
                       input#group.form-radio(type='radio', checked, name='placement', onclick="showMe('selectagroup', this)")
                       label.option(for='group') A group I am a member of:
               #selectagroup
-                .form-item.col.s12.m6.margin-top-s
+                .form-item.col.col-xs-12.col-sm-6.margin-top-s
                   select.browser-default
                     option(value='', disabled='',) Select a group
                     option(value='1') Group name 1
@@ -97,7 +97,7 @@ block content
                     option(value='3') Group name 3
             
             .row
-              .col.s12      
+              .col-xs-12      
                 .form-item.form__item-radios
                   label.form__label.form-required Visibility
                   .form__radios
@@ -143,7 +143,7 @@ block content
         input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
         
 
-    .col.m3.hidden-mobile
+    .col-sm-3.hidden-mobile
       .toc-wrapper
         ul.section.table-of-contents
           li

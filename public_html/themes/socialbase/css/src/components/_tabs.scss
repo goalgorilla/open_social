@@ -194,25 +194,22 @@
   display: flex;
 
   .nav-tabs {
-    flex: 1;
+    flex: 1 1 auto;
   }
 
-  .tab-content {
-    padding: $card-padding;
+  > .tab-content {
+    flex: 1 1 75%;
+    overflow: auto;
   }
-}
 
-.tabs-left > .tab-content,
-.tabs-right > .tab-content {
-	overflow: auto;
 }
-
 
 .tabs-left > .nav-tabs,
 .tabs-right > .nav-tabs {
 	padding-left: 0;
 	padding-right: 0;
 }
+
 .tabs-left > .nav-tabs > li,
 .tabs-right > .nav-tabs > li {
 	float: none;
@@ -222,6 +219,9 @@
 .tabs-right > .nav-tabs > li > a {
 	min-width: 74px;
 	margin-right: 0;
+  line-height: 1.5;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 // Tab left only

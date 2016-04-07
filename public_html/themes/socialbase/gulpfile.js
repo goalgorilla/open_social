@@ -18,7 +18,7 @@ var gulp          = require('gulp'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
     uglify        = require('gulp-uglify'),
-    cssnano       = require('gulp-cssnano'),
+    nano          = require('gulp-cssnano'),
     connect       = require('gulp-connect'),
     plumber       = require('gulp-plumber'),
     deploy        = require('gulp-gh-pages');
@@ -81,6 +81,9 @@ gulp.task('css', function () {
     }))
     .pipe( sourcemaps.init() )
     .pipe( sass() )
+    .pipe( nano( {
+      mergeRules: true
+    }) )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
     .pipe( sourcemaps.write('.') )

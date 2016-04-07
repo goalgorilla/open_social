@@ -2,9 +2,9 @@
   @include clearfix;
   @include z-depth-1;
   position: relative;
-  margin: 0.5rem 0 1rem 0;
-  background-color: $card-bg-color;
-  border-radius: 10px;
+  margin-bottom: $card-spacer-y;
+  background-color: $card-bg;
+  @include border-radius($card-border-radius);
   transition: box-shadow .25s;
   background-clip: padding-box;
 }
@@ -74,9 +74,9 @@ a.card:hover {
 
 
 // Desktop cards are only displayed on desktop.
-.desktop-card {
+.visible-sm-card {
 
-  @include MQ($medium) {
+  @include MQ($small) {
     border-radius: 10px;
     transition: box-shadow .25s;
     background-clip: padding-box;

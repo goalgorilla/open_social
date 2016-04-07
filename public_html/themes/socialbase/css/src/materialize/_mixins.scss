@@ -21,25 +21,6 @@
 
 }
 
-@mixin clearfix {
-
-  &:before,
-  &:after {
-    content: '';
-    display: table;
-  }
-
-  &:after {
-    clear: both;
-  }
-
-}
-
-%clearfix,
-.clearfix {
-  @include clearfix;
-}
-
 %inline-clear {
   clear: both;
 }
@@ -63,3 +44,9 @@
     transform: translateY(-50%);
   }
 }
+
+@import "mixins/card";
+@import "mixins/border-radius";
+@import "mixins/breakpoints";
+@import "mixins/grid-framework";
+@import "mixins/grid";

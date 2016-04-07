@@ -19,6 +19,7 @@ button:focus {
   white-space: nowrap;
   text-align: center;
   font-weight: 500;
+  height: $button-height;
   line-height: $button-height;
   border: $button-border;
   vertical-align: middle;
@@ -93,7 +94,7 @@ button:focus {
 	&:hover,
   &:focus,
   .open .dropdown-toggle & {
-		background-color: rgba(12, 12, 12, 0.07);
+		background-color: rgba(0, 0, 0, 0.07);
 		border-color: transparent;
 		@include z-depth-0;
 		color: inherit;
@@ -111,7 +112,7 @@ button:focus {
 .btn-icon-toggle {
 	border-radius: 50% !important;
   padding: 0;
-  width: 1em;
+  width: 36px;
 }
 
 // Floating button
@@ -287,15 +288,12 @@ button.btn-floating {
 }
 
 .btn-flat {
+  color: $primary-color;
 
-  &.btn--primary {
+  &:hover,
+  &:focus {
     color: $primary-color;
-
-    &:hover,
-    &:focus {
-      color: $primary-color-dark;
-    }
-
+    background-color: rgba($primary-color, 0.12);
   }
 
   &.btn--default-bright {
