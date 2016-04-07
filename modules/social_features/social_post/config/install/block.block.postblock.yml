@@ -1,0 +1,26 @@
+uuid: 35a885f4-f794-4e07-8739-57dd34e3dfe5
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_post
+    - system
+  theme:
+    - socialbase
+id: postblock
+theme: socialbase
+region: content
+weight: null
+provider: null
+plugin: post_block
+settings:
+  id: post_block
+  label: 'Post block'
+  provider: social_post
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
