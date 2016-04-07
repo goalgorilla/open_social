@@ -125,7 +125,12 @@ a.card:hover {
         left: 0;
         width: 100%;
         height: 100%;
+        pointer-events: none;
         background: rgba(41, 171, 226, 0.8);
+      }
+
+      a {
+        display: block;
       }
 
     }
@@ -136,6 +141,7 @@ a.card:hover {
     @include center(xy);
     width: 30%;
     height: auto;
+    pointer-events: none;
   }
 
   .teaser-date {

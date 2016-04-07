@@ -77,7 +77,7 @@
   {% endif %}
 
   {% if page.secondary_navigation %}
-    <div class="style-secondary only-desktop">
+    <div class="style-secondary hidden-xs">
       <div class="container">
         {{ page.secondary_navigation }}
       </div>
@@ -87,18 +87,18 @@
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
     <div class="row">
-      <div class="col s12 l9 section-header">
+      <div class="col-xs-12 col-md-9 section-header">
         {{ page.title }}
       </div>
 
-      <div class="col s12 l9">
+      <div class="col-xs-12 col-md-9">
         {% block card %}
           {{ page.content }}
         {% endblock %}
       </div>
 
       {% if page.complementary %}
-        <div role="complementary" class="col s12 l3">
+        <div role="complementary" class="col-xs-12 col-md-3">
           {{ page.complementary }}
         </div>
       {% endif %}
