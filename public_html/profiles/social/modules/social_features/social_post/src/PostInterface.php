@@ -21,25 +21,6 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
   // Add get/set methods for your configuration properties here.
 
   /**
-   * Gets the Post name.
-   *
-   * @return string
-   *   Name of the Post.
-   */
-  public function getName();
-
-  /**
-   * Sets the Post name.
-   *
-   * @param string $name
-   *   The Post name.
-   *
-   * @return \Drupal\social_post\PostInterface
-   *   The called Post entity.
-   */
-  public function setName($name);
-
-  /**
    * Gets the Post creation timestamp.
    *
    * @return int
