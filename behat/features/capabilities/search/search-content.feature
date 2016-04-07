@@ -25,7 +25,7 @@ Feature: Search
     And I should see "Topic first"
     And I should not see "Event second"
     # Scenario: Successfully filter search results
-    When I select "topic" from "Filter contents"
-    And I press "submit" in the "Sidebar second"
+    When I select "topic" from "Content type"
+    And I press "Filter" in the "Sidebar second"
     And I should see "Topic first"
     And I should not see "Event first"

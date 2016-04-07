@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\NodeType;
+use Drupal\Core\Url;
 
 /**
  * @file
@@ -12,6 +14,46 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * Enhance the Search Content Filter form.
  */
-function social_search_form_facets_dropdown_widget__search_content_filter_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  $form['type']['#attributes']['class'][] = 'browser-default';
+function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if('views-exposed-form-search-content-page' === $form['#id']){
+
+    // Set current path as form action, in order to keep search input.
+    $form['#action'] = \Drupal::service('path.current')->getPath();
+
+    // Change textfield widget which is only provided by Search API to select.
+    $options = array(
+      'topic' => t('Topic'),
+      'event' => t('Event'),
+    );
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => t('Content type'),
+      '#options' => $options,
+      '#empty_value' => '',
+      '#empty_option' => t('All'),
+      //@TODO: remove this class when theme will be ready.
+      '#attributes' => array(
+        'class' => array('browser-default')
+      )
+    );
+
+    // Always enable the reset button.
+    $form['actions']['reset']['#access'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ *
+ * Enhance the Search Content Filter block.
+ */
+function social_search_block_view_views_exposed_filter_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+ if($build['#id'] === 'exposed_form_search_content_page_sidebar'){
+
+   // Disable cache for exposed filter block to get correct current path,
+   // which is used in $form['#action'].
+   $build['#cache'] = array(
+     'max-age' => 0,
+   );
+ }
 }
