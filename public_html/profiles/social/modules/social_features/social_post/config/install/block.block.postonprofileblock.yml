@@ -1,0 +1,26 @@
+uuid: 0bf401ac-add0-4223-b231-490b49f77919
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_post
+    - system
+  theme:
+    - socialbase
+id: postonprofileblock
+theme: socialbase
+region: content
+weight: -10
+provider: null
+plugin: post_profile_block
+settings:
+  id: post_profile_block
+  label: 'Post on profile block'
+  provider: social_post
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*'
+    negate: false
+    context_mapping: {  }
