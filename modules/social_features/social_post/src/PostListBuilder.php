@@ -24,7 +24,6 @@ class PostListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header['id'] = $this->t('Post ID');
-    $header['name'] = $this->t('Name');
     return $header + parent::buildHeader();
   }
 
@@ -34,14 +33,6 @@ class PostListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\social_post\Entity\Post */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
-      new Url(
-        'entity.post.edit_form', array(
-          'post' => $entity->id(),
-        )
-      )
-    );
     return $row + parent::buildRow($entity);
   }
 
