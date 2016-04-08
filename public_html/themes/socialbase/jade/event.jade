@@ -4,36 +4,35 @@ block title
   title Amsterdam meetup
 
 block pagetitle
-  .block-hero
-    .container
-      .hero-cover
-        .center.cover-wrap
-          a.right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='#!')
-            i.material-icons mode_edit        
-          h1.page-title Amsterdam Meetup
-          p
-            time.eventdate.updated June 6 2016 - 12:00 
-            span @ GoalGorilla, Amsterdam
-          .hero-footer
-            img.img-circle.img-bordered.img-small(src='content/images/avatar0.jpg')
-            .small.margin-top-m
-              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by  
-              a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
-          
-      .primary-action-region
-        button.btn.btn-accent.btn-raised enroll this event
+
+  .cover.container.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
+    .cover-wrap   
+      a.right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='#!')
+        i.material-icons mode_edit        
+      h1.page-title Amsterdam Meetup
+      p
+        time.eventdate.updated June 6 2016 - 12:00 
+        span @ GoalGorilla, Amsterdam
+      .hero-footer
+        img.img-circle.img-bordered.img-small(src='content/images/avatar0.jpg')
+        .small.margin-top-m
+          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by
+          a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+    
+    .primary-action-region
+      p.small.text-default-bright.hidden You have enrolled to this event.
+      button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll this event
 
 block secondary_navigation
-  .style-secondary
-    .container
-      nav(role="navigation" aria-label="Tabs")
-        h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.tabs-center.style-secondary.nav-tabs--xl
-          li.active
-            a(href='event.html') Details
-              span.visually-hidden (active tab)
-          li
-            a(href="event-enrollments.html") Enrollments
+  .container.style-default-bright
+    nav(role="navigation" aria-label="Tabs")
+      h2.visually-hidden Secondary navigation
+      ul.nav.nav-tabs.tabs-center.style-default-bright.nav-tabs--xl
+        li.active
+          a(href='event.html') Details
+            span.visually-hidden (active tab)
+        li
+          a(href="event-enrollments.html") Enrollments
       
 block content
       
@@ -51,7 +50,7 @@ block content
               - var n = Math.floor(Math.random() * (1 - 6) + 6)
                 img.img-circle.img-small(src='content/images/avatar#{n}.jpg')
           
-          a.btn.btn-default(href="#") View all
+          a.btn.btn-default(href="event-enrollments.html") View all
   
     .col-sm-9.col-sm-pull-3
       .card
@@ -85,4 +84,19 @@ block content
 
           p If you are in your early twenties, willing to work all night for the love of this industry, and have few pressing expenses, then building up your professional reputation on open source projects and sharing your ideas is a great thing to do. It’s how we all got started, how I and the majority of my peers found our voices. As I get older, however, I have started to feel the pressure of the finite amount of time we all have. I’ve started to see people of my generation taking a step back. I’ve seen people leave the industry, temporarily or permanently, due to burnout. Others disappear into companies, often in managerial (rather than hands-on) roles that leave limited time for giving back to the community.
 
-    
+block scriptinline
+  script.
+    jQuery(document).ready(function($){
+      $('#enrollButton').on('click', function () {
+        
+        // button text will toggle "Cancel enrollment"
+        var buttonState = $(this).data("toggle-text");
+        $(this).data('toggle-text', $(this).text()).text(buttonState);
+        
+        // button active state will toggle
+        $(this).toggleClass('active') 
+        
+        // show / hide previous text element
+        $(this).prev('p').toggleClass('hidden');
+      })  
+    });

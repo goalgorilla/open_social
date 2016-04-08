@@ -31,7 +31,7 @@ var folder = {
   css: 'css',
   scss: 'css/src',
   bootstrap_scss: 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap',
-  bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts/bootstrap',
+  bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts',
   js: 'js',
   js_comp: 'js/components',
   js_project: 'js/project',
@@ -45,7 +45,6 @@ var glob = {
   css: folder.css + '/*.css',
   scss: folder.css + '/src/**/*.scss',
   bootstrap_scss: folder.bootstrap_scss + '/**/*.scss',
-  bootstrap_js: folder.bootstrap_js + '/*.js',
   js: folder.js + '/**/*.js',
   jade: folder.jade + '/*.jade',
   font: 'font/**/*',
@@ -246,11 +245,9 @@ gulp.task('bootstrap-sass', function() {
 });
 
 gulp.task('bootstrap-js', function() {
-  stream = gulp.src(glob.bootstrap_js)
-    .pipe( gulp.dest(folder.js + '/bootstrap') )
-    .pipe( concat('bootstrap.js') )
+  stream = gulp.src(folder.bootstrap_js + '/bootstrap.min.js')
     .pipe( gulp.dest(folder.js) )
-    .pipe( gulp.dest(folder.dist + '/js') )
+    .pipe( gulp.dest(folder.dist + "/js") )
   return stream;
 });
 
