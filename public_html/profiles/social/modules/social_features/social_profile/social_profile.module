@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * The Social profile module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Fix theme issues in profile fields.
+ */
+function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+  switch ($field_definition->getName()) {
+    case 'field_profile_phone_number':
+      // @TODO: remove this when rule for .form-tel elements will be added.
+      $element['value']['#attributes']['class'][] = 'form-text';
+      break;
+    case 'field_profile_address':
+      // @TODO: remove this when script for custom selects will be added.
+      $element['country_code']['#attributes']['class'][] = 'browser-default';
+      break;
+  }
+}
