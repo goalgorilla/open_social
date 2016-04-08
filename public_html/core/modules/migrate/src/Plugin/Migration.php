@@ -7,11 +7,13 @@
 
 namespace Drupal\migrate\Plugin;
 
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\migrate\Exception\RequirementsException;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateSkipRowException;
 use Drupal\Component\Utility\NestedArray;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the Migration plugin.
@@ -20,7 +22,7 @@ use Drupal\Component\Utility\NestedArray;
  * container for the information about a single migration such as the source,
  * process and destination plugins.
  */
-class Migration extends PluginBase implements MigrationInterface, RequirementsInterface {
+class Migration extends PluginBase implements MigrationInterface, RequirementsInterface, ContainerFactoryPluginInterface {
 
   /**
    * The migration ID (machine name).
@@ -129,7 +131,9 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
   protected $destinationIds = [];
 
   /**
-   * Information on the high water mark.
+   * Information on the property used as the high watermark.
+   *
+   * Array of 'name' & (optional) db 'alias' properties used for high watermark.
    *
    * @var array
    */
@@ -217,6 +221,33 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
    */
   protected $migrationPluginManager;
 
+  /**
+   *  The source plugin manager.
+   *
+   * @var \Drupal\migrate\Plugin\MigratePluginManager
+   */
+  protected $sourcePluginManager;
+
+  /**
+   * Thep process plugin manager.
+   *
+   * @var \Drupal\migrate\Plugin\MigratePluginManager
+   */
+  protected $processPluginManager;
+
+  /**
+   * The destination plugin manager.
+   *
+   * @var \Drupal\migrate\Plugin\MigrateDestinationPluginManager
+   */
+  protected $destinationPluginManager;
+
+  /**
+   * The ID map plugin manager.
+   *
+   * @var \Drupal\migrate\Plugin\MigratePluginManager
+   */
+  protected $idMapPluginManager;
 
   /**
    * Labels corresponding to each defined status.
@@ -232,13 +263,52 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
   ];
 
   /**
-   * {@inheritdoc}
+   * Constructs a Migration.
+   *
+   * @param array $configuration
+   *   Plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\migrate\Plugin\MigrationPluginManagerInterface $migration_plugin_manager
+   *   The migration plugin manager.
+   * @param \Drupal\migrate\Plugin\MigratePluginManager $source_plugin_manager
+   *   The source migration plugin manager.
+   * @param \Drupal\migrate\Plugin\MigratePluginManager $process_plugin_manager
+   *   The process migration plugin manager.
+   * @param \Drupal\migrate\Plugin\MigrateDestinationPluginManager $destination_plugin_manager
+   *   The destination migration plugin manager.
+   * @param \Drupal\migrate\Plugin\MigratePluginManager $idmap_plugin_manager
+   *   The ID map migration plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationPluginManagerInterface $migration_plugin_manager, MigratePluginManager $source_plugin_manager, MigratePluginManager $process_plugin_manager, MigrateDestinationPluginManager $destination_plugin_manager, MigratePluginManager $idmap_plugin_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->migrationPluginManager = $migration_plugin_manager;
+    $this->sourcePluginManager = $source_plugin_manager;
+    $this->processPluginManager = $process_plugin_manager;
+    $this->destinationPluginManager = $destination_plugin_manager;
+    $this->idMapPluginManager = $idmap_plugin_manager;
+
     foreach ($plugin_definition as $key => $value) {
       $this->$key = $value;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.migration'),
+      $container->get('plugin.manager.migrate.source'),
+      $container->get('plugin.manager.migrate.process'),
+      $container->get('plugin.manager.migrate.destination'),
+      $container->get('plugin.manager.migrate.id_map')
+    );
   }
 
   /**
@@ -263,6 +333,9 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
    *
    * @return mixed
    *   The value for that property, or NULL if the property does not exist.
+   *
+   * @deprecated in Drupal 8.1.x, will be removed before Drupal 9.0.x. Use
+   *   more specific getters instead.
    */
   public function get($property) {
     return isset($this->$property) ? $this->$property : NULL;
@@ -283,7 +356,7 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
    */
   public function getSourcePlugin() {
     if (!isset($this->sourcePlugin)) {
-      $this->sourcePlugin = \Drupal::service('plugin.manager.migrate.source')->createInstance($this->source['plugin'], $this->source, $this);
+      $this->sourcePlugin = $this->sourcePluginManager->createInstance($this->source['plugin'], $this->source, $this);
     }
     return $this->sourcePlugin;
   }
@@ -302,11 +375,11 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
         $this->processPlugins[$index][$property] = array();
         foreach ($configurations as $configuration) {
           if (isset($configuration['source'])) {
-            $this->processPlugins[$index][$property][] = \Drupal::service('plugin.manager.migrate.process')->createInstance('get', $configuration, $this);
+            $this->processPlugins[$index][$property][] = $this->processPluginManager->createInstance('get', $configuration, $this);
           }
           // Get is already handled.
           if ($configuration['plugin'] != 'get') {
-            $this->processPlugins[$index][$property][] = \Drupal::service('plugin.manager.migrate.process')->createInstance($configuration['plugin'], $configuration, $this);
+            $this->processPlugins[$index][$property][] = $this->processPluginManager->createInstance($configuration['plugin'], $configuration, $this);
           }
           if (!$this->processPlugins[$index][$property]) {
             throw new MigrateException("Invalid process configuration for $property");
@@ -351,7 +424,7 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
       throw new MigrateSkipRowException;
     }
     if (!isset($this->destinationPlugin)) {
-      $this->destinationPlugin = \Drupal::service('plugin.manager.migrate.destination')->createInstance($this->destination['plugin'], $this->destination, $this);
+      $this->destinationPlugin = $this->destinationPluginManager->createInstance($this->destination['plugin'], $this->destination, $this);
     }
     return $this->destinationPlugin;
   }
@@ -363,7 +436,7 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
     if (!isset($this->idMapPlugin)) {
       $configuration = $this->idMap;
       $plugin = isset($configuration['plugin']) ? $configuration['plugin'] : 'sql';
-      $this->idMapPlugin = \Drupal::service('plugin.manager.migrate.id_map')->createInstance($plugin, $configuration, $this);
+      $this->idMapPlugin = $this->idMapPluginManager->createInstance($plugin, $configuration, $this);
     }
     return $this->idMapPlugin;
   }
@@ -434,9 +507,6 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
    *   The plugin manager.
    */
   protected function getMigrationPluginManager() {
-    if (!isset($this->migrationPluginManager)) {
-      $this->migrationPluginManager = \Drupal::service('plugin.manager.migration');
-    }
     return $this->migrationPluginManager;
   }
 
@@ -611,5 +681,40 @@ class Migration extends PluginBase implements MigrationInterface, RequirementsIn
       $definition[$key] = isset($this->$key) ? $this->$key : $value;
     }
     return $definition;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDestinationConfiguration() {
+    return $this->destination;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSourceConfiguration() {
+    return $this->source;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHighWaterProperty() {
+    return $this->highWaterProperty;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTrackLastImported() {
+    $this->trackLastImported;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDestinationIds() {
+    $this->destinationIds;
   }
 }

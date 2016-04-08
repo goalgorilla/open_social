@@ -7,13 +7,11 @@
 
 namespace Drupal\Tests\migrate\Kernel;
 
-use Drupal\migrate\Plugin\Migration;
 use Drupal\migrate\MigrateExecutable;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Row;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\Tests\migrate\Kernel\MigrateTestBase;
 
 /**
  * Tests rolling back of imports.
@@ -66,7 +64,7 @@ class MigrateRollbackTest extends MigrateTestBase {
       'destination' => ['plugin' => 'entity:taxonomy_vocabulary'],
     ];
 
-    $vocabulary_migration = new Migration([], uniqid(), $definition);
+    $vocabulary_migration = \Drupal::service('plugin.manager.migration')->createStubMigration($definition);
     $vocabulary_id_map = $vocabulary_migration->getIdMap();
 
     $this->assertTrue($vocabulary_migration->getDestinationPlugin()->supportsRollback());
@@ -107,7 +105,7 @@ class MigrateRollbackTest extends MigrateTestBase {
       'migration_dependencies' => ['required' => ['vocabularies']],
     ];
 
-    $term_migration = new Migration([], uniqid(), $definition);
+    $term_migration = \Drupal::service('plugin.manager.migration')->createStubMigration($definition);
     $term_id_map = $term_migration->getIdMap();
 
     $this->assertTrue($term_migration->getDestinationPlugin()->supportsRollback());
@@ -180,7 +178,7 @@ class MigrateRollbackTest extends MigrateTestBase {
       'migration_dependencies' => ['required' => ['vocabularies']],
     ];
 
-    $settings_migration = new Migration([], uniqid(), $definition);
+    $settings_migration = \Drupal::service('plugin.manager.migration')->createStubMigration($definition);
     $this->assertFalse($settings_migration->getDestinationPlugin()->supportsRollback());
   }
 
