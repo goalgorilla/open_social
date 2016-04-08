@@ -316,6 +316,13 @@ gulp.task('deploy', ['build'], function() {
     .pipe( deploy() );
 });
 
+
+// ===================================================
+// Run this one time when you install the project so you have all files in the dist folder
+// ===================================================
+gulp.task('init', ['images', 'content', 'libs', 'font']);
+
+
 gulp.task('scripts', ['script-components', 'script-project', 'script-vendor', 'script-drupal', 'script-init']);
 
 gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);

@@ -1,65 +1,26 @@
-input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  font-family: inherit;
-}
-
-button:focus {
-  outline: none;
-}
-
 // Shared styles
 // --------------------------------------------------
 .btn {
-  display: inline-block;
-  padding: $button-padding;
+  font-size: $button-font-size;
   border-radius: $button-radius;
   text-transform: uppercase;
-  font-size: $button-font-size;
-  white-space: nowrap;
-  text-align: center;
-  font-weight: 500;
-  height: $button-height;
-  line-height: $button-height;
-  border: $button-border;
-  vertical-align: middle;
   touch-action: manipulation;
-  cursor: pointer;
-  user-select: none;
   transition: .2s ease-out;
   will-change: opacity, transform;
-
-  &:hover {
-    @include z-depth-1-half;
-  }
-
-  &:active,
-  &.active
-  &:focus {
-		outline: 0;
-	}
-
-	&, &:active, &.active {
-		&:focus {
-			outline: 0;
-		}
-	}
-
-  &.disabled,
-	&[disabled],
-	[disabled] & {
-		border-color: transparent;
-		filter: grayscale(1);
-    opacity: 0.6;
-		box-shadow: none;
-    pointer-events: none;
-	}
+  max-width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 
   i {
     font-size: $button-font-size;
     line-height: inherit;
   }
 
+}
+
+.btn-accent {
+  @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
 }
 
 // Button raised
@@ -142,11 +103,6 @@ button:focus {
   line-height: $button-floating-large-size;
 }
 
-// button fix
-button.btn-floating {
-  border: $button-border;
-}
-
 // Fixed Action Button
 .fixed-action-btn {
   &.active {
@@ -215,22 +171,6 @@ button.btn-floating {
 
   &.btn-default-light {
     color: $grey-light-1;
-  }
-
-}
-
-// Large button
-.btn--large {
-  font-size: $button-large-font-size;
-}
-
-// Block button
-.btn--block {
-  width: 100%;
-  display: block;
-
-  + .btn {
-    margin-top: 5px;
   }
 
 }
