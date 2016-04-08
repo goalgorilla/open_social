@@ -2,16 +2,20 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_self_introduction
     - profile.type.profile
   module:
+    - address
     - field_group
+    - telephone
     - text
 third_party_settings:
   field_group:
@@ -45,7 +49,7 @@ third_party_settings:
       children:
         - field_profile_self_introduction
       parent_name: ''
-      weight: 4
+      weight: 3
       label: 'Self introduction'
       format_type: fieldset
       format_settings:
@@ -58,7 +62,7 @@ third_party_settings:
         - field_profile_interests
         - field_profile_expertise
       parent_name: ''
-      weight: 6
+      weight: 4
       label: 'Expertise and interests'
       format_type: fieldset
       format_settings:
@@ -66,11 +70,32 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+    group_profile_contact_info:
+      children:
+        - field_profile_phone_number
+        - field_profile_address
+      parent_name: ''
+      weight: 2
+      label: 'Contact information'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+_core:
+  default_config_hash: afAnARIdK3VCCf6PZRdtG74Jj6mBLb1047ZhaetZP6I
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
 mode: default
 content:
+  field_profile_address:
+    weight: 7
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
   field_profile_expertise:
     weight: 7
     settings:
@@ -115,6 +140,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+  field_profile_phone_number:
+    weight: 6
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
   field_profile_self_introduction:
     weight: 5
     settings:
