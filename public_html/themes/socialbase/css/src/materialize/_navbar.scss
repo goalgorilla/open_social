@@ -1,0 +1,73 @@
+// Styleguide override
+.styleguide .container {
+    width: 100% !important;
+}
+
+.navbar-default {
+  border: 0;
+  background-color: $brand-primary;
+}
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:focus,
+.navbar-default .navbar-brand:hover {
+  background-color: $brand-secondary;
+  padding: 10px 15px;
+  width: 60px;
+}
+.navbar-default .navbar-nav > li > a {
+  color: $grey-light-3;
+}
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li > a:hover {
+  color: $grey-light-3;
+
+  &:after{
+    content: "";
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: $brand-secondary;
+  }
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover {
+  color: $grey-light-3;
+  background-color: $brand-secondary;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+  transition: color .2s ease, background-color .2s ease;
+  color: $grey-light-3;
+  background-color: $brand-secondary;
+}
+
+// Temporary fix for aligning icons
+.navbar-default .navbar-nav .material-icons {
+  @include MQ($small) {
+    float: left;
+  }
+}
+
+// Hacking into responsive bootstrap behaviour
+.navbar-right {
+  margin-top: 0;
+  float: right;
+
+  & > li {
+    display: inline-block;
+
+    a {
+      padding: 13px 15px 8px;
+    }
+  }
+  @include MQ($small) {
+    li {
+      display: block;
+    }
+  }
+}

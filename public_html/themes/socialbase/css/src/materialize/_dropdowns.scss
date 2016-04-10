@@ -1,0 +1,68 @@
+.dropdown-menu {
+  padding: 0;
+
+  @include MQ($small) {
+    &.notifications-nav {
+        min-width: 320px;
+    }
+  }
+
+  & > li:last-child > a {
+    border-bottom-left-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+  }
+
+  .dropdown-header,
+  .dropdown-footer {
+    padding: 15px 10px !important;
+    background-color: $grey-light-3;
+    text-align: center;
+
+    a,
+    span {
+      font-weight: bold;
+      text-transform: uppercase;
+      color: $grey-light-1;
+      font-size: 14px;
+    }
+  }
+  .dropdown-footer {
+    border-bottom-left-radius: $border-radius-base;
+    border-bottom-right-radius: $border-radius-base;
+  }
+  .user-picture {
+    float: left;
+    margin-right: 20px;
+
+    img {
+      width: 35px;
+      border-radius: 50%;
+    }
+  }
+  .user-name {
+    color: $grey-dark-1;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .user-action {
+    color: $grey-light-1;
+  }
+}
+.dropdown-toggle + ul > li > .material-icons {
+  margin-right: 10px;
+  font-size: 16px;
+}
+.navbar-nav .open .dropdown-menu {
+  position: fixed !important;
+  top: 50px;
+  background-color: white !important;
+  width: 100% !important;
+
+  & > li > a{
+    padding: 15px 10px !important;
+  }
+
+  @include MQ($small) {
+    position: absolute !important;
+  }
+}
