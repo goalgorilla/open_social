@@ -1,0 +1,176 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.server.social_database
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_interests
+  module:
+    - search_api
+    - profile
+id: social_users
+name: 'Social Users'
+description: 'Default users index created for the Social distribution.'
+read_only: false
+field_settings:
+  search_api_language:
+    label: 'Item language'
+    datasource_id: null
+    property_path: search_api_language
+    type: string
+    indexed_locked: true
+    type_locked: true
+  rendered_item:
+    label: 'Rendered HTML output'
+    datasource_id: null
+    property_path: rendered_item
+    type: text
+    indexed_locked: true
+  field_profile_expertise:
+    label: Expertise
+    datasource_id: 'entity:profile'
+    property_path: field_profile_expertise
+    type: integer
+  field_profile_interests:
+    label: Interests
+    datasource_id: 'entity:profile'
+    property_path: field_profile_interests
+    type: integer
+processor_settings:
+  add_url:
+    plugin_id: add_url
+    settings:
+      weights:
+        preprocess_index: -30
+  language:
+    plugin_id: language
+    settings:
+      weights:
+        preprocess_index: -30
+  highlight:
+    plugin_id: highlight
+    settings:
+      highlight: always
+      excerpt: true
+      excerpt_length: 256
+      prefix: '<strong>'
+      suffix: '</strong>'
+      weights:
+        postprocess_query: 0
+  html_filter:
+    plugin_id: html_filter
+    settings:
+      fields:
+        - search_api_language
+        - rendered_item
+      title: true
+      alt: true
+      tags:
+        h1: 5
+        h2: 3
+        h3: 2
+        strong: 2
+        b: 2
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+  ignorecase:
+    plugin_id: ignorecase
+    settings:
+      fields:
+        - search_api_language
+        - rendered_item
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+  rendered_item:
+    plugin_id: rendered_item
+    settings:
+      roles:
+        authenticated: authenticated
+      view_mode:
+        'entity:profile':
+          profile: search_index
+          main: ''
+      weights:
+        preprocess_index: -10
+  stopwords:
+    plugin_id: stopwords
+    settings:
+      fields:
+        - rendered_item
+      stopwords:
+        - a
+        - an
+        - and
+        - are
+        - as
+        - at
+        - be
+        - but
+        - by
+        - for
+        - if
+        - in
+        - into
+        - is
+        - it
+        - 'no'
+        - not
+        - of
+        - 'on'
+        - or
+        - s
+        - such
+        - t
+        - that
+        - the
+        - their
+        - then
+        - there
+        - these
+        - they
+        - this
+        - to
+        - was
+        - will
+        - with
+      weights:
+        preprocess_index: -5
+        preprocess_query: -2
+        postprocess_query: -2
+  tokenizer:
+    plugin_id: tokenizer
+    settings:
+      fields:
+        - rendered_item
+      spaces: ''
+      overlap_cjk: 1
+      minimum_word_size: '3'
+      weights:
+        preprocess_index: -6
+        preprocess_query: -6
+  transliteration:
+    plugin_id: transliteration
+    settings:
+      fields:
+        - search_api_language
+        - rendered_item
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+options:
+  index_directly: true
+  cron_limit: 50
+datasource_settings:
+  'entity:profile':
+    plugin_id: 'entity:profile'
+    settings:
+      languages: {  }
+      default: '1'
+      bundles: {  }
+tracker_settings:
+  default:
+    plugin_id: default
+    settings: {  }
+server: social_database
