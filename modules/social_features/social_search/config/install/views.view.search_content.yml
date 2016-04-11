@@ -219,7 +219,7 @@ display:
           title: ''
           default_argument_type: fixed
           default_argument_options:
-            argument: ''
+            argument: all
           default_argument_skip_url: false
           summary_options: null
           summary:
@@ -249,6 +249,22 @@ display:
     display_plugin: page
     id: page
     display_title: Page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: search/content/%keys
+      exposed_block: true
+    cache_metadata:
+      max-age: 0
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  page_no_value:
+    display_plugin: page
+    id: page_no_value
+    display_title: 'Page (no value)'
     position: 1
     display_options:
       display_extenders: {  }

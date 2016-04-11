@@ -35,16 +35,10 @@ class SearchContentForm extends FormBase {
       '#type' => 'textfield',
       '#title' => t('Search the entire website'),
     );
-    // Prefill search input if we are on search content page.
+
+    // Prefill search input on the search content page.
     if (\Drupal::routeMatch()->getRouteName() == 'view.search_content.page') {
-      // As function arg() is deprecated this is the only way to retrieve
-      // an array which contains the path pieces.
-      // See: https://www.drupal.org/node/2274705
-      $current_path = \Drupal::service('path.current')->getPath();
-      $path_args = explode('/', $current_path);
-      if(!empty($path_args[3])){
-        $form['search_input']['#default_value'] = $path_args[3];
-      }
+      $form['search_input']['#default_value'] = \Drupal::routeMatch()->getParameter('keys');
     }
 
     $form['actions'] = array('#type' => 'actions');
@@ -60,10 +54,15 @@ class SearchContentForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Redirect to the search content page with filters in the GET parameters.
-    $search_content_page = Url::fromRoute('view.search_content.page');
-    $search_input = $form_state->getValue('search_input');
-    $redirect_path = $search_content_page->toString() . '/' . $search_input;
+    if(empty($form_state->getValue('search_input'))){
+      // Redirect to the search content page with empty search values.
+      $search_content_page = Url::fromRoute('view.search_content.page_no_value');
+    } else {
+      // Redirect to the search content page with filters in the GET parameters.
+      $search_input = $form_state->getValue('search_input');
+      $search_content_page = Url::fromRoute('view.search_content.page', array('keys' => $search_input));
+    }
+    $redirect_path = $search_content_page->toString();
 
     $query = UrlHelper::filterQueryParameters(\Drupal::request()->query->all());
 
