@@ -4,10 +4,12 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero.hidden-xs.hero-cover
+  .cover.container
     .cover-wrap
-      img.img-circle.img-bordered(src='content/images/avatar0.jpg')
       h1.page-title Michael Angarano
+      img.img-circle.img-bordered(src='content/images/avatar0.jpg')
+      br
+      br
       button.btn.btn-flat.btn--default-bright
         i.material-icons.left check
         | Following
@@ -45,11 +47,11 @@ block content
       h2.h3.section-title My events
     
     .col-xs-12.col-sm-3.right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn--block.btn--default-dark.btn-raised(href='#!') 
+      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-event.html') 
         i.material-icons.left add
         | Add an event
 
-      a.btn.btn--block.btn--primary.btn-raised.visible-xs-block.js-open-canvas
+      button.waves-effect.waves-light.btn.btn-block.btn--primary.visible-xs-block.js-open-canvas
         i.material-icons.left tune
         | Filters
       
@@ -62,20 +64,20 @@ block content
     
         .offcanvas-body
           form
-            .form-item.form__item-radios
-              label.form__label Event status 
-              .form__radios
-                .form-item.form__item-radio
-                  input.form__radio#radio1(name='event', type='radio', checked)
-                  label.label--option(for='radio1') Upcoming
-                .form-item.form__item-radio
-                  input.form__radio#radio2(name='event', type='radio')
-                  label.label--option(for='radio2') Past 
-                .form-item.form__item-radio
-                  input.form__radio#radio3(name='event', type='radio')
-                  label.label--option(for='radio3') Unpublished
-            .form-actions.form-wrapper.clearfix
-              button.btn.btn-flat.js-close-canvas.right Done
+            .form-group.radios
+              label Event status 
+              .radio
+                input#radio1(name='event', type='radio', checked)
+                label(for='radio1') Upcoming
+              .radio
+                input#radio2(name='event', type='radio')
+                label(for='radio2') Past
+              .radio
+                input#radio3(name='event', type='radio')
+                label(for='radio3') Unpublished
+            .form-group.margin-top-l.clearfix.visible-xs-block
+                button.btn.btn-default.js-close-canvas.right Done
+              
 
     .col-xs-12.col-sm-9
       include molecules/_event1.jade

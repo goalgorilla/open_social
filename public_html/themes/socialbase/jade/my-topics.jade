@@ -4,10 +4,12 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero.hidden-xs.profile-cover
+  .cover.container
     .cover-wrap
-      img.circle.img-bordered(src='content/images/avatar0.jpg')
-      h1.page-title.h2 Michael Angarano
+      h1.page-title Michael Angarano
+      img.img-circle.img-bordered(src='content/images/avatar0.jpg')
+      br
+      br
       button.btn.btn-flat.btn--default-bright
         i.material-icons.left check
         | Following
@@ -45,11 +47,11 @@ block content
       h2.h3.section-title My topics
     
     .col-xs-12.col-sm-3.right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn--block.btn--default-dark.btn-raised(href='#!') 
+      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-topic.html') 
         i.material-icons.left add
         | Add a topic
 
-      a.btn.btn--block.btn--primary.btn-raised.visible-xs-block.js-open-canvas
+      btn.waves-effect.waves-light.btn.btn-block.btn--primary.btn-raised.visible-xs-block.js-open-canvas
         i.material-icons.left tune
         | Filters
       
@@ -62,21 +64,21 @@ block content
         
         .offcanvas-body
           form
-            .form-item
-              label.form__label Topic type
-              select.browser-default(onchange="enableMe('reset-button', this)")
+            .form-group
+              label Topic type
+              select.form-control(onchange="enableMe('reset-button', this)")
                 option(value="", selected="") All types
                 option(value="blog") Blog
                 option(value="discussion") Discussion
                 option(value="topic") Topic
-            .form-item
-              label.form__label Status
-              select.browser-default(onchange="enableMe('reset-button', this)")
+            .form-group
+              label Status
+              select.form-control(onchange="enableMe('reset-button', this)")
                 option(value="", selected="") All statusses
                 option(value="published") Published
                 option(value="unpublished") Unpublished
-            .form-actions.form-wrapper.clearfix
-              input#reset-button.btn.btn-flat.right.disabled(type="submit", value="Reset")
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-primary.right.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-9
       include molecules/_topic1.jade

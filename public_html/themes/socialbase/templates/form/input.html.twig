@@ -19,7 +19,6 @@
  * @ingroup templates
  */
 #}
-
 {%
   set classes = [
     element['#type'] == 'email' ? 'form-text',
@@ -27,4 +26,26 @@
   ]
 %}
 
-<input{{ attributes.addClass(classes) }} />{{ children }}
+{% spaceless %}
+  {% if input_group %}
+    <div class="input-group">
+  {% endif %}
+
+  {% if prefix %}
+    {{ prefix }}
+  {% endif %}
+
+  {% block input %}
+    <input{{ attributes.addClass(classes) }} />
+  {% endblock %}
+
+  {% if suffix %}
+    {{ suffix }}
+  {% endif %}
+
+  {% if input_group %}
+    </div>
+  {% endif %}
+
+  {{ children }}
+{% endspaceless %}

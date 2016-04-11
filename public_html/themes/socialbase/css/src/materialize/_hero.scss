@@ -4,15 +4,14 @@
   color: white;
   background-color: $primary-color;
   width: 100%;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .cover-img {
   background-size: cover;
   background-position: center;
-  text-align: center;
-  padding-top: 45px;
-  padding-bottom: 20px;
-  position: relative;
 
   &:before{
     display: block;
@@ -35,12 +34,18 @@
   z-index: 2;
 
   @include MQ($medium) {
-    padding-top: 40px;
     height: 335px;
   }
 
+
 }
 
+.page-title {
+	color: white;
+  font-weight: 700;
+  text-align: center;
+	margin: 1em 0;
+}
 
 .hero-footer {
   padding-top: 20px;

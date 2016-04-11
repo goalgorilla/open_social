@@ -29,15 +29,13 @@ block content
         .card-body
 
           form.user-login-form(accept-charset='UTF-8')
-            .form-item.form__type-textfield
-              .input-field
-                label(for='edit-name') Username
-                input#edit-name.form-text(type='text', autocorrect='none', autofocus='autofocus', required='required')
+            .form-group
+              label(for='edit-name') Username
+              input.form-control(type='text', autocorrect='none', autofocus='autofocus', required)
 
-            .form-item.form__type-textfield
-              .input-field
-                label(for='edit-pass') Password
-                input#edit-pass.form-text(type='password', required='required')
+            .form-group
+              label(for='edit-pass') Password
+              input.form-control(type='password', required='required')
                 
             #edit-actions.form-actions.form-wrapper.clearfix
-              input#edit-submit.btn.btn-flat.right(type='submit', value='Log in')
+              input.btn.btn-primary.right(type='submit', value='Log in')

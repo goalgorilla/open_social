@@ -644,7 +644,7 @@ html(lang="en")
                    $('input#input_text, textarea#textarea1').characterCounter();
                   });
                 
-          .col.m3.l2.hidden-mobile
+          .col-sm-3.col-md-2.hidden-xs
             .toc-wrapper
               ul.section.table-of-contents
                 li
@@ -670,10 +670,10 @@ html(lang="en")
 
   
     include ./layout/_scripts.jade
-    script(src="extras/date_picker/picker.js")
-    script(src="extras/date_picker/picker.date.js")
-    link(href='extras/noUiSlider/nouislider.css', rel='stylesheet')
-    script(src="extras/noUiSlider/nouislider.js")
+    script(src="libs/date_picker/picker.js")
+    script(src="libs/date_picker/picker.date.js")
+    link(href='libs/noUiSlider/nouislider.css', rel='stylesheet')
+    script(src="libs/noUiSlider/nouislider.js")
     script(type='text/javascript').
       var slider = document.getElementById('range-input');
       noUiSlider.create(slider, {

@@ -1,0 +1,224 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Create Event
+
+block pagetitle
+  .block-hero.cover
+    .container
+      h1.page-title.h2 Create event          
+
+      
+block content
+      
+  .row.margin-top-l
+    .col-md-9.margin-bottom-l
+    
+      form.node-form
+      
+        #content.card.card-underline.scrollspy
+        
+          .card-head
+            header Title and teaser image
+      
+          .card-body
+
+            .form-group
+              label.form-required Title
+              input.form-control.required(type="text")
+                  
+            .form-group.form__type-managed-file
+              label.form__label Image
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                  i.material-icons.left file_upload
+                  | Upload
+              .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+
+          
+        #placement.card.card-underline.scrollspy
+        
+          .card-head
+            header Placement and visibility
+      
+          .card-body 
+
+            .form-group.radios
+              label.form-required Add event to
+              .radio
+                input#profile(type='radio', name='placement')
+                label(for='profile') My profile
+              .radio
+                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
+                label(for='group') A group I am a member of:
+            #selectagroup(style='display:none;')
+              select.form-control
+                option(value='', disabled='', selected='') Select a group
+                option(value='1') Group 1
+                option(value='2') Group 2
+                option(value='3') Group 3
+        
+            .form-group.radios
+              label.form-required Visibility
+              .form__radios
+                .radio
+                  input#public(type='radio', name='visibility')
+                  label(for='public') Public
+                  .help-block Community visible to all visitors of the platform
+                .radio
+                  input#community(type='radio', name='visibility')
+                  label(for='community') Community
+                  .help-block visible only to logged in members
+                #visibilitygroup.radio(style='display: none')
+                  input#groups.form-radio(type='radio', name='visibility')
+                  label.option(for='groups') Groups
+                  .help-block Visible only to group members
+
+        #eventtime.card.card-underline.scrollspy
+        
+          .card-head
+            header Date and time
+      
+          .card-body
+            .row
+              .col-sm-6
+                .form-group
+                  label.form-required Start date
+                  input.form-control.datepicker(type="text")
+                  .help-block Please fill in the start date of your event
+              .col-sm-6
+                .form-group
+                  label.form-required Start time
+                  input.form-control.timepicker(type="text")
+            
+            .row
+              .col-sm-6
+                .form-group
+                  label End date
+                  input.form-control.datepicker(type="text")    
+              .col-sm-6
+                .form-group
+                  label End time
+                  input.form-control.timepicker(type="text")
+
+        #location.card.card-underline.scrollspy
+        
+          .card-head
+            header Location
+      
+          .card-body
+            
+            .form-group
+              label.form-required Venue name
+              input.form-control(type="text", required)
+
+            .form-group
+              label Country
+              select.form-control
+                option(value='', disabled='', selected='') Choose a country
+                option(value='1') Option 1
+                option(value='2') Option 2
+                option(value='3') Option 3
+            
+            .form-group
+              label Post code
+              input.form-control(type="text")  
+              
+            .form-group
+              label City
+              input.form-control(type="text")  
+                
+            .form-group
+              label Address
+              input.form-control(type="text")    
+
+
+    
+        #description.card.card-underline.scrollspy
+        
+          .card-head
+            header Description
+      
+          .card-body
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control
+        
+        #attachments.card.card-underline.scrollspy
+        
+          .card-head
+            header Attachments
+      
+          .card-body
+            .form-group
+              label Files
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                  i.material-icons.left file_upload
+                  | Upload
+              .help-block 15 MB per file limit - Allowed types: xls xlsx doc 
+            
+        #comment-settings.form-item.card.scrollspy.tabs-left
+          ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
+            li.active
+              a(href="#comments") Comment settings
+                
+          .card-body.tab-content
+            #comments.tab-pane.active
+              .form-group.radios
+                label.form-required Comments
+                .radio
+                  input#open(type='radio', checked, name='comments')
+                  label(for='open') Open
+                  .help-block Users with the "Post comments" permission can post comments.
+                .radio
+                  input#closed(type='radio', name='comments')
+                  label(for='closed') Closed
+                  .help-block Users cannot post comments.
+              
+        .form-wrapper.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
+
+    .col-md-3
+      .toc-wrapper
+        ul.section.table-of-contents
+          li
+            a(href='#content') Title &amp; image
+          li
+            a(href='#placement') Placement and visibility
+          li 
+            a(href='#eventtime') Date &amp; time
+          li 
+            a(href='#location') Location
+          li 
+            a(href='#description') Description
+          li
+            a(href='#attachments') Attachments
+          li
+            a(href='#comment-settings') Comment settings
+
+        
+block scriptinline  
+  script(src='libs/ckeditor/ckeditor.js')
+  script(src='libs/ckeditor/adapters/jquery.js')
+  
+  script(src="libs/date_picker/picker.js")
+  script(src="libs/date_picker/picker.date.js")
+  script(src="libs/date_picker/picker.time.js")
+  
+  script.
+    jQuery(document).ready(function($){
+      $( '#ckeditor' ).ckeditor();  
+      $('.datepicker').pickadate({selectYears: 20});
+      $('.timepicker').pickatime();
+    });
+    
+    function showMe (it, it2, box) {
+      var visibility = (box.checked) ? "block" : "none";
+      document.getElementById(it).style.display = visibility;
+      document.getElementById(it2).style.display = visibility;
+    }

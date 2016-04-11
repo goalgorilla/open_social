@@ -11,12 +11,6 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-
-  i {
-    font-size: $button-font-size;
-    line-height: inherit;
-  }
-
 }
 
 .btn-accent {
@@ -90,6 +84,13 @@
     width: $button-floating-large-size;
     height: $button-floating-large-size;
   }
+}
+
+// Icons in buttons
+
+.icon-font-loaded .btn i {
+  font-size: $button-font-size * 1.143;
+  line-height: 35px - ($padding-base-vertical * 2);
 }
 
 .icon-font-loaded .btn-floating i {

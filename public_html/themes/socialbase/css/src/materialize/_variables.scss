@@ -112,8 +112,8 @@ $link-hover-decoration: none !default;
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
-$padding-base-vertical:     .375rem !default;
-$padding-base-horizontal:   1rem !default;
+$padding-base-vertical:     6px !default;
+$padding-base-horizontal:   12px !default;
 
 $padding-large-vertical:    10px !default;
 $padding-large-horizontal:  16px !default;
@@ -199,7 +199,7 @@ $border-radius-base: 10px;
  // Shared styles
  $button-font-size: 0.875rem !default;
  $button-height: 36px !default;
- $button-padding: 0 1em !default;
+ $button-padding: 0 $padding-large-horizontal !default;
  $button-radius: 10px !default;
 
  // Disabled styles
@@ -301,6 +301,55 @@ $dropdown-item-height: 50px !default;
 
 // 10. Forms
 // ==========================================================================
+//** `<input>` background color
+$input-bg:                       white !default;
+//** `<input disabled>` background color
+$input-bg-disabled:              white !default;
+
+//** Text color for `<input>`s
+$input-color:                    $gray !default;
+//** `<input>` border color
+$input-border:                   #ccc !default;
+
+// TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
+//** Default `.form-control` border radius
+// This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
+$input-border-radius:            $border-radius-base !default;
+//** Large `.form-control` border radius
+$input-border-radius-large:      $border-radius-large !default;
+//** Small `.form-control` border radius
+$input-border-radius-small:      $border-radius-small !default;
+
+//** Border color for inputs on focus
+$input-border-focus:             #66afe9 !default;
+
+//** Placeholder text color
+$input-color-placeholder:        #999 !default;
+
+//** Default `.form-control` height
+$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
+//** Large `.form-control` height
+$input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2) !default;
+//** Small `.form-control` height
+$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2) !default;
+
+// max width for form-controls, so we do not need columns everywhere
+$form-control-max-width: 25rem;
+
+//** `.form-group` margin
+$form-group-margin-bottom:       15px !default;
+
+$legend-color:                   $gray-dark !default;
+$legend-border-color:            #e5e5e5 !default;
+
+//** Background color for textual input addons
+$input-group-addon-bg:           $gray-lighter !default;
+//** Border color for textual input addons
+$input-group-addon-border-color: $input-border !default;
+
+//** Disabled cursor for form controls and buttons.
+$cursor-disabled:                not-allowed !default;
+
 
 // Text Inputs + Textarea
 $input-border-color: #9e9e9e !default;
@@ -316,6 +365,7 @@ $input-disabled-solid-color: #BDBDBD !default;
 $radio-fill-color: $primary-color-dark !default;
 $radio-empty-color: #5a5a5a !default;
 $radio-border: 2px solid $radio-fill-color !default;
+$radio-width: 35px !default;
 
 // Switches
 $switch-bg-color: $primary-color-dark !default;
