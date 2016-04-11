@@ -47,6 +47,13 @@ class ProfileAccessControlHandler extends EntityAccessControlHandler {
 
     $user_page = \Drupal::request()->attributes->get('user');
 
+    if ($user_page instanceof \Drupal\user\Entity\User) {
+      $user_page_id = $user_page->id();
+    }
+    else if (is_string($user_page)) {
+      $user_page_id = $user_page;
+    }
+
     // Some times, operation edit is called update.
     // Use edit in any case.
     if ($operation == 'update') {
@@ -64,7 +71,8 @@ class ProfileAccessControlHandler extends EntityAccessControlHandler {
     }
     elseif ($entity->getEntityTypeId() == 'profile_type') {
       $profile_roles = $entity->getRoles();
-      $user_roles = User::load($user_page->id())->getRoles(TRUE);
+      $user_roles = User::load($user_page_id)->getRoles(TRUE);
+
       if (!empty(array_filter($profile_roles)) && !array_intersect($user_roles, $profile_roles)) {
         return AccessResult::forbidden();
       }
@@ -78,7 +86,7 @@ class ProfileAccessControlHandler extends EntityAccessControlHandler {
         $operation == 'add'
         && (
           (
-            $user_page->id() == $account->id()
+            $user_page_id == $account->id()
             && $account->hasPermission($operation . ' own ' . $entity->id() . ' profile')
           )
           || $account->hasPermission($operation . ' any ' . $entity->id() . ' profile')
