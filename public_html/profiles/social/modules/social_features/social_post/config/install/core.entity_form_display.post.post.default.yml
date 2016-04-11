@@ -9,7 +9,6 @@ dependencies:
   module:
     - comment
     - social_post
-    - user
 id: post.post.default
 targetEntityType: post
 bundle: post
@@ -17,7 +16,7 @@ mode: default
 content:
   field_post:
     type: string_textarea
-    weight: 0
+    weight: 1
     label: hidden
     settings: {  }
     third_party_settings: {  }
@@ -28,12 +27,8 @@ content:
     settings:
       pager_id: 0
     third_party_settings: {  }
-  user_id:
-    label: hidden
-    type: author
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   field_recipient_user: true
   field_visibility: true
+  langcode: true
+  user_id: true
