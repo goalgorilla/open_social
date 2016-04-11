@@ -704,6 +704,20 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  * example.org, with all subdomains included.
  */
 
+
+/**
+ * Get environment settings.
+ *
+ * Production (default): normal production settings.
+ * Development: Use development settings.
+ */
+$drupal_settings = 'production';
+if (isset($_ENV['DRUPAL_SETTINGS'])) {
+  $drupal_settings = $_ENV['DRUPAL_SETTINGS'];
+}
+
+$settings['trusted_host_patterns'] = array('[\s\S]*');
+
 /**
  * Load local development override configuration, if available.
  *
@@ -714,6 +728,12 @@ $settings['container_yamls'][] = __DIR__ . '/services.yml';
  *
  * Keep this code block at the end of this file to take full effect.
  */
-# if (file_exists(__DIR__ . '/settings.local.php')) {
-#   include __DIR__ . '/settings.local.php';
-# }
+if ($drupal_settings === 'development' && file_exists(__DIR__ . '/settings.local.php')) {
+  include __DIR__ . '/settings.local.php';
+}
+
+/** Everything after here is added by the installation process.
+ *
+ * TODO: improve the installtion by putting the settings.local part below these
+ * settings.
+ */
