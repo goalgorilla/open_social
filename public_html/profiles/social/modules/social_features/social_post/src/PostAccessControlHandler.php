@@ -25,6 +25,47 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\social_post\PostInterface $entity */
     switch ($operation) {
       case 'view':
+        // Public = ALL
+        $visibility = $entity->field_visibility->value;
+
+        switch ($visibility) {
+          // Recipient.
+          case "0":
+            if (AccessResult::allowedIfHasPermission($account, 'view community posts')) {
+              return $this->checkDefaultAccess($entity, $operation, $account);
+            }
+            return AccessResult::forbidden();
+            break;
+
+          // Public.
+          case "1":
+            if (AccessResult::allowedIfHasPermission($account, 'view public posts')) {
+              return $this->checkDefaultAccess($entity, $operation, $account);
+            }
+            return AccessResult::forbidden();
+
+          // Community.
+          case "2":
+            if (AccessResult::allowedIfHasPermission($account, 'view community posts')) {
+              return $this->checkDefaultAccess($entity, $operation, $account);
+            }
+            return AccessResult::forbidden();
+        }
+
+      case 'update':
+        return $this->checkDefaultAccess($entity, $operation, $account);
+
+      case 'delete':
+        return $this->checkDefaultAccess($entity, $operation, $account);
+    }
+
+    // Unknown operation, no opinion.
+    return AccessResult::neutral();
+  }
+
+  protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+    switch ($operation) {
+      case 'view':
         if (!$entity->isPublished()) {
           return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');
         }
