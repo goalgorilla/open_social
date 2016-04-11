@@ -1,0 +1,28 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_comment module.
+ */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_feature.
+ */
+function social_core_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'add own profile profile',
+    'delete own profile profile',
+    'edit own profile profile',
+    'view any profile profile',
+    'view own profile profile'
+  ));
+}
+
+
+
+
