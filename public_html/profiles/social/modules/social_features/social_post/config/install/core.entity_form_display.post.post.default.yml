@@ -1,31 +1,39 @@
-uuid: a0058f50-a19e-43e9-a32f-4768e558c2e0
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.post.post.field_post
+    - field.field.post.post.field_post_comments
     - field.field.post.post.field_recipient_user
     - field.field.post.post.field_visibility
   module:
+    - comment
     - social_post
+    - user
 id: post.post.default
 targetEntityType: post
 bundle: post
 mode: default
 content:
   field_post:
-    type: string_textarea
+    type: basic_string
     weight: 0
-    settings:
-      rows: 5
-      placeholder: ''
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
-  field_visibility:
-    type: options_select
+  field_post_comments:
+    type: comment_default
+    weight: 2
+    label: hidden
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
     weight: 1
     settings: {  }
     third_party_settings: {  }
 hidden:
   field_recipient_user: true
-  langcode: true
-  user_id: true
+  field_visibility: true
