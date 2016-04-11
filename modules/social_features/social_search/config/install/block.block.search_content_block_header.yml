@@ -1,25 +1,22 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - views.view.search_content
   module:
+    - social_search
     - system
-    - views
   theme:
     - socialbase
-id: exposed_form_search_content_page_header
+id: search_content_block_header
 theme: socialbase
 region: header
-weight: -10
+weight: -9
 provider: null
-plugin: 'views_exposed_filter_block:search_content-page'
+plugin: search_content_block
 settings:
-  id: 'views_exposed_filter_block:search_content-page'
-  label: ''
-  provider: views
+  id: search_content_block
+  label: 'Search content block'
+  provider: social_search
   label_display: '0'
-  views_label: ''
 visibility:
   request_path:
     id: request_path
