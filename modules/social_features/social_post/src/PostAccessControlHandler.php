@@ -23,6 +23,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     /** @var \Drupal\social_post\PostInterface $entity */
+
     switch ($operation) {
       case 'view':
         // Public = ALL
@@ -31,7 +32,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
         switch ($visibility) {
           // Recipient.
           case "0":
-            if (AccessResult::allowedIfHasPermission($account, 'view community posts')) {
+            if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
@@ -39,14 +40,14 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
 
           // Public.
           case "1":
-            if (AccessResult::allowedIfHasPermission($account, 'view public posts')) {
+            if (AccessResult::allowedIfHasPermission($account, 'view public posts')->isAllowed()) {
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
 
           // Community.
           case "2":
-            if (AccessResult::allowedIfHasPermission($account, 'view community posts')) {
+            if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
