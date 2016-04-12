@@ -7,6 +7,8 @@ use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use PHPUnit_Framework_Assert as PHPUnit;
+use Drupal\profile\Entity\Profile;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 
 /**
  * Defines application features from the specific context.
@@ -129,5 +131,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     {
       $this->getSession()->resizeWindow(1280, 1024, 'current');
     }
+
+  /**
+   * Hook into user creation to add profile fields `@afterUserCreate`
+   *
+   * @afterUserCreate
+   */
+  public function alterUserParameters(EntityScope $event) {
+    $account = $event->getEntity();
+    // Create new Profile of type 'profile' for current user.
+    $profile = Profile::create([
+      'uid' => $account->uid,
+      'type' => 'profile',
+    ]);
+    // Set given profile field values.
+    foreach ($profile->toArray() as $field_name => $value) {
+      if (isset($account->{$field_name})) {
+        $profile->set($field_name, $account->{$field_name});
+      }
+    }
+
+    $profile->save();
+  }
 
 }
