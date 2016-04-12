@@ -1,14 +1,16 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - core.entity_view_mode.user.compact
   module:
-    - image
     - user
-id: user.user.compact
+id: user.user.default
 targetEntityType: user
 bundle: user
-mode: compact
+mode: default
+content:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   member_for: true
+  profile_main: true
