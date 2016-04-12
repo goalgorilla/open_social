@@ -35,5 +35,9 @@ class RouteSubscriber extends RouteSubscriberBase {
         '_title' => 'Reset your password',
       ));
     }
+    // Route the user view page to user/{uid}/timeline
+    if ($route = $collection->get('entity.user.canonical')) {
+      $route->setPath('/user/{user}/stream');
+    }
   }
 }

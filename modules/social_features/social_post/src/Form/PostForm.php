@@ -16,14 +16,33 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup social_post
  */
 class PostForm extends ContentEntityForm {
+
+  public function getFormId() {
+    return 'social_post_entity_form';
+  }
+
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\social_post\Entity\Post */
+    // Retrieve the form display before it is overwritten in the parent.
+    $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
-    $entity = $this->entity;
 
+    // Remove recipient option.
+    // Only needed for 'private' permissions which we currently do not support.
+    unset($form['field_visibility']['widget']['#options'][0]);
+
+    $display_id = $display->get('id');
+
+    if ($display_id === 'post.post.default') {
+      // Set default value to public.
+      $form['field_visibility']['widget']['#default_value'][0] = "1";
+    }
+    elseif ($display_id === 'post.post.profile') {
+      // Remove public option from options.
+      unset($form['field_visibility']['widget']['#options'][1]);
+    }
     return $form;
   }
 

@@ -8,8 +8,10 @@
 namespace Drupal\social_post\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'PostBlock' block.
@@ -39,7 +41,7 @@ class PostBlock extends BlockBase {
    * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
-    return \Drupal::entityManager()
+    return \Drupal::entityTypeManager()
       ->getAccessControlHandler($this->entity_type)
       ->createAccess($this->bundle, $account, [], TRUE);
   }
@@ -50,12 +52,12 @@ class PostBlock extends BlockBase {
   public function build() {
     $values = array();
     // Specify selected bundle if the entity has bundles.
-    if (\Drupal::entityManager()->getDefinition($this->entity_type)->hasKey('bundle')) {
-      $bundle_key = \Drupal::entityManager()->getDefinition($this->entity_type)->getKey('bundle');
+    if (\Drupal::entityTypeManager()->getDefinition($this->entity_type)->hasKey('bundle')) {
+      $bundle_key = \Drupal::entityTypeManager()->getDefinition($this->entity_type)->getKey('bundle');
       $values = array($bundle_key => $this->bundle);
     }
 
-    $entity = \Drupal::entityManager()
+    $entity = \Drupal::entityTypeManager()
       ->getStorage($this->entity_type)
       ->create($values);
 
@@ -63,10 +65,17 @@ class PostBlock extends BlockBase {
       $entity->setOwnerId(\Drupal::currentUser()->id());
     }
 
-    $form = \Drupal::entityManager()
-      ->getFormObject($this->entity_type, $this->form_display)
-      ->setEntity($entity);
-    return \Drupal::formBuilder()->getForm($form);
+    $display = \Drupal::entityTypeManager()
+      ->getStorage('entity_form_display')
+      ->load($this->entity_type . '.' . $this->bundle . '.' . $this->form_display);
+
+    $form_object = \Drupal::entityTypeManager()
+      ->getFormObject($entity->getEntityTypeId(), 'default');
+    $form_object->setEntity($entity);
+
+    $form_state = (new FormState())->setFormState(array());
+    $form_state->set('form_display', $display);
+    return \Drupal::formBuilder()->buildForm($form_object, $form_state);
   }
 
 }
