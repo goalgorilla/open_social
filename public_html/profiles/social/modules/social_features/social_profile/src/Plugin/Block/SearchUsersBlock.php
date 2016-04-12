@@ -27,7 +27,7 @@ class SearchUsersBlock extends BlockBase {
     $build = [];
 
     $form = \Drupal::formBuilder()->getForm('Drupal\social_profile\Form\SearchUsersForm');
-    $build['search_content_form'] = $form;
+    $build['search_users_form'] = $form;
 
     return $build;
   }
