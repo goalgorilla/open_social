@@ -33,16 +33,17 @@ class PostForm extends ContentEntityForm {
     // Only needed for 'private' permissions which we currently do not support.
     unset($form['field_visibility']['widget']['#options'][0]);
 
-    $display_id = $display->get('id');
+    if (isset($display) && ($display_id = $display->get('id'))) {
+      if ($display_id === 'post.post.default') {
+        // Set default value to public.
+        $form['field_visibility']['widget']['#default_value'][0] = "1";
+      }
+      elseif ($display_id === 'post.post.profile') {
+        // Remove public option from options.
+        unset($form['field_visibility']['widget']['#options'][1]);
+      }
+    }
 
-    if ($display_id === 'post.post.default') {
-      // Set default value to public.
-      $form['field_visibility']['widget']['#default_value'][0] = "1";
-    }
-    elseif ($display_id === 'post.post.profile') {
-      // Remove public option from options.
-      unset($form['field_visibility']['widget']['#options'][1]);
-    }
     return $form;
   }
 
