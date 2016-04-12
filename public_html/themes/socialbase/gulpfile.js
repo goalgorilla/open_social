@@ -152,7 +152,7 @@ gulp.task('script-materialize', function() {
   return gulp.src([
     folder.js_materialize + "/navbar-search.js",
     ])
-    .pipe( concat('project.js') )
+    .pipe( concat('materialize.js') )
     .pipe( gulp.dest(folder.js) )
     //.pipe( uglify() )
     .pipe( gulp.dest(folder.dist + '/js') )
