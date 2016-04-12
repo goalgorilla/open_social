@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  kint($form);
+  if (isset($form['actions']['set_default'])) {
+    unset($form['actions']['set_default']);
+  }
+}
