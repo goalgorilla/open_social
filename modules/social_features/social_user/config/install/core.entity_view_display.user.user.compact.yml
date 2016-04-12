@@ -3,8 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
-    - field.field.user.user.field_picture
-    - image.style.micro
   module:
     - image
     - user
@@ -12,14 +10,5 @@ id: user.user.compact
 targetEntityType: user
 bundle: user
 mode: compact
-content:
-  field_picture:
-    weight: 0
-    label: hidden
-    settings:
-      image_style: micro
-      image_link: content
-    third_party_settings: {  }
-    type: image
 hidden:
   member_for: true
