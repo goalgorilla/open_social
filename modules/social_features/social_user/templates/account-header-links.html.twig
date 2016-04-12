@@ -13,29 +13,32 @@
  */
 #}
 
-<ul class="header-menu list-unstyled">
-{% for item in links %}
 
-    <li class="menu__item {{ item.classes }}">
-        <a href="{{ item.url }}" {{item.link_attributes|raw }} class="menu__link {{ item.link_classes }}">
-            <div class="b-menu {{ item.icon_classes }}">
+<ul class="nav navbar-nav navbar-right">
+{% for item in links %}
+    <li class="{{ item.classes }}">
+        <a href="{{ item.url }}" {{item.link_attributes|raw }} class="{{ item.link_classes }}">
+            <div class="{{ item.icon_classes }}">
               <i title="{{ item.label }}" class="material-icons">{{ item.icon_label|lower }}</i>
             </div>
-            <span class="menu__label {{item.label_classes}}">{{ item.label }}</span>
+            <span class="{{item.label_classes}}">{{ item.label }}</span>
         </a>
-
     </li>
 {% endfor %}
 
   {# This menu item is used to open the main menu for mobile, as the class says it is hidden on desktop. Admins must not disable the main menu. #}
-  <li class="menu__item hidden-desktop">
-    <a href="#0" data-panel="#menu-panel" title="Show menu" class="menu__link panel-trigger">
-      <div class="b-menu">
-        <div class="b-bun b-bun--top"></div>
-        <div class="b-bun b-bun--mid"></div>
-        <div class="b-bun b-bun--bottom"></div>
-      </div>
-      <span class="menu__label hidden">menu</span>
-    </a>
+  <li class="hidden-sm hidden-md hidden-lg open"><a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true" class="dropdown-toggle"><i title="menu" class="material-icons">menu</i></a>
+    <ul class="dropdown-menu">
+      <li><a href="#">Explore</a></li>
+      <li>
+        <form role="search" class="navbar-form navbar-left">
+          <div id="navbar-search" class="form-group">
+            <input type="text" placeholder="Search" class="form-control">
+            <input type="submit" class="form-submit">
+            <div class="search-icon"><i class="material-icons">search</i></div>
+          </div>
+        </form>
+      </li>
+    </ul>
   </li>
 </ul>

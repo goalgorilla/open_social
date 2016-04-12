@@ -30,7 +30,7 @@ class AccountHeaderBlock extends BlockBase {
 
       $links = [
         'add' => array(
-          'classes' => 'hidden-mobile',
+          'classes' => 'hidden-xs',
           'link_attributes' => '',
           'icon_classes' => '',
           'icon_label' => 'Add',
@@ -39,27 +39,27 @@ class AccountHeaderBlock extends BlockBase {
           'url' => Url::fromRoute('node.add_page'),
         ),
         'home' => array(
-          'classes' => 'hidden-mobile',
+          'classes' => 'hidden-xs',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-tablet',
+          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
           'icon_label' => 'Home',
           'label' => 'Home',
-          'label_classes' => 'hidden-mobile',
+          'label_classes' => '',
           'url' => Url::fromRoute('<front>'),
         ),
         'groups' => array(
           'classes' => '',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-tablet',
-          'icon_label' => 'Home',
+          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
+          'icon_label' => 'Group',
           'label' => 'Groups',
-          'label_classes' => 'hidden-mobile',
+          'label_classes' => 'hidden-xs',
           'url' => Url::fromRoute('<front>'),
         ),
         'notifications' => array(
           'classes' => '',
-          'link_attributes' => 'data-panel="#notification-panel"',
-          'link_classes' => 'panel-trigger',
+          'link_attributes' => '',
+          'link_classes' => '',
           'icon_classes' => '',
           // the following changes based on whether the user has notifications or not
           'icon_label' => 'notifications_none',
@@ -69,8 +69,8 @@ class AccountHeaderBlock extends BlockBase {
         ),
         'account_box' => array(
           'classes' => '',
-          'link_attributes' => 'data-panel="#user-panel"',
-          'link_classes' => 'panel-trigger',
+          'link_attributes' => '',
+          'link_classes' => '',
           'icon_classes' => '',
           'icon_label' => 'account_box',
           'label' => $account_name,
