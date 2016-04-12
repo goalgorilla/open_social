@@ -1,13 +1,11 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - block.block.postblock
   module:
     - social_post
     - user
 id: posts
-label: Activity stream
+label: 'Activity stream'
 module: views
 description: ''
 tag: ''
@@ -181,20 +179,7 @@ display:
           entity_field: created
           plugin_id: date
       title: ''
-      header:
-        entity_block:
-          id: entity_block
-          table: views
-          field: entity_block
-          relationship: none
-          group_type: group
-          admin_label: header_postblock
-          empty: true
-          tokenize: false
-          target: postblock
-          view_mode: default
-          bypass_access: false
-          plugin_id: entity
+      header: {  }
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -210,12 +195,12 @@ display:
   activity_stream:
     display_plugin: page
     id: activity_stream
-    display_title: Homepage
+    display_title: Stream
     position: 1
     display_options:
       display_extenders: {  }
-      path: posts
-      display_description: ''
+      path: stream
+      display_description: 'Stream on the homepage'
     cache_metadata:
       max-age: -1
       contexts:
