@@ -12,7 +12,7 @@ namespace Drupal\social_post\Plugin\Block;
  *
  * @Block(
  *  id = "post_profile_block",
- *  admin_label = @Translation("Post on profile block"),
+ *  admin_label = @Translation("Post on profile of others block"),
  * )
  */
 class PostProfileBlock extends PostBlock {
@@ -28,7 +28,14 @@ class PostProfileBlock extends PostBlock {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entity_type = 'post';
     $this->bundle = 'post';
-    $this->form_display = 'default';
-  }
+    $this->form_display = 'profile';
 
+    // Check if current user is the same as the profile.
+    // In this case use the default form display.
+    $uid = \Drupal::currentUser()->id();
+    $account_profile = \Drupal::routeMatch()->getParameter('user');
+    if (isset($account_profile) && $uid === $account_profile->id()) {
+      $this->form_display = 'default';
+    }
+  }
 }
