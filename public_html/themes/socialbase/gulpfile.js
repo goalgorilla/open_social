@@ -34,7 +34,7 @@ var folder = {
   bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts',
   js: 'js',
   js_comp: 'js/components',
-  js_project: 'js/project',
+  js_materialize: 'js/materialize',
   js_vendor: '../../core/assets/vendor',
   js_drupal: '../../core',
   jade: 'jade',
@@ -123,14 +123,12 @@ gulp.task('script-components', function() {
     folder.js_comp + "/jquery.easing.1.3.js",
     folder.js_comp + "/animation.js",
     folder.js_comp + "/velocity.min.js",
-    folder.js_comp + "/classie.js",
     folder.js_comp + "/hammer.min.js",
     folder.js_comp + "/jquery.hammer.js",
     folder.js_comp + "/global.js",
     folder.js_comp + "/responsive-dom.js",
     folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
-    folder.js_comp + "/droppanel.js",
     folder.js_comp + "/scrollspy.js",
     folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
@@ -150,10 +148,9 @@ gulp.task('script-components', function() {
 });
 
 // get project scripts and make available for dist in one file
-gulp.task('script-project', function() {
+gulp.task('script-materialize', function() {
   return gulp.src([
-    folder.js_project + "/ui-search.js",
-    folder.js_project + "/main-menu.js"
+    folder.js_materialize + "/navbar-search.js",
     ])
     .pipe( concat('project.js') )
     .pipe( gulp.dest(folder.js) )
@@ -283,8 +280,8 @@ gulp.task('watch', function() {
   ], ['scripts']);
 
   gulp.watch([
-    folder.js_project + '/**/*.js'
-  ], ['script-project']);
+    folder.js_materialize + '/**/*.js'
+  ], ['script-materialize']);
 
   gulp.watch([
     folder.js + "/init.js"
@@ -320,7 +317,7 @@ gulp.task('deploy', ['build'], function() {
 gulp.task('init', ['images', 'content', 'libs', 'font']);
 
 
-gulp.task('scripts', ['script-components', 'script-project', 'script-vendor', 'script-drupal', 'script-init']);
+gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
 
 gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);
 

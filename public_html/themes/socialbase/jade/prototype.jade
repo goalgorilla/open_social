@@ -2,8 +2,8 @@
 - var page = "Prototype pages"
 
 mixin collection(link, name)
-  li.collection__item
-    a(href=link)= name
+  a.list-group-item(href=link)
+    p.list-group-item-text= name
 
 doctype html
 html(lang="en")
@@ -16,28 +16,27 @@ html(lang="en")
     main.styleguide-container(role='main')
 
       .container
-        .row 
-          .col-xs-12
-            .section
-              ul.collection
-                li.collection-header
-                  h4.flow-text Anonymous users
-                +collection('login.html', 'Login')
-                +collection('sign-up.html', 'Sign up')
-                +collection('sign-up-with-email.html', ' Sign up with e-mail verification')
-                +collection('reset-password.html', 'Reset password')
+        .row.section 
+          .col-xs-12.col-md-6
+            .list-group
+              .list-group-item
+                h4.list-group-item-heading.text-primary Anonymous users
+              +collection('login.html', 'Login')
+              +collection('sign-up.html', 'Sign up')
+              +collection('sign-up-with-email.html', ' Sign up with e-mail verification')
+              +collection('reset-password.html', 'Reset password')
             
-            .section
-              ul.collection
-                li.collection-header
-                  h4.flow-text Logged in users
-                +collection('my-topics.html', 'My Topics')
-                +collection('topic.html', 'Topic')
-                +collection('node-add-topic.html', 'Create topic')
-                +collection('node-edit-topic.html', 'Edit topic')
-                +collection('my-events.html', 'My Events')
-                +collection('event.html', 'Event')
-                +collection('event-enrollments.html', 'Event enrollments')
-                +collection('node-add-event.html', 'Create event')
+          .col-xs-12.col-md-6
+            .list-group
+              .list-group-item
+                h4.list-group-item-heading.text-primary Logged in users
+              +collection('my-topics.html', 'My Topics')
+              +collection('topic.html', 'Topic')
+              +collection('node-add-topic.html', 'Create topic')
+              +collection('node-edit-topic.html', 'Edit topic')
+              +collection('my-events.html', 'My Events')
+              +collection('event.html', 'Event')
+              +collection('event-enrollments.html', 'Event enrollments')
+              +collection('node-add-event.html', 'Create event')
   
     include ./layout/_scripts.jade
