@@ -5,3 +5,11 @@ social_user.page_redirect:
     _title: 'My account'
   requirements:
     _user_is_logged_in: 'TRUE'
+
+social_user.user_flood_settings:
+  path: '/admin/config/people/accounts/flood'
+  defaults:
+    _form: '\Drupal\social_user\Form\SocialUserFloodForm'
+    _title: 'User flooding'
+  requirements:
+    _permission: 'administer site configuration'

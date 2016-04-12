@@ -1,4 +1,4 @@
-@api @search @stability @DS-498
+@api @search @stability @DS-498 @DS-673
 Feature: Search
   Benefit: In order to find specific content
   Role: As a LU
@@ -24,3 +24,8 @@ Feature: Search
     And I should see "Event first" in the "Main content"
     And I should see "Topic first"
     And I should not see "Event second"
+    # Scenario: Successfully filter search results
+    When I select "topic" from "Content type"
+    And I press "Filter" in the "Sidebar second"
+    And I should see "Topic first"
+    And I should not see "Event first"
