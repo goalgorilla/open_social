@@ -55,6 +55,22 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @When I click admin link :text
+     */
+    public function clickAdminLink($text) {
+
+      $page = $this->getSession()->getPage();
+      $adminspan = $page->find('xpath', '//a//span[text()="'.$text.'"]');
+
+      if ($adminspan === null) {
+        throw new \InvalidArgumentException(sprintf('Cannot find the admin link with text: "%s"', $text));
+      }
+
+      $adminlink = $adminspan->getParent();
+      $adminlink->click();
+    }
+
+    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
