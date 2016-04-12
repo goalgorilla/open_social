@@ -1,4 +1,4 @@
-@account @profile @stability @AN @perfect @DS-256 @api
+@account @profile @stability @AN @perfect @DS-701 @api
 Feature: I want to have a profile
   Benefit: In order to present myself to other people
   Role: LU
