@@ -31,23 +31,23 @@
  * http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  */
 #}
-{%
-  set classes = [
-    'block--headermenu',
-  ]
-%}
 
-<nav role="navigation" {{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
-  {# Label. If not displayed, we still provide it for screen readers. #}
-  {% if not configuration.label_display %}
-    {% set title_attributes = title_attributes.addClass('visually-hidden') %}
-  {% endif %}
-  {{ title_prefix }}
-  <h2{{ title_attributes}}>{{ configuration.label }}</h2>
-  {{ title_suffix }}
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top"{{ attributes|without('role', 'aria-labelledby') }}>
+  <div class="container">
+    <a href="#" class="navbar-brand">
+      <object id="front-page-logo" type="image/svg+xml" data="themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
+    </a>
+    {# Label. If not displayed, we still provide it for screen readers. #}
+    {% if not configuration.label_display %}
+      {% set title_attributes = title_attributes.addClass('visually-hidden') %}
+    {% endif %}
+    {{ title_prefix }}
+    <h2{{ title_attributes}}>{{ configuration.label }}</h2>
+    {{ title_suffix }}
 
-  {# Menu. #}
-  {% block content %}
-    {{ content }}
-  {% endblock %}
+    {# Menu. #}
+    {% block content %}
+      {{ content }}
+    {% endblock %}
+  </div>
 </nav>
