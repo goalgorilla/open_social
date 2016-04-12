@@ -28,7 +28,8 @@ class ProfileHtmlRouteProvider extends DefaultHtmlRouteProvider {
       $route = (new Route(
         "/user/{user}/{profile_type}",
         ['_controller' => '\Drupal\profile\Controller\ProfileController::userProfileForm',
-          '_title_callback' => '\Drupal\profile\Controller\ProfileController::addPageTitle'
+          '_title_callback' => '\Drupal\profile\Controller\ProfileController::addPageTitle',
+        ],
         ['_profile_access_check' => 'add'],
         [
           'parameters' => [
