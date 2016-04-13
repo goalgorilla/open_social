@@ -25,3 +25,33 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       break;
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Remove the save and set default submit button on profile creation.
+  if (isset($form['actions']['set_default'])) {
+    unset($form['actions']['set_default']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_profile_profile_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Remove the save and set default submit button on profile edit.
+  if (isset($form['actions']['set_default'])) {
+    unset($form['actions']['set_default']);
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function social_profile_local_tasks_alter(&$local_tasks) {
+  // Remove the profile main "Profile information" from the local tabs.
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
+  }
+}

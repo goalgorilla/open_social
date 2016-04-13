@@ -11,6 +11,7 @@ services:
      - mailcatcher
     environment:
      - VIRTUAL_HOST=social.dev
+     - DRUPAL_SETTINGS=development
     ports:
      - "80"
     network_mode: "bridge"
@@ -68,6 +69,8 @@ services:
      - web:web
      - db:db
      - selenium:selenium
+    environment:
+     - DRUPAL_SETTINGS=development
     network_mode: "bridge"
 
 volumes:

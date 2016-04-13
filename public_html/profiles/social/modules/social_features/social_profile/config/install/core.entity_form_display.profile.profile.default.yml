@@ -6,15 +6,18 @@ dependencies:
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_self_introduction
+    - image.style.thumbnail
     - profile.type.profile
   module:
     - address
     - field_group
+    - image
     - telephone
     - text
 third_party_settings:
@@ -23,6 +26,7 @@ third_party_settings:
       children:
         - field_profile_first_name
         - field_profile_last_name
+        - field_profile_image
       parent_name: ''
       weight: 0
       label: 'Names and profile image'
@@ -118,6 +122,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+  field_profile_image:
+    weight: 3
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
   field_profile_interests:
     weight: 6
     settings:
