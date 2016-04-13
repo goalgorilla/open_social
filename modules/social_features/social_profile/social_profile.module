@@ -55,35 +55,3 @@ function social_profile_local_tasks_alter(&$local_tasks) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
   }
 }
-
-/**
- * Implements hook_form_FORM_ID_alter().
- *
- * Enhance the Search Users filter form.
- */
-function social_profile_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if ('views-exposed-form-search-users-page' === $form['#id']) {
-    // Set current path as form action, in order to keep search input.
-    $form['#action'] = \Drupal::service('path.current')->getPath();
-
-    // Always enable the reset button.
-    $form['actions']['reset']['#access'] = TRUE;
-  }
-}
-
-
-/**
- * Implements hook_block_view_BASE_BLOCK_ID_alter().
- *
- * Enhance the Search Users filter block.
- */
-function social_profile_block_view_views_exposed_filter_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
-  if ($build['#id'] === 'exposed_form_search_users_page_sidebar') {
-
-    // Disable cache for exposed filter block to get correct current path,
-    // which is used in $form['#action'].
-    $build['#cache'] = array(
-      'max-age' => 0,
-    );
-  }
-}

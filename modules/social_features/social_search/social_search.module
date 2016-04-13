@@ -12,51 +12,60 @@ use Drupal\Core\Url;
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * Enhance the Search Content Filter form.
+ * Enhance the Views exposed filter blocks forms.
  */
 function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if('views-exposed-form-search-content-page' === $form['#id']){
+  $filter_forms = array(
+    'views-exposed-form-search-content-page',
+    'views-exposed-form-search-users-page',
+  );
 
+  if (in_array($form['#id'], $filter_forms)) {
     // Set current path as form action, in order to keep search input.
     $form['#action'] = \Drupal::service('path.current')->getPath();
-
-    // Get a list of content types.
-    $types = NodeType::loadMultiple();
-    $types_options = array();
-    foreach ($types as $key => $value) {
-      $types_options[$key] = $value->label();
-    }
-
-    // Change textfield widget which is only provided by Search API to select.
-    $form['type'] = array(
-      '#type' => 'select',
-      '#title' => t('Content type'),
-      '#options' => $types_options,
-      '#empty_value' => '',
-      '#empty_option' => t('All'),
-      //@TODO: remove this class when theme will be ready.
-      '#attributes' => array(
-        'class' => array('browser-default')
-      )
-    );
-
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
+
+    if ('views-exposed-form-search-content-page' === $form['#id']) {
+      // Get a list of content types.
+      $types = NodeType::loadMultiple();
+      $types_options = array();
+      foreach ($types as $key => $value) {
+        $types_options[$key] = $value->label();
+      }
+      // Change textfield widget which is only provided by Search API to select.
+      $form['type'] = array(
+        '#type' => 'select',
+        '#title' => t('Content type'),
+        '#options' => $types_options,
+        '#empty_value' => '',
+        '#empty_option' => t('All'),
+        //@TODO: remove this class when theme will be ready.
+        '#attributes' => array(
+          'class' => array('browser-default')
+        )
+      );
+    }
   }
 }
 
 /**
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
  *
- * Enhance the Search Content Filter block.
+ * Enhance the Views exposed filter blocks.
  */
 function social_search_block_view_views_exposed_filter_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
- if($build['#id'] === 'exposed_form_search_content_page_sidebar'){
+  $filter_blocks = array(
+    'exposed_form_search_content_page_sidebar',
+    'exposed_form_search_users_page_sidebar',
+  );
 
-   // Disable cache for exposed filter block to get correct current path,
-   // which is used in $form['#action'].
-   $build['#cache'] = array(
-     'max-age' => 0,
-   );
- }
+  if (in_array($build['#id'], $filter_blocks)) {
+    // Disable cache for exposed filter block to get correct current path,
+    // which is used in $form['#action'].
+    $build['#cache'] = array(
+      'max-age' => 0,
+    );
+  }
 }
+
