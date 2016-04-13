@@ -8,9 +8,9 @@ dependencies:
     - views
   theme:
     - socialbase
-id: exposed_form_search_content_page_title
+id: exposed_form_search_content_page_sidebar
 theme: socialbase
-region: title
+region: complementary
 weight: -10
 provider: null
 plugin: 'views_exposed_filter_block:search_content-page'
@@ -18,11 +18,11 @@ settings:
   id: 'views_exposed_filter_block:search_content-page'
   label: ''
   provider: views
-  label_display: '0'
-  views_label: ''
+  label_display: visible
+  views_label: 'Filter contents'
 visibility:
   request_path:
     id: request_path
-    pages: /search/content
+    pages: "/search/content\r\n/search/content/*"
     negate: false
     context_mapping: {  }

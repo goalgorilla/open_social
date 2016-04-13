@@ -4,11 +4,16 @@ dependencies:
   config:
     - core.entity_view_mode.user.full
   module:
-    - image
     - user
 id: user.user.full
 targetEntityType: user
 bundle: user
 mode: full
+content:
+  profile_profile:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   member_for: true
+  profile_main: true
