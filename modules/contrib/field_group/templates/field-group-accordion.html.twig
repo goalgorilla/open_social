@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a fieldgroup accordion item.
+ *
+ * Available variables:
+ * - children: The children of the group.
+ * - attributes: A list of HTML attributes for the group wrapper.
+ *
+ * @see template_preprocess_field_group_accordion()
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+  set classes = [
+    'field-group-accordion-wrapper',
+  ]
+%}
+
+<div {{ attributes.addClass(classes) }}>{{ children }}</div>
