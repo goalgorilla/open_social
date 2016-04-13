@@ -1,0 +1,64 @@
+uuid: cf699b59-5649-4fcb-8c08-ee88d6832ed0
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.teaser
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_self_introduction
+    - profile.type.profile
+  module:
+    - image
+_core:
+  default_config_hash: '-PQn0jQgIwgz_l3k9KOYxCnWBhMvHaUfOK_kF2ieP8c'
+id: profile.profile.teaser
+targetEntityType: profile
+bundle: profile
+mode: teaser
+content:
+  field_profile_first_name:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_function:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_image:
+    weight: 0
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_profile_last_name:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_organization:
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+hidden:
+  field_profile_expertise: true
+  field_profile_interests: true
+  field_profile_self_introduction: true
