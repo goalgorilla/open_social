@@ -7,6 +7,7 @@ dependencies:
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
@@ -15,7 +16,6 @@ dependencies:
     - profile.type.profile
   module:
     - address
-    - telephone
     - text
 _core:
   default_config_hash: hbs7iw_nRr1AradiPsqqzRpLxVOjxrDbPfAQDkeDmdA
@@ -85,4 +85,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
-hidden: {  }
+hidden:
+  field_profile_image: true

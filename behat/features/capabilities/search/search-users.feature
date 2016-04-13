@@ -14,6 +14,6 @@
     When I fill in the following:
       | Search the entire website | first |
     And I press "Search"
-    And I should see "Search Users" in the "Page title block"
+    And I should see "Search users" in the "Page title block"
     And I should see "User first" in the "Main content"
     And I should not see "User second"

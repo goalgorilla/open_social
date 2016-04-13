@@ -20,7 +20,7 @@ Feature: Search
     When I fill in the following:
       | Search the entire website | first |
     And I press "Search"
-    And I should see "Search Content" in the "Page title block"
+    And I should see "Search content" in the "Page title block"
     And I should see "Event first" in the "Main content"
     And I should see "Topic first"
     And I should not see "Event second"

@@ -232,8 +232,21 @@ display:
           expose:
             label: ''
           plugin_id: search_api
-      title: 'Search Users'
-      header: {  }
+      title: 'Search users'
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<p>If you are searching for content, <a href="/search/content">click here</a></p>'
+            format: basic_html
+          plugin_id: text
       footer: {  }
       empty:
         area:
@@ -268,7 +281,7 @@ display:
           default_argument_type: fixed
           default_argument_options:
             argument: ''
-          default_argument_skip_url: false
+          default_argument_skip_url: true
           summary_options: null
           summary:
             sort_order: asc
@@ -318,6 +331,15 @@ display:
       path: search/users
       exposed_block: true
       display_description: ''
+      menu:
+        type: tab
+        title: Users
+        description: ''
+        expanded: false
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: main
     cache_metadata:
       max-age: 0
       contexts:
