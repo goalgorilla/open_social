@@ -5,33 +5,34 @@ block title
 
 block pagetitle
   
-  .cover.container.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
-    .cover-wrap   
-      a.pull-right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='#!')
-        i.material-icons mode_edit        
-      h1.page-title Amsterdam Meetup
-      .hero-footer
-        .small.margin-top-m
+  .container
+    .cover.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
+      .cover-wrap   
+        a.pull-right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='node-edit-event.html')
+          i.material-icons mode_edit        
+        h1.page-title Amsterdam Meetup
+        .hero-footer
           div
             time.eventdate.updated June 6 2016 - 12:00 
             span @ GoalGorilla, Amsterdam
           div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
             a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
     
-    .primary-action-region
-      p.small.text-default-bright.hidden You have enrolled to this event.
-      button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll this event
+      .primary-action-region
+        p.small.text-default-bright.hidden You have enrolled to this event.
+        button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
       
 block secondary_navigation
-  .container.brand-secondary.z-depth-1
-    nav(role="navigation" aria-label="Tabs")
-      h2.visually-hidden Secondary navigation
-      ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-        li
-          a(href='event.html') Details
-        li.active
-          a(href="event-enrollments.html") Enrollments
-            span.visually-hidden (active tab)
+  .container
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href='event.html') Details
+          li.active
+            a(href="event-enrollments.html") Enrollments
+              span.visually-hidden (active tab)
       
 block content
       
