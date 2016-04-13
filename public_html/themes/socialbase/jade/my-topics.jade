@@ -11,14 +11,14 @@ block pagetitle
       br
       br
       button.btn.btn-flat.btn--default-bright
-        i.material-icons.left check
+        i.material-icons.pull-left check
         | Following
       
 block secondary_navigation
   .container
-    .visible-xs-block.section-header
+    .visible-xs-block.section
       a.btn.btn-raised.btn--default-bright 
-        i.material-icons.left keyboard_arrow_left
+        i.material-icons.pull-left keyboard_arrow_left
         | Back to timeline
 
   .brand-secondary.z-depth-1.hidden-xs
@@ -45,20 +45,20 @@ block content
     .col-xs-12
       h2.h3.section-title My topics
     
-    .col-xs-12.col-sm-3.right.margin-bottom-l
+    .col-xs-12.col-sm-3.pull-right.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-topic.html') 
-        i.material-icons.left add
+        i.material-icons.pull-left add
         | Add a topic
 
       btn.waves-effect.waves-light.btn.btn-block.btn--primary.btn-raised.visible-xs-block.js-open-canvas
-        i.material-icons.left tune
+        i.material-icons.pull-left tune
         | Filters
       
       .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.right
+            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
               i.material-icons close
         
         .offcanvas-body
@@ -77,7 +77,7 @@ block content
                 option(value="published") Published
                 option(value="unpublished") Unpublished
             .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.right.disabled(type="submit", value="Reset")
+              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-9
       include molecules/_topic1.jade
