@@ -1,12 +1,13 @@
-uuid: 7a2929dc-ef41-43b5-bc04-4a954ee5aaa0
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.topic
+    - taxonomy.vocabulary.topic_types
   module:
     - node
+    - taxonomy
     - user
 id: topics
 label: Topics
@@ -293,6 +294,7 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -305,7 +307,7 @@ display:
       display_extenders: {  }
       path: user/%user/topics
       menu:
-        type: tab
+        type: none
         title: Topics
         description: ''
         expanded: false
@@ -328,6 +330,7 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

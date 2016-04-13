@@ -34,8 +34,9 @@ class PostProfileBlock extends PostBlock {
     // In this case use the default form display.
     $uid = \Drupal::currentUser()->id();
     $account_profile = \Drupal::routeMatch()->getParameter('user');
-    if (isset($account_profile) && $uid === $account_profile->id()) {
+    if (isset($account_profile) && ($account_profile === $uid || (is_object($account_profile) && $uid === $account_profile->id()))) {
       $this->form_display = 'default';
     }
+
   }
 }
