@@ -1,24 +1,17 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - field.field.user.user.field_picture
-    - image.style.teaser
   module:
-    - image
     - user
 id: user.user.default
 targetEntityType: user
 bundle: user
 mode: default
 content:
-  field_picture:
+  profile_profile:
     weight: 0
-    label: hidden
-    settings:
-      image_style: teaser
-      image_link: content
+    settings: {  }
     third_party_settings: {  }
-    type: image
 hidden:
   member_for: true
+  profile_main: true

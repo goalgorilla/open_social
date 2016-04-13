@@ -2,15 +2,15 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.user.field_picture
+    - field.storage.profile.field_profile_image
+    - profile.type.profile
   module:
     - image
-    - user
-id: user.user.field_picture
-field_name: field_picture
-entity_type: user
-bundle: user
-label: Picture
+id: profile.profile.field_profile_image
+field_name: field_profile_image
+entity_type: profile
+bundle: profile
+label: 'Profile image'
 description: ''
 required: false
 translatable: false
@@ -22,7 +22,7 @@ settings:
   max_filesize: ''
   max_resolution: ''
   min_resolution: ''
-  alt_field: false
+  alt_field: true
   alt_field_required: false
   title_field: false
   title_field_required: false

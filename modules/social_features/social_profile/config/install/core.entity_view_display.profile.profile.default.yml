@@ -6,6 +6,7 @@ dependencies:
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
@@ -15,6 +16,7 @@ dependencies:
   module:
     - address
     - telephone
+    - image
     - text
 _core:
   default_config_hash: fHCc1pA2XQxHZ-ecTB6jIpIFMBx5ni9O07NkXyFpDCk
@@ -50,6 +52,14 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+  field_profile_image:
+    weight: 7
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
   field_profile_interests:
     weight: 7
     label: above
