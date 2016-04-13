@@ -1,8 +1,8 @@
 social_user.page_redirect:
   path: '/user/{user}'
   defaults:
-    _controller: '\Drupal\user\Controller\UserController::userPage'
-    _title: 'My account'
+    _controller: '\Drupal\social_user\Controller\SocialUserController::otherUserPage'
+    _title: 'Account'
   requirements:
     _user_is_logged_in: 'TRUE'
 
