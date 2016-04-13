@@ -4,8 +4,6 @@
  * The Social post module.
  */
 use Drupal\Core\Form\FormStateInterface;
-use \Drupal\Core\Entity\EntityInterface;
-use \Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -13,4 +11,19 @@ use \Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
   $form['field_visibility']['#attributes']['class'][] = 'browser-default';
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_post_views_data_alter(array &$data) {
+    $data['post']['post_visibility_access_filter'] = array(
+    'title' => t('Post visibility access'),
+    'filter' => array(
+      'title' => t('Post visibility access'),
+      'help' => t('Enable post access for public and community posts.'),
+      'field' => 'field_visibility',
+      'id' => 'post_visibility_access'
+    ),
+  );
 }
