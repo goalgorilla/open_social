@@ -184,8 +184,21 @@ display:
           expose:
             label: ''
           plugin_id: search_api
-      title: 'Search Content'
-      header: {  }
+      title: 'Search content'
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<p>If you are searching for users, <a href="/search/users">click here</a></p>'
+            format: basic_html
+          plugin_id: text
       footer: {  }
       empty:
         area:
@@ -270,6 +283,20 @@ display:
       display_extenders: {  }
       path: search/content
       exposed_block: true
+      menu:
+        type: tab
+        title: Content
+        description: ''
+        expanded: false
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: main
+      tab_options:
+        type: none
+        title: ''
+        description: ''
+        weight: 0
     cache_metadata:
       max-age: 0
       contexts:
