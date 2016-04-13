@@ -155,7 +155,7 @@ $caret-width-large:         5px !default;
 
  $font-size-base:          16px !default;
  $font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
- $font-size-small:         ceil(($font-size-base * 0.75)) !default; // ~12px
+ $font-size-small:         ceil(($font-size-base * 0.875)) !default; // ~12px
 
  $font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~36px
  $font-size-h2:            floor(($font-size-base * 2.15)) !default; // ~30px
@@ -342,6 +342,8 @@ $dropdown-link-disabled-color:   $gray-light !default;
 
 //** Text color for headers within dropdown menus.
 $dropdown-header-color:          $gray-light !default;
+//** Background color for headers within dropdown menus.
+$dropdown-header-bg:             $gray-lighter;
 
 //** Deprecated `$dropdown-caret-color` as of v3.1.0
 $dropdown-caret-color:           #000 !default;
@@ -361,19 +363,19 @@ $input-bg-disabled:              white !default;
 //** Text color for `<input>`s
 $input-color:                    $gray !default;
 //** `<input>` border color
-$input-border:                   #ccc !default;
+$input-border:                   $grey-light-1 !default;
 
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
-$input-border-radius:            $border-radius-base !default;
+$input-border-radius:            0 !default;
 //** Large `.form-control` border radius
-$input-border-radius-large:      $border-radius-large !default;
+$input-border-radius-large:      0 !default;
 //** Small `.form-control` border radius
-$input-border-radius-small:      $border-radius-small !default;
+$input-border-radius-small:      0 !default;
 
 //** Border color for inputs on focus
-$input-border-focus:             #66afe9 !default;
+$input-border-focus:             $brand-primary !default;
 
 //** Placeholder text color
 $input-color-placeholder:        #999 !default;
@@ -386,10 +388,13 @@ $input-height-large:             (ceil($font-size-large * $line-height-large) + 
 $input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2) !default;
 
 // max width for form-controls, so we do not need columns everywhere
-$form-control-max-width: 25rem;
+$form-control-max-width:         25rem;
+
+// Color help texts that go with form-controls
+$help-block:                     $gray-light !default;
 
 //** `.form-group` margin
-$form-group-margin-bottom:       15px !default;
+$form-group-margin-bottom:       1rem !default;
 
 $legend-color:                   $gray-dark !default;
 $legend-border-color:            #e5e5e5 !default;
@@ -425,73 +430,6 @@ $switch-checked-lever-bg: desaturate(lighten($primary-color-dark, 25%), 25%) !de
 $switch-unchecked-bg: #F1F1F1 !default;
 $switch-unchecked-lever-bg: #818181 !default;
 
-//** Disabled cursor for form controls and buttons.
-$cursor-disabled:                not-allowed !default;
-//** `<input>` background color
-$input-bg:                       #fff !default;
-//** `<input disabled>` background color
-$input-bg-disabled:              $gray-lighter !default;
-
-//** Text color for `<input>`s
-$input-color:                    $gray !default;
-//** `<input>` border color
-$input-border:                   #ccc !default;
-
-//** Default `.form-control` border radius
-// This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
-$input-border-radius:            $border-radius-base !default;
-//** Large `.form-control` border radius
-$input-border-radius-large:      $border-radius-large !default;
-//** Small `.form-control` border radius
-$input-border-radius-small:      $border-radius-small !default;
-
-//** Border color for inputs on focus
-$input-border-focus:             #66afe9 !default;
-
-//** Placeholder text color
-$input-color-placeholder:        #999 !default;
-
-//** Default `.form-control` height
-$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
-//** Large `.form-control` height
-$input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2) !default;
-//** Small `.form-control` height
-$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2) !default;
-
-//** `.form-group` margin
-$form-group-margin-bottom:       15px !default;
-
-$legend-color:                   $gray-dark !default;
-$legend-border-color:            #e5e5e5 !default;
-
-//** Background color for textual input addons
-$input-group-addon-bg:           $gray-lighter !default;
-//** Border color for textual input addons
-$input-group-addon-border-color: $input-border !default;
-
-//** Disabled cursor for form controls and buttons.
-$cursor-disabled:                not-allowed !default;
-
-//## Define colors for form feedback states and, by default, alerts.
-
-$state-success-text:             #3c763d !default;
-$state-success-bg:               #dff0d8 !default;
-$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
-
-$state-info-text:                #31708f !default;
-$state-info-bg:                  #d9edf7 !default;
-$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
-
-$state-warning-text:             #8a6d3b !default;
-$state-warning-bg:               #fcf8e3 !default;
-$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) !default;
-
-$state-danger-text:              #a94442 !default;
-$state-danger-bg:                #f2dede !default;
-$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
-
-
-// Form states and alerts
 //## Define colors for form feedback states and, by default, alerts.
 
 $state-success-text:             #3c763d !default;
@@ -598,13 +536,11 @@ $container-max-widths: (
 $grid-columns:               12 !default;
 $grid-gutter-width:          1.875rem !default; // 30px
 
-$num-cols: 12 !default;
-$gutter-width: 30px !default;
-$element-top-margin: $gutter-width/3 !default;
-$element-bottom-margin: ($gutter-width*2)/3 !default;
+$element-top-margin: $grid-gutter-width/3 !default;
+$element-bottom-margin: ($grid-gutter-width*2)/3 !default;
 
-$element-top-margin: $gutter-width/3 !default;
-$element-bottom-margin: ($gutter-width*2)/3 !default;
+$element-top-margin: $grid-gutter-width/3 !default;
+$element-bottom-margin: ($grid-gutter-width*2)/3 !default;
 
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.

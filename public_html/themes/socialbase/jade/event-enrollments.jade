@@ -10,24 +10,23 @@ block pagetitle
       a.right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='#!')
         i.material-icons mode_edit        
       h1.page-title Amsterdam Meetup
-      p
-        time.eventdate.updated June 6 2016 - 12:00 
-        span @ GoalGorilla, Amsterdam
       .hero-footer
-        img.img-circle.img-bordered.img-small(src='content/images/avatar0.jpg')
         .small.margin-top-m
-          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by
-          a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+          div
+            time.eventdate.updated June 6 2016 - 12:00 
+            span @ GoalGorilla, Amsterdam
+          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
+            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
     
     .primary-action-region
       p.small.text-default-bright.hidden You have enrolled to this event.
       button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll this event
       
 block secondary_navigation
-  .container.style-default-bright
+  .container.brand-secondary.z-depth-1
     nav(role="navigation" aria-label="Tabs")
       h2.visually-hidden Secondary navigation
-      ul.nav.nav-tabs.tabs-center.style-default-bright.nav-tabs--xl
+      ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
         li
           a(href='event.html') Details
         li.active

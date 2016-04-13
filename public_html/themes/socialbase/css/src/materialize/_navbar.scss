@@ -15,6 +15,8 @@
   left: auto;
 }
 
+//
+
 @media (max-width: $grid-float-breakpoint-max) {
   // Dropdowns get same display when collapsed
   // This is an override of bootstrap navbar line 241
@@ -29,6 +31,20 @@
       padding: 5px 20px;
     }
 
+  }
+
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    position: fixed;
+    top: 50px;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 100%;
+    max-height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
   }
 
   .navbar-collapse .navbar-nav {

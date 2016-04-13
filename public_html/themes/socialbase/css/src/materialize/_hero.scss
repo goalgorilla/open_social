@@ -5,8 +5,8 @@
   background-color: $primary-color;
   width: 100%;
   text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: .9375rem;
+  padding-bottom: ($grid-gutter-width / 2);
 }
 
 .cover-img {
@@ -14,17 +14,17 @@
   background-position: center;
 
   &:before{
-    display: block;
-    position: absolute;
-    content: '';
-    background: rgba(34,34,34,.25);
-    width: 100%;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-  }
+      display: block;
+      position: absolute;
+      content: '';
+      background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.35) 100%);
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+    }
 
 }
 
@@ -45,6 +45,7 @@
   font-weight: 700;
   text-align: center;
 	margin: 1em 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 }
 
 .hero-footer {
@@ -65,7 +66,12 @@
   z-index: 2;
 
   @include MQ($small) {
+    position: absolute;
     text-align: right;
+    right: 0;
+    bottom: 0;
+    width: 35%;
+    padding: ($grid-gutter-width / 2);
   }
 
 }
