@@ -7,13 +7,17 @@
 
 namespace Drupal\Core\EventSubscriber;
 
+use Drupal\Core\Access\AccessManagerInterface;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Path\AliasManagerInterface;
+use Drupal\Core\Routing\AccessAwareRouterInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Url;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 /**
  * Exception subscriber for handling core custom HTML error pages.
@@ -28,30 +32,32 @@ class CustomPageExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
   protected $configFactory;
 
   /**
-   * The page alias manager.
+   * The access manager.
    *
-   * @var \Drupal\Core\Path\AliasManagerInterface
+   * @var \Drupal\Core\Access\AccessManagerInterface
    */
-  protected $aliasManager;
+  protected $accessManager;
 
   /**
    * Constructs a new CustomPageExceptionHtmlSubscriber.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
-   * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
-   *   The alias manager service.
    * @param \Symfony\Component\HttpKernel\HttpKernelInterface $http_kernel
    *   The HTTP Kernel service.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
    *   The redirect destination service.
+   * @param \Symfony\Component\Routing\Matcher\UrlMatcherInterface $access_unaware_router
+   *   A router implementation which does not check access.
+   * @param \Drupal\Core\Access\AccessManagerInterface $access_manager
+   *   The access manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, AliasManagerInterface $alias_manager, HttpKernelInterface $http_kernel, LoggerInterface $logger, RedirectDestinationInterface $redirect_destination) {
-    parent::__construct($http_kernel, $logger, $redirect_destination);
+  public function __construct(ConfigFactoryInterface $config_factory, HttpKernelInterface $http_kernel, LoggerInterface $logger, RedirectDestinationInterface $redirect_destination, UrlMatcherInterface $access_unaware_router, AccessManagerInterface $access_manager) {
+    parent::__construct($http_kernel, $logger, $redirect_destination, $access_unaware_router);
     $this->configFactory = $config_factory;
-    $this->aliasManager = $alias_manager;
+    $this->accessManager = $access_manager;
   }
 
   /**
@@ -65,16 +71,57 @@ class CustomPageExceptionHtmlSubscriber extends DefaultExceptionHtmlSubscriber {
    * {@inheritdoc}
    */
   public function on403(GetResponseForExceptionEvent $event) {
-    $path = $this->aliasManager->getPathByAlias($this->configFactory->get('system.site')->get('page.403'));
-    $this->makeSubrequest($event, trim($path, '/'), Response::HTTP_FORBIDDEN);
+    $custom_403_path = $this->configFactory->get('system.site')->get('page.403');
+    if (!empty($custom_403_path)) {
+      $this->makeSubrequestToCustomPath($event, $custom_403_path, Response::HTTP_FORBIDDEN);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function on404(GetResponseForExceptionEvent $event) {
-    $path = $this->aliasManager->getPathByAlias($this->configFactory->get('system.site')->get('page.404'));
-    $this->makeSubrequest($event, trim($path, '/'), Response::HTTP_NOT_FOUND);
+    $custom_404_path = $this->configFactory->get('system.site')->get('page.404');
+    if (!empty($custom_404_path)) {
+      $this->makeSubrequestToCustomPath($event, $custom_404_path, Response::HTTP_NOT_FOUND);
+    }
+  }
+
+  /**
+   * Makes a subrequest to retrieve the custom error page.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $event
+   *   The event to process.
+   * @param string $custom_path
+   *   The custom path to which to make a subrequest for this error message.
+   * @param int $status_code
+   *   The status code for the error being handled.
+   */
+  protected function makeSubrequestToCustomPath(GetResponseForExceptionEvent $event, $custom_path, $status_code) {
+    $url = Url::fromUserInput($custom_path);
+    if ($url->isRouted()) {
+      $access_result = $this->accessManager->checkNamedRoute($url->getRouteName(), $url->getRouteParameters(), NULL, TRUE);
+      $request = $event->getRequest();
+
+      // Merge the custom path's route's access result's cacheability metadata
+      // with the existing one (from the master request), otherwise create it.
+      if (!$request->attributes->has(AccessAwareRouterInterface::ACCESS_RESULT)) {
+        $request->attributes->set(AccessAwareRouterInterface::ACCESS_RESULT, $access_result);
+      }
+      else {
+        $existing_access_result = $request->attributes->get(AccessAwareRouterInterface::ACCESS_RESULT);
+        if ($existing_access_result instanceof RefinableCacheableDependencyInterface) {
+          $existing_access_result->addCacheableDependency($access_result);
+        }
+      }
+
+      // Only perform the subrequest if the custom path is actually accessible.
+      if (!$access_result->isAllowed()) {
+        return;
+      }
+    }
+
+    $this->makeSubrequest($event, $custom_path, $status_code);
   }
 
 }

@@ -9,7 +9,6 @@ namespace Drupal\file\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
@@ -119,7 +118,7 @@ class FileWidget extends WidgetBase implements ContainerFactoryPluginInterface {
     }
 
     $title = $this->fieldDefinition->getLabel();
-    $description = FieldFilteredMarkup::create($this->fieldDefinition->getDescription());
+    $description = $this->getFilteredDescription();
 
     $elements = array();
 

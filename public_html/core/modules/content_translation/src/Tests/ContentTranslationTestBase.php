@@ -8,8 +8,10 @@
 namespace Drupal\content_translation\Tests;
 
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Base class for content translation tests.
@@ -183,18 +185,18 @@ abstract class ContentTranslationTestBase extends WebTestBase {
     if (empty($this->fieldName)) {
       $this->fieldName = 'field_test_et_ui_test';
     }
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $this->fieldName,
       'type' => 'string',
       'entity_type' => $this->entityTypeId,
       'cardinality' => 1,
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => $this->entityTypeId,
       'field_name' => $this->fieldName,
       'bundle' => $this->bundle,
       'label' => 'Test translatable text-field',
-    ))->save();
+    ])->save();
     entity_get_form_display($this->entityTypeId, $this->bundle, 'default')
       ->setComponent($this->fieldName, array(
         'type' => 'string_textfield',
@@ -232,7 +234,9 @@ abstract class ContentTranslationTestBase extends WebTestBase {
         }
       }
     }
-    $entity = entity_create($this->entityTypeId, $entity_values);
+    $entity = $this->container->get('entity_type.manager')
+      ->getStorage($this->entityTypeId)
+      ->create($entity_values);
     $entity->save();
     return $entity->id();
   }

@@ -76,14 +76,14 @@ class BooleanOperator extends FilterPluginBase {
     return array(
       '=' => array(
         'title' => $this->t('Is equal to'),
-        'method' => '_queryOperatorBoolean',
+        'method' => 'queryOpBoolean',
         'short' => $this->t('='),
         'values' => 1,
         'query_operator' => static::EQUAL,
       ),
       '!=' => array(
         'title' => $this->t('Is not equal to'),
-        'method' => '_queryOperatorBoolean',
+        'method' => 'queryOpBoolean',
         'short' => $this->t('!='),
         'values' => 1,
         'query_operator' => static::NOT_EQUAL,
@@ -226,29 +226,15 @@ class BooleanOperator extends FilterPluginBase {
   }
 
   /**
-   * Adds a where condition to the query for a boolean value. This function
-   * remains to prevent breaks in public-facing API's.
-   *
-   * @param string $field
-   *   The field name to add the where condition for.
-   */
-  protected function queryOpBoolean($field) {
-    $this->_queryOperatorBoolean($field, static::EQUAL);
-  }
-
-  /**
    * Adds a where condition to the query for a boolean value.
    *
    * @param string $field
    *   The field name to add the where condition for.
    * @param string $query_operator
-   *   Either static::EQUAL or static::NOT_EQUAL.
-   *
-   * @internal
-   *   This method will be removed in 8.1.0 and is here to maintain backwards-
-   *   compatibility in 8.0.x releases.
+   *   (optional) Either static::EQUAL or static::NOT_EQUAL. Defaults to
+   *   static::EQUAL.
    */
-  protected function _queryOperatorBoolean($field, $query_operator) {
+  protected function queryOpBoolean($field, $query_operator = EQUAL) {
     if (empty($this->value)) {
       if ($this->accept_null) {
         if ($query_operator == static::EQUAL) {

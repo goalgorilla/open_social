@@ -78,7 +78,6 @@ class DefinitionDecorator extends Definition
 
     /**
      * {@inheritdoc}
-     *
      */
     public function setFactoryClass($class)
     {
@@ -100,11 +99,11 @@ class DefinitionDecorator extends Definition
     /**
      * {@inheritdoc}
      */
-    public function setFactoryService($service)
+    public function setFactoryService($service, $triggerDeprecationError = true)
     {
         $this->changes['factory_service'] = true;
 
-        return parent::setFactoryService($service);
+        return parent::setFactoryService($service, $triggerDeprecationError);
     }
 
     /**
@@ -150,11 +149,21 @@ class DefinitionDecorator extends Definition
     /**
      * {@inheritdoc}
      */
-    public function setDecoratedService($id, $renamedId = null)
+    public function setDecoratedService($id, $renamedId = null, $priority = 0)
     {
         $this->changes['decorated_service'] = true;
 
-        return parent::setDecoratedService($id, $renamedId);
+        return parent::setDecoratedService($id, $renamedId, $priority);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeprecated($boolean = true, $template = null)
+    {
+        $this->changes['deprecated'] = true;
+
+        return parent::setDeprecated($boolean, $template);
     }
 
     /**

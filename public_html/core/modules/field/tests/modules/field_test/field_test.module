@@ -1,8 +1,5 @@
 <?php
 
-use Drupal\field\FieldStorageConfigInterface;
-use Drupal\Core\Form\FormStateInterface;
-
 /**
  * @file
  * Helper module for the Field API tests.
@@ -15,6 +12,9 @@ use Drupal\Core\Form\FormStateInterface;
  * The main field_test.module file implements generic hooks and provides some
  * test helper functions
  */
+
+use Drupal\field\FieldStorageConfigInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 require_once __DIR__ . '/field_test.entity.inc';
 require_once __DIR__ . '/field_test.field.inc';
@@ -42,7 +42,7 @@ require_once __DIR__ . '/field_test.field.inc';
  *   field_test_memorize();
  *
  *   // call some Field API functions that invoke field_test hooks
- *   entity_create('field_storage_config', $field_definition)->save();
+ *   FieldStorageConfig::create($field_definition)->save();
  *
  *   // retrieve and reset the memorized hook call data
  *   $mem = field_test_memorize();

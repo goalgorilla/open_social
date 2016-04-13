@@ -1,0 +1,105 @@
+field_group.field_group_formatter_plugin.accordion:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the accordion formatter settings'
+  mapping:
+    effect:
+      type: string
+      label: 'Effect on the accordion'
+
+field_group.field_group_formatter_plugin.accordion_item:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the accordion item formatter settings'
+  mapping:
+    formatter:
+      type: string
+      label: 'Formatting of the item'
+    description:
+      type: string
+      label: 'description of the item'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
+
+field_group.field_group_formatter_plugin.details:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the details formatter settings'
+  mapping:
+    open:
+      type: boolean
+      label: 'Display element open by default.'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
+
+field_group.field_group_formatter_plugin.fieldset:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the fieldset formatter settings'
+  mapping:
+    description:
+      type: string
+      label: 'description of the item'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
+
+field_group.field_group_formatter_plugin.html_element:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the html element formatter settings'
+  mapping:
+    element:
+      type: string
+      label: 'html element tag to be used'
+    show_label:
+      type: boolean
+      label: 'show the label'
+    label_element:
+      type: string
+      label: 'html element tag to be used for the label'
+    attributes:
+      type: string
+      label: 'html attributes for the element'
+    effect:
+      type: string
+      label: 'effect on the element'
+    speed:
+      type: string
+      label: 'speed of the effect'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
+
+field_group.field_group_formatter_plugin.tab:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the tab formatter settings'
+  mapping:
+    formatter:
+      type: string
+      label: 'default state for the tab'
+    description:
+      type: string
+      label: 'description of the tab'
+    required_fields:
+      type: boolean
+      label: 'Mark for required fields'
+
+field_group.field_group_formatter_plugin.tabs:
+  type: field_group.field_group_formatter_plugin.base
+  label: 'Mapping for the tab formatter settings'
+  mapping:
+    direction:
+      type: string
+      label: 'Direction of the tabs'
+
+field_group.field_group_formatter_plugin.base:
+  type: mapping
+  label: 'Mapping for the base formatter settings'
+  mapping:
+    label:
+      type: string
+      label: 'Label of the fieldgroup'
+    classes:
+      type: string
+      label:  'Classes of the fieldgroup'
+    id:
+      type: string
+      label: 'Html id of the fieldgroup'

@@ -50,7 +50,7 @@ abstract class FileFieldTestBase extends WebTestBase {
     // \Drupal\file\Entity\File::load().
     $file->filesize = filesize($file->uri);
 
-    return entity_create('file', (array) $file);
+    return File::create((array) $file);
   }
 
   /**
@@ -77,7 +77,7 @@ abstract class FileFieldTestBase extends WebTestBase {
    *   A list of widget settings that will be added to the widget defaults.
    */
   function createFileField($name, $entity_type, $bundle, $storage_settings = array(), $field_settings = array(), $widget_settings = array()) {
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'entity_type' => $entity_type,
       'field_name' => $name,
       'type' => 'file',
@@ -113,7 +113,7 @@ abstract class FileFieldTestBase extends WebTestBase {
       'required' => !empty($field_settings['required']),
       'settings' => $field_settings,
     );
-    entity_create('field_config', $field)->save();
+    FieldConfig::create($field)->save();
 
     entity_get_form_display($entity_type, $bundle, 'default')
       ->setComponent($name, array(

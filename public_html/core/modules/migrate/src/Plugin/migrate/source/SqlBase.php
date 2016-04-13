@@ -10,7 +10,7 @@ namespace Drupal\migrate\Plugin\migrate\source;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Plugin\migrate\id_map\Sql;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -91,6 +91,9 @@ abstract class SqlBase extends SourcePluginBase implements ContainerFactoryPlugi
       if (isset($this->configuration['database_state_key'])) {
         $this->database = $this->setUpDatabase($this->state->get($this->configuration['database_state_key']));
       }
+      elseif (($fallback_state_key = $this->state->get('migrate.fallback_state_key'))) {
+        $this->database = $this->setUpDatabase($this->state->get($fallback_state_key));
+      }
       else {
         $this->database = $this->setUpDatabase($this->configuration);
       }
@@ -163,7 +166,7 @@ abstract class SqlBase extends SourcePluginBase implements ContainerFactoryPlugi
    */
   protected function initializeIterator() {
     $this->prepareQuery();
-    $high_water_property = $this->migration->get('highWaterProperty');
+    $high_water_property = $this->migration->getHighWaterProperty();
 
     // Get the key values, for potential use in joining to the map table.
     $keys = array();
@@ -205,7 +208,7 @@ abstract class SqlBase extends SourcePluginBase implements ContainerFactoryPlugi
         $map_key = 'sourceid' . $count;
         $this->query->addField($alias, $map_key, "migrate_map_$map_key");
       }
-      if ($n = count($this->migration->get('destinationIds'))) {
+      if ($n = count($this->migration->getDestinationIds())) {
         for ($count = 1; $count <= $n; $count++) {
           $map_key = 'destid' . $count++;
           $this->query->addField($alias, $map_key, "migrate_map_$map_key");
@@ -263,6 +266,15 @@ abstract class SqlBase extends SourcePluginBase implements ContainerFactoryPlugi
     }
     $id_map_database_options = $id_map->getDatabase()->getConnectionOptions();
     $source_database_options = $this->getDatabase()->getConnectionOptions();
+
+    // Special handling for sqlite which deals with files.
+    if ($id_map_database_options['driver'] === 'sqlite' &&
+      $source_database_options['driver'] === 'sqlite' &&
+      $id_map_database_options['database'] != $source_database_options['database']
+    ) {
+      return FALSE;
+    }
+
     foreach (array('username', 'password', 'host', 'port', 'namespace', 'driver') as $key) {
       if (isset($source_database_options[$key])) {
         if ($id_map_database_options[$key] != $source_database_options[$key]) {

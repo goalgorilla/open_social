@@ -9,6 +9,7 @@ namespace Drupal\Tests\system\Kernel\Extension;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use \Drupal\Core\Extension\ModuleUninstallValidatorException;
+use Drupal\entity_test\Entity\EntityTest;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -88,7 +89,7 @@ class ModuleHandlerTest extends KernelTestBase {
    *   The expected values, sorted by weight and module name.
    * @param $condition
    */
-  protected function assertModuleList(Array $expected_values, $condition) {
+  protected function assertModuleList(array $expected_values, $condition) {
     $expected_values = array_values(array_unique($expected_values));
     $enabled_modules = array_keys($this->container->get('module_handler')->getModuleList());
     $this->assertEqual($expected_values, $enabled_modules, format_string('@condition: extension handler returns correct results', array('@condition' => $condition)));
@@ -238,7 +239,7 @@ class ModuleHandlerTest extends KernelTestBase {
     drupal_static_reset('system_rebuild_module_data');
 
     // Create an entity so that the modules can not be disabled.
-    $entity = entity_create('entity_test', array('name' => $this->randomString()));
+    $entity = EntityTest::create(array('name' => $this->randomString()));
     $entity->save();
 
     // Uninstalling entity_test is not possible when there is content.

@@ -1,0 +1,129 @@
+.horizontal-tabs {
+  margin: 0 0 1em 0; /* LTR */
+  padding: 0;
+  border: 1px solid #ccc;
+  position: relative; /* IE6/7 */
+}
+
+[dir="rtl"] .horizontal-tabs {
+    margin: 0 0 1em 0;
+}
+
+.horizontal-tabs .horizontal-tabs-list {
+  display: inline-block;
+  margin: 0;
+  border: 0;
+  padding: 0px;
+  list-style: none;
+  background-color: #dedede;
+  border-right: 1px solid #dedede; /* LTR */
+  width: 100%;
+  height: auto;
+  clear: both;
+}
+
+[dir="rtl"] .horizontal-tabs .horizontal-tabs-list {
+  border-right: 0;
+  border-left: 1px solid #dedede;
+}
+
+.horizontal-tabs-pane {
+  padding: 0 1em;
+  border: 0;
+}
+
+.horizontal-tabs-pane > summary {
+  display: none;
+}
+
+/* Layout of each tab */
+.horizontal-tabs  .horizontal-tab-button {
+  background: #eee;
+  border-right: 1px solid #ccc; /* LTR */
+  padding: 1px;
+  padding-top: 0;
+  margin: 0;
+  min-width: 5em; /* IE7 */
+  float: left; /* LTR */
+}
+
+[dir="rtl"] .horizontal-tabs .horizontal-tab-button {
+  border-right: 0;
+  border-left: 1px solid #ccc;
+  float: right;
+}
+
+.horizontal-tabs .horizontal-tab-button a {
+  display: block;
+  text-decoration: none;
+  padding: 0.5em 0.6em;
+}
+
+.horizontal-tabs .horizontal-tab-button a:hover {
+  outline: none;
+  background-color: #ededdd;
+}
+
+.horizontal-tabs .horizontal-tab-button li:hover,
+.horizontal-tabs .horizontal-tab-button li:focus {
+  background-color: #ddd;
+}
+
+.horizontal-tabs ul.horizontal-tabs-list :focus {
+  outline: none;
+}
+
+.horizontal-tab-button a:focus strong,
+.horizontal-tab-button a:active strong,
+.horizontal-tab-button a:hover strong {
+  text-decoration: none;
+  outline: none;
+}
+
+.horizontal-tab-button.selected {
+  background-color: #fff;
+  padding: 0 0 1px 0;
+}
+
+[dir="rtl"] .horizontal-tab-button.selected {
+  border-left-width: 0;
+  border-right-width: 1px;
+}
+
+.horizontal-tabs ul.horizontal-tabs-list li a,
+.horizontal-tabs ul.horizontal-tabs-list li.selected a {
+  display: block;
+  text-decoration: none;
+  padding: 0.5em 0.6em 0.3em 0.6em;
+  position:relative;
+  top: 0px;
+}
+
+.horizontal-tab-button .selected strong {
+  color: #000;
+}
+
+.horizontal-tab-button .summary {
+  display: block;
+}
+
+.horizontal-tab-button .summary {
+  line-height: normal;
+  margin-bottom: 0;
+}
+
+/**
+ * tab content
+ */
+div.field-group-htabs-wrapper .field-group-format-wrapper {
+  clear: both;
+  padding: 0 0 0.6em;
+}
+
+/*hide*/
+.horizontal-tabs .horizontal-tab-hidden {
+  display: block;
+  position: absolute;
+  top: -100000px;
+  width: 100%;
+}

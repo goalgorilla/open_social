@@ -7,7 +7,9 @@
 
 namespace Drupal\telephone\Tests;
 
+use Drupal\field\Entity\FieldConfig;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests the creation of telephone fields.
@@ -50,17 +52,17 @@ class TelephoneFieldTest extends WebTestBase {
   function testTelephoneField() {
 
     // Add the telephone field to the article content type.
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => 'field_telephone',
       'entity_type' => 'node',
       'type' => 'telephone',
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => 'field_telephone',
       'label' => 'Telephone Number',
       'entity_type' => 'node',
       'bundle' => 'article',
-    ))->save();
+    ])->save();
 
     entity_get_form_display('node', 'article', 'default')
       ->setComponent('field_telephone', array(

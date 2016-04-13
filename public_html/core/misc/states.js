@@ -3,7 +3,7 @@
  * Drupal's states library.
  */
 
-(function ($) {
+(function ($, Drupal) {
 
   'use strict';
 
@@ -27,6 +27,9 @@
    * Attaches the states.
    *
    * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches states behaviors.
    */
   Drupal.behaviors.states = {
     attach: function (context, settings) {
@@ -329,6 +332,7 @@
      * @memberof Drupal.states.Dependent#
      *
      * @return {object}
+     *   An object describing the required triggers.
      */
     getDependees: function () {
       var cache = {};
@@ -359,6 +363,7 @@
    * @constructor Drupal.states.Trigger
    *
    * @param {object} args
+   *   Trigger arguments.
    */
   states.Trigger = function (args) {
     $.extend(this, args);
@@ -402,7 +407,9 @@
      * @memberof Drupal.states.Trigger#
      *
      * @param {jQuery.Event} event
+     *   The event triggered.
      * @param {function} valueFn
+     *   The function to call.
      */
     defaultTrigger: function (event, valueFn) {
       var oldValue = valueFn.call(this.element);
@@ -498,6 +505,7 @@
    * @constructor Drupal.states.State
    *
    * @param {string} state
+   *   The name of the state.
    */
   states.State = function (state) {
 
@@ -531,8 +539,10 @@
    * @name Drupal.states.State.sanitize
    *
    * @param {string|Drupal.states.State} state
+   *   A state object or the name of a state.
    *
    * @return {Drupal.states.state}
+   *   A state object.
    */
   states.State.sanitize = function (state) {
     if (state instanceof states.State) {
@@ -577,6 +587,7 @@
      * @memberof Drupal.states.State#
      *
      * @return {string}
+     *   The name of the state.
      */
     toString: function () {
       return this.name;
@@ -590,7 +601,8 @@
    * can override these state change handlers for particular parts of a page.
    */
 
-  $(document).on('state:disabled', function (e) {
+  var $document = $(document);
+  $document.on('state:disabled', function (e) {
     // Only act when this change was triggered by a dependency and not by the
     // element monitoring itself.
     if (e.trigger) {
@@ -604,7 +616,7 @@
     }
   });
 
-  $(document).on('state:required', function (e) {
+  $document.on('state:required', function (e) {
     if (e.trigger) {
       if (e.value) {
         var label = 'label' + (e.target.id ? '[for=' + e.target.id + ']' : '');
@@ -620,19 +632,19 @@
     }
   });
 
-  $(document).on('state:visible', function (e) {
+  $document.on('state:visible', function (e) {
     if (e.trigger) {
       $(e.target).closest('.js-form-item, .js-form-submit, .js-form-wrapper').toggle(e.value);
     }
   });
 
-  $(document).on('state:checked', function (e) {
+  $document.on('state:checked', function (e) {
     if (e.trigger) {
       $(e.target).prop('checked', e.value);
     }
   });
 
-  $(document).on('state:collapsed', function (e) {
+  $document.on('state:collapsed', function (e) {
     if (e.trigger) {
       if ($(e.target).is('[open]') === e.value) {
         $(e.target).find('> summary').trigger('click');
@@ -651,9 +663,12 @@
    * @function Drupal.states~ternary
    *
    * @param {*} a
+   *   Value a.
    * @param {*} b
+   *   Value b
    *
    * @return {bool}
+   *   The result.
    */
   function ternary(a, b) {
     if (typeof a === 'undefined') {
@@ -673,9 +688,12 @@
    * @function Drupal.states~invert
    *
    * @param {*} a
+   *   The value to maybe invert.
    * @param {bool} invertState
+   *   Whether to invert state or not.
    *
    * @return {bool}
+   *   The result.
    */
   function invert(a, invertState) {
     return (invertState && typeof a !== 'undefined') ? !a : a;
@@ -687,9 +705,12 @@
    * @function Drupal.states~compare
    *
    * @param {*} a
+   *   Value a.
    * @param {*} b
+   *   Value b.
    *
    * @return {bool}
+   *   The comparison result.
    */
   function compare(a, b) {
     if (a === b) {
@@ -700,4 +721,4 @@
     }
   }
 
-})(jQuery);
+})(jQuery, Drupal);

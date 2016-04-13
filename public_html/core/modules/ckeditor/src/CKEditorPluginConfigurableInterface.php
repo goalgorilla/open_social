@@ -20,6 +20,7 @@ use Drupal\editor\Entity\Editor;
  * @see \Drupal\ckeditor\CKEditorPluginInterface
  * @see \Drupal\ckeditor\CKEditorPluginButtonsInterface
  * @see \Drupal\ckeditor\CKEditorPluginContextualInterface
+ * @see \Drupal\ckeditor\CKEditorPluginCssInterface
  * @see \Drupal\ckeditor\CKEditorPluginBase
  * @see \Drupal\ckeditor\CKEditorPluginManager
  * @see \Drupal\ckeditor\Annotation\CKEditorPlugin
@@ -42,8 +43,8 @@ interface CKEditorPluginConfigurableInterface extends CKEditorPluginInterface {
    * @param \Drupal\editor\Entity\Editor $editor
    *   A configured text editor object.
    *
-   * @return array|FALSE
-   *   A render array for the settings form, or FALSE if there is none.
+   * @return array
+   *   A render array for the settings form.
    */
   public function settingsForm(array $form, FormStateInterface $form_state, Editor $editor);
 

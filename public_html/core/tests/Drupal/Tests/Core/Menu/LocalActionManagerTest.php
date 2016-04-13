@@ -12,7 +12,6 @@ use Drupal\Component\Plugin\Factory\FactoryInterface;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultForbidden;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Menu\LocalActionManager;
@@ -213,10 +212,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            // For back-compatibility in 8.0.x the max-age is Cache::PERMANENT
-            // instead of 0 for any class that does not implement
-            // \Drupal\Core\Cache\CacheableDependencyInterface.
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
       ),
@@ -258,7 +254,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
       ),
@@ -301,7 +297,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
         'plugin_id_2' => array(
@@ -316,7 +312,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
       ),
@@ -361,7 +357,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
         'plugin_id_2' => array(
@@ -376,7 +372,7 @@ class LocalActionManagerTest extends UnitTestCase {
           '#cache' => array(
             'contexts' => array(),
             'tags' => array(),
-            'max-age' => Cache::PERMANENT,
+            'max-age' => 0,
           ),
         ),
       ),

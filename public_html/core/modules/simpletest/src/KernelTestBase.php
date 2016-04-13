@@ -271,6 +271,12 @@ EOD;
     // The temporary stream wrapper is able to operate both with and without
     // configuration.
     $this->registerStreamWrapper('temporary', 'Drupal\Core\StreamWrapper\TemporaryStream');
+
+    // Manually configure the test mail collector implementation to prevent
+    // tests from sending out emails and collect them in state instead.
+    // While this should be enforced via settings.php prior to installation,
+    // some tests expect to be able to test mail system implementations.
+    $GLOBALS['config']['system.mail']['interface']['default'] = 'test_mail_collector';
   }
 
   /**
@@ -429,10 +435,18 @@ EOD;
     if (!$this->container->get('module_handler')->moduleExists($module)) {
       throw new \RuntimeException("'$module' module is not enabled");
     }
+
     $tables = (array) $tables;
     foreach ($tables as $table) {
       $schema = drupal_get_module_schema($module, $table);
       if (empty($schema)) {
+        // BC layer to avoid some contrib tests to fail.
+        // @todo Remove the BC layer before 8.1.x release.
+        // @see https://www.drupal.org/node/2670360
+        // @see https://www.drupal.org/node/2670454
+        if ($module == 'system') {
+          continue;
+        }
         throw new \RuntimeException("Unknown '$table' table schema in '$module' module.");
       }
       $this->container->get('database')->schema()->createTable($table, $schema);
@@ -596,9 +610,7 @@ EOD;
   protected function render(array &$elements) {
     // Use the bare HTML page renderer to render our links.
     $renderer = $this->container->get('bare_html_page_renderer');
-    $response = $renderer->renderBarePage(
-      $elements, '', $this->container->get('theme.manager')->getActiveTheme()->getName()
-    );
+    $response = $renderer->renderBarePage($elements, '', 'maintenance_page');
 
     // Glean the content from the response object.
     $content = $response->getContent();

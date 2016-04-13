@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
  */
 
@@ -306,21 +306,23 @@ class Uri implements UriInterface
      */
     public function withPort($port)
     {
-        if (! is_numeric($port)) {
+        if (! is_numeric($port) && $port !== null) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid port "%s" specified; must be an integer or integer string',
+                'Invalid port "%s" specified; must be an integer, an integer string, or null',
                 (is_object($port) ? get_class($port) : gettype($port))
             ));
         }
 
-        $port = (int) $port;
+        if ($port !== null) {
+            $port = (int) $port;
+        }
 
         if ($port === $this->port) {
             // Do nothing if no change was made.
             return clone $this;
         }
 
-        if ($port < 1 || $port > 65535) {
+        if ($port !== null && $port < 1 || $port > 65535) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid port "%d" specified; must be a valid TCP/UDP port',
                 $port
@@ -625,7 +627,7 @@ class Uri implements UriInterface
     private function filterFragment($fragment)
     {
         if (! empty($fragment) && strpos($fragment, '#') === 0) {
-            $fragment = substr($fragment, 1);
+            $fragment = '%23' . substr($fragment, 1);
         }
 
         return $this->filterQueryOrFragment($fragment);

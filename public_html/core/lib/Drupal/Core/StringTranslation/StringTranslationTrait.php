@@ -60,7 +60,9 @@ trait StringTranslationTrait {
    *   - 'langcode' (defaults to the current language): A language code, to
    *     translate to a language other than what is used to display the page.
    *   - 'context' (defaults to the empty context): The context the source
-   *     string belongs to.
+   *     string belongs to. See the
+   *     @link i18n Internationalization topic @endlink for more information
+   *     about string contexts.
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   An object that, when cast to a string, returns the translated string.
@@ -71,7 +73,7 @@ trait StringTranslationTrait {
    * @ingroup sanitization
    */
   protected function t($string, array $args = array(), array $options = array()) {
-    return $this->getStringTranslation()->translate($string, $args, $options);
+    return new TranslatableMarkup($string, $args, $options, $this->getStringTranslation());
   }
 
   /**
@@ -80,7 +82,7 @@ trait StringTranslationTrait {
    * @see \Drupal\Core\StringTranslation\TranslationInterface::formatPlural()
    */
   protected function formatPlural($count, $singular, $plural, array $args = array(), array $options = array()) {
-    return $this->getStringTranslation()->formatPlural($count, $singular, $plural, $args, $options);
+    return new PluralTranslatableMarkup($count, $singular, $plural, $args, $options, $this->getStringTranslation());
   }
 
   /**

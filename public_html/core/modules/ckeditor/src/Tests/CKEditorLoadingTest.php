@@ -7,7 +7,9 @@
 
 namespace Drupal\ckeditor\Tests;
 
+use Drupal\editor\Entity\Editor;
 use Drupal\simpletest\WebTestBase;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests loading of CKEditor.
@@ -41,22 +43,22 @@ class CKEditorLoadingTest extends WebTestBase {
     parent::setUp();
 
     // Create text format, associate CKEditor.
-    $filtered_html_format = entity_create('filter_format', array(
+    $filtered_html_format = FilterFormat::create(array(
       'format' => 'filtered_html',
       'name' => 'Filtered HTML',
       'weight' => 0,
       'filters' => array(),
     ));
     $filtered_html_format->save();
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'filtered_html',
       'editor' => 'ckeditor',
-    ));
+    ]);
     $editor->save();
 
     // Create a second format without an associated editor so a drop down select
     // list is created when selecting formats.
-    $full_html_format = entity_create('filter_format', array(
+    $full_html_format = FilterFormat::create(array(
       'format' => 'full_html',
       'name' => 'Full HTML',
       'weight' => 1,
@@ -146,6 +148,16 @@ class CKEditorLoadingTest extends WebTestBase {
     $this->assertIdentical($expected, $this->castSafeStrings($settings['editor']), "Text Editor module's JavaScript settings on the page are correct.");
     $this->assertTrue($editor_js_present, 'Text Editor JavaScript is present.');
     $this->assertTrue(in_array('ckeditor/drupal.ckeditor', explode(',', $settings['ajaxPageState']['libraries'])), 'CKEditor glue library is present.');
+
+    // Assert that CKEditor uses Drupal's cache-busting query string by
+    // comparing the setting sent with the page with the current query string.
+    $settings = $this->getDrupalSettings();
+    $expected = $settings['ckeditor']['timestamp'];
+    $this->assertIdentical($expected, \Drupal::state()->get('system.css_js_query_string'), "CKEditor scripts cache-busting string is correct before flushing all caches.");
+    // Flush all caches then make sure that $settings['ckeditor']['timestamp']
+    // still matches.
+    drupal_flush_all_caches();
+    $this->assertIdentical($expected, \Drupal::state()->get('system.css_js_query_string'), "CKEditor scripts cache-busting string is correct after flushing all caches.");
   }
 
   protected function getThingsToCheck() {

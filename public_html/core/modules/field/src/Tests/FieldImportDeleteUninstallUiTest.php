@@ -7,6 +7,10 @@
 
 namespace Drupal\field\Tests;
 
+use Drupal\entity_test\Entity\EntityTest;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
 /**
  * Delete field storages and fields during config synchronization and uninstall
  * module that provides the field type through the UI.
@@ -36,31 +40,31 @@ class FieldImportDeleteUninstallUiTest extends FieldTestBase {
    */
   public function testImportDeleteUninstall() {
     // Create a telephone field.
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'field_name' => 'field_tel',
       'entity_type' => 'entity_test',
       'type' => 'telephone',
     ));
     $field_storage->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => 'entity_test',
-    ))->save();
+    ])->save();
 
     // Create a text field.
-    $date_field_storage = entity_create('field_storage_config', array(
+    $date_field_storage = FieldStorageConfig::create(array(
       'field_name' => 'field_date',
       'entity_type' => 'entity_test',
       'type' => 'datetime',
     ));
     $date_field_storage->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_storage' => $date_field_storage,
       'bundle' => 'entity_test',
-    ))->save();
+    ])->save();
 
     // Create an entity which has values for the telephone and text field.
-    $entity = entity_create('entity_test');
+    $entity = EntityTest::create();
     $value = '+0123456789';
     $entity->field_tel = $value;
     $entity->field_date = time();

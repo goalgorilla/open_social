@@ -108,16 +108,16 @@ class ConfigExportImportUITest extends WebTestBase {
 
     // Create a field.
     $this->fieldName = Unicode::strtolower($this->randomMachineName());
-    $this->fieldStorage = entity_create('field_storage_config', array(
+    $this->fieldStorage = FieldStorageConfig::create(array(
       'field_name' => $this->fieldName,
       'entity_type' => 'node',
       'type' => 'text',
     ));
     $this->fieldStorage->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_storage' => $this->fieldStorage,
       'bundle' => $this->contentType->id(),
-    ))->save();
+    ])->save();
     // Update the displays so that configuration does not change unexpectedly on
     // import.
     entity_get_form_display('node', $this->contentType->id(), 'default')

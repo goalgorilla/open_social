@@ -1896,10 +1896,6 @@ class ViewExecutable implements \Serializable {
       return $this->override_url;
     }
 
-    if (!isset($path)) {
-      $path = $this->getPath();
-    }
-
     $display_handler = $this->displayHandlers->get($display_id ?: $this->current_display)->getRoutedDisplay();
     if (!$display_handler instanceof DisplayRouterInterface) {
       throw new \InvalidArgumentException('You cannot create a URL to a display without routes.');
@@ -1919,6 +1915,9 @@ class ViewExecutable implements \Serializable {
         }
       }
     }
+
+    $path = $this->getPath();
+
     // Don't bother working if there's nothing to do:
     if (empty($path) || (empty($args) && strpos($path, '%') === FALSE)) {
       return $display_handler->getUrlInfo();
@@ -2460,24 +2459,28 @@ class ViewExecutable implements \Serializable {
   public function unserialize($serialized) {
     list($storage, $current_display, $args, $current_page, $exposed_input, $exposed_raw_input, $exposed_data, $dom_id, $executed) = unserialize($serialized);
 
-    $this->setRequest(\Drupal::request());
-    $this->user = \Drupal::currentUser();
+    // There are cases, like in testing, where we don't have a container
+    // available.
+    if (\Drupal::hasContainer()) {
+      $this->setRequest(\Drupal::request());
+      $this->user = \Drupal::currentUser();
 
-    $this->storage = \Drupal::entityManager()->getStorage('view')->load($storage);
+      $this->storage = \Drupal::entityManager()->getStorage('view')->load($storage);
 
-    $this->setDisplay($current_display);
-    $this->setArguments($args);
-    $this->setCurrentPage($current_page);
-    $this->setExposedInput($exposed_input);
-    $this->exposed_data = $exposed_data;
-    $this->exposed_raw_input = $exposed_raw_input;
-    $this->dom_id = $dom_id;
+      $this->setDisplay($current_display);
+      $this->setArguments($args);
+      $this->setCurrentPage($current_page);
+      $this->setExposedInput($exposed_input);
+      $this->exposed_data = $exposed_data;
+      $this->exposed_raw_input = $exposed_raw_input;
+      $this->dom_id = $dom_id;
 
-    $this->initHandlers();
+      $this->initHandlers();
 
-    // If the display was previously executed, execute it now.
-    if ($executed) {
-      $this->execute($this->current_display);
+      // If the display was previously executed, execute it now.
+      if ($executed) {
+        $this->execute($this->current_display);
+      }
     }
   }
 
