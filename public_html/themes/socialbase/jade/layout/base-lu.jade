@@ -39,8 +39,11 @@ html(lang="en")
   script(src='js/drupal-core.js')
   script(src='js/bootstrap.min.js')
   script(src='js/components.js')
-  script(src='js/project.js')
+  script(src='js/materialize.js')
   script(src='js/init.js')
+  
+  script.
+    new UISearch( document.getElementById( 'navbar-search' ) );
   
   unless pagetype == "template"
     script(src='js/prism.js')

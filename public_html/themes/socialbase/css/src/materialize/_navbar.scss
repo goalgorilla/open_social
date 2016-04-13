@@ -15,6 +15,22 @@
   left: auto;
 }
 
+.navbar > .container .navbar-brand {
+  margin-left: -$navbar-padding-horizontal;
+}
+
+@media (min-width: $grid-float-breakpoint) {
+
+  .navbar > .container .navbar-brand {
+    margin-left: 0;
+  }
+
+  .navbar-right {
+    margin-right: 0;
+  }
+
+}
+
 //
 
 @media (max-width: $grid-float-breakpoint-max) {
@@ -92,12 +108,9 @@
 
 }
 
-
-
-
 .navbar-default {
   border: 0;
-  background-color: $brand-primary;
+  background-color: darken($brand-primary, 30%);
   font-size: $navbar-font-size;
 
   .navbar-toggle {
@@ -118,26 +131,24 @@
   }
 }
 
-
-
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:hover {
-  background-color: $brand-secondary;
+  background-color: $brand-primary;
   padding: 10px 15px;
   width: 60px;
 }
 
 .navbar-default .navbar-nav > li > a:focus,
 .navbar-default .navbar-nav > li > a:hover {
-  background-color: $primary-color-dark;
+  background-color: $brand-secondary;
 }
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > .active > a:hover {
   &:after {
-    background-color: $brand-secondary;
+    background-color: $brand-primary;
     display: block;
     content: '';
     height: 5px;
@@ -199,7 +210,7 @@
 
   .form-control {
     padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
-    border-radius: 4px;
+    border-radius: $input-border-radius;
     max-width: none;
     border: 0;
 
@@ -223,15 +234,13 @@
     line-height: 38px;
     cursor: pointer;
     text-align: center;
-    border-radius: 0 4px 4px 0;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
 	}
 
   .search-icon {
-    width: 38px;
     line-height: 38px;
     color: $primary-color;
     background: white;
-    border-radius: 0 4px 4px 0;
     speak: none;
     pointer-events: none;
 
@@ -246,7 +255,7 @@
 	@include MQ($small) {
 
     .form-group {
-  		border-radius: 4px;
+  		border-radius: $input-border-radius;
       @include clearfix;
       width: 0%;
       min-width: 38px;
@@ -280,10 +289,11 @@
 
     .search-icon {
       z-index: 90;
-      background: $primary-color;
+      border-radius: 0;
+      background: darken($brand-primary, 30%);
       color: white;
       pointer-events: initial;
-      transition: background-color 0.3s, color 0.3s;;
+      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
     }
 
   }
@@ -302,6 +312,7 @@
 	background: white;
 	color: $primary-color;
 	z-index: 11;
+  border-radius: 0 $input-border-radius $input-border-radius 0;
 }
 
 #navbar-search.is-open .form-submit,
