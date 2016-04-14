@@ -36,3 +36,17 @@ function social_post_views_data_alter(array &$data) {
     ),
   );
 }
+
+/**
+ * Implements hook_theme().
+ */
+function social_post_theme() {
+  $items = [
+    'post' => [
+      'render element' => 'elements',
+      'file' => 'post.page.inc',
+      'template' => 'post',
+    ],
+  ];
+  return $items;
+}
