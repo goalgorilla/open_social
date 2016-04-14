@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\AddURLTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\search_api\Plugin\search_api\processor\AddURL;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -87,7 +81,7 @@ class AddURLTest extends UnitTestCase {
     $body_value = array('Some text value');
     $fields = array(
       'search_api_url' => array(
-        'type' => 'string'
+        'type' => 'string',
       ),
       'entity:node/body' => array(
         'type' => 'text',
@@ -140,4 +134,5 @@ class AddURLTest extends UnitTestCase {
     $this->processor->alterPropertyDefinitions($properties, $datasource);
     $this->assertEmpty($properties, 'Datasource-specific properties did not get changed.');
   }
+
 }

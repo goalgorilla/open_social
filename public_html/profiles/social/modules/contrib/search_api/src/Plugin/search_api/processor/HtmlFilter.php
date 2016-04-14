@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\HtmlFilter.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Component\Utility\Html;
@@ -17,6 +12,8 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser;
 
 /**
+ * Strips HTML tags from fulltext fields and decodes HTML entities.
+ *
  * @SearchApiProcessor(
  *   id = "html_filter",
  *   label = @Translation("HTML filter"),

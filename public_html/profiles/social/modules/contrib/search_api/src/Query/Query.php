@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Query\Query.
- */
-
 namespace Drupal\search_api\Query;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -151,8 +146,7 @@ class Query implements QueryInterface {
   public function parseModes() {
     $modes['direct'] = array(
       'name' => $this->t('Direct query'),
-      'description' => $this->t("Don't parse the query, just hand it to the search server unaltered. " .
-          "Might fail if the query contains syntax errors in regard to the specific server's query syntax."),
+      'description' => $this->t("Don't parse the query, just hand it to the search server unaltered. Might fail if the query contains syntax errors in regard to the specific server's query syntax."),
     );
     $modes['single'] = array(
       'name' => $this->t('Single term'),
@@ -160,8 +154,7 @@ class Query implements QueryInterface {
     );
     $modes['terms'] = array(
       'name' => $this->t('Multiple terms'),
-      'description' => $this->t('The query is interpreted as multiple keywords separated by spaces. ' .
-          'Keywords containing spaces may be "quoted". Quoted keywords must still be separated by spaces.'),
+      'description' => $this->t('The query is interpreted as multiple keywords separated by spaces. Keywords containing spaces may be "quoted". Quoted keywords must still be separated by spaces.'),
     );
     // @todo Add fourth mode for complicated expressions, e.g.: »"vanilla ice" OR (love NOT hate)«
     return $modes;
@@ -228,7 +221,7 @@ class Query implements QueryInterface {
           }
           elseif ($v[0] == '"') {
             $len = strlen($v);
-            if ($len > 1 && $v[$len-1] == '"') {
+            if ($len > 1 && $v[$len - 1] == '"') {
               $ret[$k] = substr($v, 1, -1);
             }
             else {
@@ -267,6 +260,7 @@ class Query implements QueryInterface {
     }
     return $this;
   }
+
   /**
    * {@inheritdoc}
    */
@@ -309,7 +303,6 @@ class Query implements QueryInterface {
     return $this;
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -326,7 +319,6 @@ class Query implements QueryInterface {
     // Store search for later retrieval for facets, etc.
     // @todo Figure out how to store the executed searches for the request.
     // search_api_current_search(NULL, $this, $response);
-
     return $response;
   }
 
@@ -475,7 +467,7 @@ class Query implements QueryInterface {
       $ret .= 'Sorting: ' . implode(', ', $sorts) . "\n";
     }
     // @todo Fix for entities contained in options (which might kill
-    //    var_export() due to circular references).
+    //   var_export() due to circular references).
     $ret .= 'Options: ' . str_replace("\n", "\n  ", var_export($this->options, TRUE)) . "\n";
     return $ret;
   }

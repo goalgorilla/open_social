@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\Plugin\views\relationship\SearchApiRelationship.
- */
-
 namespace Drupal\search_api\Plugin\views\relationship;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -32,7 +27,7 @@ class SearchApiRelationship extends RelationshipPluginBase {
    * {@inheritdoc}
    */
   public function query() {
-   $this->alias = $this->field;
+    $this->alias = $this->field;
   }
 
   /**

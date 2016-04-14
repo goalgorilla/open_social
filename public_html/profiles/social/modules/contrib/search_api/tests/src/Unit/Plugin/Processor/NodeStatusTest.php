@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\NodeStatusTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
@@ -49,11 +44,11 @@ class NodeStatusTest extends UnitTestCase {
       ->will($this->returnValue('node'));
     /** @var \Drupal\search_api\Datasource\DatasourceInterface $datasource */
 
+    /** @var \Drupal\search_api\IndexInterface|\PHPUnit_Framework_MockObject_MockObject $index */
     $index = $this->getMock('Drupal\search_api\IndexInterface');
     $index->expects($this->any())
       ->method('getDatasources')
       ->will($this->returnValue(array($datasource)));
-      /** @var \Drupal\search_api\IndexInterface $index */
 
     $item = Utility::createItem($index, Utility::createCombinedId('entity:node', '1:en'), $datasource);
     $unpublished_node = $this->getMockBuilder('Drupal\Tests\search_api\TestNodeInterface')

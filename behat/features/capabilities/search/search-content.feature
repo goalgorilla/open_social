@@ -6,26 +6,26 @@ Feature: Search
 
   Scenario: Successfully search content
     Given "event" content:
-      | title              | body               |
-      | Event first        | Description one    |
-      | Event second       | Description two    |
+      | title             | body          | field_event_date    | field_event_date_end  |
+      | Event one         | Description   | 2016-04-14T12:00:00 | 2020-04-14T12:00:00   |
+      | Event two         | Description   | 2016-04-14T12:00:00 | 2020-04-14T12:00:00   |
     And "topic" content:
-      | title              | body               |
-      | Topic first        | Description three  |
-      | Topic second       | Description four  |
+      | title             | body          | field_topic_type    |
+      | Topic one         | Description   | Blog                |
+      | Topic two         | Description   | Blog                |
     And I am logged in as an "authenticated user"
     And I run cron
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
     When I fill in the following:
-      | Search the entire website | first |
+      | Search the entire website | one |
     And I press "Search"
     And I should see "Search content" in the "Page title block"
-    And I should see "Event first" in the "Main content"
-    And I should see "Topic first"
-    And I should not see "Event second"
+    And I should see "Event one" in the "Main content"
+    And I should see "Topic one"
+    And I should not see "Event two"
     # Scenario: Successfully filter search results
     When I select "topic" from "Content type"
     And I press "Filter" in the "Sidebar second"
-    And I should see "Topic first"
-    And I should not see "Event first"
+    And I should see "Topic one"
+    And I should not see "Event one"

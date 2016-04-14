@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\Field.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\Component\Render\FormattableMarkup;

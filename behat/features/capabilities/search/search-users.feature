@@ -7,13 +7,13 @@
   Scenario: Successfully search users
     Given users:
       | name     | mail               | status | field_profile_first_name |
-      | user_1   | user_1@example.com | 1      | User first               |
-      | user_2   | user_2@example.com | 1      | User second              |
+      | user_1   | user_1@example.com | 1      | User one                 |
+      | user_2   | user_2@example.com | 1      | User two                 |
     And I am logged in as an "authenticated user"
     And I am on "search/users"
     When I fill in the following:
-      | Search the entire website | first |
+      | Search the entire website | one |
     And I press "Search"
     And I should see "Search users" in the "Page title block"
-    And I should see "User first" in the "Main content"
-    And I should not see "User second"
+    And I should see "User one" in the "Main content"
+    And I should not see "User two" in the "Main content"

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\datasource\ContentEntity.
- */
-
 namespace Drupal\search_api\Plugin\search_api\datasource;
 
 use Drupal\Component\Utility\Html;
@@ -19,7 +14,6 @@ use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\field\FieldConfigInterface;
@@ -549,7 +543,6 @@ class ContentEntity extends DatasourcePluginBase {
   protected function getEntityBundleOptions() {
     $options = array();
     if (($bundles = $this->getEntityBundles())) {
-      unset($bundles[$this->getEntityTypeId()]);
       foreach ($bundles as $bundle => $bundle_info) {
         $options[$bundle] = Html::escape($bundle_info['label']);
       }
@@ -602,7 +595,6 @@ class ContentEntity extends DatasourcePluginBase {
     }
     return NULL;
   }
-
 
   /**
    * {@inheritdoc}

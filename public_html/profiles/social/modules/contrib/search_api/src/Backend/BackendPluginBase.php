@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Backend\BackendPluginBase.
- */
-
 namespace Drupal\search_api\Backend;
 
 use Drupal\search_api\Entity\Server;

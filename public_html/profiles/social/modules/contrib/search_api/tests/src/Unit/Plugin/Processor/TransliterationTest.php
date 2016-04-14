@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\TransliterationTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\Transliteration;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\Tests\UnitTestCase;
 
 /**

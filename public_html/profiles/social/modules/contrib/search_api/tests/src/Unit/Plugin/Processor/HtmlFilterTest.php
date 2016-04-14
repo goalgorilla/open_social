@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\HtmlFilterTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\HtmlFilter;
@@ -43,7 +38,12 @@ class HtmlFilterTest extends UnitTestCase {
    * @dataProvider titleConfigurationDataProvider
    */
   public function testTitleConfiguration($passed_value, $expected_value, $title_config) {
-    $this->processor->setConfiguration(array('tags' => array(), 'title' => $title_config, 'alt' => FALSE));
+    $configuration = array(
+      'tags' => array(),
+      'title' => $title_config,
+      'alt' => FALSE,
+    );
+    $this->processor->setConfiguration($configuration);
     $type = 'text';
     $this->invokeMethod('processFieldValue', array(&$passed_value, &$type));
     $this->assertEquals($expected_value, $passed_value);
@@ -81,7 +81,12 @@ class HtmlFilterTest extends UnitTestCase {
    * @dataProvider altConfigurationDataProvider
    */
   public function testAltConfiguration($passed_value, $expected_value, $alt_config) {
-    $this->processor->setConfiguration(array('tags' => array('img' => '2'), 'title' => FALSE, 'alt' => $alt_config));
+    $configuration = array(
+      'tags' => array('img' => '2'),
+      'title' => FALSE,
+      'alt' => $alt_config,
+    );
+    $this->processor->setConfiguration($configuration);
     $type = 'text';
     $this->invokeMethod('processFieldValue', array(&$passed_value, &$type));
     $this->assertEquals($expected_value, $passed_value);
@@ -97,11 +102,37 @@ class HtmlFilterTest extends UnitTestCase {
     return array(
       array('word', array(Utility::createTextToken('word')), FALSE),
       array('word', array(Utility::createTextToken('word')), TRUE),
-      array('<img src="href" />word', array(Utility::createTextToken('word')), TRUE),
-      array('<img alt="ALT"/> word', array(Utility::createTextToken('ALT', 2), Utility::createTextToken('word')), TRUE),
-      array('<img alt="ALT" /> word', array(Utility::createTextToken('word')), FALSE),
-      array('<img data-alt="ALT"/> word', array(Utility::createTextToken('word')), TRUE),
-      array('<img src="href" alt="ALT" title="Bar" /> word </a>', array(Utility::createTextToken('ALT', 2), Utility::createTextToken('word')), TRUE),
+      array(
+        '<img src="href" />word',
+        array(Utility::createTextToken('word')),
+        TRUE,
+      ),
+      array(
+        '<img alt="ALT"/> word',
+        array(
+          Utility::createTextToken('ALT', 2),
+          Utility::createTextToken('word'),
+        ),
+        TRUE,
+      ),
+      array(
+        '<img alt="ALT" /> word',
+        array(Utility::createTextToken('word')),
+        FALSE,
+      ),
+      array(
+        '<img data-alt="ALT"/> word',
+        array(Utility::createTextToken('word')),
+        TRUE,
+      ),
+      array(
+        '<img src="href" alt="ALT" title="Bar" /> word </a>',
+        array(
+          Utility::createTextToken('ALT', 2),
+          Utility::createTextToken('word'),
+        ),
+        TRUE,
+      ),
     );
   }
 
@@ -118,7 +149,12 @@ class HtmlFilterTest extends UnitTestCase {
    * @dataProvider tagConfigurationDataProvider
    */
   public function testTagConfiguration($passed_value, $expected_value, array $tags_config) {
-    $this->processor->setConfiguration(array('tags' => $tags_config, 'title' => TRUE, 'alt' => TRUE));
+    $configuration = array(
+      'tags' => $tags_config,
+      'title' => TRUE,
+      'alt' => TRUE,
+    );
+    $this->processor->setConfiguration($configuration);
     $type = 'text';
     $this->invokeMethod('processFieldValue', array(&$passed_value, &$type));
     $this->assertEquals($expected_value, $passed_value);
@@ -157,9 +193,27 @@ class HtmlFilterTest extends UnitTestCase {
     return array(
       array('h2word', 'h2word', array()),
       array('h2word', array(Utility::createTextToken('h2word')), $tags_config),
-      array('foo bar <h2> h2word </h2>', array(Utility::createTextToken('foo bar'), Utility::createTextToken('h2word', 2.0)), $tags_config),
-      array('foo bar <h2>h2word</h2>', array(Utility::createTextToken('foo bar'), Utility::createTextToken('h2word', 2.0)), $tags_config),
-      array('<div>word</div>', array(Utility::createTextToken('word', 2)), array('div' => 2)),
+      array(
+        'foo bar <h2> h2word </h2>',
+        array(
+          Utility::createTextToken('foo bar'),
+          Utility::createTextToken('h2word', 2.0),
+        ),
+        $tags_config,
+      ),
+      array(
+        'foo bar <h2>h2word</h2>',
+        array(
+          Utility::createTextToken('foo bar'),
+          Utility::createTextToken('h2word', 2.0),
+        ),
+        $tags_config,
+      ),
+      array(
+        '<div>word</div>',
+        array(Utility::createTextToken('word', 2)),
+        array('div' => 2),
+      ),
       $complex_test,
     );
   }

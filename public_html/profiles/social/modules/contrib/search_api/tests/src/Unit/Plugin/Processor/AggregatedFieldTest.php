@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\AggregatedFieldTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Plugin\search_api\processor\AggregatedFields;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\search_api\Utility;
 use Drupal\Tests\UnitTestCase;
 

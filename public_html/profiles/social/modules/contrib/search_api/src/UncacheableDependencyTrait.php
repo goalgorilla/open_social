@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\UncacheableDependencyTrait.
- */
-
 namespace Drupal\search_api;
 
 /**
@@ -42,7 +37,7 @@ trait UncacheableDependencyTrait {
    * When this object is modified, these cache tags will be invalidated.
    *
    * @return string[]
-   *  A set of cache tags.
+   *   A set of cache tags.
    *
    * @see \Drupal\Core\Cache\CacheableDependencyInterface::getCacheTags()
    */

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api_db\DatabaseCompatibility\MySql.
- */
-
 namespace Drupal\search_api_db\DatabaseCompatibility;
 
 use Drupal\Component\Render\FormattableMarkup;

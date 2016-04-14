@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\Tests\search_api\Kernel\Processor\RenderedItemTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel\Processor;
 
 use Drupal\Core\TypedData\DataDefinition;
@@ -41,7 +36,7 @@ class RenderedItemTest extends ProcessorTestBase {
     'search_api_test_backend',
     'comment',
     'system',
-    'filter'
+    'filter',
   );
 
   /**
@@ -50,8 +45,8 @@ class RenderedItemTest extends ProcessorTestBase {
   public function setUp($processor = NULL) {
     parent::setUp('rendered_item');
 
-    // Load configuration and needed schemas. (The necessary schemas for using
-    // nodes are already installed by the parent method.)
+    // Load additional configuration and needed schemas. (The necessary schemas
+    // for using nodes are already installed by the parent method.)
     $this->installConfig(array('system', 'filter', 'node', 'comment'));
     $this->installSchema('system', array('router'));
     \Drupal::service('router.builder')->rebuild();
@@ -102,12 +97,16 @@ class RenderedItemTest extends ProcessorTestBase {
     // Set proper configuration for the tested processor.
     $config = $this->processor->getConfiguration();
     $config['view_mode'] = array(
-      'entity:node' => [
+      'entity:node' => array(
         'page' => 'full',
         'article' => 'teaser',
-      ],
-      'entity:user' => 'compact',
-      'entity:comment' => 'teaser',
+      ),
+      'entity:user' => array(
+        'user' => 'compact',
+      ),
+      'entity:comment' => array(
+        'comment' => 'teaser',
+      ),
     );
     $config['roles'] = array($role->id());
     $this->processor->setConfiguration($config);
@@ -239,7 +238,7 @@ class RenderedItemTest extends ProcessorTestBase {
     // Check if the properties stay untouched if a datasource is given.
     $properties = array();
     $this->processor->alterPropertyDefinitions($properties, $this->index->getDatasource('entity:node'));
-    $this->assertEquals(array(),$properties, '"render_item" property not added when data source is given.');
+    $this->assertEquals(array(), $properties, '"render_item" property not added when data source is given.');
   }
 
 }

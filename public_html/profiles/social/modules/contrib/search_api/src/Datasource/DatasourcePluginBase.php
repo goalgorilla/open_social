@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Datasource\DatasourcePluginBase.
- */
-
 namespace Drupal\search_api\Datasource;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
