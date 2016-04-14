@@ -15,8 +15,20 @@
  * @ingroup themeable
  */
 #}
-<div{{ attributes.addClass('post') }}>
-  {% if content %}
-    {{- content -}}
+<div{{ attributes.addClass('card', 'post') }}>
+
+  {% if content.user_id %}
+    {{- content.user_id -}}
   {% endif %}
+
+  {{ date }}
+
+  {% if content.field_post %}
+    {{- content.field_post -}}
+  {% endif %}
+
+  {% if content.field_post_comments %}
+    {{- content.field_post_comments -}}
+  {% endif %}
+
 </div>
