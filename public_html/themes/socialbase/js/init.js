@@ -1,18 +1,22 @@
+
 (function($){
   $(function(){
 
+    var screen_sm_min = 767;
     var window_width = $(window).width();
 
+    if (window_width > screen_sm_min ) {
+      // Floating-Fixed table of contents
+      if ($('.table-of-contents').length) {
+        $('.toc-wrapper').pushpin({ top: $('.table-of-contents').offset().top, offset: 50 });
+      }
+      else if ($('#index-banner').length) {
+        $('.toc-wrapper').pushpin({ top: $('#index-banner').height() });
+      }
+      else {
+        $('.toc-wrapper').pushpin({ top: 0 });
+      }
 
-    // Floating-Fixed table of contents
-    if ($('.table-of-contents').length) {
-      $('.toc-wrapper').pushpin({ top: $('.table-of-contents').offset().top, offset: 60 });
-    }
-    else if ($('#index-banner').length) {
-      $('.toc-wrapper').pushpin({ top: $('#index-banner').height() });
-    }
-    else {
-      $('.toc-wrapper').pushpin({ top: 0 });
     }
 
     // Github Latest Commit
