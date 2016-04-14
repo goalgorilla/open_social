@@ -17,13 +17,22 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
  * Implements hook_views_data_alter().
  */
 function social_post_views_data_alter(array &$data) {
-    $data['post']['post_visibility_access_filter'] = array(
+  $data['post']['post_visibility_access_filter'] = array(
     'title' => t('Post visibility access'),
     'filter' => array(
       'title' => t('Post visibility access'),
       'help' => t('Enable post access for public and community posts.'),
       'field' => 'field_visibility',
       'id' => 'post_visibility_access'
+    ),
+  );
+  $data['post']['post_account_stream_filter'] = array(
+    'title' => t('Post account stream'),
+    'filter' => array(
+      'title' => t('Post account stream'),
+      'help' => t('Enable post for the account stream.'),
+      'field' => 'field_visibility',
+      'id' => 'post_account_stream',
     ),
   );
 }
