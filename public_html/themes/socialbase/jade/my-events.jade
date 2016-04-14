@@ -4,40 +4,40 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .cover.container
-    .cover-wrap
-      h1.page-title Michael Angarano
-      img.img-circle.img-bordered(src='content/images/avatar0.jpg')
-      br
-      br
-      button.btn.btn-flat.btn--default-bright
-        i.material-icons.left check
-        | Following
+  .container
+    .cover
+      .cover-wrap
+        h1.page-title Michael Angarano
+        img.img-circle.img-bordered(src='content/images/avatar0.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
       
 block secondary_navigation
   .container
-    .row.visible-xs-block.section-header
-      .col-xs-12
-        a.btn.btn-raised.btn--default-bright 
-          i.material-icons.left keyboard_arrow_left
-          | Back to timeline
+    .visible-xs-block.section
+      a.btn.btn-raised.btn--default-bright 
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to timeline
 
-  .style-secondary.hidden-xs
-    .container
+  .container
+    .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.tabs-center.style-secondary.nav-tabs--xl
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li
-            a(href="#") Timeline  
+            a(href="my-stream.html") Stream  
           li
-            a(href="#") Information
+            a(href="about.html") About
           li
             a(href='my-topics.html') Topics
           li.active
-            a(href='my-events.html') Events
-              span.visually-hidden (active tab)
+            a(href='my-events.html') Events 
+            span.visually-hidden (active tab) 
           li
-            a(href="#") Groups
+            a(href="my-groups.html") Groups
       
 block content
   
@@ -46,20 +46,20 @@ block content
     .col-xs-12
       h2.h3.section-title My events
     
-    .col-xs-12.col-sm-3.right.margin-bottom-l
+    .col-xs-12.col-sm-3.pull-right.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-event.html') 
-        i.material-icons.left add
+        i.material-icons.pull-left add
         | Add an event
 
-      button.waves-effect.waves-light.btn.btn-block.btn--primary.visible-xs-block.js-open-canvas
-        i.material-icons.left tune
+      button.waves-effect.waves-light.btn.btn-block.btn-primary.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
         | Filters
       
       .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
-            button.js-close-canvas.btn.btn-icon-toggle.btn-default-light.right
+            button.js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
               i.material-icons close
     
         .offcanvas-body
@@ -76,7 +76,7 @@ block content
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
             .form-group.margin-top-l.clearfix.visible-xs-block
-                button.btn.btn-default.js-close-canvas.right Done
+                button.btn.btn-default.js-close-canvas.pull-right Done
               
 
     .col-xs-12.col-sm-9

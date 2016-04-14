@@ -25,17 +25,21 @@ block content
 
             .form-group
               label.form-required Title
-              input.form-control.required(type="text")
+              input.form-control.required(type="text", value='Amsterdam Meetup')
                   
             .form-group.form__type-managed-file
-              label.form__label Image
+              label Image
               .image-widget.form-managed-file.clearfix
-                input.form-control(type='file', value='upload an image')
-                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
-                  i.material-icons.pull-left file_upload
-                  | Upload
-              .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-
+                img.img-responsive.pull-left(src='content/images/animals1-square.jpg', width='50')
+                .pull-left.padding-xs
+                  .file.file--image
+                  a(href='#', type="image/jpeg; length=158378") animals1-square.jpg
+                  .file-size (154.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-default.form-submit(type='submit', value='remove')
+                    i.material-icons.pull-left delete
+                    | Remove
+              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
         #placement.card.card-underline.scrollspy
         
@@ -47,7 +51,7 @@ block content
             .form-group.radios
               label.form-required Add event to
               .radio
-                input#profile(type='radio', name='placement')
+                input#profile(type='radio', name='placement', checked)
                 label(for='profile') My profile
               .radio
                 input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
@@ -67,7 +71,7 @@ block content
                   label(for='public') Public
                   .help-block Community visible to all visitors of the platform
                 .radio
-                  input#community(type='radio', name='visibility')
+                  input#community(type='radio', name='visibility', checked)
                   label(for='community') Community
                   .help-block visible only to logged in members
                 #visibilitygroup.radio(style='display: none')
@@ -85,22 +89,22 @@ block content
               .col-sm-6
                 .form-group
                   label.form-required Start date
-                  input.form-control.datepicker(type="text")
+                  input.form-control.datepicker(type="text", value='6 june, 2016')
                   .help-block Please fill in the start date of your event
               .col-sm-6
                 .form-group
                   label.form-required Start time
-                  input.form-control.timepicker(type="text")
+                  input.form-control.timepicker(type="text", value='12:00')
             
             .row
               .col-sm-6
                 .form-group
                   label End date
-                  input.form-control.datepicker(type="text")    
+                  input.form-control.datepicker(type="text", value='6 june, 2016')    
               .col-sm-6
                 .form-group
                   label End time
-                  input.form-control.timepicker(type="text")
+                  input.form-control.timepicker(type="text", value='17:00')
 
         #location.card.card-underline.scrollspy
         
@@ -111,27 +115,27 @@ block content
             
             .form-group
               label.form-required Venue name
-              input.form-control(type="text", required)
+              input.form-control(type="text", required, value='Goalgorilla')
 
             .form-group
               label Country
               select.form-control
-                option(value='', disabled='', selected='') Choose a country
-                option(value='1') Option 1
+                option(value='', disabled='') Choose a country
+                option(value='1', selected) Netherlands
                 option(value='2') Option 2
                 option(value='3') Option 3
             
             .form-group
               label Post code
-              input.form-control(type="text")  
+              input.form-control(type="text", value='1234 AB')  
               
             .form-group
               label City
-              input.form-control(type="text")  
+              input.form-control(type="text", value='Amsterdam')  
                 
             .form-group
               label Address
-              input.form-control(type="text")    
+              input.form-control(type="text", value='Keizersgracht 376')    
 
 
     
@@ -144,7 +148,13 @@ block content
             .form-group
               label.form-required Description
               .textarea--cke
-                textarea#ckeditor.form-control
+                textarea#ckeditor.form-control(required)
+                  p 
+                    strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business. Your training can be free, as so many industry experts write and teach and share this information without charging for it. Even the tools you use to build websites can be downloaded free of charge, or purchased for very little.
+                
+                    p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
+
+                    p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
         
         #attachments.card.card-underline.scrollspy
         
@@ -171,17 +181,19 @@ block content
               .form-group.radios
                 label.form-required Comments
                 .radio
-                  input#open(type='radio', checked, name='comments')
+                  input#open(type='radio', name='comments')
                   label(for='open') Open
                   .help-block Users with the "Post comments" permission can post comments.
                 .radio
-                  input#closed(type='radio', name='comments')
+                  input#closed(type='radio', checked, name='comments')
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
               
         .form-wrapper.clearfix
+          a.waves-effect.waves-light.btn.btn-raised.btn--default-bright(href="event.html") Discard changes
+          a.btn.btn-flat(href='event-confirm-delete.html') Delete
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.pull-right(type='submit', value='Preview') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-default.pull-right(type='submit', value='Preview') 
 
     .col-md-3
       .toc-wrapper

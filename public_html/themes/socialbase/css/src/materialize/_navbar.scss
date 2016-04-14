@@ -1,31 +1,154 @@
-// Styleguide override
-.styleguide .container {
-    width: 100% !important;
+// Layout and behaviour overrides
+
+.navbar-nav {
+  margin: 0;
+}
+
+.navbar-header {
+  @include MQ($small) {
+    float: right;
+  }
+}
+
+.navbar-right .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.navbar > .container .navbar-brand {
+  margin-left: -$navbar-padding-horizontal;
+}
+
+@media (min-width: $grid-float-breakpoint) {
+
+  .navbar > .container .navbar-brand {
+    margin-left: 0;
+  }
+
+  .navbar-right {
+    margin-right: 0;
+  }
+
+}
+
+//
+
+@media (max-width: $grid-float-breakpoint-max) {
+  // Dropdowns get same display when collapsed
+  // This is an override of bootstrap navbar line 241
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    margin-top: 0;
+    background-color: $dropdown-bg;
+    border: 1px solid $dropdown-border;
+    @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+    > li > a,
+    .dropdown-header {
+      padding: 5px 20px;
+    }
+
+  }
+
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    position: fixed;
+    top: 50px;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 100%;
+    max-height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
+  }
+
+  .navbar-collapse .navbar-nav {
+    margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+  }
+
+  .navbar-collapse .nav > li > a  {
+    padding: 13px 20px;
+  }
+
+}
+
+// Style overrides
+
+@media (max-width: $grid-float-breakpoint-max) {
+
+  .navbar-default .navbar-nav .open .dropdown-menu {
+
+    > li > a {
+      color: $dropdown-link-color;
+      &:hover,
+      &:focus {
+        color: $dropdown-link-hover-color;
+        background-color: $dropdown-link-hover-bg;
+      }
+    }
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-active-color;
+        background-color: $dropdown-link-active-bg;
+      }
+    }
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-color;
+        background-color: $dropdown-link-disabled-color;
+      }
+    }
+
+  }
+
 }
 
 .navbar-default {
   border: 0;
-  background-color: $brand-primary;
+  background-color: darken($brand-primary, 30%);
   font-size: $navbar-font-size;
+
+  .navbar-toggle {
+    border: 0;
+    border-radius: 0;
+    color: white;
+    padding: 13px 15px 8px;
+    height: 50px;
+    min-width: 50px;
+    margin: 0;
+  }
+
+  .navbar-form {
+    box-shadow: none;
+    border: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
+
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:hover {
-  background-color: $brand-secondary;
+  background-color: $brand-primary;
   padding: 10px 15px;
   width: 60px;
 }
 
 .navbar-default .navbar-nav > li > a:focus,
 .navbar-default .navbar-nav > li > a:hover {
-  background-color: $primary-color-dark;
+  background-color: $brand-secondary;
 }
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > .active > a:hover {
   &:after {
-    background-color: $brand-secondary;
+    background-color: $brand-primary;
     display: block;
     content: '';
     height: 5px;
@@ -57,8 +180,8 @@
   margin-top: 0;
   float: right;
 
-  & > li {
-    display: inline-block;
+  > li {
+    float: left;
 
     > a {
       padding: 13px 15px 8px;
@@ -66,11 +189,7 @@
       min-width: $navbar-height;
     }
   }
-  @include MQ($small) {
-    li {
-      display: block;
-    }
-  }
+
 }
 
 .navbar .dropdown .badge {
@@ -83,16 +202,61 @@
 }
 
 
-#navbar-search {
+.navbar-form[role='search'] {
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-control {
+    padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
+    border-radius: $input-border-radius;
+    max-width: none;
+    border: 0;
+
+    &::-webkit-input-placeholder,
+    &:-moz-placeholder,
+    &::-moz-placeholder,
+    &:-ms-input-placeholder {
+      color: $primary-color-bright;
+    }
+
+  }
+
+  .form-submit,
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    line-height: 38px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+	}
+
+  .search-icon {
+    line-height: 38px;
+    color: $primary-color;
+    background: white;
+    speak: none;
+    pointer-events: none;
+
+    i {
+      line-height: 38px;
+      width: 38px;
+      height: 38px;
+    }
+
+  }
 
 	@include MQ($small) {
-		border-radius: 4px;
-		background: white;
-    @include clearfix;
 
-		.form-group {
-      display: block;
-      position: relative;
+    .form-group {
+  		border-radius: $input-border-radius;
+      @include clearfix;
       width: 0%;
       min-width: 38px;
       height: 38px;
@@ -100,11 +264,7 @@
       overflow: hidden;
       transition: width 0.3s;
       -webkit-backface-visibility: hidden;
-
-      &.is-open {
-        max-width: 100%;
-      }
-		}
+    }
 
 		.form-control {
       position: absolute;
@@ -113,55 +273,49 @@
       outline: none;
       background: white;
       width: 100%;
+      height: 38px;
       margin: 0;
       z-index: 10;
-      font-family: inherit;
-      font-size: 20px;
-      color: #2c3e50;
-			padding: $padding-base-vertical $padding-base-horizontal;
-			max-width: 0;
-			transition: max-width 0.3s ease-in-out;
-
-		}
-
-		.form-submit,
-    .search-icon {
-      width: 38px;
-      height: 38px;
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 0;
-      padding: 0;
-      margin: 0;
-      text-align: center;
-      cursor: pointer;
 		}
 
     .form-submit {
+      background: white; // IE needs this
       opacity: 0;
-      color: transparent;
-      border: none;
-      outline: none;
-      z-index: -1;
+    	color: transparent;
+    	border: none;
+    	outline: none;
+    	z-index: -1;
     }
 
     .search-icon {
-      color: white;
-      background-color: $primary-color;
       z-index: 90;
-
-      i {
-        line-height: 38px;
-        height: 38px;
-        width: 38px;
-      }
+      border-radius: 0;
+      background: darken($brand-primary, 30%);
+      color: white;
+      pointer-events: initial;
+      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
     }
 
-		.is-open .search-icon {
-			color: $primary-color;
-		}
+  }
 
-	}
+}
 
+
+// Open state
+#navbar-search.is-open,
+.no-js #navbar-search {
+	width: 180px;
+}
+
+#navbar-search.is-open .search-icon,
+.no-js #navbar-search .search-icon {
+	background: white;
+	color: $primary-color;
+	z-index: 11;
+  border-radius: 0 $input-border-radius $input-border-radius 0;
+}
+
+#navbar-search.is-open .form-submit,
+.no-js #navbar-search .form-submit {
+	z-index: 90;
 }

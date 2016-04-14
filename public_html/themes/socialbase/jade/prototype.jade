@@ -30,6 +30,9 @@ html(lang="en")
             .list-group
               .list-group-item
                 h4.list-group-item-heading.text-primary Logged in users
+              +collection('my-stream.html', 'Profile')
+              +collection('profile-edit.html', 'Edit Profile')
+              +collection('account-edit.html', 'Edit Account')
               +collection('my-topics.html', 'My Topics')
               +collection('topic.html', 'Topic')
               +collection('node-add-topic.html', 'Create topic')
@@ -38,5 +41,6 @@ html(lang="en")
               +collection('event.html', 'Event')
               +collection('event-enrollments.html', 'Event enrollments')
               +collection('node-add-event.html', 'Create event')
+              +collection('node-edit-event.html', 'Edit event')
   
     include ./layout/_scripts.jade

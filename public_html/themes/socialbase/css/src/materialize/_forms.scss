@@ -24,19 +24,18 @@ label {
 
 .help-block {
   font-size: 0.75rem;
+  color: $help-block;
 
   .radio & {
     padding-left: $radio-width;
     max-width: none;
+    margin-top: 0;
   }
 }
 
 .form-control {
-  border: 0;
-  border-bottom: 1px solid $input-border;
-  border-radius: 0;
+  border: 1px solid $input-border;
   box-shadow: none;
-  padding: $padding-base-vertical 0;
   max-width: $form-control-max-width;
   appearance: none;
 
@@ -45,11 +44,33 @@ label {
     box-shadow: 0 2px 0 0 $primary-color;
   }
 
-  // Focused label style
-  &:focus ~ label {
-    color: $primary-color;
+}
+
+// ***************
+// Selects
+// ***************
+
+.material-select {
+  position: relative;
+  max-width: $form-control-max-width;
+
+  select {
+    cursor: pointer;
+    display: block;
   }
 
+  &:after{
+    content: '';
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    display: block;
+    width: 30px;
+    height: 38px;
+    background: url("../images/icon-select.svg") no-repeat center / auto 100%;
+    pointer-events: none;
+  }
 }
 
 
@@ -149,13 +170,17 @@ label {
   background-color: $input-disabled-color;
 }
 
+[type="checkbox"]:focus + label:before,
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px lighten($brand-primary, 10%);
+}
+
 // ***************
 // ckeditor
 // ***************
 
 .textarea--cke .cke {
   position: relative;
-  margin-top: 12px;
 }
 
 
@@ -222,11 +247,18 @@ textarea {
 		}
 }
 
+// ***************
+// Managed file input
+// ***************
+
+.form-managed-file {
+  font-size: 0.875rem;
+}
+
 
 // ***************
 // Password hints
 // ***************
-
 
 #edit-pass {
   color: $grey-dark-1;
@@ -309,7 +341,7 @@ textarea {
   }
 }
 
-/* Styling for the status indicator of the passwords match test.  */
+// Styling for the status indicator of the passwords match test.
 .password-confirm .ok {
   color: $success-color;
   font-weight: 500;

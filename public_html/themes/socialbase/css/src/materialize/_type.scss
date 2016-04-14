@@ -4,6 +4,10 @@ a {
 
   // Gets rid of tap active state
   -webkit-tap-highlight-color: transparent;
+
+	&:hover {
+		color: inherit;
+	}
 }
 
 
@@ -100,9 +104,7 @@ blockquote {
 // Text Styles
 em { font-style: italic; }
 strong { font-weight: 500; }
-small { font-size: 75%; }
 .light { font-weight: 300; }
-.thin { font-weight: 200; }
 
 .flow-text{
   font-size: responsive;
@@ -117,18 +119,10 @@ small { font-size: 75%; }
 ul,
 ol {
   padding-left: 24px;
-  margin-top: 0;
-  margin-bottom: 12px;
 }
 
 ol {
   list-style-position: inside;
-}
-
-.list-unstyled {
-  padding-left: 0;
-	margin: 0;
-  list-style: none;
 }
 
 .section-title {
@@ -152,3 +146,10 @@ ol {
 .text-xxl {		font-size: 1.5em; }
 .text-xxxl {	font-size: 2em; }
 .text-xxxxl {	font-size: 3em; }
+
+
+//
+
+@include style-variant('.brand-primary', $brand-primary, white);
+@include style-variant('.brand-secondary', $brand-secondary, 'white');
+@include style-variant('.brand-accent', $brand-accent, $default-color);

@@ -16,7 +16,7 @@ block content
   .row.margin-top-l
     .col-md-9.margin-bottom-l
     
-      form.node-form
+      form(action='topic.html', method='get')
       
         #content.card.card-underline.scrollspy
         
@@ -51,7 +51,7 @@ block content
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
                 button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
-                  i.material-icons.left file_upload
+                  i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
@@ -70,7 +70,7 @@ block content
               .radio
                 input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
                 label(for='group') A group I am a member of:
-              #selectagroup.form-control.col-sm-6.margin-top-s(style='display:none;')
+              #selectagroup(style='display:none;')
                 select.form-control
                   option(value='', disabled='', selected='') Select a group
                   option(value='1') Group 1
@@ -113,8 +113,8 @@ block content
                   .help-block Users cannot post comments.
               
         .form-wrapper.clearfix
-          input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.pull-right(type='submit', value='Preview') 
 
     .col-sm-3.hidden-mobile
       .toc-wrapper
