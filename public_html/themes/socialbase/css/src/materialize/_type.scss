@@ -126,7 +126,15 @@ ol {
 }
 
 .section-title {
-	color: $grey-dark-1;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 1.25rem;
+  margin: 0;
+
+  @include MQ($small) {
+    padding-left: 48px;
+    margin: 1em 0 .5em
+  }
 }
 
 .text-caption {

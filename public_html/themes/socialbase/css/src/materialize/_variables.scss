@@ -15,6 +15,7 @@
 // *  8. Collapsible
 // *  9. Dropdown
 // *  10. Forms
+// *  11. Collection
 // *  12. Media queries
 // *  13. Grid system
 // *  14. Breadcrumbs
@@ -24,7 +25,8 @@
 // *  18. Tables
 // *  19. Thumbnails
 // *  20. Type
-// *  22. Flow Text
+// *  21. Flow Text
+// *  22. Chips
 //
 
 // 0. Options
@@ -128,7 +130,7 @@ $padding-xs-horizontal:     5px !default;
 $line-height-large:         1.3333333 !default; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5 !default;
 
-$border-radius-base:        4px !default;
+$border-radius-base:        10px !default;
 $border-radius-large:       6px !default;
 $border-radius-small:       3px !default;
 
@@ -214,8 +216,6 @@ $badge-border-radius:         10px !default;
 
 // 6. Buttons
 // ==========================================================================
-
-$border-radius-base: 10px;
 
  // Shared styles
  $button-font-size: 0.875rem !default;
@@ -445,6 +445,15 @@ $state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) 
 $state-danger-text:              #a94442 !default;
 $state-danger-bg:                #f2dede !default;
 $state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+
+
+// 11. Collection
+// ==========================================================================
+$collection-border:              transparent !default;
+$collection-item-border:         $gray-lighter !default;
+$collection-bg:                  white !default;
+$collection-item-padding-vertical: $padding-large-vertical;
+$collection-item-padding-horizontal: 0;
 
 
 // 12. Media queries
@@ -762,3 +771,11 @@ $dl-horizontal-offset:        $component-offset-horizontal !default;
 $dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
 //** Horizontal line color.
 $hr-border:                   $gray-lighter !default;
+
+
+// 22. Chips
+// ==========================================================================
+
+$chip-bg-color:               $gray-lighter;
+$chip-height:                 32px;
+$chip-radius:                 $chip-height / 2 ;
