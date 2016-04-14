@@ -1,22 +1,26 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - views.view.posts
   module:
-    - social_post
     - system
+    - views
   theme:
     - socialbase
-id: postonprofileblock
+id: views_block__posts_block_stream_account
 theme: socialbase
 region: content
-weight: -9
+weight: -4
 provider: null
-plugin: post_profile_block
+plugin: 'views_block:posts-block_stream_account'
 settings:
-  id: post_profile_block
-  label: 'Post on profile block'
-  provider: social_post
+  id: 'views_block:posts-block_stream_account'
+  label: ''
+  provider: views
   label_display: '0'
+  views_label: ''
+  items_per_page: none
 visibility:
   request_path:
     id: request_path

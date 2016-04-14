@@ -2,12 +2,11 @@
 
 /**
  * @file
- * Contains \Drupal\social_post\Plugin\views\filter\Access.
+ * Contains \Drupal\social_post\Plugin\views\filter\PostVisibilityAccess.
  */
 
 namespace Drupal\social_post\Plugin\views\filter;
 
-use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 
@@ -18,7 +17,7 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
  *
  * @ViewsFilter("post_visibility_access")
  */
-class PostAccess extends FilterPluginBase {
+class PostVisibilityAccess extends FilterPluginBase {
 
   public function adminSummary() {
   }

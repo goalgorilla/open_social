@@ -28,19 +28,21 @@ class PostForm extends ContentEntityForm {
     // Retrieve the form display before it is overwritten in the parent.
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
-
-    // Remove recipient option.
-    // Only needed for 'private' permissions which we currently do not support.
-    unset($form['field_visibility']['widget']['#options'][0]);
+    $this->setFormDisplay($display, $form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
       if ($display_id === 'post.post.default') {
         // Set default value to public.
+        // Remove recipient option.
+        // Only needed for 'private' permissions which we currently do not support.
+        unset($form['field_visibility']['widget']['#options'][0]);
         $form['field_visibility']['widget']['#default_value'][0] = "1";
       }
       elseif ($display_id === 'post.post.profile') {
         // Remove public option from options.
+        $form['field_visibility']['widget']['#default_value'][0] = "0";
         unset($form['field_visibility']['widget']['#options'][1]);
+        unset($form['field_visibility']['widget']['#options'][2]);
       }
     }
 
@@ -51,22 +53,33 @@ class PostForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $entity = $this->entity;
+    $display = $this->getFormDisplay($form_state);
+
+    if (isset($display) && ($display_id = $display->get('id'))) {
+      if ($display_id === 'post.post.default') {
+
+      }
+      elseif ($display_id === 'post.post.profile') {
+        $account_profile = \Drupal::routeMatch()->getParameter('user');
+        $this->entity->get('field_recipient_user')->setValue($account_profile);
+      }
+    }
+
     $status = parent::save($form, $form_state);
 
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Post.', [
-          '%label' => $entity->label(),
+          '%label' => $this->entity->label(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Post.', [
-          '%label' => $entity->label(),
+          '%label' => $this->entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.post.canonical', ['post' => $entity->id()]);
+    $form_state->setRedirect('entity.post.canonical', ['post' => $this->entity->id()]);
   }
 
 }
