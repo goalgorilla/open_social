@@ -1,0 +1,41 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Amsterdam meetup
+
+block pagetitle
+      
+block content
+      
+  .row.margin-top-l
+    .col-sm-3.col-sm-push-9
+  
+    .col-sm-9.col-sm-pull-3
+    
+      .card
+        .card-body.extra-padding
+          ul.media-list
+            li.media
+              include ./molecules/_comment1.jade
+          form.form-horizontal
+            .form-group
+              textarea.form-control(rows='1', placeholder='Add a reply')
+            .form-group
+              button.btn.btn-primary.pull-right(type='submit') Reply
+      
+block scriptinline
+  script.
+    jQuery(document).ready(function($){
+      $('#enrollButton').on('click', function () {
+        
+        // button text will toggle "Cancel enrollment"
+        var buttonState = $(this).data("toggle-text");
+        $(this).data('toggle-text', $(this).text()).text(buttonState);
+        
+        // button active state will toggle
+        $(this).toggleClass('active') 
+        
+        // show / hide previous text element
+        $(this).prev('p').toggleClass('hidden');
+      })  
+    });
