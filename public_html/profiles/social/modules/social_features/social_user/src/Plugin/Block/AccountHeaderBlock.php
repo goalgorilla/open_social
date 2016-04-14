@@ -27,6 +27,7 @@ class AccountHeaderBlock extends BlockBase {
     $account = \Drupal::currentUser();
     if ($account->id() !== 0) {
       $account_name = $account->getAccountName();
+      $account_uid = $account->id();
 
       $links = [
         'add' => array(
@@ -41,7 +42,7 @@ class AccountHeaderBlock extends BlockBase {
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
+          'icon_classes' => 'hidden-sm hidden-md hidden-lg ',
           'icon_label' => 'Home',
           'label' => 'Home',
           'label_classes' => '',
@@ -50,7 +51,7 @@ class AccountHeaderBlock extends BlockBase {
         'groups' => array(
           'classes' => '',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
+          'icon_classes' => 'hidden-sm hidden-md hidden-lg ',
           'icon_label' => 'Group',
           'label' => 'Groups',
           'label_classes' => 'hidden-xs',
@@ -69,19 +70,69 @@ class AccountHeaderBlock extends BlockBase {
         ),
         'account_box' => array(
           'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
+          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
+          'link_classes' => 'dropdown-toggle',
           'icon_classes' => '',
           'icon_label' => 'account_box',
           'label' => $account_name,
-          'label_classes' => 'hidden-mobile',
+          'label_classes' => 'hidden-xs',
           'url' => '#',
+          'below' => array(
+            'my_profile' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'label' => 'My profile',
+              'label_classes' => '',
+              'url' => '/user',
+            ),
+            'my_account' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'label' => 'My account',
+              'label_classes' => '',
+              'url' => '/user',
+            ),
+            'edit_profile' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'label' => 'Edit profile',
+              'label_classes' => '',
+              'url' => '/user/' . $account_uid . '/edit',
+            ),
+            'logout' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'label' => 'Logout',
+              'label_classes' => '',
+              'url' => '/user/logout',
+            ),
+          ),
         ),
       ];
     }
     else {
       $links = [
-
+        'home' => array(
+          'classes' => 'hidden-xs',
+          'link_attributes' => '',
+          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
+          'icon_label' => 'Home',
+          'label' => 'Home',
+          'label_classes' => '',
+          'url' => Url::fromRoute('<front>'),
+        ),
       ];
     }
 
