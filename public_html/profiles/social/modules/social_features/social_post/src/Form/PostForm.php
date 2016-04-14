@@ -28,8 +28,9 @@ class PostForm extends ContentEntityForm {
     // Retrieve the form display before it is overwritten in the parent.
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
-    $this->setFormDisplay($display, $form_state);
-
+    if (isset($display)) {
+      $this->setFormDisplay($display, $form_state);
+    }
     if (isset($display) && ($display_id = $display->get('id'))) {
       if ($display_id === 'post.post.default') {
         // Set default value to public.
