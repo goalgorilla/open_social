@@ -12,45 +12,45 @@
  * @ingroup templates
  */
 #}
+<a href="#" class="navbar-brand">
+  <object id="front-page-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
+</a>
 
-
-<ul class="nav navbar-nav navbar-right">
-{% for item in links %}
-    <li class="{{ item.classes }}">
-        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-            <i title="{{ item.label }}" class="material-icons {{ item.icon_classes }}">{{ item.icon_label|lower }}</i>
-            <span class="{{item.label_classes}}">{{ item.label }}</span>
-        </a>
-        {% if item.below %}
-          <ul class="dropdown-menu">
-            {% for item in item.below %}
-              <li class="{{ item.classes }}">
-                <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-                  <span class="{{item.label_classes}}">{{ item.label }}</span>
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-    </li>
-{% endfor %}
-
-  {# This menu item is used to open the main menu for mobile, as the class says it is hidden on desktop. Admins must not disable the main menu. #}
-  <li class="hidden-sm hidden-md hidden-lg open">
-    <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true" class="dropdown-toggle">
-      <i title="menu" class="material-icons">menu</i>
-    </a>
-    <ul class="dropdown-menu">
-      <li><a href="#">Explore</a></li>
-      <li>
-        <form role="search" class="navbar-form navbar-left">
-          <div id="navbar-search" class="form-group">
-            <input type="text" placeholder="Search" class="form-control">
-            <input type="submit" class="form-submit">
-            <div class="search-icon"><i class="material-icons">search</i></div>
-          </div>
-        </form>
+<div class="navbar-header">
+  <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
+  <ul class="nav navbar-nav navbar-right">
+  {% for item in links %}
+      <li class="{{ item.classes }}">
+          <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+              <i title="{{ item.label }}" class="material-icons {{ item.icon_classes }}">{{ item.icon_label|lower }}</i>
+              <span class="{{item.label_classes}}">{{ item.label }}</span>
+          </a>
+          {% if item.below %}
+            <ul class="dropdown-menu">
+              {% for item in item.below %}
+                <li class="{{ item.classes }}">
+                  <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+                    <span class="{{item.label_classes}}">{{ item.label }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
       </li>
-    </ul>
-  </li>
-</ul>
+  {% endfor %}
+  </ul>
+</div>
+
+<div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
+  <ul class="nav navbar-nav">
+    <li><a href="#">Explore</a></li>
+    <li>
+      <form role="search" class="navbar-form navbar-left">
+        <div id="navbar-search" class="form-group">
+          <input id="search" type="text" placeholder="Search" name="search" class="form-control">
+          <input type="submit" value="" class="form-submit"><span class="search-icon"><i class="material-icons">search</i></span>
+        </div>
+      </form>
+    </li>
+  </ul>
+</div>
