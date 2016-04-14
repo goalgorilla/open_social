@@ -1,17 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\IntegrationTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\Component\Utility\Html;
-use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Utility;
+use Drupal\search_api_test_backend\Plugin\search_api\tracker\Test;
 
 /**
  * Tests the overall functionality of the Search API framework and admin UI.
@@ -58,23 +53,12 @@ class IntegrationTest extends WebTestBase {
   public function testFramework() {
     $this->drupalLogin($this->adminUser);
 
-    // Test that the overview page exists and its permissions work.
-    $this->drupalGet('admin/config');
-    $this->assertText('Search API', 'Search API menu link is displayed.');
-
-    $this->drupalGet('admin/config/search/search-api');
-    $this->assertResponse(200, 'Admin user can access the overview page.');
-
-    $this->drupalLogin($this->unauthorizedUser);
-    $this->drupalGet('admin/config/search/search-api');
-    $this->assertResponse(403, "User without permissions doesn't have access to the overview page.");
-
-    // Login as an admin user for the rest of the tests.
-    $this->drupalLogin($this->adminUser);
-
     $this->createServer();
     $this->checkServerAvailability();
     $this->createIndex();
+    $this->createIndexDuplicate();
+    $this->editServer();
+    $this->editIndex();
     $this->checkUserIndexCreation();
     $this->checkContentEntityTracking();
 
@@ -82,6 +66,7 @@ class IntegrationTest extends WebTestBase {
     $this->checkFieldLabels();
 
     $this->addFieldsToIndex();
+    $this->checkDataTypesTable();
     $this->removeFieldsFromIndex();
 
     $this->configureFilter();
@@ -218,7 +203,6 @@ class IntegrationTest extends WebTestBase {
     $this->assertText($this->t('@name field is required.', array('@name' => $this->t('Machine-readable name'))));
     $this->assertText($this->t('@name field is required.', array('@name' => $this->t('Data sources'))));
 
-
     $edit = array(
       'name' => $index_name,
       'id' => $this->indexId,
@@ -238,9 +222,7 @@ class IntegrationTest extends WebTestBase {
     $this->drupalGet($this->getIndexPath('edit'));
     $this->assertHtmlEscaped($index_name);
 
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
 
     if ($this->assertTrue($index, 'Index was correctly created.')) {
       $this->assertEqual($index->label(), $edit['name'], 'Name correctly inserted.');
@@ -272,6 +254,102 @@ class IntegrationTest extends WebTestBase {
   }
 
   /**
+   * Tests creating a search index with an existing machine name.
+   */
+  protected function createIndexDuplicate() {
+    $index_add_page = 'admin/config/search/search-api/add-index';
+    $this->drupalGet($index_add_page);
+    $this->indexId = 'test_index';
+
+    $edit = array(
+      'name' => $this->indexId,
+      'id' => $this->indexId,
+      'server' => $this->serverId,
+      'datasources[]' => array('entity:node'),
+    );
+
+    // Try to submit an index with a duplicate machine name.
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->assertText($this->t('The machine-readable name is already in use. It must be unique.'));
+
+    // Try to submit an index with a duplicate machine name after form
+    // rebuilding via datasource submit.
+    $this->drupalPostForm(NULL, $edit, array('path' => $index_add_page, 'triggering_element' => array('datasources_configure' => t('Configure'))));
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->assertText($this->t('The machine-readable name is already in use. It must be unique.'));
+
+    // Try to submit an index with a duplicate machine name after form
+    // rebuilding via datasource submit using AJAX.
+    $this->drupalPostAjaxForm(NULL, $edit, array('datasources_configure' => t('Configure')));
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->assertText($this->t('The machine-readable name is already in use. It must be unique.'));
+  }
+
+  /**
+   * Tests whether editing a server works correctly.
+   */
+  protected function editServer() {
+    $path = 'admin/config/search/search-api/server/' . $this->serverId . '/edit';
+    $this->drupalGet($path);
+
+    // Check if it's possible to change the machine name.
+    $elements = $this->xpath('//form[@id="search-api-server-edit-form"]/div[contains(@class, "form-item-id")]/input[@disabled]');
+    $this->assertEqual(count($elements), 1, 'Machine name cannot be changed.');
+
+    $tracked_items_before = $this->countTrackedItems();
+
+    $edit = array(
+      'name' => 'Test server',
+    );
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+
+    /** @var $index \Drupal\search_api\IndexInterface */
+    $index = $this->indexStorage->load($this->indexId);
+    $remaining = $index->getTrackerInstance()->getRemainingItemsCount();
+    $this->assertEqual(0, $remaining, 'Index was not scheduled for re-indexing when saving its server.');
+
+    \Drupal::state()->set('search_api_test_backend.return.postUpdate', TRUE);
+    $this->drupalPostForm($path, $edit, $this->t('Save'));
+
+    $tracked_items = $this->countTrackedItems();
+    $remaining = $index->getTrackerInstance()->getRemainingItemsCount();
+    $this->assertEqual($tracked_items, $remaining, 'Backend could trigger re-indexing upon save.');
+    $this->assertEqual($tracked_items_before, $tracked_items, 'Items are still tracked after re-indexing was triggered.');
+  }
+
+  /**
+   * Tests editing a search index via the UI.
+   */
+  protected function editIndex() {
+    $tracked_items = $this->countTrackedItems();
+    $edit_path = 'admin/config/search/search-api/index/' . $this->indexId . '/edit';
+    $this->drupalGet($edit_path);
+
+    // Check if it's possible to change the machine name.
+    $elements = $this->xpath('//form[@id="search-api-index-edit-form"]/div[contains(@class, "form-item-id")]/input[@disabled]');
+    $this->assertEqual(count($elements), 1, 'Machine name cannot be changed.');
+
+    // Test the AJAX functionality for configuring the tracker.
+    $edit = array('tracker' => 'search_api_test_backend');
+    $this->drupalPostAjaxForm(NULL, $edit, 'tracker_configure');
+    $edit['tracker_config[foo]'] = 'foobar';
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $this->assertResponse(200);
+
+    // Verify that everything was changed correctly.
+    $index = $this->getIndex(TRUE);
+    $tracker = $index->getTrackerInstance();
+    $this->assertTrue($tracker instanceof Test, 'Tracker was successfully switched.');
+    $this->assertEqual($tracker->getConfiguration(), array('foo' => 'foobar'), 'Tracker config was successfully saved.');
+    $this->assertEqual($this->countTrackedItems(), $tracked_items, 'Items are still correctly tracked.');
+
+    // Revert back to the default tracker for the rest of the test.
+    $edit = array('tracker' => 'default');
+    $this->drupalPostForm($edit_path, $edit, $this->t('Save'));
+    $this->assertResponse(200);
+  }
+
+  /**
    * Tests that an entity without bundles can be used as a data source.
    */
   protected function checkUserIndexCreation() {
@@ -297,12 +375,12 @@ class IntegrationTest extends WebTestBase {
     $this->assertResponse(200);
     $this->assertRaw($this->t('Enabled'));
 
-    \Drupal::state()->set('search_api_test_backend.available', FALSE);
+    \Drupal::state()->set('search_api_test_backend.return.isAvailable', FALSE);
     $this->drupalGet('admin/config/search/search-api');
     $this->assertResponse(200);
     $this->assertRaw($this->t('Unavailable'));
 
-    \Drupal::state()->set('search_api_test_backend.available', TRUE);
+    \Drupal::state()->set('search_api_test_backend.return.isAvailable', TRUE);
   }
 
   /**
@@ -475,7 +553,7 @@ class IntegrationTest extends WebTestBase {
       'administer search_api',
       'access administration pages',
       'administer content types',
-      'administer node fields'
+      'administer node fields',
     );
     $this->drupalLogin($this->createUser($permissions));
 
@@ -484,7 +562,7 @@ class IntegrationTest extends WebTestBase {
     // Add a new content type with funky chars.
     $edit = array(
       'name' => $content_type_name,
-      'type' => '_content_'
+      'type' => '_content_',
     );
     $this->drupalGet('admin/structure/types/add');
     $this->assertResponse(200);
@@ -496,7 +574,7 @@ class IntegrationTest extends WebTestBase {
     $edit = array(
       'new_storage_type' => 'string',
       'label' => $field_name,
-      'field_name' => '_field_'
+      'field_name' => '_field_',
     );
     $this->drupalGet('admin/structure/types/manage/_content_/fields/add-field');
     $this->assertResponse(200);
@@ -529,7 +607,7 @@ class IntegrationTest extends WebTestBase {
    */
   protected function addFieldsToIndex() {
     $fields = array(
-      'nid' => $this->t('Node ID'),
+      'nid' => $this->t('ID'),
       'title' => $this->t('Title'),
       'body' => $this->t('Body'),
       'revision_log' => $this->t('Revision log message'),
@@ -538,9 +616,7 @@ class IntegrationTest extends WebTestBase {
       $this->addField('entity:node', $property_path, $label);
     }
 
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $fields = $index->getFields();
 
     $this->assertTrue(!empty($fields['nid']), 'nid field is indexed.');
@@ -571,8 +647,7 @@ class IntegrationTest extends WebTestBase {
     $this->drupalPostForm($this->getIndexPath('fields'), $edit, $this->t('Save changes'));
     $this->assertText($this->t('The changes were successfully saved.'));
 
-    $this->indexStorage->resetCache(array($this->indexId));
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $fields = $index->getFields();
 
     if ($this->assertTrue(!empty($fields['title']), 'type field is indexed.')) {
@@ -581,6 +656,32 @@ class IntegrationTest extends WebTestBase {
     }
     if ($this->assertTrue(!empty($fields['revision_log']), 'revision_log field is indexed.')) {
       $this->assertEqual($fields['revision_log']->getType(), $edit['fields[revision_log][type]'], 'revision_log field type is search_api_test_data_type.');
+    }
+  }
+
+  /**
+   * Tests if the data types table is available and contains correct values.
+   */
+  protected function checkDataTypesTable() {
+    $this->drupalGet($this->getIndexPath('fields'));
+    $rows = $this->xpath('//*[@id="search-api-data-types-table"]/*/table/tbody/tr');
+    $this->assertTrue(is_array($rows) && !empty($rows), 'Found a datatype listing.');
+
+    /** @var \SimpleXMLElement $row */
+    foreach ($rows as $row) {
+      $label = (string) $row->td[0];
+      $icon = basename($row->td[2]->img['src']);
+      $fallback = (string) $row->td[3];
+
+      // Make sure we display the right icon and fallback column.
+      if (strpos($label, 'Unsupported') === 0) {
+        $this->assertEqual($icon, 'error.svg', 'An error icon is shown for unsupported data types.');
+        $this->assertNotEqual($fallback, '', 'The fallback data type label is not empty for unsupported data types.');
+      }
+      else {
+        $this->assertEqual($icon, 'check.svg', 'A check icon is shown for supported data types.');
+        $this->assertEqual($fallback, '', 'The fallback data type label is empty for supported data types.');
+      }
     }
   }
 
@@ -628,9 +729,7 @@ class IntegrationTest extends WebTestBase {
       $this->drupalGet($url_target);
     }
 
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $fields = $index->getFields();
     $this->assertTrue(!isset($fields['body']), 'The body field has been removed from the index.');
   }
@@ -645,9 +744,7 @@ class IntegrationTest extends WebTestBase {
       'processors[ignorecase][settings][fields][title]' => 'title',
     );
     $this->drupalPostForm($this->getIndexPath('processors'), $edit, $this->t('Save'));
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var \Drupal\search_api\IndexInterface $index */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $processors = $index->getProcessors();
     if (isset($processors['ignorecase'])) {
       $configuration = $processors['ignorecase']->getConfiguration();
@@ -724,9 +821,7 @@ class IntegrationTest extends WebTestBase {
    * keeps tracking but won't index any items.
    */
   protected function setReadOnly() {
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $index->reindex();
 
     $index_path = $this->getIndexPath();
@@ -743,8 +838,7 @@ class IntegrationTest extends WebTestBase {
     );
     $this->drupalPostForm($settings_path, $edit, $this->t('Save'));
 
-    $this->indexStorage->resetCache(array($this->indexId));
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $remaining_before = $this->countRemainingItems();
 
     $this->drupalGet($index_path);
@@ -770,7 +864,6 @@ class IntegrationTest extends WebTestBase {
 
     $remaining_after = $index->getTrackerInstance()->getRemainingItemsCount();
     $this->assertEqual(0, $remaining_after, 'Items were indexed after removing the "read only" flag.');
-
   }
 
   /**
@@ -814,9 +907,7 @@ class IntegrationTest extends WebTestBase {
    * handle and add the new ones.
    */
   protected function changeIndexDatasource() {
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
     $index->reindex();
 
     $user_count = \Drupal::entityQuery('user')->count()->execute();
@@ -850,9 +941,7 @@ class IntegrationTest extends WebTestBase {
    * "unindexed" in the tracker.
    */
   protected function changeIndexServer() {
-    $this->indexStorage->resetCache(array($this->indexId));
-    /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->getIndex(TRUE);
 
     $node_count = \Drupal::entityQuery('node')->count()->execute();
     $this->assertEqual($node_count, $this->countTrackedItems(), 'All nodes are correctly tracked by the index.');
@@ -897,9 +986,8 @@ class IntegrationTest extends WebTestBase {
     $this->assertUrl('admin/config/search/search-api', array(), 'Correct redirect to search api overview page.');
 
     // Confirm that the index hasn't been deleted.
-    $this->indexStorage->resetCache(array($this->indexId));
     /** @var $index \Drupal\search_api\IndexInterface */
-    $index = $this->indexStorage->load($this->indexId);
+    $index = $this->indexStorage->load($this->indexId, TRUE);
     if ($this->assertTrue($index, 'The index associated with the server was not deleted.')) {
       $this->assertFalse($index->status(), 'The index associated with the server was disabled.');
       $this->assertNull($index->getServerId(), 'The index was removed from the server.');
@@ -909,11 +997,17 @@ class IntegrationTest extends WebTestBase {
   /**
    * Retrieves test index.
    *
+   * @param bool $reset
+   *   (optional) If TRUE, reset the entity cache before loading.
+   *
    * @return \Drupal\search_api\IndexInterface
    *   The test index.
    */
-  protected function getIndex() {
-    return Index::load($this->indexId);
+  protected function getIndex($reset = FALSE) {
+    if ($reset) {
+      $this->indexStorage->resetCache(array($this->indexId));
+    }
+    return $this->indexStorage->load($this->indexId);
   }
 
   /**

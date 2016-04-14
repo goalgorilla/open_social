@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\filter\SearchApiUser.
- */
-
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\search_api\UncacheableDependencyTrait;
@@ -27,7 +22,7 @@ class SearchApiUser extends Name {
   /**
    * {@inheritdoc}
    */
-  function operators() {
+  public function operators() {
     return array(
       'or' => array(
         'title' => $this->t('Is one of'),

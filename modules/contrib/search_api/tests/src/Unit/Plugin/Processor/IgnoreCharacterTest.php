@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\IgnoreCharacterTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\IgnoreCharacters;
@@ -135,6 +130,7 @@ class IgnoreCharacterTest extends UnitTestCase {
   public function ignorableCharactersDataProvider() {
     return array(
       array('abcde', 'ace', '[bd]'),
+      array(array('abcde', 'abcdef'), array('ace', 'ace'), '[bdf]'),
       array("ab.c'de", "a.'de", '[b-c]'),
       array('foo 13$%& (bar)[93]', 'foo $%& (bar)[]', '\d'),
     );

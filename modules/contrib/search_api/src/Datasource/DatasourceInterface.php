@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Datasource\DatasourceInterface.
- */
-
 namespace Drupal\search_api\Datasource;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -127,7 +122,6 @@ interface DatasourceInterface extends IndexPluginInterface {
    *   be empty if it isn't possible to view items of this datasource.
    */
   public function getViewModes($bundle = NULL);
-
 
   /**
    * Retrieves the bundles associated to this datasource.

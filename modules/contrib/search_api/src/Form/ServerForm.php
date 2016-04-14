@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Form\ServerForm.
- */
-
 namespace Drupal\search_api\Form;
 
 use Drupal\Component\Utility\Html;
@@ -139,6 +134,7 @@ class ServerForm extends EntityForm {
         'exists' => array($this->getStorage(), 'load'),
         'source' => array('name'),
       ),
+      '#disabled' => !$server->isNew(),
     );
     $form['status'] = array(
       '#type' => 'checkbox',

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\ExampleContentTrait.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\search_api\Entity\Index;
@@ -40,42 +35,44 @@ trait ExampleContentTrait {
     // To test Unicode compliance, include all kind of strange characters here.
     $smiley = json_decode('"\u1F601"');
     $this->entities[1] = $entity_test_storage->create(array(
-        'name' => 'foo bar baz föö smile' . $smiley,
-        'body' => 'test test case Case casE',
-        'type' => 'item',
-        'keywords' => array('Orange', 'orange', 'örange', 'Orange', $smiley),
-        'category' => 'item_category'
-      ));
+      'name' => 'foo bar baz foobaz föö smile' . $smiley,
+      'body' => 'test test case Case casE',
+      'type' => 'item',
+      'keywords' => array('Orange', 'orange', 'örange', 'Orange', $smiley),
+      'category' => 'item_category',
+    ));
     $this->entities[1]->save();
     $this->entities[2] = $entity_test_storage->create(array(
-        'name' => 'foo test',
-        'body' => 'bar test casE',
-        'type' => 'item',
-        'keywords' => array('orange', 'apple', 'grape'),
-        'category' => 'item_category'
-      ));
+      'name' => 'foo test foobuz',
+      'body' => 'bar test casE',
+      'type' => 'item',
+      'keywords' => array('orange', 'apple', 'grape'),
+      'category' => 'item_category',
+    ));
     $this->entities[2]->save();
     $this->entities[3] = $entity_test_storage->create(array(
-        'name' => 'bar',
-        'body' => 'test foobar Case',
-        'type' => 'item',
-      ));
+      'name' => 'bar',
+      'body' => 'test foobar Case',
+      'type' => 'item',
+    ));
     $this->entities[3]->save();
     $this->entities[4] = $entity_test_storage->create(array(
-        'name' => 'foo baz',
-        'body' => 'test test test',
-        'type' => 'article',
-        'keywords' => array('apple', 'strawberry', 'grape'),
-        'category' => 'article_category'
-      ));
+      'name' => 'foo baz',
+      'body' => 'test test test',
+      'type' => 'article',
+      'keywords' => array('apple', 'strawberry', 'grape'),
+      'category' => 'article_category',
+      'width' => '1.0',
+    ));
     $this->entities[4]->save();
     $this->entities[5] = $entity_test_storage->create(array(
-        'name' => 'bar baz',
-        'body' => 'foo',
-        'type' => 'article',
-        'keywords' => array('orange', 'strawberry', 'grape', 'banana'),
-        'category' => 'article_category'
-      ));
+      'name' => 'bar baz',
+      'body' => 'foo',
+      'type' => 'article',
+      'keywords' => array('orange', 'strawberry', 'grape', 'banana'),
+      'category' => 'article_category',
+      'width' => '2.0',
+    ));
     $this->entities[5]->save();
     $count = \Drupal::entityQuery('entity_test')->count()->execute() - $count;
     $this->assertEqual($count, 5, "$count items inserted.");

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Plugin\views\field\SearchApiDate.
- */
-
 namespace Drupal\search_api\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\Date;

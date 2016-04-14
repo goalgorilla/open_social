@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api_db\DatabaseCompatibility\GenericDatabase.
- */
-
 namespace Drupal\search_api_db\DatabaseCompatibility;
 
 use Drupal\Component\Transliteration\TransliterationInterface;

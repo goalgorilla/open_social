@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\datasource\ContentEntityDeriver.
- */
-
 namespace Drupal\search_api\Plugin\search_api\datasource;
 
 use Drupal\Component\Plugin\PluginBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Backend\BackendPluginManager.
- */
-
 namespace Drupal\search_api\Backend;
 
 use Drupal\Core\Cache\CacheBackendInterface;

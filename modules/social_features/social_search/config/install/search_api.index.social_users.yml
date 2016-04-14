@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - search_api.server.social_database
+    - core.entity_view_mode.profile.search_index
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_interests
   module:
@@ -42,11 +43,6 @@ processor_settings:
     settings:
       weights:
         preprocess_index: -30
-  language:
-    plugin_id: language
-    settings:
-      weights:
-        preprocess_index: -30
   highlight:
     plugin_id: highlight
     settings:
@@ -83,6 +79,11 @@ processor_settings:
       weights:
         preprocess_index: -10
         preprocess_query: -10
+  language:
+    plugin_id: language
+    settings:
+      weights:
+        preprocess_index: -30
   rendered_item:
     plugin_id: rendered_item
     settings:

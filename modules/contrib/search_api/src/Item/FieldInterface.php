@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\FieldInterface.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\search_api\IndexInterface;

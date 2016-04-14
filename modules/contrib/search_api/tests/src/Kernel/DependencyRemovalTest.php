@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\DependencyRemovalTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
@@ -63,14 +58,14 @@ class DependencyRemovalTest extends KernelTestBase {
       'tracker_settings' => array(
         'default' => array(
           'plugin_id' => 'default',
-          'settings' => array()
-        )
+          'settings' => array(),
+        ),
       ),
       'datasource_settings' => array(
         'entity:user' => array(
           'plugin_id' => 'entity:user',
           'settings' => array(),
-        )
+        ),
       ),
     ));
 
@@ -135,7 +130,7 @@ class DependencyRemovalTest extends KernelTestBase {
     // Set our magic state key to let the test plugin know whether the
     // dependency should be removed or not. See
     // \Drupal\search_api_test_backend\Plugin\search_api\backend\TestBackend::onDependencyRemoval().
-    $key = 'search_api_test_backend.dependencies.remove';
+    $key = 'search_api_test_backend.return.onDependencyRemoval';
     \Drupal::state()->set($key, $remove_dependency);
 
     // Delete the backend's dependency.
@@ -191,8 +186,11 @@ class DependencyRemovalTest extends KernelTestBase {
     $datasources['entity:user'] = $manager->createInstance('entity:user', array('index' => $this->index));
     $datasources['search_api_test_dependencies'] = $manager->createInstance(
       'search_api_test_dependencies',
-      array($dependency_key => array($dependency_name),
-        'index' => $this->index));
+      array(
+        $dependency_key => array($dependency_name),
+        'index' => $this->index,
+      )
+    );
     $this->index->setDatasources($datasources);
 
     $this->index->save();

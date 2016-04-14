@@ -137,11 +137,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -158,6 +155,7 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -170,7 +168,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: search_api_string
+          reduce_duplicates: false
+          plugin_id: search_api_options
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -251,6 +250,9 @@ display:
           plugin_id: search_api_fulltext
       display_extenders: {  }
       use_ajax: false
+      filter_groups:
+        operator: AND
+        groups: {  }
     cache_metadata:
       max-age: 0
       contexts:

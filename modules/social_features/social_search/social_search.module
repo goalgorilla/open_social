@@ -27,23 +27,9 @@ function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\F
     $form['actions']['reset']['#access'] = TRUE;
 
     if ('views-exposed-form-search-content-page' === $form['#id']) {
-      // Get a list of content types.
-      $types = NodeType::loadMultiple();
-      $types_options = array();
-      foreach ($types as $key => $value) {
-        $types_options[$key] = $value->label();
-      }
-      // Change textfield widget which is only provided by Search API to select.
-      $form['type'] = array(
-        '#type' => 'select',
-        '#title' => t('Content type'),
-        '#options' => $types_options,
-        '#empty_value' => '',
-        '#empty_option' => t('All'),
-        //@TODO: remove this class when theme will be ready.
-        '#attributes' => array(
-          'class' => array('browser-default')
-        )
+      //@TODO: remove this class when theme will be ready.
+      $form['type']['#attributes'] = array(
+        'class' => array('browser-default')
       );
     }
   }

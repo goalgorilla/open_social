@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Annotation\SearchApiDataType.
- */
-
 namespace Drupal\search_api\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -36,6 +31,15 @@ class SearchApiDataType extends Plugin {
    * @var \Drupal\Core\Annotation\Translation
    */
   public $label;
+
+  /**
+   * The description of the data type.
+   *
+   * @ingroup plugin_translatable
+   *
+   * @var \Drupal\Core\Annotation\Translation
+   */
+  public $description;
 
   /**
    * Whether this is one of the default data types provided by the Search API.

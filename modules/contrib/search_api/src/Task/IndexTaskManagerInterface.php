@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Task\IndexTaskManagerInterface.
- */
-
 namespace Drupal\search_api\Task;
 
 use Drupal\search_api\IndexInterface;
@@ -55,7 +50,10 @@ interface IndexTaskManagerInterface {
    * @param \Drupal\search_api\IndexInterface $index
    *   The search index.
    *
-   * @return mixed
+   * @return int|null
+   *   The number of items tracked. Or NULL if no items were added and tracking
+   *   for this index has been completed. (Note that 0 can also be returned,
+   *   which does not mean that tracking has been completed for the index.)
    */
   public function addItemsAll(IndexInterface $index);
 

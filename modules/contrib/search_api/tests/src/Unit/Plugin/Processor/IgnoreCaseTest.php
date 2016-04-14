@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\IgnoreCaseTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\IgnoreCase;
@@ -55,7 +50,7 @@ class IgnoreCaseTest extends UnitTestCase {
       array('Foo bar', 'foo bar'),
       array('foo Bar', 'foo bar'),
       array('Foo Bar', 'foo bar'),
-      array('Foo bar BaZ, ÄÖÜÀÁ<>»«.', 'foo bar baz, äöüàá<>»«.')
+      array('Foo bar BaZ, ÄÖÜÀÁ<>»«.', 'foo bar baz, äöüàá<>»«.'),
     );
   }
 
