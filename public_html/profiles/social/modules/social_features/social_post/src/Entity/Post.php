@@ -24,7 +24,7 @@ use Drupal\user\UserInterface;
  *   id = "post",
  *   label = @Translation("Post"),
  *   handlers = {
- *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
+ *     "view_builder" = "Drupal\social_post\PostViewBuilder",
  *     "list_builder" = "Drupal\social_post\PostListBuilder",
  *     "views_data" = "Drupal\social_post\Entity\PostViewsData",
  *
