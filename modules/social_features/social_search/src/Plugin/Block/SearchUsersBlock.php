@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\social_profile\Plugin\Block\SearchUsersBlock.
+ * Contains \Drupal\social_search\Plugin\Block\SearchUsersBlock.
  */
 
-namespace Drupal\social_profile\Plugin\Block;
+namespace Drupal\social_search\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 
@@ -26,7 +26,7 @@ class SearchUsersBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    $form = \Drupal::formBuilder()->getForm('Drupal\social_profile\Form\SearchUsersForm');
+    $form = \Drupal::formBuilder()->getForm('Drupal\social_search\Form\SearchUsersForm');
     $build['search_users_form'] = $form;
 
     return $build;

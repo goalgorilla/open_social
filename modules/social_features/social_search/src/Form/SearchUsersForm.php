@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\social_profile\Form\SearchUsersForm.
+ * Contains \Drupal\social_search\Form\SearchUsersForm.
  */
 
-namespace Drupal\social_profile\Form;
+namespace Drupal\social_search\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -15,7 +15,7 @@ use Drupal\Component\Utility\UrlHelper;
 /**
  * Class SearchUsersForm.
  *
- * @package Drupal\social_profile\Form
+ * @package Drupal\social_search\Form
  */
 class SearchUsersForm extends FormBase {
 
@@ -32,7 +32,6 @@ class SearchUsersForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['search_input'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Search the entire website'),
     );
 
     // Prefill search input on the search users page.
