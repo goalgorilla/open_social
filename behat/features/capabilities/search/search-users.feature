@@ -12,7 +12,7 @@
     And I am logged in as an "authenticated user"
     And I am on "search/users"
     When I fill in the following:
-      | Search the entire website | one |
+      | search_input | one |
     And I press "Search"
     And I should see "Search users" in the "Page title block"
     And I should see "User one" in the "Main content"

@@ -18,7 +18,7 @@ Feature: Search
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
     When I fill in the following:
-      | Search the entire website | one |
+      | search_input | one |
     And I press "Search"
     And I should see "Search content" in the "Page title block"
     And I should see "Event one" in the "Main content"
