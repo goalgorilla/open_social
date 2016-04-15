@@ -1,4 +1,4 @@
-@api @event @eventenrollment @stability @perfect @DS-479
+@api @event @eventenrollment @stability @perfect @DS-479 @profile 
 Feature: Enroll for an event
   Benefit: In order to attend an Event
   Role: LU
@@ -22,6 +22,8 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see the link "Enrollments"
+    And I should see "View profile"
+    And I should see "Contact me"
 
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
