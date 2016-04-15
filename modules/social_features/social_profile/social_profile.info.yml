@@ -3,12 +3,19 @@ description: 'Social profile config'
 type: module
 core: 8.x
 dependencies:
-  - user
-  - social
-  - entity
-  - profile
   - field_group
+  - image
+  - profile
+  - search_api
+  - social_profile
+  - social_search
+  - system
+  - telephone
+  - text
+  - views
 version: '8.1'
 package: Social
 features:
   bundle: social
+  required:
+    - block.block.profile_hero_block
