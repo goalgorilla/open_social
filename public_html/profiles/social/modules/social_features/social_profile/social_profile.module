@@ -1,7 +1,9 @@
 <?php
 
 use Drupal\Core\Render\Element;
-
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\UserInterface;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
@@ -86,5 +88,22 @@ function social_profile_preprocess_profile(&$variables) {
   $variables += array('content' => array());
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * In order to save a new default profile on user creation.
+ */
+function social_profile_user_insert(UserInterface $account) {
+  // If the new account has a UID, we can create a default profile.
+  // Default image is added through the field settings.
+  if (!empty($account->id())) {
+    $profile = Profile::create($expected = [
+      'type' => ProfileType::load('profile')->id(),
+      'uid' => $account->id(),
+    ]);
+    $profile->save();
   }
 }
