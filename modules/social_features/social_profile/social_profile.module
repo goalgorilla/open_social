@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Render\Element;
+
 /**
  * Implements hook_form_FORM_ID_alter().
  */
@@ -48,4 +50,41 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
   $suggestions[] = $original . '__' . $entity->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
+}
+
+/**
+ * Prepares variables for profile templates.
+ *
+ * Default template: profile.html.twig.
+ *
+ * Most themes use their own copy of node.html.twig. The default is located
+ * inside "/core/modules/node/templates/node.html.twig". Look in there for the
+ * full list of variables.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - profile: The profile object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_profile_preprocess_profile(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $profile = $variables['profile'];
+  $user = \Drupal\user\Entity\User::load($profile->getOwnerId());
+
+  // See social_user_user_format_name_alter(), DisplayName is either first name
+  // + last name, or username if both first and last name aren't filled out.
+  $profile_name = $user->getDisplayName();
+
+  // This will get the users internal route path, in this case user/{user.id}.
+  $profile_url = $user->toUrl()->getInternalPath();
+
+  $variables['profile_name'] = $profile_name;
+  $variables['profile_url'] = $profile_url;
+
+  // Helpful $content variable for templates.
+  $variables += array('content' => array());
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
 }
