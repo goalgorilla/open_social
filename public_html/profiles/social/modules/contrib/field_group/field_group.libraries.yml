@@ -1,0 +1,50 @@
+field_ui:
+  version: VERSION
+  js:
+    js/field_group.field_ui.js: {}
+  css:
+    component:
+      css/field_group.field_ui.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+
+core:
+  version: VERSION
+  js:
+    js/field_group.js: {}
+  css:
+    theme:
+      css/field_group.css: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+    - core/drupalSettings
+
+formatter.accordion:
+  version: VERSION
+  js:
+    formatters/accordion/accordion.js: {}
+  dependencies:
+    - field_group/core
+    - core/jquery.ui.accordion
+
+formatter.html_element:
+  version: VERSION
+  js:
+    formatters/html_element/html-element.js: {}
+  dependencies:
+    - field_group/core
+
+formatter.horizontal_tabs:
+  version: VERSION
+  js:
+    formatters/horizontal_tabs/horizontal-tabs.js: {}
+  css:
+    component:
+      formatters/horizontal_tabs/horizontal-tabs.css: {}
+  dependencies:
+    - field_group/core

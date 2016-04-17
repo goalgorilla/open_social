@@ -23,14 +23,6 @@ class CurrentThemeConditionTest extends KernelTestBase {
   public static $modules = array('system', 'theme_test');
 
   /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-    $this->installSchema('system', array('router'));
-  }
-
-  /**
    * Tests the current theme condition.
    */
   public function testCurrentTheme() {
@@ -52,7 +44,7 @@ class CurrentThemeConditionTest extends KernelTestBase {
     $this->assertTrue($condition_negated->execute());
 
     // Set the expected theme to be used.
-    $this->config('system.theme')->set('default', 'test_theme')->save();
+    \Drupal::service('theme_handler')->setDefault('test_theme');
     \Drupal::theme()->resetActiveTheme();
 
     $this->assertTrue($condition->execute());

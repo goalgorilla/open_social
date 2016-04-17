@@ -79,9 +79,9 @@
  * Web services make it possible for applications and web sites to read and
  * update information from other web sites. There are several standard
  * techniques for providing web services, including:
- * - SOAP: http://en.wikipedia.org/wiki/SOAP SOAP
- * - XML-RPC: http://en.wikipedia.org/wiki/XML-RPC
- * - REST: http://en.wikipedia.org/wiki/Representational_state_transfer
+ * - SOAP: http://wikipedia.org/wiki/SOAP
+ * - XML-RPC: http://wikipedia.org/wiki/XML-RPC
+ * - REST: http://wikipedia.org/wiki/Representational_state_transfer
  * Drupal sites can both provide web services and integrate third-party web
  * services.
  *
@@ -254,7 +254,7 @@
  * - Exporting and importing configuration.
  *
  * The file storage format for configuration information in Drupal is
- * @link http://en.wikipedia.org/wiki/YAML YAML files. @endlink Configuration is
+ * @link http://wikipedia.org/wiki/YAML YAML files. @endlink Configuration is
  * divided into files, each containing one configuration object. The file name
  * for a configuration object is equal to the unique name of the configuration,
  * with a '.yml' extension. The default configuration files for each module are
@@ -283,16 +283,16 @@
  *
  * The first task in using the simple configuration API is to define the
  * configuration file structure, file name, and schema of your settings (see
- * @ref sec_yaml above). Once you have done that, you can retrieve the
- * active configuration object that corresponds to configuration file
- * mymodule.foo.yml with a call to:
+ * @ref sec_yaml above). Once you have done that, you can retrieve the active
+ * configuration object that corresponds to configuration file mymodule.foo.yml
+ * with a call to:
  * @code
  * $config = \Drupal::config('mymodule.foo');
  * @endcode
  *
  * This will be an object of class \Drupal\Core\Config\Config, which has methods
- * for getting and setting configuration information.  For instance, if your
- * YAML file structure looks like this:
+ * for getting configuration information. For instance, if your YAML file
+ * structure looks like this:
  * @code
  * enabled: '0'
  * bar:
@@ -307,11 +307,33 @@
  * $bar = $config->get('bar');
  * // Get one element of the array.
  * $bar_baz = $config->get('bar.baz');
- * // Update a value. Nesting works the same as get().
- * $config->set('bar.baz', 'string2');
- * // Nothing actually happens with set() until you call save().
+ * @endcode
+ *
+ * The Config object that was obtained and used in the previous examples does
+ * not allow you to change configuration. If you want to change configuration,
+ * you will instead need to get the Config object by making a call to
+ * getEditable() on the config factory:
+ * @code
+ * $config =\Drupal::service('config.factory')->getEditable('mymodule.foo');
+ * @endcode
+ *
+ * Individual configuration values can be changed or added using the set()
+ * method and saved using the save() method:
+ * @code
+ * // Set a scalar value.
+ * $config->set('enabled', 1);
+ * // Save the configuration.
  * $config->save();
  * @endcode
+ *
+ * Configuration values can also be unset using the clear() method, which is
+ * also chainable:
+ * @code
+ * $config->clear('bar.boo')->save();
+ * $config_data = $config->get('bar');
+ * @endcode
+ * In this example $config_data would return an array with one key - 'baz' -
+ * because 'boo' was unset.
  *
  * @section sec_entity Configuration entities
  * In contrast to the simple configuration settings described in the previous
@@ -709,7 +731,8 @@
  * top-level core directory). Some Drupal Core modules and contributed modules
  * also define services in modulename.services.yml files. API reference sites
  * (such as https://api.drupal.org) generate lists of all existing services from
- * these files, or you can look through the individual files manually.
+ * these files. Look for the Services link in the API Navigation block.
+ * Alternatively you can look through the individual files manually.
  *
  * A typical service definition in a *.services.yml file looks like this:
  * @code
@@ -1120,7 +1143,7 @@
  *
  * A runtime assertion is a statement that is expected to always be true at
  * the point in the code it appears at. They are tested using PHP's internal
- * @link http://www.php.net/assert assert() @endlink statement. If an
+ * @link http://php.net/assert assert() @endlink statement. If an
  * assertion is ever FALSE it indicates an error in the code or in module or
  * theme configuration files. User-provided configuration files should be
  * verified with standard control structures at all times, not just checked in
@@ -1947,9 +1970,10 @@ function hook_queue_info_alter(&$queues) {
  *     Subject of the email to be sent. This must not contain any newline
  *     characters, or the email may not be sent properly.
  *  - 'body':
- *     An array of strings containing the message text. The message body is
- *     created by concatenating the individual array strings into a single text
- *     string using "\n\n" as a separator.
+ *     An array of strings or objects that implement
+ *     \Drupal\Component\Render\MarkupInterface containing the message text. The
+ *     message body is created by concatenating the individual array strings
+ *     into a single text string using "\n\n" as a separator.
  *  - 'headers':
  *     Associative array containing mail headers, such as From, Sender,
  *     MIME-Version, Content-Type, etc.
@@ -1998,7 +2022,9 @@ function hook_mail_alter(&$message) {
  *     string when the hook is invoked.
  *   - body: An array of lines containing the message to be sent. Drupal will
  *     format the correct line endings for you. MailManagerInterface->mail()
- *     sets this to an empty array when the hook is invoked.
+ *     sets this to an empty array when the hook is invoked. The array may
+ *     contain either strings or objects implementing
+ *     \Drupal\Component\Render\MarkupInterface.
  *   - from: The address the message will be marked as being from, which is
  *     set by MailManagerInterface->mail() to either a custom address or the
  *     site-wide default email address when the hook is invoked.

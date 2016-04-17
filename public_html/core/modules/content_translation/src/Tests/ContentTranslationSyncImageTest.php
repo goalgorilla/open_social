@@ -8,6 +8,9 @@
 namespace Drupal\content_translation\Tests;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\file\Entity\File;
 
 /**
  * Tests the field synchronization behavior for the image field.
@@ -49,14 +52,14 @@ class ContentTranslationSyncImageTest extends ContentTranslationTestBase {
     $this->fieldName = 'field_test_et_ui_image';
     $this->cardinality = 3;
 
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $this->fieldName,
       'entity_type' => $this->entityTypeId,
       'type' => 'image',
       'cardinality' => $this->cardinality,
     ))->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'entity_type' => $this->entityTypeId,
       'field_name' => $this->fieldName,
       'bundle' => $this->entityTypeId,
@@ -70,7 +73,7 @@ class ContentTranslationSyncImageTest extends ContentTranslationTestBase {
           ),
         ),
       ),
-    ))->save();
+    ])->save();
   }
 
   /**
@@ -137,7 +140,7 @@ class ContentTranslationSyncImageTest extends ContentTranslationTestBase {
         'uid' => \Drupal::currentUser()->id(),
         'status' => FILE_STATUS_PERMANENT,
       );
-      $file = entity_create('file', $field_values);
+      $file = File::create($field_values);
       $file->save();
       $fid = $file->id();
       $this->files[$index]->fid = $fid;

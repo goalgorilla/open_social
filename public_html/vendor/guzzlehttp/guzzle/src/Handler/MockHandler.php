@@ -74,7 +74,7 @@ class MockHandler implements \Countable
         $response = array_shift($this->queue);
 
         if (is_callable($response)) {
-            $response = $response($request, $options);
+            $response = call_user_func($response, $request, $options);
         }
 
         $response = $response instanceof \Exception
@@ -87,6 +87,19 @@ class MockHandler implements \Countable
                 if ($this->onFulfilled) {
                     call_user_func($this->onFulfilled, $value);
                 }
+                if (isset($options['sink'])) {
+                    $contents = (string) $value->getBody();
+                    $sink = $options['sink'];
+
+                    if (is_resource($sink)) {
+                        fwrite($sink, $contents);
+                    } elseif (is_string($sink)) {
+                        file_put_contents($sink, $contents);
+                    } elseif ($sink instanceof \Psr\Http\Message\StreamInterface) {
+                        $sink->write($contents);
+                    }
+                }
+
                 return $value;
             },
             function ($reason) use ($request, $options) {

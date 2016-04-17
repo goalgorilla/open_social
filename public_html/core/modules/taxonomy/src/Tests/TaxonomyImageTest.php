@@ -7,8 +7,10 @@
 
 namespace Drupal\taxonomy\Tests;
 
+use Drupal\field\Entity\FieldConfig;
 use Drupal\user\RoleInterface;
 use Drupal\file\Entity\File;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests access checks of private image fields.
@@ -41,7 +43,7 @@ class TaxonomyImageTest extends TaxonomyTestBase {
     // Add a field to the vocabulary.
     $entity_type = 'taxonomy_term';
     $name = 'field_test';
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $name,
       'entity_type' => $entity_type,
       'type' => 'image',
@@ -49,12 +51,12 @@ class TaxonomyImageTest extends TaxonomyTestBase {
         'uri_scheme' => 'private',
       ),
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $name,
       'entity_type' => $entity_type,
       'bundle' => $this->vocabulary->id(),
       'settings' => array(),
-    ))->save();
+    ])->save();
     entity_get_display($entity_type, $this->vocabulary->id(), 'default')
       ->setComponent($name, array(
         'type' => 'image',

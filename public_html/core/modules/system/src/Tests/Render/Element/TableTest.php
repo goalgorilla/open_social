@@ -29,7 +29,6 @@ class TableTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $this->installSchema('system', 'router');
     \Drupal::service('router.builder')->rebuild();
   }
 
@@ -98,7 +97,7 @@ class TableTest extends KernelTestBase {
 
     // Enable the Classy theme.
     \Drupal::service('theme_handler')->install(['classy']);
-    $this->config('system.theme')->set('default', 'classy')->save();
+    \Drupal::service('theme_handler')->setDefault('classy');
 
     $this->render($table);
     $this->removeWhiteSpace();

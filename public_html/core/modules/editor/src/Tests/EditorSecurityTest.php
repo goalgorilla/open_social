@@ -8,7 +8,9 @@
 namespace Drupal\editor\Tests;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\editor\Entity\Editor;
 use Drupal\simpletest\WebTestBase;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Tests XSS protection for content creators when using text editors.
@@ -86,7 +88,7 @@ class EditorSecurityTest extends WebTestBase {
     // With text formats 2, 3 and 5, we also associate a text editor that does
     // not guarantee XSS safety. "restricted" means the text format has XSS
     // filters on output, "unrestricted" means the opposite.
-    $format = entity_create('filter_format', array(
+    $format = FilterFormat::create(array(
       'format' => 'restricted_without_editor',
       'name' => 'Restricted HTML, without text editor',
       'weight' => 0,
@@ -101,7 +103,7 @@ class EditorSecurityTest extends WebTestBase {
       ),
     ));
     $format->save();
-    $format = entity_create('filter_format', array(
+    $format = FilterFormat::create(array(
       'format' => 'restricted_with_editor',
       'name' => 'Restricted HTML, with text editor',
       'weight' => 1,
@@ -116,12 +118,12 @@ class EditorSecurityTest extends WebTestBase {
       ),
     ));
     $format->save();
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'restricted_with_editor',
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
-    $format = entity_create('filter_format', array(
+    $format = FilterFormat::create(array(
       'format' => 'restricted_plus_dangerous_tag_with_editor',
       'name' => 'Restricted HTML, dangerous tag allowed, with text editor',
       'weight' => 1,
@@ -136,29 +138,29 @@ class EditorSecurityTest extends WebTestBase {
       ),
     ));
     $format->save();
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'restricted_plus_dangerous_tag_with_editor',
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
-    $format = entity_create('filter_format', array(
+    $format = FilterFormat::create(array(
       'format' => 'unrestricted_without_editor',
       'name' => 'Unrestricted HTML, without text editor',
       'weight' => 0,
       'filters' => array(),
     ));
     $format->save();
-    $format = entity_create('filter_format', array(
+    $format = FilterFormat::create(array(
       'format' => 'unrestricted_with_editor',
       'name' => 'Unrestricted HTML, with text editor',
       'weight' => 1,
       'filters' => array(),
     ));
     $format->save();
-    $editor = entity_create('editor', array(
+    $editor = Editor::create([
       'format' => 'unrestricted_with_editor',
       'editor' => 'unicorn',
-    ));
+    ]);
     $editor->save();
 
 

@@ -8,7 +8,10 @@
 namespace Drupal\field\Tests\Number;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\node\Entity\Node;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests the creation of numeric fields.
@@ -43,7 +46,7 @@ class NumberFieldTest extends WebTestBase {
   function testNumberDecimalField() {
     // Create a field with settings to validate.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => 'decimal',
@@ -51,11 +54,11 @@ class NumberFieldTest extends WebTestBase {
         'precision' => 8, 'scale' => 4,
       )
     ))->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'bundle' => 'entity_test',
-    ))->save();
+    ])->save();
 
     entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($field_name, array(
@@ -133,21 +136,21 @@ class NumberFieldTest extends WebTestBase {
 
     // Create a field with settings to validate.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    $storage = entity_create('field_storage_config', array(
+    $storage = FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => 'integer',
     ));
     $storage->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'bundle' => 'entity_test',
       'settings' => array(
         'min' => $minimum, 'max' => $maximum, 'prefix' => 'ThePrefix',
       )
-    ))->save();
+    ])->save();
 
     entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($field_name, array(
@@ -276,17 +279,17 @@ class NumberFieldTest extends WebTestBase {
   function testNumberFloatField() {
     // Create a field with settings to validate.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => 'float',
     ))->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'bundle' => 'entity_test',
-    ))->save();
+    ])->save();
 
     entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($field_name, array(
@@ -377,19 +380,19 @@ class NumberFieldTest extends WebTestBase {
     // Create a content type containing float and integer fields.
     $this->drupalCreateContentType(array('type' => $type));
 
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $float_field,
       'entity_type' => 'node',
       'type' => 'float',
     ))->save();
 
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $integer_field,
       'entity_type' => 'node',
       'type' => 'integer',
     ))->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $float_field,
       'entity_type' => 'node',
       'bundle' => $type,
@@ -397,9 +400,9 @@ class NumberFieldTest extends WebTestBase {
         'prefix' => $prefix,
         'suffix' => $suffix
       ),
-    ))->save();
+    ])->save();
 
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_name' => $integer_field,
       'entity_type' => 'node',
       'bundle' => $type,
@@ -407,7 +410,7 @@ class NumberFieldTest extends WebTestBase {
         'prefix' => $prefix,
         'suffix' => $suffix
       ),
-    ))->save();
+    ])->save();
 
     entity_get_form_display('node', $type, 'default')
       ->setComponent($float_field, array(
@@ -434,16 +437,12 @@ class NumberFieldTest extends WebTestBase {
       ->save();
 
     // Create a node to test formatters.
-    $node = entity_create('node', array(
+    $node = Node::create([
       'type' => $type,
       'title' => $this->randomMachineName(),
-      $float_field => array(
-        'value' => $random_float,
-      ),
-      $integer_field => array(
-        'value' => $random_integer,
-      ),
-    ));
+      $float_field => ['value' => $random_float],
+      $integer_field => ['value' => $random_integer],
+    ]);
     $node->save();
 
     // Go to manage display page.
@@ -501,17 +500,17 @@ class NumberFieldTest extends WebTestBase {
   function testCreateNumberFloatField() {
     // Create a float field.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => 'float',
     ))->save();
 
-    $field = entity_create('field_config', array(
+    $field = FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'bundle' => 'entity_test',
-    ));
+    ]);
     $field->save();
 
     // Set the minimum value to a float value.
@@ -526,17 +525,17 @@ class NumberFieldTest extends WebTestBase {
   function testCreateNumberDecimalField() {
     // Create a decimal field.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    entity_create('field_storage_config', array(
+    FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => 'decimal',
     ))->save();
 
-    $field = entity_create('field_config', array(
+    $field = FieldConfig::create([
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'bundle' => 'entity_test',
-    ));
+    ]);
     $field->save();
 
     // Set the minimum value to a decimal value.

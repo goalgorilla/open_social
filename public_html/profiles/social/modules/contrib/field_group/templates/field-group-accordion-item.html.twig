@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a fieldgroup accordion item.
+ *
+ * Available variables:
+ * - title: Title of the group.
+ * - children: The children of the group.
+ * - label_attributes: A list of HTML attributes for the label.
+ * - attributes: A list of HTML attributes for the group wrapper.
+ *
+ * @see template_preprocess_field_group_accordion()
+ *
+ * @ingroup themeable
+ */
+#}
+{%
+
+  set label_classes = [
+    'field-group-format-toggler',
+    'accordion-item',
+    collapsed ? 'field-group-accordion-active',
+  ]
+
+%}
+
+{%
+  set classes = [
+    'field-group-format-wrapper',
+  ]
+%}
+
+<h3 {{ label_attributes.addClass(label_classes) }}>
+  <a href="#">{{ title }}</a>
+</h3>
+<div {{ attributes.addClass(classes) }}>
+  {% if description %}<div class="description"></div>{% endif %}
+  {{children}}
+</div>

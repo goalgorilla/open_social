@@ -339,7 +339,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     // Create a new style.
     $style_name = strtolower($this->randomMachineName(10));
     $style_label = $this->randomString();
-    $style = entity_create('image_style', array('name' => $style_name, 'label' => $style_label));
+    $style = ImageStyle::create(array('name' => $style_name, 'label' => $style_label));
     $style->save();
     $style_path = 'admin/config/media/image-styles/manage/';
 
@@ -444,7 +444,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
 
     // Create a new style.
     $style_name = strtolower($this->randomMachineName(10));
-    $style = entity_create('image_style', array('name' => $style_name, 'label' => $this->randomString()));
+    $style = ImageStyle::create(array('name' => $style_name, 'label' => $this->randomString()));
     $style->save();
 
     // Create an image to make sure it gets flushed.
@@ -474,7 +474,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
     // Create a new style.
     $style_name = strtolower($this->randomMachineName(10));
     $style_label = $this->randomString();
-    $style = entity_create('image_style', array('name' => $style_name, 'label' => $style_label));
+    $style = ImageStyle::create(array('name' => $style_name, 'label' => $style_label));
     $style->save();
 
     // Create an image field that uses the new style.
@@ -520,7 +520,7 @@ class ImageAdminStylesTest extends ImageFieldTestBase {
    * Tests access for the image style listing.
    */
   public function testImageStyleAccess() {
-    $style = entity_create('image_style', array('name' => 'style_foo', 'label' => $this->randomString()));
+    $style = ImageStyle::create(array('name' => 'style_foo', 'label' => $this->randomString()));
     $style->save();
 
     $this->drupalGet('admin/config/media/image-styles');

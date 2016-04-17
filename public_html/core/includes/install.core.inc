@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * API functions for installing Drupal.
+ */
+
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Config\BootstrapConfigStorageFactory;
@@ -27,11 +32,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Route;
 use Drupal\user\Entity\User;
 use GuzzleHttp\Exception\RequestException;
-
-/**
- * @file
- * API functions for installing Drupal.
- */
 
 /**
  * Do not run the task during the current installation request.
@@ -418,13 +418,6 @@ function install_begin_request($class_loader, &$install_state) {
   $container->get('string_translation')
     ->addTranslator($container->get('string_translator.file_translation'));
 
-  // Set the default language to the selected language, if any.
-  if (isset($install_state['parameters']['langcode'])) {
-    $default_language = new Language(array('id' => $install_state['parameters']['langcode']));
-    $container->get('language.default')->set($default_language);
-    \Drupal::translation()->setDefaultLangcode($install_state['parameters']['langcode']);
-  }
-
   // Add list of all available profiles to the installation state.
   $listing = new ExtensionDiscovery($container->get('app.root'));
   $listing->setProfileDirectories(array());
@@ -441,6 +434,19 @@ function install_begin_request($class_loader, &$install_state) {
     if (isset($install_state['profile_info']['distribution']['install']['theme'])) {
       $install_state['theme'] = $install_state['profile_info']['distribution']['install']['theme'];
     }
+  }
+
+  // Use the language from the profile configuration, if available, to override
+  // the language previously set in the parameters.
+  if (isset($install_state['profile_info']['distribution']['langcode'])) {
+    $install_state['parameters']['langcode'] = $install_state['profile_info']['distribution']['langcode'];
+  }
+
+  // Set the default language to the selected language, if any.
+  if (isset($install_state['parameters']['langcode'])) {
+    $default_language = new Language(array('id' => $install_state['parameters']['langcode']));
+    $container->get('language.default')->set($default_language);
+    \Drupal::translation()->setDefaultLangcode($install_state['parameters']['langcode']);
   }
 
   // Override the module list with a minimal set of modules.
@@ -987,7 +993,7 @@ function install_display_output($output, $install_state) {
   $default_headers = array(
     'Expires' => 'Sun, 19 Nov 1978 05:00:00 GMT',
     'Last-Modified' => gmdate(DATE_RFC1123, REQUEST_TIME),
-    'Cache-Control' => 'no-cache, must-revalidate, post-check=0, pre-check=0',
+    'Cache-Control' => 'no-cache, must-revalidate',
     'ETag' => '"' . REQUEST_TIME . '"',
   );
   $response->headers->add($default_headers);
@@ -1133,23 +1139,6 @@ function install_database_errors($database, $settings_file) {
     Database::addConnectionInfo('default', 'default', $database);
 
     $errors = db_installer_object($driver)->runTasks();
-    if (count($errors)) {
-      $error_message = [
-        '#type' => 'inline_template',
-        '#template' => '{% trans %}Resolve all issues below to continue the installation. For help configuring your database server, see the <a href="https://www.drupal.org/getting-started/install">installation handbook</a>, or contact your hosting provider.{% endtrans%}{{ errors }}',
-        '#context' => [
-          'errors' => [
-            '#theme' => 'item_list',
-            '#items' => $errors,
-          ],
-        ],
-      ];
-
-      // These are generic errors, so we do not have any specific key of the
-      // database connection array to attach them to; therefore, we just put
-      // them in the error array with standard numeric keys.
-      $errors[$driver . '][0'] = \Drupal::service('renderer')->renderPlain($error_message);
-    }
   }
   return $errors;
 }
@@ -1955,7 +1944,7 @@ function install_check_requirements($install_state) {
   $profile = $install_state['parameters']['profile'];
 
   // Check the profile requirements.
-  $requirements = drupal_check_profile($profile, $install_state);
+  $requirements = drupal_check_profile($profile);
 
   if ($install_state['settings_verified']) {
     return $requirements;

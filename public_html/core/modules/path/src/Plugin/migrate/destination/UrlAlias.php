@@ -8,7 +8,7 @@
 namespace Drupal\path\Plugin\migrate\destination;
 
 use Drupal\Core\Path\AliasStorage;
-use Drupal\migrate\Entity\MigrationInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
 use Drupal\migrate\Plugin\migrate\destination\DestinationBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,7 +37,7 @@ class UrlAlias extends DestinationBase implements ContainerFactoryPluginInterfac
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param MigrationInterface $migration
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration.
    * @param \Drupal\Core\Path\AliasStorage $alias_storage
    *   The alias storage service.
@@ -90,8 +90,8 @@ class UrlAlias extends DestinationBase implements ContainerFactoryPluginInterfac
     return [
       'pid' => 'The path id',
       'source' => 'The source path.',
-      'alias' => 'The url alias.',
-      'langcode' => 'The language code for the url.',
+      'alias' => 'The URL alias.',
+      'langcode' => 'The language code for the URL.',
     ];
   }
 
