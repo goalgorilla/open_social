@@ -1,3 +1,4 @@
+uuid: f36f1cc7-2b96-41e6-9b69-f07e767ce8a0
 langcode: en
 status: true
 dependencies:
@@ -12,8 +13,9 @@ dependencies:
     - field.field.profile.profile.field_profile_self_introduction
     - profile.type.profile
   module:
-    - image
     - text
+_core:
+  default_config_hash: mQAoE0RCypAsDnZkdVRzfs_MbGRu3ePqhObwyZFn1yw
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
@@ -26,28 +28,6 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
-  field_profile_first_name:
-    weight: 0
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_function:
-    weight: 2
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_image:
-    weight: 7
-    label: above
-    settings:
-      image_style: ''
-      image_link: ''
-    third_party_settings: {  }
-    type: image
   field_profile_interests:
     weight: 5
     label: above
@@ -55,24 +35,15 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
-  field_profile_last_name:
-    weight: 1
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_organization:
-    weight: 3
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
   field_profile_self_introduction:
     weight: 4
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
-hidden: {  }
+hidden:
+  field_profile_first_name: true
+  field_profile_function: true
+  field_profile_image: true
+  field_profile_last_name: true
+  field_profile_organization: true
