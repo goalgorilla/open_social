@@ -52,4 +52,13 @@ class TraceableEventDispatcher extends BaseTraceableEventDispatcher {
         break;
     }
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getListenerPriority($eventName, $listener)
+  {
+    return 0;
+  }
+
 }
