@@ -79,7 +79,7 @@
         {# Need to replace  {{ author }} with {{ user_picture }} when user profile will be ready. #}
         {{ author }} {{ submitted }}
         {% if created != changed %}
-            Modified
+            {{ 'Modified'|t }}
           {{ changed }}
         {% endif %}
 
