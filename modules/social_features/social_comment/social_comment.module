@@ -3,6 +3,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
@@ -99,7 +100,10 @@ function social_comment_preprocess_comment(&$variables) {
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
-  $variables['submitted'] = t('%time ago', array('%time' => $created_time_ago));
+  $submitted = t('%time ago', array('%time' => $created_time_ago));
+
+  $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));;
+
 }
 
 /**
