@@ -77,6 +77,7 @@ function social_profile_preprocess_profile(&$variables) {
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
   $profile_name = $user->getDisplayName();
+  $user_mail = $user->getEmail();
 
   // This will get the users internal route path, in this case user/{user.id}.
   $profile_url = $user->toUrl()->getInternalPath();
