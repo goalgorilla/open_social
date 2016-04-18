@@ -324,11 +324,15 @@ textarea {
 }
 
 .password-suggestions {
-  @include make-col;
-  @include make-col-span(7);
   margin-top: 1em;
   color: lighten($text-color, 25%);
   font-size: 80%;
+  @include make-col;
+  @include make-col-span(12);
+
+  @include MQ($small) {
+    @include make-col-span(7);
+  }
 }
 
 .password-suggestions ul {
