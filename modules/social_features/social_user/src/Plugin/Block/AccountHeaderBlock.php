@@ -26,7 +26,7 @@ class AccountHeaderBlock extends BlockBase {
   public function build() {
     $account = \Drupal::currentUser();
     if ($account->id() !== 0) {
-      $account_name = $account->getAccountName();
+      $account_name = $account->getDisplayName();
 
       $links = [
         'add' => array(
