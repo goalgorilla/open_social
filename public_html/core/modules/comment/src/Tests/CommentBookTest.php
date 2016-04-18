@@ -8,7 +8,9 @@
 namespace Drupal\comment\Tests;
 
 use Drupal\comment\CommentInterface;
+use Drupal\node\Entity\Node;
 use Drupal\simpletest\WebTestBase;
+use Drupal\comment\Entity\Comment;
 
 /**
  * Tests visibility of comments on book pages.
@@ -37,17 +39,17 @@ class CommentBookTest extends WebTestBase {
    * Tests comments in book export.
    */
   public function testBookCommentPrint() {
-    $book_node = entity_create('node', array(
+    $book_node = Node::create([
       'type' => 'book',
       'title' => 'Book title',
       'body' => 'Book body',
-    ));
+    ]);
     $book_node->book['bid'] = 'new';
     $book_node->save();
 
     $comment_subject = $this->randomMachineName(8);
     $comment_body = $this->randomMachineName(8);
-    $comment = entity_create('comment', array(
+    $comment = Comment::create(array(
       'subject' => $comment_subject,
       'comment_body' => $comment_body,
       'entity_id' => $book_node->id(),

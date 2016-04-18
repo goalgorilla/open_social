@@ -3,19 +3,13 @@
 /**
  * @file
  * Contains \Drupal\Core\Template\TwigExtension.
- *
- * This provides a Twig extension that registers various Drupal specific
- * extensions to Twig.
- *
- * @see \Drupal\Core\CoreServiceProvider
  */
 
 namespace Drupal\Core\Template;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Render\MarkupInterface;
-use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -25,7 +19,8 @@ use Drupal\Core\Url;
 /**
  * A class providing Drupal Twig extensions.
  *
- * Specifically Twig functions, filter and node visitors.
+ * This provides a Twig extension that registers various Drupal-specific
+ * extensions to Twig, specifically Twig functions, filter, and node visitors.
  *
  * @see \Drupal\Core\CoreServiceProvider
  */
@@ -55,7 +50,7 @@ class TwigExtension extends \Twig_Extension {
   /**
    * The date formatter.
    *
-   * @var \Drupal\Core\Datetime\DateFormatter
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
 
@@ -118,7 +113,7 @@ class TwigExtension extends \Twig_Extension {
    *
    * @return $this
    */
-  public function setDateFormatter(DateFormatter $date_formatter) {
+  public function setDateFormatter(DateFormatterInterface $date_formatter) {
     $this->dateFormatter = $date_formatter;
     return $this;
   }
@@ -438,7 +433,7 @@ class TwigExtension extends \Twig_Extension {
         $return = (string) $arg;
       }
       // You can't throw exceptions in the magic PHP __toString() methods, see
-      // http://php.net/manual/en/language.oop5.magic.php#object.tostring so
+      // http://php.net/manual/language.oop5.magic.php#object.tostring so
       // we also support a toString method.
       elseif (method_exists($arg, 'toString')) {
         $return = $arg->toString();
@@ -450,7 +445,7 @@ class TwigExtension extends \Twig_Extension {
 
     // We have a string or an object converted to a string: Autoescape it!
     if (isset($return)) {
-      if ($autoescape && SafeMarkup::isSafe($return, $strategy)) {
+      if ($autoescape && $return instanceof MarkupInterface) {
         return $return;
       }
       // Drupal only supports the HTML escaping strategy, so provide a
@@ -487,12 +482,12 @@ class TwigExtension extends \Twig_Extension {
    * @param mixed $arg
    *   String, Object or Render Array.
    *
-   * @return mixed
-   *   The rendered output or an Twig_Markup object.
-   *
    * @throws \Exception
    *   When $arg is passed as an object which does not implement __toString(),
    *   RenderableInterface or toString().
+   *
+   * @return mixed
+   *   The rendered output or an Twig_Markup object.
    *
    * @see render
    * @see TwigNodeVisitor
@@ -521,7 +516,7 @@ class TwigExtension extends \Twig_Extension {
         return (string) $arg;
       }
       // You can't throw exceptions in the magic PHP __toString() methods, see
-      // http://php.net/manual/en/language.oop5.magic.php#object.tostring so
+      // http://php.net/manual/language.oop5.magic.php#object.tostring so
       // we also support a toString method.
       elseif (method_exists($arg, 'toString')) {
         return $arg->toString();

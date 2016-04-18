@@ -250,7 +250,7 @@ function field_entity_bundle_delete($entity_type_id, $bundle) {
         $field_config->save();
 
         // In case we deleted the only target bundle allowed by the field we
-        // have to log a warning message because the field will not function
+        // have to log a critical message because the field will not function
         // correctly anymore.
         if ($handler_settings['target_bundles'] === []) {
           \Drupal::logger('entity_reference')->critical('The %target_bundle bundle (entity type: %target_entity_type) was deleted. As a result, the %field_name entity reference field (entity_type: %entity_type, bundle: %bundle) no longer has any valid bundle it can reference. The field is not working correctly anymore and has to be adjusted.', [
@@ -292,7 +292,9 @@ function _field_create_entity_from_ids($ids) {
   if (isset($ids->bundle) && $bundle_key = $entity_type->getKey('bundle')) {
     $id_properties[$bundle_key] = $ids->bundle;
   }
-  return entity_create($ids->entity_type, $id_properties);
+  return \Drupal::entityTypeManager()
+    ->getStorage($ids->entity_type)
+    ->create($id_properties);
 }
 
 /**

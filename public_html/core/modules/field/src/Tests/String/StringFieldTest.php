@@ -8,7 +8,9 @@
 namespace Drupal\field\Tests\String;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Tests the creation of string fields.
@@ -54,17 +56,17 @@ class StringFieldTest extends WebTestBase {
   function _testTextfieldWidgets($field_type, $widget_type) {
     // Create a field.
     $field_name = Unicode::strtolower($this->randomMachineName());
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'field_name' => $field_name,
       'entity_type' => 'entity_test',
       'type' => $field_type
     ));
     $field_storage->save();
-    entity_create('field_config', array(
+    FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => 'entity_test',
       'label' => $this->randomMachineName() . '_label',
-    ))->save();
+    ])->save();
     entity_get_form_display('entity_test', 'entity_test', 'default')
       ->setComponent($field_name, array(
         'type' => $widget_type,

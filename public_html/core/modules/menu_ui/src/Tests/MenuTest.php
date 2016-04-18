@@ -157,7 +157,7 @@ class MenuTest extends MenuWebTestBase {
     $menu_name = substr(hash('sha256', $this->randomMachineName(16)), 0, MENU_MAX_MENU_NAME_LENGTH_UI);
     $label = $this->randomMachineName(16);
 
-    $menu = entity_create('menu', array(
+    $menu = Menu::create(array(
       'id' => $menu_name,
       'label' => $label,
       'description' => 'Description text',
@@ -298,7 +298,7 @@ class MenuTest extends MenuWebTestBase {
 
     // Verify add link button.
     $this->drupalGet('admin/structure/menu');
-    $this->assertLinkByHref('admin/structure/menu/manage/' . $menu_name . '/add', 0, "The add menu link button url is correct");
+    $this->assertLinkByHref('admin/structure/menu/manage/' . $menu_name . '/add', 0, "The add menu link button URL is correct");
 
     // Verify form defaults.
     $this->doMenuLinkFormDefaultsTest();

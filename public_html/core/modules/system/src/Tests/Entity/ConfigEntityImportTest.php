@@ -9,7 +9,9 @@ namespace Drupal\system\Tests\Entity;
 
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\search\Entity\SearchPage;
 use Drupal\simpletest\WebTestBase;
+use Drupal\system\Entity\Action;
 
 /**
  * Tests ConfigEntity importing.
@@ -50,7 +52,7 @@ class ConfigEntityImportTest extends WebTestBase {
   protected function doActionUpdate() {
     // Create a test action with a known label.
     $name = 'system.action.apple';
-    $entity = entity_create('action', array(
+    $entity = Action::create(array(
       'id' => 'apple',
       'plugin' => 'action_message_action',
     ));
@@ -159,10 +161,10 @@ class ConfigEntityImportTest extends WebTestBase {
   protected function doSearchPageUpdate() {
     // Create a test search page with a known label.
     $name = 'search.page.apple';
-    $entity = entity_create('search_page', array(
+    $entity = SearchPage::create([
       'id' => 'apple',
       'plugin' => 'search_extra_type_search',
-    ));
+    ]);
     $entity->save();
 
     $this->checkSinglePluginConfigSync($entity, 'configuration', 'boost', 'bi');

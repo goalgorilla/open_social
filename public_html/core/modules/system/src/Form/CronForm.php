@@ -15,7 +15,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Configure cron settings for this site.
@@ -127,7 +126,7 @@ class CronForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Run cron manually from Cron form.
     if ($this->cron->run()) {
-      drupal_set_message(t('Cron run successfully.'));
+      drupal_set_message(t('Cron ran successfully.'));
     }
     else {
       drupal_set_message(t('Cron run failed.'), 'error');

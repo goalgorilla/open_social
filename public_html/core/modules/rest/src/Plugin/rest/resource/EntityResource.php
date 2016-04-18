@@ -18,6 +18,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 /**
  * Represents entities as resources.
  *
+ * @see \Drupal\rest\Plugin\Deriver\EntityDeriver
+ *
  * @RestResource(
  *   id = "entity",
  *   label = @Translation("Entity"),
@@ -28,8 +30,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *     "https://www.drupal.org/link-relations/create" = "/entity/{entity_type}"
  *   }
  * )
- *
- * @see \Drupal\rest\Plugin\Deriver\EntityDeriver
  */
 class EntityResource extends ResourceBase {
 
@@ -112,9 +112,10 @@ class EntityResource extends ResourceBase {
       $entity->save();
       $this->logger->notice('Created entity %type with ID %id.', array('%type' => $entity->getEntityTypeId(), '%id' => $entity->id()));
 
-      // 201 Created responses have an empty body.
+      // 201 Created responses return the newly created entity in the response
+      // body.
       $url = $entity->urlInfo('canonical', ['absolute' => TRUE])->toString(TRUE);
-      $response = new ResourceResponse(NULL, 201, ['Location' => $url->getGeneratedUrl()]);
+      $response = new ResourceResponse($entity, 201, ['Location' => $url->getGeneratedUrl()]);
       // Responses after creating an entity are not cacheable, so we add no
       // cacheability metadata here.
       return $response;

@@ -324,12 +324,12 @@ function node_add_body_field(NodeTypeInterface $type, $label = 'Body') {
   $field_storage = FieldStorageConfig::loadByName('node', 'body');
   $field = FieldConfig::loadByName('node', $type->id(), 'body');
   if (empty($field)) {
-    $field = entity_create('field_config', array(
+    $field = FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => $type->id(),
       'label' => $label,
       'settings' => array('display_summary' => TRUE),
-    ));
+    ]);
     $field->save();
 
     // Assign widget settings for the 'default' form mode.
@@ -832,6 +832,7 @@ function node_form_system_themes_admin_form_alter(&$form, FormStateInterface $fo
   $form['admin_theme']['use_admin_theme'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use the administration theme when editing or creating content'),
+    '#description' => t('Control which roles can "View the administration theme" on the <a href=":permissions">Permissions page</a>.', array(':permissions' => Url::fromRoute('user.admin_permissions')->toString())),
     '#default_value' => \Drupal::configFactory()->getEditable('node.settings')->get('use_admin_theme'),
   );
   $form['#submit'][] = 'node_form_system_themes_admin_form_submit';
@@ -914,7 +915,7 @@ function node_node_access(NodeInterface $node, $op, $account) {
         return AccessResult::allowed()->cachePerPermissions();
       }
       else {
-        return AccessResult::allowedIf($account->hasPermission('edit own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->cacheUntilEntityChanges($node);
+        return AccessResult::allowedIf($account->hasPermission('edit own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
       }
 
     case 'delete':
@@ -922,7 +923,7 @@ function node_node_access(NodeInterface $node, $op, $account) {
         return AccessResult::allowed()->cachePerPermissions();
       }
       else {
-        return AccessResult::allowedIf($account->hasPermission('delete own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->cacheUntilEntityChanges($node);
+        return AccessResult::allowedIf($account->hasPermission('delete own ' . $type . ' content', $account) && ($account->id() == $node->getOwnerId()))->cachePerPermissions()->cachePerUser()->addCacheableDependency($node);
       }
 
     default:
@@ -1046,18 +1047,29 @@ function node_query_node_access_alter(AlterableInterface $query) {
 
   $tables = $query->getTables();
   $base_table = $query->getMetaData('base_table');
-  // If the base table is not given, default to node if present.
+  // If the base table is not given, default to one of the node base tables.
   if (!$base_table) {
+    /** @var \Drupal\Core\Entity\Sql\DefaultTableMapping $table_mapping */
+    $table_mapping = \Drupal::entityTypeManager()->getStorage('node')->getTableMapping();
+    $node_base_tables = $table_mapping->getTableNames();
+
     foreach ($tables as $table_info) {
       if (!($table_info instanceof SelectInterface)) {
         $table = $table_info['table'];
-        // If the node table is in the query, it wins immediately.
+        // Ensure that 'node' and 'node_field_data' are always preferred over
+        // 'node_revision' and 'node_field_revision'.
         if ($table == 'node' || $table == 'node_field_data') {
           $base_table = $table;
           break;
         }
+        // If one of the node base tables are in the query, add it to the list
+        // of possible base tables to join against.
+        if (in_array($table, $node_base_tables)) {
+          $base_table = $table;
+        }
       }
     }
+
     // Bail out if the base table is missing.
     if (!$base_table) {
       throw new Exception(t('Query tagged for node access but there is no node table, specify the base_table using meta data.'));
@@ -1133,6 +1145,7 @@ function node_access_needs_rebuild($rebuild = NULL) {
  */
 function node_access_rebuild($batch_mode = FALSE) {
   $node_storage = \Drupal::entityManager()->getStorage('node');
+  /** @var \Drupal\node\NodeAccessControlHandlerInterface $access_control_handler */
   $access_control_handler = \Drupal::entityManager()->getAccessControlHandler('node');
   $access_control_handler->deleteGrants();
   // Only recalculate if the site is using a node_access module.
@@ -1167,7 +1180,8 @@ function node_access_rebuild($batch_mode = FALSE) {
         // To preserve database integrity, only write grants if the node
         // loads successfully.
         if (!empty($node)) {
-          $access_control_handler->writeGrants($node);
+          $grants = $access_control_handler->acquireGrants($node);
+          \Drupal::service('node.grant_storage')->write($node, $grants);
         }
       }
     }
@@ -1222,7 +1236,10 @@ function _node_access_rebuild_batch_operation(&$context) {
     // To preserve database integrity, only write grants if the node
     // loads successfully.
     if (!empty($node)) {
-      \Drupal::entityManager()->getAccessControlHandler('node')->writeGrants($node);
+      /** @var \Drupal\node\NodeAccessControlHandlerInterface $access_control_handler */
+      $access_control_handler = \Drupal::entityManager()->getAccessControlHandler('node');
+      $grants = $access_control_handler->acquireGrants($node);
+      \Drupal::service('node.grant_storage')->write($node, $grants);
     }
     $context['sandbox']['progress']++;
     $context['sandbox']['current_node'] = $nid;
@@ -1275,22 +1292,6 @@ function node_modules_installed($modules) {
  * Implements hook_modules_uninstalled().
  */
 function node_modules_uninstalled($modules) {
-  // Remove module-specific settings from all node types.
-  $config_names = \Drupal::configFactory()->listAll('node.type.');
-  foreach ($config_names as $config_name) {
-    $config = \Drupal::config($config_name);
-    $changed = FALSE;
-    foreach ($modules as $module) {
-      if ($config->get('settings.' . $module)) {
-        $config->clear('settings.' . $module);
-        $changed = TRUE;
-      }
-    }
-    if ($changed) {
-      $config->save();
-    }
-  }
-
   // Check whether any of the disabled modules implemented hook_node_grants(),
   // in which case the node access table needs to be rebuilt.
   foreach ($modules as $module) {

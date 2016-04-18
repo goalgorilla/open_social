@@ -8,6 +8,7 @@
 namespace Drupal\config_translation\Tests;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Language\Language;
@@ -127,10 +128,12 @@ class ConfigTranslationUiTest extends WebTestBase {
   public function testSiteInformationTranslationUi() {
     $this->drupalLogin($this->adminUser);
 
-    $site_name = 'Site name for testing configuration translation';
+    $site_name = 'Name of the site for testing configuration translation';
     $site_slogan = 'Site slogan for testing configuration translation';
+    $site_name_label = 'Site name';
     $fr_site_name = 'Nom du site pour tester la configuration traduction';
     $fr_site_slogan = 'Slogan du site pour tester la traduction de configuration';
+    $fr_site_name_label = 'Libellé du champ "Nom du site"';
     $translation_base_url = 'admin/config/system/site-information/translate';
 
     // Set site name and slogan for default language.
@@ -188,6 +191,37 @@ class ConfigTranslationUiTest extends WebTestBase {
     $this->drupalGet("fr/$translation_base_url/fr/edit");
     $this->assertText($site_name);
     $this->assertText($site_slogan);
+
+    // Translate 'Site name' label in French.
+    $search = array(
+      'string' => $site_name_label,
+      'langcode' => 'fr',
+      'translation' => 'untranslated',
+    );
+    $this->drupalPostForm('admin/config/regional/translate', $search, t('Filter'));
+
+    $textarea = current($this->xpath('//textarea'));
+    $lid = (string) $textarea[0]['name'];
+    $edit = array(
+      $lid => $fr_site_name_label,
+    );
+    $this->drupalPostForm('admin/config/regional/translate', $edit, t('Save translations'));
+
+    // Ensure that the label is in French (and not in English).
+    $this->drupalGet("fr/$translation_base_url/fr/edit");
+    $this->assertText($fr_site_name_label);
+    $this->assertNoText($site_name_label);
+
+    // Ensure that the label is also in French (and not in English)
+    // when editing another language with the interface in French.
+    $this->drupalGet("fr/$translation_base_url/ta/edit");
+    $this->assertText($fr_site_name_label);
+    $this->assertNoText($site_name_label);
+
+    // Ensure that the label is not translated when the interface is in English.
+    $this->drupalGet("$translation_base_url/fr/edit");
+    $this->assertText($site_name_label);
+    $this->assertNoText($fr_site_name_label);
   }
 
   /**
@@ -731,6 +765,46 @@ class ConfigTranslationUiTest extends WebTestBase {
     $this->assertEscaped($translatable_field_setting);
     $this->assertText('Translatable storage setting');
     $this->assertEscaped($translatable_storage_setting);
+  }
+
+  /**
+   * Tests the translation of a boolean field settings.
+   */
+  public function testBooleanFieldConfigTranslation() {
+    // Add a test boolean field.
+    $field_name = strtolower($this->randomMachineName());
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'entity_test',
+      'type' => 'boolean',
+    ])->save();
+
+    $bundle = strtolower($this->randomMachineName());
+    entity_test_create_bundle($bundle);
+    $field = FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'entity_test',
+      'bundle' => $bundle,
+    ]);
+
+    $on_label = 'On label (with <em>HTML</em> & things)';
+    $field->setSetting('on_label', $on_label);
+    $off_label = 'Off label (with <em>HTML</em> & things)';
+    $field->setSetting('off_label', $off_label);
+    $field->save();
+
+    $this->drupalLogin($this->translatorUser);
+
+    $this->drupalGet("/entity_test/structure/$bundle/fields/entity_test.$bundle.$field_name/translate");
+    $this->clickLink('Add');
+
+    // Checks the text of details summary element that surrounds the translation
+    // options.
+    $this->assertText(Html::escape(strip_tags($on_label)) . ' Boolean settings');
+
+    // Checks that the correct on and off labels appear on the form.
+    $this->assertEscaped($on_label);
+    $this->assertEscaped($off_label);
   }
 
   /**

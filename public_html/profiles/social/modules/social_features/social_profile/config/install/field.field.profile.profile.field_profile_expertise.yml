@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profile_expertise
+    - profile.type.profile
+    - taxonomy.vocabulary.expertise
+id: profile.profile.field_profile_expertise
+field_name: field_profile_expertise
+entity_type: profile
+bundle: profile
+label: Expertise
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      expertise: expertise
+    sort:
+      field: _none
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

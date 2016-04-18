@@ -10,7 +10,6 @@ namespace Drupal\Tests\Core\Entity;
 use Drupal\Core\Entity\EntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -311,16 +310,68 @@ class EntityTypeTest extends UnitTestCase {
     $this->assertSame($default_label, $entity_type->getGroupLabel());
 
     $default_label = new TranslatableMarkup('Other', array(), array('context' => 'Entity type group'));
-    $entity_type = $this->setUpEntityType([]);
-
-    $string_translation = $this->getMock(TranslationInterface::class);
-    $string_translation->expects($this->atLeastOnce())
-      ->method('translate')
-      ->with('Other', array(), array('context' => 'Entity type group'))
-      ->willReturn($default_label);
-    $entity_type->setStringTranslation($string_translation);
-
+    $entity_type = $this->setUpEntityType(array('group_label' => $default_label));
     $this->assertSame($default_label, $entity_type->getGroupLabel());
+  }
+
+  /**
+   * @covers ::getSingularLabel
+   */
+  public function testGetSingularLabel() {
+    $translatable_label = new TranslatableMarkup('entity test singular', [], [], $this->getStringTranslationStub());
+    $entity_type = $this->setUpEntityType(['label_singular' => $translatable_label]);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('entity test singular', $entity_type->getSingularLabel());
+  }
+
+  /**
+   * @covers ::getSingularLabel
+   */
+  public function testGetSingularLabelDefault() {
+    $entity_type = $this->setUpEntityType(['label' => 'Entity test Singular']);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('entity test singular', $entity_type->getSingularLabel());
+  }
+
+  /**
+   * @covers ::getPluralLabel
+   */
+  public function testGetPluralLabel() {
+    $translatable_label = new TranslatableMarkup('entity test plural', [], [], $this->getStringTranslationStub());
+    $entity_type = $this->setUpEntityType(['label_plural' => $translatable_label]);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('entity test plural', $entity_type->getPluralLabel());
+  }
+
+  /**
+   * @covers ::getPluralLabel
+   */
+  public function testGetPluralLabelDefault() {
+    $entity_type = $this->setUpEntityType(['label' => 'Entity test Plural']);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('entity test plural entities', $entity_type->getPluralLabel());
+  }
+
+  /**
+   * @covers ::getCountLabel
+   */
+  public function testGetCountLabel() {
+    $entity_type = $this->setUpEntityType(['label_count' => ['singular' => 'one entity test', 'plural' => '@count entity test']]);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('one entity test', $entity_type->getCountLabel(1));
+    $this->assertEquals('2 entity test', $entity_type->getCountLabel(2));
+    $this->assertEquals('200 entity test', $entity_type->getCountLabel(200));
+  }
+
+  /**
+   * @covers ::getCountLabel
+   */
+  public function testGetCountLabelDefault() {
+    $entity_type = $this->setUpEntityType(['label' => 'Entity test Plural']);
+    $entity_type->setStringTranslation($this->getStringTranslationStub());
+    $this->assertEquals('1 entity test plural', $entity_type->getCountLabel(1));
+    $this->assertEquals('2 entity test plural entities', $entity_type->getCountLabel(2));
+    $this->assertEquals('200 entity test plural entities', $entity_type->getCountLabel(200));
   }
 
   /**

@@ -288,19 +288,19 @@ class UserRegistrationTest extends WebTestBase {
    */
   function testRegistrationWithUserFields() {
     // Create a field on 'user' entity type.
-    $field_storage = entity_create('field_storage_config', array(
+    $field_storage = FieldStorageConfig::create(array(
       'field_name' => 'test_user_field',
       'entity_type' => 'user',
       'type' => 'test_field',
       'cardinality' => 1,
     ));
     $field_storage->save();
-    $field = entity_create('field_config', array(
+    $field = FieldConfig::create([
       'field_storage' => $field_storage,
       'label' => 'Some user field',
       'bundle' => 'user',
       'required' => TRUE,
-    ));
+    ]);
     $field->save();
     entity_get_form_display('user', 'user', 'default')
       ->setComponent('test_user_field', array('type' => 'test_field_widget'))

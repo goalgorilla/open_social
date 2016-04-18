@@ -15,7 +15,6 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\node\NodeTypeInterface;
@@ -150,7 +149,7 @@ function _menu_ui_node_save(NodeInterface $node, array $values) {
   }
   else {
     // Create a new menu_link_content entity.
-    $entity = entity_create('menu_link_content', array(
+    $entity = MenuLinkContent::create(array(
       'link' => ['uri' => 'entity:node/' . $node->id()],
       'langcode' => $node->language()->getId(),
     ));

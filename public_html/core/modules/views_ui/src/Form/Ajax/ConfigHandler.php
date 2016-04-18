@@ -8,7 +8,6 @@
 namespace Drupal\views_ui\Form\Ajax;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
@@ -181,9 +180,6 @@ class ConfigHandler extends ViewsFormBase {
         '#value' => $this->t('Remove'),
         '#submit' => array(array($this, 'remove')),
         '#limit_validation_errors' => array(array('override')),
-        '#ajax' => array(
-          'url' => Url::fromRoute('<current>'),
-        ),
         '#button_type' => 'danger',
       );
     }

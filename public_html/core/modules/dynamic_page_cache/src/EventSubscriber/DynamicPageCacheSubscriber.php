@@ -12,7 +12,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableResponseInterface;
 use Drupal\Core\PageCache\RequestPolicyInterface;
 use Drupal\Core\PageCache\ResponsePolicyInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RenderCacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -39,14 +38,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @see \Drupal\Core\Cache\CacheableResponseInterface
  */
 class DynamicPageCacheSubscriber implements EventSubscriberInterface {
-
-  /**
-   * Attribute name of the Dynamic Page Cache request policy result.
-   *
-   * @see onRouteMatch()
-   * @see onRespond()
-   */
-  const ATTRIBUTE_REQUEST_POLICY_RESULT = '_dynamic_page_cache_request_policy_result';
 
   /**
    * Name of Dynamic Page Cache's response header.
@@ -104,6 +95,13 @@ class DynamicPageCacheSubscriber implements EventSubscriberInterface {
   ];
 
   /**
+   * Internal cache of request policy results.
+   *
+   * @var \SplObjectStorage
+   */
+  protected $requestPolicyResults;
+
+  /**
    * Constructs a new DynamicPageCacheSubscriber object.
    *
    * @param \Drupal\Core\PageCache\RequestPolicyInterface $request_policy
@@ -120,6 +118,7 @@ class DynamicPageCacheSubscriber implements EventSubscriberInterface {
     $this->responsePolicy = $response_policy;
     $this->renderCache = $render_cache;
     $this->rendererConfig = $renderer_config;
+    $this->requestPolicyResults = new \SplObjectStorage();
   }
 
   /**
@@ -134,7 +133,7 @@ class DynamicPageCacheSubscriber implements EventSubscriberInterface {
     // does not have to redo the request policy check.
     $request = $event->getRequest();
     $request_policy_result = $this->requestPolicy->check($request);
-    $request->attributes->set(self::ATTRIBUTE_REQUEST_POLICY_RESULT, $request_policy_result);
+    $this->requestPolicyResults[$request] = $request_policy_result;
     if ($request_policy_result === RequestPolicyInterface::DENY) {
       return;
     }
@@ -189,14 +188,14 @@ class DynamicPageCacheSubscriber implements EventSubscriberInterface {
     // @see \Drupal\Core\Routing\AccessAwareRouter::checkAccess()
     // @see \Drupal\Core\EventSubscriber\DefaultExceptionHtmlSubscriber::on403()
     $request = $event->getRequest();
-    if (!$request->attributes->has(self::ATTRIBUTE_REQUEST_POLICY_RESULT)) {
+    if (!isset($this->requestPolicyResults[$request])) {
       return;
     }
 
     // Don't cache the response if the Dynamic Page Cache request & response
     // policies are not met.
     // @see onRouteMatch()
-    if ($request->attributes->get(self::ATTRIBUTE_REQUEST_POLICY_RESULT) === RequestPolicyInterface::DENY || $this->responsePolicy->check($response, $request) === ResponsePolicyInterface::DENY) {
+    if ($this->requestPolicyResults[$request] === RequestPolicyInterface::DENY || $this->responsePolicy->check($response, $request) === ResponsePolicyInterface::DENY) {
       return;
     }
 

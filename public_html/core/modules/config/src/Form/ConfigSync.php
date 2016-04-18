@@ -186,7 +186,7 @@ class ConfigSync extends FormBase {
     if (empty($source_list) || !$storage_comparer->createChangelist()->hasChanges()) {
       $form['no_changes'] = array(
         '#type' => 'table',
-        '#header' => array('Name', 'Operations'),
+        '#header' => array($this->t('Name'), $this->t('Operations')),
         '#rows' => array(),
         '#empty' => $this->t('There are no configuration changes to import.'),
       );
@@ -232,7 +232,7 @@ class ConfigSync extends FormBase {
     $form_state->set('storage_comparer', $storage_comparer);
 
     // Add the AJAX library to the form for dialog support.
-    $form['#attached']['library'][] = 'core/drupal.ajax';
+    $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
 
     foreach ($storage_comparer->getAllCollectionNames() as $collection) {
       if ($collection != StorageInterface::DEFAULT_COLLECTION) {
@@ -272,7 +272,7 @@ class ConfigSync extends FormBase {
         }
         $form[$collection][$config_change_type]['list'] = array(
           '#type' => 'table',
-          '#header' => array('Name', 'Operations'),
+          '#header' => array($this->t('Name'), $this->t('Operations')),
         );
 
         foreach ($config_names as $config_name) {
@@ -343,9 +343,9 @@ class ConfigSync extends FormBase {
           'finished' => array(get_class($this), 'finishBatch'),
           'title' => t('Synchronizing configuration'),
           'init_message' => t('Starting configuration synchronization.'),
-          'progress_message' => t('Completed @current step of @total.'),
+          'progress_message' => t('Completed step @current of @total.'),
           'error_message' => t('Configuration synchronization has encountered an error.'),
-          'file' => drupal_get_path('module', 'config') . '/config.admin.inc',
+          'file' => __DIR__ . '/../../config.admin.inc',
         );
         foreach ($sync_steps as $sync_step) {
           $batch['operations'][] = array(array(get_class($this), 'processBatch'), array($config_importer, $sync_step));

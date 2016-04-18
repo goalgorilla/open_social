@@ -61,7 +61,7 @@ function system_requirements($phase) {
     if (!empty($experimental)) {
       $requirements['experimental'] = array(
         'title' => t('Experimental modules enabled'),
-        'value' => t('Experimental modules found: %module_list. Experimental modules are provided for testing purposes only. Use at your own risk.', array('%module_list' => implode(', ', $experimental))),
+        'value' => t('Experimental modules found: %module_list. <a href=":url">Experimental modules</a> are provided for testing purposes only. Use at your own risk.', array('%module_list' => implode(', ', $experimental), ':url' => 'https://www.drupal.org/core/experimental')),
         'severity' => REQUIREMENT_WARNING,
       );
     }
@@ -246,7 +246,7 @@ function system_requirements($phase) {
       $requirements['php_opcache'] = array(
         'value' => t('Not enabled'),
         'severity' => REQUIREMENT_WARNING,
-        'description' => t('PHP OPcode caching can improve your site\'s performance considerably. It is <strong>highly recommended</strong> to have <a href=":opcache_link" target="_blank">OPcache</a> installed on your server.', array(':opcache_link' => 'http://php.net/manual/en/opcache.installation.php')),
+        'description' => t('PHP OPcode caching can improve your site\'s performance considerably. It is <strong>highly recommended</strong> to have <a href="http://php.net/manual/opcache.installation.php" target="_blank">OPcache</a> installed on your server.'),
       );
     }
     else {
@@ -365,12 +365,25 @@ function system_requirements($phase) {
     else {
       $site_path = DrupalKernel::findSitePath(Request::createFromGlobals());
     }
-    if (!drupal_verify_install_file($site_path, FILE_NOT_WRITABLE, 'dir')) {
-      $conf_errors[] = t("The directory %file is not protected from modifications and poses a security risk. You must change the directory's permissions to be non-writable.", array('%file' => $site_path));
+    // Allow system administrators to disable permissions hardening for the site
+    // directory. This allows additional files in the site directory to be
+    // updated when they are managed in a version control system.
+    if (Settings::get('skip_permissions_hardening')) {
+      $conf_errors[] = t('Protection disabled');
+      // If permissions hardening is disabled, then only show a warning for a
+      // writable file, as a reminder, rather than an error.
+      $file_protection_severity = REQUIREMENT_WARNING;
+    }
+    else {
+      // In normal operation, writable files or directories are an error.
+      $file_protection_severity = REQUIREMENT_ERROR;
+      if (!drupal_verify_install_file($site_path, FILE_NOT_WRITABLE, 'dir')) {
+        $conf_errors[] = t("The directory %file is not protected from modifications and poses a security risk. You must change the directory's permissions to be non-writable.", array('%file' => $site_path));
+      }
     }
     foreach (array('settings.php', 'settings.local.php', 'services.yml') as $conf_file) {
       $full_path = $site_path . '/' . $conf_file;
-      if (file_exists($full_path) && !drupal_verify_install_file($full_path, FILE_EXIST|FILE_READABLE|FILE_NOT_WRITABLE)) {
+      if (file_exists($full_path) && (Settings::get('skip_permissions_hardening') || !drupal_verify_install_file($full_path, FILE_EXIST|FILE_READABLE|FILE_NOT_WRITABLE))) {
         $conf_errors[] = t("The file %file is not protected from modifications and poses a security risk. You must change the file's permissions to be non-writable.", array('%file' => $full_path));
       }
     }
@@ -393,7 +406,7 @@ function system_requirements($phase) {
       }
       $requirements['configuration_files'] = array(
         'value' => t('Not protected'),
-        'severity' => REQUIREMENT_ERROR,
+        'severity' => $file_protection_severity,
         'description' => $description,
       );
     }
@@ -841,83 +854,6 @@ function system_install() {
  * Implements hook_schema().
  */
 function system_schema() {
-  $schema['batch'] = array(
-    'description' => 'Stores details about batches (processes that run in multiple HTTP requests).',
-    'fields' => array(
-      'bid' => array(
-        'description' => 'Primary Key: Unique batch ID.',
-        // This is not a serial column, to allow both progressive and
-        // non-progressive batches. See batch_process().
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'token' => array(
-        'description' => "A string token generated against the current user's session id and the batch id, used to ensure that only the user who submitted the batch can effectively access it.",
-        'type' => 'varchar_ascii',
-        'length' => 64,
-        'not null' => TRUE,
-      ),
-      'timestamp' => array(
-        'description' => 'A Unix timestamp indicating when this batch was submitted for processing. Stale batches are purged at cron time.',
-        'type' => 'int',
-        'not null' => TRUE,
-      ),
-      'batch' => array(
-        'description' => 'A serialized array containing the processing data for the batch.',
-        'type' => 'blob',
-        'not null' => FALSE,
-        'size' => 'big',
-      ),
-    ),
-    'primary key' => array('bid'),
-    'indexes' => array(
-      'token' => array('token'),
-    ),
-  );
-
-  $schema['flood'] = array(
-    'description' => 'Flood controls the threshold of events, such as the number of contact attempts.',
-    'fields' => array(
-      'fid' => array(
-        'description' => 'Unique flood event ID.',
-        'type' => 'serial',
-        'not null' => TRUE,
-      ),
-      'event' => array(
-        'description' => 'Name of event (e.g. contact).',
-        'type' => 'varchar_ascii',
-        'length' => 64,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'identifier' => array(
-        'description' => 'Identifier of the visitor, such as an IP address or hostname.',
-        'type' => 'varchar_ascii',
-        'length' => 128,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'timestamp' => array(
-        'description' => 'Timestamp of the event.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'expiration' => array(
-        'description' => 'Expiration timestamp. Expired events are purged on cron run.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-    ),
-    'primary key' => array('fid'),
-    'indexes' => array(
-      'allow' => array('event', 'identifier', 'timestamp'),
-      'purge' => array('expiration'),
-    ),
-  );
-
   $schema['key_value'] = array(
     'description' => 'Generic key-value storage table. See the state system for an example.',
     'fields' => array(
@@ -983,129 +919,6 @@ function system_schema() {
     ),
   );
 
-  $schema['queue'] = array(
-    'description' => 'Stores items in queues.',
-    'fields' => array(
-      'item_id' => array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'Primary Key: Unique item ID.',
-      ),
-      'name' => array(
-        'type' => 'varchar_ascii',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'The queue name.',
-      ),
-      'data' => array(
-        'type' => 'blob',
-        'not null' => FALSE,
-        'size' => 'big',
-        'serialize' => TRUE,
-        'description' => 'The arbitrary data for the item.',
-      ),
-      'expire' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-        'description' => 'Timestamp when the claim lease expires on the item.',
-      ),
-      'created' => array(
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-        'description' => 'Timestamp when the item was created.',
-      ),
-    ),
-    'primary key' => array('item_id'),
-    'indexes' => array(
-      'name_created' => array('name', 'created'),
-      'expire' => array('expire'),
-    ),
-  );
-
-  $schema['router'] = array(
-    'description' => 'Maps paths to various callbacks (access, page and title)',
-    'fields' => array(
-      'name' => array(
-        'description' => 'Primary Key: Machine name of this route',
-        'type' => 'varchar_ascii',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'path' => array(
-        'description' => 'The path for this URI',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'pattern_outline' => array(
-        'description' => 'The pattern',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'fit' => array(
-        'description' => 'A numeric representation of how specific the path is.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'route' => array(
-        'description' => 'A serialized Route object',
-        'type' => 'blob',
-        'size' => 'big',
-      ),
-      'number_parts' => array(
-        'description' => 'Number of parts in this router path.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-        'size' => 'small',
-      ),
-    ),
-    'indexes' => array(
-      'pattern_outline_parts' => array('pattern_outline', 'number_parts'),
-    ),
-    'primary key' => array('name'),
-  );
-
-  $schema['semaphore'] = array(
-    'description' => 'Table for holding semaphores, locks, flags, etc. that cannot be stored as state since they must not be cached.',
-    'fields' => array(
-      'name' => array(
-        'description' => 'Primary Key: Unique name.',
-        'type' => 'varchar_ascii',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => ''
-      ),
-      'value' => array(
-        'description' => 'A value for the semaphore.',
-        'type' => 'varchar_ascii',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => ''
-      ),
-      'expire' => array(
-        'description' => 'A Unix timestamp with microseconds indicating when the semaphore should expire.',
-        'type' => 'float',
-        'size' => 'big',
-        'not null' => TRUE
-      ),
-    ),
-    'indexes' => array(
-      'value' => array('value'),
-      'expire' => array('expire'),
-    ),
-    'primary key' => array('name'),
-  );
-
   $schema['sequences'] = array(
     'description' => 'Stores IDs.',
     'fields' => array(
@@ -1166,44 +979,6 @@ function system_schema() {
         'table' => 'users',
         'columns' => array('uid' => 'uid'),
       ),
-    ),
-  );
-
-  $schema['url_alias'] = array(
-    'description' => 'A list of URL aliases for Drupal paths; a user may visit either the source or destination path.',
-    'fields' => array(
-      'pid' => array(
-        'description' => 'A unique path alias identifier.',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'source' => array(
-        'description' => 'The Drupal path this alias is for; e.g. node/12.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'alias' => array(
-        'description' => 'The alias for this path; e.g. title-of-the-story.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'langcode' => array(
-        'description' => "The language code this alias is for; if 'und', the alias will be used for unknown languages. Each Drupal path can have an alias for each supported language.",
-        'type' => 'varchar_ascii',
-        'length' => 12,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-    ),
-    'primary key' => array('pid'),
-    'indexes' => array(
-      'alias_langcode_pid' => array('alias', 'langcode', 'pid'),
-      'source_langcode_pid' => array('source', 'langcode', 'pid'),
     ),
   );
 

@@ -3,7 +3,7 @@
  * Block behaviors.
  */
 
-(function ($, window) {
+(function ($, window, Drupal) {
 
   'use strict';
 
@@ -20,7 +20,7 @@
       // The drupalSetSummary method required for this behavior is not available
       // on the Blocks administration page, so we need to make sure this
       // behavior is processed only if drupalSetSummary is defined.
-      if (typeof jQuery.fn.drupalSetSummary === 'undefined') {
+      if (typeof $.fn.drupalSetSummary === 'undefined') {
         return;
       }
 
@@ -78,6 +78,78 @@
         return;
       }
 
+      /**
+       * Function to check empty regions and toggle classes based on this.
+       *
+       * @param {jQuery} table
+       *   The jQuery object representing the table to inspect.
+       * @param {jQuery} rowObject
+       *   The jQuery object representing the table row.
+       */
+      function checkEmptyRegions(table, rowObject) {
+        table.find('tr.region-message').each(function () {
+          var $this = $(this);
+          // If the dragged row is in this region, but above the message row,
+          // swap it down one space.
+          if ($this.prev('tr').get(0) === rowObject.element) {
+            // Prevent a recursion problem when using the keyboard to move rows
+            // up.
+            if ((rowObject.method !== 'keyboard' || rowObject.direction === 'down')) {
+              rowObject.swap('after', this);
+            }
+          }
+          // This region has become empty.
+          if ($this.next('tr').is(':not(.draggable)') || $this.next('tr').length === 0) {
+            $this.removeClass('region-populated').addClass('region-empty');
+          }
+          // This region has become populated.
+          else if ($this.is('.region-empty')) {
+            $this.removeClass('region-empty').addClass('region-populated');
+          }
+        });
+      }
+
+      /**
+       * Function to update the last placed row with the correct classes.
+       *
+       * @param {jQuery} table
+       *   The jQuery object representing the table to inspect.
+       * @param {jQuery} rowObject
+       *   The jQuery object representing the table row.
+       */
+      function updateLastPlaced(table, rowObject) {
+        // Remove the color-success class from new block if applicable.
+        table.find('.color-success').removeClass('color-success');
+
+        var $rowObject = $(rowObject);
+        if (!$rowObject.is('.drag-previous')) {
+          table.find('.drag-previous').removeClass('drag-previous');
+          $rowObject.addClass('drag-previous');
+        }
+      }
+
+      /**
+       * Update block weights in the given region.
+       *
+       * @param {jQuery} table
+       *   Table with draggable items.
+       * @param {string} region
+       *   Machine name of region containing blocks to update.
+       */
+      function updateBlockWeights(table, region) {
+        // Calculate minimum weight.
+        var weight = -Math.round(table.find('.draggable').length / 2);
+        // Update the block weights.
+        table.find('.region-' + region + '-message').nextUntil('.region-title')
+          .find('select.block-weight').val(function () {
+            // Increment the weight before assigning it to prevent using the
+            // absolute minimum available weight. This way we always have an
+            // unused upper and lower bound, which makes manually setting the
+            // weights easier for users who prefer to do it that way.
+            return ++weight;
+          });
+      }
+
       var table = $('#blocks');
       // Get the blocks tableDrag object.
       var tableDrag = Drupal.tableDrag.blocks;
@@ -125,14 +197,21 @@
           // Make our new row and select field.
           var row = $(this).closest('tr');
           var select = $(this);
-
           // Find the correct region and insert the row as the last in the
           // region.
-          table.find('.region-' + select[0].value + '-message').nextUntil('.region-message').eq(-1).before(row);
-
+          tableDrag.rowObject = new tableDrag.row(row[0]);
+          var region_message = table.find('.region-' + select[0].value + '-message');
+          var region_items = region_message.nextUntil('.region-message, .region-title');
+          if (region_items.length) {
+            region_items.last().after(row);
+          }
+          // We found that region_message is the last row.
+          else {
+            region_message.after(row);
+          }
           updateBlockWeights(table, select[0].value);
           // Modify empty regions with added or removed fields.
-          checkEmptyRegions(table, row);
+          checkEmptyRegions(table, tableDrag.rowObject);
           // Update last placed block indication.
           updateLastPlaced(table, row);
           // Show unsaved changes warning.
@@ -143,71 +222,7 @@
           // Remove focus from selectbox.
           select.trigger('blur');
         });
-
-      var updateLastPlaced = function ($table, rowObject) {
-        // Remove the color-success class from new block if applicable.
-        $table.find('.color-success').removeClass('color-success');
-
-        var $rowObject = $(rowObject);
-        if (!$rowObject.is('.drag-previous')) {
-          $table.find('.drag-previous').removeClass('drag-previous');
-          $rowObject.addClass('drag-previous');
-        }
-      };
-
-      /**
-       * Update block weights in the given region.
-       *
-       * @param {jQuery} $table
-       *   Table with draggable items.
-       * @param {string} region
-       *   Machine name of region containing blocks to update.
-       */
-      var updateBlockWeights = function ($table, region) {
-        // Calculate minimum weight.
-        var weight = -Math.round($table.find('.draggable').length / 2);
-        // Update the block weights.
-        $table.find('.region-' + region + '-message').nextUntil('.region-title')
-          .find('select.block-weight').val(function () {
-            // Increment the weight before assigning it to prevent using the
-            // absolute minimum available weight. This way we always have an
-            // unused upper and lower bound, which makes manually setting the
-            // weights easier for users who prefer to do it that way.
-            return ++weight;
-          });
-      };
-
-      /**
-       * Checks empty regions and toggles classes based on this.
-       *
-       * @param {jQuery} table
-       *   The jQuery object representing the table to inspect.
-       * @param {jQuery} rowObject
-       *   The jQuery object representing the table row.
-       */
-      var checkEmptyRegions = function (table, rowObject) {
-        table.find('tr.region-message').each(function () {
-          var $this = $(this);
-          // If the dragged row is in this region, but above the message row,
-          // swap it down one space.
-          if ($this.prev('tr').get(0) === rowObject.element) {
-            // Prevent a recursion problem when using the keyboard to move rows
-            // up.
-            if ((rowObject.method !== 'keyboard' || rowObject.direction === 'down')) {
-              rowObject.swap('after', this);
-            }
-          }
-          // This region has become empty.
-          if ($this.next('tr').is(':not(.draggable)') || $this.next('tr').length === 0) {
-            $this.removeClass('region-populated').addClass('region-empty');
-          }
-          // This region has become populated.
-          else if ($this.is('.region-empty')) {
-            $this.removeClass('region-empty').addClass('region-populated');
-          }
-        });
-      };
     }
   };
 
-})(jQuery, window);
+})(jQuery, window, Drupal);

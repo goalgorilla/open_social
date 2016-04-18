@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * Clears the entity render cache for all entity types.
@@ -143,16 +145,15 @@ function entity_revision_delete($entity_type, $revision_id) {
  * database access if loaded again during the same page request.
  *
  * The actual loading is done through a class that has to implement the
- * Drupal\Core\Entity\EntityStorageInterface interface. By default,
- * Drupal\Core\Entity\Sql\SqlContentEntityStorage is used for content entities
+ * \Drupal\Core\Entity\EntityStorageInterface interface. By default,
+ * \Drupal\Core\Entity\Sql\SqlContentEntityStorage is used for content entities
  * and Drupal\Core\Config\Entity\ConfigEntityStorage for config entities. Entity
  * types can specify that a different class should be used by setting the
- * "controllers['storage']" key in the entity plugin annotation. These classes
- * can either implement the Drupal\Core\Entity\EntityStorageInterface
+ * "handlers['storage']" key in the entity plugin annotation. These classes
+ * can either implement the \Drupal\Core\Entity\EntityStorageInterface
  * interface, or, most commonly, extend the
- * Drupal\Core\Entity\Sql\SqlContentEntityStorage class.
- * See Drupal\node\Entity\Node and Drupal\node\NodeStorage
- * for an example.
+ * \Drupal\Core\Entity\Sql\SqlContentEntityStorage class. See
+ * \Drupal\node\Entity\Node and \Drupal\node\NodeStorage for an example.
  *
  * @param string $entity_type
  *   The entity type to load, e.g. node or user.
@@ -469,7 +470,7 @@ function entity_get_display($entity_type, $bundle, $view_mode) {
   // configuration entries are only created when a display object is explicitly
   // configured and saved.
   if (!$display) {
-    $display = entity_create('entity_view_display', array(
+    $display = EntityViewDisplay::create(array(
       'targetEntityType' => $entity_type,
       'bundle' => $bundle,
       'mode' => $view_mode,
@@ -545,7 +546,7 @@ function entity_get_form_display($entity_type, $bundle, $form_mode) {
   // configuration entries are only created when an entity form display is
   // explicitly configured and saved.
   if (!$entity_form_display) {
-    $entity_form_display = entity_create('entity_form_display', array(
+    $entity_form_display = EntityFormDisplay::create(array(
       'targetEntityType' => $entity_type,
       'bundle' => $bundle,
       'mode' => $form_mode,

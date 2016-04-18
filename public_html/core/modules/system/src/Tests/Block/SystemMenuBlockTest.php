@@ -6,6 +6,8 @@
 
 namespace Drupal\system\Tests\Block;
 
+use Drupal\system\Entity\Menu;
+use Drupal\block\Entity\Block;
 use Drupal\Core\Render\Element;
 use Drupal\simpletest\KernelTestBase;
 use Drupal\system\Tests\Routing\MockRouteProvider;
@@ -85,7 +87,6 @@ class SystemMenuBlockTest extends KernelTestBase {
     parent::setUp();
     $this->installSchema('system', 'sequences');
     $this->installEntitySchema('user');
-    $this->installSchema('system', array('router'));
     $this->installEntitySchema('menu_link_content');
 
     $account = User::create([
@@ -118,7 +119,7 @@ class SystemMenuBlockTest extends KernelTestBase {
     $menu_name = 'mock';
     $label = $this->randomMachineName(16);
 
-    $this->menu = entity_create('menu', array(
+    $this->menu = Menu::create(array(
       'id' => $menu_name,
       'label' => $label,
       'description' => 'Description text',
@@ -155,7 +156,7 @@ class SystemMenuBlockTest extends KernelTestBase {
    */
   public function testSystemMenuBlockConfigDependencies() {
 
-    $block = entity_create('block', array(
+    $block = Block::create(array(
       'plugin' => 'system_menu_block:' . $this->menu->id(),
       'region' => 'footer',
       'id' => 'machinename',

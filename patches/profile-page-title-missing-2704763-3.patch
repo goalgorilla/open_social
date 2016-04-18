@@ -1,0 +1,15 @@
+diff --git a/src/ProfileHtmlRouteProvider.php b/src/ProfileHtmlRouteProvider.php
+index fd61c45..bf8a7c6 100644
+--- a/src/ProfileHtmlRouteProvider.php
++++ b/src/ProfileHtmlRouteProvider.php
+@@ -27,7 +27,9 @@ public function getRoutes(EntityTypeInterface $entity_type) {
+     foreach (ProfileType::loadMultiple() as $profile_type) {
+       $route = (new Route(
+         "/user/{user}/{profile_type}",
+-        ['_controller' => '\Drupal\profile\Controller\ProfileController::userProfileForm'],
++        ['_controller' => '\Drupal\profile\Controller\ProfileController::userProfileForm',
++          '_title_callback' => '\Drupal\profile\Controller\ProfileController::addPageTitle'
++        ],
+         ['_profile_access_check' => 'add'],
+         [
+           'parameters' => [

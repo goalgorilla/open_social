@@ -268,7 +268,7 @@ class Request
         // stores the Content-Type and Content-Length header values in
         // HTTP_CONTENT_TYPE and HTTP_CONTENT_LENGTH fields.
         $server = $_SERVER;
-        if ('cli-server' === php_sapi_name()) {
+        if ('cli-server' === PHP_SAPI) {
             if (array_key_exists('HTTP_CONTENT_LENGTH', $_SERVER)) {
                 $server['CONTENT_LENGTH'] = $_SERVER['HTTP_CONTENT_LENGTH'];
             }
@@ -714,6 +714,8 @@ class Request
      * It is better to explicitly get request parameters from the appropriate
      * public property instead (query, attributes, request).
      *
+     * Note: Finding deep items is deprecated since version 2.8, to be removed in 3.0.
+     *
      * @param string $key     the key
      * @param mixed  $default the default value
      * @param bool   $deep    is parameter deep in multidimensional array
@@ -722,6 +724,10 @@ class Request
      */
     public function get($key, $default = null, $deep = false)
     {
+        if ($deep) {
+            @trigger_error('Using paths to find deeper items in '.__METHOD__.' is deprecated since version 2.8 and will be removed in 3.0. Filter the returned value in your own code instead.', E_USER_DEPRECATED);
+        }
+
         if ($this !== $result = $this->query->get($key, $this, $deep)) {
             return $result;
         }
@@ -814,7 +820,7 @@ class Request
         }
 
         $clientIps[] = $ip; // Complete the IP chain with the IP the request actually came from
-        $ip = $clientIps[0]; // Fallback to this when the client IP falls into the range of trusted proxies
+        $firstTrustedIp = null;
 
         foreach ($clientIps as $key => $clientIp) {
             // Remove port (unfortunately, it does happen)
@@ -822,13 +828,24 @@ class Request
                 $clientIps[$key] = $clientIp = $match[1];
             }
 
+            if (!filter_var($clientIp, FILTER_VALIDATE_IP)) {
+                unset($clientIps[$key]);
+
+                continue;
+            }
+
             if (IpUtils::checkIp($clientIp, self::$trustedProxies)) {
                 unset($clientIps[$key]);
+
+                // Fallback to this when the client IP falls into the range of trusted proxies
+                if (null ===  $firstTrustedIp) {
+                    $firstTrustedIp = $clientIp;
+                }
             }
         }
 
         // Now the IP chain contains only untrusted proxies and the client IP
-        return $clientIps ? array_reverse($clientIps) : array($ip);
+        return $clientIps ? array_reverse($clientIps) : array($firstTrustedIp);
     }
 
     /**
@@ -1326,8 +1343,9 @@ class Request
      */
     public function getFormat($mimeType)
     {
+        $canonicalMimeType = null;
         if (false !== $pos = strpos($mimeType, ';')) {
-            $mimeType = substr($mimeType, 0, $pos);
+            $canonicalMimeType = substr($mimeType, 0, $pos);
         }
 
         if (null === static::$formats) {
@@ -1336,6 +1354,9 @@ class Request
 
         foreach (static::$formats as $format => $mimeTypes) {
             if (in_array($mimeType, (array) $mimeTypes)) {
+                return $format;
+            }
+            if (null !== $canonicalMimeType && in_array($canonicalMimeType, (array) $mimeTypes)) {
                 return $format;
             }
         }
@@ -1818,8 +1839,6 @@ class Request
         if (null === ($requestUri = $this->getRequestUri())) {
             return '/';
         }
-
-        $pathInfo = '/';
 
         // Remove the query string from REQUEST_URI
         if ($pos = strpos($requestUri, '?')) {

@@ -6,6 +6,7 @@
 
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\shortcut\Entity\Shortcut;
 
 /**
  * Implements hook_install().
@@ -31,6 +32,10 @@ function standard_install() {
   $user->roles[] = 'administrator';
   $user->save();
 
+  // We install some menu links, so we have to rebuild the router, to ensure the
+  // menu links are valid.
+  \Drupal::service('router.builder')->rebuildIfNeeded();
+
   // Enable the Contact link in the footer menu.
   /** @var \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager */
   $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
@@ -43,7 +48,7 @@ function standard_install() {
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array('access shortcuts'));
 
   // Populate the default shortcut set.
-  $shortcut = entity_create('shortcut', array(
+  $shortcut = Shortcut::create(array(
     'shortcut_set' => 'default',
     'title' => t('Add content'),
     'weight' => -20,
@@ -51,7 +56,7 @@ function standard_install() {
   ));
   $shortcut->save();
 
-  $shortcut = entity_create('shortcut', array(
+  $shortcut = Shortcut::create(array(
     'shortcut_set' => 'default',
     'title' => t('All content'),
     'weight' => -19,
