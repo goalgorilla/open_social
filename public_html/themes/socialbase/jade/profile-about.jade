@@ -1,23 +1,26 @@
 extends ./layout/base-lu.jade
 
 block title
-  title John Johnson
+  title Profile of Christian Bay
 
 block pagetitle
   .container.hidden-xs
     .cover
-      .cover-wrap
-        a.pull-right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='profile-edit.html')
-          i.material-icons mode_edit   
-        h1.page-title John Johnson
-        img.img-circle.img-bordered(src='content/images/avatar1.jpg')
+      .cover-wrap 
+        h1.page-title Christian Bay
+        img.img-circle.img-bordered(src='content/images/avatar3.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
       
 block secondary_navigation
   .container
     .visible-xs-block.section
       a.btn.btn-raised.btn-default 
         i.material-icons.pull-left keyboard_arrow_left
-        | Back to my stream
+        | Back to stream
 
   .container
     .brand-secondary.z-depth-1.hidden-xs
@@ -25,22 +28,22 @@ block secondary_navigation
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li
-            a(href="my-stream.html") Stream  
+            a(href="stream.html") Stream  
           li.active
-            a(href="my-profile-about.html") About
+            a(href="profile-about.html") About
             span.visually-hidden (active tab)
           li
-            a(href='my-topics.html') Topics
+            a(href='topics.html') Topics
           li
-            a(href='my-events.html') Events  
+            a(href='events.html') Events  
           li
-            a(href="my-groups.html") Groups
+            a(href="groups.html") Groups
       
 block content
   
   .row
     .col-sm-12
-      h4.section-title About you
+      h4.section-title About Christian
     
     .col-xs-12.col-sm-9
       
@@ -52,32 +55,31 @@ block content
               h4 Contact information
             li.collection-item 
               .collection-label Phone
-              .collection-field +31 612345678
+              .collection-field +1 2612345678
             li.collection-item 
               .collection-label E-mail
               .collection-field 
-                a(href="example@domain.com") john@johnjohnson.com    
+                a(href="example@domain.com") christian@domain.com    
             li.collection-item 
               .collection-label Address
               .collection-field 
-                | My street name 123 
+                | Tree lane 1423
                 br
-                | 1234 BB
+                | 563921
                 br
-                | Amsterdam
+                | Los Angeles
           
           h4 Intro
           p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
           
-          h4 Your interests
-          .chip drupal
-          .chip sales
-          .chip barbecues
+          h4 Interests
+          .chip cycling
+          .chip triathlons
+          .chip raw food
           
-          h4 Your expertise
-          .chip php
-          .chip interaction design
-          .chip cooking
+          h4 Expertise
+          .chip Biochemistry
+          .chip Mechanics 
               
                     
               
