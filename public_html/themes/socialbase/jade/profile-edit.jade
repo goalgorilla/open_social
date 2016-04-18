@@ -11,8 +11,21 @@ block pagetitle
       
 block content
       
-  .row.margin-top-l
-    .col-md-9.margin-bottom-l
+  .row
+  
+    .col-sm-3.col-sm-push-9
+      .toc-wrapper
+        ul.section.table-of-contents
+          li
+            a(href='#name') Name &amp; profile image
+          li
+            a(href='#work') Work 
+          li 
+            a(href='#contact') Contact information
+          li 
+            a(href='#details') Details about you
+  
+    .col-sm-9.col-sm-pull-3.margin-top-l
     
       form(method='get', action='my-profile-about.html')
       
@@ -118,21 +131,11 @@ block content
               label Your interests
               input.form-control(type="text", value='')
               
-        .form-wrapper.clearfix
+        .form-actions.clearfix
           a.waves-effect.waves-light.btn.btn-raised.btn--default-bright(href="my-profile-about.html") Discard changes
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
 
-    .col-md-3
-      .toc-wrapper
-        ul.section.table-of-contents
-          li
-            a(href='#name') Name &amp; profile image
-          li
-            a(href='#work') Work 
-          li 
-            a(href='#contact') Contact information
-          li 
-            a(href='#details') Details about you
+    
 
         
 block scriptinline  
