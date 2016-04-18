@@ -33,8 +33,6 @@ html(lang="en")
         .container
           block content
 
-  include _fontfaceobserver.jade
-
   block scriptinline_before
 
   script(src='js/vendor.js')
@@ -43,6 +41,9 @@ html(lang="en")
   script(src='js/components.js')
   script(src='js/materialize.js')
   script(src='js/init.js')
+  
+  // Does not work for Safari iOS, debug later
+  // include _fontfaceobserver.jade
   
   script.
     new UISearch( document.getElementById( 'navbar-search' ) );

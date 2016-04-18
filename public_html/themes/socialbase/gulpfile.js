@@ -171,6 +171,11 @@ gulp.task('script-vendor', function() {
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
+gulp.task('jqueryminmap', function() {
+  return gulp.src(folder.js_vendor + '/jquery/jquery.min.map')
+  .pipe( gulp.dest(folder.dist + '/js') );
+});
+
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-drupal', function() {
   return gulp.src([
@@ -314,7 +319,7 @@ gulp.task('deploy', ['build'], function() {
 // ===================================================
 // Run this one time when you install the project so you have all files in the dist folder
 // ===================================================
-gulp.task('init', ['images', 'content', 'libs', 'font']);
+gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap']);
 
 
 gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
