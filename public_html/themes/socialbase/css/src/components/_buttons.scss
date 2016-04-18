@@ -2,19 +2,36 @@
 // --------------------------------------------------
 .btn {
   font-size: $button-font-size;
-  border-radius: $button-radius;
   text-transform: uppercase;
   touch-action: manipulation;
   transition: .2s ease-out;
   will-change: opacity, transform;
-  max-width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+
+  + .btn {
+    margin-left: 5px;
+  }
+
+}
+
+.btn-sm {
+  font-size: $button-font-size-small;
 }
 
 .btn-accent {
   @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
+}
+
+.btn-link { // not 100% if this is wise dd 14-04-16
+  padding-left: 0;
+  padding-right: 0;
+
+  + .btn {
+    margin-left: 12px; // default margin + padding-right because it missing on btn-link
+  }
+
+  + .btn-sm {
+    margin-left: 10px; // default margin + padding-right small because it missing on btn-link
+  }
 }
 
 // Button raised

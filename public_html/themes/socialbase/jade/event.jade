@@ -93,11 +93,11 @@ block content
               include ./molecules/_comment1.jade
             li.media
               include ./molecules/_comment2.jade
-          form.form-horizontal
+          form#insert-comment
             .form-group
-              textarea.form-control(rows='1', placeholder='Add a comment')
-            .form-group
-              button.btn.btn-primary.pull-right(type='submit') Comment
+              textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a comment')
+            .form-group.clearfix
+              button.btn.btn-primary.pull-right(type='submit') Submit
       
 block scriptinline
   script.
