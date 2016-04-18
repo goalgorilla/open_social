@@ -155,18 +155,23 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function alterUserParameters(EntityScope $event) {
       $account = $event->getEntity();
-      // Create new Profile of type 'profile' for current user.
-      $profile = Profile::create([
-        'uid' => $account->uid,
-        'type' => 'profile',
-      ]);
-      // Set given profile field values.
-      foreach ($profile->toArray() as $field_name => $value) {
-        if (isset($account->{$field_name})) {
-          $profile->set($field_name, $account->{$field_name});
+      // Get profile of current user.
+      if (!empty($account->uid)) {
+        $user_account = \Drupal::entityTypeManager()->getStorage('user')->load($account->uid);
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          $user_profile = $storage->loadByUser($user_account, 'profile', TRUE);
+          if ($user_profile) {
+            // Set given profile field values.
+            foreach ($user_profile->toArray() as $field_name => $value) {
+              if (isset($account->{$field_name})) {
+                $user_profile->set($field_name, $account->{$field_name});
+              }
+            }
+            $user_profile->save();
+          }
         }
       }
-      $profile->save();
     }
 
 }

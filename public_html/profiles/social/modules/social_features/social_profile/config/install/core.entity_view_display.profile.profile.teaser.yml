@@ -1,8 +1,9 @@
+uuid: cf699b59-5649-4fcb-8c08-ee88d6832ed0
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.profile.profile.field_profile_address
+    - core.entity_view_mode.profile.teaser
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
@@ -10,88 +11,55 @@ dependencies:
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
-    - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_self_introduction
+    - image.style.teaser
     - profile.type.profile
   module:
-    - address
-    - telephone
     - image
-    - text
 _core:
-  default_config_hash: fHCc1pA2XQxHZ-ecTB6jIpIFMBx5ni9O07NkXyFpDCk
-id: profile.profile.default
+  default_config_hash: Pv8AqRKfYCVvHu6MK5lBfc1j6Vz4IFrAF_-4ZIGtsFk
+id: profile.profile.teaser
 targetEntityType: profile
 bundle: profile
-mode: default
+mode: teaser
 content:
-  field_profile_address:
-    weight: 5
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: address_default
-  field_profile_expertise:
-    weight: 8
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
   field_profile_first_name:
-    weight: 0
-    label: above
+    weight: 1
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_profile_function:
-    weight: 2
-    label: above
+    weight: 3
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_profile_image:
-    weight: 7
-    label: above
+    weight: 0
+    label: hidden
     settings:
-      image_style: ''
+      image_style: teaser
       image_link: ''
     third_party_settings: {  }
     type: image
-  field_profile_interests:
-    weight: 7
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
   field_profile_last_name:
-    weight: 1
-    label: above
+    weight: 2
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_profile_organization:
-    weight: 3
-    label: above
+    weight: 4
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
-  field_profile_phone_number:
-    weight: 4
-    label: above
-    settings:
-      title: ''
-    third_party_settings: {  }
-    type: string
-  field_profile_self_introduction:
-    weight: 6
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: text_default
-hidden: {  }
+hidden:
+  field_profile_expertise: true
+  field_profile_interests: true
+  field_profile_self_introduction: true

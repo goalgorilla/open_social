@@ -8,8 +8,6 @@
 namespace Drupal\social_profile\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\profile\Entity\Profile;
-use Drupal\Core\Entity\EntityViewBuilder;
 
 /**
  * Provides a 'ProfileHeroBlock' block.
@@ -30,26 +28,24 @@ class ProfileHeroBlock extends BlockBase {
 
     $account = \Drupal::routeMatch()->getParameter('user');
     if (!is_object($account)) {
-      $account = \Drupal::service('entity_type.manager')->getStorage('user')->load($account);
+      $account = \Drupal::service('entity_type.manager')
+        ->getStorage('user')
+        ->load($account);
     }
 
     if (!empty($account)) {
-      $profile = social_profile_load_by_uid($account->id());
-      if (empty($profile)) {
-        //@TODO: Remove this part when all users will have profile by default.
-        $content = array(
-          '#theme' => 'username',
-          '#account' => $account,
-          '#prefix' => '<h1 class="page-title">',
-          '#suffix' => '</h1>',
-        );
-      }
-      else {
-        $content = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($profile, 'hero');
+      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      if (!empty($storage)) {
+        $user_profile = $storage->loadByUser($account, 'profile', TRUE);
+        if ($user_profile) {
+          $content = \Drupal::entityTypeManager()
+            ->getViewBuilder('profile')
+            ->view($user_profile, 'hero');
+          $build['content'] = $content;
+        }
       }
     }
 
-    $build['content'] = $content;
     $build['#cache'] = array(
       'max-age' => 0,
     );
