@@ -1,0 +1,49 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_profile module.
+ */
+
+use Drupal\user\RoleInterface;
+use Drupal\File\Entity\File;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_feature.
+ */
+function social_profile_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'add own profile profile',
+    'delete own profile profile',
+    'edit own profile profile',
+    'view any profile profile',
+    'view own profile profile'
+  ));
+
+  // Add default image
+  $config_factory = \Drupal::configFactory();
+  $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
+  $default_image = $field_image_config->get('settings.default_image');
+
+  $uri  = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . '/images/default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
+
+  $media = File::create([
+    'uri' => $uri
+  ]);
+  $media->save();
+
+  $default_image['uuid'] = $media->uuid();
+  $default_image['alt'] = 'Default profile image';
+  $default_image['title'] = 'Default profile image';
+  $default_image['height'] = 200;
+  $default_image['width'] = 200;
+
+  $field_image_config->set('settings.default_image', $default_image)->save(TRUE);
+  drupal_flush_all_caches();
+}
+
+
+

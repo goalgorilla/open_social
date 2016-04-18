@@ -49,7 +49,7 @@ function social_event_block_view_alter(array &$build, \Drupal\Core\Block\BlockPl
  */
 function social_event_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_enrollments_link = FALSE;
-  if ($route_name === "view.enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
+  if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
     $node = \Drupal::service('current_route_match')->getParameter('node');
     if (!is_null($node) && !is_object($node)) {
       $node = Node::load($node);

@@ -15,8 +15,8 @@ use Drupal\user\RoleInterface;
  * @see system_install()
  */
 function social_install() {
-  // Set front page to "node".
-  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/node')->save(TRUE);
+  // @todo make sure we set default frontpage when we have it for AN / LU. Breaks behat now.
+  //  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/node')->save(TRUE);
 
   // Assign user 1 the "administrator" role.
   $user = User::load(1);

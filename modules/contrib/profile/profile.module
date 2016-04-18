@@ -1,0 +1,320 @@
+<?php
+
+/**
+ * @file
+ * Support for configurable user profiles.
+ */
+
+use Drupal\user\UserInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\field\FieldConfigInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Denotes that the profile is not active.
+ */
+const PROFILE_NOT_ACTIVE = 0;
+
+/**
+ * Denotes that the profile is active.
+ */
+const PROFILE_ACTIVE = 1;
+
+/**
+ * Denotes that the profile is not default.
+ */
+const PROFILE_NOT_DEFAULT = 0;
+
+/**
+ * Denotes that the profile is default.
+ */
+const PROFILE_DEFAULT = 1;
+
+/**
+ * Implements hook_help().
+ */
+function profile_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.profile':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Profile module provides a fieldable entity, that allows administrators to define different sets of fields for user profiles, which are then displayed in the <a href="!user">My Account</a> section. This permits users of a site to share more information about themselves, and can help community-based sites organize users around specific information.', array('!user' => \Drupal::url('user.page'))) . '</p>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Types of profiles') . '</dt>';
+      $output .= '<dd>' . t('Profile types provide a way of grouping similar data for user profiles e.g. Personal information, Work etc. A default "Personal information type is provided. You may create more types and manage fields for each type from the <a href="!profile-types">Profile types</a> admin page. When creating a new profile type, you will be able to specify whether a user may create multiple profiles or make the profile form available when registering a new user.', array('!profile-types' => \Drupal::url('entity.profile_type.collection'))) . '</dd>';
+      $output .= '<dt>' . t('Creating profiles') . '</dt>';
+      $output .= '<dd>' . t('A user will see tabs they have access to, when editing their main user account e.g. "Add personal information profile". The visibility of a tab depends on whether they can create multiple profiles or if they haven\'t created a profile of the type that doesn\'t allow multiple instances.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function profile_theme() {
+  return [
+    'profile' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for profile templates.
+ *
+ * Default template: profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing rendered fields.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_profile(array &$variables) {
+  /** @var Drupal\profile\Entity\ProfileInterface $profile */
+  $profile = $variables['elements']['#profile'];
+
+  $variables['profile'] = $profile;
+  $variables['url'] = $profile->toUrl();
+  // Helpful $content variable for templates.
+  $variables['content'] = [];
+  foreach (\Drupal\Core\Render\Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_user_view().
+ */
+function profile_user_view(array &$build, UserInterface $account, EntityViewDisplayInterface $display, $view_mode) {
+  // Iterate through each bundle and see if it's component exists.
+  foreach (ProfileType::loadMultiple() as $bundle) {
+    $component_key = 'profile_' . $bundle->id();
+    if ($display->getComponent($component_key)) {
+
+      // Embed the view of active profiles for profile type.
+      $build[$component_key] = [
+        '#type' => 'view',
+        '#name' => 'profiles',
+        '#display_id' => 'user_view',
+        '#arguments' => [$account->id(), $bundle->id(), 1],
+        '#embed' => TRUE,
+        '#title' => $bundle->label(),
+        '#pre_render' => [
+          ['\Drupal\views\Element\View', 'preRenderViewElement'],
+          'profile_views_add_title_pre_render',
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function profile_entity_extra_field_info() {
+  $extra = [];
+
+  // Add each profile type as an extra field for display. Enabled by default.
+  foreach (ProfileType::loadMultiple() as $bundle) {
+    $extra['user']['user']['display']['profile_' . $bundle->id()] = array(
+      'label' => $bundle->label(),
+      'description' => t('Display @type profiles', ['@type' => $bundle->label()]),
+      'weight' => 10,
+      'visible' => TRUE,
+    );
+  }
+  return $extra;
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function profile_user_delete(EntityInterface $entity) {
+  $list = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'uid' => $entity->id(),
+      ]);
+
+  foreach ($list as $profile) {
+    $profile->delete();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function profile_form_field_config_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $field = $form_state->getFormObject()->getEntity();
+  if ($field->getTargetEntityTypeId() != 'profile') {
+    return;
+  }
+
+  $form['field']['profile']['profile_private'] = [
+    '#type' => 'checkbox',
+    '#title' => t('This is a private field.'),
+    '#default_value' => $field->getThirdPartySetting('profile', 'profile_private', FALSE),
+  ];
+  $form['actions']['submit']['#submit'][] = 'profile_form_field_config_edit_form_submit';
+}
+
+/**
+ * Form submission handler for profile_form_field_config_edit_form_alter.
+ *
+ * @param array $form
+ *   The form array.
+ * @param FormStateInterface $form_state
+ *   The form state.
+ */
+function profile_form_field_config_edit_form_submit(array $form, FormStateInterface $form_state) {
+  $field = $form_state->getFormObject()->getEntity();
+  $form_fields = &$form_state->getValues();
+
+  // If the private option is checked, update settings.
+  if ($form_fields['profile_private']) {
+    $field->setThirdPartySetting('profile', 'profile_private', TRUE);
+    $field->save();
+  }
+  else {
+    $field->unsetThirdPartySetting('profile', 'profile_private');
+    $field->save();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Add available profile forms to the user registration form.
+ */
+function profile_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
+  $attached_profile_form = FALSE;
+  $weight = 90;
+
+  /** @var ProfileType[] $profile_types */
+  $profile_types = ProfileType::loadMultiple();
+  foreach ($profile_types as $profile_type) {
+    $instances = array_filter(\Drupal::service('entity_field.manager')->getFieldDefinitions('profile', $profile_type->id()), function ($field_definition) {
+      return $field_definition instanceof FieldConfigInterface;
+    });
+
+    if ($profile_type->getRegistration() === TRUE && count($instances)) {
+      $property = ['profiles', $profile_type->id()];
+      $profile = $form_state->get($property);
+      if (empty($profile)) {
+        $profile = Profile::create([
+          'type' => $profile_type->id(),
+          'langcode' => $profile_type->language() ?
+            $profile_type->language() : \Drupal::languageManager()->getDefaultLanguage()->getId(),
+        ]);
+
+        // Attach profile entity form.
+        $form_state->set($property, $profile);
+        $form_state->set('form_display_' . $profile_type->id(), EntityFormDisplay::collectRenderDisplay($profile, 'default'));
+        $form['entity_' . $profile_type->id()] = array(
+          '#type' => 'details',
+          '#title' => $profile_type->label(),
+          '#tree' => TRUE,
+          '#parents' => array('entity_' . $profile_type->id()),
+          '#weight' => ++$weight,
+          '#open' => TRUE,
+        );
+        $form_state
+          ->get('form_display_' . $profile_type->id())
+          ->buildForm($profile, $form['entity_' . $profile_type->id()], $form_state);
+
+        $attached_profile_form = TRUE;
+      }
+    }
+  }
+
+  if ($attached_profile_form) {
+    $form['actions']['submit']['#validate'][] = 'profile_form_user_register_form_validate';
+    $form['actions']['submit']['#submit'][] = 'profile_form_user_register_form_submit';
+  }
+}
+
+/**
+ * Extra form validation handler for the user registration form.
+ */
+function profile_form_user_register_form_validate(array &$form, FormStateInterface $form_state) {
+  $profiles = $form_state->get('profiles');
+  if (!empty($profiles)) {
+    foreach ($profiles as $bundle => $entity) {
+      /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+      $form_display = $form_state->get('form_display_' . $bundle);
+      $form_display->extractFormValues($entity, $form['entity_' . $bundle], $form_state);
+      $form_display->validateFormValues($entity, $form['entity_' . $bundle], $form_state);
+    }
+  }
+  // Entity was validated in entityFormValidate(). This will prevent validation
+  // exception from being thrown.
+  $form_state->getFormObject()->getEntity()->validate();
+}
+
+/**
+ * Extra form submission handler for the user registration form.
+ */
+function profile_form_user_register_form_submit(array &$form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  $account = $form_state->getFormObject()->getEntity();
+  $profiles = $form_state->get('profiles');
+  if (!empty($profiles)) {
+    foreach ($profiles as $bundle => $entity) {
+      $entity->setOwnerId($account->id());
+      $entity->setActive(TRUE);
+      $entity->save();
+    }
+  }
+}
+
+/**
+ * Pre render callback for profile embedded views to ensure a title is set.
+ * @param $element
+ *
+ * @return mixed
+ */
+function profile_views_add_title_pre_render($element) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  if (isset($element['#title'])) {
+    $view = $element['view_build']['#view'];
+    $view->setTitle($element['#title']);
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function profile_preprocess_views_view(&$variables) {
+  // We have to manually add back the title since it was removed by Views.
+  // @see template_preprocess_views_view()
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = $variables['view'];
+  if ($view->storage->id() == 'profiles') {
+    $variables['title'] = $view->getTitle();
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ *
+ * Adds a relationship from the user table to its' profile entity.
+ */
+function profile_views_data_alter(&$data) {
+  $data['users_field_data']['profile']['relationship'] = [
+    'title' => t('Profile'),
+    'label' => t('Profile'),
+    'group' => 'User',
+    'help' => t('Reference to the profile of a user.'),
+    'id' => 'standard',
+    'base' => 'profile',
+    'base field' => 'uid',
+    'field' => 'uid',
+  ];
+}
