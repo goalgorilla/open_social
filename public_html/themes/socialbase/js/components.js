@@ -1721,7 +1721,7 @@ jQuery(document).ready(function($){
         hiddenDiv.css('width', $(window).width()/2);
       }
 
-      $textarea.css('height', hiddenDiv.height());
+      $textarea.css('height', hiddenDiv.height() + 52 );
     }
 
     $(text_area_selector).each(function () {

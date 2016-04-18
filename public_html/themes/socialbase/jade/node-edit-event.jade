@@ -1,18 +1,37 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Create Event
+  title Edit Event
 
 block pagetitle
   .block-hero.cover
     .container
-      h1.page-title.h2 Create event          
+      h1.page-title.h2 Edit Event: Amsterdam Meetup      
 
       
 block content
       
-  .row.margin-top-l
-    .col-md-9.margin-bottom-l
+  .row
+  
+    .col-sm-3.col-sm-push-9
+      .toc-wrapper
+        ul.table-of-contents
+          li
+            a(href='#content') Title &amp; image
+          li
+            a(href='#placement') Placement and visibility
+          li 
+            a(href='#eventtime') Date &amp; time
+          li 
+            a(href='#location') Location
+          li 
+            a(href='#description') Description
+          li
+            a(href='#attachments') Attachments
+          li
+            a(href='#comment-settings') Comment settings
+    
+    .col-sm-9.col-sm-pull-3.margin-top-l
     
       form(action='event.html', method='get')
       
@@ -189,29 +208,13 @@ block content
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
               
-        .form-wrapper.clearfix
+        .form-actions.clearfix
           a.waves-effect.waves-light.btn.btn-raised.btn--default-bright(href="event.html") Discard changes
           a.btn.btn-flat(href='event-confirm-delete.html') Delete
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
           input.waves-effect.waves-light.btn.btn-raised.btn-default.pull-right(type='submit', value='Preview') 
 
-    .col-md-3
-      .toc-wrapper
-        ul.section.table-of-contents
-          li
-            a(href='#content') Title &amp; image
-          li
-            a(href='#placement') Placement and visibility
-          li 
-            a(href='#eventtime') Date &amp; time
-          li 
-            a(href='#location') Location
-          li 
-            a(href='#description') Description
-          li
-            a(href='#attachments') Attachments
-          li
-            a(href='#comment-settings') Comment settings
+    
 
         
 block scriptinline  

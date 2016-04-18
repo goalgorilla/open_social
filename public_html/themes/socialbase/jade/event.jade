@@ -84,6 +84,21 @@ block content
 
           p If you are in your early twenties, willing to work all night for the love of this industry, and have few pressing expenses, then building up your professional reputation on open source projects and sharing your ideas is a great thing to do. It’s how we all got started, how I and the majority of my peers found our voices. As I get older, however, I have started to feel the pressure of the finite amount of time we all have. I’ve started to see people of my generation taking a step back. I’ve seen people leave the industry, temporarily or permanently, due to burnout. Others disappear into companies, often in managerial (rather than hands-on) roles that leave limited time for giving back to the community.
 
+      h4.section-title Comments
+      
+      .card
+        .card-body.extra-padding
+          ul.media-list
+            li.media
+              include ./molecules/_comment1.jade
+            li.media
+              include ./molecules/_comment2.jade
+          form#insert-comment
+            .form-group
+              textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a comment')
+            .form-group.clearfix
+              button.btn.btn-primary.pull-right(type='submit') Submit
+      
 block scriptinline
   script.
     jQuery(document).ready(function($){

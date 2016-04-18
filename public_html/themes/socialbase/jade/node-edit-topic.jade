@@ -13,8 +13,19 @@ block pagetitle
       
 block content
       
-  .row.margin-top-xl
-    .col-xs-12.col-sm-9
+  .row
+  
+    .col-sm-3.col-sm-push-9
+      .toc-wrapper
+        ul.section.table-of-contents
+          li
+            a(href='#content') Content
+          li
+            a(href='#placement') Placement and visibility
+          li
+            a(href='#comment-settings') Comment settings
+
+    .col-sm-9.col-sm-pull-3.margin-top-l
     
       form(action='topic.html', method='get')
       
@@ -117,18 +128,7 @@ block content
           a.btn.btn-flat(href='#') Delete
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
           input.waves-effect.waves-light.btn.btn-raised.btn-default.pull-right(type='submit', value='Preview') 
-        
-
-    .col-sm-3.hidden-mobile
-      .toc-wrapper
-        ul.section.table-of-contents
-          li
-            a(href='#content') Content
-          li
-            a(href='#placement') Placement and visibility
-          li
-            a(href='#comment-settings') Comment settings
-
+      
         
 block scriptinline  
   script(src='libs/ckeditor/ckeditor.js')

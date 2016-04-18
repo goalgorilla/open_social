@@ -44,7 +44,23 @@ label {
     box-shadow: 0 2px 0 0 $primary-color;
   }
 
+  &.form-control--block {
+    max-width: none;
+  }
+
+  &.materialize-textarea {
+    overflow-y: hidden; // prevents scroll bar flash
+    padding-top: 1.6rem; // prevents text jump on Enter keypress
+    resize: none;
+    min-height: 5rem;
+  }
+
 }
+
+.form-actions .btn {
+  margin-bottom: 5px;
+}
+
 
 // ***************
 // Selects
