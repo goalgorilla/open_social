@@ -7,7 +7,7 @@ block pagetitle
   .container.hidden-xs
     .cover
       .cover-wrap
-        h1.page-title John Johnson
+        h1.page-title.h2 John Johnson
         img.img-circle.img-bordered(src='content/images/avatar1.jpg')
         br
         br
@@ -15,14 +15,11 @@ block pagetitle
           i.material-icons.pull-left check
           | Following
       
-block secondary_navigation
-  .container
     .visible-xs-block.section
       a.btn.btn-raised.btn-default(href="my-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to my stream
 
-  .container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
@@ -51,7 +48,7 @@ block content
         i.material-icons.pull-left add
         | Add an event
 
-      button.waves-effect.waves-light.btn.btn-block.btn-primary.visible-xs-block.js-open-canvas
+      button.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filters
       

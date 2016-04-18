@@ -11,15 +11,23 @@ label {
   cursor: text;
 }
 
+@include MQ($small) {
+
+  .form-group-inline {
+    display: flex;
+
+    .form-control--block {
+      flex: 1;
+    }
+
+  }
+
+}
+
 // Indication on labels for required fields
-.form-required::after {
-  content: '';
-  vertical-align: super;
-  display: inline-block;
-  background: url(../images/required.svg) 0/6px no-repeat;
-  width: 6px;
-  height: 6px;
-  margin: 0 5px;
+span.form-required {
+  margin: 0 3px;
+  color: $brand-danger;
 }
 
 .help-block {
