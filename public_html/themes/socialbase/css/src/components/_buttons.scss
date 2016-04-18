@@ -11,7 +11,13 @@
     margin-left: 5px;
   }
 
+  + .btn-block {
+    margin-left: 0;
+  }
+
 }
+
+
 
 .btn-sm {
   font-size: $button-font-size-small;
@@ -25,18 +31,6 @@
   @include button-variant(white, $user-color, $user-color);
 }
 
-.btn-link { // not 100% if this is wise dd 14-04-16
-  padding-left: 0;
-  padding-right: 0;
-
-  + .btn {
-    margin-left: 12px; // default margin + padding-right because it missing on btn-link
-  }
-
-  + .btn-sm {
-    margin-left: 10px; // default margin + padding-right small because it missing on btn-link
-  }
-}
 
 // Button raised
 // --------------------------------------------------
