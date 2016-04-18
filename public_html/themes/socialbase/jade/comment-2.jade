@@ -1,0 +1,26 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Comment on Amsterdam meetup
+
+block pagetitle
+  .container
+    .cover
+        h1.page-title.h2 Comment 
+      
+block content
+      
+  .row.margin-top-l
+  
+    .col-sm-9
+    
+      .card
+        .card-body.extra-padding
+          ul.media-list
+            li.media
+              include ./molecules/_comment1-var.jade
+          form#insert-comment
+            .form-group
+              textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a comment')
+            .form-group.clearfix
+              button.btn.btn-primary.pull-right(type='submit') Submit

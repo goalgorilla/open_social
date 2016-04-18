@@ -21,6 +21,10 @@
   @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
 }
 
+.btn-user {
+  @include button-variant(white, $user-color, $user-color);
+}
+
 .btn-link { // not 100% if this is wise dd 14-04-16
   padding-left: 0;
   padding-right: 0;
@@ -84,7 +88,7 @@
 .btn-icon-toggle {
 	border-radius: 50% !important;
   padding: 0;
-  width: 36px;
+  width: 30px;
 }
 
 // Floating button
@@ -174,24 +178,6 @@
   }
 }
 
-// Flat button
-.btn-icon-toggle,
-.btn-flat {
-  box-shadow: none;
-  background-color: transparent;
-  color: $button-flat-color;
-  cursor: pointer;
-
-  &.disabled {
-    color: $button-flat-disabled-color;
-    cursor: default;
-  }
-
-  &.btn-default-light {
-    color: $grey-light-1;
-  }
-
-}
 
 .btn-raised {
 
