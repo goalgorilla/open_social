@@ -1,5 +1,9 @@
 <?php
 
+use Drupal\Core\Render\Element;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\UserInterface;
 /**
  * @file
  * The Social profile module.
@@ -53,5 +57,68 @@ function social_profile_local_tasks_alter(&$local_tasks) {
   // Remove the profile main "Profile information" from the local tabs.
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
+  // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
+  $original = $variables['theme_hook_original'];
+  $entity = $variables['elements']['#profile'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions = array();
+  $suggestions[] = $original;
+  $suggestions[] = $original . '__' . $sanitized_view_mode;
+  $suggestions[] = $original . '__' . $entity->bundle();
+  $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = $original . '__' . $entity->id();
+  $suggestions[] = $original . '__' . $entity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Prepares variables for profile templates.
+ *
+ * Default template: profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - profile: The profile object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_profile_preprocess_profile(&$variables) {
+  $profile = $variables['profile'];
+  $user = \Drupal\user\Entity\User::load($profile->getOwnerId());
+
+  // See social_user_user_format_name_alter(), DisplayName is either first name
+  // + last name, or username if both first and last name aren't filled out.
+  $profile_name = $user->getDisplayName();
+
+  // This will get the users internal route path, in this case /user/{user.id}.
+  $profile_url = $user->toUrl();
+
+  $variables['profile_name'] = $profile_name;
+  $variables['profile_url'] = $profile_url;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * In order to save a new default profile on user creation.
+ */
+function social_profile_user_insert(UserInterface $account) {
+  // If the new account has a UID, we can create a default profile.
+  // Default image is added through the field settings.
+  if (!empty($account->id())) {
+    $profile = Profile::create($expected = [
+      'type' => ProfileType::load('profile')->id(),
+      'uid' => $account->id(),
+    ]);
+    $profile->save();
   }
 }
