@@ -37,27 +37,27 @@
     logged_in  ? 'block--user-menu' : 'block--headermenu',
   ]
 %}
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top"{{ attributes|without('role', 'aria-labelledby') }}>
+  <div class="container">
+    {# Extra wrapper, only when it is a logged in user #}
+    {% if logged_in %}
+      <div class="block--user-menu">
+    {% endif %}
 
-<nav role="navigation" {{ attributes.addClass(classes)|without('role', 'aria-labelledby') }}>
+    {# Label. If not displayed, we still provide it for screen readers. #}
+    {% if not configuration.label_display %}
+      {% set title_attributes = title_attributes.addClass('visually-hidden') %}
+    {% endif %}
+    {{ title_prefix }}
+    <h2{{ title_attributes }}>{{ configuration.label }}</h2>
+    {{ title_suffix }}
 
-  {# Extra wrapper, only when it is a logged in user #}
-  {% if logged_in %}
-    <div class="block--user-menu">
-  {% endif %}
-
-  {# Label. If not displayed, we still provide it for screen readers. #}
-  {% if not configuration.label_display %}
-    {% set title_attributes = title_attributes.addClass('visually-hidden') %}
-  {% endif %}
-  {{ title_prefix }}
-  <h2{{ title_attributes }}>{{ configuration.label }}</h2>
-  {{ title_suffix }}
-
-  {# Menu. #}
-  {{ content }}
+    {# Menu. #}
+    {{ content }}
 
 
-  {% if logged_in %}
-    </div>
-  {% endif %}
+    {% if logged_in %}
+      </div>
+    {% endif %}
+  </div>
 </nav>
