@@ -31,11 +31,13 @@ default:
         drupal:
           drupal_root: '/var/www/html'
         selectors:
-          message_selector: 'div[role=contentinfo]'
-          error_message_selector: 'div[role=contentinfo]'
-          success_message_selector: 'div[role=contentinfo]'
+          message_selector: '.alert'
+          error_message_selector: '.alert.alert-danger'
+          success_message_selector: '.alert.alert-success'
         text:
           username_field: 'Username or email address'
+          log_in: "Log in"
+          log_out: "Logout"
         region_map:
           'Page title block': '.section-title'
           'Hero block': '.block-hero'
