@@ -24,11 +24,21 @@ i {
   }
 }
 
-.img-bordered {
-  border: 5px solid white;
-}
 
 // Image sizes for profile pictures in hero areas and streams
+.img-medium {
+  width: 60px;
+  height: 60px;
+  border: 2px solid white;
+
+  @include MQ($small) {
+    width: 128px;
+    height: 128px;
+    border-width: 5px;
+  }
+
+}
+
 .img-small {
   width: 44px;
   height: 44px;

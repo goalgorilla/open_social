@@ -6,6 +6,9 @@ block title
 block pagetitle
   .container.hidden-xs
     .cover
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
+          i.material-icons mode_edit
       .cover-wrap
         h1.page-title John Johnson
         img.img-circle.img-bordered(src='content/images/avatar1.jpg')
@@ -18,7 +21,7 @@ block pagetitle
 block secondary_navigation
   .container
     .visible-xs-block.section
-      a.btn.btn-raised.btn-default 
+      a.btn.btn-raised.btn-default(href="my-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to my stream
 
@@ -30,7 +33,7 @@ block secondary_navigation
           li
             a(href="my-stream.html") Stream  
           li
-            a(href="about.html") About
+            a(href="my-profile-about.html") About
           li.active
             a(href='my-topics.html') Topics
             span.visually-hidden (active tab) 
