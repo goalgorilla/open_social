@@ -11,7 +11,6 @@ Feature: Profile information
       | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  |
     And I am logged in as "user_1"
     And I am on "/user"
-    Then I break
     And I should see "Albert Einstein" in the "Hero block"
     # @TODO: Uncomment this when title will be in correct region
     # And I should not see "user_1" in the "Hero block"
