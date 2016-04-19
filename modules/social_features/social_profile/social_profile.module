@@ -59,6 +59,9 @@ function social_profile_local_tasks_alter(&$local_tasks) {
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
   }
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
+  }
 }
 
 /**
@@ -150,9 +153,7 @@ function social_profile_user_insert(UserInterface $account) {
  */
 function social_profile_menu_local_tasks_alter(&$data, $route_name) {
   // Rewrite title for /user/{uid} from view to information.
-  if ($route_name == 'entity.user.canonical') {
-    if (!empty($data['tabs'][0]['entity.user.canonical'])) {
-      $data['tabs'][0]['entity.user.canonical']['#link']['title'] = 'Information';
-    }
+  if (!empty($data['tabs'][0]['entity.user.canonical'])) {
+    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = 'Information';
   }
 }
