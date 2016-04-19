@@ -1,9 +1,9 @@
-uuid: cf699b59-5649-4fcb-8c08-ee88d6832ed0
+uuid: f19f05ee-bd80-48a1-ad90-8c81546fdebd
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.profile.teaser
+    - core.entity_view_mode.profile.compact
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
@@ -12,54 +12,30 @@ dependencies:
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_self_introduction
-    - image.style.teaser
+    - image.style.micro
     - profile.type.profile
   module:
     - image
 _core:
-  default_config_hash: Pv8AqRKfYCVvHu6MK5lBfc1j6Vz4IFrAF_-4ZIGtsFk
-id: profile.profile.teaser
+  default_config_hash: mQAoE0RCypAsDnZkdVRzfs_MbGRu3ePqhObwyZFn1yw
+id: profile.profile.compact
 targetEntityType: profile
 bundle: profile
-mode: teaser
+mode: compact
 content:
-  field_profile_first_name:
-    weight: 1
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_function:
-    weight: 3
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
   field_profile_image:
-    weight: 0
+    weight: 7
     label: hidden
     settings:
-      image_style: teaser
+      image_style: micro
       image_link: ''
     third_party_settings: {  }
     type: image
-  field_profile_last_name:
-    weight: 2
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_organization:
-    weight: 4
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
 hidden:
   field_profile_expertise: true
+  field_profile_first_name: true
+  field_profile_function: true
   field_profile_interests: true
+  field_profile_last_name: true
+  field_profile_organization: true
   field_profile_self_introduction: true
