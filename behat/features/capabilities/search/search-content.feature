@@ -14,7 +14,6 @@ Feature: Search
       | Topic one         | Description   | Blog                |
       | Topic two         | Description   | Blog                |
     And I am logged in as an "authenticated user"
-    And I run cron
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
     When I fill in the following:
@@ -26,6 +25,6 @@ Feature: Search
     And I should not see "Event two"
     # Scenario: Successfully filter search results
     When I select "topic" from "Content type"
-    And I press "Filter" in the "Sidebar second"
+    And I press the "Filter" button
     And I should see "Topic one"
     And I should not see "Event one"

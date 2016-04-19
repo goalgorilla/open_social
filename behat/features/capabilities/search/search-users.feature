@@ -6,9 +6,10 @@
 
   Scenario: Successfully search users
     Given users:
-      | name     | mail               | status | field_profile_first_name |
-      | user_1   | user_1@example.com | 1      | User one                 |
-      | user_2   | user_2@example.com | 1      | User two                 |
+
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
+      | user_1   | user_1@example.com | 1      | User                     | one                     |
+      | user_2   | user_2@example.com | 1      | User                     | two                     |
     And I am logged in as an "authenticated user"
     And I am on "search/users"
     When I fill in the following:
