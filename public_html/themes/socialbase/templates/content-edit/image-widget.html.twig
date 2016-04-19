@@ -1,31 +1,19 @@
 {#
 /**
  * @file
- * Theme override for an image field widget.
+ * Default theme implementation for an image field widget.
  *
  * Available variables:
  * - attributes: HTML attributes for the containing element.
  * - data: Render elements of the image widget.
  *
  * @see template_preprocess_image_widget()
+ *
+ * @ingroup themeable
  */
 #}
-
-<div{{ attributes.addClass('file-field input-field') }}>
-  {% if data.preview %}
-    <div class="image-preview">
-      {{ data.preview }}
-    </div>
-  {% endif %}
-  <div class="image-widget-data">
-    {# Render widget data without the image preview that was output already. #}
-    <div class="btn">
-      <span>File</span>
-        {{ data }}
-    </div>
-    <div class="file-path-wrapper">
-      <input class="file-path form-text" type="text">
-    </div>
-  </div>
-
+<div{{ attributes }}>
+  {{ data.preview }}
+  {# Render widget data without the image preview that was output already. #}
+  {{ data|without('preview') }}
 </div>
