@@ -125,7 +125,7 @@ function social_profile_preprocess_profile(&$variables) {
   // Edit profile URL
   $account = \Drupal::currentUser();
   if($profile->access('edit', $account)){
-    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/edit');
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
   }
 }
 
