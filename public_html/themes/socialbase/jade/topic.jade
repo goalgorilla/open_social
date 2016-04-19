@@ -69,13 +69,14 @@ block content
           
       .card
         .card-body.extra-padding
-          ul.media-list
-            li.media
-              include ./molecules/_comment1.jade
-            li.media
-              include ./molecules/_comment2.jade
-          form.form-horizontal
-            .form-group
-              textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a comment')
-            .form-group
-              button.btn.btn-primary.pull-right(type='submit') Submit
+          include ./molecules/_comment1.jade
+          include ./molecules/_comment2.jade
+          hr
+          .media
+            .media-left
+              img.img-small.img-circle(src='content/images/avatar1.jpg')
+            .media-body
+              form
+                .form-group.form-group-inline
+                  textarea.form-control.form-control--block(placeholder='Add a new comment...', width='100%')
+                  button.btn.btn-primary(type='submit') Comment

@@ -70,6 +70,45 @@ a.card:hover {
   color: $grey-dark-1;
 }
 
+.card-nested-section {
+  background: $grey-light-3;
+  border-top: 1px darken($gray-lighter, 10%) solid;
+  border-bottom: 1px darken($gray-lighter, 10%) solid;
+  margin-top: $card-padding / 2;
+  margin-left: -$card-padding;
+  margin-right: -$card-padding;
+  margin-bottom: $card-padding;
+  padding: $card-padding;
+
+  font-size: 0.875em;
+
+  .extra-padding & {
+    @include MQ($small) {
+      margin-left: -$card-padding-large;
+      margin-right: -$card-padding-large;
+      padding: $card-padding $card-padding-large;
+    }
+  }
+
+  hr {
+    border-top-color: darken($gray-lighter, 10%);
+  }
+
+  &:last-child {
+    margin-bottom: -$card-padding;
+    border-bottom-left-radius: $card-border-radius;
+    border-bottom-right-radius: $card-border-radius;
+    border-bottom: 0;
+
+    .extra-padding & {
+      @include MQ($small) {
+        margin-bottom: -$card-padding-large;
+      }
+    }
+
+  }
+}
+
 
 // Desktop cards are only displayed on desktop.
 .visible-sm-card {
