@@ -19,7 +19,6 @@ use Drupal\Core\Block\BlockBase;
  */
 class ProfileHeroBlock extends BlockBase {
 
-
   /**
    * {@inheritdoc}
    */
@@ -36,7 +35,7 @@ class ProfileHeroBlock extends BlockBase {
     if (!empty($account)) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
       if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($account, 'profile', TRUE);
+        $user_profile = $storage->loadByUser($account, 'profile');
         if ($user_profile) {
           $content = \Drupal::entityTypeManager()
             ->getViewBuilder('profile')
