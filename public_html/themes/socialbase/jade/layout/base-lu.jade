@@ -22,7 +22,15 @@ html(lang="en")
     include _header-lu.jade
     
     main.main-container(role='main')
-      include _breadcrumbs.jade
+      
+      nav.visible-md-block.visible-lg-block.style-default-bright
+        ol.breadcrumb.container
+          block breadcrumbs  
+            li
+              a(href='#!') Home
+            li
+              a(href='#!') Overview
+            li.active Detail
       
       block pagetitle
 
