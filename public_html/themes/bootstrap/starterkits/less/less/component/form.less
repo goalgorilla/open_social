@@ -1,0 +1,64 @@
+/**
+ * Form styles.
+ */
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+// @see http://stackoverflow.com/q/21103542
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  .form-inline & {
+    width: auto;
+  }
+  .input-group & {
+    display: table-cell;
+    // Reset rounded corners
+    &:first-child .form-control:first-child {
+      .border-left-radius(@border-radius-base);
+    }
+    &:last-child .form-control:first-child {
+      .border-right-radius(@border-radius-base);
+    }
+  }
+  select {
+    appearance: none;
+    line-height: 1;
+    padding-right: 2em;
+  }
+  &:after {
+    color: @brand-primary;
+    content: '▼';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    margin-top: -.5em;
+    padding-right: .5em;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 10;
+
+    // Use a more stylish icon if the theme uses glyphicons.
+    .has-glyphicons & {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      content: '\e114'; // .glyphicon-chevron-down
+      display: inline-block;
+      font-family: 'Glyphicons Halflings';
+      //margin-left: -10px;
+      //margin-top: 2px;
+    }
+    .has-error & {
+      color: @state-danger-text;
+    }
+    .has-success & {
+      color: @state-success-text;
+    }
+    .has-warning & {
+      color: @state-warning-text;
+    }
+  }
+}

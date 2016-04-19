@@ -33,7 +33,11 @@ class FormElement extends PreprocessBase implements PreprocessInterface {
     // See http://getbootstrap.com/css/#forms-controls.
     $checkbox = $variables['is_checkbox'] = $variables->element->isType('checkbox');
     $radio = $variables['is_radio'] = $variables->element->isType('radio');
-    $variables['is_form_group'] = !$variables['is_checkbox'] && !$variables['is_radio'] && !$variables->element->isType(['hidden', 'textarea']);
+
+    // Determine if the form element should have the "form-group" class added.
+    // Use an explicitly set property from the element or use its other
+    // properties as the criteria to determine if it should be set.
+    $variables['is_form_group'] = $variables->element->getProperty('form_group', !$variables['is_checkbox'] && !$variables['is_radio'] && !$variables->element->isType(['hidden', 'textarea']));
 
     // Add label_display and label variables to template.
     $display = $variables['label_display'] = $variables['title_display'] = $variables->element->getProperty('title_display');

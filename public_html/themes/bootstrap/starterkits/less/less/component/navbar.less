@@ -1,9 +1,11 @@
 /**
  * Navbar styling.
  */
-body {
-  margin-top: (@grid-gutter-width / 2);
+@tablet:  ~"screen and (min-width: @{screen-sm-min})";
+@normal:  ~"screen and (min-width: @{screen-md-min})";
+@wide:    ~"screen and (min-width: @{screen-lg-min})";
 
+body {
   // Fix horizontal scrolling on iOS devices.
   // http://drupal.org/node/1870076
   position: relative;
@@ -17,12 +19,12 @@ body {
   &.navbar-is-fixed-bottom {
     padding-bottom: (@navbar-height + (@grid-gutter-width / 2));
   }
+
+  @media @tablet {
+    margin-top: (@grid-gutter-width / 2);
+  }
 }
 .navbar.container {
-  @tablet:  ~"screen and (min-width: @{screen-sm-min})";
-  @normal:  ~"screen and (min-width: @{screen-md-min})";
-  @wide:    ~"screen and (min-width: @{screen-lg-min})";
-
   @media @tablet {
     max-width: ((@container-sm - @grid-gutter-width));
   }

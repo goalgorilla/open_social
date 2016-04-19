@@ -26,8 +26,8 @@ a base theme like this.
 - @link subtheme_less LESS Starterkit @endlink
 
 #### @link registry Theme Registry @endlink
-- @link theme_preprocess Preprocess@endlink
-- @link templates Templates@endlink
+- @link theme_preprocess Preprocess @endlink
+- @link templates Templates @endlink
 
 #### @link api APIs @endlink
 

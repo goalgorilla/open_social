@@ -20,11 +20,13 @@ regions:
   page_bottom: 'Page bottom'
 
 libraries:
-  - 'bootstrap/base-theme'
+  - 'bootstrap/theme'
 
 libraries-extend:
   core/drupal.ajax:
     - bootstrap/drupal.ajax
+  core/drupal.autocomplete:
+    - bootstrap/drupal.autocomplete
   core/drupal.form:
     - bootstrap/drupal.form
   core/drupal.progress:
@@ -33,13 +35,40 @@ libraries-extend:
     - bootstrap/drupal.states
   core/drupal.tabledrag:
     - bootstrap/drupal.tabledrag
+  views/views.ajax:
+    - bootstrap/views.ajax
 
 libraries-override:
+  core/drupal.batch: bootstrap/drupal.batch
   core/drupal.collapse: false
   core/drupal.dropbutton: bootstrap/dropdown
   core/drupal.vertical-tabs: bootstrap/drupal.vertical-tabs
+  filter/drupal.filter: bootstrap/drupal.filter
   system/admin: false
   text/drupal.text: bootstrap/drupal.text
+
+# Remove individual stylesheets.
+  system/base:
+    css:
+      component:
+        css/components/ajax-progress.module.css: false
+        css/components/autocomplete-loading.module.css: false
+        css/components/tabledrag.module.css: false
+
+  file/drupal.file:
+    css:
+      theme:
+        css/file.admin.css: false
+
+  filter/drupal.filter.admin:
+    css:
+      theme:
+        css/filter.admin.css: false
+
+  node/drupal.node.preview:
+    css:
+      theme:
+        css/node.preview.css: false
 
 # The following are dynamic library overrides based on certain critera,
 # usually a theme setting.
@@ -49,8 +78,8 @@ libraries-override:
 #  core/drupal.dialog: bootstrap/drupal.dialog
 #  core/drupal.dialog.ajax: bootstrap/drupal.dialog.ajax
 
-# Information added by Drupal.org packaging script on 2015-12-19
-version: '8.x-3.0-beta2'
+# Information added by Drupal.org packaging script on 2016-04-10
+version: '8.x-3.0-beta3+15-dev'
 core: '8.x'
 project: 'bootstrap'
-datestamp: 1450531741
+datestamp: 1460322243
