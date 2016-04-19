@@ -11,13 +11,23 @@ label {
   cursor: text;
 }
 
-@include MQ($small) {
+.form-group-inline {
 
-  .form-group-inline {
+  .form-control--block {
+    margin-bottom: 5px;
+  }
+
+  @include MQ($small) {
     display: flex;
+    align-items: flex-start;
 
     .form-control--block {
       flex: 1;
+      margin-bottom: 0;
+    }
+
+    .btn:last-child {
+      margin-left: 8px;
     }
 
   }
