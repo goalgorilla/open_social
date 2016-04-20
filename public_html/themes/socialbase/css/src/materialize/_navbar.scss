@@ -21,12 +21,20 @@
 
 .navbar > .container .navbar-brand {
   margin-left: -$navbar-padding-horizontal;
+
+  object {
+    pointer-events: none;
+  }
 }
 
 @media (min-width: $grid-float-breakpoint) {
 
   .navbar > .container .navbar-brand {
     margin-left: 0;
+  }
+
+  .container > .navbar-collapse {
+    margin-left: 60px; // make sure navbar-brand is clickable
   }
 
   .navbar-right {
