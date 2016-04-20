@@ -1,9 +1,10 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+
 /**
-* Implements hook_form_FORM_ID_alter().
-*/
+ * Implements hook_form_FORM_ID_alter().
+ */
 function socialbase_form_social_user_password_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['mail']['#prefix'] = '<div class="form__description">';
   $form['mail']['#suffix'] = '</div>';
@@ -33,7 +34,10 @@ function socialbase_theme_suggestions_menu_alter(array &$suggestions, array $var
   // Remove the block and replace dashes with underscores in the block ID to
   // use for the hook name.
   if (isset($variables['attributes']['block'])) {
-    $hook = str_replace(array('block-', '-'), array('', '_'), $variables['attributes']['block']);
+    $hook = str_replace(array('block-', '-'), array(
+      '',
+      '_'
+    ), $variables['attributes']['block']);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 }
@@ -80,5 +84,16 @@ function socialbase_preprocess_node(&$variables) {
     if (!$variables['elements']['#node']->isPublished()) {
       $variables['attributes']['class'][] = 'unpublished';
     }
+  }
+}
+
+
+/**
+ * Implements template_preprocess_image_style().
+ */
+function socialbase_preprocess_image_style(&$variables) {
+  if($variables['style_name'] == 'profile_hero'){
+    $variables['image']['#attributes']['class'][] = 'img-bordered';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
   }
 }
