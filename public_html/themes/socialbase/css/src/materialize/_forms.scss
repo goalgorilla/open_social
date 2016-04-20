@@ -306,8 +306,8 @@ span.form-required {
     div.password-confirm {
       position: absolute;
       bottom: 0;
-      @include make-col-offset(12);
-      @include make-col-span(6);
+      @include make-col-offset(7);
+      @include make-col-span(3);
       padding-bottom: 0.5rem;
     }
 
@@ -353,12 +353,6 @@ span.form-required {
   margin-top: 1em;
   color: lighten($text-color, 25%);
   font-size: 80%;
-  @include make-col;
-  @include make-col-span(12);
-
-  @include MQ($small) {
-    @include make-col-span(7);
-  }
 }
 
 .password-suggestions ul {

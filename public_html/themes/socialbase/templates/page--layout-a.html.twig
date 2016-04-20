@@ -56,37 +56,41 @@
 </header>
 
 <main id="content" class="column main-container" role="main">
-
   {{ page.breadcrumb }}
 
-  <div class="container hero-container">
-    <div class="cover">
-      {{ page.title }}
-      {{ page.hero }}
+  <div class="block-hero">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 center margin-bottom-xxl">
+          {{ page.hero }}
+        </div>
+      </div>
     </div>
+  </div>
 
-    {% if page.secondary_navigation %}
-      <div class="brand-secondary z-depth-1">
+  {% if page.secondary_navigation %}
+    <div class="style-secondary hidden-xs">
+      <div class="container">
         {{ page.secondary_navigation }}
       </div>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
-    <div class="row margin-top-l">
+    <div class="row">
 
       <div role="complementary" class="col-sm-3 col-sm-push-9">
         {{ page.complementary }}
       </div>
 
       <div class="col-sm-9 col-sm-pull-3 margin-top-l">
+        {{ page.title }}
         {% block card %}
           {{ page.content }}
         {% endblock %}
       </div>
 
-    </div>
   </div>
 
 </main>
