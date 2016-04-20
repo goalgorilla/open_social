@@ -14,6 +14,6 @@ Feature: Create Topic
     And I click radio button "Discussion"
     And I press "Save"
     And I should see "Topic This is a test topic has been created."
-    And I should see "This is a test topic" in the ".section-title" element
+    And I should see "This is a test topic" in the "Hero block" element
     And I should see "Discussion" in the "Hero block"
     And I should see "Body description text" in the "Main content"
