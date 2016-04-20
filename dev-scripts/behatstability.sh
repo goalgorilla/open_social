@@ -6,4 +6,4 @@ behat --version
 
 echo $PROJECT_FOLDER/config/behat.yml;
 
-behat $PROJECT_FOLDER --config $PROJECT_FOLDER/config/behat.yml --tags "DS-479"
+behat $PROJECT_FOLDER --config $PROJECT_FOLDER/config/behat.yml --tags "stability"
