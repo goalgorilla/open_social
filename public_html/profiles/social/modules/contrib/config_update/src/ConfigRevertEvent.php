@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigRevertEvent.
- */
-
 namespace Drupal\config_update;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -12,7 +8,8 @@ use Symfony\Component\EventDispatcher\Event;
  * Event context class for configuration revert/import events.
  *
  * This class is passed in as the event when the
- * \Drupal\config_update\ConfigRevertInterface::IMPORT and
+ * \Drupal\config_update\ConfigRevertInterface::IMPORT,
+ * \Drupal\config_update\ConfigDeleteInterface::DELETE, and
  * \Drupal\config_update\ConfigRevertInterface::REVERT events are triggered.
  */
 class ConfigRevertEvent extends Event {
@@ -39,7 +36,7 @@ class ConfigRevertEvent extends Event {
    * @param string $name
    *   The name of the config item being imported/reverted, without prefix.
    */
-  function __construct($type, $name) {
+  public function __construct($type, $name) {
     $this->type = $type;
     $this->name = $name;
   }
@@ -59,7 +56,8 @@ class ConfigRevertEvent extends Event {
    * Returns the name of the config item, without prefix.
    *
    * @return string
-   *   The name of the config item being imported/reverted, with the prefix.
+   *   The name of the config item being imported/reverted/deleted, with the
+   *   prefix.
    */
   public function getName() {
     return $this->name;

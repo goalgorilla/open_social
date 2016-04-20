@@ -1,25 +1,20 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigReverter.
- */
-
 namespace Drupal\config_update;
 
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Site\Settings;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Provides methods related to config reverting and importing.
+ * Provides methods related to config reverting, deleting, and importing.
  *
  * In this class, when any import or revert operation is requested, the
  * configuration that is being reverted or imported is searched for in both the
  * config/install repository and config/optional. This happens automatically.
  */
-class ConfigReverter implements ConfigRevertInterface {
+class ConfigReverter implements ConfigRevertInterface, ConfigDeleteInterface {
 
   /**
    * The entity manager.
@@ -66,7 +61,7 @@ class ConfigReverter implements ConfigRevertInterface {
   /**
    * Constructs a ConfigReverter.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\Config\StorageInterface $active_config_storage
    *   The active config storage.
@@ -79,7 +74,7 @@ class ConfigReverter implements ConfigRevertInterface {
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   The event dispatcher.
    */
-  public function __construct(EntityManagerInterface $entity_manager, StorageInterface $active_config_storage, StorageInterface $extension_config_storage, StorageInterface $extension_optional_config_storage, ConfigFactoryInterface $config_factory, EventDispatcherInterface $dispatcher) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, StorageInterface $active_config_storage, StorageInterface $extension_config_storage, StorageInterface $extension_optional_config_storage, ConfigFactoryInterface $config_factory, EventDispatcherInterface $dispatcher) {
     $this->entityManager = $entity_manager;
     $this->activeConfigStorage = $active_config_storage;
     $this->extensionConfigStorage = $extension_config_storage;
@@ -156,6 +151,26 @@ class ConfigReverter implements ConfigRevertInterface {
     $event = new ConfigRevertEvent($type, $name);
     $this->dispatcher->dispatch(ConfigRevertInterface::REVERT, $event);
 
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function delete($type, $name) {
+    $full_name = $this->getFullName($type, $name);
+    if (!$full_name) {
+      return FALSE;
+    }
+    $config = $this->configFactory->getEditable($full_name);
+    if (!$config) {
+      return FALSE;
+    }
+    $config->delete();
+
+    // Trigger an event notifying of this change.
+    $event = new ConfigRevertEvent($type, $name);
+    $this->dispatcher->dispatch(ConfigDeleteInterface::DELETE, $event);
     return TRUE;
   }
 
