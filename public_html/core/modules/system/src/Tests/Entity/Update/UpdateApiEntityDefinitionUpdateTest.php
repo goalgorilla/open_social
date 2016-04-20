@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\system\Tests\Entity\Update\UpdateApiEntityDefinitionUpdateTest.
- */
-
 namespace Drupal\system\Tests\Entity\Update;
 
 use Drupal\Core\Entity\Exception\FieldStorageDefinitionUpdateForbiddenException;
@@ -71,6 +66,9 @@ class UpdateApiEntityDefinitionUpdateTest extends WebTestBase {
     // Make 'user_id' multiple by applying updates.
     $this->enableUpdates('entity_test', 'entity_definition_updates', 8001);
     $this->applyUpdates();
+
+    // Ensure the 'entity_test__user_id' table got created.
+    $this->assertTrue(\Drupal::database()->schema()->tableExists('entity_test__user_id'));
 
     // Check that data was correctly migrated.
     $entity = $this->reloadEntity($entity);

@@ -1,8 +1,13 @@
 <?php
 
+namespace Drupal\update\Tests;
+
+use Drupal\Core\DrupalKernel;
+use Drupal\Core\Url;
+use Drupal\simpletest\WebTestBase;
+
 /**
- * @file
- * Contains \Drupal\update\Tests\UpdateTestBase.
+ * Defines some shared functions used by all update tests.
  *
  * The overarching methodology of these tests is we need to compare a given
  * state of installed modules and themes (e.g., version, project grouping,
@@ -17,16 +22,6 @@
  * (via the 'update_test_xml_map' variable), and then performs a series of
  * assertions that the report matches our expectations given the specific
  * initial state and availability scenario.
- */
-
-namespace Drupal\update\Tests;
-
-use Drupal\Core\DrupalKernel;
-use Drupal\Core\Url;
-use Drupal\simpletest\WebTestBase;
-
-/**
- * Defines some shared functions used by all update tests.
  */
 abstract class UpdateTestBase extends WebTestBase {
 

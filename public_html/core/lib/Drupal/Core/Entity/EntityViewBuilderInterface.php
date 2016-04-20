@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Entity\EntityViewBuilderInterface.
- */
-
 namespace Drupal\Core\Entity;
 
 use Drupal\Core\Field\FieldItemInterface;
@@ -104,7 +99,7 @@ interface EntityViewBuilderInterface {
    * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   FieldItemList containing the values to be displayed.
    * @param string|array $display_options
-   *  Can be either:
+   *   Can be either:
    *   - The name of a view mode. The field will be displayed according to the
    *     display settings specified for this view mode in the $field
    *     definition for the field in the entity's bundle. If no display settings

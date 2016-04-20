@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\Plugin\views\display\DisplayPluginBase.
- */
-
 namespace Drupal\views\Plugin\views\display;
 
 use Drupal\Component\Plugin\DependentPluginInterface;
@@ -2267,7 +2262,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
   /**
    * {@inheritdoc}
    */
-  public function calculateCacheMetadata () {
+  public function calculateCacheMetadata() {
     $cache_metadata = new CacheableMetadata();
 
     // Iterate over ordinary views plugins.
