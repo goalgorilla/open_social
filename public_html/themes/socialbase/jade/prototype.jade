@@ -30,6 +30,8 @@ html(lang="en")
             .list-group
               .list-group-item
                 h4.list-group-item-heading.text-primary Logged in users
+              +collection('home-lu.html', 'Homepage')
+              +collection('home-lu-2.html', 'Homepage ver. 2')
               +collection('my-stream.html', 'Profile')
               +collection('profile-edit.html', 'Edit Profile')
               +collection('account-edit.html', 'Edit Account')
@@ -44,5 +46,7 @@ html(lang="en")
               +collection('node-edit-event.html', 'Edit event')
               +collection('comment.html', 'Single comment')
               +collection('single-post.html', 'Single post')
+              +collection('search-content.html', 'Search content')
+              +collection('search-members.html', 'Search members')
   
     include ./layout/_scripts.jade
