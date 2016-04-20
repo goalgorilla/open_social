@@ -74,7 +74,7 @@ a.card:hover {
   background: $grey-light-3;
   border-top: 1px darken($gray-lighter, 10%) solid;
   border-bottom: 1px darken($gray-lighter, 10%) solid;
-  margin-top: $card-padding / 2;
+  margin-top: 0;
   margin-left: -$card-padding;
   margin-right: -$card-padding;
   margin-bottom: $card-padding;
@@ -257,4 +257,25 @@ a.card:hover {
 
 .card-actionbar--with-border {
   border-top: 1px solid $grey-light-2;
+}
+
+.card-buttonbar {
+  padding: 6px 0;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid $grey-light-2;
+
+  @include MQ($small) {
+    justify-content: flex-start;
+  }
+
+  .btn-link {
+    padding: 6px;
+  }
+
+  .justify-end {
+    margin-left: auto;
+    text-align: right;
+    flex: 1;
+  }
 }
