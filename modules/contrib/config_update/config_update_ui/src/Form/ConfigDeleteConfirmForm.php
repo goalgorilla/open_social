@@ -10,19 +10,19 @@ use Drupal\config_update\ConfigRevertInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a confirmation form for reverting configuration.
+ * Defines a confirmation form for deleting configuration.
  */
-class ConfigRevertConfirmForm extends ConfirmFormBase {
+class ConfigDeleteConfirmForm extends ConfirmFormBase {
 
   /**
-   * The type of config being reverted.
+   * The type of config being deleted.
    *
    * @var string
    */
   protected $type;
 
   /**
-   * The name of the config item being reverted, without the prefix.
+   * The name of the config item being deleted, without the prefix.
    *
    * @var string
    */
@@ -43,7 +43,7 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
   protected $configRevert;
 
   /**
-   * Constructs a ConfigRevertConfirmForm object.
+   * Constructs a ConfigDeleteConfirmForm object.
    *
    * @param \Drupal\config_update\ConfigListInterface $config_list
    *   The config lister.
@@ -69,7 +69,7 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'config_update_confirm';
+    return 'config_delete_confirm';
   }
 
   /**
@@ -84,7 +84,7 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
       $type_label = $definition->get('label');
     }
 
-    return $this->t('Are you sure you want to revert the %type config %item to its source configuration?', ['%type' => $type_label, '%item' => $this->name]);
+    return $this->t('Are you sure you want to delete the %type config %item?', ['%type' => $type_label, '%item' => $this->name]);
   }
 
   /**
@@ -98,14 +98,14 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getDescription() {
-    return $this->t('Customizations will be lost. This action cannot be undone.');
+    return $this->t('This action cannot be undone. Manually deleting configuration from this page can cause problems on your site due to missing dependencies, and should only be done if there is no other way to delete a problematic piece of configuration.');
   }
 
   /**
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return $this->t('Revert');
+    return $this->t('Delete');
   }
 
   /**
@@ -123,9 +123,9 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $value = $this->configRevert->getFromExtension($this->type, $this->name);
+    $value = $this->configRevert->getFromActive($this->type, $this->name);
     if (!$value) {
-      $form_state->setErrorByName('', $this->t('There is no configuration @type named @name to import', ['@type' => $this->type, '@name' => $this->name]));
+      $form_state->setErrorByName('', $this->t('There is no configuration @type named @name to delete', ['@type' => $this->type, '@name' => $this->name]));
       return;
     }
   }
@@ -134,9 +134,9 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->configRevert->revert($this->type, $this->name);
+    $this->configRevert->delete($this->type, $this->name);
 
-    drupal_set_message($this->t('The configuration was reverted to its source.'));
+    drupal_set_message($this->t('The configuration was deleted.'));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

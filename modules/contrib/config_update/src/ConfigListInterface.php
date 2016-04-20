@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigListInterface.
- */
-
 namespace Drupal\config_update;
 
 /**
@@ -14,7 +10,7 @@ interface ConfigListInterface {
   /**
    * Lists the types of configuration available on the system.
    *
-   * @return
+   * @return \Drupal\Core\Entity\EntityTypeInterface[]
    *   Array of entity type definitions, keyed by machine name of the type.
    */
   public function listTypes();
@@ -64,7 +60,7 @@ interface ConfigListInterface {
    *   type 'system.simple' for simple config, and 'system.all' to list all
    *   config items.
    *
-   * @return
+   * @return array
    *   Array whose first element is the list of config objects in active
    *   storage, second is the list of config objects in extension storage,
    *   and third is the list of optional config objects in extension storage
@@ -73,6 +69,6 @@ interface ConfigListInterface {
    *   includes all configuration items in the system, not limited to ones from
    *   this module, theme, or profile.
    */
-  function listConfig($list_type, $name);
+  public function listConfig($list_type, $name);
 
 }
