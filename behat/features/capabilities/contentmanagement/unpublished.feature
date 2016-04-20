@@ -15,7 +15,7 @@ Feature: Un/publish a node
       And I press the "Toggle Dropdown" button
       And I click "Save as unpublished"
     Then I should see "Topic This is a test topic has been created."
-      And I should see "This is a test topic" in the ".section-title" element
+      And I should see "This is a test topic" in the "Hero block"
       And I should see "Discussion" in the "Hero block"
       And I should see "Body description text" in the "Main content"
 
@@ -28,6 +28,6 @@ Feature: Un/publish a node
       And I click "Edit"
       And I press the "Toggle Dropdown" button
       And I click "Save and publish"
-      Then I should see "This is a test topic" in the ".section-title" element
+      Then I should see "This is a test topic" in the "Hero block"
       And I should see "Discussion"
       And I should see "Body description text"
