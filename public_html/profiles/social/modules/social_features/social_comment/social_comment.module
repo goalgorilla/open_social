@@ -80,8 +80,9 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
  */
 function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
   // Change sorting to newest reply shown on top only for post comments.
-  $post = \Drupal::routeMatch()->getParameter('post');
-  if ($post) {
+  $entity = $query->getMetaData('entity');
+  $entity_type = $entity->getEntityTypeId();
+  if ($entity_type === 'post') {
     $expressions = &$query->getExpressions();
     if (isset($expressions['torder'])) {
       unset($expressions['torder']);
