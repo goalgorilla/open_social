@@ -10,7 +10,7 @@ Feature: Topic Overview
     And I am on "user"
     When I click "Topics"
     # Then I should see the heading "Topics"
-    Then I should see "Topics" in the "Hero block"
+    Then I should see "Topics" in the "Page title block"
     And I should see the heading "I want to see topics that" in the "Sidebar second"
     And I should see text matching "is the type of"
     And I should see text matching "has the publish status of"
