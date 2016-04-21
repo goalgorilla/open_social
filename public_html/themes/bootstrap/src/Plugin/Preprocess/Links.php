@@ -30,17 +30,7 @@ class Links extends PreprocessBase implements PreprocessInterface {
         $link->addClass(['btn', 'btn-sm']);
         $link->colorize();
         $link->setIcon();
-        if ($icon = $link->getProperty('icon')) {
-          $link->addClass('icon-before');
-          $title = [
-            'icon' => $icon,
-            'title' => [
-              '#markup' => $link->getProperty('title'),
-            ],
-          ];
-          $link->setProperty('title', Element::create($title));
-        }
-        if (($options = &$link->getProperty('options', [])) && isset($options['attributes']['title'])) {
+        if ($this->theme->getSetting('tooltip_enabled')) {
           $link->setAttribute('data-toggle', 'tooltip');
           $link->setAttribute('data-placement', 'bottom');
         }

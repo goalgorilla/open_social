@@ -1,0 +1,67 @@
+.collection {
+  margin: 0.5rem 0 1rem 0;
+  border: 1px solid $collection-border;
+  border-radius: $border-radius-base;
+  overflow: hidden;
+  position: relative;
+  padding-left: 0;
+  list-style-type: none;
+  background-color: $collection-bg;
+}
+
+.collection-item {
+  margin: 0;
+  padding: $collection-item-padding-vertical $collection-item-padding-horizontal;
+  display: block;
+  background-color: $collection-bg;
+  line-height: 1.5em;
+  word-wrap: break-word;
+  border-bottom: 1px solid $collection-item-border;
+
+  a {
+    display: block;
+    transition: .25s;
+    color: $brand-primary;    
+  }
+
+  &.avatar {
+    min-height: 84px;
+    padding-left: 72px;
+    position: relative;
+
+    .circle {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      left: 15px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+}
+
+.collection-label {
+  display: inline-block;
+  margin-right: 20px;
+  width: 180px;
+  font-weight: 500;
+  vertical-align: top;
+}
+
+.collection-field {
+  display: inline-block;
+}

@@ -136,6 +136,36 @@ class Element extends DrupalAttributes {
   }
 
   /**
+   * Appends a property with a value.
+   *
+   * @param string $name
+   *   The name of the property to set.
+   * @param mixed $value
+   *   The value of the property to set.
+   *
+   * @return $this
+   */
+  public function appendProperty($name, $value) {
+    $property = &$this->getProperty($name);
+    $value = $value instanceof Element ? $value->getArray() : $value;
+
+    // If property isn't set, just set it.
+    if (!isset($property)) {
+      $property = $value;
+      return $this;
+    }
+
+    if (is_array($property)) {
+      $property[] = Element::create($value)->getArray();
+    }
+    else {
+      $property .= (string) $value;
+    }
+
+    return $this;
+  }
+
+  /**
    * Identifies the children of an element array, optionally sorted by weight.
    *
    * The children of a element array are those key/value pairs whose key does
@@ -388,6 +418,36 @@ class Element extends DrupalAttributes {
    */
   public function map(array $map) {
     \Drupal\Core\Render\Element::setAttributes($this->array, $map);
+    return $this;
+  }
+
+  /**
+   * Prepends a property with a value.
+   *
+   * @param string $name
+   *   The name of the property to set.
+   * @param mixed $value
+   *   The value of the property to set.
+   *
+   * @return $this
+   */
+  public function prependProperty($name, $value) {
+    $property = &$this->getProperty($name);
+    $value = $value instanceof Element ? $value->getArray() : $value;
+
+    // If property isn't set, just set it.
+    if (!isset($property)) {
+      $property = $value;
+      return $this;
+    }
+
+    if (is_array($property)) {
+      array_unshift($property, Element::create($value)->getArray());
+    }
+    else {
+      $property = (string) $value . (string) $property;
+    }
+
     return $this;
   }
 

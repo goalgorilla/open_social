@@ -1,0 +1,167 @@
+a {
+	font-weight: 500;
+	color: inherit;
+
+  // Gets rid of tap active state
+  -webkit-tap-highlight-color: transparent;
+
+	&:hover {
+		color: inherit;
+	}
+}
+
+
+html{
+  font-size: 16px;
+}
+
+body {
+	font-family: $font-family-webfont;
+	font-weight: 300;
+	-webkit-font-smoothing: antialiased;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 500;
+	line-height: 1.1;
+	transition: 0.3s;
+	margin: 1em 0 0.5em;
+
+	a {
+		font-weight: inherit;
+	}
+
+}
+
+// Header Styles
+
+h1, .h1 {
+	font-size: 2rem;
+	letter-spacing: 0.05em;
+	font-weight: 700;
+
+	@include MQ($medium) {
+		font-size: 3rem;
+	}
+
+}
+
+h2, .h2 {
+	font-size: 1.5rem;
+
+	@include MQ($medium) {
+		font-size: 2rem;
+	}
+}
+
+h3, .h3 {
+	font-size: 1.25rem;
+
+	@include MQ($medium) {
+		font-size: 1.5rem;
+	}
+}
+
+h4, .h4 {
+	font-size: 1.2em;
+
+	@include MQ($medium) {
+		font-size: 1.25em;
+	}
+
+}
+
+h5, .h5{
+	font-size: 1.1em;
+
+	@include MQ($medium) {
+		font-size: 1.1em;
+	}
+}
+
+h6, .h6 {
+	font-size: 1em;
+
+	@include MQ($medium) {
+		font-size: 1em;
+	}
+}
+
+.header {
+	color: $primary-color;
+	font-weight: 300;
+}
+
+// Blockquote
+blockquote {
+  margin: 20px 0;
+  padding-left: 1.5em;
+  border-left: 3px solid $primary-color;
+	font-weight: 500;
+}
+
+
+// Text Styles
+em { font-style: italic; }
+strong { font-weight: 500; }
+.light { font-weight: 300; }
+
+.flow-text{
+  font-size: responsive;
+}
+
+.caption {
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+ul,
+ol {
+  padding-left: 24px;
+}
+
+ol {
+  list-style-position: inside;
+}
+
+.section-title {
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 1.25rem;
+  margin: 0;
+
+  @include MQ($small) {
+    padding-left: 48px;
+    margin: 1em 0 .5em
+  }
+}
+
+.text-caption {
+  display: block;
+  margin-bottom: 24px;
+  font-size: 12px;
+}
+
+// Sizes
+// -------------------------
+
+.text-xs {		font-size: 0.4em; }
+.text-s {			font-size: 0.75em; }
+.text-m {			font-size: 0.875em; }
+.text-l {			font-size: 1.125em; }
+.text-xl {		font-size: 1.25em; }
+.text-xxl {		font-size: 1.5em; }
+.text-xxxl {	font-size: 2em; }
+.text-xxxxl {	font-size: 3em; }
+
+
+//
+
+@include style-variant('.brand-primary', $brand-primary, white);
+@include style-variant('.brand-secondary', $brand-secondary, white);
+@include style-variant('.brand-accent', $brand-accent, $default-color);
+@include style-variant('.brand-user', $user-color, white);
+
+@include style-variant('.default-light', $gray-lighter, $default-color);

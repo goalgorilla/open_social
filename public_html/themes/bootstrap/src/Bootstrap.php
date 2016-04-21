@@ -122,7 +122,7 @@ class Bootstrap {
       foreach ($callbacks as $key => $value) {
         // Convert each callback and match the string values.
         if (Unicode::convertCallback($value) === Unicode::convertCallback($replace)) {
-          $callbacks[$key] = Unicode::convertCallback($callback, TRUE);
+          $callbacks[$key] = $callback;
           return TRUE;
         }
       }
@@ -243,8 +243,13 @@ class Bootstrap {
    *   if no match could be made.
    */
   public static function cssClassFromString($string, $default = '') {
+    static $lang;
+    if (!isset($lang)) {
+      $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    }
+
     $theme = Bootstrap::getTheme();
-    $texts = $theme->getCache('cssClassFromString');
+    $texts = $theme->getCache('cssClassFromString', [$lang]);
 
     $string = (string) $string;
 
@@ -376,16 +381,68 @@ class Bootstrap {
   }
 
   /**
+   * Retrieves a theme instance of \Drupal\bootstrap.
+   *
+   * @param string $name
+   *   The machine name of a theme. If omitted, the active theme will be used.
+   * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
+   *   The theme handler object.
+   *
+   * @return \Drupal\bootstrap\Theme
+   *   A theme object.
+   */
+  public static function getTheme($name = NULL, ThemeHandlerInterface $theme_handler = NULL) {
+    // Immediately return if theme passed is already instantiated.
+    if ($name instanceof Theme) {
+      return $name;
+    }
+
+    static $themes = [];
+    static $active_theme;
+    if (!isset($active_theme)) {
+      $active_theme = \Drupal::theme()->getActiveTheme()->getName();
+    }
+    if (!isset($name)) {
+      $name = $active_theme;
+    }
+
+    if (!isset($theme_handler)) {
+      $theme_handler = self::getThemeHandler();
+    }
+
+    if (!isset($themes[$name])) {
+      $themes[$name] = new Theme($theme_handler->getTheme($name), $theme_handler);
+    }
+
+    return $themes[$name];
+  }
+
+  /**
+   * Retrieves the theme handler instance.
+   *
+   * @return \Drupal\Core\Extension\ThemeHandlerInterface
+   *   The theme handler instance.
+   */
+  public static function getThemeHandler() {
+    static $theme_handler;
+    if (!isset($theme_handler)) {
+      $theme_handler = \Drupal::service('theme_handler');
+    }
+    return $theme_handler;
+  }
+
+  /**
    * Returns the theme hook definition information.
    *
    * This base-theme's custom theme hook implementations. Never define "path"
-   * or "template" as these are detected and automatically added.
+   * as this is automatically detected and added.
    *
+   * @see \Drupal\bootstrap\Plugin\Alter\ThemeRegistry::alter()
    * @see bootstrap_theme_registry_alter()
-   * @see \Drupal\bootstrap\Registry
+   * @see bootstrap_theme()
    * @see hook_theme()
    */
-  public static function getInfo() {
+  public static function getThemeHooks() {
     $hooks['bootstrap_carousel'] = [
       'variables' => [
         'attributes' => [],
@@ -452,57 +509,6 @@ class Bootstrap {
   }
 
   /**
-   * Retrieves a theme instance of \Drupal\bootstrap.
-   *
-   * @param string $name
-   *   The machine name of a theme. If omitted, the active theme will be used.
-   * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
-   *   The theme handler object.
-   *
-   * @return \Drupal\bootstrap\Theme
-   *   A theme object.
-   */
-  public static function getTheme($name = NULL, ThemeHandlerInterface $theme_handler = NULL) {
-    // Immediately return if theme passed is already instantiated.
-    if ($name instanceof Theme) {
-      return $name;
-    }
-
-    static $themes = [];
-    static $active_theme;
-    if (!isset($active_theme)) {
-      $active_theme = \Drupal::theme()->getActiveTheme()->getName();
-    }
-    if (!isset($name)) {
-      $name = $active_theme;
-    }
-
-    if (!isset($theme_handler)) {
-      $theme_handler = self::getThemeHandler();
-    }
-
-    if (!isset($themes[$name])) {
-      $themes[$name] = new Theme($theme_handler->getTheme($name), $theme_handler);
-    }
-
-    return $themes[$name];
-  }
-
-  /**
-   * Retrieves the theme handler instance.
-   *
-   * @return \Drupal\Core\Extension\ThemeHandlerInterface
-   *   The theme handler instance.
-   */
-  public static function getThemeHandler() {
-    static $theme_handler;
-    if (!isset($theme_handler)) {
-      $theme_handler = \Drupal::service('theme_handler');
-    }
-    return $theme_handler;
-  }
-
-  /**
    * Returns a specific Bootstrap Glyphicon.
    *
    * @param string $name
@@ -515,29 +521,34 @@ class Bootstrap {
    *   icon does not exist or returns NULL if no icon could be rendered.
    */
   public static function glyphicon($name, $default = []) {
+    $icon = [];
+
     // Ensure the icon specified is a valid Bootstrap Glyphicon.
     // @todo Supply a specific version to _bootstrap_glyphicons() when Icon API
     // supports versioning.
     if (self::getTheme()->hasGlyphicons() && in_array($name, self::glyphicons())) {
       // Attempt to use the Icon API module, if enabled and it generates output.
       if (\Drupal::moduleHandler()->moduleExists('icon')) {
-        return [
+        $icon = [
           '#type' => 'icon',
           '#bundle' => 'bootstrap',
           '#icon' => 'glyphicon-' . $name,
         ];
       }
-      return [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#value' => '',
-        '#attributes' => [
-          'class' => ['icon', 'glyphicon', 'glyphicon-' . $name],
-          'aria-hidden' => 'true',
-        ],
-      ];
+      else {
+        $icon = [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => '',
+          '#attributes' => [
+            'class' => ['icon', 'glyphicon', 'glyphicon-' . $name],
+            'aria-hidden' => 'true',
+          ],
+        ];
+      }
     }
-    return $default;
+
+    return $icon ?: $default;
   }
 
   /**
@@ -553,8 +564,13 @@ class Bootstrap {
    *   no match could be made.
    */
   public static function glyphiconFromString($string, $default = []) {
+    static $lang;
+    if (!isset($lang)) {
+      $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    }
+
     $theme = Bootstrap::getTheme();
-    $texts = $theme->getCache('glyphiconFromString');
+    $texts = $theme->getCache('glyphiconFromString', [$lang]);
 
     $string = (string) $string;
 
@@ -583,6 +599,7 @@ class Bootstrap {
           t('Remove')->render()     => 'trash',
           t('Search')->render()     => 'search',
           t('Upload')->render()     => 'upload',
+          t('Preview')->render()    => 'eye-open',
         ],
       ];
 
@@ -987,6 +1004,7 @@ class Bootstrap {
       $variables['theme']['path'] = $theme->getPath();
       $variables['theme']['title'] = $theme->getTitle();
       $variables['theme']['settings'] = $theme->settings()->get();
+      $variables['theme']['has_glyphicons'] = $theme->hasGlyphicons();
     }
 
     // Invoke necessary preprocess plugin.

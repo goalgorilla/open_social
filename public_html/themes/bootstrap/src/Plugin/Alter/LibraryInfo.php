@@ -33,12 +33,12 @@ class LibraryInfo extends PluginBase implements AlterInterface {
       }
 
       // Merge the assets into the library info.
-      $libraries['base-theme'] = NestedArray::mergeDeepArray([$assets, $libraries['base-theme']], TRUE);
+      $libraries['theme'] = NestedArray::mergeDeepArray([$assets, $libraries['theme']], TRUE);
 
       // Add a specific version and theme CSS overrides file.
       // @todo This should be retrieved by the Provider API.
       $version = $this->theme->getSetting('cdn_' . $provider->getPluginId() . '_version') ?: Bootstrap::FRAMEWORK_VERSION;
-      $libraries['base-theme']['version'] = $version;
+      $libraries['theme']['version'] = $version;
       $provider_theme = $this->theme->getSetting('cdn_' . $provider->getPluginId() . '_theme') ?: 'bootstrap';
       $provider_theme = $provider_theme === 'bootstrap' || $provider_theme === 'bootstrap_theme' ? '' : "-$provider_theme";
 
@@ -48,7 +48,7 @@ class LibraryInfo extends PluginBase implements AlterInterface {
           // Since this uses a relative path to the ancestor from DRUPAL_ROOT,
           // we must prefix the entire path with / so it doesn't append the
           // active theme's path (which would duplicate the prefix).
-          $libraries['base-theme']['css']['theme']["/$overrides"] = [];
+          $libraries['theme']['css']['theme']["/$overrides"] = [];
           break;
         }
       }

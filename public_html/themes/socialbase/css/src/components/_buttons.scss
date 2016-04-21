@@ -1,65 +1,48 @@
-input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  font-family: inherit;
-}
-
-button:focus {
-  outline: none;
-}
-
 // Shared styles
 // --------------------------------------------------
 .btn {
-  display: inline-block;
-  padding: $button-padding;
-  border-radius: $button-radius;
-  text-transform: uppercase;
   font-size: $button-font-size;
-  white-space: nowrap;
-  text-align: center;
-  font-weight: 500;
-  line-height: $button-height;
-  border: $button-border;
-  vertical-align: middle;
+  text-transform: uppercase;
   touch-action: manipulation;
-  cursor: pointer;
-  user-select: none;
   transition: .2s ease-out;
   will-change: opacity, transform;
 
-  &:hover {
-    @include z-depth-1-half;
+  + .btn {
+    margin-left: 5px;
   }
 
-  &:active,
-  &.active
-  &:focus {
-		outline: 0;
-	}
+  + .btn-block {
+    margin-left: 0;
+  }
 
-	&, &:active, &.active {
-		&:focus {
-			outline: 0;
-		}
-	}
-
-  &.disabled,
-	&[disabled],
-	[disabled] & {
-		border-color: transparent;
-		filter: grayscale(1);
-    opacity: 0.6;
-		box-shadow: none;
-    pointer-events: none;
-	}
-
-  i {
-    font-size: $button-font-size;
-    line-height: inherit;
+  .caret {
+    margin-left: 3px;
   }
 
 }
+
+
+
+.btn-sm {
+  font-size: $button-font-size-small;
+}
+
+.btn-secondary {
+  @include button-variant(white, $brand-secondary, $brand-secondary);
+}
+
+.btn-accent {
+  @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
+}
+
+.btn-user {
+  @include button-variant(white, $user-color, $user-color);
+}
+
+.btn-link-default {
+  color: $default-color;
+}
+
 
 // Button raised
 // --------------------------------------------------
@@ -69,7 +52,7 @@ button:focus {
 	transition: box-shadow, .15s ease-out;
 
   &:active, &.active {
-    @include z-depth-1-half;
+    @include z-depth-3;
   }
 
   &.disabled,
@@ -93,7 +76,7 @@ button:focus {
 	&:hover,
   &:focus,
   .open .dropdown-toggle & {
-		background-color: rgba(12, 12, 12, 0.07);
+		background-color: rgba(0, 0, 0, 0.07);
 		border-color: transparent;
 		@include z-depth-0;
 		color: inherit;
@@ -111,7 +94,7 @@ button:focus {
 .btn-icon-toggle {
 	border-radius: 50% !important;
   padding: 0;
-  width: 1em;
+  width: 30px;
 }
 
 // Floating button
@@ -121,29 +104,36 @@ button:focus {
   width: $button-floating-size;
   height: $button-floating-size;
   padding: 0;
+  font-size: 1.25rem;
   border-radius: $button-floating-radius;
-  font-size: 1.4rem;
+  @include z-depth-2;
 
   &.btn-large {
     width: $button-floating-large-size;
     height: $button-floating-large-size;
+    font-size: 1.5rem;
   }
+
 }
 
-.icon-font-loaded .btn-floating i {
-  line-height: $button-floating-size;
+// Icons in buttons
+
+.btn i {
+  font-size: $button-font-size * 1.143;
+  line-height: 33px - ($padding-base-vertical * 2);
+  height: 33px - ($padding-base-vertical * 2);
+}
+
+.btn-floating i {
+  line-height: $button-floating-size - 1;
+  height: $button-floating-size - 1;
   font-size: inherit;
   width: inherit;
   text-align: center;
 }
 
-.icon-font-loaded .btn-floating.btn-large i {
-  line-height: $button-floating-large-size;
-}
-
-// button fix
-button.btn-floating {
-  border: $button-border;
+.btn-floating.btn-large i {
+  line-height: $button-floating-large-size - 2;
 }
 
 // Fixed Action Button
@@ -199,56 +189,11 @@ button.btn-floating {
   }
 }
 
-// Flat button
-.btn-icon-toggle,
-.btn-flat {
-  box-shadow: none;
-  background-color: transparent;
-  color: $button-flat-color;
-  cursor: pointer;
-
-  &.disabled {
-    color: $button-flat-disabled-color;
-    cursor: default;
-  }
-
-  &.btn-default-light {
-    color: $grey-light-1;
-  }
-
-}
-
-// Large button
-.btn--large {
-  font-size: $button-large-font-size;
-}
-
-// Block button
-.btn--block {
-  width: 100%;
-  display: block;
-
-  + .btn {
-    margin-top: 5px;
-  }
-
-}
 
 .btn-raised {
 
   &.btn--default-dark {
     @extend .style-default-dark;
-  }
-
-  &.btn--primary {
-    background-color: $primary-color;
-    color: white;
-
-    &:hover,
-  	&:focus {
-      background-color: $primary-color-dark;
-    }
-
   }
 
   &.btn--secondary {
@@ -287,15 +232,12 @@ button.btn-floating {
 }
 
 .btn-flat {
+  color: $primary-color;
 
-  &.btn--primary {
+  &:hover,
+  &:focus {
     color: $primary-color;
-
-    &:hover,
-    &:focus {
-      color: $primary-color-dark;
-    }
-
+    background-color: rgba($primary-color, 0.12);
   }
 
   &.btn--default-bright {
