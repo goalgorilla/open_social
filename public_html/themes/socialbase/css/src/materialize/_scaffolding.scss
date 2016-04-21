@@ -1,0 +1,117 @@
+
+// Icon Styles
+
+i {
+  line-height: inherit;
+
+  &.pull-left {
+    margin-right: 5px;
+  }
+  &.pull-right {
+    margin-left: 5px;
+  }
+  &.tiny {
+    font-size: 1rem;
+  }
+  &.small {
+    font-size: 2rem;
+  }
+  &.medium {
+    font-size: 4rem;
+  }
+  &.large {
+    font-size: 6rem;
+  }
+}
+
+
+// Image sizes for profile pictures in hero areas and streams
+.img-medium {
+  width: 60px;
+  height: 60px;
+  border: 2px solid white;
+
+  @include MQ($small) {
+    width: 128px;
+    height: 128px;
+    border-width: 5px;
+  }
+
+}
+
+.img-small {
+  width: 44px;
+  height: 44px;
+  border-width: 2px;
+}
+
+.img-tiny {
+  width: 24px;
+  height: 24px;
+}
+
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-bottom: $padding-large-vertical;
+
+  img {
+    margin: 3px;
+  }
+}
+
+.truncate {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.no-margin {            margin: 0; }
+.margin-bottom-s {      margin-bottom: 5px; }
+.margin-bottom-m {  	  margin-bottom: 10px; }
+.margin-bottom-l {	    margin-bottom: 20px; }
+.margin-top-s {	        margin-top: 5px; }
+.margin-top-m {	        margin-top: 10px; }
+.margin-top-l {	        margin-top: 20px; }
+.margin-top-xl {	      margin-top: 30px; }
+.margin-top-xxl {	      margin-top: 40px; }
+
+.no-padding { padding: 0 !important;}
+.padding-xs { padding: 6px; }
+.padding-sm { padding: 12px; }
+.padding-md { padding: 24px; }
+.padding-lg { padding: 48px; }
+.no-side-padding { padding: 24px 0; }
+
+// Pushpin
+.pin-top, .pin-bottom {
+  position: relative;
+}
+.pinned {
+  position: fixed !important;
+}
+
+hr {
+
+  &.ruler-s {
+    margin: ($line-height-computed / 2.5) 0;
+  }
+
+  &.ruler-l {
+    margin: ($line-height-computed * 2.5) 0;
+  }
+}
+
+.js .js-hide {
+  display: none;
+}
+
+.js-show {
+  display: none;
+}
+
+.js .js-show {
+  display: block;
+}

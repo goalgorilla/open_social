@@ -15,15 +15,10 @@ use Drupal\Core\Annotation\Translation;
  *
  * @BootstrapSetting(
  *   id = "tooltip_trigger",
- *   type = "checkboxes",
+ *   type = "select",
  *   title = @Translation("trigger"),
  *   description = @Translation("How a tooltip is triggered."),
- *   defaultValue = {
- *     "hover" = "hover",
- *     "focus" = "focus",
- *     "click" = 0,
- *     "manual" = 0,
- *   },
+ *   defaultValue = "hover",
  *   options = {
  *     "click" = @Translation("click"),
  *     "hover" = @Translation("hover"),

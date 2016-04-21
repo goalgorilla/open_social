@@ -4,111 +4,110 @@ block title
   title Michael Angarano
 
 block pagetitle
-  .block-hero.only-desktop.profile-cover
-    .cover-wrap
-      img.circle.img-bordered(src='content/images/avatar0.jpg')
-      h1.page-title.h2 Michael Angarano
-      button.btn.btn-flat.btn--default-bright
-        i.material-icons.left check
-        | Following
+  .container.hidden-xs
+    .cover
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
+          i.material-icons mode_edit
+      .cover-wrap
+        h1.page-title.h2 John Johnson
+        img.img-circle.img-bordered(src='content/images/avatar1.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
       
 block secondary_navigation
   .container
-    .row.hidden-desktop.section-header
-      .col.s12
-        a.btn.btn-raised.btn--default-bright 
-          i.material-icons.left keyboard_arrow_left
-          | Back to timeline
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-default(href="my-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to my stream
 
-  .style-secondary.only-desktop
-    .container
+  .container
+    .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.tabs-center.style-secondary.nav-tabs--xl
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li
-            a(href="#").disabled Timeline  
+            a(href="my-stream.html") Stream  
           li
-            a(href="#") Information
+            a(href="my-profile-about.html") About
           li.active
             a(href='my-topics.html') Topics
-              span.visually-hidden (active tab)
+            span.visually-hidden (active tab) 
           li
-            a(href="my-events.html") Events
+            a(href='my-events.html') Events 
           li
-            a(href="#") Groups
+            a(href="my-groups.html") Groups
       
 block content
   
   .row
   
-    .col.s12
+    .col-xs-12
       h2.h3.section-title My topics
     
-    .col.s12.l3.right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn--block.btn--default-dark.btn-raised(href='#!') 
-        i.material-icons.left add
+    .col-xs-12.col-sm-3.pull-right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-topic.html') 
+        i.material-icons.pull-left add
         | Add a topic
 
-      a.btn.btn--block.btn--primary.btn-raised.hidden-desktop.js-open-canvas
-        i.material-icons.left tune
+      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
         | Filters
-      
-      .off-canvas.off-canvas-right.off-canvas-small-only.desktop-card
+      br 
+      br
+      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
         .offcanvas-head
           header.card__label filter
-          .offcanvas-tools.hidden-desktop
-            .js-close-canvas.btn-icon-toggle.btn-default-light.right
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
               i.material-icons close
         
         .offcanvas-body
           form
-            .row
-              .col.s12
-                .form-item
-                  label.form__label Topic type
-                  select.browser-default(onchange="enableMe('reset-button', this)")
-                    option(value="", selected="") All types
-                    option(value="blog") Blog
-                    option(value="discussion") Discussion
-                    option(value="topic") Topic
-            .row
-              .col.s12
-                .form-item
-                  label.form__label Status
-                  select.browser-default(onchange="enableMe('reset-button', this)")
-                    option(value="", selected="") All statusses
-                    option(value="published") Published
-                    option(value="unpublished") Unpublished
-              
-            .row
-              .col.s12
-                .form-actions.form-wrapper.right-align
-                  input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
+            .form-group
+              label Topic type
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All types
+                option(value="blog") Blog
+                option(value="discussion") Discussion
+                option(value="topic") Topic
+            .form-group
+              label Status
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All statusses
+                option(value="published") Published
+                option(value="unpublished") Unpublished
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
 
-    .col.s12.l9
-      .card--wrapper
-        include molecules/_topic1.jade
-        include molecules/_topic2.jade
-        include molecules/_topic3.jade
-        include molecules/_topic4.jade
+    .col-xs-12.col-sm-9
+      include molecules/_topic1.jade
+      include molecules/_topic2.jade
+      include molecules/_topic3.jade
+      include molecules/_topic4.jade
         
-      ul.pagination
-        li.pager__item.pager__item--previous.disabled
-          a(href="#0", aria-label='Previous')    
-            span(aria-hidden="true") 
-              i.material-icons chevron_left
-        li.pager__item.active
-          a(href="#1") 1
-        li.pager__item 
-          a(href="#1") 2
-        li.pager__item 
-          a(href="#1") 3          
-        li.pager__item 
-          a(href="#1") 4
-        li.pager__item.pager__item--next
-          a(href='#', aria-label='Next')
-            span(aria-hidden="true")
-              i.material-icons chevron_right
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right
 
 block scriptinline  
   
