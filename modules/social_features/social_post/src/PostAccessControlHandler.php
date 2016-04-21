@@ -54,10 +54,24 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
         }
 
       case 'update':
-        return $this->checkDefaultAccess($entity, $operation, $account);
+        // Check if the user has permission to edit any or own post entities.
+        if ($account->hasPermission('edit any post entities', $account)) {
+          return AccessResult::allowed();
+        }
+        elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+          return AccessResult::allowed();
+        }
+        return AccessResult::forbidden();
 
       case 'delete':
-        return $this->checkDefaultAccess($entity, $operation, $account);
+        // Check if the user has permission to delete any or own post entities.
+        if ($account->hasPermission('delete any post entities', $account)) {
+          return AccessResult::allowed();
+        }
+        elseif ($account->hasPermission('delete own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+          return AccessResult::allowed();
+        }
+        return AccessResult::forbidden();
     }
 
     // Unknown operation, no opinion.
@@ -73,10 +87,10 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
         return AccessResult::allowedIfHasPermission($account, 'view published post entities');
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit post entities');
+        return AccessResult::allowedIfHasPermission($account, 'edit any post entities');
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete post entities');
+        return AccessResult::allowedIfHasPermission($account, 'delete any post entities');
     }
 
     // Unknown operation, no opinion.
