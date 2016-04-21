@@ -7,9 +7,9 @@ block pagetitle
       
 block content
   
-  .row
+  .row.margin-top-xl
 
-    .col-sm-9.margin-top-xl
+    .col-sm-9
     
       .card.no-margin
         .card-body
@@ -56,7 +56,25 @@ block content
             .card-body
               include ./molecules/_stream-post1.jade
               
-    .col-sm-3.margin-bottom-l.hidden-xs
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade
+              
+    .col-sm-3.hidden-xs
+      include ./molecules/_my-upcoming-events.jade
+      include ./molecules/_upcoming-events.jade
+      include ./molecules/_new-topics.jade
+      include ./molecules/_new-groups.jade
+      include ./molecules/_new-users.jade
+      
       
 block scriptinline  
   
