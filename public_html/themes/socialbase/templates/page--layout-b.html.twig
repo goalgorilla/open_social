@@ -75,17 +75,16 @@
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
     <div class="row margin-top-l">
-      <div class="col-xs-12 col-md-9">
+
+      <div role="complementary" class="col-sm-3 col-sm-push-9">
+        {{ page.complementary }}
+      </div>
+
+      <div class="col-sm-9 col-sm-pull-3 margin-top-l">
         {% block card %}
           {{ page.content }}
         {% endblock %}
       </div>
-
-      {% if page.complementary %}
-        <div role="complementary" class="col-xs-12 col-md-3">
-          {{ page.complementary }}
-        </div>
-      {% endif %}
 
     </div>
   </div>
