@@ -1,15 +1,16 @@
 <?php
 
+use Drupal\Core\Url;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\UserInterface;
+
 /**
  * @file
  * The Social profile module.
  */
-
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -61,10 +62,25 @@ function social_profile_local_tasks_alter(&$local_tasks) {
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK().
+ * Return Profile entity by given user id.
+ */
+function social_profile_load_by_uid($uid) {
+  $profile = \Drupal::entityTypeManager()
+    ->getStorage('profile')
+    ->loadByProperties([
+      'uid' => $uid,
+      'type' => 'profile',
+    ]);
+
+  return reset($profile);
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
  */
 function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
   // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
+  $suggestions = array();
   $original = $variables['theme_hook_original'];
   $entity = $variables['elements']['#profile'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
@@ -104,6 +120,12 @@ function social_profile_preprocess_profile(&$variables) {
 
   $variables['profile_name'] = $profile_name;
   $variables['profile_url'] = $profile_url;
+
+  // Edit profile URL
+  $account = \Drupal::currentUser();
+  if($profile->access('edit', $account)){
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/edit');
+  }
 }
 
 /**
