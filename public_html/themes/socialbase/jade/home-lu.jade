@@ -13,33 +13,36 @@ block content
     
       .card.no-margin
         .card-body
-          form.form-horizontal
+          form
             .form-group
-              .col-xs-12
-                textarea.form-control.form-control--block.materialize-textarea(placeholder='What is on your mind?')
-            .form-group
-              label.control-label.hidden-xs.col-sm-2.col-sm-offset-4.col-md-offset-5 Visibility
-              .col-xs-7.col-sm-3.col-md-3
-                .dropdown
+              textarea.form-control.form-control--block.materialize-textarea(placeholder='What is on your mind?')
+            .form-group.media
+              .media-body
+                .dropdown.pull-right
                   button#post-visibility.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true') 
+                    i.material-icons.pull-left public
                     span.text Public 
                     span.caret
-                  ul.dropdown-menu(role='menu', aria-labelledby="post-visibility")
+                  ul.dropdown-menu.dropdown-md(role='menu', aria-labelledby="post-visibility")
                     li.dropdown-header Visibility settings
                     li.list-group-item.active
                       .form-group
-                        label(for="public") Public
-                        input#public.invisible(type="radio", name="visioptions", value="Public", checked, onclick="showMe('post-visibility', this)")
-                        .help-block Visible to all visitors of the site
+                        label(for="public") 
+                          i.material-icons.pull-left public
+                          | Public
+                          input#public.invisible(type="radio", name="visioptions", value="Public", checked, onclick="showMe('post-visibility', this)")
+                          .help-block Visible to all visitors of the site
                     li.list-group-item
                       .form-group
-                        label(for="community") Community
-                        input#community.invisible(type="radio", name="visioptions", value="Community", onclick="showMe('post-visibility', this)")
-                        .help-block Visible only to member who are logged in
+                        label(for="community") 
+                          i.material-icons.pull-left group
+                          | Community
+                          input#community.invisible(type="radio", name="visioptions", value="Community", onclick="showMe('post-visibility', this)")
+                          .help-block Visible only to member who are logged in
                         
-              .col-xs-5.col-sm-3.col-md-2
-                input.btn.btn-primary.btn-block(type='submit', value="post")
-    
+              .media-right
+                input.btn.btn-primary(type='submit', value="post")
+      
       ul.stream
         
         li.stream-item
@@ -60,7 +63,9 @@ block scriptinline
   script.  
     function showMe (it, radio) {
       var visibility = radio.value;
-      jQuery('#' + it).find('span.text').html(visibility);
+      var icon = jQuery(radio).prevAll('.material-icons').text();
+      jQuery('#' + it).find('.text').html(visibility);
+      jQuery('#' + it).find('.material-icons').html(icon);
       jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
       jQuery(radio).closest('.list-group-item').addClass('active');
     }
