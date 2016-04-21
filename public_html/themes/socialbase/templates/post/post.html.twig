@@ -1,24 +1,26 @@
-{#
-/**
- * @file post.html.twig
- * Default theme implementation to present Post data.
- *
- * This template is used when viewing Post pages.
- *
- *
- * Available variables:
- * - content: A list of content items. Use 'content' to print all content, or
- * - attributes: HTML attributes for the container element.
- *
- * @see template_preprocess_post()
- *
- * @ingroup themeable
- */
-#}
-<div{{ attributes.addClass('stream-item') }}>
-  <i class="stream-icon"> </i>
+  {#
+  /**
+  * @file post.html.twig
+  * Default theme implementation to present Post data.
+  *
+  * This template is used when viewing Post pages.
+  *
+  *
+  * Available variables:
+  * - content: A list of content items. Use 'content' to print all content, or
+  * - attributes: HTML attributes for the container element.
+  *
+  * @see template_preprocess_post()
+  *
+  * @ingroup themeable
+  */
+  #}
+
+<div class="stream-item">
+  <i class="stream-icon"></i>
+
   <div class="card stream-card">
-    <div class="card-body">
+    <div class="card-body extra-padding">
       <div class="media">
         <div class="media-left">
           {% if content.author_picture %}
@@ -42,8 +44,9 @@
         {% if content.field_post_comments %}
           {{ content.field_post_comments }}
         {% endif %}
-        <div class="margin-top-s text-center"><a href="single-post.html" class="btn btn-default">show all 5 comments</a></div>
+        <div class="margin-top-m text-right"><a href="single-post.html" class="btn btn-link">show all 5 comments<i class="material-icons">chevron_right</i></a></div>
       </div>
     </div>
   </div>
+  
 </div>
