@@ -15,38 +15,35 @@
  * @ingroup themeable
  */
 #}
-<div{{ attributes.addClass('card', 'post') }}>
-
-  <div class="card-body extra-padding">
-    <ul class="media-list">
-      <li class="media">
+<div{{ attributes.addClass('stream-item') }}>
+  <i class="stream-icon"> </i>
+  <div class="card stream-card">
+    <div class="card-body">
+      <div class="media">
         <div class="media-left">
           {% if content.author_picture %}
-            {{- content.author_picture -}}
+            {{ content.author_picture }}
           {% endif %}
         </div>
         <div class="media-body">
-          <h4 class="media-heading">
-            {% if content.user_id %}
-              {{- content.user_id -}}
-            {% endif %}
-            <small>{{ date }}</small>
-          </h4>
-
-          {% if content.field_post %}
-            {{- content.field_post -}}
-          {% endif %}
-
-          {% if content.links %}
-            {{- content.links -}}
-          {% endif %}
-
-          {% if content.field_post_comments %}
-            {{- content.field_post_comments -}}
-          {% endif %}
-
+          <h5 class="media-heading">
+              {% if content.user_id %}
+                {{- content.user_id -}}
+              {% endif %}
+            <br><small>{{ date }}</small></h5>
         </div>
-      </li>
-    </ul>
+      </div>
+      <p class="margin-top-s">
+        {% if content.field_post %}
+          {{- content.field_post -}}
+        {% endif %}
+      </p>
+      <div class="card-nested-section">
+        {% if content.field_post_comments %}
+          {{ content.field_post_comments }}
+        {% endif %}
+        <div class="margin-top-s text-center"><a href="single-post.html" class="btn btn-default">show all 5 comments</a></div>
+      </div>
+    </div>
   </div>
 </div>
