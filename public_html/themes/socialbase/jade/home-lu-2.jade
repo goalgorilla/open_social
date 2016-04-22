@@ -4,22 +4,23 @@ block title
   title Homepage Logged-in user
 
 block pagetitle
+
+block breadcrumbs  
       
 block content
   
-  .row
+  .row.margin-top-xl
 
-    .col-sm-9.margin-top-xl
+    .col-sm-9
     
       .card.no-margin
         .card-body
-          form.form-horizontal
+          form
             .form-group
-              .col-xs-12
-                textarea.form-control.form-control--block.materialize-textarea(placeholder='What is on your mind?')
-            .form-group
-              .col-xs-7.col-sm-3
-                .dropdown
+              textarea.form-control.form-control--block.materialize-textarea(placeholder='What is on your mind?')
+            .form-group.media
+              .media-body
+                .dropdown.pull-right
                   button#post-visibility.btn.btn-sm.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true') 
                     i.material-icons.pull-left public
                     span.text Public 
@@ -41,8 +42,8 @@ block content
                           input#community.invisible(type="radio", name="visioptions", value="Community", onclick="showMe('post-visibility', this)")
                           .help-block Visible only to member who are logged in
                         
-              .col-xs-5.col-sm-2.col-sm-offset-7
-                input.btn.btn-sm.btn-primary.btn-block(type='submit', value="post")
+              .media-right
+                input.btn.btn-primary.btn-sm(type='submit', value="post")
     
       ul.stream
         
@@ -56,9 +57,28 @@ block content
           .card.stream-card
             .card-body
               include ./molecules/_stream-post2.jade
+        
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
               
-    .col-sm-3.margin-bottom-l.hidden-xs
-      
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+    .col-sm-3.hidden-xs
+      include ./molecules/_my-upcoming-events-2.jade
+      include ./molecules/_upcoming-events-2.jade
+      include ./molecules/_my-upcoming-events-2.jade
+      include ./molecules/_upcoming-events-2.jade
+      //include ./molecules/_new-topics.jade
+      //include ./molecules/_new-groups.jade
+      //include ./molecules/_new-users.jade
+
   style.
    .card-body {padding: 10px; font-size: 14px; line-height: 18px;}
    .media-left, .media>.pull-left {padding-right: 10px;}
@@ -75,7 +95,9 @@ block scriptinline
  script.  
    function showMe (it, radio) {
      var visibility = radio.value;
-     jQuery('#' + it).find('span.text').html(visibility);
+     var icon = jQuery(radio).prevAll('.material-icons').text();
+     jQuery('#' + it).find('.text').html(visibility);
+     jQuery('#' + it).find('.material-icons').html(icon);
      jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
      jQuery(radio).closest('.list-group-item').addClass('active');
    }

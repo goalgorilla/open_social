@@ -13,7 +13,8 @@
   position: relative;
   vertical-align: middle;
   border-radius: 10px 10px 0 0;
-  padding: 0 20px;
+  padding: 15px 20px 0;
+  color: $gray-light;
   @include clearfix;
 }
 
@@ -52,8 +53,6 @@
 }
 
 .card-head header {
-  display: inline-block;
-  line-height: 3em;
   vertical-align: middle;
   font-weight: 500;
   text-transform: uppercase;
@@ -79,8 +78,6 @@ a.card:hover {
   margin-right: -$card-padding;
   margin-bottom: $card-padding;
   padding: $card-padding;
-
-  font-size: 0.875em;
 
   .extra-padding & {
     @include MQ($small) {

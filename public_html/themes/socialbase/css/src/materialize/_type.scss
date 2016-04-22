@@ -93,6 +93,11 @@ h6, .h6 {
 	font-weight: 300;
 }
 
+.subtitle {
+	font-size: 0.75em;
+	line-height: 1;
+}
+
 // Blockquote
 blockquote {
   margin: 20px 0;
@@ -155,6 +160,11 @@ ol {
 .text-xxl {		font-size: 1.5em; }
 .text-xxxl {	font-size: 2em; }
 .text-xxxxl {	font-size: 3em; }
+
+@include text-emphasis-variant('.text-gray', $gray);
+@include text-emphasis-variant('.text-gray-light', $gray-light);
+@include text-emphasis-variant('.text-gray-lighter', $grey-light-1);
+@include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
 
 
 //
