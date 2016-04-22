@@ -69,32 +69,45 @@
     <div class="card-body extra-padding">
         <ul class="collection">
             <li class="collection-item">
-                <h4>Contact information</h4>
+                <h4>{% trans %}Contact information{% endtrans %}</h4>
             </li>
+            {% if content.field_profile_phone_number %}
             <li class="collection-item">
-                <div class="collection-label">Phone</div>
-                <div class="collection-field">+31 612345678</div>
+                <div class="collection-label">{% trans %}Phone{% endtrans %}</div>
+                <div class="collection-field">{{ content.field_profile_phone_number }}</div>
             </li>
+            {% endif %}
             <li class="collection-item">
-                <div class="collection-label">E-mail</div>
-                <div class="collection-field"><a href="example@domain.com">{{ user.mail }}</a></div>
+                <div class="collection-label">{% trans %}E-mail{% endtrans %}</div>
+                <div class="collection-field"><a href="{{ user_mail }}">{{ user_mail }}</a></div>
             </li>
+            {% if content.field_profile_address %}
             <li class="collection-item">
-                <div class="collection-label">Address</div>
+                <div class="collection-label">{% trans %}Address{% endtrans %}</div>
                 <div class="collection-field">
-                    My street name 123 <br>1234 BB<br>Amsterdam
+                    {{ content.field_profile_address }}
                 </div>
             </li>
+            {% endif %}
         </ul>
-        <h4>Intro</h4>
-        <p>Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.</p>
-        <h4>Your interests</h4>
-        <div class="chip">drupal</div>
-        <div class="chip">sales</div>
-        <div class="chip">barbecues</div>
-        <h4>Your expertise</h4>
-        <div class="chip">php</div>
-        <div class="chip">interaction design</div>
-        <div class="chip">cooking</div>
+
+        {% if content.field_profile_self_introduction %}
+            <h4>{% trans %}Intro{% endtrans %}</h4>
+            {{ content.field_profile_self_introduction }}
+        {% endif %}
+
+        {% if content.field_profile_interests['#items'] %}
+            <h4>{% trans %}Your interests{% endtrans %}</h4>
+            {% for item in content.field_profile_interests['#items'] %}
+                <div class="chip">{{ item.entity.label }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if content.field_profile_expertise['#items'] %}
+            <h4>{% trans %}Your expertise{% endtrans %}</h4>
+            {% for item in content.field_profile_expertise['#items'] %}
+                <div class="chip">{{ item.entity.label }}</div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
