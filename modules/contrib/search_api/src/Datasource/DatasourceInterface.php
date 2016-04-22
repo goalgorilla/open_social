@@ -195,4 +195,17 @@ interface DatasourceInterface extends IndexPluginInterface {
    */
   public function getItemIds($page = NULL);
 
+  /**
+   * Retrieves any dependencies of the given fields.
+   *
+   * @param string[] $fields
+   *   An array of property paths on this datasource, keyed by field IDs.
+   *
+   * @return string[][][]
+   *   An associative array containing the dependencies of the given fields. The
+   *   array is keyed by field ID and dependency type, the values are arrays
+   *   with dependency names.
+   */
+  public function getFieldDependencies(array $fields);
+
 }

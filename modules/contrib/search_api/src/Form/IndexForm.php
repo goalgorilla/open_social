@@ -386,9 +386,11 @@ class IndexForm extends EntityForm {
     }
 
     foreach ($datasources as $datasource_id => $datasource) {
-      // @todo Create and use SubFormState already here, not only in validate().
-      //   Also, use proper subset of $form for first parameter? See #2694665.
-      if ($config_form = $datasource->buildConfigurationForm(array(), $form_state)) {
+      // Get the "sub-form state" and appropriate form part to send to
+      // buildConfigurationForm().
+      $datasource_form = (!empty($form['datasource_configs'][$datasource_id])) ? $form['datasource_configs'][$datasource_id] : array();
+      $datasource_form_state = new SubFormState($form_state, array('datasource_configs', $datasource_id));
+      if ($config_form = $datasource->buildConfigurationForm($datasource_form, $datasource_form_state)) {
         $form['datasource_configs'][$datasource_id]['#type'] = 'details';
         $form['datasource_configs'][$datasource_id]['#title'] = $this->t('Configure the %datasource datasource', array('%datasource' => $datasource->getPluginDefinition()['label']));
         $form['datasource_configs'][$datasource_id]['#open'] = $index->isNew();
@@ -426,10 +428,11 @@ class IndexForm extends EntityForm {
     if (empty($tracker)) {
       return;
     }
-
-    // @todo Create and use SubFormState already here, not only in validate().
-    //   Also, use proper subset of $form for first parameter? See #2694665.
-    if ($config_form = $tracker->buildConfigurationForm(array(), $form_state)) {
+    // Get the "sub-form state" and appropriate form part to send to
+    // buildConfigurationForm().
+    $tracker_form = !empty($form['tracker_config']) ? $form['tracker_config'] : array();
+    $tracker_form_state = new SubFormState($form_state, array('tracker_config'));
+    if ($config_form = $tracker->buildConfigurationForm($tracker_form, $tracker_form_state)) {
       $form['tracker_config']['#type'] = 'details';
       $form['tracker_config']['#title'] = $this->t('Configure the %plugin tracker', array('%plugin' => $tracker->label()));
       $form['tracker_config']['#description'] = Html::escape($tracker->getDescription());

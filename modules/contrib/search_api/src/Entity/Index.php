@@ -1067,8 +1067,6 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-
     // Prevent enabling of indexes when the server is disabled.
     if ($this->status() && !$this->isServerEnabled()) {
       $this->disable();
@@ -1087,9 +1085,13 @@ class Index extends ConfigEntityBase implements IndexInterface {
       $processor->preIndexSave();
     }
 
-    // Write the field settings to the settings property.
+    // Calculate field dependencies and save field settings containing them.
+    $fields = $this->getFields();
+    $field_dependencies = $this->getFieldDependencies();
+    $field_dependencies += array_fill_keys(array_keys($fields), array());
     $this->field_settings = array();
     foreach ($this->getFields() as $field_id => $field) {
+      $field->setDependencies($field_dependencies[$field_id]);
       $this->field_settings[$field_id] = $field->getSettings();
     }
 
@@ -1121,6 +1123,11 @@ class Index extends ConfigEntityBase implements IndexInterface {
         'settings' => $datasource->getConfiguration(),
       );
     }
+
+    // Since we change dependency-relevant data in this method, we can only call
+    // the parent method at the end (or we'd need to re-calculate the
+    // dependencies).
+    parent::preSave($storage);
   }
 
   /**
@@ -1365,12 +1372,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
    */
   public function calculateDependencies() {
     $dependencies = $this->getDependencyData();
-    $this->dependencies = array();
-
-    foreach ($dependencies as $type => $list) {
-      $this->dependencies[$type] = array_keys($list);
-    }
-
+    $this->dependencies = array_map('array_keys', $dependencies);
     return $this;
   }
 
@@ -1431,6 +1433,15 @@ class Index extends ConfigEntityBase implements IndexInterface {
     }
     $this->dependencies = $original_dependencies;
 
+    // Include the field dependencies.
+    foreach ($this->getFields() as $field_id => $field) {
+      foreach ($field->getDependencies() as $dependency_type => $names) {
+        foreach ($names as $name) {
+          $dependency_data[$dependency_type][$name]['always']['fields'][$field_id] = $field;
+        }
+      }
+    }
+
     // The server needs special treatment, since it is a dependency of the index
     // itself, and not one of its plugins.
     if ($this->hasValidServer()) {
@@ -1472,6 +1483,28 @@ class Index extends ConfigEntityBase implements IndexInterface {
   }
 
   /**
+   * Retrieves information about the dependencies of the indexed fields.
+   *
+   * @return string[][][]
+   *   An associative array containing the dependencies of the indexed fields.
+   *   The array is keyed by field ID and dependency type, the values are arrays
+   *   with dependency names.
+   */
+  protected function getFieldDependencies() {
+    $field_dependencies = array();
+
+    foreach ($this->getDatasources() as $datasource_id => $datasource) {
+      $fields = array();
+      foreach ($this->getFieldsByDatasource($datasource_id) as $field_id => $field) {
+        $fields[$field_id] = $field->getPropertyPath();
+      }
+      $field_dependencies += $datasource->getFieldDependencies($fields);
+    }
+
+    return $field_dependencies;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function onDependencyRemoval(array $dependencies) {
@@ -1503,8 +1536,25 @@ class Index extends ConfigEntityBase implements IndexInterface {
               continue;
             }
 
-            $all_plugins[$plugin_type] = array_diff_key($all_plugins[$plugin_type], $plugins);
+            // This will definitely lead to a change.
             $changed = TRUE;
+
+            if ($plugin_type == 'fields') {
+              // Remove a field from the index that is being removed from the
+              // system.
+              /** @var \Drupal\search_api\Item\FieldInterface $field */
+              foreach ($plugins as $field_id => $field) {
+                // In case the field is locked, unlock it before removing.
+                if ($field->isIndexedLocked()) {
+                  $field->setIndexedLocked(FALSE);
+                }
+                $this->removeField($field_id);
+              }
+            }
+            else {
+              // For all other types, just remove the plugin from our list.
+              $all_plugins[$plugin_type] = array_diff_key($all_plugins[$plugin_type], $plugins);
+            }
           }
         }
 

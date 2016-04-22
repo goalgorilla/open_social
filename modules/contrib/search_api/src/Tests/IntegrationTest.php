@@ -37,6 +37,8 @@ class IntegrationTest extends WebTestBase {
     'search_api',
     'search_api_test_backend',
     'field_ui',
+    'link',
+    'image',
   );
 
   /**
@@ -45,14 +47,20 @@ class IntegrationTest extends WebTestBase {
   public function setUp() {
     parent::setUp();
     $this->indexStorage = \Drupal::entityTypeManager()->getStorage('search_api_index');
+
+    $this->adminUser = $this->drupalCreateUser(array(
+      'administer search_api',
+      'access administration pages',
+      'administer nodes',
+      'administer node fields',
+    ));
+    $this->drupalLogin($this->adminUser);
   }
 
   /**
    * Tests various operations via the Search API's admin UI.
    */
   public function testFramework() {
-    $this->drupalLogin($this->adminUser);
-
     $this->createServer();
     $this->checkServerAvailability();
     $this->createIndex();
@@ -118,6 +126,8 @@ class IntegrationTest extends WebTestBase {
     $this->checkFieldLabels();
 
     $this->addFieldsToIndex();
+    $this->addFieldsWithDependenciesToIndex();
+    $this->removeFieldsDependencies();
     $this->removeFieldsFromIndex();
 
     $this->configureFilter();
@@ -712,6 +722,80 @@ class IntegrationTest extends WebTestBase {
       $args['%label'] = $label;
       $this->assertRaw($this->t('Field %label was added to the index.', $args));
     }
+  }
+
+  /**
+   * Tests field dependencies.
+   */
+  protected function addFieldsWithDependenciesToIndex() {
+    // Add a new field.
+    $edit = array(
+      'new_storage_type' => 'link',
+      'label' => 'Link',
+      'field_name' => 'link',
+    );
+    $this->drupalPostForm('admin/structure/types/manage/article/fields/add-field', $edit, t('Save and continue'));
+    $this->drupalPostForm(NULL, array(), t('Save field settings'));
+    $this->drupalPostForm(NULL, array(), t('Save settings'));
+
+    // Add an image field.
+    $edit = array(
+      'new_storage_type' => 'image',
+      'label' => 'Image',
+      'field_name' => 'image',
+    );
+    $this->drupalPostForm('admin/structure/types/manage/article/fields/add-field', $edit, t('Save and continue'));
+    $this->drupalPostForm(NULL, array(), t('Save field settings'));
+    $this->drupalPostForm(NULL, array(), t('Save settings'));
+
+    // Add the image field to the "Basic page" content type, too.
+    $edit = array(
+      'existing_storage_name' => 'field_image',
+      'existing_storage_label' => 'Image',
+    );
+    $this->drupalPostForm('admin/structure/types/manage/page/fields/add-field', $edit, t('Save and continue'));
+    $this->drupalPostForm(NULL, array(), t('Save settings'));
+
+    $fields = array(
+      'field_link' => $this->t('Link'),
+      'field_image' => $this->t('Image'),
+    );
+    foreach ($fields as $property_path => $label) {
+      $this->addField('entity:node', $property_path, $label);
+    }
+
+    // Check that index configuration is updated with dependencies.
+    $field_dependencies = (array) \Drupal::config('search_api.index.' . $this->indexId)->get('dependencies.config');
+    $this->assertTrue(in_array('field.storage.node.field_link', $field_dependencies), 'The link field has been added as a dependency of the index.');
+    $this->assertTrue(in_array('field.storage.node.field_image', $field_dependencies), 'The image field has been added as a dependency of the index.');
+  }
+
+  /**
+   * Tests whether removing fields on which the index depends works correctly.
+   */
+  protected function removeFieldsDependencies() {
+    // Remove a field and make sure that doing so does not remove the search
+    // index.
+    $this->drupalGet('admin/structure/types/manage/article/fields/node.article.field_link/delete');
+    $this->assertNoText(t('The listed configuration will be deleted.'));
+    $this->assertText(t('Search index'));
+
+    $this->drupalPostForm(NULL, array(), t('Delete'));
+    $this->drupalGet('admin/structure/types/manage/article/fields/node.article.field_image/delete');
+    $this->drupalPostForm(NULL, array(), t('Delete'));
+
+    if (!$this->assertNotNull($this->getIndex(), 'Index was not deleted.')) {
+      throw new \Exception('Index deleted, test aborted.');
+    }
+
+    $this->drupalGet($this->getIndexPath('fields'));
+    $this->assertResponse(200);
+    $this->assertNoText('field_link', 'The Link field was removed from the index.');
+    $this->assertText('field_image', 'The Image field was not removed from the index.');
+
+    $field_dependencies = \Drupal::config('search_api.index.' . $this->indexId)->get('dependencies.config');
+    $this->assertFalse(in_array('field.storage.node.field_link', (array) $field_dependencies), "The link field has been removed from the index's dependencies.");
+    $this->assertTrue(in_array('field.storage.node.field_image', (array) $field_dependencies), "The image field has been removed from the index's dependencies.");
   }
 
   /**

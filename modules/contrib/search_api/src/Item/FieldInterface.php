@@ -341,4 +341,22 @@ interface FieldInterface extends \Traversable {
    */
   public function setTypeLocked($type_locked = TRUE);
 
+  /**
+   * Retrieves the field's dependencies.
+   *
+   * @return string[][]
+   *   The field's dependencies.
+   */
+  public function getDependencies();
+
+  /**
+   * Sets the field's dependencies.
+   *
+   * @param string[][] $dependencies
+   *   The field's dependencies.
+   *
+   * @return $this
+   */
+  public function setDependencies(array $dependencies);
+
 }
