@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\IndexPluginInterface.
- */
-
 namespace Drupal\search_api\Plugin;
 
 use Drupal\search_api\IndexInterface;

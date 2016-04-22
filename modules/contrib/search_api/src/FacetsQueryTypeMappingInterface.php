@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\FacetsQueryTypeMappingInterface.
- */
-
 namespace Drupal\search_api;
 
 /**

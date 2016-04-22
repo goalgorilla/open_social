@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\DataType\DataTypePluginManager.
- */
-
 namespace Drupal\search_api\DataType;
 
 use Drupal\Core\Cache\CacheBackendInterface;

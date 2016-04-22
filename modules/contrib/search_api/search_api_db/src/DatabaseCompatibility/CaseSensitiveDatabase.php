@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api_db\DatabaseCompatibility\CaseSensitiveDatabase.
- */
-
 namespace Drupal\search_api_db\DatabaseCompatibility;
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\CliTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;
@@ -46,7 +41,6 @@ class CliTest extends KernelTestBase {
     parent::setUp();
 
     $this->installSchema('search_api', array('search_api_item', 'search_api_task'));
-    $this->installSchema('system', 'queue');
     $this->installEntitySchema('entity_test');
 
     // Create a test server.
@@ -78,14 +72,14 @@ class CliTest extends KernelTestBase {
       'body' => 'test test case Case casE',
       'type' => 'item',
       'keywords' => array('Orange', 'orange', 'örange', 'Orange'),
-      'category' => 'item_category'
+      'category' => 'item_category',
     ))->save();
     EntityTest::create(array(
       'name' => 'foo bar baz föö smile',
       'body' => 'test test case Case casE',
       'type' => 'item',
       'keywords' => array('strawberry', 'llama'),
-      'category' => 'item_category'
+      'category' => 'item_category',
     ))->save();
 
     // Create a test index.
@@ -114,7 +108,7 @@ class CliTest extends KernelTestBase {
     $total_items = $index->getTrackerInstance()->getTotalItemsCount();
     $indexed_items = $index->getTrackerInstance()->getIndexedItemsCount();
 
-    $this->assertEquals(2, $total_items,'The 2 items are tracked.');
+    $this->assertEquals(2, $total_items, 'The 2 items are tracked.');
     $this->assertEquals(0, $indexed_items, 'No items are indexed');
 
     EntityTest::create(array(
@@ -122,14 +116,14 @@ class CliTest extends KernelTestBase {
       'body' => 'test test case Case casE',
       'type' => 'item',
       'keywords' => array('strawberry', 'llama'),
-      'category' => 'item_category'
+      'category' => 'item_category',
     ))->save();
     EntityTest::create(array(
       'name' => 'foo bar baz föö smile',
       'body' => 'test test case Case casE',
       'type' => 'item',
       'keywords' => array('strawberry', 'llama'),
-      'category' => 'item_category'
+      'category' => 'item_category',
     ))->save();
 
     $total_items = $index->getTrackerInstance()->getTotalItemsCount();

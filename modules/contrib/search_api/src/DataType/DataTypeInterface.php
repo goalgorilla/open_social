@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\DataType\DataTypeInterface.
- */
-
 namespace Drupal\search_api\DataType;
 
 use Drupal\Component\Plugin\DerivativeInspectionInterface;
@@ -21,12 +16,17 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface DataTypeInterface extends PluginInspectionInterface, DerivativeInspectionInterface {
 
   /**
-   * Returns the label for use on the administration pages.
+   * Returns the label of the data type.
    *
    * @return string
    *   The administration label.
    */
   public function label();
+
+  /**
+   * Returns the description of the data type.
+   */
+  public function getDescription();
 
   /**
    * Converts a field value to match the data type (if needed).

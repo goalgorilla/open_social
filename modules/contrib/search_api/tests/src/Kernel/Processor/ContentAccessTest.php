@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\ProcessorContentAccessTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel\Processor;
 
 use Drupal\comment\Entity\Comment;
@@ -72,7 +67,12 @@ class ContentAccessTest extends ProcessorTestBase {
     ))->save();
 
     // Create a node with attached comment.
-    $this->nodes[0] = Node::create(array('status' => NODE_PUBLISHED, 'type' => 'page', 'title' => 'test title'));
+    $values = array(
+      'status' => NODE_PUBLISHED,
+      'type' => 'page',
+      'title' => 'test title',
+    );
+    $this->nodes[0] = Node::create($values);
     $this->nodes[0]->save();
 
     $comment_type = CommentType::create(array(
@@ -95,10 +95,20 @@ class ContentAccessTest extends ProcessorTestBase {
 
     $this->comments[] = $comment;
 
-    $this->nodes[1] = Node::create(array('status' => NODE_PUBLISHED, 'type' => 'page', 'title' => 'some title'));
+    $values = array(
+      'status' => NODE_PUBLISHED,
+      'type' => 'page',
+      'title' => 'some title',
+    );
+    $this->nodes[1] = Node::create($values);
     $this->nodes[1]->save();
 
-    $this->nodes[2] = Node::create(array('status' => NODE_NOT_PUBLISHED, 'type' => 'page', 'title' => 'other title'));
+    $values = array(
+      'status' => NODE_NOT_PUBLISHED,
+      'type' => 'page',
+      'title' => 'other title',
+    );
+    $this->nodes[2] = Node::create($values);
     $this->nodes[2]->save();
 
     // Also index users, to verify that they are unaffected by the processor.
@@ -120,7 +130,8 @@ class ContentAccessTest extends ProcessorTestBase {
    * Tests searching when content is accessible to all.
    */
   public function testQueryAccessAll() {
-    user_role_grant_permissions('anonymous', array('access content', 'access comments'));
+    $permissions = array('access content', 'access comments');
+    user_role_grant_permissions('anonymous', $permissions);
     $this->index->reindex();
     $this->index->indexItems();
     $this->assertEquals(5, $this->index->getTrackerInstance()->getIndexedItemsCount(), '5 items indexed, as expected.');
@@ -128,7 +139,12 @@ class ContentAccessTest extends ProcessorTestBase {
     $query = Utility::createQuery($this->index);
     $result = $query->execute();
 
-    $this->assertResults($result, array('user' => array(0), 'comment' => array(0), 'node' => array(0, 1)));
+    $expected = array(
+      'user' => array(0),
+      'comment' => array(0),
+      'node' => array(0, 1),
+    );
+    $this->assertResults($result, $expected);
   }
 
   /**
@@ -154,12 +170,18 @@ class ContentAccessTest extends ProcessorTestBase {
     $permissions = array(
       'access content',
       'access comments',
-      'view own unpublished content'
+      'view own unpublished content',
     );
     $authenticated_user = $this->createUser($permissions);
     $uid = $authenticated_user->id();
 
-    $this->nodes[3] = Node::create(array('status' => NODE_NOT_PUBLISHED, 'type' => 'page', 'title' => 'foo', 'uid' => $uid));
+    $values = array(
+      'status' => NODE_NOT_PUBLISHED,
+      'type' => 'page',
+      'title' => 'foo',
+      'uid' => $uid,
+    );
+    $this->nodes[3] = Node::create($values);
     $this->nodes[3]->save();
     $this->index->indexItems();
     $this->assertEquals(7, $this->index->getTrackerInstance()->getIndexedItemsCount(), '7 items indexed, as expected.');
@@ -168,7 +190,8 @@ class ContentAccessTest extends ProcessorTestBase {
     $query->setOption('search_api_access_account', $authenticated_user);
     $result = $query->execute();
 
-    $this->assertResults($result, array('user' => array(0, $uid), 'node' => array(3)));
+    $expected = array('user' => array(0, $uid), 'node' => array(3));
+    $this->assertResults($result, $expected);
   }
 
   /**
@@ -197,11 +220,15 @@ class ContentAccessTest extends ProcessorTestBase {
     $query->setOption('search_api_access_account', $authenticated_user);
     $result = $query->execute();
 
-    $this->assertResults($result, array('user' => array(0, $authenticated_user->id()), 'node' => array(0)));
+    $expected = array(
+      'user' => array(0, $authenticated_user->id()),
+      'node' => array(0),
+    );
+    $this->assertResults($result, $expected);
   }
 
   /**
-   *  Tests comment indexing when all users have access to content.
+   * Tests comment indexing when all users have access to content.
    */
   public function testContentAccessAll() {
     user_role_grant_permissions('anonymous', array('access content', 'access comments'));
@@ -243,6 +270,29 @@ class ContentAccessTest extends ProcessorTestBase {
     foreach ($items as $item) {
       $this->assertEquals(array('node_access_search_api_test:0'), $item->getField('search_api_node_grants')->getValues());
     }
+  }
+
+  /**
+   * Tests that acquiring node grants leads to re-indexing of that node.
+   */
+  public function testNodeGrantsChange() {
+    $this->index->setOption('index_directly', FALSE)->save();
+    $this->index->indexItems();
+    $remaining = $this->index->getTrackerInstance()->getRemainingItems();
+    $this->assertEquals(array(), $remaining, 'All items were indexed.');
+
+    /** @var \Drupal\node\NodeAccessControlHandlerInterface $access_control_handler */
+    $access_control_handler = \Drupal::entityTypeManager()
+      ->getAccessControlHandler('node');
+    $access_control_handler->acquireGrants($this->nodes[0]);
+
+    $expected = array(
+      'entity:comment/' . $this->comments[0]->id() . ':en',
+      'entity:node/' . $this->nodes[0]->id() . ':en',
+    );
+    $remaining = $this->index->getTrackerInstance()->getRemainingItems();
+    sort($remaining);
+    $this->assertEquals($expected, $remaining, 'The expected items were marked as "changed" when changing node access grants.');
   }
 
   /**

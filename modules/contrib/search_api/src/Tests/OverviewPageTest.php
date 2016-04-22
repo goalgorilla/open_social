@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\OverviewPageTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
 use Drupal\search_api\ServerInterface;
 
 /**
@@ -39,6 +33,21 @@ class OverviewPageTest extends WebTestBase {
     $this->drupalLogin($this->adminUser);
 
     $this->overviewPageUrl = 'admin/config/search/search-api';
+  }
+
+  /**
+   * Tests that the overview has the correct permissions set.
+   */
+  public function testOverviewPermissions() {
+    $this->drupalGet('admin/config');
+    $this->assertText('Search API', 'Search API menu link is displayed.');
+
+    $this->drupalGet($this->overviewPageUrl);
+    $this->assertResponse(200, 'Admin user can access the overview page.');
+
+    $this->drupalLogin($this->unauthorizedUser);
+    $this->drupalGet($this->overviewPageUrl);
+    $this->assertResponse(403, "User without permissions doesn't have access to the overview page.");
   }
 
   /**
@@ -162,8 +171,8 @@ class OverviewPageTest extends WebTestBase {
 
     // Since \Drupal\Core\Access\CsrfTokenGenerator uses the current session ID,
     // we cannot verify the validity of the token from here.
-    $this->assertRaw('<a href="' . $basic_url .'/enable?token=', 'Enable operation present');
-    $this->assertNoRaw('<a href="' . $basic_url .'/disable">Disable</a>', 'Disable operation  is not present');
+    $this->assertRaw('<a href="' . $basic_url . '/enable?token=', 'Enable operation present');
+    $this->assertNoRaw('<a href="' . $basic_url . '/disable">Disable</a>', 'Disable operation  is not present');
   }
 
 }

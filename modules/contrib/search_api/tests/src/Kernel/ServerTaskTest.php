@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\ServerTaskTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -101,7 +96,7 @@ class ServerTaskTest extends KernelTestBase {
         'default' => array(
           'plugin_id' => 'default',
           'settings' => array(),
-        )
+        ),
       ),
       'server' => $this->server->id(),
       'options' => array('index_directly' => FALSE),
@@ -196,8 +191,14 @@ class ServerTaskTest extends KernelTestBase {
     // call to indexItems().
     $this->state->set('search_api_test_backend.exception.updateIndex', FALSE);
     $this->server->indexItems($this->index, array());
+
+    $expected_methods = array(
+      'updateIndex',
+      'deleteAllIndexItems',
+      'indexItems',
+    );
     $this->assertEquals(array(), $this->getServerTasks(), 'Server tasks were correctly executed.');
-    $this->assertEquals(array('updateIndex', 'deleteAllIndexItems', 'indexItems'), $this->getCalledServerMethods(), 'Right methods were called during task execution.');
+    $this->assertEquals($expected_methods, $this->getCalledServerMethods(), 'Right methods were called during task execution.');
   }
 
   /**
@@ -326,8 +327,14 @@ class ServerTaskTest extends KernelTestBase {
     // with a call to indexItems().
     $this->state->set('search_api_test_backend.exception.deleteAllIndexItems', FALSE);
     $this->server->indexItems($this->index, array());
+
+    $expected_methods = array(
+      'deleteAllIndexItems',
+      'updateIndex',
+      'indexItems',
+    );
     $this->assertEquals(array(), $this->getServerTasks(), 'Server tasks were correctly executed.');
-    $this->assertEquals(array('deleteAllIndexItems', 'updateIndex', 'indexItems'), $this->getCalledServerMethods(), 'Right methods were called during task execution.');
+    $this->assertEquals($expected_methods, $this->getCalledServerMethods(), 'Right methods were called during task execution.');
   }
 
   /**

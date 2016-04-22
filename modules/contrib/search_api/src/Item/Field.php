@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\Field.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -130,6 +125,13 @@ class Field implements \IteratorAggregate, FieldInterface {
   protected $typeLocked;
 
   /**
+   * This field's dependencies, if any.
+   *
+   * @var string[][]
+   */
+  protected $dependencies = array();
+
+  /**
    * The field's values.
    *
    * @var array
@@ -202,6 +204,9 @@ class Field implements \IteratorAggregate, FieldInterface {
     }
     if ($this->isHidden()) {
       $settings['hidden'] = TRUE;
+    }
+    if ($this->getDependencies()) {
+      $settings['dependencies'] = $this->getDependencies();
     }
     return $settings;
   }
@@ -489,6 +494,21 @@ class Field implements \IteratorAggregate, FieldInterface {
    */
   public function setTypeLocked($type_locked = TRUE) {
     $this->typeLocked = $type_locked;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDependencies() {
+    return $this->dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDependencies(array $dependencies) {
+    $this->dependencies = $dependencies;
     return $this;
   }
 

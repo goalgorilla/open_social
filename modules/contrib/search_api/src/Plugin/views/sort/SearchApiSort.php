@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\sort\SearchApiSort.
- */
-
 namespace Drupal\search_api\Plugin\views\sort;
 
 use Drupal\search_api\UncacheableDependencyTrait;

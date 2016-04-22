@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Processor\FieldsProcessorPluginBase.
- */
-
 namespace Drupal\search_api\Processor;
 
 use Drupal\Component\Utility\Html;
@@ -237,6 +232,19 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase {
           $empty_string = $value === '';
           $this->processConditionValue($value);
 
+          // The BETWEEN operator deserves special attention, as it seems
+          // unlikely that it makes sense to completely remove it. Processors
+          // that remove values are normally indicating that this value can't be
+          // in the index – but that's irrelevant for BETWEEN conditions, as any
+          // value between the two bounds could still be included. We therefore
+          // never remove a BETWEEN condition and also ignore it when one of the
+          // two values got removed. (Note that this check will also catch empty
+          // strings.) Processors who need different behavior have to override
+          // this method.
+          if (($condition->getOperator() == 'BETWEEN') && count($value) < 2) {
+            continue;
+          }
+
           if ($value === '' && !$empty_string) {
             unset($conditions[$key]);
           }
@@ -333,13 +341,28 @@ abstract class FieldsProcessorPluginBase extends ProcessorPluginBase {
    * Called for processing a single condition value. The default implementation
    * just calls process().
    *
-   * @param string $value
-   *   The string value to preprocess, as a reference. Can be manipulated
-   *   directly, nothing has to be returned. Has to remain a string. Set to an
-   *   empty string to remove the condition.
+   * @param mixed $value
+   *   The condition value to preprocess, as a reference. Can be manipulated
+   *   directly, nothing has to be returned. Set to an empty string to remove
+   *   the condition.
    */
   protected function processConditionValue(&$value) {
-    $this->process($value);
+    if (is_array($value)) {
+      if ($value) {
+        foreach ($value as $i => $part) {
+          $this->processConditionValue($value[$i]);
+          if ($value[$i] !== $part && $value[$i] === '') {
+            unset($value[$i]);
+          }
+        }
+        if (!$value) {
+          $value = '';
+        }
+      }
+    }
+    else {
+      $this->process($value);
+    }
   }
 
   /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Entity\Server.
- */
-
 namespace Drupal\search_api\Entity;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -194,6 +189,13 @@ class Server extends ConfigEntityBase implements ServerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getDiscouragedProcessors() {
+    return $this->getBackend()->getDiscouragedProcessors();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function addIndex(IndexInterface $index) {
     $server_task_manager = \Drupal::getContainer()->get('search_api.server_task_manager');
     // When freshly adding an index to a server, it doesn't make any sense to
@@ -369,8 +371,15 @@ class Server extends ConfigEntityBase implements ServerInterface {
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
 
+    // The rest of the code only applies to updates.
+    if (!isset($this->original)) {
+      return;
+    }
+
+    $this->getBackend()->preUpdate();
+
     // If the server is being disabled, also disable all its indexes.
-    if (!$this->status() && isset($this->original) && $this->original->status()) {
+    if (!$this->status() && $this->original->status()) {
       foreach ($this->getIndexes(array('status' => TRUE)) as $index) {
         /** @var \Drupal\search_api\IndexInterface $index */
         $index->setStatus(FALSE)->save();
@@ -384,7 +393,12 @@ class Server extends ConfigEntityBase implements ServerInterface {
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     if ($this->hasValidBackend()) {
       if ($update) {
-        $this->getBackend()->postUpdate();
+        $reindexing_necessary = $this->getBackend()->postUpdate();
+        if ($reindexing_necessary) {
+          foreach ($this->getIndexes() as $index) {
+            $index->reindex();
+          }
+        }
       }
       else {
         $this->getBackend()->postInsert();
@@ -400,8 +414,8 @@ class Server extends ConfigEntityBase implements ServerInterface {
     //   from this server, triggering the server's removeIndex() method. This
     //   is, at best, wasted performance and could at worst lead to a bug if
     //   removeIndex() saves the server. We should try what happens when this is
-    //   the case, whether there really is a bug, and try to fix it somehow
-    //   (maybe clever detection of this case in removeIndex() or
+    //   the case, whether there really is a bug, and try to fix it somehow –
+    //   maybe clever detection of this case in removeIndex() or
     //   Index::postSave(). $server->isUninstalling() might help?
     parent::preDelete($storage, $entities);
 

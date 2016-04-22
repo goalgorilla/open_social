@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Datasource\DatasourcePluginBase.
- */
-
 namespace Drupal\search_api\Datasource;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -126,6 +121,13 @@ abstract class DatasourcePluginBase extends IndexPluginBase implements Datasourc
    * {@inheritdoc}
    */
   public function getItemIds($page = NULL) {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldDependencies(array $fields) {
     return array();
   }
 

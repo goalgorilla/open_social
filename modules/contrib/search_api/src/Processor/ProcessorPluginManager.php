@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Processor\ProcessorPluginManager.
- */
-
 namespace Drupal\search_api\Processor;
 
 use Drupal\Core\Cache\CacheBackendInterface;
