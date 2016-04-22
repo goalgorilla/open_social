@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Form\ServerDisableConfirmForm.
- */
-
 namespace Drupal\search_api\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;

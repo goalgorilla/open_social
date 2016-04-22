@@ -8,6 +8,7 @@
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexBatchHelper;
+use Drupal\search_api\IndexInterface;
 use Drupal\search_api\SearchApiException;
 
 /**
@@ -396,7 +397,12 @@ function drush_search_api_index($index_id = NULL, $limit = NULL, $batch_size = N
       $limit = $remaining;
     }
 
-    drush_log(dt("Indexing a maximum number of @limit items (@batch_size items per batch run) for the index '@index'.", array('@index' => $index->label(), '@limit' => $limit, '@batch_size' => $batch_size)), 'ok');
+    $arguments = array(
+      '@index' => $index->label(),
+      '@limit' => $limit,
+      '@batch_size' => $batch_size,
+    );
+    drush_log(dt("Indexing a maximum number of @limit items (@batch_size items per batch run) for the index '@index'.", $arguments), 'ok');
 
     // Create the batch.
     try {
@@ -466,7 +472,7 @@ function search_api_drush_get_index_count() {
  * Returns either one or all indexes as an array.
  *
  * If the index is not defined or there are no indexes then an error message
- * is displayed
+ * is displayed.
  *
  * @param string|null $index_id
  *   (optional) Either the ID of the search index to load, or NULL to load all
@@ -506,10 +512,10 @@ function search_api_drush_get_indexes($index_id = NULL) {
  *
  * @param \Drupal\search_api\IndexInterface $index
  *   The index to be enabled.
- * @param boolean $enable
+ * @param bool $enable
  *   (optional) TRUE to enable, FALSE to disable the index.
  */
-function search_api_drush_set_index_state($index, $enable = TRUE) {
+function search_api_drush_set_index_state(IndexInterface $index, $enable = TRUE) {
   $state_label = $enable ? dt('enabled') : dt('disabled');
   $method = $enable ? 'enable' : 'disable';
 

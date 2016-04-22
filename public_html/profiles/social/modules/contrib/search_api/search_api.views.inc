@@ -290,6 +290,15 @@ function _search_api_views_handler_mapping() {
           'id' => 'search_api',
         ),
       ),
+      'entity:node_type' => array(
+        'filter' => array(
+          'id' => 'search_api_options',
+          'options callback' => 'node_type_get_names',
+        ),
+        'sort' => array(
+          'id' => 'search_api',
+        ),
+      ),
     );
 
     $alter_id = 'search_api_views_handler_mapping';
@@ -377,7 +386,7 @@ function _search_api_views_data_special_fields(array &$table) {
   $table[$excerpt_field]['title'] = t('Excerpt');
   $table[$excerpt_field]['help'] = t('The search result excerpted to show found search terms');
   $table[$excerpt_field]['field']['id'] = 'search_api';
-  $table[$excerpt_field]['field']['html'] = TRUE;
+  $table[$excerpt_field]['field']['filter_type'] = 'xss';
   if ($excerpt_field != 'search_api_excerpt') {
     $table[$excerpt_field]['real field'] = 'search_api_excerpt';
   }
@@ -647,44 +656,42 @@ function _search_api_views_get_field_handler_mapping() {
       'id' => 'search_api',
     );
 
-    $plain_mapping['field_item:text_long'] =
-    $plain_mapping['field_item:text_with_summary'] = array(
+    $text_mapping = array(
       'id' => 'search_api',
       'filter_type' => 'xss',
     );
+    $plain_mapping['field_item:text_long'] = $text_mapping;
+    $plain_mapping['field_item:text_with_summary'] = $text_mapping;
 
-    $plain_mapping['field_item:integer'] =
-    $plain_mapping['field_item:list_integer'] =
-    $plain_mapping['integer'] =
-    $plain_mapping['timespan'] = array(
-      'id' => 'search_api_numeric',
-    );
+    $numeric_mapping = array('id' => 'search_api_numeric');
+    $plain_mapping['field_item:integer'] = $numeric_mapping;
+    $plain_mapping['field_item:list_integer'] = $numeric_mapping;
+    $plain_mapping['integer'] = $numeric_mapping;
+    $plain_mapping['timespan'] = $numeric_mapping;
 
-    $plain_mapping['field_item:decimal'] =
-    $plain_mapping['field_item:float'] =
-    $plain_mapping['field_item:list_float'] =
-    $plain_mapping['decimal'] =
-    $plain_mapping['float'] = array(
+    $float_mapping = array(
       'id' => 'search_api_numeric',
       'float' => TRUE,
     );
+    $plain_mapping['field_item:decimal'] = $float_mapping;
+    $plain_mapping['field_item:float'] = $float_mapping;
+    $plain_mapping['field_item:list_float'] = $float_mapping;
+    $plain_mapping['decimal'] = $float_mapping;
+    $plain_mapping['float'] = $float_mapping;
 
-    $plain_mapping['field_item:created'] =
-    $plain_mapping['field_item:changed'] =
-    $plain_mapping['datetime_iso8601'] =
-    $plain_mapping['timestamp'] = array(
-      'id' => 'search_api_date',
-    );
+    $date_mapping = array('id' => 'search_api_date');
+    $plain_mapping['field_item:created'] = $date_mapping;
+    $plain_mapping['field_item:changed'] = $date_mapping;
+    $plain_mapping['datetime_iso8601'] = $date_mapping;
+    $plain_mapping['timestamp'] = $date_mapping;
 
-    $plain_mapping['boolean'] =
-    $plain_mapping['field_item:boolean'] = array(
-      'id' => 'search_api_boolean',
-    );
+    $bool_mapping = array('id' => 'search_api_boolean');
+    $plain_mapping['boolean'] = $bool_mapping;
+    $plain_mapping['field_item:boolean'] = $bool_mapping;
 
-    $plain_mapping['field_item:entity_reference'] =
-    $plain_mapping['field_item:comment'] = array(
-      'id' => 'search_api_entity',
-    );
+    $ref_mapping = array('id' => 'search_api_entity');
+    $plain_mapping['field_item:entity_reference'] = $ref_mapping;
+    $plain_mapping['field_item:comment'] = $ref_mapping;
 
     // Field items have a special handler, but need a fallback handler set to be
     // able to optionally circumvent entity field rendering. That's why we just

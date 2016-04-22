@@ -1,0 +1,89 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.search_index
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_self_introduction
+    - profile.type.profile
+  module:
+    - address
+    - text
+_core:
+  default_config_hash: hbs7iw_nRr1AradiPsqqzRpLxVOjxrDbPfAQDkeDmdA
+id: profile.profile.search_index
+targetEntityType: profile
+bundle: profile
+mode: search_index
+content:
+  field_profile_address:
+    weight: 5
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+  field_profile_expertise:
+    weight: 8
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_profile_first_name:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_function:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_interests:
+    weight: 7
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_profile_last_name:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_organization:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_phone_number:
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_self_introduction:
+    weight: 6
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+hidden:
+  field_profile_image: true

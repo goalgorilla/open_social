@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Query\ConditionGroup.
- */
-
 namespace Drupal\search_api\Query;
 
 /**

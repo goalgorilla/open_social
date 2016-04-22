@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Form\IndexAddFieldsForm.
- */
-
 namespace Drupal\search_api\Form;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -98,7 +93,7 @@ class IndexAddFieldsForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function getBaseFormID() {
+  public function getBaseFormId() {
     return NULL;
   }
 
@@ -225,8 +220,8 @@ class IndexAddFieldsForm extends EntityForm {
             'class' => array(
               'index-locked',
               'messages',
-              'messages--warning'
-            )
+              'messages--warning',
+            ),
           ),
           '#children' => $this->t('This index is being edited by user @user, and is therefore locked from editing by others. This lock is @age old. Click here to <a href=":url">break this lock</a>.', $lock_message_substitutions),
           '#weight' => -10,
@@ -380,7 +375,12 @@ class IndexAddFieldsForm extends EntityForm {
 
         // Don't add the additional 'entity' property for entity reference
         // fields which don't target a content entity type.
-        if ($property instanceof FieldItemDataDefinition && in_array($property->getDataType(), array('field_item:entity_reference', 'field_item:image', 'field_item:file'))) {
+        $allowed_properties = array(
+          'field_item:entity_reference',
+          'field_item:image',
+          'field_item:file',
+        );
+        if ($property instanceof FieldItemDataDefinition && in_array($property->getDataType(), $allowed_properties)) {
           $entity_type = $this->getEntityTypeManager()
             ->getDefinition($property->getSetting('target_type'));
           if (!$entity_type->isSubclassOf('Drupal\Core\Entity\ContentEntityInterface')) {

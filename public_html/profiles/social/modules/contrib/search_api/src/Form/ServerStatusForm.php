@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Form\ServerStatusForm.
- */
-
 namespace Drupal\search_api\Form;
 
 use Drupal\Core\Form\FormBase;

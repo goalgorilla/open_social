@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\AggregatedFields.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +9,8 @@ use Drupal\search_api\Processor\ProcessorPluginBase;
 use Drupal\search_api\Utility;
 
 /**
+ * Adds customized aggregations of existing fields to the index.
+ *
  * @SearchApiProcessor(
  *   id = "aggregated_field",
  *   label = @Translation("Aggregated fields"),
@@ -219,6 +216,7 @@ class AggregatedFields extends ProcessorPluginBase {
           'min' => $this->t('Minimum'),
           'first' => $this->t('First'),
         );
+
       case 'type':
         return array(
           'union' => 'string',
@@ -229,6 +227,7 @@ class AggregatedFields extends ProcessorPluginBase {
           'min' => 'integer',
           'first' => 'string',
         );
+
       case 'description':
         return array(
           'union' => $this->t('The Union aggregation does an union operation of all the values of the field. 2 fields with 2 values each become 1 field with 4 values.'),
@@ -239,6 +238,7 @@ class AggregatedFields extends ProcessorPluginBase {
           'min' => $this->t('The Minimum aggregation computes the numerically smallest contained field value.'),
           'first' => $this->t('The First aggregation will simply keep the first encountered field value.'),
         );
+
     }
     return array();
   }
@@ -433,23 +433,29 @@ class AggregatedFields extends ProcessorPluginBase {
           case 'concat':
             $values = array(implode("\n\n", $values));
             break;
+
           case 'sum':
             $values = array(array_sum($values));
             break;
+
           case 'count':
             $values = array(count($values));
             break;
+
           case 'max':
             $values = array(max($values));
             break;
+
           case 'min':
             $values = array(min($values));
             break;
+
           case 'first':
             if ($values) {
               $values = array(reset($values));
             }
             break;
+
         }
 
         if ($values) {
@@ -509,7 +515,9 @@ class AggregatedFields extends ProcessorPluginBase {
       $fields[] = $datasource_label_prefixes[$datasource_id] . $label;
     }
     $type = $this->getTypes()[$field_definition['type']];
-    return $this->t('A @type aggregation of the following fields: @fields.', array('@type' => $type, '@fields' => implode(', ', $fields)));
+
+    $arguments = array('@type' => $type, '@fields' => implode(', ', $fields));
+    return $this->t('A @type aggregation of the following fields: @fields.', $arguments);
   }
 
 }

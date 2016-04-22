@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\filter\SearchApiNumeric.
- */
-
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\search_api\UncacheableDependencyTrait;

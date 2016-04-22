@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\filter\SearchApiFulltext.
- */
-
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\Component\Utility\Unicode;
@@ -183,8 +178,8 @@ class SearchApiFulltext extends FilterPluginBase {
       return;
     }
 
-    // If the operator was set to OR or NOT, set OR as the conjunction. (It is
-    // also set for NOT since otherwise it would be "not all of these words".)
+    // If the operator was set to OR or NOT, set OR as the conjunction. It is
+    // also set for NOT since otherwise it would be "not all of these words".
     if ($this->operator != 'and') {
       $query->setOption('conjunction', 'OR');
     }

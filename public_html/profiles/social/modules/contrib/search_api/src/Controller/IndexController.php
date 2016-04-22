@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Controller\IndexController.
- */
-
 namespace Drupal\search_api\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -81,7 +76,7 @@ class IndexController extends ControllerBase {
     }
 
     // Redirect to the index's "View" page.
-    $url = $search_api_index->urlInfo('canonical');
+    $url = $search_api_index->toUrl('canonical');
     return $this->redirect($url->getRouteName(), $url->getRouteParameters());
   }
 
