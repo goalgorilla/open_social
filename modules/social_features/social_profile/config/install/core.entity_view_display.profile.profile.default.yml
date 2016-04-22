@@ -16,11 +16,9 @@ dependencies:
     - profile.type.profile
   module:
     - address
-    - telephone
-    - image
     - text
 _core:
-  default_config_hash: fHCc1pA2XQxHZ-ecTB6jIpIFMBx5ni9O07NkXyFpDCk
+  default_config_hash: ztaDSVCPZmaiJQJymLrqoZa1MJb-hAmz-w-b2zRskp8
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
@@ -28,34 +26,34 @@ mode: default
 content:
   field_profile_address:
     weight: 5
-    label: above
+    label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
   field_profile_expertise:
     weight: 8
-    label: above
+    label: visually_hidden
     settings:
-      link: true
+      link: false
     third_party_settings: {  }
     type: entity_reference_label
   field_profile_interests:
     weight: 7
-    label: above
+    label: visually_hidden
     settings:
-      link: true
+      link: false
     third_party_settings: {  }
     type: entity_reference_label
   field_profile_phone_number:
     weight: 4
-    label: above
+    label: visually_hidden
     settings:
-      title: ''
+      link_to_entity: false
     third_party_settings: {  }
     type: string
   field_profile_self_introduction:
     weight: 6
-    label: above
+    label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
