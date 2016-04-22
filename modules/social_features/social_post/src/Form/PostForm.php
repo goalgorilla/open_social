@@ -33,11 +33,11 @@ class PostForm extends ContentEntityForm {
     }
     if (isset($display) && ($display_id = $display->get('id'))) {
       if ($display_id === 'post.post.default') {
-        // Set default value to public.
+        // Set default value to community.
         // Remove recipient option.
         // Only needed for 'private' permissions which we currently do not support.
         unset($form['field_visibility']['widget']['#options'][0]);
-        $form['field_visibility']['widget']['#default_value'][0] = "1";
+        $form['field_visibility']['widget']['#default_value'][0] = "2";
       }
       elseif ($display_id === 'post.post.profile') {
         // Remove public option from options.
@@ -80,7 +80,6 @@ class PostForm extends ContentEntityForm {
           '%label' => $this->entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.post.canonical', ['post' => $this->entity->id()]);
   }
 
 }
