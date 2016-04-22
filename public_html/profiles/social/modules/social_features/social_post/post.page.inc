@@ -38,5 +38,8 @@ function template_preprocess_post(array &$variables) {
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might
   // not be configured, so remember to always check the theme setting first.
-  $variables['author_picture'] = user_view($post->getOwner(), 'compact');
+  $account = $post->getOwner();
+  if ($account) {
+    $variables['author_picture'] = user_view($account, 'compact');
+  }
 }
