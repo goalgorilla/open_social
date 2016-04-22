@@ -84,6 +84,7 @@ class SocialUserLoginForm extends UserLoginForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = $this->userStorage->load($form_state->get('uid'));
     // A destination was set, probably on an exception controller,
+    // @TODO: Add validation if route exists.
     if (!$this->getRequest()->request->has('destination')) {
       $form_state->setRedirect(
         'view.user_information.user_information',
