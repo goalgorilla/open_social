@@ -1,0 +1,42 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Michael Angarano
+
+block pagetitle
+  .container.hero-container
+    .cover
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
+          i.material-icons mode_edit
+      .cover-wrap
+        h1.page-title.h2 John Johnson
+        img.img-circle.img-medium(src='content/images/avatar1.jpg')
+      
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.active
+            a(href="my-stream.html") Stream  
+            span.visually-hidden (active tab)
+          li
+            a(href="my-profile-about.html") About
+          li
+            a(href='my-topics.html') Topics
+          li
+            a(href='my-events.html') Events  
+          li
+            a(href="my-groups.html") Groups
+      
+block content
+  
+  .row
+  
+    .col-xs-12
+      h2.h3.section-title My stream
+    
+    .col-xs-12.col-sm-3.pull-right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='#') 
+        i.material-icons.pull-left add
+        | Add content

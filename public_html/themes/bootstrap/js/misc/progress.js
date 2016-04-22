@@ -17,18 +17,17 @@
    */
   Drupal.theme.progressBar = function (id) {
     return '<div class="progress-wrapper" aria-live="polite">' +
+             '<div class="message"></div>'+
              '<div id ="' + id + '" class="progress progress-striped active">' +
-               '<div class="progress-label"></div>'+
                '<div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
-                 '<div class="percentage sr-only"></div>' +
+                 '<span class="percentage"></span>' +
                '</div>' +
              '</div>' +
-             '<div class="percentage pull-right"></div>' +
-             '<div class="message">&nbsp;</div>' +
+             '<div class="progress-label"></div>' +
            '</div>';
   };
 
-  $.extend(Drupal.ProgressBar.prototype, /** @lends Drupal.ProgressBar# */{
+  $.extend(Drupal.ProgressBar.prototype, /** @lends Drupal.ProgressBar */{
 
     /**
      * Set the percentage and status message for the progressbar.
@@ -42,8 +41,15 @@
         $(this.element).find('.progress-bar').css('width', percentage + '%').attr('aria-valuenow', percentage);
         $(this.element).find('.percentage').html(percentage + '%');
       }
-      $('.message', this.element).html(message);
-      $('.progress-label', this.element).html(label);
+      if (message) {
+        // Remove the unnecessary whitespace at the end of the message.
+        message = message.replace(/<br\/>&nbsp;|\s*$/, '');
+
+        $('.message', this.element).html(message);
+      }
+      if (label) {
+        $('.progress-label', this.element).html(label);
+      }
       if (this.updateCallback) {
         this.updateCallback(percentage, message, this);
       }

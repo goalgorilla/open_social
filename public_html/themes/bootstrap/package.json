@@ -60,12 +60,22 @@
     ],
     "pre-commit": [
       {
-        "files": "starterkits/less/less/overrides.less",
+        "files": "starterkits/less/less/**/*.less",
         "commands": [
-          "grunt compile",
-          "git add css/**/overrides*.css"
+          "grunt compile"
         ],
+        "matchAll": false,
         "staged": true
+      }
+    ],
+    "post-commit": [
+      {
+        "files": "css/**/*.css",
+        "commands": [
+          "git add css/**/*.css",
+          "git commit -m 'Automated Grunt Commit: Compile CSS'"
+        ],
+        "matchAll": false
       }
     ]
   }

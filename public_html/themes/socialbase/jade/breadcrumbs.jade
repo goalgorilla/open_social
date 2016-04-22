@@ -17,26 +17,22 @@ html(lang="en")
               .section
                 p Breadcrumbs are a good way to display your current location. This is usually used when you have multiple layers of content. They are hidden on small screens.
                 
-                nav
-                  .breadcrumbs-wrapper
-                    .container
-                      .col.s12
-                        a.breadcrumb(href='#!') First
-                        a.breadcrumb(href='#!') Second
-                        a.breadcrumb(href='#!') Third
+                nav.visible-md-block.visible-lg-block
+                  ol.breadcrumb
+                    li
+                      a(href='#!') Home
+                    li
+                      a(href='#!') Overview
+                    li.active Detail
                 
                 pre      
                   code.language-markup.
-                    <nav>
-                      <div class="breadcrumbs-wrapper">
-                        <div class="col s12">
-                          <a href="#!" class="breadcrumb">First</a>
-                          <a href="#!" class="breadcrumb">Second</a>
-                          <a href="#!" class="breadcrumb">Third</a>
-                        </div>
-                      </div>
-                    </nav>
-                
-                
+                    <nav class="visible-md-block visible-lg-block">
+                      <ol class="breadcrumb">
+                        <li><a href="#!">Home</a></li>
+                        <li><a href="#!">Overview</a></li>
+                        <li class="active">Detail</li>
+                      </ol>
+                    </nav>                
   
     include ./layout/_scripts.jade

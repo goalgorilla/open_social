@@ -13,7 +13,7 @@ Feature: Login
         | Username or email address | admin@example.com |
         | Password | admin |
     And I press "Log in"
-    Then I should see "Welcome to Drupal Social"
+    Then I should see "Explore"
 
   @security
   Scenario: unsuccessful login without leaking data

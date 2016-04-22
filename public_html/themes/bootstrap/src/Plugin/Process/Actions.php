@@ -22,7 +22,9 @@ class Actions extends ProcessBase implements ProcessInterface {
    */
   public static function processElement(Element $element, FormStateInterface $form_state, array &$complete_form) {
     foreach ($element->children() as $child) {
-      $child->setIcon();
+      if ($child->isPropertyEmpty('icon')) {
+        $child->setIcon();
+      }
     }
   }
 

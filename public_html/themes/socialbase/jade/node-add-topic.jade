@@ -6,19 +6,17 @@ block title
   title Create Topic
 
 block pagetitle
-  .block-hero
-    .container
-      .row
-        .col.s12.center.margin-bottom-xxl
-          h1.page-title.h2 Create Topic         
+  .container
+    .cover
+      h1.page-title.h2.text-center Create Topic         
 
       
 block content
       
   .row.margin-top-l
-    .col.s12.l9.margin-bottom-l
+    .col-md-9.margin-bottom-l
     
-      form.node-form
+      form(action='topic.html', method='get')
       
         #content.card.card-underline.scrollspy
         
@@ -27,41 +25,35 @@ block content
       
           .card-body
 
-            .row
-              .col.s12
-                .form-item.form__item-radios
-                  label.form__label.form-required Topic type
-                  .form__radios
-                    .form-item
-                      input#blog.form-radio(type='radio', name='type')
-                      label.option(for='blog') Blog
-                    .form-item
-                      input#discussion.form-radio(type='radio', name='type')
-                      label.option(for='discussion') Discussion
-                    .form-item
-                      input#topic.form-radio(type='radio', name='type')
-                      label.option(for='topic') Topic  
-            .row
-              .col.s12.m8
-                .form-item.form__type-textfield
-                  label.form__label.form-required Title
-                  input.form-text.required(type="text")
-            .row
-              .col.s12
-                .form-item.form__type-textarea
-                  label.form__label.form-required Description
-                  .textarea--cke
-                    textarea#ckeditor.form-text.form-textarea
-            .row
-              .col.s12    
-                .form-item.form__type-managed-file
-                  label.form__label Image
-                  .image-widget.form-managed-file.clearfix
-                    input.form-text(type='file', value='upload an image')
-                    button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
-                      i.material-icons.left file_upload
-                      | Upload
-                  .form__item-help-text One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+            .form-group.radios
+              label.form-required Topic type
+              .radio
+                input#blog(type='radio', name='type')
+                label(for='blog') Blog
+              .radio
+                input#discussion(type='radio', name='type')
+                label(for='discussion') Discussion
+              .radio
+                input#topic(type='radio', name='type')
+                label(for='topic') Topic  
+
+            .form-group
+              label.form-required Title
+              input.form-control(type="text", required)
+
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+
+            .form-group.form__type-managed-file
+              label Image
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                  i.material-icons.pull-left file_upload
+                  | Upload
+              .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
         #placement.card.card-underline.scrollspy
         
@@ -69,45 +61,38 @@ block content
             header Placement and visibility
       
           .card-body 
-            .row
-              .col.s12 
-                .form-item.form__item-radios
-                  label.form__label.form-required Add topic to
-                  .form__radios
-                    .form-item
-                      input#profile.form-radio(type='radio', name='placement')
-                      label.option(for='profile') My profile
-                    .form-item
-                      input#group.form-radio(type='radio', name='placement', onclick="showMe('selectagroup', this)")
-                      label.option(for='group') A group I am a member of
-                #selectagroup.form-item-select(style='display:none;')
-                  .form-item.col.s12.m6.margin-top-s
-                    select.browser-default
-                      option(value='', disabled='', selected='') Select a group
-                      option(value='1') Option 1
-                      option(value='2') Option 2
-                      option(value='3') Option 3
-            
-            .row
-              .col.s12      
-                .form-item.form__item-radios
-                  label.form__label.form-required Visibility
-                  .form__radios
-                    .form-item
-                      input#public.form-radio(type='radio', name='visibility')
-                      label.option(for='public') Public
-                      .form__item-help-text Community visible to all visitors of the platform
-                    .form-item
-                      input#community.form-radio(type='radio', name='visibility')
-                      label.option(for='community') Community
-                      .form__item-help-text visible only to logged in members
-                    .form-item
-                      input#groups.form-radio(type='radio', name='visibility')
-                      label.option(for='groups') Groups
-                      .form__item-help-text Visible only to group members
 
-                      
-          
+            .form-group
+              label.form-required Add topic to
+              .radio
+                input#profile(type='radio', name='placement')
+                label(for='profile') My profile
+              .radio
+                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
+                label(for='group') A group I am a member of:
+              #selectagroup(style='display:none;')
+                select.form-control
+                  option(value='', disabled='', selected='') Select a group
+                  option(value='1') Group 1
+                  option(value='2') Group 2
+                  option(value='3') Group 3
+            
+     
+            .form-group.radios
+              label.form-required Visibility
+              .radio
+                input#public(type='radio', name='visibility')
+                label(for='public') Public
+                .help-block Community visible to all visitors of the platform
+              .radio
+                input#community(type='radio', name='visibility')
+                label(for='community') Community
+                .help-block visible only to logged in members
+              .radio
+                input#groups(type='radio', name='visibility')
+                label(for='groups') Groups
+                .help-block Visible only to group members
+        
             
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
@@ -116,23 +101,22 @@ block content
                 
           .card-body.tab-content
             #comments.tab-pane.active
-              .form-item.form__item-radios
-                label.form__label.form-required Comments
-                .form__radios
-                  .form-item
-                    input#open.form-radio(type='radio', checked, name='comments')
-                    label.option(for='open') Open
-                    .form__item-help-text Users with the "Post comments" permission can post comments.
-                  .form-item
-                    input#closed.form-radio(type='radio', name='comments')
-                    label.option(for='closed') Closed
-                    .form__item-help-text Users cannot post comments.
+              .form-group.radios
+                label.form-required Comments
+                .radio
+                  input#open(type='radio', checked, name='comments')
+                  label(for='open') Open
+                  .help-block Users with the "Post comments" permission can post comments.
+                .radio
+                  input#closed(type='radio', name='comments')
+                  label(for='closed') Closed
+                  .help-block Users cannot post comments.
               
-        .form-wrapper.clearfix
-          input.waves-effect.waves-light.btn.btn-raised.btn--primary.right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn--default-dark.right(type='submit', value='Preview') 
+        .form-actions.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
 
-    .col.m3.hidden-mobile
+    .col-sm-3.hidden-mobile
       .toc-wrapper
         ul.section.table-of-contents
           li
@@ -152,7 +136,8 @@ block scriptinline
       $( '#ckeditor' ).ckeditor();  
     });
     
-    function showMe (it, box) {
+    function showMe (it, it2, box) {
       var visibility = (box.checked) ? "block" : "none";
       document.getElementById(it).style.display = visibility;
+      document.getElementById(it2).style.display = visibility;
     }

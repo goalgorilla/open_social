@@ -20,8 +20,9 @@ preprocessor.
   extension, not files ending in `.css`.
 
 ## Additional Setup {#setup}
-Download and extract the **latest** [Bootstrap Framework Source Files] into your
-new sub-theme. After it has been extracted, the folder should read `./subtheme/bootstrap`.
+Download and extract the **latest** 3.x.x version of
+[Bootstrap Framework Source Files] into your new sub-theme. After it has been
+extracted, the folder should read `./subtheme/bootstrap`.
 
 If for whatever reason you have an additional `bootstrap` folder wrapping the
 first `bootstrap` folder (e.g. `./subtheme/bootstrap/bootstrap`), remove the

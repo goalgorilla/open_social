@@ -26,11 +26,20 @@
 #}
 {{ menus.menu_links(items, attributes, 0) }}
 
+
+
+<a href="#" class="navbar-brand">
+  <object id="front-page-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
+</a>
+
+<div class="navbar-header">
+
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
 
-    <ul{{ attributes.addClass('header-menu list-unstyled') }}>
+    <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
+    <ul{{ attributes.addClass('header-menu list-unstyled nav navbar-nav navbar-right') }}>
 
     {% for item in items %}
 
@@ -48,18 +57,23 @@
       </li>
     {% endfor %}
 
-      <li class="menu__item hidden-desktop">
-        <a class="menu__link panel-trigger" href="#0" data-panel="#menu-panel" title="Show menu">
-          <span class="b-menu">
-            <span class="b-bun b-bun--top"></span>
-            <span class="b-bun b-bun--mid"></span>
-            <span class="b-bun b-bun--bottom"></span>
-          </span>
-          <span class="menu__label hidden">menu</span>
-        </a>
-      </li>
-
     </ul>
 
   {% endif %}
 {% endmacro %}
+
+</div>
+
+<div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
+  <ul class="nav navbar-nav">
+    <li><a href="#">Explore</a></li>
+    <li>
+      <form role="search" class="navbar-form navbar-left">
+        <div id="navbar-search" class="form-group">
+          <input id="search" type="text" placeholder="Search" name="search" class="form-control">
+          <input type="submit" value="" class="form-submit"><span class="search-icon"><i class="material-icons">search</i></span>
+        </div>
+      </form>
+    </li>
+  </ul>
+</div>

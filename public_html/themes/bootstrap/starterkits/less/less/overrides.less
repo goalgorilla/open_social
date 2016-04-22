@@ -1,24 +1,33 @@
 // @todo these should be their own CSS files and only included when
 // specific Drupal libraries are used.
 @import "component/alert";
-@import "component/button";
+@import "component/ajax";
 @import "component/field";
+@import "component/file";
+@import "component/filter";
+@import "component/form";
+@import "component/icon";
 @import "component/navbar";
+@import "component/node";
 @import "component/panel";
+@import "component/progress-bar";
+@import "component/table-drag";
+@import "component/tabs";
 @import "component/toolbar";
-@import "component/vertical-tabs";
+
+// jQuery UI style overrides.
+@import "jquery-ui/autocomplete";
+
+ol, ul {
+  padding-left: 1.5em;
+  .popover &:last-child {
+    margin-bottom: 0;
+  }
+}
 
 // Page header.
 .page-header {
   margin-top: 0;
-}
-
-// Tabs/Local Actions.
-.local-actions {
-  margin: 10px 0 10px -5px;
-}
-.tabs--secondary {
-  margin: 10px 0 5px;
 }
 
 // Footer.
@@ -54,4 +63,7 @@ p:last-child,
   font-size: 12px;
   margin: 5px 0 10px;
   padding: 0;
+  &:first-child {
+    margin-top: 0;
+  }
 }

@@ -6,26 +6,25 @@ Feature: Search
 
   Scenario: Successfully search content
     Given "event" content:
-      | title             | body          | field_event_date    | field_event_date_end  |
-      | Event one         | Description   | 2016-04-14T12:00:00 | 2020-04-14T12:00:00   |
-      | Event two         | Description   | 2016-04-14T12:00:00 | 2020-04-14T12:00:00   |
+      | title             | body          |
+      | Event one         | Description   |
+      | Event two         | Description   |
     And "topic" content:
-      | title             | body          | field_topic_type    |
-      | Topic one         | Description   | Blog                |
-      | Topic two         | Description   | Blog                |
+      | title             | body          |
+      | Topic one         | Description   |
+      | Topic two         | Description   |
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
     When I fill in the following:
       | search_input | one |
     And I press "Search"
-    And I should see "Search content" in the "Page title block"
+    And I should see "Search content" in the ".page-title" element
     And I should see "Event one" in the "Main content"
     And I should see "Topic one"
-    And I should not see "Event two"
+    And I should not see "Event second"
     # Scenario: Successfully filter search results
-    #@TODO: Need to fix this part
-#    When I select "topic" from "Content type"
-#    And I press the "Filter" button
-#    And I should see "Topic one"
-#    And I should not see "Event one"
+    When I select "topic" from "Content type"
+    And I press "Filter" in the "Sidebar second"
+    And I should see "Topic one"
+    And I should not see "Event one"
