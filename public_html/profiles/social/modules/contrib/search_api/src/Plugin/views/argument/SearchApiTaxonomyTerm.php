@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\argument\SearchApiTaxonomyTerm.
- */
-
 namespace Drupal\search_api\Plugin\views\argument;
 
 use Drupal\Component\Utility\Html;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Entity\Index.
- */
-
 namespace Drupal\search_api\Entity;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -388,7 +383,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function getDatasources($only_enabled = TRUE) {
-    if ($only_enabled && !is_null($this->datasourceInstances)) {
+    if ($only_enabled && $this->datasourceInstances !== NULL) {
       return $this->datasourceInstances;
     }
 
@@ -529,16 +524,21 @@ class Index extends ConfigEntityBase implements IndexInterface {
       return $this->loadProcessors();
     }
 
-    if (!is_null($this->processorInstances)) {
+    if ($this->processorInstances !== NULL) {
       return $this->processorInstances;
     }
 
     $processors = $this->loadProcessors();
 
-    // Filter the processors by status.
+    // Filter the processors to only include those that are enabled (or locked).
     // We should only reach this point in the code once, at the first call after
     // the index is loaded.
-    $this->processorInstances = array_intersect_key($processors, $this->processor_settings);
+    $this->processorInstances = array();
+    foreach ($processors as $processor_id => $processor) {
+      if (isset($this->processor_settings[$processor_id]) || $processor->isLocked()) {
+        $this->processorInstances[$processor_id] = $processor;
+      }
+    }
 
     return $this->processorInstances;
   }
@@ -547,14 +547,12 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function getProcessorsByStage($stage, $only_enabled = TRUE) {
-    $processors = $this->loadProcessors();
-    $processor_settings = $this->processor_settings;
-    $processor_weights = array();
-
     // Get a list of all processors meeting the criteria (stage and, optionally,
     // enabled) along with their effective weights (user-set or default).
+    $processors = $this->getProcessors($only_enabled);
+    $processor_weights = array();
     foreach ($processors as $name => $processor) {
-      if ($processor->supportsStage($stage) && !($only_enabled && empty($processor_settings[$name]))) {
+      if ($processor->supportsStage($stage)) {
         if (!empty($processor_settings[$name]['settings']['weights'][$stage])) {
           $processor_weights[$name] = $processor_settings[$name]['settings']['weights'][$stage];
         }
@@ -581,7 +579,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   public function addProcessor(ProcessorInterface $processor) {
     // Make sure the processorInstances are loaded before trying to add a plugin
     // to them.
-    if (is_null($this->processorInstances)) {
+    if ($this->processorInstances === NULL) {
       $this->getProcessors();
     }
     $this->processorInstances[$processor->getPluginId()] = $processor;
@@ -595,7 +593,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   public function removeProcessor($processor_id) {
     // Make sure the processorInstances are loaded before trying to remove a
     // plugin from them.
-    if (is_null($this->processorInstances)) {
+    if ($this->processorInstances === NULL) {
       $this->getProcessors();
     }
     unset($this->processorInstances[$processor_id]);
@@ -617,7 +615,10 @@ class Index extends ConfigEntityBase implements IndexInterface {
     $processor_settings = $this->processor_settings;
 
     foreach ($processor_plugin_manager->getDefinitions() as $name => $processor_definition) {
-      if (class_exists($processor_definition['class']) && empty($processor_instances[$name])) {
+      if (isset($this->processorInstances[$name])) {
+        $processor_instances[$name] = $this->processorInstances[$name];
+      }
+      elseif (class_exists($processor_definition['class'])) {
         // Create our settings for this processor.
         $settings = empty($processor_settings[$name]['settings']) ? array() : $processor_settings[$name]['settings'];
         $settings['index'] = $this;
@@ -731,7 +732,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
    */
   public function getFields() {
     // ::$fieldInstances is already filled with fields, so keep on using those.
-    if (!is_null($this->fieldInstances)) {
+    if ($this->fieldInstances !== NULL) {
       return $this->fieldInstances;
     }
 
@@ -811,7 +812,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
   /**
    * {@inheritdoc}
    */
-  public function loadItemsMultiple(array $item_ids, $group_by_datasource = FALSE) {
+  public function loadItemsMultiple(array $item_ids) {
     $items_by_datasource = array();
     foreach ($item_ids as $item_id) {
       list($datasource_id, $raw_id) = Utility::splitCombinedId($item_id);
@@ -822,12 +823,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
       try {
         foreach ($this->getDatasource($datasource_id)->loadMultiple($raw_ids) as $raw_id => $item) {
           $id = Utility::createCombinedId($datasource_id, $raw_id);
-          if ($group_by_datasource) {
-            $items[$datasource_id][$id] = $item;
-          }
-          else {
-            $items[$id] = $item;
-          }
+          $items[$id] = $item;
         }
       }
       catch (SearchApiException $e) {
@@ -1071,55 +1067,9 @@ class Index extends ConfigEntityBase implements IndexInterface {
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
-
     // Prevent enabling of indexes when the server is disabled.
     if ($this->status() && !$this->isServerEnabled()) {
       $this->disable();
-    }
-
-    // We first have to check for locked processors, otherwise their
-    // preIndexSave() methods might not be called in the next step.
-    $this->processor_settings = array();
-    foreach ($this->getProcessors(FALSE) as $processor_id => $processor) {
-      if ($processor->isLocked() && !isset($this->processor_settings[$processor_id])) {
-        $this->processor_settings[$processor_id] = array(
-          'plugin_id' => $processor_id,
-          'settings' => array(),
-        );
-      }
-    }
-
-    foreach ($this->getProcessors() as $processor_id => $processor) {
-      $this->processor_settings[$processor_id] = array(
-        'plugin_id' => $processor_id,
-        'settings' => $processor->getConfiguration(),
-      );
-    }
-
-    // Reset the canonical representation of the processors by running
-    // ::getProcessors() again here after resetting them back to NULL. This is
-    // only needed when creating a new Index.
-    $this->processorInstances = NULL;
-    $this->getProcessors();
-
-    // Add tracker settings.
-    $tracker = $this->getTrackerInstance();
-    $tracker_id = $tracker->getPluginId();
-    $this->tracker_settings = array(
-      $tracker_id => array(
-        'plugin_id' => $tracker_id,
-        'settings' => $tracker->getConfiguration(),
-      )
-    );
-
-    // Write the active datasources to the settings array.
-    $this->datasource_settings = array();
-    foreach ($this->getDatasources() as $plugin_id => $datasource) {
-      $this->datasource_settings[$plugin_id] = array(
-        'plugin_id' => $plugin_id,
-        'settings' => $datasource->getConfiguration(),
-      );
     }
 
     // Remove all "locked" and "hidden" flags from all fields of the index. If
@@ -1135,10 +1085,49 @@ class Index extends ConfigEntityBase implements IndexInterface {
       $processor->preIndexSave();
     }
 
+    // Calculate field dependencies and save field settings containing them.
+    $fields = $this->getFields();
+    $field_dependencies = $this->getFieldDependencies();
+    $field_dependencies += array_fill_keys(array_keys($fields), array());
     $this->field_settings = array();
     foreach ($this->getFields() as $field_id => $field) {
+      $field->setDependencies($field_dependencies[$field_id]);
       $this->field_settings[$field_id] = $field->getSettings();
     }
+
+    // Write the enabled processors to the settings property.
+    $processors = $this->getProcessors();
+    $this->processor_settings = array();
+    foreach ($processors as $processor_id => $processor) {
+      $this->processor_settings[$processor_id] = array(
+        'plugin_id' => $processor_id,
+        'settings' => $processor->getConfiguration(),
+      );
+    }
+
+    // Write the tracker configuration to the settings property.
+    $tracker = $this->getTrackerInstance();
+    $tracker_id = $tracker->getPluginId();
+    $this->tracker_settings = array(
+      $tracker_id => array(
+        'plugin_id' => $tracker_id,
+        'settings' => $tracker->getConfiguration(),
+      ),
+    );
+
+    // Write the enabled datasources to the settings array.
+    $this->datasource_settings = array();
+    foreach ($this->getDatasources() as $plugin_id => $datasource) {
+      $this->datasource_settings[$plugin_id] = array(
+        'plugin_id' => $plugin_id,
+        'settings' => $datasource->getConfiguration(),
+      );
+    }
+
+    // Since we change dependency-relevant data in this method, we can only call
+    // the parent method at the end (or we'd need to re-calculate the
+    // dependencies).
+    parent::preSave($storage);
   }
 
   /**
@@ -1228,7 +1217,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
       $this->reindex();
     }
     elseif ($this->isServerEnabled()) {
-      // Tell the server the index configuration got updated
+      // Tell the server the index configuration got updated.
       $this->getServerInstance()->updateIndex($this);
     }
   }
@@ -1257,7 +1246,6 @@ class Index extends ConfigEntityBase implements IndexInterface {
       $index_task_manager->startTracking($this, $added);
     }
   }
-
 
   /**
    * Checks whether the index switched tracker plugin and reacts accordingly.
@@ -1384,12 +1372,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
    */
   public function calculateDependencies() {
     $dependencies = $this->getDependencyData();
-    $this->dependencies = array();
-
-    foreach ($dependencies as $type => $list) {
-      $this->dependencies[$type] = array_keys($list);
-    }
-
+    $this->dependencies = array_map('array_keys', $dependencies);
     return $this;
   }
 
@@ -1450,6 +1433,15 @@ class Index extends ConfigEntityBase implements IndexInterface {
     }
     $this->dependencies = $original_dependencies;
 
+    // Include the field dependencies.
+    foreach ($this->getFields() as $field_id => $field) {
+      foreach ($field->getDependencies() as $dependency_type => $names) {
+        foreach ($names as $name) {
+          $dependency_data[$dependency_type][$name]['always']['fields'][$field_id] = $field;
+        }
+      }
+    }
+
     // The server needs special treatment, since it is a dependency of the index
     // itself, and not one of its plugins.
     if ($this->hasValidServer()) {
@@ -1491,6 +1483,28 @@ class Index extends ConfigEntityBase implements IndexInterface {
   }
 
   /**
+   * Retrieves information about the dependencies of the indexed fields.
+   *
+   * @return string[][][]
+   *   An associative array containing the dependencies of the indexed fields.
+   *   The array is keyed by field ID and dependency type, the values are arrays
+   *   with dependency names.
+   */
+  protected function getFieldDependencies() {
+    $field_dependencies = array();
+
+    foreach ($this->getDatasources() as $datasource_id => $datasource) {
+      $fields = array();
+      foreach ($this->getFieldsByDatasource($datasource_id) as $field_id => $field) {
+        $fields[$field_id] = $field->getPropertyPath();
+      }
+      $field_dependencies += $datasource->getFieldDependencies($fields);
+    }
+
+    return $field_dependencies;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function onDependencyRemoval(array $dependencies) {
@@ -1522,8 +1536,25 @@ class Index extends ConfigEntityBase implements IndexInterface {
               continue;
             }
 
-            $all_plugins[$plugin_type] = array_diff_key($all_plugins[$plugin_type], $plugins);
+            // This will definitely lead to a change.
             $changed = TRUE;
+
+            if ($plugin_type == 'fields') {
+              // Remove a field from the index that is being removed from the
+              // system.
+              /** @var \Drupal\search_api\Item\FieldInterface $field */
+              foreach ($plugins as $field_id => $field) {
+                // In case the field is locked, unlock it before removing.
+                if ($field->isIndexedLocked()) {
+                  $field->setIndexedLocked(FALSE);
+                }
+                $this->removeField($field_id);
+              }
+            }
+            else {
+              // For all other types, just remove the plugin from our list.
+              $all_plugins[$plugin_type] = array_diff_key($all_plugins[$plugin_type], $plugins);
+            }
           }
         }
 
@@ -1589,7 +1620,7 @@ class Index extends ConfigEntityBase implements IndexInterface {
         $default_tracker_id => array(
           'plugin_id' => $default_tracker_id,
           'settings' => array(),
-        )
+        ),
       );
       // Reset $trackerInstance so it will get newly loaded from our reset
       // settings when required.
@@ -1610,12 +1641,15 @@ class Index extends ConfigEntityBase implements IndexInterface {
           case 'processors':
             $this->processor_settings[$plugin_id]['settings'] = $plugin_config;
             break;
+
           case 'datasources':
             $this->datasource_settings[$plugin_id]['settings'] = $plugin_config;
             break;
+
           case 'tracker':
             $this->tracker_settings[$plugin_id]['settings'] = $plugin_config;
             break;
+
         }
       }
     }

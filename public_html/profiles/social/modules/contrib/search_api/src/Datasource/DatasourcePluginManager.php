@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Datasource\DatasourcePluginManager.
- */
-
 namespace Drupal\search_api\Datasource;
 
 use Drupal\Core\Cache\CacheBackendInterface;

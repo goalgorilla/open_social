@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Backend\BackendSpecificInterface.
- */
-
 namespace Drupal\search_api\Backend;
 
 use Drupal\search_api\IndexInterface;
@@ -81,6 +76,18 @@ interface BackendSpecificInterface {
    *   TRUE if the backend supports that data type.
    */
   public function supportsDataType($type);
+
+  /**
+   * Limits the processors displayed in the UI for indexes on this server.
+   *
+   * Returns an array of processor IDs that should not be enabled for this
+   * backend. It is a bad idea, for example, to have the "Tokenizer" processor
+   * enabled when using a Solr backend.
+   *
+   * @return string[]
+   *   A list of processor IDs.
+   */
+  public function getDiscouragedProcessors();
 
   /**
    * Adds a new index to this server.

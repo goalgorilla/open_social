@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Utility.
- */
-
 namespace Drupal\search_api;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -249,15 +244,18 @@ class Utility {
     // If the data type of the field is a custom one, then the value can be
     // altered by the data type plugin.
     $data_type_manager = \Drupal::service('plugin.manager.search_api.data_type');
+    /** @var \Drupal\search_api\DataType\DataTypeInterface $data_type_plugin */
+    $data_type_plugin = NULL;
     if ($data_type_manager->hasDefinition($field->getType())) {
-      /** @var \Drupal\search_api\DataType\DataTypeInterface $data_type_plugin */
       $data_type_plugin = $data_type_manager->createInstance($field->getType());
-      foreach ($values as $i => $value) {
-        $values[$i] = $data_type_plugin->getValue($value);
-      }
     }
 
-    $field->setValues($values);
+    foreach ($values as $i => $value) {
+      if ($data_type_plugin) {
+        $value = $data_type_plugin->getValue($value);
+      }
+      $field->addValue($value);
+    }
     $field->setOriginalType($data->getDataDefinition()->getDataType());
   }
 
@@ -334,7 +332,7 @@ class Utility {
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   The inner property definition.
    */
-  public static function getInnerProperty($property) {
+  public static function getInnerProperty(DataDefinitionInterface $property) {
     while ($property instanceof ListDataDefinitionInterface) {
       $property = $property->getItemDefinition();
     }

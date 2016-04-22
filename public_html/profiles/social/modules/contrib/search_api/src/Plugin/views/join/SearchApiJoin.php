@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Plugin\views\join\SearchApiJoin.
- */
-
 namespace Drupal\search_api\Plugin\views\join;
 
 use Drupal\views\Plugin\views\join\JoinPluginBase;

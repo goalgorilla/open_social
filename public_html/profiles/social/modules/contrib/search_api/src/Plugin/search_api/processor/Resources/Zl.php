@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\Resources\Zl.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor\Resources;
 
 /**

@@ -25,7 +25,13 @@ use Drupal\search_api\Utility;
  */
 function theme_search_api_admin_fields_table($variables) {
   $form = $variables['element'];
-  $header = array(t('Field'), t('Machine name'), t('Type'), t('Boost'), t('Remove'));
+  $header = array(
+    t('Field'),
+    t('Machine name'),
+    t('Type'),
+    t('Boost'),
+    t('Remove'),
+  );
 
   $rows = array();
   if (!empty($form['fields'])) {
@@ -67,6 +73,77 @@ function theme_search_api_admin_fields_table($variables) {
   $output .= render($note);
 
   return $output;
+}
+
+/**
+ * Returns HTML for the data type overview table.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - data_types: An associative array of data types, keyed by data type ID and
+ *     containing associative arrays with information about the data type:
+ *     - label: The (translated) human-readable label for the data type.
+ *     - description: The (translated) description of the data type.
+ *     - fallback: The type ID of the fallback type.
+ *   - fallback_mapping: array of fallback data types for unsupported data
+ *     types.
+ *
+ * @return string
+ *   The rendered HTML for a fields form table.
+ *
+ * @ingroup themeable
+ */
+function theme_search_api_admin_data_type_table(array $variables) {
+  $data_types = $variables['data_types'];
+  $fallback_mapping = $variables['fallback_mapping'];
+  $header = array(
+    t('Data Type'),
+    t('Description'),
+    t('Supported'),
+  );
+  // Only show the column with fallback types if there is actually an
+  // unsupported type listed.
+  if ($fallback_mapping) {
+    $header[] = t('Fallback data type');
+  }
+
+  $rows = array();
+  $yes = t('Yes');
+  $yes_img = 'core/misc/icons/73b355/check.svg';
+  $no = t('No');
+  $no_img = 'core/misc/icons/e32700/error.svg';
+  foreach ($data_types as $data_type_id => $data_type) {
+    $has_fallback = isset($fallback_mapping[$data_type_id]);
+    $supported_label = $has_fallback ? $no : $yes;
+    $supported_icon = array(
+      '#theme' => 'image',
+      '#uri' => $has_fallback ? $no_img : $yes_img,
+      '#width' => 18,
+      '#height' => 18,
+      '#alt' => $supported_label,
+      '#title' => $supported_label,
+    );
+
+    $row = array(
+      $data_type['label'],
+      $data_type['description'],
+      array('data' => $supported_icon),
+    );
+
+    if ($fallback_mapping) {
+      $row[] = $has_fallback ? $data_types[$data_type['fallback']]['label'] : '';
+    }
+
+    $rows[] = $row;
+  }
+
+  $build = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+  );
+
+  return render($build);
 }
 
 /**
@@ -141,11 +218,11 @@ function theme_search_api_server($variables) {
   // Check if the server is enabled.
   if ($server->status()) {
     $class = 'ok';
-    $info = t('enabled (<a href=":url">disable</a>)', array(':url' => $server->url('disable')));
+    $info = t('enabled (<a href=":url">disable</a>)', array(':url' => $server->toUrl('disable')->toString()));
   }
   else {
     $class = 'warning';
-    $info = t('disabled (<a href=":url">enable</a>)', array(':url' => $server->url('enable')));
+    $info = t('disabled (<a href=":url">enable</a>)', array(':url' => $server->toUrl('enable')->toString()));
   }
   // Append the row and reset variables.
   $label = t('Status');
@@ -177,7 +254,7 @@ function theme_search_api_server($variables) {
   foreach ($server->getIndexes() as $index) {
     $indexes['#links'][] = array(
       'title' => $index->label(),
-      'url' => $index->urlInfo('canonical'),
+      'url' => $index->toUrl('canonical')->toString(),
     );
   }
   // Check if the indexes variable contains links.
@@ -259,12 +336,12 @@ function theme_search_api_index($variables) {
   // Check if the index is enabled.
   if ($index->status()) {
     $class = 'ok';
-    $info = t('enabled (<a href=":url">disable</a>)', array(':url' => $index->url('disable')));
+    $info = t('enabled (<a href=":url">disable</a>)', array(':url' => $index->toUrl('disable')->toString()));
   }
   // Check if a server is available and enabled.
   elseif ($server && $server->status()) {
     $class = 'warning';
-    $info = t('disabled (<a href=":url">enable</a>)', array(':url' => $index->url('enable')));
+    $info = t('disabled (<a href=":url">enable</a>)', array(':url' => $index->toUrl('enable')->toString()));
   }
   else {
     $class = 'warning';
@@ -306,7 +383,7 @@ function theme_search_api_index($variables) {
   // Check if a server is available.
   if ($server) {
     $label = t('Server');
-    $info = $server->link(NULL, 'canonical');
+    $info = $server->toLink(NULL, 'canonical')->toString();
     $rows[] = Utility::deepCopy($row);
   }
   elseif ($index->getServerId()) {
@@ -328,6 +405,9 @@ function theme_search_api_index($variables) {
       // @todo Add a cleaner way for doing this (i.e., skipping preprocessing).
       $query = $index->query();
       $query->range(0, 0);
+      // Tag this special query to allow backend plugins to treat this query
+      // differently if required.
+      $query->addTag('server_index_status');
       $label = t('Server index status');
       try {
         $response = $server->search($query);
@@ -337,7 +417,7 @@ function theme_search_api_index($variables) {
         // Build the server index status info.
         $info = \Drupal::translation()->formatPlural($count, 'There is 1 item indexed on the server for this index. (<a href=":url">More information</a>)', 'There are @count items indexed on the server for this index. (<a href=":url">More information</a>)', $vars);
       }
-      catch(SearchApiException $e) {
+      catch (SearchApiException $e) {
         $info = t('Error while checking server index status: @message', array('@message' => $e->getMessage()));
         $class = 'error';
       }

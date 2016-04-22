@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\row\SearchApiRow.
- */
-
 namespace Drupal\search_api\Plugin\views\row;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -103,7 +98,7 @@ class SearchApiRow extends RowPluginBase {
    *   The logger to use.
    */
   public function getLogger() {
-    return $this->logger ? : \Drupal::service('logger.factory')->get('search_api');
+    return $this->logger ?: \Drupal::service('logger.factory')->get('search_api');
   }
 
   /**

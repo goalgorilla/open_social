@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\query\SearchApiQuery.
- */
-
 namespace Drupal\search_api\Plugin\views\query;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -16,6 +11,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Query\ConditionGroupInterface;
+use Drupal\search_api\Query\QueryInterface;
+use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\search_api\UncacheableDependencyTrait;
 use Drupal\search_api\Utility;
 use Drupal\user\Entity\User;
@@ -23,6 +20,7 @@ use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\views\ViewExecutable;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -112,7 +110,51 @@ class SearchApiQuery extends QueryPluginBase {
    *
    * @var string
    */
-  public $group_operator = 'AND';
+  protected $groupOperator = 'AND';
+
+  /**
+   * The logger to use for log messages.
+   *
+   * @var \Psr\Log\LoggerInterface|null
+   */
+  protected $logger;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /** @var static $plugin */
+    $plugin = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+
+    /** @var \Psr\Log\LoggerInterface $logger */
+    $logger = $container->get('logger.factory')->get('search_api');
+    $plugin->setLogger($logger);
+
+    return $plugin;
+  }
+
+  /**
+   * Retrieves the logger to use for log messages.
+   *
+   * @return \Psr\Log\LoggerInterface
+   *   The logger to use.
+   */
+  public function getLogger() {
+    return $this->logger ?: \Drupal::logger('search_api');
+  }
+
+  /**
+   * Sets the logger to use for log messages.
+   *
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The new logger.
+   *
+   * @return $this
+   */
+  public function setLogger(LoggerInterface $logger) {
+    $this->logger = $logger;
+    return $this;
+  }
 
   /**
    * Loads the search index belonging to the given Views base table.
@@ -314,7 +356,7 @@ class SearchApiQuery extends QueryPluginBase {
       // If the different groups are combined with the OR operator, we have to
       // add a new OR filter to the query to which the filters for the groups
       // will be added.
-      if ($this->group_operator === 'OR') {
+      if ($this->groupOperator === 'OR') {
         $base = $this->query->createConditionGroup('OR');
         $this->query->addConditionGroup($base);
       }
@@ -409,8 +451,8 @@ class SearchApiQuery extends QueryPluginBase {
       if (!$this->limit && $this->limit !== '0') {
         $this->limit = NULL;
       }
-      // Set the range. (We always set this, as there might even be an offset if
-      // all items are shown.)
+      // Set the range. We always set this, as there might be an offset even if
+      // all items are shown.
       $this->query->range($this->offset, $this->limit);
 
       $start = microtime(TRUE);
@@ -425,7 +467,6 @@ class SearchApiQuery extends QueryPluginBase {
         if (!empty($view->pager->options['offset'])) {
           $view->pager->total_items -= $view->pager->options['offset'];
         }
-        $view->pager->updatePageInfo();
       }
       $view->result = array();
       if ($results->getResultItems()) {
@@ -435,6 +476,7 @@ class SearchApiQuery extends QueryPluginBase {
 
       // Trigger pager postExecute().
       $view->pager->postExecute($view->result);
+      $view->pager->updatePageInfo();
     }
     catch (\Exception $e) {
       $this->abort($e->getMessage());
@@ -566,7 +608,7 @@ class SearchApiQuery extends QueryPluginBase {
    *
    * @return $this
    */
-  public function setSearchApiQuery($query) {
+  public function setSearchApiQuery(QueryInterface $query) {
     $this->query = $query;
     return $this;
   }
@@ -594,7 +636,7 @@ class SearchApiQuery extends QueryPluginBase {
    *
    * @return $this
    */
-  public function setSearchApiResults($search_api_results) {
+  public function setSearchApiResults(ResultSetInterface $search_api_results) {
     $this->searchApiResults = $search_api_results;
     return $this;
   }
@@ -734,7 +776,8 @@ class SearchApiQuery extends QueryPluginBase {
       if (empty($group)) {
         $group = 0;
       }
-      $this->conditions[$group]['conditions'][] = array($field, $value, $operator);
+      $condition = array($field, $value, $operator);
+      $this->conditions[$group]['conditions'][] = $condition;
     }
     return $this;
   }
@@ -802,7 +845,12 @@ class SearchApiQuery extends QueryPluginBase {
       }
     }
     else {
-      $this->conditions[$group]['conditions'][] = array($this->sanitizeFieldId($field), $value, $this->sanitizeOperator($operator));
+      $condition = array(
+        $this->sanitizeFieldId($field),
+        $value,
+        $this->sanitizeOperator($operator),
+      );
+      $this->conditions[$group]['conditions'][] = $condition;
     }
 
     return $this;
@@ -905,6 +953,52 @@ class SearchApiQuery extends QueryPluginBase {
       $this->query->sort($field, $order);
     }
     return $this;
+  }
+
+  /**
+   * Adds an ORDER BY clause to the query.
+   *
+   * This replicates the interface of Views' default SQL backend to simplify
+   * the Views integration of the Search API. If you are writing Search
+   * API-specific Views code, you should better use the sort() method directly.
+   *
+   * Currently, only random sorting (by passing "rand" as the table) is
+   * supported (for backends that support it), all other calls are silently
+   * ignored.
+   *
+   * @param string|null $table
+   *   The table this field is part of. If a formula, enter NULL. If you want to
+   *   order the results randomly, use "rand" as table and nothing else.
+   * @param string|null $field
+   *   (optional) The field or formula to sort on. If already a field, enter
+   *   NULL and put in the alias.
+   * @param string $order
+   *   (optional) Either ASC or DESC.
+   * @param string $alias
+   *   (optional) The alias to add the field as. In SQL, all fields in the order
+   *   by must also be in the SELECT portion. If an $alias isn't specified one
+   *   will be generated for from the $field; however, if the $field is a
+   *   formula, this alias will likely fail.
+   * @param array $params
+   *   (optional) Any parameters that should be passed through to the addField()
+   *   call.
+   *
+   * @see \Drupal\views\Plugin\views\query\Sql::addOrderBy()
+   */
+  public function addOrderBy($table, $field = NULL, $order = 'ASC', $alias = '', $params = array()) {
+    $server = $this->getIndex()->getServerInstance();
+    if ($table == 'rand') {
+      if ($server->supportsFeature('search_api_random_sort')) {
+        $this->sort('search_api_random', $order);
+        if ($params) {
+          $this->setOption('search_api_random_sort', $params);
+        }
+      }
+      else {
+        $variables['%server'] = $server->label();
+        $this->getLogger()->warning('Tried to sort results randomly on server %server which does not support random sorting.', $variables);
+      }
+    }
   }
 
   /**
@@ -1125,7 +1219,7 @@ class SearchApiQuery extends QueryPluginBase {
   }
 
   //
-  // Methods from Views' SQL query plugin (to simplify integration)
+  // Methods from Views' SQL query plugin, to simplify integration.
   //
 
   /**

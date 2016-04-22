@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\filter\SearchApiLanguage.
- */
-
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\Core\Language\LanguageInterface;

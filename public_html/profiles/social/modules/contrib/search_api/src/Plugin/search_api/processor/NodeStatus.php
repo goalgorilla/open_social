@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\NodeStatus.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\node\NodeInterface;
@@ -12,6 +7,8 @@ use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 
 /**
+ * Excludes unpublished nodes from node indexes.
+ *
  * @SearchApiProcessor(
  *   id = "node_status",
  *   label = @Translation("Node status"),

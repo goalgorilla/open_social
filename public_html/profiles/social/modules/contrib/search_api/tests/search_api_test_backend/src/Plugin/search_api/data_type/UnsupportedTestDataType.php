@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api_test_backend\Plugin\search_api\data_type\UnsupportedTestDataType.
- */
-
 namespace Drupal\search_api_test_backend\Plugin\search_api\data_type;
 
 use Drupal\search_api\DataType\DataTypePluginBase;
