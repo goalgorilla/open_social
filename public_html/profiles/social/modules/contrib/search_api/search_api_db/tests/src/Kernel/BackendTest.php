@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api_db\Kernel\BackendTest.
- */
-
 namespace Drupal\Tests\search_api_db\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -19,6 +14,7 @@ use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
+use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Tests\ExampleContentTrait;
 use Drupal\search_api\Utility;
 use Drupal\search_api_db\Plugin\search_api\backend\Database as BackendDatabase;
@@ -97,9 +93,14 @@ class BackendTest extends KernelTestBase {
     $this->updateIndex();
     $this->searchNoResults();
     $this->indexItems($this->indexId);
+    $this->checkMultiValuedInfo();
     $this->searchSuccess1();
     $this->checkFacets();
     $this->regressionTests();
+
+    $this->editServerPartial();
+    $this->searchSuccessPartial();
+
     $this->editServer();
     $this->searchSuccess2();
     $this->clearIndex();
@@ -126,7 +127,7 @@ class BackendTest extends KernelTestBase {
    * Tests that all tables and all columns have been created.
    */
   protected function checkServerTables() {
-    $db_info = \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)->get($this->indexId);
+    $db_info = $this->getIndexDbInfo();
     $normalized_storage_table = $db_info['index_table'];
     $field_tables = $db_info['field_tables'];
 
@@ -138,9 +139,11 @@ class BackendTest extends KernelTestBase {
       'name',
       'search_api_language',
       'type',
+      'width',
     );
     $actual_fields = array_keys($field_tables);
     sort($actual_fields);
+    sort($expected_fields);
     $this->assertEquals($expected_fields, $actual_fields, 'All expected field tables were created.');
 
     $this->assertTrue(\Drupal::database()->schema()->tableExists($normalized_storage_table), 'Normalized storage table exists');
@@ -182,7 +185,7 @@ class BackendTest extends KernelTestBase {
 
     $index_fields = array_keys($index->getFields());
 
-    $db_info = \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)->get($this->indexId);
+    $db_info = $this->getIndexDbInfo();
     $server_fields = array_keys($db_info['field_tables']);
 
     sort($index_fields);
@@ -231,15 +234,15 @@ class BackendTest extends KernelTestBase {
    *
    * @param string|array|null $keys
    *   (optional) The search keys to set, if any.
-   * @param array $conditions
+   * @param string[] $conditions
    *   (optional) Conditions to set on the query, in the format "field,value".
-   * @param array $fields
+   * @param string[]|null $fields
    *   (optional) Fulltext fields to search for the keys.
    *
    * @return \Drupal\search_api\Query\QueryInterface
    *   A search query on the test index.
    */
-  protected function buildSearch($keys = NULL, array $conditions = array(), array $fields = array()) {
+  protected function buildSearch($keys = NULL, array $conditions = array(), array $fields = NULL) {
     $query = $this->getIndex()->query();
     if ($keys) {
       $query->keys($keys);
@@ -268,6 +271,26 @@ class BackendTest extends KernelTestBase {
   }
 
   /**
+   * Verifies that the stored information about multi-valued fields is correct.
+   */
+  protected function checkMultiValuedInfo() {
+    $db_info = $this->getIndexDbInfo();
+    $field_info = $db_info['field_tables'];
+
+    $fields = array('name', 'body', 'type', 'keywords', 'category', 'width');
+    $multi_valued = array('name', 'body', 'keywords');
+    foreach ($fields as $field_id) {
+      $this->assertArrayHasKey($field_id, $field_info, "Field info saved for field $field_id.");
+      if (in_array($field_id, $multi_valued)) {
+        $this->assertFalse(empty($field_info[$field_id]['multi-valued']), "Field $field_id is stored as multi-value.");
+      }
+      else {
+        $this->assertTrue(empty($field_info[$field_id]['multi-valued']), "Field $field_id is not stored as multi-value.");
+      }
+    }
+  }
+
+  /**
    * Tests whether some test searches have the correct results.
    */
   protected function searchSuccess1() {
@@ -279,14 +302,13 @@ class BackendTest extends KernelTestBase {
 
     $ids = $this->getItemIds(array(2));
     $id = reset($ids);
-    if ($this->assertEquals($id, key($results->getResultItems()))) {
-      $this->assertEquals($id, $results->getResultItems()[$id]->getId());
-      $this->assertEquals('entity:entity_test', $results->getResultItems()[$id]->getDatasourceId());
-    }
+    $this->assertEquals($id, key($results->getResultItems()));
+    $this->assertEquals($id, $results->getResultItems()[$id]->getId());
+    $this->assertEquals('entity:entity_test', $results->getResultItems()[$id]->getDatasourceId());
 
     $results = $this->buildSearch('test foo')->sort('id', QueryInterface::SORT_ASC)->execute();
     $this->assertEquals(3, $results->getResultCount(), 'Search for »test foo« returned correct number of results.');
-    $this->assertEquals($this->getItemIds(array(1, 2, 4)), array_keys($results->getResultItems()),'Search for »test foo« returned correct result.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 4)), array_keys($results->getResultItems()), 'Search for »test foo« returned correct result.');
     $this->assertIgnored($results);
     $this->assertWarnings($results);
 
@@ -316,6 +338,35 @@ class BackendTest extends KernelTestBase {
     $this->assertEquals($this->getItemIds(array(4)), array_keys($results->getResultItems()), 'Complex search 1 returned correct result.');
     $this->assertIgnored($results);
     $this->assertWarnings($results);
+
+    $query = $this->buildSearch()->sort('id');
+    $conditions = $query->createConditionGroup('OR');
+    $conditions->addCondition('name', 'bar');
+    $conditions->addCondition('body', 'bar');
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertEquals(4, $results->getResultCount(), 'Search with multi-field fulltext filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3, 5)), array_keys($results->getResultItems()), 'Search with multi-field fulltext filter returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch()->addCondition('keywords', array('grape', 'apple'), 'IN')->execute();
+    $this->assertEquals(3, $results->getResultCount(), 'Query with IN filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(2, 4, 5)), array_keys($results->getResultItems()), 'Query with IN filter field returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch()->addCondition('keywords', array('grape', 'apple'), 'NOT IN')->execute();
+    $this->assertEquals(2, $results->getResultCount(), 'Query with NOT IN filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 3)), array_keys($results->getResultItems()), 'Query with NOT IN filter field returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch()->addCondition('width', array('0.9', '1.5'), 'BETWEEN')->execute();
+    $this->assertEquals(1, $results->getResultCount(), 'Query with BETWEEN filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(4)), array_keys($results->getResultItems()), 'Query with BETWEEN filter field returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
   }
 
   /**
@@ -334,9 +385,9 @@ class BackendTest extends KernelTestBase {
       'operator' => 'or',
     );
     $query->setOption('search_api_facets', $facets);
-    $query->range(0, 0);
     $results = $query->execute();
     $this->assertEquals(2, $results->getResultCount(), 'OR facets query returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(4, 5)), array_keys($results->getResultItems()));
     $expected = array(
       array('count' => 2, 'filter' => '"article_category"'),
       array('count' => 2, 'filter' => '"item_category"'),
@@ -361,9 +412,9 @@ class BackendTest extends KernelTestBase {
       'operator' => 'or',
     );
     $query->setOption('search_api_facets', $facets);
-    $query->range(0, 0);
     $results = $query->execute();
     $this->assertEquals(2, $results->getResultCount(), 'OR facets query returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(4, 5)), array_keys($results->getResultItems()));
     $expected = array(
       array('count' => 2, 'filter' => '"article_category"'),
       array('count' => 2, 'filter' => '"item_category"'),
@@ -374,12 +425,104 @@ class BackendTest extends KernelTestBase {
   }
 
   /**
+   * Edits the server to enable partial matches.
+   *
+   * @param bool $enable
+   *   (optional) Whether partial matching should be enabled or disabled.
+   */
+  protected function editServerPartial($enable = TRUE) {
+    $server = $this->getServer();
+    $backend_config = $server->getBackendConfig();
+    $backend_config['partial_matches'] = $enable;
+    $server->setBackendConfig($backend_config);
+    $this->assertTrue((bool) $server->save(), 'The server was successfully edited.');
+    $this->resetEntityCache();
+  }
+
+  /**
+   * Tests whether partial searches work.
+   */
+  protected function searchSuccessPartial() {
+    $results = $this->buildSearch('foobaz')->range(0, 1)->execute();
+    $this->assertEquals(1, $results->getResultCount(), 'Partial search for »foobaz« returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1)), array_keys($results->getResultItems()), 'Partial search for »foobaz« returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('foo')
+      ->sort('search_api_relevance', QueryInterface::SORT_DESC)
+      ->sort('id')
+      ->execute();
+    $this->assertEquals(5, $results->getResultCount(), 'Partial search for »foo« returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 4, 3, 5)), array_keys($results->getResultItems()), 'Partial search for »foo« returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('foo tes')->sort('id')->execute();
+    $this->assertEquals(4, $results->getResultCount(), 'Partial search for »foo tes« returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3, 4)), array_keys($results->getResultItems()), 'Partial search for »foo tes« returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('oob est')->sort('id')->execute();
+    $this->assertEquals(3, $results->getResultCount(), 'Partial search for »oob est« returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3)), array_keys($results->getResultItems()), 'Partial search for »oob est« returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('foo nonexistent')->execute();
+    $this->assertEquals(0, $results->getResultCount(), 'Partial search for »foo nonexistent« returned correct number of results.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('bar nonexistent')->execute();
+    $this->assertEquals(0, $results->getResultCount(), 'Partial search for »foo nonexistent« returned correct number of results.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $keys = array(
+      '#conjunction' => 'AND',
+      'oob',
+      array(
+        '#conjunction' => 'OR',
+        'est',
+        'nonexistent',
+      ),
+    );
+    $results = $this->buildSearch($keys)->sort('id')->execute();
+    $this->assertEquals(3, $results->getResultCount(), 'Partial search for complex keys returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3)), array_keys($results->getResultItems()), 'Partial search for complex keys returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $results = $this->buildSearch('foo', array('category,item_category'))
+      ->sort('id', QueryInterface::SORT_DESC)
+      ->execute();
+    $this->assertEquals(2, $results->getResultCount(), 'Partial search for »foo« with additional filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(2, 1)), array_keys($results->getResultItems()), 'Partial search for »foo« with additional filter returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $query = $this->buildSearch()->sort('id');
+    $conditions = $query->createConditionGroup('OR');
+    $conditions->addCondition('name', 'test');
+    $conditions->addCondition('body', 'test');
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertEquals(4, $results->getResultCount(), 'Partial search with multi-field fulltext filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3, 4)), array_keys($results->getResultItems()), 'Partial search with multi-field fulltext filter returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+  }
+
+  /**
    * Edits the server to change the "Minimum word length" setting.
    */
   protected function editServer() {
     $server = $this->getServer();
     $backend_config = $server->getBackendConfig();
     $backend_config['min_chars'] = 4;
+    $backend_config['partial_matches'] = FALSE;
     $server->setBackendConfig($backend_config);
     $success = (bool) $server->save();
     $this->assertTrue($success, 'The server was successfully edited.');
@@ -387,8 +530,7 @@ class BackendTest extends KernelTestBase {
     $this->clearIndex();
     $this->indexItems($this->indexId);
 
-    // Reset the internal cache so the new values will be available.
-    \Drupal::entityTypeManager()->getStorage('search_api_index')->resetCache(array($this->indexId));
+    $this->resetEntityCache();
   }
 
   /**
@@ -396,8 +538,19 @@ class BackendTest extends KernelTestBase {
    */
   protected function searchSuccess2() {
     $results = $this->buildSearch('test')->range(1, 2)->execute();
-    $this->assertEquals(4, $results->getResultCount(),'Search for »test« returned correct number of results.');
+    $this->assertEquals(4, $results->getResultCount(), 'Search for »test« returned correct number of results.');
     $this->assertEquals($this->getItemIds(array(4, 1)), array_keys($results->getResultItems()), 'Search for »test« returned correct result.');
+    $this->assertIgnored($results);
+    $this->assertWarnings($results);
+
+    $query = $this->buildSearch()->sort('id');
+    $conditions = $query->createConditionGroup('OR');
+    $conditions->addCondition('name', 'test');
+    $conditions->addCondition('body', 'test');
+    $query->addConditionGroup($conditions);
+    $results = $query->execute();
+    $this->assertEquals(4, $results->getResultCount(), 'Search with multi-field fulltext filter returned correct number of results.');
+    $this->assertEquals($this->getItemIds(array(1, 2, 3, 4)), array_keys($results->getResultItems()), 'Search with multi-field fulltext filter returned correct result.');
     $this->assertIgnored($results);
     $this->assertWarnings($results);
 
@@ -500,6 +653,25 @@ class BackendTest extends KernelTestBase {
    * Executes regression tests for issues that were already fixed.
    */
   protected function regressionTests() {
+    /** @var \Drupal\search_api\ServerInterface $second_server */
+    $second_server = Server::create(array(
+      'id' => 'test2',
+      'backend' => 'search_api_db',
+      'backend_config' => array(
+        'database' => 'default:default',
+      ),
+    ));
+    $second_server->save();
+    $query = $this->buildSearch();
+    try {
+      $second_server->search($query);
+      $this->fail('Could execute a query for an index on a different server.');
+    }
+    catch (SearchApiException $e) {
+      $this->assertTrue(TRUE, 'Executing a query for an index on a different server throws an exception.');
+    }
+    $second_server->delete();
+
     // Regression tests for #2007872.
     $results = $this->buildSearch('test')->sort('id', QueryInterface::SORT_ASC)->sort('type', QueryInterface::SORT_ASC)->execute();
     $this->assertEquals(4, $results->getResultCount(), 'Sorting on field with NULLs returned correct number of results.');
@@ -820,6 +992,17 @@ class BackendTest extends KernelTestBase {
     $this->assertEquals($this->getItemIds(array(1, 3)), array_keys($results->getResultItems()), 'Negated filter on multi-valued field returned correct result.');
     $this->assertIgnored($results);
     $this->assertWarnings($results);
+
+    // Regression tests for #2511860.
+    $query = $this->buildSearch();
+    $query->addCondition('body', 'ab xy');
+    $results = $query->execute();
+    $this->assertEquals(5, $results->getResultCount(), 'Fulltext filters on short words do not change the result.');
+
+    $query = $this->buildSearch();
+    $query->addCondition('body', 'ab ab');
+    $results = $query->execute();
+    $this->assertEquals(5, $results->getResultCount(), 'Fulltext filters on duplicate short words do not change the result.');
   }
 
   /**
@@ -879,8 +1062,8 @@ class BackendTest extends KernelTestBase {
     $this->assertTrue($success, 'The index field settings were successfully changed.');
 
     // Reset the static cache so the new values will be available.
-    \Drupal::entityTypeManager()->getStorage('search_api_server')->resetCache(array($this->serverId));
-    \Drupal::entityTypeManager()->getStorage('search_api_index')->resetCache(array($this->serverId));
+    $this->resetEntityCache('server');
+    $this->resetEntityCache();
 
     \Drupal::entityTypeManager()
       ->getStorage('entity_test')
@@ -956,7 +1139,7 @@ class BackendTest extends KernelTestBase {
    * Tests whether removing the configuration again works as it should.
    */
   protected function checkModuleUninstall() {
-    $db_info = \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)->get($this->indexId);
+    $db_info = $this->getIndexDbInfo();
     $normalized_storage_table = $db_info['index_table'];
     $field_tables = $db_info['field_tables'];
 
@@ -974,7 +1157,7 @@ class BackendTest extends KernelTestBase {
     $index->setServer();
     $index->save();
 
-    $db_info = \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)->get($this->indexId);
+    $db_info = $this->getIndexDbInfo();
     $this->assertNull($db_info, 'The index was successfully removed from the server.');
     $this->assertFalse(Database::getConnection()->schema()->tableExists($normalized_storage_table), 'The index tables were deleted.');
     foreach ($field_tables as $field_table) {
@@ -988,7 +1171,7 @@ class BackendTest extends KernelTestBase {
     $index->save();
     $server->delete();
 
-    $db_info = \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)->get($this->indexId);
+    $db_info = $this->getIndexDbInfo();
     $this->assertNull($db_info, 'The index was successfully removed from the server.');
     $this->assertFalse(Database::getConnection()->schema()->tableExists($normalized_storage_table), 'The index tables were deleted.');
     foreach ($field_tables as $field_table) {
@@ -1073,6 +1256,31 @@ class BackendTest extends KernelTestBase {
     $field = Utility::createField($index, $property_name, $field_info);
     $index->addField($field);
     $index->save();
+  }
+
+  /**
+   * Resets the entity cache for the specified entity.
+   *
+   * @param string $type
+   *   (optional) The type of entity whose cache should be reset. Either "index"
+   *   or "server".
+   */
+  protected function resetEntityCache($type = 'index') {
+    $entity_type_id = 'search_api_' . $type;
+    \Drupal::entityTypeManager()
+      ->getStorage($entity_type_id)
+      ->resetCache(array($this->{$type . 'Id'}));
+  }
+
+  /**
+   * Retrieves the database information for the test index.
+   *
+   * @return array
+   *   The database information stored by the backend for the test index.
+   */
+  protected function getIndexDbInfo() {
+    return \Drupal::keyValue(BackendDatabase::INDEXES_KEY_VALUE_STORE_ID)
+      ->get($this->indexId);
   }
 
 }

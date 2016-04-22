@@ -1,16 +1,14 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\Transliteration.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
+use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\search_api\Processor\FieldsProcessorPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Makes searches insensitive to accents and other non-ASCII characters.
+ *
  * @SearchApiProcessor(
  *   id = "transliteration",
  *   label = @Translation("Transliteration"),
@@ -72,7 +70,7 @@ class Transliteration extends FieldsProcessorPluginBase {
    *
    * @return $this
    */
-  public function setTransliterator($transliterator) {
+  public function setTransliterator(TransliterationInterface $transliterator) {
     $this->transliterator = $transliterator;
     return $this;
   }

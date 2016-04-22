@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\TokenizerTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Component\Utility\Unicode;
@@ -74,17 +69,57 @@ class TokenizerTest extends UnitTestCase {
       array('words!word', array(Utility::createTextToken('words'), $word_token)),
       array('words$word', array(Utility::createTextToken('words'), $word_token)),
       // Test whether overriding the default works and is case-insensitive.
-      array('wordXwordxword', array($word_token, Utility::createTextToken('wordxword')), array('spaces' => 'X')),
-      array('word3word!word', array($word_token, Utility::createTextToken('word!word')), array('spaces' => '\d')),
-      array('wordXwordRword', array($word_token, $word_token, $word_token), array('spaces' => 'R-Z')),
-      array('wordXwordRword', array($word_token, $word_token, $word_token), array('spaces' => 'R-TW-Z')),
-      array('wordXword word', array($word_token, $word_token, $word_token), array('spaces' => 'R-Z')),
+      array(
+        'wordXwordxword',
+        array($word_token, Utility::createTextToken('wordxword')),
+        array('spaces' => 'X'),
+      ),
+      array(
+        'word3word!word',
+        array($word_token, Utility::createTextToken('word!word')),
+        array('spaces' => '\d'),
+      ),
+      array(
+        'wordXwordRword',
+        array($word_token, $word_token, $word_token),
+        array('spaces' => 'R-Z'),
+      ),
+      array(
+        'wordXwordRword',
+        array($word_token, $word_token, $word_token),
+        array('spaces' => 'R-TW-Z'),
+      ),
+      array(
+        'wordXword word',
+        array($word_token, $word_token, $word_token),
+        array('spaces' => 'R-Z'),
+      ),
       // Test whether minimum word size works.
-      array('wordSwo', array($word_token), array('spaces' => 'R-Z')),
-      array('wordSwo', array($word_token, Utility::createTextToken('wo')), array('spaces' => 'R-Z', 'minimum_word_size' => 2)),
-      array('word w', array($word_token), array('minimum_word_size' => 2)),
-      array('word w', array($word_token, Utility::createTextToken('w')), array('minimum_word_size' => 1)),
-      array('word wordword', array(), array('minimum_word_size' => 10)),
+      array(
+        'wordSwo',
+        array($word_token),
+        array('spaces' => 'R-Z'),
+      ),
+      array(
+        'wordSwo',
+        array($word_token, Utility::createTextToken('wo')),
+        array('spaces' => 'R-Z', 'minimum_word_size' => 2),
+      ),
+      array(
+        'word w',
+        array($word_token),
+        array('minimum_word_size' => 2),
+      ),
+      array(
+        'word w',
+        array($word_token, Utility::createTextToken('w')),
+        array('minimum_word_size' => 1),
+      ),
+      array(
+        'word wordword',
+        array(),
+        array('minimum_word_size' => 10),
+      ),
     );
   }
 
@@ -201,9 +236,10 @@ class TokenizerTest extends UnitTestCase {
   /**
    * Converts a Unicode code point to a UTF-8 string.
    *
-   * chr() only works for ASCII characters up to character 255. This function
-   * converts a number to the corresponding unicode character. Adapted from
-   * functions supplied in comments on several functions on php.net.
+   * The PHP function "chr()" only works for ASCII characters up to character
+   * 255. This function converts a number to the corresponding unicode
+   * character. Adapted from functions supplied in comments on several functions
+   * on php.net.
    *
    * @param int $num
    *   A Unicode code point.
@@ -323,11 +359,31 @@ class TokenizerTest extends UnitTestCase {
    */
   public function searchSimplifyPunctuationProvider() {
     $cases = array(
-      array('20.03/94-28,876', '20039428876', 'Punctuation removed from numbers'),
-      array('great...drupal--module', 'great drupal module', 'Multiple dot and dashes are word boundaries'),
-      array('very_great-drupal.module', 'verygreatdrupalmodule', 'Single dot, dash, underscore are removed'),
-      array('regular,punctuation;word', 'regular punctuation word', 'Punctuation is a word boundary'),
-      array('Äußerung français repülőtér', 'Äußerung français repülőtér', 'Umlauts and accented characters are not treated as word boundaries'),
+      array(
+        '20.03/94-28,876',
+        '20039428876',
+        'Punctuation removed from numbers',
+      ),
+      array(
+        'great...drupal--module',
+        'great drupal module',
+        'Multiple dot and dashes are word boundaries',
+      ),
+      array(
+        'very_great-drupal.module',
+        'verygreatdrupalmodule',
+        'Single dot, dash, underscore are removed',
+      ),
+      array(
+        'regular,punctuation;word',
+        'regular punctuation word',
+        'Punctuation is a word boundary',
+      ),
+      array(
+        'Äußerung français repülőtér',
+        'Äußerung français repülőtér',
+        'Umlauts and accented characters are not treated as word boundaries',
+      ),
     );
     return $cases;
   }

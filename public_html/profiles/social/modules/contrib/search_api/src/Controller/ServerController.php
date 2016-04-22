@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Controller\ServerController.
- */
-
 namespace Drupal\search_api\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -73,7 +68,7 @@ class ServerController extends ControllerBase {
     drupal_set_message($this->t('The search server %name has been enabled.', array('%name' => $search_api_server->label())));
 
     // Redirect to the server's "View" page.
-    $url = $search_api_server->urlInfo('canonical');
+    $url = $search_api_server->toUrl('canonical');
     return $this->redirect($url->getRouteName(), $url->getRouteParameters());
   }
 

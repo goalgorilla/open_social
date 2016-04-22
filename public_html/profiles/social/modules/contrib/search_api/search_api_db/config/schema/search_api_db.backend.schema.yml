@@ -1,4 +1,4 @@
-search_api.backend.plugin.search_api_db:
+plugin.plugin_configuration.search_api_backend.search_api_db:
   type: mapping
   label: 'Search API DB settings'
   mapping:
@@ -7,7 +7,10 @@ search_api.backend.plugin.search_api_db:
       label: 'Name of the database we are connecting to'
     min_chars:
       type: 'integer'
-      label: '@todo'
+      label: 'Minimum length of indexed words'
+    partial_matches:
+      type: 'boolean'
+      label: 'Whether to also search on parts of a word'
     autocomplete:
       type: mapping
       label: Autcomplete configuration

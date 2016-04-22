@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\AddURL.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Core\TypedData\DataDefinition;
@@ -12,6 +7,8 @@ use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 
 /**
+ * Adds the item's URL to the indexed data.
+ *
  * @SearchApiProcessor(
  *   id = "add_url",
  *   label = @Translation("URL field"),

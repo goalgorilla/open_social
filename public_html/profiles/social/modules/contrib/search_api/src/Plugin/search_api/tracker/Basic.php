@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\tracker\Basic.
- */
-
 namespace Drupal\search_api\Plugin\search_api\tracker;
 
 use Drupal\Core\Database\Connection;

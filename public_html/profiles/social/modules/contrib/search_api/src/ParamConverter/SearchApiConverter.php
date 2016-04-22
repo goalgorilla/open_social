@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\ParamConverter\SearchApiConverter.
- */
-
 namespace Drupal\search_api\ParamConverter;
 
 use Drupal\Core\Entity\EntityManagerInterface;

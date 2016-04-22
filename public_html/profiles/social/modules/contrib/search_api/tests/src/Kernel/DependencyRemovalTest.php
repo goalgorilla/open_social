@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\DependencyRemovalTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Utility;
 
 /**
  * Tests what happens when an index's dependencies are removed.
@@ -38,6 +36,7 @@ class DependencyRemovalTest extends KernelTestBase {
   public static $modules = array(
     'user',
     'system',
+    'field',
     'search_api',
     'search_api_test_backend',
     'search_api_test_dependencies',
@@ -63,14 +62,14 @@ class DependencyRemovalTest extends KernelTestBase {
       'tracker_settings' => array(
         'default' => array(
           'plugin_id' => 'default',
-          'settings' => array()
-        )
+          'settings' => array(),
+        ),
       ),
       'datasource_settings' => array(
         'entity:user' => array(
           'plugin_id' => 'entity:user',
           'settings' => array(),
-        )
+        ),
       ),
     ));
 
@@ -82,6 +81,46 @@ class DependencyRemovalTest extends KernelTestBase {
       'backend' => 'search_api_test_backend',
     ));
     $this->dependency->save();
+  }
+
+  /**
+   * Tests index with a field dependency that gets removed.
+   */
+  public function testFieldDependency() {
+    // Add new field storage and field definitions.
+    /** @var \Drupal\field\FieldStorageConfigInterface $field_storage */
+    $field_storage = FieldStorageConfig::create(array(
+      'field_name' => 'field_search',
+      'type' => 'string',
+      'entity_type' => 'user',
+    ));
+    $field_storage->save();
+    $field_search = FieldConfig::create(array(
+      'field_name' => 'field_search',
+      'field_type' => 'string',
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'label' => 'Search Field',
+    ));
+    $field_search->save();
+
+    // Create a Search API field/item and add it to the current index.
+    $field = Utility::createFieldFromProperty($this->index, $field_storage->getPropertyDefinition('value'), 'entity:user', 'field_search', NULL, 'string');
+    $field->setLabel('Search Field');
+    $this->index->addField($field);
+    $this->index->save();
+
+    // New field has been added to the list of dependencies.
+    $config_dependencies = \Drupal::config('search_api.index.' . $this->index->id())->get('dependencies.config');
+    $this->assertContains($field_storage->getConfigDependencyName(), $config_dependencies);
+
+    // Remove a dependent field.
+    $field_storage->delete();
+
+    // Index has not been deleted and index dependencies were updated.
+    $this->reloadIndex();
+    $dependencies = \Drupal::config('search_api.index.' . $this->index->id())->get('dependencies');
+    $this->assertFalse(isset($dependencies['config'][$field_storage->getConfigDependencyName()]));
   }
 
   /**
@@ -135,7 +174,7 @@ class DependencyRemovalTest extends KernelTestBase {
     // Set our magic state key to let the test plugin know whether the
     // dependency should be removed or not. See
     // \Drupal\search_api_test_backend\Plugin\search_api\backend\TestBackend::onDependencyRemoval().
-    $key = 'search_api_test_backend.dependencies.remove';
+    $key = 'search_api_test_backend.return.onDependencyRemoval';
     \Drupal::state()->set($key, $remove_dependency);
 
     // Delete the backend's dependency.
@@ -191,8 +230,11 @@ class DependencyRemovalTest extends KernelTestBase {
     $datasources['entity:user'] = $manager->createInstance('entity:user', array('index' => $this->index));
     $datasources['search_api_test_dependencies'] = $manager->createInstance(
       'search_api_test_dependencies',
-      array($dependency_key => array($dependency_name),
-        'index' => $this->index));
+      array(
+        $dependency_key => array($dependency_name),
+        'index' => $this->index,
+      )
+    );
     $this->index->setDatasources($datasources);
 
     $this->index->save();

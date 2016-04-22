@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Task\IndexTaskManager.
- */
-
 namespace Drupal\search_api\Task;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

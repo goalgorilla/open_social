@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\cache\SearchApiCache.
- */
-
 namespace Drupal\search_api\Plugin\views\cache;
 
 use Drupal\search_api\SearchApiException;

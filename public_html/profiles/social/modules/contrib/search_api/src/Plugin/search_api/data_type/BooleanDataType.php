@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\data_type\BooleanDataType.
- */
-
 namespace Drupal\search_api\Plugin\search_api\data_type;
 
 use Drupal\search_api\DataType\DataTypePluginBase;
@@ -15,6 +10,7 @@ use Drupal\search_api\DataType\DataTypePluginBase;
  * @SearchApiDataType(
  *   id = "boolean",
  *   label = @Translation("Boolean"),
+ *   description = @Translation("Boolean fields can only have one of two values: true or false."),
  *   default = "true"
  * )
  */

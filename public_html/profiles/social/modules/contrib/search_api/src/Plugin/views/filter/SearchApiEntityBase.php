@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\filter\SearchApiEntityBase.
- */
-
 namespace Drupal\search_api\Plugin\views\filter;
 
 use Drupal\Component\Utility\Tags;
@@ -19,7 +14,7 @@ abstract class SearchApiEntityBase extends SearchApiString {
   use UncacheableDependencyTrait;
 
   /**
-   * Where the $query object will reside:
+   * The query plugin for the current view.
    *
    * @var \Drupal\search_api\Plugin\views\query\SearchApiQuery
    */

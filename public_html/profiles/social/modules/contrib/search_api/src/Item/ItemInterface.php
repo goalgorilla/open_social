@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\ItemInterface.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -149,13 +144,13 @@ interface ItemInterface extends \Traversable {
    * some of its extracted fields have been removed and that it should extract
    * them again when necessary.
    *
-   * @param bool $fieldsExtracted
+   * @param bool $fields_extracted
    *   TRUE if all field values have been extracted already for this item. FALSE
    *   otherwise.
    *
    * @return $this
    */
-  public function setFieldsExtracted($fieldsExtracted);
+  public function setFieldsExtracted($fields_extracted);
 
   /**
    * Returns the score of the item.
