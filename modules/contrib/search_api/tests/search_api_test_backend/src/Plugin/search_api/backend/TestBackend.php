@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api_test_backend\Plugin\search_api\backend\TestBackend.
- */
-
 namespace Drupal\search_api_test_backend\Plugin\search_api\backend;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -24,6 +19,21 @@ use Drupal\search_api\Utility;
  * )
  */
 class TestBackend extends BackendPluginBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preUpdate() {
+    $this->checkError(__FUNCTION__);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postUpdate() {
+    $this->checkError(__FUNCTION__);
+    return $this->getReturnValue(__FUNCTION__, FALSE);
+  }
 
   /**
    * {@inheritdoc}
@@ -163,14 +173,14 @@ class TestBackend extends BackendPluginBase {
    * {@inheritdoc}
    */
   public function isAvailable() {
-    return \Drupal::state()->get('search_api_test_backend.available', TRUE);
+    return $this->getReturnValue(__FUNCTION__, TRUE);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDiscouragedProcessors() {
-    return \Drupal::state()->get('search_api_test_backend.discouraged_processors', array());
+    return $this->getReturnValue(__FUNCTION__, array());
   }
 
   /**
@@ -184,8 +194,7 @@ class TestBackend extends BackendPluginBase {
    * {@inheritdoc}
    */
   public function onDependencyRemoval(array $dependencies) {
-    $key = 'search_api_test_backend.dependencies.remove';
-    $remove = \Drupal::state()->get($key, FALSE);
+    $remove = $this->getReturnValue(__FUNCTION__, FALSE);
     if ($remove) {
       unset($this->configuration['dependencies']);
     }
@@ -212,6 +221,22 @@ class TestBackend extends BackendPluginBase {
     $methods_called = $state->get($key, array());
     $methods_called[] = $method;
     $state->set($key, $methods_called);
+  }
+
+  /**
+   * Retrieves the value to return for a certain method.
+   *
+   * @param string $method
+   *   The name of the called method.
+   * @param mixed $default
+   *   (optional) The default return value.
+   *
+   * @return mixed
+   *   The value to return from the method.
+   */
+  protected function getReturnValue($method, $default = NULL) {
+    $key = "search_api_test_backend.return.$method";
+    return \Drupal::state()->get($key, $default);
   }
 
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\ViewsTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\Component\Utility\Html;
@@ -54,8 +49,16 @@ class ViewsTest extends WebTestBase {
   public function testView() {
     $this->checkResults(array(), array_keys($this->entities), 'Unfiltered search');
 
-    $this->checkResults(array('search_api_fulltext' => 'foobar'), array(3), 'Search for a single word');
-    $this->checkResults(array('search_api_fulltext' => 'foo test'), array(1, 2, 4), 'Search for multiple words');
+    $this->checkResults(
+      array('search_api_fulltext' => 'foobar'),
+      array(3),
+      'Search for a single word'
+    );
+    $this->checkResults(
+      array('search_api_fulltext' => 'foo test'),
+      array(1, 2, 4),
+      'Search for multiple words'
+    );
     $query = array(
       'search_api_fulltext' => 'foo test',
       'search_api_fulltext_op' => 'or',
@@ -229,7 +232,7 @@ class ViewsTest extends WebTestBase {
     $this->assertText($this->t('Relevance'));
     $this->assertText($this->t('The relevance of this search result with respect to the query'));
     $this->assertText($this->t('Language code'));
-    $this->assertText($this->t('The language code of the test entity.'));
+    $this->assertText($this->t('The user language code.'));
     $this->assertText($this->t('(No description available)'));
     $this->assertNoText($this->t('Error: missing help'));
 
@@ -253,6 +256,13 @@ class ViewsTest extends WebTestBase {
     for ($i = 0; $i < count($fields); ++$i) {
       $this->submitFieldsForm();
     }
+
+    $this->clickLink($this->t('Add filter criteria'));
+    $edit = array(
+      'name[search_api_index_database_search_index.name]' => 'search_api_index_database_search_index.name',
+    );
+    $this->drupalPostForm(NULL, $edit, $this->t('Add and configure filter criteria'));
+    $this->submitPluginForm(array());
 
     // Save the view.
     $this->drupalPostForm(NULL, array(), $this->t('Save'));
@@ -332,6 +342,16 @@ class ViewsTest extends WebTestBase {
         break;
     }
 
+    $this->submitPluginForm($edit);
+  }
+
+  /**
+   * Submits a Views plugin's configuration form.
+   *
+   * @param array $edit
+   *   The values to set in the form.
+   */
+  protected function submitPluginForm(array $edit) {
     $button_label = $this->t('Apply');
     $buttons = $this->xpath('//input[starts-with(@value, :label)]', array(':label' => $button_label));
     if ($buttons) {

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\Resources\UnicodeCharacterPropertyInterface.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor\Resources;
 
 /**

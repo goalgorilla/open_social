@@ -33,7 +33,6 @@ class SearchContentForm extends FormBase {
 
     $form['search_input'] = array(
       '#type' => 'textfield',
-      '#title' => t('Search the entire website'),
     );
 
     // Prefill search input on the search content page.

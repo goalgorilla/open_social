@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Processor\ProcessorInterface.
- */
-
 namespace Drupal\search_api\Processor;
 
 use Drupal\search_api\Datasource\DatasourceInterface;

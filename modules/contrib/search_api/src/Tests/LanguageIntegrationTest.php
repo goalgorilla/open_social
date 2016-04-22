@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\LanguageIntegrationTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\language\Entity\ConfigurableLanguage;
@@ -20,7 +15,12 @@ class LanguageIntegrationTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('node', 'search_api', 'search_api_test_backend', 'language');
+  public static $modules = array(
+    'node',
+    'search_api',
+    'search_api_test_backend',
+    'language',
+  );
 
   /**
    * {@inheritdoc}
@@ -122,4 +122,5 @@ class LanguageIntegrationTest extends WebTestBase {
     $index = Index::load($this->indexId);
     return $index->getTrackerInstance()->getTotalItemsCount();
   }
+
 }

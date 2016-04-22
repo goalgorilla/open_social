@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Query\ResultsCache.
- */
-
 namespace Drupal\search_api\Query;
 
 use Symfony\Component\HttpFoundation\RequestStack;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Query\ConditionInterface.
- */
-
 namespace Drupal\search_api\Query;
 
 /**

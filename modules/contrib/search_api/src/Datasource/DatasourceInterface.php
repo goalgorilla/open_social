@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Datasource\DatasourceInterface.
- */
-
 namespace Drupal\search_api\Datasource;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
@@ -128,7 +123,6 @@ interface DatasourceInterface extends IndexPluginInterface {
    */
   public function getViewModes($bundle = NULL);
 
-
   /**
    * Retrieves the bundles associated to this datasource.
    *
@@ -200,5 +194,18 @@ interface DatasourceInterface extends IndexPluginInterface {
    *   following pages.
    */
   public function getItemIds($page = NULL);
+
+  /**
+   * Retrieves any dependencies of the given fields.
+   *
+   * @param string[] $fields
+   *   An array of property paths on this datasource, keyed by field IDs.
+   *
+   * @return string[][][]
+   *   An associative array containing the dependencies of the given fields. The
+   *   array is keyed by field ID and dependency type, the values are arrays
+   *   with dependency names.
+   */
+  public function getFieldDependencies(array $fields);
 
 }

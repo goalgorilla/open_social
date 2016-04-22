@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Annotation\SearchApiTracker.
- */
-
 namespace Drupal\search_api\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

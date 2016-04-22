@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tracker\TrackerPluginBase.
- */
-
 namespace Drupal\search_api\Tracker;
 
 use Drupal\search_api\Plugin\IndexPluginBase;

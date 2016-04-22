@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\UnsavedConfigurationInterface.
- */
-
 namespace Drupal\search_api;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

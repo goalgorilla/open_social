@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\LanguageTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
 use Drupal\Core\Language\Language as CoreLanguage;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\search_api\Plugin\search_api\processor\Language;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\Tests\UnitTestCase;
 
 /**
