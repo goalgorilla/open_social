@@ -71,7 +71,7 @@
             <li class="collection-item">
                 <h4>{% trans %}Contact information{% endtrans %}</h4>
             </li>
-            {% if content.field_profile_phone_number %}
+            {% if content.field_profile_phone_number|render %}
             <li class="collection-item">
                 <div class="collection-label">{% trans %}Phone{% endtrans %}</div>
                 <div class="collection-field">{{ content.field_profile_phone_number }}</div>
@@ -81,7 +81,7 @@
                 <div class="collection-label">{% trans %}E-mail{% endtrans %}</div>
                 <div class="collection-field"><a href="{{ user_mail }}">{{ user_mail }}</a></div>
             </li>
-            {% if content.field_profile_address %}
+            {% if content.field_profile_address|render %}
             <li class="collection-item">
                 <div class="collection-label">{% trans %}Address{% endtrans %}</div>
                 <div class="collection-field">
@@ -91,7 +91,7 @@
             {% endif %}
         </ul>
 
-        {% if content.field_profile_self_introduction %}
+        {% if content.field_profile_self_introduction|render %}
             <h4>{% trans %}Intro{% endtrans %}</h4>
             {{ content.field_profile_self_introduction }}
         {% endif %}
