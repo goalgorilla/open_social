@@ -148,12 +148,3 @@ function social_profile_user_insert(UserInterface $account) {
     $profile->save();
   }
 }
-/*
- * Implements hook_menu_local_tasks_alter().
- */
-function social_profile_menu_local_tasks_alter(&$data, $route_name) {
-  // Rewrite title for /user/{uid} from view to information.
-  if (!empty($data['tabs'][0]['entity.user.canonical'])) {
-    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = 'Information';
-  }
-}
