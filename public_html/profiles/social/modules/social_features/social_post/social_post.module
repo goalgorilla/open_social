@@ -50,3 +50,18 @@ function social_post_theme() {
   ];
   return $items;
 }
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function social_post_theme_suggestions_post(array $variables) {
+  $suggestions = array();
+  $post = $variables['elements']['#post'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'post__' . $sanitized_view_mode;
+  $suggestions[] = 'post__' . $post->id();
+  $suggestions[] = 'post__' . $post->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
