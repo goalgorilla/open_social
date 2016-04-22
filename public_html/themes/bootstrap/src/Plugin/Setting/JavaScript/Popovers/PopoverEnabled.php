@@ -39,4 +39,11 @@ class PopoverEnabled extends SettingBase {
     $group->setProperty('description', t('Add small overlays of content, like those on the iPad, to any element for housing secondary information.'));
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function drupalSettings() {
+    return !!$this->theme->getSetting('popover_enabled');
+  }
+
 }

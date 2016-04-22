@@ -8,7 +8,8 @@ module.exports = function (grunt, options) {
       // @see https://github.com/wecodemore/grunt-githooks/pull/40
       'pre-commit': 'pre-commit',
       'post-merge': 'post-merge',
-      'post-checkout': 'post-checkout'
+      'post-checkout': 'post-checkout',
+      'post-commit': 'post-commit'
     }
   };
 };

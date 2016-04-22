@@ -1,146 +1,60 @@
-/**
- * uisearch.js v1.0.0
- * http://www.codrops.com
- *
- * Licensed under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
- *
- * Copyright 2013, Codrops
- * http://www.codrops.com
- */
-;( function( window ) {
+(function ($) {
 
-	'use strict';
+  Drupal.behaviors.searchBoxResize = {
 
-	// EventListener | @jon_neal | //github.com/jonathantneal/EventListener
-	!window.addEventListener && window.Element && (function () {
-	   function addToPrototype(name, method) {
-		  Window.prototype[name] = HTMLDocument.prototype[name] = Element.prototype[name] = method;
-	   }
+    attach: function (context, settings) {
 
-	   var registry = [];
+      clearSearchTimer = null;
 
-	   addToPrototype("addEventListener", function (type, listener) {
-		  var target = this;
+      // Listen for the nav search button click
+  		$('#navbar-search .form-submit').on('click', function (e) {
+        handleButtonClick(e);
+  		});
 
-		  registry.unshift({
-			 __listener: function (event) {
-				event.currentTarget = target;
-				event.pageX = event.clientX + document.documentElement.scrollLeft;
-				event.pageY = event.clientY + document.documentElement.scrollTop;
-				event.preventDefault = function () { event.returnValue = false };
-				event.relatedTarget = event.fromElement || null;
-				event.stopPropagation = function () { event.cancelBubble = true };
-				event.relatedTarget = event.fromElement || null;
-				event.target = event.srcElement || target;
-				event.timeStamp = +new Date;
+  		// When the search field loses focus
+  		$('#navbar-search .form-control').on('blur', function (e) {
+        handleFieldBlur(e);
+  		});
 
-				listener.call(target, event);
-			 },
-			 listener: listener,
-			 target: target,
-			 type: type
-		  });
+      function handleButtonClick(e) {
 
-		  this.attachEvent("on" + type, registry[0].__listener);
-	   });
+    		e.preventDefault();
+    		var form = $(e.currentTarget).closest('form');
+    		var input = form.find('.form-control');
+    		var keyword = input.val();
 
-	   addToPrototype("removeEventListener", function (type, listener) {
-		  for (var index = 0, length = registry.length; index < length; ++index) {
-			 if (registry[index].target == this && registry[index].type == type && registry[index].listener == listener) {
-				return this.detachEvent("on" + type, registry.splice(index, 1)[0].__listener);
-			 }
-		  }
-	   });
+    		if ($.trim(keyword) === '') {
+    			// When there is no keyword, just open the bar
+    			form.addClass('is-open');
+    			input.focus();
+    		}
 
-	   addToPrototype("dispatchEvent", function (eventObject) {
-		  try {
-			 return this.fireEvent("on" + eventObject.type, eventObject);
-		  } catch (error) {
-			 for (var index = 0, length = registry.length; index < length; ++index) {
-				if (registry[index].target == this && registry[index].type == eventObject.type) {
-				   registry[index].call(this, eventObject);
-				}
-			 }
-		  }
-	   });
-	})();
+    		else {
+    			// When there is a keyword, submit the keyword
+    			form.addClass('is-open');
+    			form.submit();
 
-	function isMobile() {
-		try{ document.createEvent("TouchEvent"); return true; }
-		catch(e){ return false; }
-	}
+    			// Clear the timer that removes the keyword
+    			clearTimeout(this.clearSearchTimer);
+    		}
+    	};
 
-	// http://www.jonathantneal.com/blog/polyfills-and-prototypes/
-	!String.prototype.trim && (String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g, '');
-	});
+      function handleFieldBlur(e) {
+    		// When the search field loses focus
+    		var input = $(e.currentTarget);
+    		var form = input.closest('form');
 
-	function UISearch( el, options ) {
-		this.el = el;
-		this.inputEl = el.querySelector( 'input.search__input' );
-		this._initEvents();
-	}
+    		// Collapse the search field
+    		form.removeClass('is-open');
 
-	UISearch.prototype = {
-		_initEvents : function() {
-			var self = this,
-				initSearchFn = function( ev ) {
-					ev.stopPropagation();
-					// trim its value
-					self.inputEl.value = self.inputEl.value.trim();
+    		// Clear the textfield after 300 seconds (the time it takes to collapse the field)
+    		clearTimeout(this.clearSearchTimer);
+    		this.clearSearchTimer = setTimeout(function () {
+    			input.val('');
+    		}, 300);
+    	};
 
-					if( !classie.has( self.el, 'search-open' ) ) { // open it
-						ev.preventDefault();
-						self.open();
-					}
-					else if( classie.has( self.el, 'search-open' ) && /^\s*$/.test( self.inputEl.value ) ) { // close it
-						ev.preventDefault();
-						self.close();
-					}
-				}
+    }
 
-			this.el.addEventListener( 'click', initSearchFn );
-			this.el.addEventListener( 'touchstart', initSearchFn );
-			this.inputEl.addEventListener( 'click', function( ev ) { ev.stopPropagation(); });
-			this.inputEl.addEventListener( 'touchstart', function( ev ) { ev.stopPropagation(); } );
-		},
-		open : function() {
-			var self = this;
-			classie.add( this.el, 'search-open' );
-			// focus the input
-			if( !isMobile() ) {
-				this.inputEl.focus();
-			}
-			// close the search input if body is clicked
-			var bodyFn = function( ev ) {
-				self.close();
-				this.removeEventListener( 'click', bodyFn );
-				this.removeEventListener( 'touchstart', bodyFn );
-			};
-			document.addEventListener( 'click', bodyFn );
-			document.addEventListener( 'touchstart', bodyFn );
-		},
-		close : function() {
-			this.inputEl.blur();
-			classie.remove( this.el, 'search-open' );
-		}
-	}
-
-	// add to global namespace
-	window.UISearch = UISearch;
-
-} )( window );
-
-jQuery(document).ready(function($){
-
-  'use strict';
-
-  $('.site-logo').click(function(event){
-    e.preventDefault();
-    $("html, body").animate({ scrollTop: 0 });
-  });
-
-  new UISearch( document.getElementById( 'search-wrapper' ) );
-
-});
+  };
+})(jQuery);

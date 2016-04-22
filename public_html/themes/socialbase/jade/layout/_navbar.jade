@@ -1,7 +1,7 @@
 .header__wrapper
   .header__innerwrapper.container
     .row
-      .col.s12
+      .col-xs-12
         if page
           h1.header__title #{page}
         else
@@ -36,6 +36,8 @@ ul#nav-mobile.side-nav.fixed
           | Components
         .collapsible-body
           ul
+            li(class=(page == "Navigation" ? "active" : ""))
+              a(href='navigation.html') Navigation
             li(class=(page == "Breadcrumbs" ? "active" : ""))
               a(href='breadcrumbs.html') Breadcrumbs
             li(class=(page == "Cards" ? "active" : ""))

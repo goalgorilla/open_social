@@ -18,7 +18,7 @@ var gulp          = require('gulp'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
     uglify        = require('gulp-uglify'),
-    cssnano       = require('gulp-cssnano'),
+    nano          = require('gulp-cssnano'),
     connect       = require('gulp-connect'),
     plumber       = require('gulp-plumber'),
     deploy        = require('gulp-gh-pages');
@@ -28,24 +28,25 @@ var gulp          = require('gulp'),
 // ===================================================
 
 var folder = {
-  dist: 'dist',
-  jade: 'jade',
   css: 'css',
   scss: 'css/src',
+  bootstrap_scss: 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap',
+  bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts',
   js: 'js',
   js_comp: 'js/components',
-  js_project: 'js/project',
-  data: 'locales',
+  js_materialize: 'js/materialize',
   js_vendor: '../../core/assets/vendor',
-  js_drupal: '../../core'
+  js_drupal: '../../core',
+  jade: 'jade',
+  dist: 'dist'
 }
 
 var glob = {
-  jade: folder.jade + '/*.jade',
   css: folder.css + '/*.css',
   scss: folder.css + '/src/**/*.scss',
+  bootstrap_scss: folder.bootstrap_scss + '/**/*.scss',
   js: folder.js + '/**/*.js',
-  data: folder.data + '/**/*.json',
+  jade: folder.jade + '/*.jade',
   font: 'font/**/*',
   images: 'images/**/*',
   content: 'content/**/*',
@@ -79,6 +80,9 @@ gulp.task('css', function () {
     }))
     .pipe( sourcemaps.init() )
     .pipe( sass() )
+    .pipe( nano( {
+      mergeRules: true
+    }) )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
     .pipe( sourcemaps.write('.') )
@@ -119,14 +123,12 @@ gulp.task('script-components', function() {
     folder.js_comp + "/jquery.easing.1.3.js",
     folder.js_comp + "/animation.js",
     folder.js_comp + "/velocity.min.js",
-    folder.js_comp + "/classie.js",
     folder.js_comp + "/hammer.min.js",
     folder.js_comp + "/jquery.hammer.js",
     folder.js_comp + "/global.js",
     folder.js_comp + "/responsive-dom.js",
     folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
-    folder.js_comp + "/droppanel.js",
     folder.js_comp + "/scrollspy.js",
     folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
@@ -146,12 +148,11 @@ gulp.task('script-components', function() {
 });
 
 // get project scripts and make available for dist in one file
-gulp.task('script-project', function() {
+gulp.task('script-materialize', function() {
   return gulp.src([
-    folder.js_project + "/ui-search.js",
-    folder.js_project + "/main-menu.js"
+    folder.js_materialize + "/navbar-search.js",
     ])
-    .pipe( concat('project.js') )
+    .pipe( concat('materialize.js') )
     .pipe( gulp.dest(folder.js) )
     //.pipe( uglify() )
     .pipe( gulp.dest(folder.dist + '/js') )
@@ -167,6 +168,11 @@ gulp.task('script-vendor', function() {
     'js/vendor/jquery.touch-swipe.js'
   ])
   .pipe( concat('vendor.js') )
+  .pipe( gulp.dest(folder.dist + '/js') );
+});
+
+gulp.task('jqueryminmap', function() {
+  return gulp.src(folder.js_vendor + '/jquery/jquery.min.map')
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
@@ -231,6 +237,24 @@ gulp.task('libs', function() {
 
 
 // ===================================================
+// Import Bootstrap assets
+// ===================================================
+
+gulp.task('bootstrap-sass', function() {
+  stream = gulp.src(glob.bootstrap_scss)
+    .pipe( gulp.dest(folder.scss + '/bootstrap') )
+  return stream;
+});
+
+gulp.task('bootstrap-js', function() {
+  stream = gulp.src(folder.bootstrap_js + '/bootstrap.min.js')
+    .pipe( gulp.dest(folder.js) )
+    .pipe( gulp.dest(folder.dist + "/js") )
+  return stream;
+});
+
+
+// ===================================================
 // Set up a server
 // ===================================================
 
@@ -261,8 +285,8 @@ gulp.task('watch', function() {
   ], ['scripts']);
 
   gulp.watch([
-    folder.js_project + '/**/*.js'
-  ], ['script-project']);
+    folder.js_materialize + '/**/*.js'
+  ], ['script-materialize']);
 
   gulp.watch([
     folder.js + "/init.js"
@@ -291,7 +315,14 @@ gulp.task('deploy', ['build'], function() {
     .pipe( deploy() );
 });
 
-gulp.task('scripts', ['script-components', 'script-project', 'script-vendor', 'script-drupal', 'script-init']);
+
+// ===================================================
+// Run this one time when you install the project so you have all files in the dist folder
+// ===================================================
+gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap']);
+
+
+gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
 
 gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);
 

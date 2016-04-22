@@ -15,15 +15,10 @@ use Drupal\Core\Annotation\Translation;
  *
  * @BootstrapSetting(
  *   id = "popover_trigger",
- *   type = "checkboxes",
+ *   type = "select",
  *   title = @Translation("trigger"),
  *   description = @Translation("How a popover is triggered."),
- *   defaultValue = {
- *     "click" = "click",
- *     "hover" = 0,
- *     "focus" = 0,
- *     "manual" = 0,
- *   },
+ *   defaultValue = "click",
  *   options = {
  *     "click" = @Translation("click"),
  *     "hover" = @Translation("hover"),

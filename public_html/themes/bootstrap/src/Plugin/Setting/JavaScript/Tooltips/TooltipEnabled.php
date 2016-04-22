@@ -41,4 +41,11 @@ class TooltipEnabled extends SettingBase {
     ]));
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function drupalSettings() {
+    return !!$this->theme->getSetting('tooltip_enabled');
+  }
+
 }

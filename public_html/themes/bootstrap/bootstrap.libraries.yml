@@ -1,14 +1,24 @@
-# Placeholder for the "base-theme" library.
-# @see \Drupal\bootstrap\Plugin\Alter\LibraryInfo
-base-theme:
-  css: {}
+attributes:
+  js:
+    js/attributes.js: {}
+  dependencies:
+    - core/jquery
+    - core/underscore
+
+drupal.bootstrap:
   js:
     js/drupal.bootstrap.js: {}
   dependencies:
-    - core/underscore
     - core/jquery
     - core/drupal
     - core/drupalSettings
+
+theme:
+  js:
+    js/theme.js: {}
+  dependencies:
+    - bootstrap/drupal.bootstrap
+    - bootstrap/attributes
 
 theme-settings:
   js:
@@ -23,36 +33,40 @@ dropdown:
   js:
     js/dropdown.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
 
 modal:
   js:
     js/modal.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
 
 popover:
   js:
     js/popover.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
 
 tooltip:
   js:
     js/tooltip.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
 
 # libraries-extend
 drupal.ajax:
   js:
     js/misc/ajax.js: {}
 
+drupal.autocomplete:
+  js:
+    js/misc/autocomplete.js: {}
+
 drupal.form:
   js:
     js/misc/form.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
 
 drupal.progress:
   js:
@@ -66,7 +80,20 @@ drupal.tabledrag:
   js:
     js/misc/tabledrag.js: {}
 
+views.ajax:
+  js:
+    js/modules/views/ajax_view.js: {}
+
 # libraries-override
+drupal.batch:
+  js:
+    js/misc/batch.js: { cache: false }
+  dependencies:
+    - bootstrap/theme
+    - core/drupal.ajax
+    - core/drupal.progress
+    - core/jquery.once
+
 drupal.dialog:
   js:
     js/misc/dialog.js: {}
@@ -80,6 +107,15 @@ drupal.dialog.ajax:
     - core/drupal.ajax
     - bootstrap/drupal.dialog
 
+drupal.filter:
+  version: VERSION
+  js:
+    js/modules/filter/filter.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
+
 drupal.text:
   js:
     js/text/text.js: {}
@@ -92,7 +128,7 @@ drupal.vertical-tabs:
   js:
     js/misc/vertical-tabs.js: {}
   dependencies:
-    - bootstrap/base-theme
+    - bootstrap/theme
     - core/jquery.once
     - core/drupal.form
     - core/matchmedia

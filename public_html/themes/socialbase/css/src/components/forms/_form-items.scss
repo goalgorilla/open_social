@@ -1,43 +1,31 @@
+label {
+  font-weight: 300;
+}
+
+.form__label {
+  font-size: 0.875rem;
+  cursor: text;
+}
+
 .label--option {
   font-size: $label-font-size;
   color: $grey-dark-1;
 }
 
-.form__label {
-  display: block;
-  font-size: 0.875rem;
-  opacity: 0.75;
-  cursor: text;
-  font-weight: 300;
-  transition: .2s ease-out;
-  color: $grey-dark-1;
-  margin-bottom: 3px;
-}
-
-form p {
-  margin-bottom: 10px;
-}
-
-.form-required::after {
-  content: '';
-  vertical-align: super;
-  display: inline-block;
-  background: url(../images/required.svg) 0/6px no-repeat;
-  width: 6px;
-  height: 6px;
-  margin: 0 5px;
-}
-
 .form-item {
   position: relative;
+  margin-bottom: 1.25rem;
 }
 
-.form__item-help-text {
+.form-actions {
+  margin-bottom: 1.25rem;
+  margin-top: 2.50rem;
+}
+
+.help-block {
   text-align: right;
-  margin: 0;
-  color: inherit;
-  opacity: .7;
   font-size: 0.75rem;
+  max-width: $form-control-max-width; // match max width of form-controls
 }
 
 .form__item--description {

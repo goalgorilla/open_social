@@ -1,50 +1,79 @@
 @charset "UTF-8";
 
 // Mixins
-@import "mixins/mixins";
-@import "base/shadows";
 
-// Variables;
-@import "base/variables";
-@import "mixins/styles";
+//
+// Variables and mixins
+@import "materialize/variables";
+@import "bootstrap/mixins";
+@import "materialize/mixins";
 
-// Reset
-@import "base/normalize";
+//
+// Reset and dependencies
+@import "bootstrap/normalize";
+@import "bootstrap/print";
+@import "materialize/icons";
+@import "materialize/fonts";
 
 //
 // Base
 @import "base/color";
-@import "base/global";
 @import "base/animations";
-@import "base/fonts";
-@import "base/typography";
 @import "base/visibility";
-@import "base/icons";
-@import "base/tables";
+
+//
+// Bootstrap components that are used @version 3.3.6
+@import "bootstrap/scaffolding";
+@import "bootstrap/buttons";
+@import "bootstrap/breadcrumbs";
+@import "bootstrap/forms";
+@import "bootstrap/pagination";
+@import "bootstrap/type";
+@import "bootstrap/forms";
+@import "bootstrap/component-animations";
+@import "bootstrap/navbar";
+@import "bootstrap/navs";
+@import "bootstrap/dropdowns";
+@import "bootstrap/badges";
+@import "bootstrap/list-group";
+@import "bootstrap/media";
+@import "bootstrap/input-groups";
+@import "bootstrap/button-groups";
+
+
+//
+// Materialize style components
+@import "materialize/breadcrumbs";
+@import "materialize/cards";
+@import "materialize/elevation";
+@import "materialize/forms";
+@import "materialize/grid"; // This is the Bootstrap v4.0 grid system
+@import "materialize/hero";
+@import "materialize/pagination";
+@import "materialize/scaffolding";
+@import "materialize/navbar";
+@import "materialize/dropdowns";
+@import "materialize/badges";
+@import "materialize/type";
+@import "materialize/collection";
+@import "materialize/chips";
+@import "materialize/table-of-contents";
+@import "materialize/media";
+@import "materialize/stream";
+@import "materialize/list-group";
 
 //
 // Components
 @import "components/buttons";
-@import "components/dropdown";
-@import "components/collection";
 @import "components/waves";
 @import "components/collapsible";
-@import "components/cards";
 @import "components/tabs";
-@import "components/breadcrumbs";
-@import "components/table-of-contents";
-@import "components/teaser";
 @import "components/off-canvas";
-@import "components/pagination";
 
-@import "components/forms/inputs";
-@import "components/forms/radio";
 @import "components/forms/checkbox";
 @import "components/forms/file-input";
-@import "components/forms/selects";
 @import "components/forms/switch";
 @import "components/forms/range";
-@import "components/forms/form-items";
 
 @import "components/date_picker/default";
 @import "components/date_picker/default.date";
@@ -52,15 +81,10 @@
 
 // Layout
 @import "layout/layout";
-@import "layout/grid";
 
-//
-// Project
-@import "project/header";
-@import "project/search";
-@import "project/hamburger";
-@import "project/forms";
-@import "project/hero";
+// Utility classes
+@import "bootstrap/utilities";
+@import "bootstrap/responsive-utilities";
 
 //
 // Theme

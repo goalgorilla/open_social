@@ -12,30 +12,45 @@
  * @ingroup templates
  */
 #}
+<a href="#" class="navbar-brand">
+  <object id="front-page-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
+</a>
 
-<ul class="header-menu list-unstyled">
-{% for item in links %}
+<div class="navbar-header">
+  <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
+  <ul class="nav navbar-nav navbar-right">
+  {% for item in links %}
+      <li class="{{ item.classes }}">
+          <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+              <i title="{{ item.label }}" class="material-icons {{ item.icon_classes }}">{{ item.icon_label|lower }}</i>
+              <span class="{{item.label_classes}}">{{ item.label }}</span>
+          </a>
+          {% if item.below %}
+            <ul class="dropdown-menu">
+              {% for item in item.below %}
+                <li class="{{ item.classes }}">
+                  <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+                    <span class="{{item.label_classes}}">{{ item.label }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+      </li>
+  {% endfor %}
+  </ul>
+</div>
 
-    <li class="menu__item {{ item.classes }}">
-        <a href="{{ item.url }}" {{item.link_attributes|raw }} class="menu__link {{ item.link_classes }}">
-            <div class="b-menu {{ item.icon_classes }}">
-              <i title="{{ item.label }}" class="material-icons">{{ item.icon_label|lower }}</i>
-            </div>
-            <span class="menu__label {{item.label_classes}}">{{ item.label }}</span>
-        </a>
-
+<div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
+  <ul class="nav navbar-nav">
+    <li><a href="#">Explore</a></li>
+    <li>
+      <form role="search" class="navbar-form navbar-left">
+        <div id="navbar-search" class="form-group">
+          <input id="search" type="text" placeholder="Search" name="search" class="form-control">
+          <input type="submit" value="" class="form-submit"><span class="search-icon"><i class="material-icons">search</i></span>
+        </div>
+      </form>
     </li>
-{% endfor %}
-
-  {# This menu item is used to open the main menu for mobile, as the class says it is hidden on desktop. Admins must not disable the main menu. #}
-  <li class="menu__item hidden-desktop">
-    <a href="#0" data-panel="#menu-panel" title="Show menu" class="menu__link panel-trigger">
-      <div class="b-menu">
-        <div class="b-bun b-bun--top"></div>
-        <div class="b-bun b-bun--mid"></div>
-        <div class="b-bun b-bun--bottom"></div>
-      </div>
-      <span class="menu__label hidden">menu</span>
-    </a>
-  </li>
-</ul>
+  </ul>
+</div>
