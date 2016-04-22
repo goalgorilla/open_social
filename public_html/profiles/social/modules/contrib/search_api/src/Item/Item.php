@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\Item.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\Core\TypedData\ComplexDataInterface;

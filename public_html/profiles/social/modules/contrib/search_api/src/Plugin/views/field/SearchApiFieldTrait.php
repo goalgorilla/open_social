@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\field\SearchApiFieldTrait.
- */
-
 namespace Drupal\search_api\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityInterface;

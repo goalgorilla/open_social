@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\IgnoreCharacters.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -12,6 +7,8 @@ use Drupal\Core\Url;
 use Drupal\search_api\Processor\FieldsProcessorPluginBase;
 
 /**
+ * Configure types of characters which should be ignored for searches.
+ *
  * @SearchApiProcessor(
  *   id = "ignore_character",
  *   label = @Translation("Ignore characters"),
@@ -87,7 +84,6 @@ class IgnoreCharacters extends FieldsProcessorPluginBase {
 
     return $form;
   }
-
 
   /**
    * {@inheritdoc}

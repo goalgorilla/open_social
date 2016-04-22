@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\data_type\StringDataType.
- */
-
 namespace Drupal\search_api\Plugin\search_api\data_type;
 
 use Drupal\search_api\DataType\DataTypePluginBase;
@@ -15,6 +10,7 @@ use Drupal\search_api\DataType\DataTypePluginBase;
  * @SearchApiDataType(
  *   id = "string",
  *   label = @Translation("String"),
+ *   description = @Translation("String fields are used for short, keyword-like character strings where you only want to find complete field values, not individual words."),
  *   default = "true"
  * )
  */

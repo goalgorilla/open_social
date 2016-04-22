@@ -1,15 +1,12 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\argument\SearchApiDate.
- */
-
 namespace Drupal\search_api\Plugin\views\argument;
 
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\search_api\UncacheableDependencyTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a contextual filter for conditions on date fields.
@@ -21,6 +18,48 @@ use Drupal\search_api\UncacheableDependencyTrait;
 class SearchApiDate extends SearchApiStandard {
 
   use UncacheableDependencyTrait;
+
+  /**
+   * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface|null
+   */
+  protected $dateFormatter;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /** @var static $plugin */
+    $plugin = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+
+    $plugin->setDateFormatter($container->get('date.formatter'));
+
+    return $plugin;
+  }
+
+  /**
+   * Retrieves the date formatter.
+   *
+   * @return \Drupal\Core\Datetime\DateFormatterInterface
+   *   The date formatter.
+   */
+  public function getDateFormatter() {
+    return $this->dateFormatter ?: \Drupal::service('date.formatter');
+  }
+
+  /**
+   * Sets the date formatter.
+   *
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The new date formatter.
+   *
+   * @return $this
+   */
+  public function setDateFormatter(DateFormatterInterface $date_formatter) {
+    $this->dateFormatter = $date_formatter;
+    return $this;
+  }
 
   /**
    * {@inheritdoc}
@@ -84,14 +123,14 @@ class SearchApiDate extends SearchApiStandard {
         $date_parts = explode(';', $date);
 
         $ts = $this->getTimestamp($date_parts[0]);
-        $datestr = format_date($ts, 'short');
+        $date_string = $this->getDateFormatter()->format($ts, 'short');
         if (count($date_parts) > 1) {
           $ts = $this->getTimestamp($date_parts[1]);
-          $datestr .= ' – ' . format_date($ts, 'short');
+          $date_string .= ' – ' . $this->getDateFormatter()->format($ts, 'short');
         }
 
-        if ($datestr) {
-          $dates[] = $datestr;
+        if ($date_string) {
+          $dates[] = $date_string;
         }
       }
       return $dates ? implode(', ', $dates) : Html::escape($this->argument);

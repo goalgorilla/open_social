@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Query\ResultSetInterface.
- */
-
 namespace Drupal\search_api\Query;
 
 use Drupal\search_api\Item\ItemInterface;

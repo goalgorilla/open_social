@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tracker\TrackerPluginManager.
- */
-
 namespace Drupal\search_api\Tracker;
 
 use Drupal\Component\Utility\Html;

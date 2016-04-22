@@ -5,9 +5,12 @@
  * Provides a rich framework for creating searches.
  */
 
+use Drupal\comment\Entity\Comment;
 use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+use Drupal\search_api\Entity\Index;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
 
@@ -240,6 +243,49 @@ function search_api_entity_delete(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_node_access_records_alter().
+ *
+ * Marks the node and its comments changed for indexes that use the "Content
+ * access" processor.
+ */
+function search_api_node_access_records_alter(&$grants, NodeInterface $node) {
+  /** @var \Drupal\search_api\IndexInterface $index */
+  foreach (Index::loadMultiple() as $index) {
+    if (!$index->hasValidTracker() || !$index->status()) {
+      continue;
+    }
+    if (empty($index->getProcessors()['content_access'])) {
+      continue;
+    }
+
+    foreach ($index->getDatasources() as $datasource_id => $datasource) {
+      switch ($datasource->getEntityTypeId()) {
+        case 'node':
+          $item_id = $datasource->getItemId($node->getTypedData());
+          $index->trackItemsUpdated($datasource_id, array($item_id));
+          break;
+
+        case 'comment':
+          if (!isset($comments)) {
+            $entity_query = \Drupal::entityQuery('comment');
+            $entity_query->condition('entity_id', (int) $node->id());
+            $entity_query->condition('entity_type', 'node');
+            $comment_ids = $entity_query->execute();
+            /** @var \Drupal\comment\CommentInterface[] $comments */
+            $comments = Comment::loadMultiple($comment_ids);
+          }
+          $item_ids = array();
+          foreach ($comments as $comment) {
+            $item_ids[] = $datasource->getItemId($comment->getTypedData());
+          }
+          $index->trackItemsUpdated($datasource_id, $item_ids);
+          break;
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function search_api_theme() {
@@ -247,6 +293,14 @@ function search_api_theme() {
     'search_api_admin_fields_table' => array(
       'render element' => 'element',
       'function' => 'theme_search_api_admin_fields_table',
+      'file' => 'search_api.theme.inc',
+    ),
+    'search_api_admin_data_type_table' => array(
+      'variables' => array(
+        'data_types' => array(),
+        'fallback_mapping' => array()
+      ),
+      'function' => 'theme_search_api_admin_data_type_table',
       'file' => 'search_api.theme.inc',
     ),
     'search_api_form_item_list' => array(

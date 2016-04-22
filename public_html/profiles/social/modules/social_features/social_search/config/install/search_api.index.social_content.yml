@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - search_api.server.social_database
+    - core.entity_view_mode.node.search_index
   module:
     - search_api
     - node
@@ -70,11 +71,6 @@ processor_settings:
     settings:
       weights:
         preprocess_index: -30
-  language:
-    plugin_id: language
-    settings:
-      weights:
-        preprocess_index: -30
   content_access:
     plugin_id: content_access
     settings:
@@ -116,6 +112,11 @@ processor_settings:
       weights:
         preprocess_index: -10
         preprocess_query: -10
+  language:
+    plugin_id: language
+    settings:
+      weights:
+        preprocess_index: -30
   node_status:
     plugin_id: node_status
     settings:

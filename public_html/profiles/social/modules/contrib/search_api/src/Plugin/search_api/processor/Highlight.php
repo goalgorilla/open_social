@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\Highlight.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Component\Utility\Html;
@@ -18,6 +13,8 @@ use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\search_api\Utility;
 
 /**
+ * Adds a highlighted excerpt to results and highlights returned fields.
+ *
  * @SearchApiProcessor(
  *   id = "highlight",
  *   label = @Translation("Highlight"),
@@ -466,7 +463,7 @@ class Highlight extends ProcessorPluginBase {
     $working_from = $working_to = NULL;
     foreach ($ranges as $this_from => $this_to) {
       $max_end = max($max_end, $this_to);
-      if (is_null($working_from)) {
+      if ($working_from === NULL) {
         // This is the first time through this loop: initialize.
         $working_from = $this_from;
         $working_to = $this_to;
@@ -499,7 +496,9 @@ class Highlight extends ProcessorPluginBase {
     $ellipses = $this->getEllipses();
     $excerpt = $ellipses[0] . implode($ellipses[1], $out) . $ellipses[2];
 
-    return $this->highlightField($excerpt, $keys);
+    // Since we stripped the tags at the beginning, highlighting doesn't need to
+    // handle HTML anymore.
+    return $this->highlightField($excerpt, $keys, FALSE);
   }
 
   /**
@@ -509,11 +508,22 @@ class Highlight extends ProcessorPluginBase {
    *   The text of the field.
    * @param array $keys
    *   The search keywords entered by the user.
+   * @param bool $html
+   *   (optional) Whether the text can contain HTML tags or not. In the former
+   *   case, text inside tags (i.e., tag names and attributes) won't be
+   *   highlighted.
    *
    * @return string
-   *   The field's text with all occurrences of search keywords highlighted.
+   *   The given text with all occurrences of search keywords highlighted.
    */
-  protected function highlightField($text, array $keys) {
+  protected function highlightField($text, array $keys, $html = TRUE) {
+    if ($html) {
+      $texts = preg_split('#((?:</?[[:alpha:]](?:[^>"\']*|"[^"]*"|\'[^\']\')*>)+)#i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+      for ($i = 0; $i < count($texts); $i += 2) {
+        $texts[$i] = $this->highlightField($texts[$i], $keys, FALSE);
+      }
+      return implode('', $texts);
+    }
     $replace = $this->configuration['prefix'] . '\0' . $this->configuration['suffix'];
     $keys = implode('|', array_map('preg_quote', $keys, array_fill(0, count($keys), '/')));
     $text = preg_replace('/' . self::$boundary . '(' . $keys . ')' . self::$boundary . '/iu', $replace, ' ' . $text . ' ');

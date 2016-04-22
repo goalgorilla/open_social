@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Plugin\views\field\SearchApiEntityField.
- */
-
 namespace Drupal\search_api\Plugin\views\field;
 
 use Drupal\Core\Form\FormHelper;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\search_api\Plugin\views\EntityFieldRenderer;
 use Drupal\search_api\Utility;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Form\SubFormState.
- */
-
 namespace Drupal\search_api\Form;
 
 use Drupal\Component\Utility\NestedArray;
@@ -563,7 +558,7 @@ class SubFormState implements FormStateInterface {
    */
   public function getLimitValidationErrors() {
     $limit_validation_errors = $this->mainFormState->getLimitValidationErrors();
-    if (is_null($limit_validation_errors)) {
+    if ($limit_validation_errors === NULL) {
       return NULL;
     }
     $return = array();
