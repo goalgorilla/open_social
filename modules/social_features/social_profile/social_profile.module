@@ -123,7 +123,7 @@ function social_profile_preprocess_profile(&$variables) {
   $profile_url = $user->toUrl();
 
   $variables['profile_name'] = $profile_name;
-  $variables['profile_url'] = $profile_url;
+  $variables['profile_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
 
   // Edit profile URL
   $account = \Drupal::currentUser();
