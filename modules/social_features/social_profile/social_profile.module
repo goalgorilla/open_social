@@ -39,6 +39,10 @@ function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
   }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
 }
 
 /**
@@ -49,6 +53,25 @@ function social_profile_form_profile_profile_edit_form_alter(&$form, \Drupal\Cor
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
   }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for profile_profile_edit_form and profile_profile_add_form.
+ *
+ */
+function _social_profile_profile_edit_form_submit($form, FormStateInterface $form_state) {
+  // Set redirect to the profile overview page when a user saves their profile.
+  $form_state->setRedirect(
+    'view.user_information.user_information',
+    array('user' =>\Drupal::currentUser()->id(), array())
+  );
 }
 
 /**
