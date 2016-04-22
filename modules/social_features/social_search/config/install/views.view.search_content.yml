@@ -1,3 +1,4 @@
+uuid: 01d43915-bc86-457f-bb14-f6c724f9398d
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,8 @@ dependencies:
   module:
     - search_api
     - user
+_core:
+  default_config_hash: ISut19TboE0JJZ4wrxAbuXlOWxtg9HDLiaRy-3NjGNs
 id: search_content
 label: 'Search Content'
 module: views
@@ -26,8 +29,12 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
-        options: {  }
+        type: search_api
+        options:
+          results_lifespan: '3600'
+          results_lifespan_custom: '0'
+          output_lifespan: '3600'
+          output_lifespan_custom: '0'
       query:
         type: views_query
         options:
