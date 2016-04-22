@@ -34,12 +34,10 @@
             {% endif %}
             <small>{{ date }}</small>
           </h5>
-          {% if content.links %}
-          <div class="btn-group pull-right">
+          <!-- <div class="btn-group pull-right">
             <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">mode_edit</i></button>
-            {{ content.links }}
-          </div>
-          {% endif %}
+             {content.links}
+          </div> -->
         </div>
       </div>
       <p class="margin-top-s">
@@ -47,6 +45,9 @@
           {{- content.field_post -}}
         {% endif %}
       </p>
+      {% if content.links %}
+        {{ content.links }}
+      {% endif %}
       <div class="card-nested-section">
         {% if content.field_post_comments %}
           {{ content.field_post_comments }}
