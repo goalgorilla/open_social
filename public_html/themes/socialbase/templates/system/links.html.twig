@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default theme implementation for a set of links.
+ * Theme override for a set of links.
  *
  * Available variables:
  * - attributes: Attributes for the UL containing the list of links.
@@ -13,6 +13,7 @@
  *     to l() as its $options parameter.
  *   - attributes: (optional) HTML attributes for the anchor, or for the <span>
  *     tag if no 'href' is supplied.
+ *   - link_key: The link CSS class.
  * - heading: (optional) A heading to precede the links.
  *   - text: The heading text.
  *   - level: The heading level (e.g. 'h2', 'h3').
@@ -29,8 +30,6 @@
  *   http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  *
  * @see template_preprocess_links()
- *
- * @ingroup themeable
  */
 #}
 {% if links -%}
@@ -41,9 +40,13 @@
       <h2{{ heading.attributes }}>{{ heading.text }}</h2>
     {%- endif -%}
   {%- endif -%}
+  {%- if attributes.hasClass('inline') -%}
+  <ul{{ attributes.addClass('list-inline') }}>
+  {%- else -%}
   <ul{{ attributes }}>
-    {%- for item in links -%}
-      <li{{ item.attributes }}>
+  {%- endif -%}
+    {%- for key, item in links -%}
+      <li{{ item.attributes.addClass('btn btn-link') }}>
         {%- if item.link -%}
           {{ item.link }}
         {%- elseif item.text_attributes -%}
