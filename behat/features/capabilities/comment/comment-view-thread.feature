@@ -22,4 +22,4 @@ Feature: See Comment
       | Add a comment | This is a second comment |
     And I press "Comment"
     Then I should see "This is a second comment"
-    And "This is a second comment" should precede "This is a first comment" for the query ".js-comment div"
+    And "This is a first comment" should precede "This is a second comment" for the query ".js-comment div"
