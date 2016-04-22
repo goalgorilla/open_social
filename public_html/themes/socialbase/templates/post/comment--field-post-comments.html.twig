@@ -69,16 +69,15 @@
 
 <div class="media">
   <div class="media-left">
-
+  {% if author_picture %}
+    {{ author_picture }}
+  {% endif %}
   </div>
   <div class="media-body">
     <h5 class="media-heading">
-      <a href="other-stream.html">{{ author }} </a>• <small>{{ submitted }}</small>
+      {{ author }} • <small>{{ submitted }}
     </h5>
-    <div class="btn-group pull-right">
-      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">mode_edit</i></button>
-      {{ content.links }}
-    </div>
     <p>{{ content.field_comment_body }}</p>
+    {{ content.links }}
   </div>
 </div>
