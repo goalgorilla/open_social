@@ -24,7 +24,7 @@ Feature: Search
     And I should see "Topic one"
     And I should not see "Event second"
     # Scenario: Successfully filter search results
-    When I select "topic" from "Content type"
-    And I press "Filter" in the "Sidebar second"
-    And I should see "Topic one"
-    And I should not see "Event one"
+#    When I select "topic" from "Content type"
+#    And I press "Filter" in the "Sidebar second"
+#    And I should see "Topic one"
+#    And I should not see "Event one"

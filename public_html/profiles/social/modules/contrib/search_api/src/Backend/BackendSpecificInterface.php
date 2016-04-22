@@ -78,6 +78,18 @@ interface BackendSpecificInterface {
   public function supportsDataType($type);
 
   /**
+   * Limits the processors displayed in the UI for indexes on this server.
+   *
+   * Returns an array of processor IDs that should not be enabled for this
+   * backend. It is a bad idea, for example, to have the "Tokenizer" processor
+   * enabled when using a Solr backend.
+   *
+   * @return string[]
+   *   A list of processor IDs.
+   */
+  public function getDiscouragedProcessors();
+
+  /**
    * Adds a new index to this server.
    *
    * If the index was already added to the server, the object should treat this

@@ -189,6 +189,13 @@ class Server extends ConfigEntityBase implements ServerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getDiscouragedProcessors() {
+    return $this->getBackend()->getDiscouragedProcessors();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function addIndex(IndexInterface $index) {
     $server_task_manager = \Drupal::getContainer()->get('search_api.server_task_manager');
     // When freshly adding an index to a server, it doesn't make any sense to

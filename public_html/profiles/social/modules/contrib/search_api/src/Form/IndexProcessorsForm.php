@@ -93,7 +93,6 @@ class IndexProcessorsForm extends EntityForm {
 
     if ($this->entity->getServerInstance()) {
       $backend_discouraged_processors = $this->entity->getServerInstance()
-        ->getBackend()
         ->getDiscouragedProcessors();
 
       foreach ($backend_discouraged_processors as $processor_id) {

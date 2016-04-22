@@ -124,4 +124,11 @@ abstract class DatasourcePluginBase extends IndexPluginBase implements Datasourc
     return array();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldDependencies(array $fields) {
+    return array();
+  }
+
 }

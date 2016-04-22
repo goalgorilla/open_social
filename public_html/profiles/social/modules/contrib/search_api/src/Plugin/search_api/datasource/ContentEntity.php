@@ -11,16 +11,21 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
+use Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\field\FieldConfigInterface;
+use Drupal\field\FieldStorageConfigInterface;
 use Drupal\search_api\Datasource\DatasourcePluginBase;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\SearchApiException;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Utility;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -581,7 +586,7 @@ class ContentEntity extends DatasourcePluginBase {
    */
   public function getItemId(ComplexDataInterface $item) {
     if ($item instanceof EntityAdapter) {
-      return $item->getValue()->id() . ':' . $item->getValue()->language();
+      return $item->getValue()->id() . ':' . $item->getValue()->language()->getId();
     }
     return NULL;
   }
@@ -856,33 +861,89 @@ class ContentEntity extends DatasourcePluginBase {
 
     $this->addDependency('module', $this->getEntityType()->getProvider());
 
-    // @todo This should definitely be the responsibility of the index class,
-    //   this is nothing specific to the datasource.
-    $fields = array();
-    foreach ($this->getIndex()->getFields() as $field) {
-      if ($field->getDatasourceId() === $this->pluginId) {
-        $fields[] = $field->getPropertyPath();
-      }
-    }
-    if ($field_dependencies = $this->getFieldDependencies($this->getEntityTypeId(), $fields)) {
-      $this->addDependencies(array('config' => $field_dependencies));
+    return $this->dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldDependencies(array $fields) {
+    $dependencies = array();
+    $properties = $this->getPropertyDefinitions();
+
+    foreach ($fields as $field_id => $property_path) {
+      $dependencies[$field_id] = $this->getPropertyPathDependencies($property_path, $properties);
     }
 
-    return $this->dependencies;
+    return $dependencies;
+  }
+
+  /**
+   * Computes all dependencies of the given property path.
+   *
+   * @param string $property_path
+   *   The property path of the property.
+   * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $properties
+   *   The properties which form the basis for the property path.
+   *
+   * @return string[][]
+   *   An associative array with the dependencies for the given property path,
+   *   mapping dependency types to arrays of dependency names.
+   */
+  protected function getPropertyPathDependencies($property_path, array $properties) {
+    $dependencies = array();
+
+    list($key, $nested_path) = Utility::splitPropertyPath($property_path, FALSE);
+    if (!isset($properties[$key])) {
+      return $dependencies;
+    }
+
+    $property = $properties[$key];
+    if ($property instanceof FieldConfigInterface) {
+      $storage = $property->getFieldStorageDefinition();
+      if ($storage instanceof FieldStorageConfigInterface) {
+        $name = $storage->getConfigDependencyName();
+        $dependencies[$storage->getConfigDependencyKey()][$name] = $name;
+      }
+    }
+
+    $property = Utility::getInnerProperty($property);
+
+    if ($property instanceof EntityDataDefinitionInterface) {
+      $entity_type_definition = $this->getEntityTypeManager()
+        ->getDefinition($property->getEntityTypeId());
+      if ($entity_type_definition) {
+        $module = $entity_type_definition->getProvider();
+        $dependencies['module'][$module] = $module;
+      }
+    }
+
+    if (isset($nested_path) && $property instanceof ComplexDataDefinitionInterface) {
+      $nested_dependencies = $this->getPropertyPathDependencies($nested_path, $property->getPropertyDefinitions());
+      foreach ($nested_dependencies as $type => $names) {
+        $dependencies += array($type => array());
+        $dependencies[$type] += $names;
+      }
+    }
+
+    return array_map('array_values', $dependencies);
   }
 
   /**
    * Returns an array of config entity dependencies.
    *
    * @param string $entity_type_id
-   *   The entity type to which these fields are attached.
+   *   The entity type to which the fields are attached.
    * @param string[] $fields
-   *   An array of property paths on items of this entity type.
+   *   An array of property paths of fields from this entity type.
+   * @param string[] $all_fields
+   *   An array of property paths of all the fields from this datasource.
    *
    * @return string[]
-   *   An array of IDs of entities on which this datasource depends.
+   *   An array keyed by the IDs of entities on which this datasource depends.
+   *   The values are containing list of Search API fields.
    */
-  protected function getFieldDependencies($entity_type_id, $fields) {
+  public function getFieldDependenciesForEntityType($entity_type_id, array $fields, array $all_fields) {
     $field_dependencies = array();
 
     // Figure out which fields are directly on the item and which need to be
@@ -894,8 +955,10 @@ class ContentEntity extends DatasourcePluginBase {
         list($direct, $nested) = explode(':entity:', $field, 2);
         $nested_fields[$direct][] = $nested;
       }
-      elseif (strpos($field, ':') === FALSE) {
-        $direct_fields[] = $field;
+      else {
+        // Support nested Search API fields.
+        $base_field_name = explode(':', $field, 2)[0];
+        $direct_fields[$base_field_name] = TRUE;
       }
     }
 
@@ -903,20 +966,34 @@ class ContentEntity extends DatasourcePluginBase {
     foreach (array_keys($this->getEntityTypeBundleInfo()->getBundleInfo($entity_type_id)) as $bundle) {
       foreach ($this->getEntityFieldManager()->getFieldDefinitions($entity_type_id, $bundle) as $field_name => $field_definition) {
         if ($field_definition instanceof FieldConfigInterface) {
-          if (in_array($field_name, $direct_fields) || isset($nested_fields[$field_name])) {
-            $field_dependencies[$field_definition->getConfigDependencyName()] = TRUE;
+          if (isset($direct_fields[$field_name]) || isset($nested_fields[$field_name])) {
+            // Make a mapping of dependencies and fields that depend on them.
+            $storage_definition = $field_definition->getFieldStorageDefinition();
+            if (!$storage_definition instanceof EntityInterface) {
+              continue;
+            }
+            $dependency = $storage_definition->getConfigDependencyName();
+            $search_api_fields = array();
+
+            // Get a list of enabled fields on the datasource.
+            foreach ($all_fields as $field_id => $property_path) {
+              if (strpos($property_path, $field_definition->getName()) !== FALSE) {
+                $search_api_fields[] = $field_id;
+              }
+            }
+            $field_dependencies[$dependency] = $search_api_fields;
           }
 
           // Recurse for nested fields.
           if (isset($nested_fields[$field_name])) {
             $entity_type = $field_definition->getSetting('target_type');
-            $field_dependencies += $this->getFieldDependencies($entity_type, $nested_fields[$field_name]);
+            $field_dependencies += $this->getFieldDependenciesForEntityType($entity_type, $nested_fields[$field_name], $all_fields);
           }
         }
       }
     }
 
-    return array_keys($field_dependencies);
+    return $field_dependencies;
   }
 
   /**

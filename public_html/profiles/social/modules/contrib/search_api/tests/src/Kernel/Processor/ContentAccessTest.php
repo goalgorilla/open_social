@@ -273,6 +273,29 @@ class ContentAccessTest extends ProcessorTestBase {
   }
 
   /**
+   * Tests that acquiring node grants leads to re-indexing of that node.
+   */
+  public function testNodeGrantsChange() {
+    $this->index->setOption('index_directly', FALSE)->save();
+    $this->index->indexItems();
+    $remaining = $this->index->getTrackerInstance()->getRemainingItems();
+    $this->assertEquals(array(), $remaining, 'All items were indexed.');
+
+    /** @var \Drupal\node\NodeAccessControlHandlerInterface $access_control_handler */
+    $access_control_handler = \Drupal::entityTypeManager()
+      ->getAccessControlHandler('node');
+    $access_control_handler->acquireGrants($this->nodes[0]);
+
+    $expected = array(
+      'entity:comment/' . $this->comments[0]->id() . ':en',
+      'entity:node/' . $this->nodes[0]->id() . ':en',
+    );
+    $remaining = $this->index->getTrackerInstance()->getRemainingItems();
+    sort($remaining);
+    $this->assertEquals($expected, $remaining, 'The expected items were marked as "changed" when changing node access grants.');
+  }
+
+  /**
    * Asserts that the search results contain the expected IDs.
    *
    * @param ResultSetInterface $result
