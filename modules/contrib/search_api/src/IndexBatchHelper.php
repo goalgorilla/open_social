@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\IndexBatchHelper.
- */
-
 namespace Drupal\search_api;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -116,11 +111,11 @@ class IndexBatchHelper {
    *   The maximum number of items to index per batch pass.
    * @param int $limit
    *   The maximum number of items to index in total, or -1 to index all items.
-   * @param array $context
+   * @param array|\ArrayAccess $context
    *   The current batch context, as defined in the
    *   @link batch Batch operations @endlink documentation.
    */
-  public static function process(IndexInterface $index, $batch_size, $limit, array &$context) {
+  public static function process(IndexInterface $index, $batch_size, $limit, &$context) {
     // Check if the sandbox should be initialized.
     if (!isset($context['sandbox']['limit'])) {
       // Initialize the sandbox with data which is shared among the batch runs.

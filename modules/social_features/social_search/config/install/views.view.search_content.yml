@@ -27,7 +27,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'access content search'
       cache:
         type: search_api
         options:
@@ -144,11 +144,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -165,6 +162,7 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -177,7 +175,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: search_api_string
+          reduce_duplicates: false
+          plugin_id: search_api_options
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -191,8 +190,21 @@ display:
           expose:
             label: ''
           plugin_id: search_api
-      title: 'Search Content'
-      header: {  }
+      title: 'Search content'
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<p>If you are searching for users, <a href="/search/users">click here</a></p>'
+            format: basic_html
+          plugin_id: text
       footer: {  }
       empty:
         area:
@@ -245,6 +257,9 @@ display:
           plugin_id: search_api_fulltext
       display_extenders: {  }
       use_ajax: false
+      filter_groups:
+        operator: AND
+        groups: {  }
     cache_metadata:
       max-age: 0
       contexts:
@@ -277,6 +292,20 @@ display:
       display_extenders: {  }
       path: search/content
       exposed_block: true
+      menu:
+        type: tab
+        title: Content
+        description: ''
+        expanded: false
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: main
+      tab_options:
+        type: none
+        title: ''
+        description: ''
+        weight: 0
     cache_metadata:
       max-age: 0
       contexts:

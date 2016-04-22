@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\SearchApiHandlerTrait.
- */
-
 namespace Drupal\search_api\Plugin\views;
 
 use Drupal\search_api\Plugin\views\query\SearchApiQuery;
@@ -21,7 +16,8 @@ trait SearchApiHandlerTrait {
    * necessary nor possible, but we still want to stay as compatible as possible
    * to the default SQL query plugin.
    */
-  public function ensureMyTable() {}
+  public function ensureMyTable() {
+  }
 
   /**
    * Determines the entity type used by this handler.
@@ -60,7 +56,8 @@ trait SearchApiHandlerTrait {
    * Retrieves the query plugin.
    *
    * @return \Drupal\search_api\Plugin\views\query\SearchApiQuery|null
-   *   The query plugin, or NULL if there is no query or it is no Search API query.
+   *   The query plugin, or NULL if there is no query or it is no Search API
+   *   query.
    */
   public function getQuery() {
     if (empty($this->query) || !($this->query instanceof SearchApiQuery)) {

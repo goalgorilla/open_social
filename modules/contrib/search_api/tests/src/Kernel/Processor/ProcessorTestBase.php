@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\ProcessorProcessorTestBase.
- */
-
 namespace Drupal\Tests\search_api\Kernel\Processor;
 
 use Drupal\KernelTests\KernelTestBase;

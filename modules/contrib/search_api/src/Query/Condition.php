@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\Query\Condition.
- */
-
 namespace Drupal\search_api\Query;
 
 /**
@@ -97,7 +92,7 @@ class Condition implements ConditionInterface {
   /**
    * Implements the magic __toString() method to simplify debugging.
    */
-  function __toString() {
+  public function __toString() {
     return "{$this->field} {$this->operator} " . str_replace("\n", "\n    ", var_export($this->value, TRUE));
   }
 
