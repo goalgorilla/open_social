@@ -94,4 +94,8 @@ function socialbase_preprocess_image_style(&$variables) {
     $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+  if($variables['style_name'] == 'micro'){
+    $variables['image']['#attributes']['class'][] = 'img-small';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
+  }
 }

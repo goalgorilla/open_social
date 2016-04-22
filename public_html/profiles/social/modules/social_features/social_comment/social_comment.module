@@ -103,7 +103,21 @@ function social_comment_preprocess_comment(&$variables) {
     ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
   $submitted = t('%time ago', array('%time' => $created_time_ago));
 
-  $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));;
+  $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+
+  $account = $comment->getOwner();
+  if ($account) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, 'compact');
+        $variables['author_picture'] = $content;
+      }
+    }
+  }
 
 }
 
