@@ -1,14 +1,10 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigLister.
- */
-
 namespace Drupal\config_update;
 
 use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Extension\Extension;
 
@@ -24,7 +20,7 @@ class ConfigLister implements ConfigListInterface {
    *
    * @var string[]
    */
-  protected $typesByPrefix = array();
+  protected $typesByPrefix = [];
 
   /**
    * List of current config entity type definitions, keyed by entity type.
@@ -33,7 +29,7 @@ class ConfigLister implements ConfigListInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeInterface[]
    */
-  protected $definitions = array();
+  protected $definitions = [];
 
   /**
    * The entity manager.
@@ -66,7 +62,7 @@ class ConfigLister implements ConfigListInterface {
   /**
    * Constructs a ConfigLister.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    * @param \Drupal\Core\Config\StorageInterface $active_config_storage
    *   The active config storage.
@@ -75,7 +71,7 @@ class ConfigLister implements ConfigListInterface {
    * @param \Drupal\Core\Config\ExtensionInstallStorage $extension_optional_config_storage
    *   The extension config storage for optional config items.
    */
-  public function __construct(EntityManagerInterface $entity_manager, StorageInterface $active_config_storage, ExtensionInstallStorage $extension_config_storage, ExtensionInstallStorage $extension_optional_config_storage) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, StorageInterface $active_config_storage, ExtensionInstallStorage $extension_config_storage, ExtensionInstallStorage $extension_optional_config_storage) {
     $this->entityManager = $entity_manager;
     $this->activeConfigStorage = $active_config_storage;
     $this->extensionConfigStorage = $extension_config_storage;
@@ -136,13 +132,13 @@ class ConfigLister implements ConfigListInterface {
   /**
    * {@inheritdoc}
    */
-  function listConfig($list_type, $name) {
-    $active_list = array();
-    $install_list = array();
-    $optional_list = array();
+  public function listConfig($list_type, $name) {
+    $active_list = [];
+    $install_list = [];
+    $optional_list = [];
     $definitions = $this->listTypes();
 
-    switch($list_type) {
+    switch ($list_type) {
       case 'type':
         if ($name == 'system.all') {
           $active_list = $this->activeConfigStorage->listAll();
@@ -168,7 +164,6 @@ class ConfigLister implements ConfigListInterface {
       case 'profile':
         $name = Settings::get('install_profile');
         // Intentional fall-through here to the 'module' or 'theme' case.
-
       case 'module':
       case 'theme':
         $active_list = $this->activeConfigStorage->listAll();
@@ -177,7 +172,7 @@ class ConfigLister implements ConfigListInterface {
         break;
     }
 
-    return array($active_list, $install_list, $optional_list);
+    return [$active_list, $install_list, $optional_list];
   }
 
   /**
@@ -198,10 +193,10 @@ class ConfigLister implements ConfigListInterface {
     $pathname = drupal_get_filename($type, $name);
     $component = new Extension(\Drupal::root(), $type, $pathname);
     if ($do_optional) {
-      $names = $this->extensionOptionalConfigStorage->getComponentNames(array($component));
+      $names = $this->extensionOptionalConfigStorage->getComponentNames([$component]);
     }
     else {
-      $names = $this->extensionConfigStorage->getComponentNames(array($component));
+      $names = $this->extensionConfigStorage->getComponentNames([$component]);
     }
     return array_keys($names);
   }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Routing\RouteMatch.
- */
-
 namespace Drupal\Core\Routing;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
@@ -49,7 +44,7 @@ class RouteMatch implements RouteMatchInterface {
    * Constructs a RouteMatch object.
    *
    * @param string $route_name
-   *  The name of the route.
+   *   The name of the route.
    * @param \Symfony\Component\Routing\Route $route
    *   The route.
    * @param array $parameters

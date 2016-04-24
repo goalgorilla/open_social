@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_test\EntityTestAccessControlHandler.
- */
-
 namespace Drupal\entity_test;
 
 use Drupal\Core\Access\AccessResult;
@@ -22,6 +17,7 @@ use Drupal\entity_test\Entity\EntityTestLabel;
  * @see \Drupal\entity_test\Entity\EntityTestMul
  * @see \Drupal\entity_test\Entity\EntityTestMulRev
  * @see \Drupal\entity_test\Entity\EntityTestRev
+ * @see \Drupal\entity_test\Entity\EntityTestWithBundle
  * @see \Drupal\entity_test\Entity\EntityTestStringId
  */
 class EntityTestAccessControlHandler extends EntityAccessControlHandler {
@@ -68,7 +64,11 @@ class EntityTestAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'administer entity_test content');
+    return AccessResult::allowedIfHasPermissions($account, [
+      'administer entity_test content',
+      'administer entity_test_with_bundle content',
+      'create ' . $entity_bundle . ' entity_test_with_bundle entities',
+    ], 'OR');
   }
 
 }

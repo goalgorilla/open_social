@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\comment\CommentLazyBuilders.
- */
-
 namespace Drupal\comment;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
@@ -125,7 +120,7 @@ class CommentLazyBuilders {
    * @param string $langcode
    *   The language in which the comment entity is being viewed.
    * @param bool $is_in_preview
-   *  Whether the comment is currently being previewed.
+   *   Whether the comment is currently being previewed.
    *
    * @return array
    *   A renderable array representing the comment links.

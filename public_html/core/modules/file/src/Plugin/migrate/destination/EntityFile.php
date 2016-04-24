@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\file\Plugin\migrate\destination\EntityFile.
- */
-
 namespace Drupal\file\Plugin\migrate\destination;
 
 use Drupal\Component\Utility\Unicode;
@@ -192,7 +187,7 @@ class EntityFile extends EntityContentBase {
    * API functions (such as file_prepare_directory()).
    *
    * @param string $uri
-   *  The URI or path.
+   *   The URI or path.
    *
    * @return string|false
    *  The directory component of the path or URI, or FALSE if it could not
@@ -213,9 +208,9 @@ class EntityFile extends EntityContentBase {
    * If either URI is a remote stream, will return FALSE.
    *
    * @param string $source
-   *  The source URI.
+   *   The source URI.
    * @param string $destination
-   *  The destination URI.
+   *   The destination URI.
    *
    * @return bool
    *  TRUE if the source and destination URIs refer to the same physical path,
@@ -238,7 +233,7 @@ class EntityFile extends EntityContentBase {
    * \Drupal\Core\StreamWrapper\LocalStream.
    *
    * @param string $uri
-   *  The URI or path to test.
+   *   The URI or path to test.
    *
    * @return bool
    */

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Entity\Controller\EntityController.
- */
-
 namespace Drupal\Core\Entity\Controller;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -140,7 +135,7 @@ class EntityController implements ContainerInjectionInterface {
         '@add_link' => Link::createFromRoute($link_text, $link_route_name)->toString(),
       ]);
       // Filter out the bundles the user doesn't have access to.
-      $access_control_handler = $this->entityTypeManager->getAccessControlHandler($bundle_entity_type_id);
+      $access_control_handler = $this->entityTypeManager->getAccessControlHandler($entity_type_id);
       foreach ($bundles as $bundle_name => $bundle_info) {
         $access = $access_control_handler->createAccess($bundle_name, NULL, [], TRUE);
         if (!$access->isAllowed()) {

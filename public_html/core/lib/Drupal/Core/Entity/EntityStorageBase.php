@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Entity\EntityStorageBase.
- */
-
 namespace Drupal\Core\Entity;
 
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -163,7 +158,7 @@ abstract class EntityStorageBase extends EntityHandlerBase implements EntityStor
    *
    * @param string $hook
    *   One of 'presave', 'insert', 'update', 'predelete', 'delete', or
-   *  'revision_delete'.
+   *   'revision_delete'.
    * @param \Drupal\Core\Entity\EntityInterface  $entity
    *   The entity object.
    */

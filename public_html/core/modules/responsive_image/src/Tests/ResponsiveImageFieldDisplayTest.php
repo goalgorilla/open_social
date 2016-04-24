@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\responsive_image\Tests\ResponsiveImageFieldDisplayTest.
- */
-
 namespace Drupal\responsive_image\Tests;
 
 use Drupal\Component\Utility\Unicode;
@@ -167,7 +162,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
    *   File scheme to use.
    * @param bool $empty_styles
    *   If true, use an empty string for image style names.
-   * Defaults to false.
+   *   Defaults to false.
    */
   protected function doTestResponsiveImageFieldFormatters($scheme, $empty_styles = FALSE) {
     /** @var \Drupal\Core\Render\RendererInterface $renderer */

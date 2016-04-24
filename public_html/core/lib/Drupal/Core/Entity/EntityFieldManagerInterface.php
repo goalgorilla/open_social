@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Entity\EntityFieldManagerInterface.
- */
-
 namespace Drupal\Core\Entity;
 
 /**
@@ -73,7 +68,8 @@ interface EntityFieldManagerInterface {
    *   An array keyed by entity type. Each value is an array which keys are
    *   field names and value is an array with two entries:
    *   - type: The field type.
-   *   - bundles: The bundles in which the field appears.
+   *   - bundles: An associative array of the bundles in which the field
+   *     appears, where the keys and values are both the bundle's machine name.
    */
   public function getFieldMap();
 
@@ -97,7 +93,8 @@ interface EntityFieldManagerInterface {
    *   An array keyed by entity type. Each value is an array which keys are
    *   field names and value is an array with two entries:
    *   - type: The field type.
-   *   - bundles: The bundles in which the field appears.
+   *   - bundles: An associative array of the bundles in which the field
+   *     appears, where the keys and values are both the bundle's machine name.
    */
   public function getFieldMapByFieldType($field_type);
 
