@@ -65,3 +65,24 @@ function social_post_theme_suggestions_post(array $variables) {
 
   return $suggestions;
 }
+
+/**
+ * Prepares variables for comment field templates.
+ *
+ * Default template: field--comment.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing render arrays for the list of
+ *     comments, and the comment form. Array keys: comments, comment_form.
+ *
+ * @todo Rename to template_preprocess_field__comment() once
+ *   https://www.drupal.org/node/939462 is resolved.
+ */
+function social_post_preprocess_field(&$variables) {
+  $element = $variables['element'];
+  if ($element['#formatter'] == 'comment_post') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
+  }
+}
