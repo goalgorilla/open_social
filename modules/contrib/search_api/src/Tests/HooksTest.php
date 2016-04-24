@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\HooksTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 /**
@@ -17,7 +12,13 @@ class HooksTest extends WebTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('node', 'search_api', 'search_api_test_backend', 'search_api_test_views', 'search_api_test_hooks');
+  public static $modules = array(
+    'node',
+    'search_api',
+    'search_api_test_backend',
+    'search_api_test_views',
+    'search_api_test_hooks',
+  );
 
   /**
    * {@inheritdoc}

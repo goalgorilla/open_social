@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api_db\DatabaseCompatibility\DatabaseCompatibilityHandlerInterface.
- */
-
 namespace Drupal\search_api_db\DatabaseCompatibility;
 
 /**

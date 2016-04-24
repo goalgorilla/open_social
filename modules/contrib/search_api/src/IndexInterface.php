@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\IndexInterface.
- */
-
 namespace Drupal\search_api;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Processor\ProcessorInterface;
 use Drupal\search_api\Query\QueryInterface;
@@ -262,7 +256,7 @@ interface IndexInterface extends ConfigEntityInterface {
   public function getServerInstance();
 
   /**
-   * Sets the server the index is attached to
+   * Sets the server the index is attached to.
    *
    * @param \Drupal\search_api\ServerInterface|null $server
    *   The server to move this index to, or NULL.
@@ -480,18 +474,11 @@ interface IndexInterface extends ConfigEntityInterface {
    *
    * @param array $item_ids
    *   The internal item IDs of the objects, with datasource prefix.
-   * @param bool $group_by_datasource
-   *   (optional) If TRUE, items will be returned grouped by datasource instead
-   *   of in a single, flat array.
    *
    * @return \Drupal\Core\TypedData\ComplexDataInterface[]
-   *   The loaded items. If $group_by_datasource is FALSE, a single-dimensional
-   *   array mapping internal item IDs to the loaded items. Otherwise, an array
-   *   mapping datasource IDs to arrays of items (keyed by internal item ID)
-   *   loaded for that datasource.
+   *   The loaded items, keyed by their internal item IDs.
    */
-  // @todo Drop second parameter?
-  public function loadItemsMultiple(array $item_ids, $group_by_datasource = FALSE);
+  public function loadItemsMultiple(array $item_ids);
 
   /**
    * Indexes a set amount of items.

@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\Processor\ProcessorIntegrationTest.
- */
-
-namespace Drupal\search_api\Tests\Processor;
+namespace Drupal\search_api\Tests;
 
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
-use Drupal\search_api\Tests\WebTestBase;
 
 /**
  * Tests the admin UI for processors.
@@ -127,12 +121,18 @@ class ProcessorIntegrationTest extends WebTestBase {
 
     // The 'language' and 'add_url' processors are are not available to be
     // removed because they are locked processors.
+    $this->checkLanguageIntegration();
+    $this->checkUrlFieldIntegration();
+
+    // Check whether disabling processors also works correctly.
+    $this->loadProcessorsTab();
+    $edit = array(
+      'status[stopwords]' => FALSE,
+    );
+    $this->drupalPostForm(NULL, $edit, $this->t('Save'));
+    $enabled = array_values(array_diff($enabled, array('stopwords')));
     $actual_processors = array_keys($this->loadIndex()->getProcessors());
     sort($actual_processors);
-    $this->assertEqual($enabled, $actual_processors);
-    $this->checkLanguageIntegration();
-    $this->assertEqual($enabled, $actual_processors);
-    $this->checkUrlFieldIntegration();
     $this->assertEqual($enabled, $actual_processors);
   }
 
@@ -158,8 +158,13 @@ class ProcessorIntegrationTest extends WebTestBase {
       'backend_config' => array(),
     ));
     $server->save();
-    $key = 'search_api_test_backend.discouraged_processors';
-    $processors = array('highlight', 'ignore_character', 'tokenizer', 'stopwords');
+    $key = 'search_api_test_backend.return.getDiscouragedProcessors';
+    $processors = array(
+      'highlight',
+      'ignore_character',
+      'tokenizer',
+      'stopwords',
+    );
     \Drupal::state()->set($key, $processors);
 
     // Use the newly created server.
@@ -211,7 +216,7 @@ class ProcessorIntegrationTest extends WebTestBase {
       'processors[html_filter][settings][fields][search_api_language]' => FALSE,
       'processors[html_filter][settings][title]' => FALSE,
       'processors[html_filter][settings][alt]' => FALSE,
-      'processors[html_filter][settings][tags]' => 'h1: 10'
+      'processors[html_filter][settings][tags]' => 'h1: 10',
     );
     $this->editSettingsForm($edit, 'html_filter');
   }

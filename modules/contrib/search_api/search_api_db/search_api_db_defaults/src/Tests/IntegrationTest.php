@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api_db_defaults\Tests\IntegrationTest.
- */
-
 namespace Drupal\search_api_db_defaults\Tests;
 
 use Drupal\comment\Tests\CommentTestTrait;
@@ -53,7 +48,7 @@ class IntegrationTest extends WebTestBase {
     // Create user with content access permission to see if the view is
     // accessible, and an admin to do the setup.
     $this->authenticatedUser = $this->drupalCreateUser();
-    $this->adminUser = $this->drupalCreateUser(array(), NULL, true);
+    $this->adminUser = $this->drupalCreateUser(array(), NULL, TRUE);
   }
 
   /**
@@ -119,7 +114,11 @@ class IntegrationTest extends WebTestBase {
     $this->assertText(t('It looks like the default setup provided by this module already exists on your site. Cannot re-install module.'));
 
     // Delete all the entities that we would fail on if they exist.
-    $entities_to_remove = array('search_api_index' => 'default_index', 'search_api_server' => 'default_server', 'view' => 'search_content');
+    $entities_to_remove = array(
+      'search_api_index' => 'default_index',
+      'search_api_server' => 'default_server',
+      'view' => 'search_content',
+    );
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
     $entity_type_manager = \Drupal::service('entity_type.manager');
     foreach ($entities_to_remove as $entity_type => $entity_id) {

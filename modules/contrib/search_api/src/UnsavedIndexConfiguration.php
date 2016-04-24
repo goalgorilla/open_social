@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\search_api\UnsavedIndexConfiguration.
- */
 
 namespace Drupal\search_api;
 
@@ -368,8 +364,8 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
   /**
    * {@inheritdoc}
    */
-  public function loadItemsMultiple(array $item_ids, $group_by_datasource = FALSE) {
-    return $this->entity->loadItemsMultiple($item_ids, $group_by_datasource);
+  public function loadItemsMultiple(array $item_ids) {
+    return $this->entity->loadItemsMultiple($item_ids);
   }
 
   /**
@@ -602,7 +598,7 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
    * {@inheritdoc}
    */
   public function urlInfo($rel = 'canonical', array $options = array()) {
-    return $this->entity->urlInfo($rel, $options);
+    return $this->entity->toUrl($rel, $options);
   }
 
   /**
@@ -616,14 +612,14 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
    * {@inheritdoc}
    */
   public function url($rel = 'canonical', $options = array()) {
-    return $this->entity->url($rel, $options);
+    return $this->entity->toUrl($rel, $options)->toString();
   }
 
   /**
    * {@inheritdoc}
    */
   public function link($text = NULL, $rel = 'canonical', array $options = array()) {
-    return $this->entity->link($text, $rel, $options);
+    return $this->entity->toLink($text, $rel, $options)->toString();
   }
 
   /**
@@ -951,4 +947,5 @@ class UnsavedIndexConfiguration implements IndexInterface, UnsavedConfigurationI
   public function removeField($field_id) {
     // @todo Implement removeField() method.
   }
+
 }

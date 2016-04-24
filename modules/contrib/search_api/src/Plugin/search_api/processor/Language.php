@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\Language.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Core\Entity\Plugin\DataType\EntityAdapter;
@@ -15,6 +10,8 @@ use Drupal\search_api\Datasource\DatasourceInterface;
 use Drupal\search_api\Processor\ProcessorPluginBase;
 
 /**
+ * Adds the item language to indexed items.
+ *
  * @SearchApiProcessor(
  *   id = "language",
  *   label = @Translation("Language"),

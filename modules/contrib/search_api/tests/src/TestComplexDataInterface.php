@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\TestComplexDataInterface.
- */
-
 namespace Drupal\Tests\search_api;
 
 use Drupal\Core\TypedData\ComplexDataInterface;

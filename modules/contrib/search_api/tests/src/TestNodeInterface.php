@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\TestNodeInterface.
- */
-
 namespace Drupal\Tests\search_api;
 
 use Drupal\node\NodeInterface;
