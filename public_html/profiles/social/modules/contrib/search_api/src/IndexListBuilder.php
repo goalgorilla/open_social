@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\IndexListBuilder.
- */
-
 namespace Drupal\search_api;
 
 use Drupal\Component\Utility\Html;
@@ -126,10 +121,10 @@ class IndexListBuilder extends ConfigEntityListBuilder {
         ),
         'title' => array(
           'data' => array(
-              '#type' => 'link',
-              '#title' => $entity->label(),
-              '#suffix' => '<div>' . $entity->get('description') . '</div>',
-            ) + $entity->urlInfo('canonical')->toRenderArray(),
+            '#type' => 'link',
+            '#title' => $entity->label(),
+            '#suffix' => '<div>' . $entity->get('description') . '</div>',
+          ) + $entity->toUrl('canonical')->toRenderArray(),
           'class' => array('search-api-title'),
         ),
         'status' => array(

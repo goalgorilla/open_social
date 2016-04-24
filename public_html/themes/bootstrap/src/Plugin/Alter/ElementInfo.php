@@ -32,11 +32,6 @@ class ElementInfo extends PluginBase implements AlterInterface {
     foreach (array_keys($types) as $type) {
       $element = &$types[$type];
 
-      // Ensure elements that have a base type with the #input set match.
-      if (isset($element['#base_type']) && isset($types[$element['#base_type']]) && isset($types[$element['#base_type']]['#input'])) {
-        $element['#input'] = $types[$element['#base_type']]['#input'];
-      }
-
       // Core does not actually use the "description_display" property on the
       // "details" or "fieldset" element types because the positioning of the
       // description is never used in core templates. However, the form builder

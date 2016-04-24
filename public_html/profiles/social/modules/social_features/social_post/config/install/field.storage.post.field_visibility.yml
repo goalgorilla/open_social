@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - social_post
+id: post.field_visibility
+field_name: field_visibility
+entity_type: post
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: '0'
+      label: Recipient
+    -
+      value: '1'
+      label: Public
+    -
+      value: '2'
+      label: Community
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

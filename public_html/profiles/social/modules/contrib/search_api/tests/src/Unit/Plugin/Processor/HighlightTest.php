@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\HighlightTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\Highlight;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\search_api\Utility;
 use Drupal\Tests\UnitTestCase;
 
@@ -43,7 +37,6 @@ class HighlightTest extends UnitTestCase {
     $this->processor->setStringTranslation($translation);
   }
 
-
   /**
    * Tests postprocessing with an empty result set.
    */
@@ -68,7 +61,6 @@ class HighlightTest extends UnitTestCase {
     $output = $results->getExtraData('highlighted_fields');
     $this->assertEmpty($output, 'No highlighting data added to result set.');
   }
-
 
   /**
    * Tests postprocessing on a query without keywords.
@@ -378,7 +370,7 @@ class HighlightTest extends UnitTestCase {
   }
 
   /**
-   * Tests whether highlighting works with a changed excerpt length
+   * Tests whether highlighting works with a changed excerpt length.
    */
   public function testPostprocessSearchResultsWithChangedExcerptLength() {
     $this->processor->setConfiguration(array('excerpt_length' => 64));
@@ -515,7 +507,7 @@ class HighlightTest extends UnitTestCase {
       'entity:node/body' => array(
         'type' => 'text',
         'values' => array(
-          'This foo text bar will get baz riddled with &lt;strong&gt; tags.'
+          'This foo text bar will get baz riddled with &lt;strong&gt; tags.',
         ),
       ),
     );
@@ -645,7 +637,6 @@ class HighlightTest extends UnitTestCase {
     $this->assertEquals($excerpt1, $items[$this->itemIds[0]]->getExcerpt(), 'Correct excerpt created from two text fields.');
     $this->assertEquals($excerpt2, $items[$this->itemIds[1]]->getExcerpt(), 'Correct excerpt created for second item.');
   }
-
 
   /**
    * Returns a long text to use for highlighting tests.

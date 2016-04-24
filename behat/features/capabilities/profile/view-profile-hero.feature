@@ -11,8 +11,8 @@ Feature: Profile information
       | user_2   | user_2@example.com | 1      | Isaac                    | Newton                  |
     And I am logged in as "user_1"
     And I am on "/user"
-    And I should see "Albert Einstein" in the "Hero block"
+    And I should see the heading "Albert Einstein"
     # @TODO: Uncomment this when title will be in correct region
     # And I should not see "user_1" in the "Hero block"
-    And I should see an "i.material-icons" element
+    And I should see the link "Edit profile information"
     # @TODO: Add scenario about view profile information of other user when Search Users will be ready

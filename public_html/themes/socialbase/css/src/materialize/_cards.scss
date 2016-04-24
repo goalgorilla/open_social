@@ -1,0 +1,278 @@
+.card {
+  @include clearfix;
+  @include z-depth-1;
+  position: relative;
+  margin-bottom: $card-spacer-y;
+  background-color: $card-bg;
+  @include border-radius($card-border-radius);
+  transition: box-shadow .25s;
+  background-clip: padding-box;
+}
+
+.card-head {
+  position: relative;
+  vertical-align: middle;
+  border-radius: 10px 10px 0 0;
+  padding: 15px 20px 0;
+  color: $gray-light;
+  @include clearfix;
+}
+
+// This style can be used to separate the card title from the card body.
+.card-underline .card-head {
+  border-bottom: 1px solid $grey-light-2;
+}
+
+.card-body {
+  position: relative;
+  padding: $card-padding;
+
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  &.extra-padding {
+
+    @include MQ($small) {
+      padding: $card-padding-large;
+    }
+
+  }
+
+}
+
+.card-with-actionbar .card-body {
+  padding-bottom: 48px;
+  overflow: hidden;
+}
+
+.card-head header {
+  vertical-align: middle;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.875em;
+}
+
+a.card:hover {
+  @include z-depth-3;
+}
+
+.card__label {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: $grey-dark-1;
+}
+
+.card-nested-section {
+  background: $grey-light-3;
+  border-top: 1px darken($gray-lighter, 10%) solid;
+  border-bottom: 1px darken($gray-lighter, 10%) solid;
+  margin-top: 0;
+  margin-left: -$card-padding;
+  margin-right: -$card-padding;
+  margin-bottom: $card-padding;
+  padding: $card-padding;
+
+  .extra-padding & {
+    @include MQ($small) {
+      margin-left: -$card-padding-large;
+      margin-right: -$card-padding-large;
+      padding: $card-padding $card-padding-large;
+    }
+  }
+
+  hr {
+    border-top-color: darken($gray-lighter, 10%);
+  }
+
+  &:last-child {
+    margin-bottom: -$card-padding;
+    border-bottom-left-radius: $card-border-radius;
+    border-bottom-right-radius: $card-border-radius;
+    border-bottom: 0;
+
+    .extra-padding & {
+      @include MQ($small) {
+        margin-bottom: -$card-padding-large;
+      }
+    }
+
+  }
+}
+
+
+// Desktop cards are only displayed on desktop.
+.visible-sm-card {
+
+  @include MQ($small) {
+    border-radius: 10px;
+    transition: box-shadow .25s;
+    background-clip: padding-box;
+    @include z-depth-1;
+  }
+
+}
+
+.card {
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+//
+// Specific Drupal teaser cards
+
+.card--teaser {
+  display: flex;
+
+  @include MQ($small) {
+    height: 220px; // matches width of image
+  }
+
+  .card-image {
+    display: none;
+
+    @include MQ($small) {
+      display: block;
+      height: 220px;
+      flex: 0 0 220px;
+      position: relative;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+
+      &.blue-overlay:before {
+        position: absolute;
+        display: block;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: rgba(41, 171, 226, 0.8);
+      }
+
+      a {
+        display: block;
+      }
+
+    }
+  }
+
+  .teaser-type {
+    position: absolute;
+    @include center(xy);
+    width: 30%;
+    height: auto;
+    pointer-events: none;
+  }
+
+  .teaser-date {
+    position: absolute;
+    @include center(xy);
+    color: white;
+    font-size: 4em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1;
+    white-space: nowrap;
+
+    div {
+      line-height: 1;
+    }
+  }
+
+  .card-status {
+    line-height: $button-height;
+    font-size: $button-font-size;
+    color: $primary-color;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .card-title {
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+  }
+
+}
+
+@include MQ($small) {
+
+  .unpublished .card-image:before {
+    background-color: rgba($grey-dark-1, 0.8);
+  }
+
+  .unpublished .status {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: white;
+    bottom: 10px;
+    left: 0;
+    font-weight: 300;
+
+    &:before {
+      border-top: 1px solid white;
+      margin: 5px auto;
+      width: 40px;
+      height: 0;
+      content: '';
+      display: block;
+    }
+
+  }
+
+}
+
+.card-actionbar {
+  @include clearfix; // buttons inside can float
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background-color: inherit;
+  padding: 6px 24px;
+}
+
+.card-actionbar--with-border {
+  border-top: 1px solid $grey-light-2;
+}
+
+.card-buttonbar {
+  padding: 6px 0;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid $grey-light-2;
+
+  @include MQ($small) {
+    justify-content: flex-start;
+  }
+
+  .btn-link {
+    padding: 6px;
+  }
+
+  .justify-end {
+    margin-left: auto;
+    text-align: right;
+    flex: 1;
+  }
+}

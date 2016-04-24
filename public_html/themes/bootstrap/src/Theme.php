@@ -100,7 +100,13 @@ class Theme {
 
     // Only install the theme if there is no schema version currently set.
     if (!$this->getSetting('schema')) {
-      $this->install();
+      try {
+        $this->install();
+      }
+      catch (\Exception $e) {
+        // Intentionally left blank.
+        // @see https://www.drupal.org/node/2697075
+      }
     }
   }
 
@@ -242,25 +248,35 @@ class Theme {
    *
    * @param string $name
    *   The name of the item to retrieve from the theme cache.
+   * @param array $context
+   *   Optional. An array of additional context to use for retrieving the
+   *   cached storage.
    * @param mixed $default
-   *   The default value to use if $name does not exist.
+   *   Optional. The default value to use if $name does not exist.
    *
    * @return mixed|\Drupal\bootstrap\Utility\StorageItem
    *   The cached value for $name.
    */
-  public function getCache($name, $default = []) {
+  public function getCache($name, array $context = [], $default = []) {
     static $cache = [];
-    $theme = $this->getName();
-    $theme_cache = self::getStorage();
-    if (!isset($cache[$theme][$name])) {
-      $value = $theme_cache->get($name);
+
+    // Prepend the name as the first context item.
+    array_unshift($context, $name);
+
+    // Join context together with ":" and use it as the name.
+    $name = implode(':', $context);
+
+    if (!isset($cache[$name])) {
+      $storage = self::getStorage();
+      $value = $storage->get($name);
       if (!isset($value)) {
-        $value  = is_array($default) ? new StorageItem($default, $theme_cache) : $default;
-        $theme_cache->set($name, $value);
+        $value  = is_array($default) ? new StorageItem($default, $storage) : $default;
+        $storage->set($name, $value);
       }
-      $cache[$theme][$name] = $value;
+      $cache[$name] = $value;
     }
-    return $cache[$theme][$name];
+
+    return $cache[$name];
   }
 
   /**

@@ -52,56 +52,39 @@
 #}
 
 <header id="header" role="banner" aria-label="{{ 'Site header'|t}}">
-  <div class="container">
-    <a href="{{ path('<front>') }}" title="{{ 'Home'|t }}" rel="home" class="site-logo">
-      <object id="header-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
-    </a>
-    {{ page.header }}
-  </div>
-
-  {{ page.menu_panel }}
-  {{ page.notification_panel }}
-  {{ page.user_panel }}
+  {{ page.header }}
 </header>
 
-
 <main id="content" class="column main-container" role="main">
+
   {{ page.breadcrumb }}
 
-  {% if page.hero %}
-    <div class="hero">
-      <aside class="layout-container section clearfix" role="complementary">
-        {{ page.hero }}
-      </aside>
+  <div class="container hero-container">
+    <div class="cover">
+      {{ page.title }}
+      {{ page.hero }}
     </div>
-  {% endif %}
 
-  {% if page.secondary_navigation %}
-    <div class="style-secondary only-desktop">
-      <div class="container">
+    {% if page.secondary_navigation %}
+      <div class="brand-secondary z-depth-1">
         {{ page.secondary_navigation }}
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  </div>
 
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
-    <div class="row">
-      <div class="col s12 l9 section-header">
-        {{ page.title }}
+    <div class="row margin-top-l">
+
+      <div role="complementary" class="col-sm-3 col-sm-push-9">
+        {{ page.complementary }}
       </div>
 
-      <div class="col s12 l9">
+      <div class="col-sm-9 col-sm-pull-3 margin-top-l">
         {% block card %}
           {{ page.content }}
         {% endblock %}
       </div>
-
-      {% if page.complementary %}
-        <div role="complementary" class="col s12 l3">
-          {{ page.complementary }}
-        </div>
-      {% endif %}
 
     </div>
   </div>

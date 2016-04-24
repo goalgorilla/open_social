@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\argument\SearchApiMoreLikeThis.
- */
-
 namespace Drupal\search_api\Plugin\views\argument;
 
 use Drupal\Core\Form\FormStateInterface;

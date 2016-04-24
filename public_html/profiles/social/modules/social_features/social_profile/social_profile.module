@@ -39,6 +39,10 @@ function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
   }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
 }
 
 /**
@@ -49,6 +53,25 @@ function social_profile_form_profile_profile_edit_form_alter(&$form, \Drupal\Cor
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
   }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for profile_profile_edit_form and profile_profile_add_form.
+ *
+ */
+function _social_profile_profile_edit_form_submit($form, FormStateInterface $form_state) {
+  // Set redirect to the profile overview page when a user saves their profile.
+  $form_state->setRedirect(
+    'view.user_information.user_information',
+    array('user' =>\Drupal::currentUser()->id(), array())
+  );
 }
 
 /**
@@ -59,20 +82,9 @@ function social_profile_local_tasks_alter(&$local_tasks) {
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
   }
-}
-
-/**
- * Return Profile entity by given user id.
- */
-function social_profile_load_by_uid($uid) {
-  $profile = \Drupal::entityTypeManager()
-    ->getStorage('profile')
-    ->loadByProperties([
-      'uid' => $uid,
-      'type' => 'profile',
-    ]);
-
-  return reset($profile);
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
+  }
 }
 
 /**
@@ -80,7 +92,6 @@ function social_profile_load_by_uid($uid) {
  */
 function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
   // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
-  $suggestions = array();
   $original = $variables['theme_hook_original'];
   $entity = $variables['elements']['#profile'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
@@ -113,18 +124,14 @@ function social_profile_preprocess_profile(&$variables) {
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
-  $profile_name = $user->getDisplayName();
-
-  // This will get the users internal route path, in this case /user/{user.id}.
-  $profile_url = $user->toUrl();
-
-  $variables['profile_name'] = $profile_name;
-  $variables['profile_url'] = $profile_url;
+  $variables['profile_name'] = $user->getDisplayName();;
+  $variables['profile_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
+  $variables['user_mail'] = $user->getEmail();
 
   // Edit profile URL
   $account = \Drupal::currentUser();
-  if($profile->access('edit', $account)){
-    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/edit');
+  if ($profile->access('edit', $account)) {
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
   }
 }
 

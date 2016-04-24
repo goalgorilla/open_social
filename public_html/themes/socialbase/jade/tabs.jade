@@ -14,10 +14,10 @@ html(lang="en")
 
       .container
         .row 
-          .col.s12
+          .col-xs-12
             .section
               .row 
-                .col.l9
+                .col-md-9
                   p.flow-text The tabs structure consists of an unordered list of tabs that have hashes corresponding to tab ids. Then when you click on each tab, only the container with the corresponding tab id will become visible.
                   
                   h3.social-blue-text Markup
@@ -28,7 +28,7 @@ html(lang="en")
                     
                       You can activate a tab navigation without writing any JavaScript by simply specifying `data-toggle="tab"`  on an element. Adding the nav and nav-tabs classes to the tab ul will apply the tab styling.
                 
-                .col.s12
+                .col-xs-12
                   pre
                     code.language-markup.
                       <ul class="nav nav-tabs" data-toggle="tabs">
@@ -46,8 +46,8 @@ html(lang="en")
                   p You can align the tabs to the left, right, centered and justified. By default the tabs are left aligned in the header.
               
               .row
-                .col.s12.l6
-                  .card
+                .col-xs-12.col-md-6
+                  .card.card-underline
                     .card-head
                       ul.nav.nav-tabs(data-toggle="tabs")
                         li.active
@@ -67,7 +67,7 @@ html(lang="en")
                 
                   em.text-caption Left aligned tabs (default)
 
-                .col.s12.l6
+                .col-xs-12.col-md-6
                   .card.card-underline
                     .card-head
                       ul.nav.nav-tabs.nav-tabs-right(data-toggle="tabs")
@@ -85,8 +85,8 @@ html(lang="en")
                   em.text-caption Right aligned tabs    
               
               .row
-                .col.s12.l6
-                  .card
+                .col-xs-12.col-md-6
+                  .card.card-underline
                     .card-head
                       ul.nav.nav-tabs.tabs-center(data-toggle="tabs")
                         li.active
@@ -106,7 +106,7 @@ html(lang="en")
                 
                   em.text-caption Centered tabs
 
-                .col.s12.l6
+                .col-xs-12.col-md-6
                   .card.card-underline
                     .card-head
                       ul.nav.nav-tabs.nav-justified(data-toggle="tabs")
@@ -127,12 +127,12 @@ html(lang="en")
             
             .section
               .row 
-                .col.l9
+                .col-md-9
                   h3.social-blue-text Layout
                   p Tabs can not only be placed above the content, but also left, right and below the content.
                   
               .row
-                .col.s12.l6
+                .col-xs-12.col-sm-6
                   .card.tabs-left.style-default-bright
                     ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
                       li.active
@@ -152,15 +152,8 @@ html(lang="en")
                 
                   em.text-caption Left sidebar layout
                   
-                .col.s12.l6
+                .col-xs-12.col-sm-6
                   .card.tabs-right.style-default-bright
-                    ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
-                      li.active
-                        a(href="#first6") First item
-                      li
-                        a(href="#second6") Second item
-                      li
-                        a(href="#third6") Third item
                           
                     .card-body.tab-content
                       #first6.tab-pane.active
@@ -169,11 +162,19 @@ html(lang="en")
                         p Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
                       #third6.tab-pane  
                         p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                        
+                    ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
+                      li.active
+                        a(href="#first6") First item
+                      li
+                        a(href="#second6") Second item
+                      li
+                        a(href="#third6") Third item
                 
                   em.text-caption Right sidebar layout
 
               .row
-                .col.s12.l6
+                .col-xs-12.col-md-6
                   .card.tabs-below.style-default-bright
                           
                     .card-body.tab-content
@@ -197,10 +198,10 @@ html(lang="en")
               hr
               
               .row 
-                .col.l8
+                .col-md-9
                   h3.social-blue-text Colors
               .row 
-                .col.s12.m6
+                .col-xs-12.col-sm-6
                   .card
                     ul.card-head.nav.nav-tabs.style-default(data-toggle="tabs")
                       li.active
@@ -216,7 +217,7 @@ html(lang="en")
                         p Default color 2
                       #third8.tab-pane  
                         p Default color 3
-                .col.s12.m6
+                .col-xs-12.col-sm-6
                   .card
                     ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
                       li.active
@@ -232,7 +233,7 @@ html(lang="en")
                         p Default light color 2
                       #third9.tab-pane  
                         p Default light color 3
-                .col.s12.m6
+                .col-xs-12.col-sm-6
                   .card
                     ul.card-head.nav.nav-tabs.style-default-bright(data-toggle="tabs")
                       li.active
@@ -249,7 +250,7 @@ html(lang="en")
                       #third10.tab-pane  
                         p Default bright color 3
                 
-                .col.s12.m6
+                .col-xs-12.col-sm-6
                   .card
                     ul.card-head.nav.nav-tabs.style-primary(data-toggle="tabs")
                       li.active
@@ -266,7 +267,7 @@ html(lang="en")
                       #third11.tab-pane  
                         p Primary color 3
                                  
-                .col.s12.m6
+                .col-xs-12.col-sm-6
                   .card
                     ul.card-head.nav.nav-tabs.style-primary-dark(data-toggle="tabs")
                       li.active
@@ -282,8 +283,5 @@ html(lang="en")
                         p Primary dark color 2
                       #third12.tab-pane  
                         p Primary dark color 3
-
-                        
-                  
                   
     include ./layout/_scripts.jade

@@ -26,7 +26,7 @@ class ProfileHeroBlock extends BlockBase {
     $build = [];
 
     $account = \Drupal::routeMatch()->getParameter('user');
-    if (!is_object($account)) {
+    if (!is_object($account) && !is_null($account)) {
       $account = \Drupal::service('entity_type.manager')
         ->getStorage('user')
         ->load($account);

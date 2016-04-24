@@ -34,6 +34,11 @@ field_settings:
     type: string
     datasource_id: 'entity:entity_test'
     property_path: category
+  width:
+    label: Width
+    type: decimal
+    datasource_id: 'entity:entity_test'
+    property_path: width
   search_api_language:
     label: 'Item language'
     type: string
@@ -70,12 +75,15 @@ dependencies:
     - field.field.entity_test.article.body
     - field.field.entity_test.article.keywords
     - field.field.entity_test.article.category
+    - field.field.entity_test.article.width
     - field.field.entity_test.item.body
     - field.field.entity_test.item.keywords
     - field.field.entity_test.item.category
+    - field.field.entity_test.item.width
     - field.storage.entity_test.body
     - field.storage.entity_test.keywords
     - field.storage.entity_test.category
+    - field.storage.entity_test.width
     - search_api.server.database_search_server
   module:
     - entity_test

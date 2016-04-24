@@ -13,6 +13,4 @@
  * @see template_preprocess_textarea()
  */
 #}
-<div{{ wrapper_attributes.addClass('textarea--cke') }}>
-<textarea{{ attributes.addClass('form-text') }}>{{ value }}</textarea>
-</div>
+<textarea {{ attributes.addClass('form-control form-control--block materialize-textarea').removeAttribute('rows') }}>{{ value }}</textarea>

@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\StopwordsTest.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Plugin\search_api\processor\Stopwords;
-use Drupal\search_api\Tests\Processor\TestItemsTrait;
 use Drupal\search_api\Utility;
 use Drupal\Tests\UnitTestCase;
 
@@ -62,7 +56,7 @@ class StopwordsTest extends UnitTestCase {
         '',
         array('or'),
       ),
-       array(
+      array(
         'orb',
         'orb',
         array('or'),
@@ -110,7 +104,8 @@ class StopwordsTest extends UnitTestCase {
     $keys = array('#conjunction' => 'AND', 'foo', 'bar', 'bar foo');
     $query->keys($keys);
 
-    $this->processor->setConfiguration(array('stopwords' => array('foobar', 'bar', 'barfoo')));
+    $configuration = array('stopwords' => array('foobar', 'bar', 'barfoo'));
+    $this->processor->setConfiguration($configuration);
     $this->processor->preprocessSearchQuery($query);
     unset($keys[1]);
     $this->assertEquals($keys, $query->getKeys());

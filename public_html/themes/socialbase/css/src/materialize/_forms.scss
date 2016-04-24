@@ -1,0 +1,381 @@
+label {
+  font-weight: 300;
+
+  .material-icons {
+    font-size: inherit;
+    line-height: inherit;
+  }
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  cursor: text;
+}
+
+.form-group-inline {
+
+  .form-control--block {
+    margin-bottom: 5px;
+  }
+
+  @include MQ($small) {
+    display: flex;
+    align-items: flex-start;
+
+    .form-control--block {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .btn:last-child {
+      margin-left: 8px;
+    }
+
+  }
+
+}
+
+// Indication on labels for required fields
+span.form-required {
+  margin: 0 3px;
+  color: $brand-danger;
+}
+
+.help-block {
+  font-size: 0.75rem;
+  color: $help-block;
+
+  .radio & {
+    padding-left: $radio-width;
+    max-width: none;
+    margin-top: 0;
+  }
+}
+
+.form-control {
+  border: 1px solid $input-border;
+  box-shadow: none;
+  max-width: $form-control-max-width;
+  appearance: none;
+
+  &:focus {
+    border-bottom: 1px solid $primary-color;
+    box-shadow: 0 2px 0 0 $primary-color;
+  }
+
+  &.form-control--block {
+    max-width: none;
+  }
+
+  // ***************
+  // Textarea autogrow
+  // ***************
+
+  &.materialize-textarea {
+    overflow-y: hidden; // prevents scroll bar flash
+    padding-top: 1.6rem; // prevents text jump on Enter keypress
+    padding-bottom: 1.6rem;
+    resize: none;
+    min-height: 5rem;
+  }
+
+}
+
+// For textarea autoresize
+.hiddendiv {
+  display: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
+  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+}
+
+.form-actions .btn {
+  margin-bottom: 5px;
+}
+
+
+// ***************
+// Selects
+// ***************
+
+.material-select {
+  position: relative;
+  max-width: $form-control-max-width;
+
+  select {
+    cursor: pointer;
+    display: block;
+  }
+
+  &:after{
+    content: '';
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    display: block;
+    width: 30px;
+    height: 38px;
+    background: url("../images/icon-select.svg") no-repeat center / auto 100%;
+    pointer-events: none;
+  }
+}
+
+
+// ***************
+// Radio Buttons
+// ***************
+
+/* Remove default Radio Buttons */
+[type="radio"]:not(:checked),
+[type="radio"]:checked {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+
+.checkbox label,
+.radio label {
+  font-weight: 300;
+  position: relative;
+  padding-left: $radio-width;
+  cursor: pointer;
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 1em;
+  transition: .28s ease;
+  user-select: none;
+}
+
+[type="radio"]:checked + label {
+  color: $radio-fill-color;
+}
+
+.radio label:before,
+.radio label:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 4px;
+  width: 16px;
+  height: 16px;
+  z-index: 0;
+  transition: .28s ease;
+}
+
+/* Unchecked styles */
+[type="radio"]:not(:checked) + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+}
+
+[type="radio"]:not(:checked) + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+  z-index: -1;
+  transform: scale(0);
+}
+
+/* Checked styles */
+[type="radio"]:checked + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+}
+
+[type="radio"]:checked + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+  background-color: $radio-fill-color;
+  z-index: 0;
+  transform: scale(.5);
+}
+
+/* Disabled style */
+
+[type="radio"]:disabled + label:before,
+[type="radio"]:disabled + label:before {
+  background-color: transparent;
+}
+
+[type="radio"]:disabled:checked + label:before {
+  border: 2px solid $input-disabled-color;
+}
+
+[type="radio"]:disabled + label {
+  color: $input-disabled-color;
+}
+
+[type="radio"]:disabled:not(:checked) + label:before {
+  border-color: $input-disabled-color;
+}
+
+[type="radio"]:disabled:checked + label:after {
+  background-color: $input-disabled-color;
+  border: none;
+  background-color: $input-disabled-color;
+}
+
+[type="checkbox"]:focus + label:before,
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px lighten($brand-primary, 10%);
+}
+
+// ***************
+// ckeditor
+// ***************
+
+.textarea--cke .cke {
+  position: relative;
+}
+
+
+// ***************
+// Input autocomplete
+// ***************
+
+.autocomplete-content {
+	margin-top: -1em;
+	@include z-depth-1;
+  background-color: white;
+
+		li {
+			color: $grey-dark-1;
+			cursor: pointer;
+			line-height: 1.5em;
+			width: 100%;
+			text-align: left;
+      @extend %clearfix;
+
+			> span {
+				font-size: 1em;
+				padding: 0.6em;
+				display: block;
+
+				.highlight {
+					color: $input-border-color;
+				}
+			}
+
+			img {
+				height: 52px;
+				width: 52px;
+				padding: 5px;
+				margin: 0 15px;
+			}
+
+			&:hover {
+				background: #eee;
+				cursor: pointer;
+			}
+		}
+}
+
+// ***************
+// Managed file input
+// ***************
+
+.form-managed-file {
+  font-size: 0.875rem;
+}
+
+
+// ***************
+// Password hints
+// ***************
+
+#edit-pass {
+  color: $grey-dark-1;
+  font-weight: 300;
+
+  .password-strength,
+  div.password-confirm {
+    margin-top: 1em;
+    color: lighten($text-color, 25%);
+    font-size: 80%;
+    padding-bottom: 1rem;
+    position: relative;
+    max-width: $form-control-max-width;
+  }
+
+  @include MQ($small) {
+
+    .password-strength,
+    div.password-confirm {
+      position: absolute;
+      bottom: 0;
+      @include make-col-offset(7);
+      @include make-col-span(3);
+      padding-bottom: 0.5rem;
+    }
+
+  }
+}
+
+.password-strength__meter {
+  height: 3px;
+  width: 100%;
+  position: absolute;
+  margin-top: 2em;
+  background-color: $grey-light-1;
+
+  @include MQ($small) {
+
+  }
+}
+
+.password-strength__indicator {
+  height: 100%;
+  width: 0;
+  background-color: $success-color;
+  transition: width 0.5s ease-out;
+}
+.password-confirm-match {
+  visibility: hidden;
+}
+
+.password-strength__indicator.is-weak {
+  background-color: $error-color;
+}
+.password-strength__indicator.is-fair {
+  background-color: $warning-color;
+}
+.password-strength__indicator.is-good {
+  background-color: $info-color;
+}
+.password-strength__indicator.is-strong {
+  background-color: $success-color;
+}
+
+.password-suggestions {
+  margin-top: 1em;
+  color: lighten($text-color, 25%);
+  font-size: 80%;
+}
+
+.password-suggestions ul {
+  margin: 1em 0;
+  padding-left: 30px;
+
+  li {
+    list-style: square outside;
+    line-height: 1.5;
+  }
+}
+
+// Styling for the status indicator of the passwords match test.
+.password-confirm .ok {
+  color: $success-color;
+  font-weight: 500;
+}
+.password-confirm .error {
+  color: $error-color;
+  font-weight: 500;
+}

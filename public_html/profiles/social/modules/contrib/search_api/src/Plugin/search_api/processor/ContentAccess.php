@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\ContentAccess.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\comment\CommentInterface;
@@ -24,6 +19,8 @@ use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Adds content access checks for nodes and comments.
+ *
  * @SearchApiProcessor(
  *   id = "content_access",
  *   label = @Translation("Content access"),
@@ -151,8 +148,8 @@ class ContentAccess extends ProcessorPluginBase {
       foreach ($this->filterForPropertyPath($item->getFields(), 'search_api_node_grants') as $field) {
         // Collect grant information for the node.
         if (!$node->access('view', $anonymous_user)) {
-          // If anonymous user has no permission we collect all grants with their
-          // realms in the item.
+          // If anonymous user has no permission we collect all grants with
+          // their realms in the item.
           $result = Database::getConnection()
             ->query('SELECT * FROM {node_access} WHERE (nid = 0 OR nid = :nid) AND grant_view = 1', array(':nid' => $node->id()));
           foreach ($result as $grant) {
@@ -160,8 +157,8 @@ class ContentAccess extends ProcessorPluginBase {
           }
         }
         else {
-          // Add the generic pseudo view grant if we are not using node access or
-          // the node is viewable by anonymous users.
+          // Add the generic pseudo view grant if we are not using node access
+          // or the node is viewable by anonymous users.
           $field->addValue('node_access__all');
         }
       }
@@ -261,7 +258,7 @@ class ContentAccess extends ProcessorPluginBase {
     //     [grants view access to one of the user's gid/realm combinations]
     //   )
     // If there are no "other" datasources, we don't need the nested OR,
-    // however, and can add the "ADD"
+    // however, and can add the "ADD".
     // @todo Add a filter tag, once they are implemented.
     if ($unaffected_datasources) {
       $outer_conditions = $query->createConditionGroup('OR', array('content_access'));

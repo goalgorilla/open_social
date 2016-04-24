@@ -1,31 +1,18 @@
 {#
 /**
  * @file
- * Theme override for a 'form' element.
+ * Default theme implementation for a 'form' element.
  *
  * Available variables
  * - attributes: A list of HTML attributes for the wrapper element.
  * - children: The child elements of the form.
  *
  * @see template_preprocess_form()
+ *
+ * @ingroup themeable
  */
 #}
 
-{% if attributes.hasClass('social-user-login-form') %}
-{%
-  set classes = [
-    'user-login-form',
-  ]
-%}
-{% endif %}
-{% if attributes.hasClass('social-user-password-form') %}
-{%
-  set classes = [
-    'user-pass-form',
-  ]
-%}
-{% endif %}
-
-<form{{ attributes.addClass(classes) }}>
+<form{{ attributes }}>
   {{ children }}
 </form>

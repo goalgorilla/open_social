@@ -68,15 +68,6 @@ function bootstrap_library_info_alter(&$data, &$context1 = NULL, &$context2 = NU
 /**
  * {@inheritdoc}
  *
- * @see \Drupal\bootstrap\Plugin\Alter\MenuLocalTasks::alter()
- */
-function bootstrap_menu_local_tasks_alter(&$data, &$context1 = NULL, &$context2 = NULL) {
-  Bootstrap::alter(__FUNCTION__, $data, $context1, $context2);
-}
-
-/**
- * {@inheritdoc}
- *
  * @see \Drupal\bootstrap\Plugin\Alter\PageAttachments::alter()
  */
 function bootstrap_page_attachments_alter(&$data, &$context1 = NULL, &$context2 = NULL) {
@@ -98,7 +89,7 @@ function bootstrap_preprocess(&$variables, $hook, $info) {
  * @see \Drupal\bootstrap\Bootstrap::getInfo()
  */
 function bootstrap_theme() {
-  return Bootstrap::getInfo();
+  return Bootstrap::getThemeHooks();
 }
 
 /**
