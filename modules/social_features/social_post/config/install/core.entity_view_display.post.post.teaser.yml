@@ -9,7 +9,6 @@ dependencies:
     - field.field.post.post.field_recipient_user
     - field.field.post.post.field_visibility
   module:
-    - comment
     - social_post
     - user
 _core:
@@ -26,11 +25,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_post_comments:
-    type: comment_default
+    type: comment_post
     weight: 2
     label: hidden
     settings:
-      pager_id: 0
+      num_comments: 2
     third_party_settings: {  }
   user_id:
     label: hidden
