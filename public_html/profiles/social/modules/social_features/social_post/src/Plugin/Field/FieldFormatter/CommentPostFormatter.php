@@ -83,7 +83,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
             $output['comments'] += $build;
           }
 
-          if ($comments_per_page) {
+          if ($comments_per_page && $comment_count > $comments_per_page) {
             $t_args = array(':num_comments' => $comment_count);
             $more_link = $this->t('Show all :num_comments comments', $t_args);
 
