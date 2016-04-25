@@ -136,7 +136,15 @@ class AccountHeaderBlock extends BlockBase {
       ];
     }
 
+    $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+    $block_output = \Drupal::entityManager()
+      ->getViewBuilder('block')
+      ->view($block);
+
+    $links['search_block'] = $block_output;
+
     return [
+      'search_block' => $block_output,
       '#theme' => 'account_header_links',
       '#links' => $links,
       '#cache' => array(
