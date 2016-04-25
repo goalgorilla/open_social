@@ -76,24 +76,6 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
 }
 
 /**
- * Implements hook_query_TAG_alter().
- */
-function social_comment_query_comment_filter_alter(Drupal\Core\Database\Query\AlterableInterface &$query) {
-  // Change sorting to newest reply shown on top only for post comments.
-  $entity = $query->getMetaData('entity');
-  $entity_type = $entity->getEntityTypeId();
-  if ($entity_type === 'post') {
-    $expressions = &$query->getExpressions();
-    if (isset($expressions['torder'])) {
-      unset($expressions['torder']);
-      $order = &$query->getOrderBy();
-      unset($order['torder']);
-      $query->orderBy('c.thread', 'DESC');
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_comment().
  */
 function social_comment_preprocess_comment(&$variables) {
@@ -139,4 +121,3 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
     }
   }
 }
-
