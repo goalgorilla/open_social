@@ -166,9 +166,6 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     if (!$this->currentUser->hasPermission('administer comments')) {
       $query->condition('c.status', CommentInterface::PUBLISHED);
-      if ($comments_per_page) {
-        $count_query->condition('c.status', CommentInterface::PUBLISHED);
-      }
     }
     if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
       $query->orderBy('c.cid', 'DESC');
