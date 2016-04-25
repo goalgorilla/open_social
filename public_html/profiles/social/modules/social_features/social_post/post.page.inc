@@ -33,7 +33,7 @@ function template_preprocess_post(array &$variables) {
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 2));
   $date = t('%time ago', array('%time' => $created_time_ago));
-  $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));;
+  $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might
