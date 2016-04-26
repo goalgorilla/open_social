@@ -64,7 +64,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
     foreach($this->posts as $uuid => $post) {
       // Must have uuid and same key value.
       if ($uuid !== $post['uuid']) {
-        var_dump('Post with uuid: ' . $uuid . ' has a different uuid in content.');
+        echo "Post with uuid: " . $uuid . " has a different uuid in content.\r\n";
         continue;
       }
 
@@ -74,7 +74,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
 
       // If it already exists, leave it.
       if ($existing_post) {
-        var_dump('Post with uuid: ' . $uuid . ' already exists.');
+        echo "Post with uuid: " . $uuid . " already exists.\r\n";
         continue;
       }
 
@@ -83,29 +83,30 @@ class SocialDemoPost implements ContainerInjectionInterface {
       $accountClass = SocialDemoUser::create($container);
       $user_id = $accountClass->loadUserFromUuid($post['user_id']);
 
+      $recipient_id = NULL;
+      if (!empty($post['recipient'])) {
+        $recipient_id = $accountClass->loadUserFromUuid($post['recipient']);
+      }
+
+      // Calculate data.
+      $posttime = $this->createDate($post['created']);
+
+/*
+0 => Recipient
+1 => Public
+2 => Comunity
+*/
+
       // Let's create some posts.
-      $randtime = REQUEST_TIME - (rand(0, 365 * 24 * 60 * 60));
       $post_object = Post::create([
         'uuid' => $post['uuid'],
         'langcode' => $post['language'],
-        'field_post' => [
-          [
-            'value' => $post['field_post'],
-          ],
-        ],
-        'field_visibility' => [
-          [
-            'value' => $post['field_visibility'],
-          ],
-        ],
-        'field_recipient_user' => [
-          [
-            'target_id' => $post['field_recipient_user'],
-          ],
-        ],
+        'field_post' => $post['post'],
+        'field_visibility' => $post['visibility'],
+        'field_recipient_user' => $recipient_id,
         'user_id' => $user_id,
-        'created' => $randtime,
-        'changed' => $randtime,
+        'created' => $posttime,
+        'changed' => $posttime,
       ]);
 
       $post_object->save();
@@ -139,4 +140,16 @@ class SocialDemoPost implements ContainerInjectionInterface {
     }
   }
 
+  /**
+   * Function to calculate the date.
+   */
+  public function createDate($date_string) {
+    // Split from delimiter.
+    $timestamp = explode('|',$date_string);
+
+    $date = strtotime($timestamp[0]);
+    $date = date("Y-m-d", $date) . "T" . $timestamp[1] . ":00";
+
+    return strtotime($date);
+  }
 }
