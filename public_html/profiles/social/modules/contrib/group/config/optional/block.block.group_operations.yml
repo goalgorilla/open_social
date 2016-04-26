@@ -1,0 +1,21 @@
+langcode: 'en'
+status: TRUE
+dependencies:
+  module:
+    - 'group'
+  theme:
+    - 'bartik'
+id: 'group_operations'
+theme: 'bartik'
+region: 'sidebar_first'
+weight: -20
+provider: NULL
+plugin: 'group_operations'
+settings:
+  id: 'group_operations'
+  label: 'Group operations'
+  provider: 'group'
+  label_display: 'visible'
+  context_mapping:
+    group: '@group.group_route_context:group'
+visibility: {}
