@@ -120,7 +120,7 @@ class FeaturesUIController implements ContainerInjectionInterface {
             $allow = TRUE;
             if (!$allow_conflicts && $config_collection[$dependent_item_name]->getPackage()) {
               if ($packages[$config_collection[$dependent_item_name]->getPackage()]) {
-                $allow = ($packages[$config_collection[$dependent_item_name]->getPackage()]['status'] == FeaturesManagerInterface::STATUS_NO_EXPORT)
+                $allow = ($packages[$config_collection[$dependent_item_name]->getPackage()]->getStatus() == FeaturesManagerInterface::STATUS_NO_EXPORT)
                   || ($config_collection[$item_name]->getPackage() == $config_collection[$dependent_item_name]->getPackage());
               }
             }

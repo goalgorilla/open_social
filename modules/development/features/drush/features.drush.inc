@@ -9,8 +9,6 @@ use Drupal\features\ConfigurationItem;
 use Drupal\features\FeaturesManagerInterface;
 use Drupal\features\Plugin\FeaturesGeneration\FeaturesGenerationWrite;
 use Drupal\Component\Diff\DiffFormatter;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\config_update\ConfigReverter;
 
 /**
  * Implements hook_drush_command().
@@ -46,6 +44,14 @@ function features_drush_command() {
       'output-data-type' => 'format-table',
     ),
     'aliases' => array('fl'),
+  );
+
+  $items['features-import-all'] = array(
+    'description' => 'Import module config from all installed features.',
+    'examples' => array(
+      "drush features-import-all" => 'Import module config from all installed features.',
+    ),
+    'aliases' => array('fra', 'fia', 'fim-all'),
   );
 
   $items['features-export'] = array(
@@ -185,8 +191,13 @@ function drush_features_status() {
 
 /**
  * Drush command callback for features-list-packages.
+ *
+ * @param string $package_name
+ *   (optional) The package name.
+ *
+ * @return array|bool
  */
-function drush_features_list_packages($package = '') {
+function drush_features_list_packages($package_name = '') {
   _drush_features_options();
   /** @var \Drupal\features\FeaturesManagerInterface $manager */
   $manager = \Drupal::service('features.manager');
@@ -196,20 +207,20 @@ function drush_features_list_packages($package = '') {
   $result = array();
 
   // If no package was specified, list all packages.
-  if (empty($package)) {
+  if (empty($package_name)) {
     drush_hide_output_fields(array('object'));
-    foreach ($packages as $item) {
-      $overrides = $manager->detectOverrides($item);
-      $state = $item['state'];
-      if (!empty($overrides) && ($item['status'] != FeaturesManagerInterface::STATUS_NO_EXPORT)) {
+    foreach ($packages as $package) {
+      $overrides = $manager->detectOverrides($package);
+      $state = $package->getState();
+      if (!empty($overrides) && ($package->getStatus() != FeaturesManagerInterface::STATUS_NO_EXPORT)) {
         $state = FeaturesManagerInterface::STATE_OVERRIDDEN;
       }
 
-      $result[$item['machine_name']] = array(
-        'name' => $item['name'],
-        'machine_name' => $item['machine_name'],
-        'status' => $manager->statusLabel($item['status']),
-        'version' => $item['version'],
+      $result[$package->getMachineName()] = array(
+        'name' => $package->getName(),
+        'machine_name' => $package->getMachineName(),
+        'status' => $manager->statusLabel($package->getStatus()),
+        'version' => $package->getVersion(),
         'state' => ($state != FeaturesManagerInterface::STATE_DEFAULT)
           ? $manager->stateLabel($state)
           : '',
@@ -219,8 +230,8 @@ function drush_features_list_packages($package = '') {
   }
   // If a valid package was listed, list its configuration.
   else {
-    foreach ($packages as $item) {
-      if ($item['machine_name'] == $package) {
+    foreach ($packages as $package) {
+      if ($package->getMachineName() == $package_name) {
         drush_hide_output_fields(array(
           'machine_name',
           'name',
@@ -228,7 +239,7 @@ function drush_features_list_packages($package = '') {
           'version',
           'state',
         ));
-        foreach ($item['config'] as $item_name) {
+        foreach ($package->getConfig() as $item_name) {
           $result[$item_name] = array(
             'object' => $item_name,
           );
@@ -240,8 +251,34 @@ function drush_features_list_packages($package = '') {
   }
 
   // If no matching package found, return an error.
-  drush_log(dt('Package "@package" not found.', array('@package' => $package)), 'warning');
+  drush_log(dt('Package "@package" not found.', array('@package' => $package_name)), 'warning');
   return FALSE;
+}
+
+/**
+ * Drush command callback for features-import-all.
+ *
+ * @return bool
+ */
+function drush_features_import_all() {
+  _drush_features_options();
+  /** @var \Drupal\features\FeaturesManagerInterface $manager */
+  $manager = \Drupal::service('features.manager');
+  $packages = $manager->getPackages();
+
+  $packages = $manager->filterPackages($packages);
+  $result = array();
+
+  foreach ($packages as $package) {
+    $overrides = $manager->detectOverrides($package);
+
+    if ($package->getStatus() == FeaturesManagerInterface::STATUS_INSTALLED) {
+      drush_print(dt('Reverting @module...', array('@module' => $package->getName())));
+      drush_features_import($package->getMachineName());
+    }
+  }
+
+  return TRUE;
 }
 
 /**
@@ -302,7 +339,7 @@ function drush_features_export($packages = NULL) {
 
   // Use the write generation method.
   $method_id = FeaturesGenerationWrite::METHOD_ID;
-  $result = $generator->generatePackages($method_id, $packages, $current_bundle);
+  $result = $generator->generatePackages($method_id, $current_bundle, $packages);
 
   foreach ($result as $message) {
     $type = $message['success'] ? 'success' : 'error';
@@ -377,7 +414,7 @@ function drush_features_add() {
 
     // Use the write generation method.
     $method_id = FeaturesGenerationWrite::METHOD_ID;
-    $result = $generator->generatePackages($method_id, $packages, $current_bundle);
+    $result = $generator->generatePackages($method_id, $current_bundle, $packages);
 
     foreach ($result as $message) {
       $type = $message['success'] ? 'success' : 'error';
@@ -570,20 +607,21 @@ function drush_features_import() {
     foreach ($modules as $module => $components_needed) {
 
       $dt_args['@module'] = $module;
+      /** @var \Drupal\features\Package $feature */
       $feature = _drush_features_load_feature($module, TRUE);
       if (empty($feature)) {
         drush_log(dt('No such feature is available: @module', $dt_args), 'error');
         return;
       }
 
-      if ($feature['status'] != FeaturesManagerInterface::STATUS_ENABLED) {
-        drush_log(dt('No such feature is enabled: @module', $dt_args), 'error');
+      if ($feature->getStatus() != FeaturesManagerInterface::STATUS_INSTALLED) {
+        drush_log(dt('No such feature is installed: @module', $dt_args), 'error');
         return;
       }
 
       // Forcefully revert all components of a feature.
       if ($force) {
-        $components = $feature['config_orig'];
+        $components = $feature->getConfigOrig();
       }
       // Only revert components that are detected to be Overridden.
       else {
@@ -608,6 +646,7 @@ function drush_features_import() {
           if ($skip_confirmation || drush_confirm(dt($confirmation_message, $dt_args))) {
             if (!isset($config[$component])) {
               // Import missing component.
+              /** @var array $item */
               $item = $manager->getConfigType($component);
               $type = ConfigurationItem::fromConfigStringToConfigType($item['type']);
               $config_revert->import($type, $item['name_short']);
@@ -617,7 +656,7 @@ function drush_features_import() {
               // Revert existing component.
               /** @var \Drupal\features\ConfigurationItem $item */
               $item = $config[$component];
-              $type = ConfigurationItem::fromConfigStringToConfigType($item['type']);
+              $type = ConfigurationItem::fromConfigStringToConfigType($item->getType());
               $config_revert->revert($type, $item->getShortName());
               drush_log(dt('Reverted @module : @component.', $dt_args), 'ok');
             }
@@ -648,7 +687,6 @@ function drush_features_import() {
 function _drush_features_load_feature($module, $any = FALSE) {
   /** @var \Drupal\features\FeaturesManagerInterface $manager */
   $manager = \Drupal::service('features.manager');
-  $packages = $manager->getPackages();
   $feature = $manager->getPackage($module);
   if ($any && !isset($feature)) {
     // See if this is a non-features module.
@@ -658,8 +696,8 @@ function _drush_features_load_feature($module, $any = FALSE) {
       $extension = $modules[$module];
       $feature = $manager->initPackageFromExtension($extension);
       $config = $manager->listExtensionConfig($extension);
-      $feature['config'] = $config;
-      $feature['status'] = FeaturesManagerInterface::STATUS_ENABLED;
+      $feature->setConfig($config);
+      $feature->setStatus(FeaturesManagerInterface::STATUS_INSTALLED);
     }
   }
   return $feature;
@@ -867,7 +905,7 @@ function _drush_features_get_component_map() {
     }
     if (!empty($item->getPackage())) {
       $package = $packages[$item->getPackage()];
-      $result[$type][$short_name][] = $package['machine_name'];
+      $result[$type][$short_name][] = $package->getMachineName();
     }
   }
 

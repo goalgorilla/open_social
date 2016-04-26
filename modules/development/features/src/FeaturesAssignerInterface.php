@@ -7,8 +7,6 @@
 
 namespace Drupal\features;
 
-use Drupal\features\FeaturesBundleInterface;
-
 /**
  * Common interface for features assignment services.
  *
@@ -66,6 +64,18 @@ interface FeaturesAssignerInterface {
   public function assignConfigPackages($force = FALSE);
 
   /**
+   * Applies a given package assignment method.
+   *
+   * @param string $method_id
+   *   The string identifier of the package assignment method to use to package
+   *   configuration.
+   * @param bool $force
+   *   (optional) If TRUE, assign config regardless of restrictions such as it
+   *   being already assigned to a package.
+   */
+  public function applyAssignmentMethod($method_id, $force = FALSE);
+
+  /**
    * Returns the enabled package assignment methods.
    *
    * @return array
@@ -104,17 +114,19 @@ interface FeaturesAssignerInterface {
   public function setBundle(FeaturesBundleInterface $bundle, $current = TRUE);
 
   /**
-   * Searches for a bundle that matches the $info.yml export.
+   * Searches for a bundle that matches the $info.yml or $features.yml export.
    *
    * Creates a new bundle as needed.
    *
    * @param array $info
    *   The bundle info.
+   * @param mixed $features_info
+   *   The features info.
    *
    * @return \Drupal\features\FeaturesBundleInterface
    *   A bundle.
    */
-  public function findBundle(array $info);
+  public function findBundle(array $info, $features_info = NULL);
 
   /**
    * Sets the currently active bundle.
@@ -175,14 +187,11 @@ interface FeaturesAssignerInterface {
   /**
    * Returns an array of bundle names suitable for a select option list.
    *
-   * @param string $none_text
-   *   (optional) A label for an empty option in the list.
-   *
    * @return array
    *   An array of bundles, keyed by machine_name, with values being human
    *   readable names.
    */
-  public function getBundleOptions($none_text = NULL);
+  public function getBundleOptions();
 
   /**
    * Makes the named bundle the current bundle.
@@ -212,9 +221,9 @@ interface FeaturesAssignerInterface {
   /**
    * Loads a named bundle.
    *
-   * @param string $bundle_name
-   *   The name of a features bundle. If omitted, gets the last bundle from the
-   *   Session.
+   * @param string $machine_name
+   *   (optional) The name of a features bundle.
+   *   Defaults to NULL, gets the last bundle from the session.
    *
    * @return \Drupal\features\FeaturesBundleInterface
    *   A features bundle object.
