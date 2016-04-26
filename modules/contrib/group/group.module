@@ -1,0 +1,147 @@
+<?php
+
+/**
+ * @file
+ * Contains Drupal\group\group.module
+ */
+
+use Drupal\group\Entity\GroupContent;
+use Drupal\group\Plugin\GroupContentEnablerHelper;
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function group_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'entity.group_type.content_plugins':
+      return '<p>' . t('Entities that can be added to this group type.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function group_element_info_alter(array &$types) {
+  // Attach our extra CSS for toolbar icons.
+  if (isset($types['toolbar'])) {
+    $types['toolbar']['#attached']['library'][] = 'group/toolbar';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function group_theme() {
+  return [
+    /*'group' => [
+      'render element' => 'elements',
+    ],*/
+    'group_add_list' => [
+      'variables' => ['group_types' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for list of available group type templates.
+ *
+ * Default template: group-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - group_types: An array of group types.
+ *
+ * @see group_add_page()
+ */
+function template_preprocess_group_add_list(&$variables) {
+  $variables['types'] = [];
+
+  if (!empty($variables['group_types'])) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    foreach ($variables['group_types'] as $group_type) {
+      $variables['types'][$group_type->id()] = [
+        'type' => $group_type->id(),
+        'url' => Url::fromRoute('entity.group.add_form', ['group_type' => $group_type->id()]),
+        'label' => $group_type->label(),
+        'description' => ['#markup' => $group_type->getDescription()],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_rebuild().
+ */
+function group_rebuild() {
+  // Checks if there are any new enforced plugins to install.
+  GroupContentEnablerHelper::installEnforcedPlugins();
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function group_modules_installed($modules) {
+  // Checks if there are any new enforced plugins to install.
+  GroupContentEnablerHelper::installEnforcedPlugins();
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function group_entity_type_alter(array &$entity_types) {
+  static $mute_self;
+
+  // Because we load content enabler plugins while rebuilding entity types, we
+  // need to make sure the code below does not keep triggering itself.
+  //
+  // This could happen because content enabler plugins may load entity types to
+  // create derivatives (like gnode does) and because we load all group types to
+  // see which plugins are actually installed.
+  if ($mute_self !== TRUE) {
+    $mute_self = TRUE;
+
+    // Enables extra forms for GroupContent entities as defined by plugins.
+    foreach (GroupContentEnablerHelper::getAdditionalEntityForms() as $name => $class) {
+      /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+      $entity_types['group_content']->setFormClass($name, $class);
+    }
+
+    $mute_self = FALSE;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param string $form_id
+ */
+function group_form_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['visibility']['group_type'])) {
+    $form['visibility_tabs']['#attached']['library'][] = 'group/block';
+    $form['visibility']['group_type']['#title'] = t('Group types');
+    $form['visibility']['group_type']['negate']['#type'] = 'value';
+    $form['visibility']['group_type']['negate']['#title_display'] = 'invisible';
+    $form['visibility']['group_type']['negate']['#value'] = $form['visibility']['group_type']['negate']['#default_value'];
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function group_entity_delete(EntityInterface $entity) {
+  if ($entity instanceof ContentEntityInterface) {
+    if ($group_contents = GroupContent::loadByEntity($entity)) {
+      /** @var \Drupal\group\Entity\GroupContent $group_content */
+      foreach ($group_contents as $group_content) {
+        $group_content->delete();
+      }
+    }
+  }
+}

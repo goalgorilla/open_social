@@ -1,0 +1,314 @@
+<?php
+
+/**
+ * @file
+ * Contains Drupal\gnode\gnode.module
+ */
+
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupContentType;
+use Drupal\node\NodeInterface;
+use Drupal\node\Entity\NodeType;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function gnode_theme() {
+  return [
+    'gnode_add_list' => [
+      'variables' => ['group' => NULL, 'node_types' => NULL],
+    ],
+    'gnode_create_list' => [
+      'variables' => ['group' => NULL, 'node_types' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for the add group node page.
+ *
+ * Default template: gnode-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - group: The group to add a group node to.
+ *   - node_types: An array of node types.
+ */
+function template_preprocess_gnode_add_list(&$variables) {
+  $variables['types'] = $options = [];
+
+  if ($variables['group'] instanceof GroupInterface && !empty($variables['node_types'])) {
+    $group = $variables['group'];
+
+    // @todo Do not use redirect.destination but check for ?destination.
+    // We try to keep the redirect destination set in the URL.
+    if ($destination = \Drupal::service('redirect.destination')->get()) {
+      $options['query']['destination'] = $destination;
+    }
+
+    /** @var \Drupal\node\NodeTypeInterface $node_type */
+    foreach ($variables['node_types'] as $node_type_id => $node_type) {
+      $plugin = $group->getGroupType()->getContentPlugin("group_node:$node_type_id");
+
+      $variables['types'][$node_type_id] = [
+        'type' => $node_type_id,
+        'url' => Url::fromRoute($plugin->getRouteName('add-form'), ['group' => $group->id()], $options),
+        'label' => $node_type->label(),
+        'description' => ['#markup' => $node_type->getDescription()],
+      ];
+    }
+  }
+}
+
+/**
+ * Prepares variables for the create group node page.
+ *
+ * Default template: gnode-create-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - group: The group to add a group node to.
+ *   - node_types: An array of node types.
+ */
+function template_preprocess_gnode_create_list(&$variables) {
+  $variables['types'] = $options = [];
+
+  if ($variables['group'] instanceof GroupInterface && !empty($variables['node_types'])) {
+    $group = $variables['group'];
+
+    // @todo Do not use redirect.destination but check for ?destination.
+    // We try to keep the redirect destination set in the URL.
+    if ($destination = \Drupal::service('redirect.destination')->get()) {
+      $options['query']['destination'] = $destination;
+    }
+
+    /** @var \Drupal\node\NodeTypeInterface $node_type */
+    foreach ($variables['node_types'] as $node_type_id => $node_type) {
+      $plugin = $group->getGroupType()->getContentPlugin("group_node:$node_type_id");
+
+      $variables['types'][$node_type_id] = [
+        'type' => $node_type_id,
+        'url' => Url::fromRoute($plugin->getRouteName('create-form'), ['group' => $group->id()], $options),
+        'label' => $node_type->label(),
+        'description' => ['#markup' => $node_type->getDescription()],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function gnode_entity_type_alter(array &$entity_types) {
+  $entity_types['node']->setFormClass('gnode-form', 'Drupal\gnode\Form\GroupNodeFormStep1');
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * When trying to view, update or delete a node it suffices to have the right to
+ * do so in only one group the node belongs to. If you wish to prevent any such
+ * action on your own terms, implement hook_node_access() in your module.
+ */
+function gnode_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  // We do not care about create access as we have our own wizard for that. Any
+  // operation aside from 'view', 'update' and 'delete' is also unsupported.
+  if (!in_array($op, ['view', 'update', 'delete'])) {
+    return AccessResult::neutral();
+  }
+
+  // Some modules, including the code in \Drupal\node\NodeForm::access() may
+  // check for 'view', 'update' or 'delete' access on new nodes, even though
+  // that makes little sense. We need to account for it to avoid crashes because
+  // we would otherwise query the DB with a non-existent node ID.
+  if ($node->isNew()) {
+    return AccessResult::neutral();
+  }
+
+  $type = $node->bundle();
+
+  // Only act if there are group content types for this node type.
+  $group_content_types = GroupContentType::loadByContentPluginId("group_node:$type");
+  if (empty($group_content_types)) {
+    return AccessResult::neutral();
+  }
+
+  // Load all the group content for this node.
+  $group_contents = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'type' => array_keys($group_content_types),
+      'entity_id' => $node->id(),
+    ]);
+
+  // If the node does not belong to any group, we have nothing to say.
+  if (empty($group_contents)) {
+    return AccessResult::neutral();
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface[] $groups */
+  $groups = [];
+  foreach ($group_contents as $group_content) {
+    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+    $group = $group_content->getGroup();
+    $groups[$group->id()] = $group;
+  }
+
+  // From this point on you need group to allow you to perform the requested
+  // operation. If you are not granted access for a node belonging to a group,
+  // you should be denied access instead.
+  switch ($op) {
+    case 'view':
+      foreach ($groups as $group) {
+        if ($group->hasPermission("view $type node", $account)) {
+          return AccessResult::allowed();
+        }
+      }
+      break;
+
+    case 'update':
+      foreach ($groups as $group) {
+        if ($group->hasPermission("edit any $type node", $account)) {
+          return AccessResult::allowed();
+        }
+        elseif ($account->id() == $node->getOwnerId() && $group->hasPermission("edit own $type node", $account)) {
+          return AccessResult::allowed();
+        }
+      }
+      break;
+
+    case 'delete':
+      foreach ($groups as $group) {
+        if ($group->hasPermission("delete any $type node", $account)) {
+          return AccessResult::allowed();
+        }
+        elseif ($account->id() == $node->getOwnerId() && $group->hasPermission("delete own $type node", $account)) {
+          return AccessResult::allowed();
+        }
+      }
+      break;
+  }
+
+  return AccessResult::forbidden();
+}
+
+/**
+ * Implements hook_node_grants().
+ *
+ * We define the following grants:
+ * - 'gnode:NODE_TYPE': Grants access for this node type.
+ * - 'gnode_author:GID:NODE_TYPE': Grants access to authors for this node type.
+ *
+ * @see gnode_node_access_records()
+ */
+function gnode_node_grants(AccountInterface $account, $op) {
+  $database = Database::getConnection('default');
+  $grants = [];
+
+  // Gather the machine names of all node types.
+  $node_types = array_keys(NodeType::loadMultiple());
+
+  // Provide grants for users who can bypass group access.
+  if ($account->hasPermission('bypass group access')) {
+    $gids = $database->query('SELECT id FROM {groups}')->fetchCol();
+    if (!empty($gids)) {
+      foreach ($node_types as $node_type) {
+        foreach ($gids as $gid) {
+          $grants["gnode:$node_type"][] = $gid;
+        }
+      }
+    }
+    return $grants;
+  }
+
+  // If the user could not bypass group access, we load every group available
+  // and calculate grants based on that. This is probably a huge performance hit
+  // on larger sites, so this may need refactoring down the line.
+  foreach (Group::loadMultiple() as $group) {
+    foreach ($node_types as $node_type) {
+      $gid = $group->id();
+
+      switch ($op) {
+        case 'view':
+          if ($group->hasPermission("view $node_type node", $account)) {
+            $grants["gnode:$node_type"][] = $gid;
+          }
+          break;
+
+        case 'update':
+        case 'delete':
+          // If you can act on any node, there's no need for the author grant.
+          if ($group->hasPermission("$op any $node_type node", $account)) {
+            $grants["gnode:$node_type"][] = $gid;
+          }
+          elseif ($group->hasPermission("$op own $node_type node", $account)) {
+            $grants["gnode_author:$gid:$node_type"][] = $account->id();
+          }
+          break;
+
+      }
+    }
+  }
+
+  return $grants;
+}
+
+/**
+ * Implements hook_node_access_records().
+ *
+ * @see gnode_node_grants()
+ */
+function gnode_node_access_records(NodeInterface $node) {
+  $records = [];
+  $type = $node->bundle();
+
+  // Only act if there are group content types for this node type.
+  $group_content_types = GroupContentType::loadByContentPluginId("group_node:$type");
+  if (empty($group_content_types)) {
+    return $records;
+  }
+
+  // Load all of the group content for this node.
+  $group_contents = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'type' => array_keys($group_content_types),
+      'entity_id' => $node->id()
+    ]);
+
+  // Set records for every group the node belongs to.
+  foreach ($group_contents as $group_content) {
+    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+    $gid = $group_content->getGroup()->id();
+
+    // Non-author records are only added for published nodes.
+    if ($node->isPublished()) {
+      $records[] = [
+        'gid' => $gid,
+        'grant_view' => 1,
+        'grant_update' => 1,
+        'grant_delete' => 1,
+        'priority' => 0,
+        'realm' => "gnode:$type",
+      ];
+    }
+
+    // Add a grant for the node author.
+    $records[] = [
+      'gid' => $node->getOwnerId(),
+      'grant_view' => 1,
+      'grant_update' => 1,
+      'grant_delete' => 1,
+      'priority' => 0,
+      'realm' => "gnode_author:$gid:$type",
+    ];
+  }
+
+  return $records;
+}

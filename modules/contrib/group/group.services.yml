@@ -1,0 +1,76 @@
+services:
+  group.permissions:
+    class: 'Drupal\group\Access\GroupPermissionHandler'
+    arguments: ['@module_handler', '@string_translation', '@controller_resolver']
+  group.permissions_hash_generator:
+    class: 'Drupal\group\Access\GroupPermissionsHashGenerator'
+    arguments: ['@private_key', '@cache.default', '@cache.static']
+  group.admin_path.route_subscriber:
+    class: 'Drupal\group\Routing\GroupAdminRouteSubscriber'
+    arguments: ['@config.factory']
+    tags:
+      - { name: 'event_subscriber' }
+  group_content_type.breadcrumb:
+    class: 'Drupal\group\Breadcrumb\GroupContentTypeBreadcrumbBuilder'
+    tags:
+      - { name: 'breadcrumb_builder', priority: 100 }
+  access_check.group.add:
+    class: 'Drupal\group\Access\GroupAddAccessCheck'
+    arguments: ['@entity.manager']
+    tags:
+      - { name: 'access_check', applies_to: '_group_add_access' }
+  access_check.group.permission:
+    class: 'Drupal\group\Access\GroupPermissionAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_group_permission' }
+  access_check.group.member:
+    class: 'Drupal\group\Access\GroupMemberAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_group_member' }
+  access_check.group.installed_content:
+    class: 'Drupal\group\Access\GroupInstalledContentAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_group_installed_content' }
+  access_check.group.owns_content:
+    class: 'Drupal\group\Access\GroupOwnsContentAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_group_owns_content' }
+  access_check.group_content.add:
+    class: 'Drupal\group\Access\GroupContentAddAccessCheck'
+    arguments: ['@entity.manager']
+    tags:
+      - { name: 'access_check', applies_to: '_group_content_add_access' }
+  cache_context.group:
+    class: 'Drupal\group\Cache\Context\GroupCacheContext'
+    arguments: ['@group.group_route_context']
+    tags:
+      - { name: 'cache.context'}
+  cache_context.group.type:
+    class: 'Drupal\group\Cache\Context\GroupTypeCacheContext'
+    arguments: ['@group.group_route_context']
+    tags:
+      - { name: 'cache.context'}
+  cache_context.group_membership:
+    class: 'Drupal\group\Cache\Context\GroupMembershipCacheContext'
+    arguments: ['@group.group_route_context', '@current_user']
+    tags:
+      - { name: 'cache.context'}
+  cache_context.group_membership.permissions:
+    class: 'Drupal\group\Cache\Context\GroupMembershipPermissionsCacheContext'
+    arguments: ['@group.group_route_context', '@current_user', '@group.permissions_hash_generator']
+    tags:
+      - { name: 'cache.context'}
+  plugin.manager.group_content_enabler:
+    class: 'Drupal\group\Plugin\GroupContentEnablerManager'
+    parent: 'default_plugin_manager'
+  group.uninstall_validator.group_content:
+    class: 'Drupal\group\UninstallValidator\GroupContentUninstallValidator'
+    tags:
+      - { name: 'module_install.uninstall_validator' }
+    arguments: ['@string_translation', '@entity.query']
+    lazy: true
+  group.group_route_context:
+    class: 'Drupal\group\Context\GroupRouteContext'
+    arguments: ['@current_route_match']
+    tags:
+      - { name: 'context_provider' }
