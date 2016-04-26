@@ -14,26 +14,26 @@ use Drupal\features\FeaturesAssignmentMethodBase;
  * Class for assigning configuration to packages based on entity types.
  *
  * @Plugin(
- *   id = \Drupal\features\Plugin\FeaturesAssignment\FeaturesAssignmentBaseType::METHOD_ID,
+ *   id = "base",
  *   weight = -2,
  *   name = @Translation("Base type"),
  *   description = @Translation("Use designated types of configuration as the base for configuration package modules. For example, if content types are selected as a base type, a package will be generated for each content type and will include all configuration dependent on that content type."),
- *   config_route_name = "features.assignment_base"
+ *   config_route_name = "features.assignment_base",
+ *   default_settings = {
+ *     "types" = {
+ *       "config" = {},
+ *       "content" = {}
+ *     }
+ *   }
  * )
  */
 class FeaturesAssignmentBaseType extends FeaturesAssignmentMethodBase {
-
-  /**
-   * The package assignment method id.
-   */
-  const METHOD_ID = 'base';
-
   /**
    * {@inheritdoc}
    */
   public function assignPackages($force = FALSE) {
     $current_bundle = $this->assigner->getBundle();
-    $settings = $current_bundle->getAssignmentSettings(self::METHOD_ID);
+    $settings = $current_bundle->getAssignmentSettings($this->getPluginId());
     $config_base_types = $settings['types']['config'];
 
     $config_types = $this->featuresManager->listConfigTypes();
@@ -41,12 +41,13 @@ class FeaturesAssignmentBaseType extends FeaturesAssignmentMethodBase {
 
     foreach ($config_collection as $item_name => $item) {
       if (in_array($item->getType(), $config_base_types)) {
-        if (!isset($packages[$item->getShortName()]) && !$item->getPackage()) {
-          $description = $this->t('Provide @label @type and related configuration.', array('@label' => $item->getLabel(), '@type' => Unicode::strtolower($config_types[$item->getType()])));
+        if (is_null($this->featuresManager->findPackage($item->getShortName())) && !$item->getPackage()) {
+          $description = $this->t('Provides @label @type and related configuration.', array('@label' => $item->getLabel(), '@type' => Unicode::strtolower($config_types[$item->getType()])));
           if (isset($item->getData()['description'])) {
             $description .= ' ' . $item->getData()['description'];
           }
           $this->featuresManager->initPackage($item->getShortName(), $item->getLabel(), $description, 'module', $current_bundle);
+          // Update list with the package we just added.
           try {
             $this->featuresManager->assignConfigPackage($item->getShortName(), [$item_name]);
           }

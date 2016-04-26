@@ -7,15 +7,14 @@
 
 namespace Drupal\features;
 
+use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\features\FeaturesManagerInterface;
-use Drupal\features\FeaturesAssignerInterface;
 
 /**
  * Interface for package assignment classes.
  */
-interface FeaturesAssignmentMethodInterface {
+interface FeaturesAssignmentMethodInterface extends PluginInspectionInterface {
 
   /**
    * Injects the features manager.

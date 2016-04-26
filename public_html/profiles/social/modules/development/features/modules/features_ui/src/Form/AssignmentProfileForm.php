@@ -7,7 +7,6 @@
 
 namespace Drupal\features_ui\Form;
 
-use Drupal\features_ui\Form\AssignmentFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -35,7 +34,7 @@ class AssignmentProfileForm extends AssignmentFormBase {
 
     $form['curated'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Add commonly-needed configuration'),
+      '#title' => $this->t('Add commonly-needed configuration'),
       '#default_value' => $settings['curated'],
       '#description' => $this->t('Select this option to add a curated list of commonly-needed configuration including cron- and theme-related settings to the install profile.'),
     );
@@ -49,13 +48,13 @@ class AssignmentProfileForm extends AssignmentFormBase {
     );
     $form['standard']['files'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Crib code'),
+      '#title' => $this->t('Crib code'),
       '#default_value' => $standard_settings['files'],
       '#description' => $this->t('Select this option to add configuration and other files to the optional install profile from the Drupal core Standard install profile. Without these additions, a generated install profile will be missing some important initial setup.'),
     );
     $form['standard']['dependencies'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Crib dependencies'),
+      '#title' => $this->t('Crib dependencies'),
       '#default_value' => $standard_settings['dependencies'],
       '#description' => $this->t('Select this option to add module and theme dependencies from the Standard install profile.'),
     );
