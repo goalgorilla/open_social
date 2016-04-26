@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_core
+    - system
+  theme:
+    - socialbase
+id: socialbase_pagetitleblock
+theme: socialbase
+region: title
+weight: -5
+provider: null
+plugin: social_page_title_block
+settings:
+  id: social_page_title_block
+  label: 'Page title block'
+  provider: social_core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/user\r\n/user/*"
+    negate: true
+    context_mapping: {  }

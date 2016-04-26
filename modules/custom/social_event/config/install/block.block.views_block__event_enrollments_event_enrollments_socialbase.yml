@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.event_enrollments
+  module:
+    - node
+    - views
+  theme:
+    - socialbase
+id: views_block__event_enrollments_event_enrollments_socialbase
+theme: socialbase
+region: complementary
+weight: -10
+provider: null
+plugin: 'views_block:event_enrollments-event_enrollments'
+settings:
+  id: 'views_block:event_enrollments-event_enrollments'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

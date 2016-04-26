@@ -1,0 +1,69 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.teaser
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_self_introduction
+    - image.style.teaser
+    - profile.type.profile
+  module:
+    - address
+    - image
+    - telephone
+    - text
+id: profile.profile.teaser
+targetEntityType: profile
+bundle: profile
+mode: teaser
+content:
+  field_profile_first_name:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_function:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: teaser
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_profile_last_name:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_organization:
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+hidden:
+  field_profile_address: true
+  field_profile_expertise: true
+  field_profile_interests: true
+  field_profile_phone_number: true
+  field_profile_self_introduction: true

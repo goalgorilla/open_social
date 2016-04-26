@@ -1,0 +1,73 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.topic.body
+    - field.field.node.topic.field_topic_comments
+    - field.field.node.topic.field_topic_image
+    - field.field.node.topic.field_topic_type
+    - image.style.thumbnail
+    - node.type.topic
+  module:
+    - comment
+    - image
+    - path
+    - text
+id: node.topic.default
+targetEntityType: node
+bundle: topic
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 2
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+  field_topic_comments:
+    weight: 27
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
+  field_topic_image:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+  field_topic_type:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+  path:
+    type: path
+    weight: 30
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  promote: true
+  sticky: true

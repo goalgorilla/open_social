@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.topics
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - bartik
+id: exposedformtopicspage_1
+theme: bartik
+region: sidebar_second
+weight: -6
+provider: null
+plugin: 'views_exposed_filter_block:topics-page_1'
+settings:
+  id: 'views_exposed_filter_block:topics-page_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: 'I want to see topics that'
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+  request_path:
+    id: request_path
+    pages: '/user/*/topics'
+    negate: false
+    context_mapping: {  }
