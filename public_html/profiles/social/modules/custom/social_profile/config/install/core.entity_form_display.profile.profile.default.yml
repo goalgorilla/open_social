@@ -1,0 +1,165 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_self_introduction
+    - image.style.thumbnail
+    - profile.type.profile
+  module:
+    - address
+    - field_group
+    - image
+    - telephone
+    - text
+third_party_settings:
+  field_group:
+    group_profile_names_image:
+      children:
+        - field_profile_first_name
+        - field_profile_last_name
+        - field_profile_image
+      parent_name: ''
+      weight: 0
+      label: 'Names and profile image'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_profile_funct_organization:
+      children:
+        - field_profile_function
+        - field_profile_organization
+      parent_name: ''
+      weight: 1
+      label: 'Function and organization'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_profile_self_intro:
+      children:
+        - field_profile_self_introduction
+      parent_name: ''
+      weight: 3
+      label: 'Self introduction'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_profile_expertise_interest:
+      children:
+        - field_profile_interests
+        - field_profile_expertise
+      parent_name: ''
+      weight: 4
+      label: 'Expertise and interests'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_profile_contact_info:
+      children:
+        - field_profile_phone_number
+        - field_profile_address
+      parent_name: ''
+      weight: 2
+      label: 'Contact information'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+id: profile.profile.default
+targetEntityType: profile
+bundle: profile
+mode: default
+content:
+  field_profile_address:
+    weight: 7
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
+  field_profile_expertise:
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
+  field_profile_first_name:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_profile_function:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_profile_image:
+    weight: 3
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
+  field_profile_interests:
+    weight: 6
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
+  field_profile_last_name:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_profile_organization:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_profile_phone_number:
+    weight: 6
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+  field_profile_self_introduction:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+hidden: {  }
