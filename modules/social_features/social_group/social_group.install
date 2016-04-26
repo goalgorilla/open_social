@@ -1,0 +1,20 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_group module.
+ */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_group.
+ */
+function social_group_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'create open_group group',
+  ));
+}
