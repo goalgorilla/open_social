@@ -28,3 +28,13 @@
   {{ profile_name }}
 </h1>
 {{ content.field_profile_image }}
+{% if (content.field_profile_function|render or content.field_profile_organization|render) %}
+  <p>
+    {% if content.field_profile_function|render %}
+      <strong>{{ content.field_profile_function|render }}</strong>
+    {% endif %}
+    {% if content.field_profile_organization|render %}
+      {{ content.field_profile_organization|render }}
+    {% endif %}
+  </p>
+{% endif %}
