@@ -11,12 +11,57 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
 }
 
 /**
- * Implements hook_theme_suggestions_alter().
+ * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Select the page layout a / b /c template based on the current route.
  */
- // function socialbase_theme_suggestions_alter(array &$suggestions, array $variables) {
-  // kint($variables);
-  // $suggestions[] = 'node__' . $variables['element']['#form_id'];
- // }
+function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  $page_suggestion = 'page_layout_a';
+  $match = \Drupal::getContainer()->get('current_route_match')->getCurrentRouteMatch();
+  $routename = $match->getRouteName();
+
+  // Add node type to routename.
+  if ($routename === 'entity.node.canonical') {
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if (!is_object($node)){
+      $node = node_load($node);
+    }
+    if (is_object($node)) {
+      $routename .= '.' . $node->getType();
+    }
+  }
+
+  switch($routename) {
+    case "view.event_enrollments.view_enrollments";
+      $page_suggestion = 'page_layout_b';
+      break;
+
+    case "entity.node.canonical.topic";
+    case "entity.node.edit_form";
+      $page_suggestion = 'page_layout_c';
+      break;
+  }
+  $suggestions[] = $page_suggestion;
+}
+
+/**
+ * Helper function to call all the process functions of a hook.
+ *
+ * @param $hook string function to preprocess (e.g. page).
+ * @param $variables array template variables to handle.
+ *
+ * @see socialbase_preprocess_page_layout_a();
+ */
+function _socialbase_call_preprocess_page($hook, &$variables) {
+  $theme_registry = theme_get_registry();
+  if (isset($theme_registry['page']['preprocess functions']))
+    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
+      if (function_exists($preprocessor_function)) {
+        $preprocessor_function($variables, $hook, $theme_registry['page']);
+      }
+    }
+}
+
 
 /**
  * Implements hook_preprocess_block().
@@ -49,7 +94,58 @@ function socialbase_preprocess_page(&$variables) {
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
+}
 
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+function socialbase_preprocess_page_layout_a(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+
+}
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+
+function socialbase_preprocess_page_layout_b(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+
+function socialbase_preprocess_page_layout_c(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+/**
+ * Implements hook_theme().
+ *
+ * Bit of hacking to be able to call multiple page layout templates based on
+ * routes.
+ *
+ * See @socialbase_theme_suggestions_menu_alter().
+ */
+function socialbase_theme() {
+  $items = array();
+  $items['page_layout_a'] = array(
+    'template' => 'page--layout-a',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_b'] = array(
+    'template' => 'page--layout-b',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_c'] = array(
+    'template' => 'page--layout-c',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  return $items;
 }
 
 /**
