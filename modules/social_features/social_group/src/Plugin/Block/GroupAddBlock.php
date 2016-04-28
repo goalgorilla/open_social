@@ -40,7 +40,7 @@ class GroupAddBlock extends BlockBase {
     );
     $url->setOptions($link_options);
 
-    $build['group_add_block'] = Link::fromTextAndUrl(t('Add a Group'), $url)->toRenderable();
+    $build['group_add_block'] = Link::fromTextAndUrl(t('Add a group'), $url)->toRenderable();
 
     return $build;
   }
