@@ -1,0 +1,83 @@
+extends ./layout/base-lu.jade
+
+block title
+  title John Johnson
+
+block pagetitle
+  .container.hidden-xs
+    .cover
+      .cover-wrap
+        h1.page-title.h2 Jenny Baker
+        img.img-circle(src='content/images/avatar5.jpg')
+      
+block secondary_navigation
+  .container
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-default(href="my-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to my stream
+
+  .container
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href="other-stream.html") Stream  
+          li.active
+            a(href="other-profile-about.html") About
+            span.visually-hidden (active tab)
+          li
+            a(href='other-topics.html') Topics
+          li
+            a(href='other-events.html') Events  
+          li
+            a(href="#") Groups
+      
+block content
+  
+  .row
+    .col-sm-12
+      h4.section-title About you
+    
+    .col-xs-12.col-sm-8
+      
+      .card
+        .card-body.extra-padding
+        
+          ul.collection
+            li.collection-item
+              h4 Contact information
+            li.collection-item 
+              .collection-label Phone
+              .collection-field +31 658974324
+            li.collection-item 
+              .collection-label E-mail
+              .collection-field 
+                a(href="example@domain.com") jenny@jennybaker.com    
+            li.collection-item 
+              .collection-label Address
+              .collection-field 
+                | My street name 123 
+                br
+                | 1234 BB
+                br
+                | Amsterdam
+          
+          h4 Intro
+          p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
+          
+          h4 Your interests
+          .chip drupal
+          .chip sales
+          .chip barbecues
+          
+          h4 Your expertise
+          .chip php
+          .chip interaction design
+          .chip cooking
+              
+                    
+              
+          
+          

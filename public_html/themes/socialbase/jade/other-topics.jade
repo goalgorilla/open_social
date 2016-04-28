@@ -1,0 +1,114 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Michael Angarano
+
+block pagetitle
+  .container.hidden-xs
+    .cover
+      .cover-wrap
+        h1.page-title.h2 Jenny Baker
+        img.img-circle.img-bordered(src='content/images/avatar5.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
+      
+block secondary_navigation
+  .container
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-default(href="my-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to my stream
+
+  .container
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href="other-stream.html") Stream  
+          li
+            a(href="other-profile-about.html") About
+          li.active
+            a(href='other-topics.html') Topics
+            span.visually-hidden (active tab) 
+          li
+            a(href='other-events.html') Events 
+          li
+            a(href="#") Groups
+      
+block content
+  
+  .row
+  
+    .col-xs-12
+      h2.h3.section-title My topics
+    
+    .col-xs-12.col-sm-4.pull-right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-topic.html') 
+        i.material-icons.pull-left add
+        | Add a topic
+
+      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filters
+      br 
+      br
+      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
+              i.material-icons close
+        
+        .offcanvas-body
+          form
+            .form-group
+              label Topic type
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All types
+                option(value="blog") Blog
+                option(value="discussion") Discussion
+                option(value="topic") Topic
+            .form-group
+              label Status
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All statusses
+                option(value="published") Published
+                option(value="unpublished") Unpublished
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+
+    .col-xs-12.col-sm-8
+      include molecules/_topic1.jade
+      include molecules/_topic2.jade
+      include molecules/_topic3.jade
+      include molecules/_topic4.jade
+        
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }
