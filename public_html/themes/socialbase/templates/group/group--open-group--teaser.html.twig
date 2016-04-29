@@ -52,8 +52,15 @@
         {% endif %}
         {{ title_suffix }}
         <div class="text-grey">{{ content.field_group_description }}</div>
-        {#TODO: Use content.links here and fix the theming#}
+        <div class="text-grey-dark">
+            {% trans %}
+            1 member
+            {% plural group.getMembers|length %}
+            @count members
+            {% endtrans %}
+        </div>
         <div class="card-actionbar">
+            <a href="{{ url }}" rel="tag" title="{{ label }}">Read more</a>
         </div>
     </div>
 </div>
