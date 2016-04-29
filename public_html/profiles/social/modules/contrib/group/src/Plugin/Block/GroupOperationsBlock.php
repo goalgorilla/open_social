@@ -46,7 +46,7 @@ class GroupOperationsBlock extends BlockBase {
     $build['#cache']['contexts'][] = 'group_membership';
 
     /** @var \Drupal\group\Entity\GroupInterface $group */
-    if ($group = $this->getContextValue('group')) {
+    if (($group = $this->getContextValue('group')) && $group->id()) {
       $links = [];
       foreach ($group->getGroupType()->getInstalledContentPlugins() as $plugin) {
         /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */

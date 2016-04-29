@@ -20,6 +20,7 @@ class GroupNodeRouteProvider {
    */
   public function getRoutes() {
     $routes = $plugin_ids = $permissions_add = $permissions_create = [];
+
     foreach (NodeType::loadMultiple() as $name => $node_type) {
       $plugin_id = "group_node:$name";
 
@@ -28,9 +29,12 @@ class GroupNodeRouteProvider {
       $permissions_create[] = "create $name node";
     }
 
+    // If there are no node types yet, we cannot have any plugin IDs and should
+    // therefore exit early because we cannot have any routes for them either.
     if (empty($plugin_ids)) {
       return $routes;
     }
+
     $routes['entity.group_content.group_node.collection'] = new Route('group/{group}/node');
     $routes['entity.group_content.group_node.collection']
       ->setDefaults([

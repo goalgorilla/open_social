@@ -8,6 +8,7 @@
 namespace Drupal\group\Context;
 
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
@@ -45,17 +46,15 @@ class GroupRouteContext implements ContextProviderInterface {
   public function getRuntimeContexts(array $unqualified_context_ids) {
     $value = NULL;
 
-    // Create an optional context definition for group entites.
+    // Create an optional context definition for group entities.
     $context_definition = new ContextDefinition('entity:group', NULL, FALSE);
 
     // See if the route has a group parameter and try to retrieve it.
-    if (($route_object = $this->routeMatch->getRouteObject()) && ($route_params = $route_object->getOption('parameters')) && isset($route_params['group'])) {
-      if ($group = $this->routeMatch->getParameter('group')) {
-        $value = $group;
-      }
+    if (($group = $this->routeMatch->getParameter('group')) && $group instanceof GroupInterface) {
+      $value = $group;
     }
     // Create a new group to use as context if on the group add form.
-    elseif ($this->routeMatch->getRouteName() == 'group.add') {
+    elseif ($this->routeMatch->getRouteName() == 'entity.group.add_form') {
       $group_type = $this->routeMatch->getParameter('group_type');
       $value = Group::create(['type' => $group_type->id()]);
     }

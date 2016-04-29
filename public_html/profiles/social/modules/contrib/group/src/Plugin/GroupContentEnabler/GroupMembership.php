@@ -7,6 +7,7 @@
 
 namespace Drupal\group\Plugin\GroupContentEnabler;
 
+use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Plugin\GroupContentEnablerBase;
@@ -15,7 +16,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\Routing\Route;
@@ -98,8 +98,6 @@ class GroupMembership extends GroupContentEnablerBase {
     // Update the labels of the default permissions.
     $permissions['access group_membership overview']['title'] = 'Access the member overview page';
     $permissions['view group_membership content']['title'] = 'View individual group members';
-
-    // @todo Implement this in updateAccess() once group content can be owned.
     $permissions['edit own group_membership content'] = [
       'title' => 'Edit own membership',
       'allowed for' => ['member'],
@@ -223,29 +221,39 @@ class GroupMembership extends GroupContentEnablerBase {
    * {@inheritdoc}
    */
   public function createAccess(GroupInterface $group, AccountInterface $account) {
-    return AccessResult::allowedIf($group->hasPermission('administer members', $account));
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
 
   /**
    * {@inheritdoc}
    */
   protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account) {
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission('administer members+view group_membership content', $account));
+    $group = $group_content->getGroup();
+    $permissions = ['view group_membership content', 'administer members'];
+    return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, $permissions, 'OR');
   }
 
   /**
    * {@inheritdoc}
    */
   protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account) {
-    // @todo Check for own membership when we support setting an author.
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission('administer members', $account));
+    $group = $group_content->getGroup();
+
+    // Allow members to edit their own membership data.
+    if ($group_content->entity_id->entity->id() == $account->id()) {
+      $permissions = ['edit own group_membership content', 'administer members'];
+      return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, $permissions, 'OR');
+    }
+
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
 
   /**
    * {@inheritdoc}
    */
   protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account) {
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission('administer members', $account));
+    $group = $group_content->getGroup();
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, 'administer members');
   }
 
   /**

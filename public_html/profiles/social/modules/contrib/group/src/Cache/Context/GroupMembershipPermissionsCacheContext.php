@@ -54,8 +54,8 @@ class GroupMembershipPermissionsCacheContext extends GroupMembershipCacheContext
    * {@inheritdoc}
    */
   public function getContext() {
-    // If there was no group on the route, there can be no membership.
-    if (empty($this->group)) {
+    // If there was no existing group on the route, there can be no membership.
+    if (!$this->hasExistingGroup()) {
       return 'none';
     }
 
@@ -68,7 +68,7 @@ class GroupMembershipPermissionsCacheContext extends GroupMembershipCacheContext
   public function getCacheableMetadata() {
     $cacheable_metadata = new CacheableMetadata();
 
-    if (!empty($this->group)) {
+    if ($this->hasExistingGroup()) {
       $tags = [];
 
       // If the user is a member, we need to add the membership's cache tag.

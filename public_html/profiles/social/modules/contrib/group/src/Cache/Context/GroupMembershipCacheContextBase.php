@@ -52,4 +52,14 @@ abstract class GroupMembershipCacheContextBase {
     $this->user = $user;
   }
 
+  /**
+   * Checks whether this context got an existing group from the route.
+   *
+   * @return bool
+   *   Whether we've got an existing group.
+   */
+  protected function hasExistingGroup() {
+    return !empty($this->group) && $this->group->id();
+  }
+
 }
