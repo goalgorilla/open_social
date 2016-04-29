@@ -35,13 +35,16 @@ class GroupAddBlock extends BlockBase {
         'class' => array(
           'btn',
           'btn-primary',
+          'btn-raised',
+          'btn-block',
+          'waves-effect',
+          'waves-light',
         ),
       ),
     );
     $url->setOptions($link_options);
 
     $build['group_add_block'] = Link::fromTextAndUrl(t('Add a group'), $url)->toRenderable();
-
     return $build;
   }
 
