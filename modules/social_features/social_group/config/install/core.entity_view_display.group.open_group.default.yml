@@ -5,29 +5,21 @@ dependencies:
     - field.field.group.open_group.field_group_description
     - field.field.group.open_group.field_group_image
     - group.type.open_group
-    - image.style.teaser
   module:
-    - image
     - text
+_core:
+  default_config_hash: UwM0YY50-hZyWRhvvSg7HnqVwU7R0BEToCGATGrEObk
 id: group.open_group.default
 targetEntityType: group
 bundle: open_group
 mode: default
 content:
   field_group_description:
-    type: text_trimmed
-    weight: 1
-    label: hidden
-    settings:
-      trim_length: 200
-    third_party_settings: {  }
-  field_group_image:
-    type: image
+    type: text_default
     weight: 0
     label: hidden
-    settings:
-      image_style: teaser
-      image_link: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
+  field_group_image: true
   uid: true
