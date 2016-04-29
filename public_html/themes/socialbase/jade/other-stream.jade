@@ -47,26 +47,38 @@ block content
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-post2.jade
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-post2.jade
               
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-post2.jade
               
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade    
+              include ./molecules/_stream-post2.jade    
       
     .col-xs-12.col-sm-4.pull-right.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='#') 
         i.material-icons.pull-left add
         | Add content
+
+block scriptinline  
+  
+  script.  
+    function showMe (it, radio) {
+      var visibility = radio.value;
+      var icon = jQuery(radio).prevAll('.material-icons').text();
+      jQuery('#' + it).find('.text').html(visibility);
+      jQuery('#' + it).find('.material-icons').html(icon);
+      jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
+      jQuery(radio).closest('.list-group-item').addClass('active');
+    }
