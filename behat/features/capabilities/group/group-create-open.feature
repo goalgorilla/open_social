@@ -1,4 +1,4 @@
-@api @group @stability @DS-811
+@api @group @stability @DS-811 @DS-816
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -13,3 +13,5 @@ Feature: Create Open Group
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
+    And I should see "Description text"
+    And I should see "1 member"
