@@ -28,8 +28,8 @@ class GroupMembershipCacheContext extends GroupMembershipCacheContextBase implem
    * {@inheritdoc}
    */
   public function getContext() {
-    // If there was no group on the route, there can be no membership.
-    if (empty($this->group)) {
+    // If there was no existing group on the route, there can be no membership.
+    if (!$this->hasExistingGroup()) {
       return 'none';
     }
 
@@ -48,8 +48,8 @@ class GroupMembershipCacheContext extends GroupMembershipCacheContextBase implem
   public function getCacheableMetadata() {
     $cacheable_metadata = new CacheableMetadata();
 
-    if (!empty($this->group) && $group_membership = $this->group->getMember($this->user)) {
-      // This needs to be invalidated whenever the group membership is updated.
+    // This needs to be invalidated whenever the group membership is updated.
+    if ($this->hasExistingGroup() && $group_membership = $this->group->getMember($this->user)) {
       $cacheable_metadata->setCacheTags($group_membership->getGroupContent()->getCacheTags());
     }
 

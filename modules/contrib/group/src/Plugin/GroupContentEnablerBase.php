@@ -7,12 +7,12 @@
 
 namespace Drupal\group\Plugin;
 
+use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\Routing\Route;
@@ -436,7 +436,7 @@ abstract class GroupContentEnablerBase extends PluginBase implements GroupConten
    */
   public function createAccess(GroupInterface $group, AccountInterface $account) {
     $plugin_id = $this->getPluginId();
-    return AccessResult::allowedIf($group->hasPermission("create $plugin_id content", $account));
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "create $plugin_id content");
   }
 
   /**
@@ -454,8 +454,9 @@ abstract class GroupContentEnablerBase extends PluginBase implements GroupConten
    *   The access result.
    */
   protected function viewAccess(GroupContentInterface $group_content, AccountInterface $account) {
+    $group = $group_content->getGroup();
     $plugin_id = $this->getPluginId();
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission("view $plugin_id content", $account));
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "view $plugin_id content");
   }
 
   /**
@@ -473,11 +474,15 @@ abstract class GroupContentEnablerBase extends PluginBase implements GroupConten
    *   The access result.
    */
   protected function updateAccess(GroupContentInterface $group_content, AccountInterface $account) {
+    $group = $group_content->getGroup();
     $plugin_id = $this->getPluginId();
 
-    // @todo Check for own content when we support setting an author.
+    // Allow members to edit their own group content.
+    if ($group_content->getOwnerId() == $account->id()) {
+      return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "edit own $plugin_id content");
+    }
 
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission("edit any $plugin_id content", $account));
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "edit any $plugin_id content");
   }
 
   /**
@@ -495,11 +500,15 @@ abstract class GroupContentEnablerBase extends PluginBase implements GroupConten
    *   The access result.
    */
   protected function deleteAccess(GroupContentInterface $group_content, AccountInterface $account) {
+    $group = $group_content->getGroup();
     $plugin_id = $this->getPluginId();
 
-    // @todo Check for own content when we support setting an author.
+    // Allow members to delete their own group content.
+    if ($group_content->getOwnerId() == $account->id()) {
+      return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "delete own $plugin_id content");
+    }
 
-    return AccessResult::allowedIf($group_content->getGroup()->hasPermission("delete any $plugin_id content", $account));
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, "delete any $plugin_id content");
   }
 
   /**
@@ -517,7 +526,7 @@ abstract class GroupContentEnablerBase extends PluginBase implements GroupConten
         $result = $this->deleteAccess($group_content, $account);
         break;
       default:
-        $result = AccessResult::neutral();
+        $result = GroupAccessResult::neutral();
     }
 
     return $result;
