@@ -36,14 +36,14 @@ class PostForm extends ContentEntityForm {
         // Set default value to community.
         // Remove recipient option.
         // Only needed for 'private' permissions which we currently do not support.
-        unset($form['field_visibility']['widget']['#options'][0]);
-        $form['field_visibility']['widget']['#default_value'][0] = "2";
+        unset($form['field_visibility']['widget'][0]['#options'][0]);
+        $form['field_visibility']['widget'][0]['#default_value'] = "2";
       }
       elseif ($display_id === 'post.post.profile') {
         // Remove public option from options.
-        $form['field_visibility']['widget']['#default_value'][0] = "0";
-        unset($form['field_visibility']['widget']['#options'][1]);
-        unset($form['field_visibility']['widget']['#options'][2]);
+        $form['field_visibility']['widget'][0]['#default_value'] = "0";
+        unset($form['field_visibility']['widget'][0]['#options'][1]);
+        unset($form['field_visibility']['widget'][0]['#options'][2]);
       }
     }
 
