@@ -10,6 +10,7 @@ namespace Drupal\dropdown\Plugin\Field\FieldWidget;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -171,6 +172,17 @@ class DropdownWidgetType extends WidgetBase {
     }
 
     return $selected_options;
+  }
+
+  /**
+   * Sanitizes a string label to display as an option.
+   *
+   * @param string $label
+   *   The label to sanitize.
+   */
+  protected function sanitizeLabel(&$label) {
+    // Allow a limited set of HTML tags.
+    $label = FieldFilteredMarkup::create($label);
   }
 
 }
