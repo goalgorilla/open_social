@@ -12,8 +12,9 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\file\Entity\File;
-use Drupal\node\NodeStorageInterface;
+use Drupal\profile\Entity\ProfileType;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\Entity\User;
 use Drupal\user\UserStorageInterface;
@@ -31,16 +32,15 @@ class SocialDemoUser implements ContainerInjectionInterface {
   protected $userStorage;
 
   /**
-   * The node storage.
+   * The entity storage.
    *
-   * @var \Drupal\node\NodeStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface;
    */
-  protected $nodeStorage;
+  protected $entityStorage;
 
-  public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage) {
+  public function __construct(UserStorageInterface $user_storage, EntityStorageInterface $entity_storage) {
     $this->userStorage = $user_storage;
-    $this->nodeStorage = $node_storage;
-//    $jan = new StorageInter
+    $this->entityStorage = $entity_storage;
 
     $yml_data = new SocialDemoParser();
     $this->accounts = $yml_data->parseFile('entity/user.yml');
@@ -49,7 +49,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('node')
+      $container->get('entity.manager')->getStorage('profile')
     );
   }
 
@@ -72,7 +72,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
       $user_account = reset($user_accounts);
 
       if ($user_account) {
-        var_dump('Account with uuid: ' . $uuid . ' already exists.');
+        echo "Account with uuid: " . $uuid . " already exists.\r\n";
         continue;
       }
 
@@ -95,12 +95,31 @@ class SocialDemoUser implements ContainerInjectionInterface {
         'status' => $account['status'],
         'created' => REQUEST_TIME,
         'changed' => REQUEST_TIME,
-        'field_picture' => $media_id,
       ]);
       $user->setPassword($account['name']);
       $user->enforceIsNew();
       // Save.
       $user->save();
+
+      // Load the profile, since it's autocreated.
+      $profile = $this->entityStorage->loadByProperties(array('uid' => $user->id(), 'type' => ProfileType::load('profile')->id()));
+      $profile = array_pop($profile);
+
+      // Set the field values.
+      $profile->field_profile_image = $media_id;
+      $profile->uuid = $account['uuid'];
+      $profile->field_profile_first_name = $account['first_name'];
+      $profile->field_profile_last_name = $account['last_name'];
+      $profile->field_profile_organization = $account['organization'];
+      $profile->field_profile_function = $account['function'];
+      $profile->field_profile_phone_number = $account['phone_number'];
+      $profile->field_profile_self_introduction = $account['self_introduction'];
+      $profile->field_profile_expertise = $account['expertise'];
+      $profile->field_profile_interests = $account['interests'];
+      $profile->field_profile_address = $account['address'];
+
+      // Save the profile.
+      $profile->save();
 
       $content_counter++;
     }

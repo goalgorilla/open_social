@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Template\Attribute.
- */
-
 namespace Drupal\Core\Template;
 
 use Drupal\Component\Render\PlainTextOutput;
@@ -317,7 +312,7 @@ class Attribute implements \ArrayAccess, \IteratorAggregate, MarkupInterface {
   /**
    * Implements the magic __clone() method.
    */
-  public function  __clone() {
+  public function __clone() {
     foreach ($this->storage as $name => $value) {
       $this->storage[$name] = clone $value;
     }

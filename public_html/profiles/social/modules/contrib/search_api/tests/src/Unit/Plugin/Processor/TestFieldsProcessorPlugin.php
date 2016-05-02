@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Plugin\Processor\TestFieldsProcessorPlugin.
- */
-
 namespace Drupal\Tests\search_api\Unit\Plugin\Processor;
 
 use Drupal\search_api\Item\FieldInterface;
@@ -126,6 +121,10 @@ class TestFieldsProcessorPlugin extends FieldsProcessorPluginBase {
    * {@inheritdoc}
    */
   protected function process(&$value) {
+    if (isset($this->methodOverrides[__FUNCTION__])) {
+      $this->methodOverrides[__FUNCTION__]($value);
+      return;
+    }
     if (isset($value)) {
       $value = "*$value";
     }

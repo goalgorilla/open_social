@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Tests\CacheabilityTest.
- */
-
 namespace Drupal\search_api\Tests;
 
 use Drupal\search_api\Entity\Index;

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Utility\ProjectInfo.
- *
- * API for building lists of installed projects.
- */
-
 namespace Drupal\Core\Utility;
 
 use Drupal\Core\Extension\Extension;

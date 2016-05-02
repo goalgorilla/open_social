@@ -20,7 +20,7 @@
  */
 #}
 {% if profile_edit_url %}
-  <a href="{{ profile_edit_url }}" class="pull-right waves-effect waves-light btn btn-raised style-default-dark btn-floating">
+  <a href="{{ profile_edit_url }}" title="Edit profile information" class="pull-right waves-effect waves-light btn btn-raised style-default-dark btn-floating">
     <i class="material-icons">mode_edit</i>
   </a>
 {% endif %}
@@ -28,3 +28,13 @@
   {{ profile_name }}
 </h1>
 {{ content.field_profile_image }}
+{% if (content.field_profile_function|render or content.field_profile_organization|render) %}
+  <p>
+    {% if content.field_profile_function|render %}
+      <strong>{{ content.field_profile_function|render }}</strong>
+    {% endif %}
+    {% if content.field_profile_organization|render %}
+      {{ content.field_profile_organization|render }}
+    {% endif %}
+  </p>
+{% endif %}

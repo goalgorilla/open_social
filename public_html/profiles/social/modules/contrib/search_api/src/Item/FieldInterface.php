@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Item\FieldInterface.
- */
-
 namespace Drupal\search_api\Item;
 
 use Drupal\search_api\IndexInterface;
@@ -345,5 +340,23 @@ interface FieldInterface extends \Traversable {
    * @return $this
    */
   public function setTypeLocked($type_locked = TRUE);
+
+  /**
+   * Retrieves the field's dependencies.
+   *
+   * @return string[][]
+   *   The field's dependencies.
+   */
+  public function getDependencies();
+
+  /**
+   * Sets the field's dependencies.
+   *
+   * @param string[][] $dependencies
+   *   The field's dependencies.
+   *
+   * @return $this
+   */
+  public function setDependencies(array $dependencies);
 
 }

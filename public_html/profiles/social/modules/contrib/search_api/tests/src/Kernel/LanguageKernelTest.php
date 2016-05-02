@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\search_api\Kernel\LanguageKernelTest.
- */
-
 namespace Drupal\Tests\search_api\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -118,7 +113,7 @@ class LanguageKernelTest extends KernelTestBase {
         'default' => array(
           'plugin_id' => 'default',
           'settings' => array(),
-        )
+        ),
       ),
       'server' => $this->server->id(),
       'options' => array('index_directly' => FALSE),

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Core\Routing\RouteFilterInterface.
- */
-
 namespace Drupal\Core\Routing;
 
 use Symfony\Cmf\Component\Routing\NestedMatcher\RouteFilterInterface as BaseRouteFilterInterface;
@@ -19,7 +14,7 @@ interface RouteFilterInterface extends BaseRouteFilterInterface {
    * Determines if the route filter applies to the given route.
    *
    * @param \Symfony\Component\Routing\Route $route
-   *  The route to consider attaching to.
+   *   The route to consider attaching to.
    *
    * @return bool
    *   TRUE if the check applies to the passed route, FALSE otherwise.

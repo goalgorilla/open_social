@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\image\Tests\ImageFieldTestBase.
- */
-
 namespace Drupal\image\Tests;
 
 use Drupal\field\Entity\FieldConfig;
@@ -140,7 +135,7 @@ abstract class ImageFieldTestBase extends WebTestBase {
    * @param $type
    *   The type of node to create.
    * @param $alt
-   *  The alt text for the image. Use if the field settings require alt text.
+   *   The alt text for the image. Use if the field settings require alt text.
    */
   function uploadNodeImage($image, $field_name, $type, $alt = '') {
     $edit = array(

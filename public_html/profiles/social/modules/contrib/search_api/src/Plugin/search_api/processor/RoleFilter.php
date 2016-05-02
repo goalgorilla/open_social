@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\RoleFilter.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Component\Utility\Html;
@@ -15,6 +10,8 @@ use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
 
 /**
+ * Filters out users based on their role.
+ *
  * @SearchApiProcessor(
  *   id = "role_filter",
  *   label = @Translation("Role filter"),
@@ -27,9 +24,9 @@ use Drupal\user\UserInterface;
 class RoleFilter extends ProcessorPluginBase {
 
   /**
-   * Overrides \Drupal\search_api\Processor\ProcessorPluginBase::supportsIndex().
+   * Can only be enabled for an index that indexes the user entity.
    *
-   * This plugin only supports indexes containing users.
+   * {@inheritdoc}
    */
   public static function supportsIndex(IndexInterface $index) {
     foreach ($index->getDatasources() as $datasource) {

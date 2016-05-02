@@ -1,3 +1,4 @@
+uuid: f36f1cc7-2b96-41e6-9b69-f07e767ce8a0
 langcode: en
 status: true
 dependencies:
@@ -15,11 +16,9 @@ dependencies:
     - profile.type.profile
   module:
     - address
-    - telephone
-    - image
     - text
 _core:
-  default_config_hash: fHCc1pA2XQxHZ-ecTB6jIpIFMBx5ni9O07NkXyFpDCk
+  default_config_hash: ztaDSVCPZmaiJQJymLrqoZa1MJb-hAmz-w-b2zRskp8
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
@@ -27,71 +26,40 @@ mode: default
 content:
   field_profile_address:
     weight: 5
-    label: above
+    label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
   field_profile_expertise:
     weight: 8
-    label: above
+    label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
-  field_profile_first_name:
-    weight: 0
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_function:
-    weight: 2
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_image:
-    weight: 7
-    label: above
-    settings:
-      image_style: ''
-      image_link: ''
-    third_party_settings: {  }
-    type: image
   field_profile_interests:
     weight: 7
-    label: above
+    label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
-  field_profile_last_name:
-    weight: 1
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_profile_organization:
-    weight: 3
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
   field_profile_phone_number:
     weight: 4
-    label: above
+    label: visually_hidden
     settings:
-      title: ''
+      link_to_entity: false
     third_party_settings: {  }
     type: string
   field_profile_self_introduction:
     weight: 6
-    label: above
+    label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
-hidden: {  }
+hidden:
+  field_profile_first_name: true
+  field_profile_function: true
+  field_profile_image: true
+  field_profile_last_name: true
+  field_profile_organization: true

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\views\Plugin\views\area\AreaPluginBase.
- */
-
 namespace Drupal\views\Plugin\views\area;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -98,7 +93,7 @@ abstract class AreaPluginBase extends HandlerBase {
    * Performs any operations needed before full rendering.
    *
    * @param array $results
-   *  The results of the view.
+   *   The results of the view.
    */
   public function preRender(array $results) {
   }

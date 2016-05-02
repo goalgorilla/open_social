@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Processor\ProcessorPluginBase.
- */
-
 namespace Drupal\search_api\Processor;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -211,4 +206,5 @@ abstract class ProcessorPluginBase extends IndexPluginBase implements ProcessorI
     // indexing process.
     return $this->supportsStage(ProcessorInterface::STAGE_PREPROCESS_INDEX);
   }
+
 }

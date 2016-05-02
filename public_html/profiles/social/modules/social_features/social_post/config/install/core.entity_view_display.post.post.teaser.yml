@@ -1,0 +1,42 @@
+uuid: 473f0089-09d0-446b-93fb-fb3b4673be41
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.post.teaser
+    - field.field.post.post.field_post
+    - field.field.post.post.field_post_comments
+    - field.field.post.post.field_recipient_user
+    - field.field.post.post.field_visibility
+  module:
+    - social_post
+    - user
+_core:
+  default_config_hash: HgyN5f3R9mDuBm8PFQYMMbJNtA2JZgxdNMjvSmmNTqs
+id: post.post.teaser
+targetEntityType: post
+bundle: post
+mode: teaser
+content:
+  field_post:
+    type: basic_string
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_post_comments:
+    type: comment_post
+    weight: 2
+    label: hidden
+    settings:
+      num_comments: 2
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_recipient_user: true
+  field_visibility: true

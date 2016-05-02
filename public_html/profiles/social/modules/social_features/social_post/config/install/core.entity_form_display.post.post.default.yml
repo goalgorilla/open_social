@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.post.post.field_post
+    - field.field.post.post.field_recipient_user
+    - field.field.post.post.field_visibility
+  module:
+    - social_post
+id: post.post.default
+targetEntityType: post
+bundle: post
+mode: default
+content:
+  field_post:
+    type: string_textarea
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_visibility:
+    type: options_select
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_recipient_user: true
+  field_post_comments: true
+  langcode: true
+  user_id: true

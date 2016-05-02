@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\link\Plugin\Field\FieldFormatter\LinkSeparateFormatter.
- *
- * @todo
- * Merge into 'link' formatter once there is a #type like 'item' that
- * can render a compound label and content outside of a form context.
- * @see https://www.drupal.org/node/1829202
- */
-
 namespace Drupal\link\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Unicode;
@@ -17,6 +7,10 @@ use Drupal\Core\Field\FieldItemListInterface;
 
 /**
  * Plugin implementation of the 'link_separate' formatter.
+ *
+ * @todo https://www.drupal.org/node/1829202 Merge into 'link' formatter once
+ *   there is a #type like 'item' that can render a compound label and content
+ *   outside of a form context.
  *
  * @FieldFormatter(
  *   id = "link_separate",

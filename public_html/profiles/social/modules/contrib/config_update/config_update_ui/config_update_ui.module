@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -19,7 +20,7 @@ function config_update_ui_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('Uses') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Checking for configuration differences') . '</dd>';
-      $output .= '<dd>' . t('The <a href="!report">Updates report</a> shows you configuration that differs between your site\'s active configuration and the installed modules, themes, and install profile. Choose a particular configuration type (or All), or run the report for a particular module, theme, or your install profile.', array('!report' => \Drupal::url('config_update_ui.report'))) . '</dd>';
+      $output .= '<dd>' . t('The <a href=":report">Updates report</a> shows you configuration that differs between your site\'s active configuration and the installed modules, themes, and install profile. Choose a particular configuration type (or All), or run the report for a particular module, theme, or your install profile.', [':report' => Url::fromRoute('config_update_ui.report')->toString()]) . '</dd>';
       $output .= '</dl>';
       return $output;
 

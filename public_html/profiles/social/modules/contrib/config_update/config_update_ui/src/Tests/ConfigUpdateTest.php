@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\config_update_ui\Tests\ConfigUpdateTest.
- */
-
 namespace Drupal\config_update_ui\Tests;
 
 use Drupal\simpletest\WebTestBase;
@@ -24,18 +19,21 @@ class ConfigUpdateTest extends WebTestBase {
    *
    * @var array.
    */
-  public static $modules = array('config', 'config_update', 'config_update_ui', 'search', 'node', 'user', 'block');
+  public static $modules = ['config', 'config_update', 'config_update_ui', 'search', 'node', 'user', 'block', 'text', 'field', 'filter'];
 
   /**
    * The admin user that will be created.
    */
   protected $adminUser;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
     // Create user and log in.
-    $this->adminUser = $this->drupalCreateUser(array('access administration pages', 'administer search', 'view config updates report', 'synchronize configuration', 'export configuration', 'import configuration', 'revert configuration'));
+    $this->adminUser = $this->drupalCreateUser(['access administration pages', 'administer search', 'view config updates report', 'synchronize configuration', 'export configuration', 'import configuration', 'revert configuration', 'delete configuration']);
     $this->drupalLogin($this->adminUser);
 
     // Make sure local tasks and page title are showing.
@@ -54,27 +52,27 @@ class ConfigUpdateTest extends WebTestBase {
 
     // Verify some empty reports.
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $this->assertReport('Search page', array(), array(), array(), array());
+    $this->assertReport('Search page', [], [], [], []);
     // Module, theme, and profile reports have no 'added' section.
     $this->drupalGet('admin/config/development/configuration/report/module/search');
-    $this->assertReport('Search module', array(), array(), array(), array(), array('added'));
+    $this->assertReport('Search module', [], [], [], [], ['added']);
     $this->drupalGet('admin/config/development/configuration/report/theme/classy');
-    $this->assertReport('Classy theme', array(), array(), array(), array(), array('added'));
+    $this->assertReport('Classy theme', [], [], [], [], ['added']);
 
-    $inactive = array('locale.settings' => 'Simple configuration');
+    $inactive = ['locale.settings' => 'Simple configuration'];
     $this->drupalGet('admin/config/development/configuration/report/profile');
-    $this->assertReport('Testing profile', array(), array(), array(), $inactive, array('added'));
+    $this->assertReport('Testing profile', [], [], [], $inactive, ['added']);
 
     // Delete the user search page from the search UI and verify report for
     // both the search page config type and user module.
     $this->drupalGet('admin/config/search/pages');
     $this->clickLink('Delete');
-    $this->drupalPostForm(NULL, array(), 'Delete');
-    $inactive = array('search.page.user_search' => 'Users');
+    $this->drupalPostForm(NULL, [], 'Delete');
+    $inactive = ['search.page.user_search' => 'Users'];
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $this->assertReport('Search page', array(), array(), array(), $inactive);
+    $this->assertReport('Search page', [], [], [], $inactive);
     $this->drupalGet('admin/config/development/configuration/report/module/user');
-    $this->assertReport('User module', array(), array(), array(), $inactive, array('added', 'changed'));
+    $this->assertReport('User module', [], [], [], $inactive, ['added', 'changed']);
 
     // Use the import link to get it back. Do this from the search page
     // report to make sure we are importing the right config.
@@ -83,18 +81,18 @@ class ConfigUpdateTest extends WebTestBase {
     $this->assertText('The configuration was imported');
     $this->assertNoReport();
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $this->assertReport('Search page', array(), array(), array(), array());
+    $this->assertReport('Search page', [], [], [], []);
 
     // Edit the node search page from the search UI and verify report.
     $this->drupalGet('admin/config/search/pages');
     $this->clickLink('Edit');
-    $this->drupalPostForm(NULL, array(
-        'label' => 'New label',
-        'path' => 'new_path',
-      ), 'Save search page');
-    $changed = array('search.page.node_search' => 'New label');
+    $this->drupalPostForm(NULL, [
+      'label' => 'New label',
+      'path'  => 'new_path',
+    ], 'Save search page');
+    $changed = ['search.page.node_search' => 'New label'];
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $this->assertReport('Search page', array(), array(), $changed, array());
+    $this->assertReport('Search page', [], [], $changed, []);
 
     // Test the show differences link.
     $this->clickLink('Show differences');
@@ -123,22 +121,22 @@ class ConfigUpdateTest extends WebTestBase {
     $this->assertText('Search page');
     $this->assertText('node_search');
     $this->assertText('Customizations will be lost. This action cannot be undone');
-    $this->drupalPostForm(NULL, array(), 'Revert');
+    $this->drupalPostForm(NULL, [], 'Revert');
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $this->assertReport('Search page', array(), array(), array(), array());
+    $this->assertReport('Search page', [], [], [], []);
 
     // Add a new search page from the search UI and verify report.
-    $this->drupalPostForm('admin/config/search/pages', array(
-        'search_type' => 'node_search',
-      ), 'Add new page');
-    $this->drupalPostForm(NULL, array(
-        'label' => 'test',
-        'id' => 'test',
-        'path' => 'test',
-      ), 'Add search page');
+    $this->drupalPostForm('admin/config/search/pages', [
+      'search_type' => 'node_search',
+    ], 'Add new page');
+    $this->drupalPostForm(NULL, [
+      'label' => 'test',
+      'id'    => 'test',
+      'path'  => 'test',
+    ], 'Add search page');
     $this->drupalGet('admin/config/development/configuration/report/type/search_page');
-    $added = array('search.page.test' => 'test');
-    $this->assertReport('Search page', array(), $added, array(), array());
+    $added = ['search.page.test' => 'test'];
+    $this->assertReport('Search page', [], $added, [], []);
 
     // Test the export link.
     $this->clickLink('Export');
@@ -148,14 +146,25 @@ class ConfigUpdateTest extends WebTestBase {
     $this->assertText('path: test');
     $this->assertText('search.page.test.yml');
 
+    // Test the delete link.
+    $this->drupalGet('admin/config/development/configuration/report/type/search_page');
+    $this->clickLink('Delete');
+    $this->assertText('Are you sure');
+    $this->assertText('cannot be undone');
+    $this->drupalPostForm(NULL, [], 'Delete');
+    $this->assertText('The configuration was deleted');
+    // And verify the report again.
+    $this->drupalGet('admin/config/development/configuration/report/type/search_page');
+    $this->assertReport('Search page', [], [], [], []);
+
     // Change the search module config and verify the actions work for
     // simple config.
-    $this->drupalPostForm('admin/config/search/pages', array(
-        'minimum_word_size' => 4,
-      ), 'Save configuration');
-    $changed = array('search.settings' => 'search.settings');
+    $this->drupalPostForm('admin/config/search/pages', [
+      'minimum_word_size' => 4,
+    ], 'Save configuration');
+    $changed = ['search.settings' => 'search.settings'];
     $this->drupalGet('admin/config/development/configuration/report/module/search');
-    $this->assertReport('Search module', array(), array(), $changed, array(), array('added'));
+    $this->assertReport('Search module', [], [], $changed, [], ['added']);
 
     $this->clickLink('Show differences');
     $this->assertText('Config difference for Simple configuration search.settings');
@@ -168,10 +177,10 @@ class ConfigUpdateTest extends WebTestBase {
 
     $this->drupalGet('admin/config/development/configuration/report/module/search');
     $this->clickLink('Revert to source');
-    $this->drupalPostForm(NULL, array(), 'Revert');
+    $this->drupalPostForm(NULL, [], 'Revert');
 
     $this->drupalGet('admin/config/development/configuration/report/module/search');
-    $this->assertReport('Search module', array(), array(), array(), array(), array('added'));
+    $this->assertReport('Search module', [], [], [], [], ['added']);
   }
 
   /**
@@ -192,7 +201,7 @@ class ConfigUpdateTest extends WebTestBase {
    * @param string[] $skip
    *   Array of report sections to skip checking.
    */
-  protected function assertReport($title, $missing, $added, $changed, $inactive, $skip = array()) {
+  protected function assertReport($title, $missing, $added, $changed, $inactive, $skip = []) {
     $this->assertText('Configuration updates report for ' . $title);
     $this->assertText('Generate new report');
 
@@ -270,4 +279,5 @@ class ConfigUpdateTest extends WebTestBase {
     $this->assertNoText('Changed configuration items');
     $this->assertNoText('Unchanged configuration items');
   }
+
 }

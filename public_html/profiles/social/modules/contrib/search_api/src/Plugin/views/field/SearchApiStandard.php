@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\views\field\SearchApiStandard.
- */
-
 namespace Drupal\search_api\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;

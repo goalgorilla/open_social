@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_test\Entity\EntityTestBundle.
- */
-
 namespace Drupal\entity_test\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
@@ -25,7 +20,7 @@ use Drupal\Core\Entity\EntityDescriptionInterface;
  *       "html" = "Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider",
  *     },
  *   },
- *   admin_permission = "administer entity_test_with_bundle content",
+ *   admin_permission = "administer entity_test_bundle content",
  *   config_prefix = "entity_test_bundle",
  *   bundle_of = "entity_test_with_bundle",
  *   entity_keys = {

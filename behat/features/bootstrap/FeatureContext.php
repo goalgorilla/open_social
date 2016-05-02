@@ -122,6 +122,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Opens specified page.
+     *
+     * @Given /^(?:|I )am on the profile of "(?P<username>[^"]+)"$/
+     * @When /^(?:|I )go to the profile of "(?P<username>[^"]+)"$/
+     */
+    public function openProfileOf($username)
+    {
+      $account = user_load_by_name($username);
+      if ($account->id() !== 0) {
+        $account_uid = $account->id();
+      }
+      else {
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
+      }
+      $page = '/user/' . $account_uid;
+
+      $this->visitPath($page);
+    }
+
+    /**
      * @Then :textBefore should precede :textAfter for the query :cssQuery
      */
     public function shouldPrecedeForTheQuery($textBefore, $textAfter, $cssQuery) {

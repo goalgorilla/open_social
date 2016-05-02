@@ -1,16 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search_api\Plugin\search_api\processor\IgnoreCase.
- */
-
 namespace Drupal\search_api\Plugin\search_api\processor;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\search_api\Processor\FieldsProcessorPluginBase;
 
 /**
+ * Makes searches case-insensitive on selected fields.
+ *
  * @SearchApiProcessor(
  *   id = "ignorecase",
  *   label = @Translation("Ignore case"),
