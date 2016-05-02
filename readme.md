@@ -6,6 +6,8 @@ Useful links for developers:
 - [Roadmap](https://drupalsocial.storiesonboard.com/m/drupal-social-mvp)
 - [Lo-fi prototype](http://prototype.goalgorilla.com/drupalsocial/current/)
 - [Hifi styleguide and prototype](http://goalgorilla.github.io/drupal_social/)
+- [Travis CI](https://travis-ci.org/goalgorilla/drupal_social/builds)
+- [Docker Hub](https://hub.docker.com/r/goalgorilla/drupal_social/builds/)
 
 # Commit messages guidelines #
 [Jira](https://goalgorilla.cloudshards.net/secure/Dashboard.jspa) is used for the issue queue. In order to link the commits to profiles at drupal.org when we release the distribution use the following [template](https://www.drupal.org/node/52287):
