@@ -2,25 +2,27 @@ langcode: en
 status: true
 dependencies:
   module:
-    - options
+    - dropdown
     - social_post
 id: post.field_visibility
 field_name: field_visibility
 entity_type: post
-type: list_string
+type: dropdown
 settings:
   allowed_values:
     -
       value: '0'
-      label: Recipient
+      label: Community
+      description: 'Visible only to member who are logged in'
     -
       value: '1'
       label: Public
+      description: 'Visible to all visitors of the site'
     -
       value: '2'
       label: Community
-  allowed_values_function: ''
-module: options
+      description: 'Visible only to member who are logged in'
+module: dropdown
 locked: false
 cardinality: 1
 translatable: true
