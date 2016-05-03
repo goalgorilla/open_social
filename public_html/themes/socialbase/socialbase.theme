@@ -1,7 +1,7 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
-
+use Drupal\Component\Utility\Html as HtmlUtility;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
@@ -82,6 +82,41 @@ function socialbase_theme_suggestions_menu_alter(array &$suggestions, array $var
       '_'
     ), $variables['attributes']['block']);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_form_element_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#parents'][0])) {
+    $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_form_element_label_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== false) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== false) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
   }
 }
 
@@ -181,7 +216,6 @@ function socialbase_preprocess_node(&$variables) {
   }
 }
 
-
 /**
  * Implements template_preprocess_image_style().
  */
@@ -194,4 +228,76 @@ function socialbase_preprocess_image_style(&$variables) {
     $variables['image']['#attributes']['class'][] = 'img-small';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_form_element_label(&$variables) {
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      if (isset($variables['element']['#attributes']['title'])) {
+        $description = $variables['element']['#attributes']['title'];
+        $variables['element']['#attributes'] = [];
+        $variables['description'] = $description;
+      }
+      // Set the materialize icon.
+      $variables['material_icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
+    }
+  }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_input(&$variables) {
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
+    // Only reaction on the visibility field.
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      $title = $variables['element']['#title'];
+      $variables['selected_material_icon'] = _socialbase_get_visibility_icon($title);
+      if (isset($variables['element']['#return_value']) && isset($variables['element']['#default_value'])) {
+        if ($variables['element']['#return_value'] === $variables['element']['#default_value']) {
+          $variables['element']['active'] = 'active';
+          $variables['active'] = 'active';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_dropdown(&$variables) {
+  if (isset($variables['active']) && is_numeric($variables['active'])) {
+    $title = $variables['element'][$variables['active']]['#title'];
+    $selected_material_icon = _socialbase_get_visibility_icon($title);
+  }
+  $variables['selected_material_icon'] = isset($selected_material_icon) ? $selected_material_icon : '';
+}
+
+/**
+ * Helper function to retrieve the icon string for a visibility title.
+ *
+ * @param $title $string
+ * @return string $icon
+ */
+function _socialbase_get_visibility_icon($title) {
+
+  // Set the materialize icon.
+  switch ($title) {
+    case 'Community':
+      $icon = 'group';
+      break;
+
+    case 'Recipient':
+      $icon = 'group';
+      break;
+
+    default:
+      $icon = strtolower(HtmlUtility::escape($title));
+  }
+
+  return $icon;
 }

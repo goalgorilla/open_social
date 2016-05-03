@@ -15,12 +15,13 @@
   border-radius: 10px 10px 0 0;
   padding: 15px 20px 0;
   color: $gray-light;
-  @include clearfix;
+  line-height: 1;
 }
 
 // This style can be used to separate the card title from the card body.
 .card-underline .card-head {
   border-bottom: 1px solid $grey-light-2;
+  padding-bottom: 15px;
 }
 
 .card-body {
@@ -89,6 +90,10 @@ a.card:hover {
 
   hr {
     border-top-color: darken($gray-lighter, 10%);
+  }
+
+  textarea {
+    height: 38px;
   }
 
   &:last-child {
@@ -215,8 +220,8 @@ a.card:hover {
 
 @include MQ($small) {
 
-  .unpublished .card-image:before {
-    background-color: rgba($grey-dark-1, 0.8);
+  .unpublished .card-image.blue-overlay:before {
+    background: rgba($grey-dark-1, 0.8);
   }
 
   .unpublished .status {
@@ -249,7 +254,7 @@ a.card:hover {
   right: 0;
   z-index: 1;
   background-color: inherit;
-  padding: 6px 24px;
+  padding: 6px 12px;
 }
 
 .card-actionbar--with-border {

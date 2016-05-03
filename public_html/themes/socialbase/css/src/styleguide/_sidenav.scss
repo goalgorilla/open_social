@@ -131,7 +131,7 @@
   background-color: white;
   transform: translate3d(-241px, 0, 0);
   transition: all 200ms ease;
-  @extend .z-depth-1;
+  @include z-depth-1; // Was: @extend .z-depth-1 (didn't find it)
   will-change: left;
 
   &:hover {
