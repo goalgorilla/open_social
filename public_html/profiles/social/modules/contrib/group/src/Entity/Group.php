@@ -39,7 +39,8 @@ use Drupal\Core\Session\AccountInterface;
  *     "access" = "Drupal\group\Entity\Access\GroupAccessControlHandler",
  *   },
  *   base_table = "groups",
- *   fieldable = TRUE,
+ *   data_table = "groups_field_data",
+ *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

@@ -46,7 +46,8 @@ use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
  *     "access" = "Drupal\group\Entity\Access\GroupContentAccessControlHandler",
  *   },
  *   base_table = "group_content",
- *   fieldable = TRUE,
+ *   data_table = "group_content_field_data",
+ *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
