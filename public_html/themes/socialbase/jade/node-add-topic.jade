@@ -41,11 +41,6 @@ block content
               label.form-required Title
               input.form-control(type="text", required)
 
-            .form-group
-              label.form-required Description
-              .textarea--cke
-                textarea#ckeditor.form-control(required)
-
             .form-group.form__type-managed-file
               label Image
               .image-widget.form-managed-file.clearfix
@@ -54,7 +49,17 @@ block content
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-          
+        
+        #description.card.card-underline.scrollspy
+          .card-head
+            header Event description
+      
+          .card-body 
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+              
         #placement.card.card-underline.scrollspy
         
           .card-head
@@ -112,8 +117,10 @@ block content
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
               
-        .form-actions.clearfix
+        .form-actions.clearfix          
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save &amp; publish') 
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Discard') 
           input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
 
     .col-sm-4.hidden-mobile
@@ -121,6 +128,8 @@ block content
         ul.section.table-of-contents
           li
             a(href='#content') Content
+          li
+            a(href='#placement') Event description
           li
             a(href='#placement') Placement and visibility
           li
