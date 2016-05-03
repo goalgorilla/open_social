@@ -71,10 +71,59 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @When I select post visibility :visibility
+     */
+    public function iSelectPostVisibility($visibility) {
+      $allowed_visibility = array(
+        '0' => 'Recipient', // Is displayed as Community in front-end.
+        '1' => 'Public',
+        '2' => 'Community',
+      );
+
+      if (!in_array($visibility, $allowed_visibility)) {
+        throw new \InvalidArgumentException(sprintf('This visibility option is not allowed: "%s"', $visibility));
+      }
+
+      // First make post visibility setting visible.
+      $this->iClickPostVisibilityDropdown();
+
+      // Click the radio button.
+      $key = array_search($visibility, $allowed_visibility);
+      if (!empty($key)) {
+        $id = 'edit-field-visibility-0-' . $key;
+        $this->clickRadioButton('', $id);
+      }
+      else {
+        throw new \InvalidArgumentException(sprintf('Could not find key for visibility option: "%s"', $visibility));
+      }
+
+      // Hide post visibility setting.
+      $this->iClickPostVisibilityDropdown();
+
+    }
+
+    /**
+     * @When /^I click the post visibility dropdown/
+     */
+    public function iClickPostVisibilityDropdown()
+    {
+      $locator = 'button#post-visibility';
+      $session = $this->getSession();
+      $element = $session->getPage()->find('css', $locator);
+
+      if ($element === NULL) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
+      }
+
+      // Now click the element.
+      $element->click();
+    }
+
+    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */
-    public function clickRadioButton($label, $id = '') {
+    public function clickRadioButton($label = '', $id = '') {
       $session = $this->getSession();
 
       $session->executeScript(
@@ -82,6 +131,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         for(var i = 0; i < inputs.length; i++) {
         inputs[i].style.opacity = 1;
         inputs[i].style.left = 0;
+        inputs[i].style.visibility = 'visible';
         inputs[i].style.position = 'relative';
         }
         ");
@@ -94,7 +144,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       }
       $value = $radiobutton->getAttribute('value');
       $labelonpage = $radiobutton->getParent()->getText();
-      if ($label != $labelonpage) {
+      if ($label !== '' && $label != $labelonpage) {
         throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
       }
       $radiobutton->selectOption($value, FALSE);
