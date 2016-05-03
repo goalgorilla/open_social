@@ -1,14 +1,14 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Michael Angarano
+  title Jenny Baker
 
 block pagetitle
   .container.hidden-xs
     .cover
       .cover-wrap
         h1.page-title.h2 Jenny Baker
-        img.img-circle.img-bordered(src='content/images/avatar5.jpg')
+        img.img-circle(src='content/images/avatar5.jpg')
         br
         br
         button.btn.btn-flat.btn--default-bright
@@ -41,19 +41,12 @@ block content
   .row
   
     .col-xs-12
-      h2.h3.section-title My events
+      h2.h3.section-title Jenny Bakers events
     
     .col-xs-12.col-sm-4.pull-right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-event.html') 
-        i.material-icons.pull-left add
-        | Add an event
-
       button.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filters
-      
-      br 
-      br
       
       .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
         .offcanvas-head
@@ -75,8 +68,8 @@ block content
               .radio
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
-            .form-group.margin-top-l.clearfix.visible-xs-block
-                button.btn.btn-user.js-close-canvas.pull-right Done
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
               
 
     .col-xs-12.col-sm-8
