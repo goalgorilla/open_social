@@ -1,31 +1,28 @@
 extends ./layout/base-lu.jade
 
 block title
-  title John Johnson
+  title Jenny Baker
 
 block pagetitle
   .container.hero-container
     .cover
-      .hero-action-button
-        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
-          i.material-icons mode_edit
       .cover-wrap
-        h1.page-title.h2 John Johnson
-        img.img-circle(src='content/images/avatar1.jpg')
+        h1.page-title.h2 Jenny Baker
+        img.img-circle.img-medium(src='content/images/avatar5.jpg')
       
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li.active
-            a(href="my-stream.html") Stream  
+            a(href="other-stream.html") Stream  
             span.visually-hidden (active tab)
           li
-            a(href="my-profile-about.html") About
+            a(href="other-profile-about.html") About
           li
-            a(href='my-topics.html') Topics
+            a(href='other-topics.html') Topics
           li
-            a(href='my-events.html') Events  
+            a(href='other-events.html') Events  
           li
             a(href="#") Groups
       
@@ -34,15 +31,15 @@ block content
   .row
   
     .col-xs-12
-      h2.h3.section-title My stream
-  
+      h2.h3.section-title Other stream
+      
   .row
 
     .col-sm-8
-      
+    
       ul.stream
         li.stream-item
-          i.stream-icon 
+          i.stream-icon
           .card.stream-card
             .card-body
               include ./molecules/_stream-post-form.jade
@@ -50,7 +47,7 @@ block content
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-post2.jade
         li.stream-item
           i.stream-icon 
           .card.stream-card
@@ -67,16 +64,13 @@ block content
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade    
+              include ./molecules/_stream-post2.jade    
       
     .col-xs-12.col-sm-4.pull-right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-user.margin-bottom-l.btn-raised(href='#') 
+      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='#') 
         i.material-icons.pull-left add
         | Add content
-      include ./molecules/_my-upcoming-events.jade
-      include ./molecules/_new-topics.jade
-      include ./molecules/_new-groups.jade
-      
+
 block scriptinline  
   
   script.  

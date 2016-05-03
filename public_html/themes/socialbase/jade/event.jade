@@ -8,7 +8,7 @@ block pagetitle
   .container.hero-container
     .cover.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
       .hero-action-button
-        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-topic.html')
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-event.html')
           i.material-icons mode_edit
       .cover-wrap   
         h1.page-title Amsterdam Meetup
@@ -17,7 +17,7 @@ block pagetitle
             time.eventdate.updated June 6 2016 - 12:00 
             span @ GoalGorilla, Amsterdam
           div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
-            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+            a.author(itemprop="url", rel="author", href="my-stream.html") John Johnson
     
       .primary-action-region
         p.small.text-default-bright.hidden You have enrolled to this event.
@@ -29,7 +29,7 @@ block secondary_navigation
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active
+          li.active.hidden-xs
             a(href='event.html') Details
               span.visually-hidden (active tab)
           li
@@ -41,7 +41,7 @@ block content
     .col-sm-12
       h4.section-title Event details
   
-    .col-sm-3.col-sm-push-9
+    .col-sm-4.col-sm-push-8
       .card.small-padding
         .card-head.text-center 
           header 15 people have enrolled
@@ -51,9 +51,9 @@ block content
               - var n = Math.floor(Math.random() * (1 - 6) + 6)
                 img.img-circle.img-small(src='content/images/avatar#{n}.jpg')
           
-          a.btn.btn-default(href="event-enrollments.html") View all
+          a.btn.btn-user(href="event-enrollments.html") View all
   
-    .col-sm-9.col-sm-pull-3
+    .col-sm-8.col-sm-pull-4
       .card
         .card-body.extra-padding
           p 
@@ -99,7 +99,7 @@ block content
               form
                 .form-group.form-group-inline
                   textarea.form-control.form-control--block(placeholder='Add a new comment...', width='100%')
-                  button.btn.btn-primary(type='submit') Comment
+                  button.btn.btn-link(type='submit') Comment
       
 block scriptinline
   script.

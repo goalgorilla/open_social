@@ -1,37 +1,40 @@
 extends ./layout/base-lu.jade
 
 block title
-  title John Johnson
+  title Michael Angarano
 
 block pagetitle
-  .container.hero-container.hidden-xs
+  .container.hidden-xs
     .cover
       .cover-wrap
-        h1.page-title.h2 John Johnson
-        img.img-circle.img-bordered(src='content/images/avatar1.jpg')
-
-  .container
+        h1.page-title.h2 Jenny Baker
+        img.img-circle.img-bordered(src='content/images/avatar5.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
+      
     .visible-xs-block.section
       a.btn.btn-raised.btn-user(href="my-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to my stream
 
-  .container.hero-container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li
-            a(href="my-stream.html") Stream  
+            a(href="other-stream.html") Stream  
           li
-            a(href="my-profile-about.html") About
+            a(href="other-profile-about.html") About
           li
-            a(href='my-topics.html') Topics
+            a(href='other-topics.html') Topics
           li.active
-            a(href='my-events.html') Events 
+            a(href='other-events.html') Events 
             span.visually-hidden (active tab) 
           li
-            a(href="#.html") Groups
+            a(href="#") Groups
       
 block content
   
@@ -72,8 +75,8 @@ block content
               .radio
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+            .form-group.margin-top-l.clearfix.visible-xs-block
+                button.btn.btn-user.js-close-canvas.pull-right Done
               
 
     .col-xs-12.col-sm-8
