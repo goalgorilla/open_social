@@ -1,0 +1,74 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Amsterdam meetup
+
+block pagetitle
+  
+  .container.hero-container
+    .cover.cover-img.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
+      .cover-wrap   
+        a.pull-right.waves-effect.waves-light.btn.btn-raised.brand-user.btn-floating(href='node-edit-event.html')
+          i.material-icons mode_edit        
+        h1.page-title Amsterdam Meetup
+        .hero-footer
+          div
+            time.eventdate.updated June 6 2016 - 12:00 
+            span @ GoalGorilla, Amsterdam
+          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
+            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+    
+      .primary-action-region
+        p.small.text-default-bright.hidden You have enrolled to this event.
+        button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
+    
+  .container  
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user(href="event.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to event
+
+  .container.hero-container  
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href='group-stream.html') Stream
+          li
+            a(href='group-topics.html') Topics
+          li
+            a(href='group-events.html') Events
+          li.active
+            a(href="group-members.html") Members
+              span.visually-hidden (active tab)
+      
+block content
+      
+  .row
+    .col-sm-12
+      h4.section-title Group members
+    
+    .col-sm-9
+      include molecules/_member1.jade
+      include molecules/_member2.jade
+      include molecules/_member3.jade
+      include molecules/_member4.jade
+      include molecules/_member5.jade
+
+block scriptinline
+  script.
+    jQuery(document).ready(function($){
+      $('#enrollButton').on('click', function () {
+        
+        // button text will toggle "Cancel enrollment"
+        var buttonState = $(this).data("toggle-text");
+        $(this).data('toggle-text', $(this).text()).text(buttonState);
+        
+        // button active state will toggle
+        $(this).toggleClass('active') 
+        
+        // show / hide previous text element
+        $(this).prev('p').toggleClass('hidden');
+      })  
+    });
