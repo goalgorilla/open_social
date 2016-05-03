@@ -1,7 +1,7 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Michael Angarano
+  title John Johnson
 
 block pagetitle
   .container.hero-container.hidden-xs
@@ -11,6 +11,7 @@ block pagetitle
           i.material-icons mode_edit
       .cover-wrap
         h1.page-title.h2 John Johnson
+
         br
         img.img-circle.img-medium(src='content/images/avatar1.jpg')
         .hero-footer
@@ -48,7 +49,8 @@ block content
     .col-xs-12
       h2.h3.section-title My topics
     
-    .col-xs-12.col-sm-3.col-sm-last.margin-bottom-l
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') Create topic
 
       btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
@@ -60,7 +62,7 @@ block content
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
+            .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
               i.material-icons close
         
         .offcanvas-body
@@ -81,7 +83,7 @@ block content
             .form-group.margin-top-l.clearfix
               input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
 
-    .col-xs-12.col-sm-9
+    .col-xs-12.col-sm-8
       include molecules/_topic1.jade
       include molecules/_topic2.jade
       include molecules/_topic3.jade

@@ -1,10 +1,15 @@
 .stream {
-  padding: $card-padding 0 0;
+  padding: 0;
   list-style: none;
   position: relative;
+  margin-left: -15px;
+
+  @include MQ($small) {
+    margin-left: 0;
+  }
 
   &:before {
-    top: 0;
+    top: 21px;
     bottom: 0;
     left: 7px;
     width: 2px;
@@ -14,6 +19,7 @@
 
     @include MQ($small) {
       left: 14px;
+      top: 42px;
     }
   }
 

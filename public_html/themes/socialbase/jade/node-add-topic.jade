@@ -14,7 +14,7 @@ block pagetitle
 block content
       
   .row.margin-top-l
-    .col-md-9.margin-bottom-l
+    .col-sm-8.margin-bottom-l
     
       form(action='topic.html', method='get')
       
@@ -41,11 +41,6 @@ block content
               label.form-required Title
               input.form-control(type="text", required)
 
-            .form-group
-              label.form-required Description
-              .textarea--cke
-                textarea#ckeditor.form-control(required)
-
             .form-group.form__type-managed-file
               label Image
               .image-widget.form-managed-file.clearfix
@@ -54,45 +49,16 @@ block content
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-          
-        #placement.card.card-underline.scrollspy
         
+        #description.card.card-underline.scrollspy
           .card-head
-            header Placement and visibility
+            header Event description
       
           .card-body 
-
             .form-group
-              label.form-required Add topic to
-              .radio
-                input#profile(type='radio', name='placement')
-                label(for='profile') My profile
-              .radio
-                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
-                label(for='group') A group I am a member of:
-              #selectagroup(style='display:none;')
-                select.form-control
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Group 1
-                  option(value='2') Group 2
-                  option(value='3') Group 3
-            
-     
-            .form-group.radios
-              label.form-required Visibility
-              .radio
-                input#public(type='radio', name='visibility')
-                label(for='public') Public
-                .help-block Community visible to all visitors of the platform
-              .radio
-                input#community(type='radio', name='visibility')
-                label(for='community') Community
-                .help-block visible only to logged in members
-              .radio
-                input#groups(type='radio', name='visibility')
-                label(for='groups') Groups
-                .help-block Visible only to group members
-        
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
             
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
@@ -112,17 +78,19 @@ block content
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
               
-        .form-actions.clearfix
+        .form-actions.clearfix          
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save and publish') 
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Discard') 
           input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
 
-    .col-sm-3.hidden-mobile
+    .col-sm-4.hidden-mobile
       .toc-wrapper
         ul.section.table-of-contents
           li
             a(href='#content') Content
           li
-            a(href='#placement') Placement and visibility
+            a(href='#placement') Event description
           li
             a(href='#comment-settings') Comment settings
 

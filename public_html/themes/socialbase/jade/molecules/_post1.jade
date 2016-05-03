@@ -1,13 +1,20 @@
 .media
   .media-left
     a(href='other-stream.html')
-      img.media-object.img-circle.img-small(src='content/images/avatar3.jpg')
+      img.media-object.img-circle.img-small(src='content/images/avatar1.jpg')
   .media-body
     h5.media-heading
-      a(href="other-stream.html") Clive Owen 
+      a(href="my-stream.html") John Johnson 
       br 
-      small 15 hours ago
-
+      small 12 hours ago
+    .btn-group.pull-right
+      button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
+        i.material-icons mode_edit
+      ul.dropdown-menu(role='menu')
+        li 
+          a(href='post-edit.html') Edit
+        li
+          a(href='post-delete.html') Delete
 p.margin-top-s We know that not paying speakers and not covering speaker expenses causes events to become less diverse. The ability to give time, energy and professional skills free of charge is a privilege. 
 
 .card-nested-section
@@ -17,8 +24,8 @@ p.margin-top-s We know that not paying speakers and not covering speaker expense
   .media-body
     form
       .form-group.form-group-inline.clearfix
-        textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%')
-        button.btn.btn-primary(type='submit') Comment
+        textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%', rows="1")
+        button.btn.btn-link(type='submit') Comment
 
   include ./_post1-reply5.jade
   include ./_post1-reply4.jade
