@@ -4,7 +4,7 @@ block title
   title Edit profile
 
 block pagetitle
-  .container
+  .container.hero-container
     .cover
       h1.page-title.h2 Edit profile         
 
@@ -13,7 +13,7 @@ block content
       
   .row
   
-    .col-sm-3.col-sm-push-9
+    .col-sm-4.col-sm-push-8
       .toc-wrapper
         ul.section.table-of-contents
           li
@@ -25,9 +25,9 @@ block content
           li 
             a(href='#details') Details about you
   
-    .col-sm-9.col-sm-pull-3.margin-top-l
+    .col-sm-8.col-sm-pull-4.margin-top-l
     
-      form(method='get', action='my-profile-about.html')
+      form(method='get', action='#')
       
         #name.card.card-underline.scrollspy
         
@@ -48,13 +48,13 @@ block content
             .form-group.form__type-managed-file
               label Image
               .image-widget.form-managed-file.clearfix
-                img.img-responsive.pull-left(src='content/images/avatar3.jpg', width='50')
+                img.img-responsive.pull-left(src='content/images/avatar1.jpg', width='50')
                 .pull-left.padding-xs
                   .file.file--image
                   a(href='#', type="image/jpeg; length=158378") my-picture.jpg
                   .file-size (91.78kb)
                 .pull-left.padding-xs
-                  button.btn.btn-default.form-submit(type='submit', value='remove')
+                  button.btn.btn-user.form-submit(type='submit', value='remove')
                     i.material-icons.pull-left delete
                     | Remove
               .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
