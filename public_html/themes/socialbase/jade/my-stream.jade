@@ -17,7 +17,7 @@ block pagetitle
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active
+          li.active.hidden-xs
             a(href="my-stream.html") Stream  
             span.visually-hidden (active tab)
           li
@@ -73,9 +73,9 @@ block content
       a.waves-effect.waves-light.btn.btn-block.btn-user.margin-bottom-l.btn-raised(href='#') 
         i.material-icons.pull-left add
         | Add content
-      include ./molecules/_my-upcoming-events.jade
-      include ./molecules/_new-topics.jade
-      include ./molecules/_new-groups.jade
+      include ./molecules/_my-events.jade
+      include ./molecules/_my-topics.jade
+      include ./molecules/_my-groups.jade
       
 block scriptinline  
   
