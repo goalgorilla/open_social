@@ -1,0 +1,49 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Lumineers
+
+block pagetitle
+  
+  .container.hero-container
+    .cover.cover-img.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
+      .cover-wrap          
+        h1.page-title Lumineers
+        .hero-footer
+          div Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+    
+      .primary-action-region
+        button.btn.btn-accent.btn-raised(type="button", autocomplete="off") Joined
+    
+  .container  
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user(href="event.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to group stream
+
+  .container.hero-container  
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href='group-stream.html') Stream
+          li
+            a(href='group-topics.html') Topics
+          li.active
+            a(href='group-events.html') Events
+              span.visually-hidden (active tab)
+          li
+            a(href="group-members.html") Members
+      
+block content
+      
+  .row
+    .col-sm-12
+      h4.section-title Lumineers events
+    
+    .col-sm-9
+      include molecules/_event1.jade
+      include molecules/_event2.jade
+      include molecules/_event3.jade
+      include molecules/_event4.jade

@@ -13,6 +13,7 @@ block pagetitle
         h1.page-title.h2 John Johnson
         p Receptionist - Bastion Hotels
         img.img-circle.img-bordered(src='content/images/avatar1.jpg')
+        
   
   .container
     .visible-xs-block.section
@@ -29,61 +30,29 @@ block pagetitle
             a(href="my-stream.html") Stream  
           li
             a(href="my-profile-about.html") About
-          li.active
+          li
             a(href='my-topics.html') Topics
-            span.visually-hidden (active tab) 
           li
             a(href='my-events.html') Events 
-          li
+          li.active
             a(href="my-groups.html") Groups
+              span.visually-hidden (active tab) 
       
 block content
   
   .row
   
     .col-xs-12
-      h2.h3.section-title My topics
+      h2.h3.section-title My groups
     
     .col-xs-12.col-sm-3.pull-right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') 
-        i.material-icons.pull-left add
-        | Create new topic
-
-      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filters
-      br 
-      br
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
-        .offcanvas-head
-          header.card__label filter
-          .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
-              i.material-icons close
-        
-        .offcanvas-body
-          form
-            .form-group
-              label Topic type
-              select.form-control(onchange="enableMe('reset-button', this)")
-                option(value="", selected="") All types
-                option(value="blog") Blog
-                option(value="discussion") Discussion
-                option(value="topic") Topic
-            .form-group
-              label Status
-              select.form-control(onchange="enableMe('reset-button', this)")
-                option(value="", selected="") All statusses
-                option(value="published") Published
-                option(value="unpublished") Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') Create group
 
     .col-xs-12.col-sm-9
-      include molecules/_topic1.jade
-      include molecules/_topic2.jade
-      include molecules/_topic3.jade
-      include molecules/_topic4.jade
+      include molecules/_group1.jade
+      include molecules/_group2.jade
+      include molecules/_group3.jade
+      include molecules/_group4.jade
         
       nav
         ul.pagination
@@ -95,10 +64,6 @@ block content
             a(href="#1") 1
           li.pager__item 
             a(href="#1") 2
-          li.pager__item 
-            a(href="#1") 3          
-          li.pager__item 
-            a(href="#1") 4
           li.pager__item.pager__item--next
             a(href='#', aria-label='Next')
               span(aria-hidden="true")
