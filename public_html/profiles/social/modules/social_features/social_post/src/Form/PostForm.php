@@ -8,6 +8,7 @@
 namespace Drupal\social_post\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -31,6 +32,14 @@ class PostForm extends ContentEntityForm {
     if (isset($display)) {
       $this->setFormDisplay($display, $form_state);
     }
+    else {
+      $visibility_value = $this->entity->get('field_visibility')->value;
+      $display_id = ($visibility_value === '0') ? 'post.post.profile' : 'post.post.default';
+      $display = EntityFormDisplay::load($display_id);
+      // Set the custom display in the form.
+      $this->setFormDisplay($display, $form_state);
+    }
+
     if (isset($display) && ($display_id = $display->get('id'))) {
       if ($display_id === 'post.post.default') {
         // Set default value to community.
