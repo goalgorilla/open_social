@@ -36,45 +36,6 @@ block content
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
 
-          
-        #placement.card.card-underline.scrollspy
-        
-          .card-head
-            header Placement and visibility
-      
-          .card-body 
-
-            .form-group.radios
-              label.form-required Add event to
-              .radio
-                input#profile(type='radio', name='placement')
-                label(for='profile') My profile
-              .radio
-                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
-                label(for='group') A group I am a member of:
-              #selectagroup(style='display:none;')
-                select.form-control
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Group 1
-                  option(value='2') Group 2
-                  option(value='3') Group 3
-        
-            .form-group.radios
-              label.form-required Visibility
-              .form__radios
-                .radio
-                  input#public(type='radio', name='visibility')
-                  label(for='public') Public
-                  .help-block Community visible to all visitors of the platform
-                .radio
-                  input#community(type='radio', name='visibility')
-                  label(for='community') Community
-                  .help-block visible only to logged in members
-                #visibilitygroup.radio(style='display: none')
-                  input#groups.form-radio(type='radio', name='visibility')
-                  label.option(for='groups') Groups
-                  .help-block Visible only to group members
-
         #eventtime.card.card-underline.scrollspy
         
           .card-head
@@ -180,7 +141,9 @@ block content
                   .help-block Users cannot post comments.
               
         .form-actions.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save and publish') 
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Discard') 
           input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
 
     .col-md-3
@@ -188,8 +151,6 @@ block content
         ul.section.table-of-contents
           li
             a(href='#content') Title &amp; image
-          li
-            a(href='#placement') Placement and visibility
           li 
             a(href='#eventtime') Date &amp; time
           li 
