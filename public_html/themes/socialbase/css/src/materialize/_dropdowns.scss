@@ -20,8 +20,12 @@
 
   &.dropdown-md {
     min-width: 240px;
-  }
+    right: -70px;
 
+    @include MQ($small) {
+      right: 0;
+    }
+  }
 }
 
 .dropdown {
@@ -56,7 +60,7 @@
       .help-block {
         font-weight: 300;
       }
-      
+
     }
 
     .help-block {

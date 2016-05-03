@@ -5,8 +5,8 @@ block title
 
 block pagetitle
 
-  .container
-    .cover.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
+  .container.hero-container
+    .cover.cover-img(style="background-image: url('content/images/topic-hero.jpg')")  
       .hero-action-button
         a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-topic.html')
           i.material-icons mode_edit
@@ -14,11 +14,11 @@ block pagetitle
         h1.page-title The High Price of Free
         .hero-footer
           div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
-            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+            a.author(itemprop="url", rel="author", href="my-stream.html") John Johnson
           div on 
             time.pubdate.updated(datetime="2016-01-26T10:00:00-05:00", itemprop="datePublished")  January 26, 2016 
             span in 
-              a(href="/topic/blogs")
+              a(href="#")
                 span(itemprop="about") Blogs
       
 block content
@@ -27,7 +27,7 @@ block content
     .col-sm-12
       h4.section-title Topic details
     
-    .col-md-9
+    .col-sm-12.col-md-9
       .card
         .card-body.extra-padding
           p

@@ -81,6 +81,7 @@ span.form-required {
     padding-bottom: 1.6rem;
     resize: none;
     min-height: 5rem;
+    height: 38px;
   }
 
 }
@@ -252,7 +253,7 @@ span.form-required {
 			line-height: 1.5em;
 			width: 100%;
 			text-align: left;
-      @extend %clearfix;
+      @extend .clearfix; // Was %extend but that one is not decla
 
 			> span {
 				font-size: 1em;
@@ -309,10 +310,6 @@ span.form-required {
 
     .password-strength,
     div.password-confirm {
-      position: absolute;
-      bottom: 0;
-      @include make-col-offset(7);
-      @include make-col-span(3);
       padding-bottom: 0.5rem;
     }
 
@@ -358,6 +355,8 @@ span.form-required {
   margin-top: 1em;
   color: lighten($text-color, 25%);
   font-size: 80%;
+  padding: 0 15px;
+  float: left;
 }
 
 .password-suggestions ul {

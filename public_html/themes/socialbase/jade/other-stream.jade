@@ -1,0 +1,84 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Jenny Baker
+
+block pagetitle
+  .container.hero-container
+    .cover
+      .cover-wrap
+        h1.page-title.h2 Jenny Baker
+        img.img-circle.img-medium(src='content/images/avatar5.jpg')
+      
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.active
+            a(href="other-stream.html") Stream  
+            span.visually-hidden (active tab)
+          li
+            a(href="other-profile-about.html") About
+          li
+            a(href='other-topics.html') Topics
+          li
+            a(href='other-events.html') Events  
+          li
+            a(href="#") Groups
+      
+block content
+  
+  .row
+  
+    .col-xs-12
+      h2.h3.section-title Other stream
+      
+  .row
+
+    .col-sm-8
+    
+      ul.stream
+        li.stream-item
+          i.stream-icon
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post-form.jade
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade    
+      
+    .col-xs-12.col-sm-4.pull-right.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='#') 
+        i.material-icons.pull-left add
+        | Add content
+
+block scriptinline  
+  
+  script.  
+    function showMe (it, radio) {
+      var visibility = radio.value;
+      var icon = jQuery(radio).prevAll('.material-icons').text();
+      jQuery('#' + it).find('.text').html(visibility);
+      jQuery('#' + it).find('.material-icons').html(icon);
+      jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
+      jQuery(radio).closest('.list-group-item').addClass('active');
+    }

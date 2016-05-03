@@ -51,4 +51,9 @@ function template_preprocess_post(array &$variables) {
       }
     }
   }
+
+  // Show a post has been edited.
+  if ($post->getCreatedTime() != $post->getChangedTime()) {
+    $variables['modified'] = TRUE;
+  }
 }
