@@ -60,7 +60,14 @@
             {% endtrans %}
         </div>
         <div class="card-actionbar">
-            <a href="{{ url }}" rel="tag" title="{{ label }}">Read more</a>
+            {% if joined %}
+                <p class="pull-left">
+                    {% trans %}Joined{% endtrans %}
+                </p>
+            {% endif %}
+            <a href="{{ profile_url }}" class="btn btn-flat pull-right">
+                <a href="{{ url }}" rel="tag" title="{{ label }}">{% trans %}Read more{% endtrans %}</a>
+            </a>
         </div>
     </div>
 </div>

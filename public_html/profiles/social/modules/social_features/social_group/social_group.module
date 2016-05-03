@@ -38,3 +38,25 @@ function _social_group_group_open_group_edit_form_submit($form, FormStateInterfa
     array('user' =>\Drupal::currentUser()->id(), array())
   );
 }
+
+/**
+ * Prepares variables for profile templates.
+ *
+ * Default template: profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - profile: The profile object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_group_preprocess_group(&$variables) {
+  $group = $variables['group'];
+  $variables['joined'] = FALSE;
+
+  // Set joined to true for teaser when current logged in
+  // user is member of the group.
+  if ($group->getMember($variables['user'])) {
+    $variables['joined'] = TRUE;
+  }
+}
