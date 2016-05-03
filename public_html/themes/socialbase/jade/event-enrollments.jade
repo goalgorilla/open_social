@@ -5,7 +5,7 @@ block title
 
 block pagetitle
   
-  .container
+  .container.hero-container
     .cover.cover-img.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
       .cover-wrap   
         a.pull-right.waves-effect.waves-light.btn.btn-raised.brand-user.btn-floating(href='node-edit-event.html')
@@ -21,12 +21,14 @@ block pagetitle
       .primary-action-region
         p.small.text-default-bright.hidden You have enrolled to this event.
         button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
-      
+    
+  .container  
     .visible-xs-block.section
-      a.btn.btn-raised.btn-default(href="event.html")
+      a.btn.btn-raised.btn-user(href="event.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to event
 
+  .container.hero-container  
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation

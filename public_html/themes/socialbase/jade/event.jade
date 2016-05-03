@@ -5,7 +5,7 @@ block title
 
 block pagetitle
 
-  .container
+  .container.hero-container
     .cover.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
       .hero-action-button
         a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-event.html')
@@ -24,12 +24,12 @@ block pagetitle
         button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
 
 block secondary_navigation
-  .container
+  .container.hero-container
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active
+          li.active.hidden-xs
             a(href='event.html') Details
               span.visually-hidden (active tab)
           li
@@ -51,7 +51,7 @@ block content
               - var n = Math.floor(Math.random() * (1 - 6) + 6)
                 img.img-circle.img-small(src='content/images/avatar#{n}.jpg')
           
-          a.btn.btn-default(href="event-enrollments.html") View all
+          a.btn.btn-user(href="event-enrollments.html") View all
   
     .col-sm-8.col-sm-pull-4
       .card

@@ -11,7 +11,7 @@ block pagetitle
           i.material-icons mode_edit
       .cover-wrap
         h1.page-title.h2 John Johnson
-        img.img-circle.img-medium(src='content/images/avatar1.jpg')
+        img.img-circle(src='content/images/avatar1.jpg')
       
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
@@ -70,9 +70,13 @@ block content
               include ./molecules/_stream-post1.jade    
       
     .col-xs-12.col-sm-4.pull-right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='#') 
+      a.waves-effect.waves-light.btn.btn-block.btn-user.margin-bottom-l.btn-raised(href='#') 
         i.material-icons.pull-left add
         | Add content
+      include ./molecules/_my-upcoming-events.jade
+      include ./molecules/_new-topics.jade
+      include ./molecules/_new-groups.jade
+      
 block scriptinline  
   
   script.  
