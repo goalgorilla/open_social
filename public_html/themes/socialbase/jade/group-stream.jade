@@ -20,7 +20,7 @@ block pagetitle
                   span.caret
                 ul.dropdown-menu
                   li
-                    a(href="#") Leave group  
+                    a(href="#") Leave group        
     
   .container  
     .visible-xs-block.section
@@ -33,25 +33,20 @@ block pagetitle
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.active
             a(href='group-stream.html') Stream
+              span.visually-hidden (active tab)
           li
             a(href='group-topics.html') Topics
           li
             a(href='group-events.html') Events
-          li.active
+          li
             a(href="group-members.html") Members
-              span.visually-hidden (active tab)
       
 block content
       
   .row
     .col-sm-12
-      h4.section-title Members of Happy Campers
-
+      
+    
     .col-sm-9
-      include molecules/_member1.jade
-      include molecules/_member2.jade
-      include molecules/_member3.jade
-      include molecules/_member4.jade
-      include molecules/_member5.jade

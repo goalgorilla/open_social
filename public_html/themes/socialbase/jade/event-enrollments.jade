@@ -12,15 +12,20 @@ block pagetitle
           i.material-icons mode_edit        
         h1.page-title Amsterdam Meetup
         .hero-footer
-          div
-            time.eventdate.updated June 6 2016 - 12:00 
-            span @ GoalGorilla, Amsterdam
-          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
-            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
-    
-      .primary-action-region
-        p.small.text-default-bright.hidden You have enrolled to this event.
-        button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              div
+                time.eventdate.updated June 6 2016 - 12:00 
+                span @ GoalGorilla, Amsterdam
+              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
+                a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
+            .col-xs-12.col-md-3
+              .btn-group.pull-right
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Enrolled        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Cancel enrollment 
     
   .container  
     .visible-xs-block.section
@@ -51,20 +56,3 @@ block content
       include molecules/_member3.jade
       include molecules/_member4.jade
       include molecules/_member5.jade
-
-block scriptinline
-  script.
-    jQuery(document).ready(function($){
-      $('#enrollButton').on('click', function () {
-        
-        // button text will toggle "Cancel enrollment"
-        var buttonState = $(this).data("toggle-text");
-        $(this).data('toggle-text', $(this).text()).text(buttonState);
-        
-        // button active state will toggle
-        $(this).toggleClass('active') 
-        
-        // show / hide previous text element
-        $(this).prev('p').toggleClass('hidden');
-      })  
-    });

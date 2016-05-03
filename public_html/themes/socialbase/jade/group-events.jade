@@ -1,19 +1,26 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Lumineers
+  title Hapy Campers
 
 block pagetitle
   
   .container.hero-container
-    .cover.cover-img.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
+    .cover.cover-img.hidden-xs(style="background-image: url('content/images/group-hero.jpg')")  
       .cover-wrap          
-        h1.page-title Lumineers
+        h1.page-title Happy Campers
+        p.page-title 21 members
         .hero-footer
-          div Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
-    
-      .primary-action-region
-        button.btn.btn-accent.btn-raised(type="button", autocomplete="off") Joined
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              p Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+            .col-xs-12.col-md-3
+              .btn-group.pull-right
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Joined        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Leave group        
     
   .container  
     .visible-xs-block.section
@@ -40,7 +47,7 @@ block content
       
   .row
     .col-sm-12
-      h4.section-title Lumineers events
+      h4.section-title Events in Happy Campers
     
     .col-sm-9
       include molecules/_event1.jade
