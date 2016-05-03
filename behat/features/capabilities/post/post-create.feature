@@ -12,7 +12,7 @@ Feature: Create Post
     And I am logged in as "PostUser1"
     And I am on the homepage
     And I fill in "Post" with "This is a public post."
-    And I select "Public" from "Visibility"
+    And I select post visibility "Public"
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should see "This is a public post." in the ".stream-card" element
@@ -21,7 +21,7 @@ Feature: Create Post
 
         # Scenario: Succesfully create a private post
    When I fill in "Post" with "This is a community post."
-    And I select "Community" from "Visibility"
+    And I select post visibility "Community"
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should see "This is a community post." in the ".stream-card" element
@@ -50,7 +50,7 @@ Feature: Create Post
 
         # Scenario: Succesfully delete a post
    When I fill in "Post" with "This is a post to be deleted."
-    And I select "Community" from "Visibility"
+    And I select post visibility "Community"
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should be on "/stream"
