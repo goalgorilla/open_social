@@ -119,6 +119,54 @@
   }
 
 }
+.navbar-footer {
+
+
+  .navbar-brand {
+    color: white;
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: left;
+    }
+
+  }
+
+  .navbar-right {
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: right;
+    }
+  }
+
+  .navbar-right li {
+    float: none;
+
+    @include MQ($small) {
+      float: left;
+    }
+
+  }
+
+  .navbar-right a {
+    color: white;
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: white;
+      background: transparent
+    }
+  }
+
+}
 
 .navbar-default {
   border: 0;
