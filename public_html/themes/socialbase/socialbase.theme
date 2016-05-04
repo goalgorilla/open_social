@@ -17,7 +17,7 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
  */
 function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   // Default page suggestion.
-  $page_suggestion = 'page_layout_a';
+  $page_suggestion = 'page__layout_a';
 
   $suggestions_mapping = array(
     'layout_b' => array(
@@ -30,10 +30,10 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
   );
 
   if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
-    $page_suggestion = 'page_layout_c';
+    $page_suggestion = 'page__layout_c';
   }
   elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
-    $page_suggestion = 'page_layout_b';
+    $page_suggestion = 'page__layout_b';
   }
   array_unshift($suggestions, $page_suggestion);
 }
