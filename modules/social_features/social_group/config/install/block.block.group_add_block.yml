@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group
+    - system
+  theme:
+    - socialbase
+id: group_add_block
+theme: socialbase
+region: complementary
+weight: -14
+provider: null
+plugin: group_add_block
+settings:
+  id: group_add_block
+  label: 'Group add block'
+  provider: social_group
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/groups'
+    negate: false
+    context_mapping: {  }

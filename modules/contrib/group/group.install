@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the group module.
+ */
+
+use Drupal\group\Entity\GroupContent;
+
+/**
+ * Resave all GroupContent labels and remove orphaned entities.
+ */
+function group_update_8001(&$sandbox) {
+  // Set up the batch by retrieving all of the group content IDs.
+  if (!isset($sandbox['progress'])) {
+    /** @var \Drupal\Core\Entity\EntityTypeManager $entity_type_manager */
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+    $storage_handler = $entity_type_manager->getStorage('group_content');
+
+    $sandbox['ids'] = $storage_handler->getQuery()->execute();
+    $sandbox['max'] = count($sandbox['ids']);
+    $sandbox['progress'] = 0;
+  }
+
+  // Try to update 25 GroupContent entities at a time.
+  $ids = array_slice($sandbox['ids'], $sandbox['progress'], 25);
+
+  /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+  foreach (GroupContent::loadMultiple($ids) as $group_content) {
+    // Re-saving the GroupContent entities will properly set their label.
+    if ($group_content->getEntity()) {
+      $group_content->save();
+    }
+    // In early versions we did not delete GroupContent entities along with the
+    // entity they represent. Let's clean those up to avoid crashes for people
+    // who still have those floating around.
+    else {
+      $group_content->delete();
+    }
+
+    $sandbox['progress']++;
+  }
+
+  // Try to update the percentage but avoid division by zero.
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+
+  // Show a status update for the current progress.
+  return t("Updated the label for @progress out of @max group content entities.", ['@progress' => $sandbox['progress'], '@max' => $sandbox['max']]);
+}
