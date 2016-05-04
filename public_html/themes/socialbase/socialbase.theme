@@ -16,32 +16,26 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
  * Select the page layout a / b /c template based on the current route.
  */
 function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Default page suggestion.
   $page_suggestion = 'page_layout_a';
-  $match = \Drupal::getContainer()->get('current_route_match')->getCurrentRouteMatch();
-  $routename = $match->getRouteName();
 
-  // Add node type to routename.
-  if ($routename === 'entity.node.canonical') {
-    $node = \Drupal::routeMatch()->getParameter('node');
-    if (!is_object($node)){
-      $node = node_load($node);
-    }
-    if (is_object($node)) {
-      $routename .= '.' . $node->getType();
-    }
+  $suggestions_mapping = array(
+    'layout_b' => array(
+      'page__node__topic',
+    ),
+    'layout_c' => array(
+      'page__node__enrollments',
+      'page__node_edit',
+    ),
+  );
+
+  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
+    $page_suggestion = 'page_layout_c';
   }
-
-  switch($routename) {
-    case "view.event_enrollments.view_enrollments";
-      $page_suggestion = 'page_layout_b';
-      break;
-
-    case "entity.node.canonical.topic";
-    case "entity.node.edit_form";
-      $page_suggestion = 'page_layout_c';
-      break;
+  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
+    $page_suggestion = 'page_layout_b';
   }
-  $suggestions[] = $page_suggestion;
+  array_unshift($suggestions, $page_suggestion);
 }
 
 /**
@@ -54,12 +48,13 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
  */
 function _socialbase_call_preprocess_page($hook, &$variables) {
   $theme_registry = theme_get_registry();
-  if (isset($theme_registry['page']['preprocess functions']))
+  if (isset($theme_registry['page']['preprocess functions'])) {
     foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
       if (function_exists($preprocessor_function)) {
         $preprocessor_function($variables, $hook, $theme_registry['page']);
       }
     }
+  }
 }
 
 
