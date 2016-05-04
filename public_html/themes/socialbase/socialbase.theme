@@ -19,6 +19,8 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
   // Default page suggestion.
   $page_suggestion = 'page__layout_a';
 
+  // Add your page mapping here. Please note:
+  // If there are multiple matches layout_c will always have priority.
   $suggestions_mapping = array(
     'layout_b' => array(
       'page__node__topic',
@@ -35,6 +37,7 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
   elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
     $page_suggestion = 'page__layout_b';
   }
+  // Add as second to last suggestion, so it can be overriden on specific pages.
   array_unshift($suggestions, $page_suggestion);
 }
 
