@@ -30,10 +30,17 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
   $altered_suggestions = array();
   // Add node type to page suggestions.
 
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    if (!is_object($node)) {
+      $node = node_load($node);
+    }
+  }
+
   foreach ($suggestions as $suggestion) {
     $add_extra = FALSE;
     $extra_suggeston = '';
-    if ($node = \Drupal::routeMatch()->getParameter('node')) {
+
+    if (isset($node) && is_object($node)) {
       // Add node type after the wildcard.
       if ($suggestion === 'page__node__%') {
         $extra_suggeston = 'page__node__' . $node->getType();
