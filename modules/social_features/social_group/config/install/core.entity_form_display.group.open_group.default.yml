@@ -1,0 +1,40 @@
+uuid: 737b547f-cef5-467b-811e-a404a2f49a38
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.open_group.field_group_description
+    - field.field.group.open_group.field_group_image
+    - group.type.open_group
+    - image.style.thumbnail
+  module:
+    - image
+    - text
+id: group.open_group.default
+targetEntityType: group
+bundle: open_group
+mode: default
+content:
+  field_group_description:
+    weight: 3
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+  field_group_image:
+    weight: 4
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+  label:
+    type: string_textfield
+    weight: -5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  uid: true

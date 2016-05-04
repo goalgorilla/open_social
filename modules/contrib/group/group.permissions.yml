@@ -1,0 +1,11 @@
+bypass group access:
+  title: 'Bypass group access control'
+  description: 'Gain full control over all groups and group configuration.'
+  restrict access: TRUE
+administer group:
+  title: 'Administer group settings'
+  description: 'Gain full control over all group configuration.'
+  restrict access: TRUE
+
+permission_callbacks:
+  - '\Drupal\group\Access\GroupPermissions::groupTypePermissions'

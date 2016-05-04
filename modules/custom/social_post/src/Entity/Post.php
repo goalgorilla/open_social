@@ -133,6 +133,23 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
+  public function getCacheContexts() {
+    $defaults = parent::getCacheContexts();
+
+    // @TODO Change this to custom cache context, may edit/delete post.
+    if (!in_array('user', $defaults)) {
+      $defaults[] = 'user';
+    }
+    if (!in_array('timezone', $defaults)) {
+      $defaults[] = 'timezone';
+    }
+
+    return $defaults;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
