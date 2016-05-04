@@ -16,7 +16,7 @@ block content
   .row.margin-top-l
     .col-md-9.margin-bottom-l
     
-      form(action='topic.html', method='get')
+      form(action='groups-stream.html', method='get')
       
         #content.card.card-underline.scrollspy
         
@@ -31,8 +31,7 @@ block content
 
             .form-group
               label.form-required Description
-              .textarea--cke
-                textarea#ckeditor.form-control(required)
+              textarea.form-control(required)
 
             .form-group.form__type-managed-file
               label Image
@@ -48,18 +47,3 @@ block content
         .form-actions.clearfix
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
           input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
-        
-block scriptinline  
-  script(src='libs/ckeditor/ckeditor.js')
-  script(src='libs/ckeditor/adapters/jquery.js')
-  
-  script.
-    jQuery(document).ready(function($){
-      $( '#ckeditor' ).ckeditor();  
-    });
-    
-    function showMe (it, it2, box) {
-      var visibility = (box.checked) ? "block" : "none";
-      document.getElementById(it).style.display = visibility;
-      document.getElementById(it2).style.display = visibility;
-    }

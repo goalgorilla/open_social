@@ -16,7 +16,7 @@
   color: white;
   background-color: $primary-color;
   text-align: center;
-  padding: 20px 20px 10px;
+  padding: 20px;
 }
 
 .cover-img {
@@ -78,33 +78,16 @@
 
   @include MQ($medium) {
     position: absolute;
-    left: 480px;
-    transform: translateX(-240px);
-    bottom: 0;
-    display: inline-block;
-    max-width: $small;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-}
-
-.primary-action-region {
-  position: relative;
-  padding-top: 20px;
-  width: 100%;
-  z-index: 2;
-
-  @include MQ($small) {
-    position: absolute;
-    text-align: right;
+    left: 0;
     right: 0;
     bottom: 0;
-    width: 35%;
-    padding: ($grid-gutter-width / 2) 20px;
   }
 
+}
+
+
+.cover .btn-group {
+  margin-top: 10px;
 }
 
 .hero-action-button {
