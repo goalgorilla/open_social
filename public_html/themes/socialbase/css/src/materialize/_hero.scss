@@ -43,6 +43,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
+  text-align: center;
 
   @include MQ($medium) {
     height: 335px;
@@ -77,9 +78,11 @@
 
   @include MQ($medium) {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 480px;
+    transform: translateX(-240px);
     bottom: 0;
+    display: inline-block;
+    max-width: $small;
   }
 
   a:hover {
