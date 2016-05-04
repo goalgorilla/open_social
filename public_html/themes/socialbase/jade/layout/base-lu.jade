@@ -35,6 +35,16 @@ html(lang="en")
     link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
   
   body(class='#{pagetype}')
+    // Google Tag Manager
+    noscript
+      iframe(src='//www.googletagmanager.com/ns.html?id=GTM-5BGZV3', height='0', width='0', style='display:none;visibility:hidden')
+    script.
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-5BGZV3');
+    // End Google Tag Manager
     include _header-lu.jade
     
     main.main-container(role='main')
@@ -56,7 +66,24 @@ html(lang="en")
         
         .container
           block content
-
+      
+    footer.main-footer
+      .container.clearfix
+        .navbar.navbar-footer
+          .nav.navbar-nav.navbar-right
+            li 
+              a(href="#") About
+            li 
+              a(href="#") Terms
+            li 
+              a(href="#") Privacy
+            li 
+              a(href="#") Cookies
+            li 
+              a(href="#") Contact
+          .navbar-brand
+            a(href='home-lu.html') Open Social
+          
   block scriptinline_before
 
   script(src='js/vendor.js')

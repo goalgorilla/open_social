@@ -3,6 +3,12 @@ extends ./layout/base-an.jade
 block title
   title Login
 
+block pagetitle
+
+  .container
+    .cover
+        h1.page-title.h2 Your account 
+
 block secondary_navigation
   
   .style-default-bright
@@ -28,7 +34,7 @@ block content
       
         .card-body
 
-          form.user-login-form(accept-charset='UTF-8')
+          form.user-login-form(accept-charset='UTF-8', action="home-lu.html")
             .form-group
               label(for='edit-name') Username
               input.form-control(type='text', autocorrect='none', autofocus='autofocus', required)

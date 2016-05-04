@@ -7,6 +7,7 @@ dependencies:
     - field.field.post.post.field_recipient_user
     - field.field.post.post.field_visibility
   module:
+    - dropdown
     - social_post
 id: post.post.profile
 targetEntityType: post
@@ -21,7 +22,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_visibility:
-    type: options_select
+    type: dropdown_widget_type
     weight: 1
     settings: {  }
     third_party_settings: {  }

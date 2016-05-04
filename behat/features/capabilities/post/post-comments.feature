@@ -14,7 +14,7 @@ Feature: Comment on a Post
 
         # Scenario: Succesfully create a private post
    When I fill in "Post" with "This is a community post."
-    And I select "Community" from "Visibility"
+    And I select post visibility "Community"
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should see "This is a community post." in the ".stream-card" element

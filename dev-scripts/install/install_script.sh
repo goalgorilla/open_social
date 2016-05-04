@@ -32,6 +32,7 @@ drush pm-enable social_demo -y
 fn_sleep
 echo "enabled module"
 drush cc drush
-drush sda file user topic event eventenrollment comment # Add the demo content
-#drush sdr file user topic event eventenrollment comment # Remove the demo content
+drush sda file user topic event eventenrollment comment post # Add the demo content
+#drush sdr file user topic event eventenrollment comment post # Remove the demo content
 drush pm-uninstall social_demo -y
+drush php-eval 'node_access_rebuild()';
