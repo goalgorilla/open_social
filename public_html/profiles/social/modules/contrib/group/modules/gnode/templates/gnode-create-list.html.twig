@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the create group node page.
+ *
+ * Available variables:
+ * - types: A list of content types, each with the following properties:
+ *   - url: Path to the create group node of this type page.
+ *   - label: The name of this content type.
+ *   - description: Description of this content type.
+ *
+ * @see template_preprocess_gnode_create_list()
+ *
+ * @ingroup themeable
+ */
+#}
+<ul class="admin-list">
+  {% for type in types %}
+    <li class="clearfix"><a href="{{ type.url }}"><span class="label">{{ type.label }}</span><div class="description">{{ type.description }}</div></a></li>
+  {% endfor %}
+</ul>

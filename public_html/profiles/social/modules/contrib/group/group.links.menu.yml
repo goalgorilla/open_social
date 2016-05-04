@@ -1,0 +1,26 @@
+system.admin_group:
+  title: 'Groups'
+  description: 'Find and manage groups, group types and group settings.'
+  route_name: 'entity.group.collection'
+  parent: 'system.admin'
+  weight: 3
+
+entity.group.collection:
+  title: 'List'
+  description: 'Find and manage groups, group types and group settings.'
+  route_name: 'entity.group.collection'
+  parent: 'system.admin_group'
+
+entity.group_type.collection:
+  title: 'Group types'
+  description: 'Configure group types.'
+  route_name: 'entity.group_type.collection'
+  parent: 'system.admin_group'
+  weight: 5
+
+group.settings:
+  title: 'Settings'
+  description: 'Configure the general group module settings.'
+  route_name: 'group.settings'
+  parent: 'system.admin_group'
+  weight: 10

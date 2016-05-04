@@ -1,0 +1,24 @@
+diff --git a/modules/gnode/src/Routing/GroupNodeRouteProvider.php b/modules/gnode/src/Routing/GroupNodeRouteProvider.php
+index dba516c..956533b 100644
+--- a/modules/gnode/src/Routing/GroupNodeRouteProvider.php
++++ b/modules/gnode/src/Routing/GroupNodeRouteProvider.php
+@@ -19,7 +19,7 @@ class GroupNodeRouteProvider {
+    * Provides the shared collection route for group node plugins.
+    */
+   public function getRoutes() {
+-    $plugin_ids = $permissions_add = $permissions_create = [];
++    $routes = $plugin_ids = $permissions_add = $permissions_create = [];
+     foreach (NodeType::loadMultiple() as $name => $node_type) {
+       $plugin_id = "group_node:$name";
+
+@@ -28,6 +28,10 @@ class GroupNodeRouteProvider {
+       $permissions_create[] = "create $name node";
+     }
+
++    if (empty($plugin_ids)) {
++      return $routes;
++    }
++
+     $routes['entity.group_content.group_node.collection'] = new Route('group/{group}/node');
+     $routes['entity.group_content.group_node.collection']
+       ->setDefaults([
