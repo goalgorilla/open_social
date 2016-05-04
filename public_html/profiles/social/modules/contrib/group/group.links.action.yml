@@ -1,0 +1,21 @@
+group.add_group:
+  route_name: 'group.group_add_page'
+  title: 'Add group'
+  appears_on:
+    - 'entity.group.collection'
+
+group.add_group_type:
+  route_name: 'entity.group_type.add_form'
+  title: 'Add group type'
+  appears_on:
+    - 'entity.group_type.collection'
+
+group.add_group_role:
+  route_name: 'entity.group_role.add_form'
+  title: 'Add group role'
+  appears_on:
+    - 'entity.group_role.collection'
+
+group_content.dynamic:
+  class: '\Drupal\group\Plugin\Menu\LocalAction\GroupContentDynamic'
+  deriver: '\Drupal\group\Plugin\Menu\LocalAction\GroupContentDynamicDeriver'

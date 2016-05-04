@@ -9,16 +9,10 @@ Useful links for developers:
 - [Travis CI](https://travis-ci.org/goalgorilla/drupal_social/builds)
 - [Docker Hub](https://hub.docker.com/r/goalgorilla/drupal_social/builds/)
 
-# Commit messages guidelines #
-[Jira](https://goalgorilla.cloudshards.net/secure/Dashboard.jspa) is used for the issue queue. In order to link the commits to profiles at drupal.org when we release the distribution use the following [template](https://www.drupal.org/node/52287):
+# Help Wanted #
+Do you want to join us in this effort? We are welcoming your [feedback](http://goalgorilla.github.io/drupal_social/prototype.html), (development) time and/or financial support. For feedback we will use [Drupal.org](https://www.drupal.org/project/social) for other questions or suggestions please contact taco@goalgorilla.com.
 
-```
-[DS-#Issue] by [comma-separated usernames]: [Summary of the change]
-```
-For example:
-```
-DS-123 by nielsvandermolen, ronaldtebrake: Login with email and custom validation constraint on create account username field.
-```
+Source-code and installation instructions are currently only available on [Github.com](https://github.com/goalgorilla/drupal_social). You are welcome to try the installation profile yourself although it is still work-in-progress. The coming months we will continue to work on the theme to match the [prototype](http://goalgorilla.github.io/drupal_social/prototype.html). If you find any issues feel free to file a bug report in the issue queue.
 
 # Installation #
 

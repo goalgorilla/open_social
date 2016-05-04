@@ -19,15 +19,12 @@ Feature: Un/publish a node
       And I should see "Discussion" in the "Hero block"
       And I should see "Body description text" in the "Main content"
 
-    When I am on "user"
-      And I click "Topics"
-    Then I should see "This is a test topic"
-      And I should see "Discussion"
-
-    When I click "This is a test topic"
-      And I click "Edit"
+    When I click "Edit"
       And I press the "Toggle Dropdown" button
       And I click "Save and publish"
       Then I should see "This is a test topic" in the "Hero block"
+
+    When I am on "user"
+      And I click "Topics"
+      Then I should see "This is a test topic"
       And I should see "Discussion"
-      And I should see "Body description text"
