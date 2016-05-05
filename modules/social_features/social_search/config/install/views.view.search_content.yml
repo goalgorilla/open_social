@@ -1,4 +1,3 @@
-uuid: 01d43915-bc86-457f-bb14-f6c724f9398d
 langcode: en
 status: true
 dependencies:
@@ -8,7 +7,7 @@ dependencies:
     - search_api
     - user
 _core:
-  default_config_hash: ISut19TboE0JJZ4wrxAbuXlOWxtg9HDLiaRy-3NjGNs
+  default_config_hash: JF_xctg5667pdkbc324vRaPHm8YzqJ_VQ94Io0uFu2A
 id: search_content
 label: 'Search Content'
 module: views
@@ -276,6 +275,22 @@ display:
       display_extenders: {  }
       path: search/content/%keys
       exposed_block: true
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: true
+          content:
+            value: '<p>If you are searching for users, <a href="/search/users/{{ arguments.search_api_fulltext }}">click here</a></p>'
+            format: basic_html
+          plugin_id: text
+      defaults:
+        header: false
     cache_metadata:
       max-age: 0
       contexts:
