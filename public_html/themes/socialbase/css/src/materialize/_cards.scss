@@ -71,13 +71,7 @@ a.card:hover {
 }
 
 .card-nested-section {
-  background: $grey-light-3;
-  border-top: 1px darken($gray-lighter, 10%) solid;
-  border-bottom: 1px darken($gray-lighter, 10%) solid;
-  margin-top: 0;
-  margin-left: -$card-padding;
-  margin-right: -$card-padding;
-  margin-bottom: $card-padding;
+  margin: 0 -$card-padding $card-padding -$card-padding ;
   padding: $card-padding;
 
   .extra-padding & {
@@ -86,10 +80,6 @@ a.card:hover {
       margin-right: -$card-padding-large;
       padding: $card-padding $card-padding-large;
     }
-  }
-
-  hr {
-    border-top-color: darken($gray-lighter, 10%);
   }
 
   textarea {
