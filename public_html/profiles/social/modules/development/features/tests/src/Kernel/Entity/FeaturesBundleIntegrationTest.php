@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\features\tests\src\Kernel\Entity;
+namespace Drupal\Tests\features\Kernel\Entity;
 
 use Drupal\features\Entity\FeaturesBundle;
 use Drupal\features\FeaturesBundleInterface;
@@ -61,6 +61,22 @@ class FeaturesBundleIntegrationTest extends KernelTestBase {
    * @covers ::getShortName
    */
   public function testGetShortName() {
+  }
+
+  /**
+   * @covers ::getProfileName
+   * @covers ::setProfileName
+   */
+  public function testGetProfile() {
+    $bundle = FeaturesBundle::create([
+      'machine_name' => 'other',
+      'profile_name' => 'example',
+      'is_profile' => TRUE,
+    ]);
+    $this->assertEquals('example', $bundle->getProfileName());
+
+    $bundle->setProfileName('example2');
+    $this->assertEquals('example2', $bundle->getProfileName());
   }
 
 }

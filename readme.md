@@ -1,4 +1,4 @@
-# Drupal Social #
+# Open Social #
 Check [drupal.org](https://www.drupal.org/project/social) for more information.
 For day to day technical documentation use the [Github Wiki](https://github.com/goalgorilla/drupal_social/wiki).
 

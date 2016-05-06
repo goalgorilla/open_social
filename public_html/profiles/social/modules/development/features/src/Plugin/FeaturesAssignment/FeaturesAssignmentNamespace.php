@@ -13,19 +13,13 @@ use Drupal\features\FeaturesAssignmentMethodBase;
  * Class for assigning configuration to packages based on namespaces.
  *
  * @Plugin(
- *   id = \Drupal\features\Plugin\FeaturesAssignment\FeaturesAssignmentNamespace::METHOD_ID,
+ *   id = "namespace",
  *   weight = 0,
  *   name = @Translation("Namespace"),
  *   description = @Translation("Add to packages configuration with a machine name containing that package's machine name."),
  * )
  */
 class FeaturesAssignmentNamespace extends FeaturesAssignmentMethodBase {
-
-  /**
-   * The package assignment method id.
-   */
-  const METHOD_ID = 'namespace';
-
   /**
    * {@inheritdoc}
    */

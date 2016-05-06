@@ -7,9 +7,7 @@
 
 namespace Drupal\features_ui\Form;
 
-use Drupal\features_ui\Form\AssignmentFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\features\FeaturesBundleInterface;
 
 /**
  * Configures the selected configuration assignment method for this site.
@@ -39,7 +37,7 @@ class AssignmentExcludeForm extends AssignmentFormBase {
 
     $form['curated'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Exclude designated site-specific configuration'),
+      '#title' => $this->t('Exclude designated site-specific configuration'),
       '#default_value' => $curated_settings,
       '#description' => $this->t('Select this option to exclude from packaging items on a curated list of site-specific configuration.'),
     );
@@ -48,39 +46,58 @@ class AssignmentExcludeForm extends AssignmentFormBase {
       '#type' => 'container',
       '#tree' => TRUE,
     );
-    $form['module']['enabled'] = array(
+    $form['module']['installed'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Exclude module-provided entity configuration'),
-      '#default_value' => $module_settings['enabled'],
-      '#description' => $this->t('Select this option to exclude from packaging any configuration that is provided by already enabled modules. Note that <a href=":url">simple configuration</a> will not be excluded as it is always module-provided.', array(':url' => 'http://www.drupal.org/node/1809490')),
+      '#title' => $this->t('Exclude installed module-provided entity configuration'),
+      '#default_value' => $module_settings['installed'],
+      '#description' => $this->t('Select this option to exclude from packaging any configuration that is provided by already installed modules.'),
       '#attributes' => array(
-        'data-module-enabled' => 'status',
+        'data-module-installed' => 'status',
       ),
     );
 
-    $show_if_module_enabled_checked = array(
+    $show_if_module_installed_checked = array(
       'visible' => array(
-        ':input[data-module-enabled="status"]' => array('checked' => TRUE),
+        ':input[data-module-installed="status"]' => array('checked' => TRUE),
       ),
     );
 
     $info = system_get_info('module', drupal_get_profile());
     $form['module']['profile'] = array(
       '#type' => 'checkbox',
-      '#title' => t("Don't exclude install profile's configuration"),
+      '#title' => $this->t("Don't exclude install profile's configuration"),
       '#default_value' => $module_settings['profile'],
       '#description' => $this->t("Select this option to not exclude from packaging any configuration that is provided by this site's install profile, %profile.", array('%profile' => $info['name'])),
-      '#states' => $show_if_module_enabled_checked,
+      '#states' => $show_if_module_installed_checked,
     );
 
     $machine_name = $this->currentBundle->getMachineName();
     $machine_name = !empty($machine_name) ? $machine_name : t('none');
     $form['module']['namespace'] = array(
       '#type' => 'checkbox',
-      '#title' => t("Don't exclude configuration by namespace"),
+      '#title' => $this->t("Don't exclude non-installed configuration by namespace"),
       '#default_value' => $module_settings['namespace'],
-      '#description' => $this->t("Select this option to not exclude from packaging any configuration that is provided by modules with the package namespace (currently %namespace).", array('%namespace' => $machine_name)),
-      '#states' => $show_if_module_enabled_checked,
+      '#description' => $this->t("Select this option to not exclude from packaging any configuration that is provided by non-installed modules with the package namespace (currently %namespace).", array('%namespace' => $machine_name)),
+      '#states' => $show_if_module_installed_checked,
+      '#attributes' => array(
+        'data-namespace' => 'status',
+      ),
+    );
+
+    $show_if_namespace_checked = array(
+      'visible' => array(
+        ':input[data-namespace="status"]' => array('checked' => TRUE),
+        ':input[data-module-installed="status"]' => array('checked' => TRUE),
+      ),
+    );
+
+    $form['module']['namespace_any'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t("Don't exclude ANY configuration by namespace"),
+      '#default_value' => $module_settings['namespace_any'],
+      '#description' => $this->t("Select this option to not exclude from packaging any configuration that is provided by ANY modules with the package namespace (currently %namespace).
+        Warning: Can cause installed configuration to be reassigned to different packages.", array('%namespace' => $machine_name)),
+      '#states' => $show_if_namespace_checked,
     );
 
     $this->setActions($form);

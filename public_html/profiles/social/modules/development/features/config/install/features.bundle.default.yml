@@ -32,17 +32,22 @@ assignments:
     weight: 15
   exclude:
     types:
-      config: {  }
+      config:
+        features_bundle: features_bundle
     curated: 1
     module:
-      enabled: 1
+      installed: 1
       profile: 1
       namespace: 1
+      namespace_any: 0
     enabled: true
     weight: -5
   existing:
     enabled: true
     weight: 12
+  forward_dependency:
+    enabled: true
+    weight: 4
   namespace:
     enabled: true
     weight: 0
@@ -89,7 +94,6 @@ assignments:
         filter_format: filter_format
     enabled: true
     weight: 7
-settings: {  }
 profile_name: ''
 is_profile: false
 
