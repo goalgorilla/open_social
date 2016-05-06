@@ -61,6 +61,11 @@ span.form-required {
   box-shadow: none;
   max-width: $form-control-max-width;
   appearance: none;
+  font-size: inherit;
+
+  @include MQ($medium) {
+    font-size:  $font-size-base;
+  }
 
   &:focus {
     border-bottom: 1px solid $primary-color;
@@ -77,7 +82,7 @@ span.form-required {
 
   &.materialize-textarea {
     overflow-y: hidden; // prevents scroll bar flash
-    padding-top: 1.6rem; // prevents text jump on Enter keypress
+    //padding-top: 1.6rem; // prevents text jump on Enter keypress
     padding-bottom: 1.6rem;
     resize: none;
     min-height: 5rem;
