@@ -5,12 +5,19 @@
   font-path: '../font/material-icons/MaterialIcons-Regular';
 }
 
+@font-face {
+    font-family: 'Custom-Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-path: '../font/custom-icons/icomoon';
+}
+
 // prevent block rendering
 .material-icons {
   font-family: 'Material-Design-Icons';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
+  font-size: 24px;  // Preferred icon size
   display: inline-block;
   width: 1em;
   height: 1em;
@@ -36,9 +43,28 @@
 
 // custom icons
 
-.icon-group {
-  background-image: url('../images/icon-group.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: auto 16px;
+.custom-icons {
+    // use !important to prevent issues with browser extensions that change fonts
+    font-family: 'Custom-Icons' !important;
+    display: inline-block;
+    vertical-align: middle;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: inherit;
+    font-size: 14px;  // Preferred icon size
+
+    // Support for all WebKit browsers.
+    -webkit-font-smoothing: antialiased;
+    // Support for Safari and Chrome.
+    text-rendering: optimizeLegibility;
+
+    // Support for Firefox.
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-group:before {
+    content: "\e900";
 }
