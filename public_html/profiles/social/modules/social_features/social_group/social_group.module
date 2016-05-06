@@ -2,6 +2,8 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * @file
@@ -58,5 +60,27 @@ function social_group_preprocess_group(&$variables) {
   // user is member of the group.
   if ($group->getMember($variables['user'])) {
     $variables['joined'] = TRUE;
+  }
+}
+
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * On a new group insert, from the type open group the Owner gets the
+ * group manager role by default.
+ */
+function social_group_group_insert(GroupInterface $group) {
+  // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
+  // sure the settings will be implemented accordingly.
+  if ($group->getGroupType()->id() == 'open_group') {
+    $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+    $values = array('group_roles' => array('open_group-group_manager'));
+    $group_content = GroupContent::create([
+        'type' => $plugin->getContentTypeConfigId(),
+        'gid' => $group->id(),
+        'entity_id' => $group->getOwnerId(),
+      ] + $values);
+    $group_content->save();
   }
 }
