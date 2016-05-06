@@ -1,4 +1,4 @@
-# Drupal Social #
+# Open Social #
 Check [drupal.org](https://www.drupal.org/project/social) for more information.
 For day to day technical documentation use the [Github Wiki](https://github.com/goalgorilla/drupal_social/wiki).
 
@@ -6,6 +6,8 @@ Useful links for developers:
 - [Roadmap](https://drupalsocial.storiesonboard.com/m/drupal-social-mvp)
 - [Lo-fi prototype](http://prototype.goalgorilla.com/drupalsocial/current/)
 - [Hifi styleguide and prototype](http://goalgorilla.github.io/drupal_social/)
+- [Travis CI](https://travis-ci.org/goalgorilla/drupal_social/builds)
+- [Docker Hub](https://hub.docker.com/r/goalgorilla/drupal_social/builds/)
 
 # Help Wanted #
 Do you want to join us in this effort? We are welcoming your [feedback](http://goalgorilla.github.io/drupal_social/prototype.html), (development) time and/or financial support. For feedback we will use [Drupal.org](https://www.drupal.org/project/social) for other questions or suggestions please contact taco@goalgorilla.com.
