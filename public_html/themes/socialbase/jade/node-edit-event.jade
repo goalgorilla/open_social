@@ -19,14 +19,12 @@ block content
           li
             a(href='#content') Title &amp; image
           li
-            a(href='#placement') Placement and visibility
+            a(href='#description') Description
           li 
             a(href='#eventtime') Date &amp; time
           li 
             a(href='#location') Location
           li 
-            a(href='#description') Description
-          li
             a(href='#attachments') Attachments
           li
             a(href='#comment-settings') Comment settings
@@ -60,43 +58,23 @@ block content
                     | Remove
               .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
-        #placement.card.card-underline.scrollspy
+        #description.card.card-underline.scrollspy
         
           .card-head
-            header Placement and visibility
+            header Description
       
-          .card-body 
+          .card-body
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+                  p 
+                    strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business. Your training can be free, as so many industry experts write and teach and share this information without charging for it. Even the tools you use to build websites can be downloaded free of charge, or purchased for very little.
+                
+                    p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
 
-            .form-group.radios
-              label.form-required Add event to
-              .radio
-                input#profile(type='radio', name='placement', checked)
-                label(for='profile') My profile
-              .radio
-                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
-                label(for='group') A group I am a member of:
-              #selectagroup(style='display:none;')
-                select.form-control
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Group 1
-                  option(value='2') Group 2
-                  option(value='3') Group 3
+                    p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
         
-            .form-group.radios
-              label.form-required Visibility
-              .form__radios
-                .radio
-                  input#public(type='radio', name='visibility')
-                  label(for='public') Public
-                  .help-block Community visible to all visitors of the platform
-                .radio
-                  input#community(type='radio', name='visibility', checked)
-                  label(for='community') Community
-                  .help-block visible only to logged in members
-                #visibilitygroup.radio(style='display: none')
-                  input#groups.form-radio(type='radio', name='visibility')
-                  label.option(for='groups') Groups
-                  .help-block Visible only to group members
 
         #eventtime.card.card-underline.scrollspy
         
@@ -156,25 +134,6 @@ block content
               label Address
               input.form-control(type="text", value='Keizersgracht 376')    
 
-
-    
-        #description.card.card-underline.scrollspy
-        
-          .card-head
-            header Description
-      
-          .card-body
-            .form-group
-              label.form-required Description
-              .textarea--cke
-                textarea#ckeditor.form-control(required)
-                  p 
-                    strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business. Your training can be free, as so many industry experts write and teach and share this information without charging for it. Even the tools you use to build websites can be downloaded free of charge, or purchased for very little.
-                
-                    p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
-
-                    p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
-        
         #attachments.card.card-underline.scrollspy
         
           .card-head
@@ -209,10 +168,11 @@ block content
                   .help-block Users cannot post comments.
               
         .form-actions.clearfix
-          a.waves-effect.waves-light.btn.btn-raised.btn-user(href="event.html") Discard changes
-          a.btn.btn-link(href='event-confirm-delete.html') Delete
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
+          a.waves-effect.waves-light.btn.btn-secondary.pull-right(href="#") Preview
+          a.btn.btn-link.pull-right(href='#') Delete
+          a.btn.btn-link.pull-right(href="#") Discard changes
+
 
     
 
