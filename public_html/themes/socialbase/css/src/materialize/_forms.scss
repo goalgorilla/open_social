@@ -1,7 +1,8 @@
 label {
   font-weight: 300;
 
-  .material-icons {
+  .material-icons,
+  .custom-icons {
     font-size: inherit;
     line-height: inherit;
   }
@@ -61,6 +62,11 @@ span.form-required {
   box-shadow: none;
   max-width: $form-control-max-width;
   appearance: none;
+  font-size: inherit;
+
+  @include MQ($medium) {
+    font-size:  $font-size-base;
+  }
 
   &:focus {
     border-bottom: 1px solid $primary-color;
@@ -77,7 +83,7 @@ span.form-required {
 
   &.materialize-textarea {
     overflow-y: hidden; // prevents scroll bar flash
-    padding-top: 1.6rem; // prevents text jump on Enter keypress
+    //padding-top: 1.6rem; // prevents text jump on Enter keypress
     padding-bottom: 1.6rem;
     resize: none;
     min-height: 5rem;
@@ -148,11 +154,11 @@ span.form-required {
   padding-left: $radio-width;
   cursor: pointer;
   display: inline-block;
-  height: 25px;
-  line-height: 25px;
+  line-height: 21px;
   font-size: 1em;
   transition: .28s ease;
   user-select: none;
+  word-break: break-all;
 }
 
 [type="radio"]:checked + label {
@@ -165,7 +171,7 @@ span.form-required {
   position: absolute;
   left: 0;
   top: 0;
-  margin: 4px;
+  margin: 2px;
   width: 16px;
   height: 16px;
   z-index: 0;

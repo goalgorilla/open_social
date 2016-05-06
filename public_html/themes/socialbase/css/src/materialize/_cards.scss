@@ -175,6 +175,17 @@ a.card:hover {
     }
   }
 
+  .card-image-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    img {
+      flex: 0 1 110px;
+      width: 110px;
+    }
+  }
+
   .teaser-type {
     position: absolute;
     @include center(xy);
@@ -187,7 +198,7 @@ a.card:hover {
     position: absolute;
     @include center(xy);
     color: white;
-    font-size: 4em;
+    font-size: 3em;
     text-transform: uppercase;
     font-weight: 500;
     text-align: center;
@@ -208,14 +219,19 @@ a.card:hover {
   }
 
   .card-title {
-    margin-top: 5px;
-    margin-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 12px;
   }
 
   .card-body {
     flex: 1 1 auto;
   }
 
+}
+
+.card--teaser-desc {
+  max-height: 3em;
+  overflow: hidden;
 }
 
 @include MQ($small) {

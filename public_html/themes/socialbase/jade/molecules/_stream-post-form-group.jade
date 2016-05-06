@@ -1,0 +1,22 @@
+form
+  .form-group
+    textarea.form-control.form-control--block.materialize-textarea(placeholder='What is on your mind?')
+  .form-group.media
+    .media-body
+      .dropdown.pull-right
+        button#post-visibility.btn.btn-default.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true') 
+          i.pull-left.custom-icons.icon-group
+          span.text Community 
+          span.caret
+        ul.dropdown-menu.dropdown-md(role='menu', aria-labelledby="post-visibility")
+          li.dropdown-header Visibility settings
+          li.list-group-item.active
+            .form-group
+              label(for="community") 
+                i.pull-left.custom-icons.icon-group
+                | Community
+                input#community.invisible(type="radio", name="visioptions", value="Community", onclick="showMe('post-visibility', this)")
+                .help-block Visible only to members who are logged in
+              
+    .media-right
+      input.btn.btn-primary(type='submit', value="post")

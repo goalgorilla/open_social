@@ -1,0 +1,119 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Michael Angarano
+
+block pagetitle
+  .container.hero-container
+    .cover.cover-img(style="background-image: url('content/images/group-hero.jpg')")  
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='group-edit.html')
+          i.material-icons mode_edit
+      .cover-wrap          
+        h1.page-title Happy Campers
+        p.page-title 21 members
+        .hero-footer
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3 Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+            .col-xs-12.col-md-3
+              .btn-group
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Joined        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Leave group     
+    
+  .container
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user(href="group-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to group stream
+
+  .container.hero-container    
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href="group-stream.html") Stream  
+          li.active
+            a(href='group-topics.html') Topics
+            span.visually-hidden (active tab) 
+          li
+            a(href='group-events.html') Events 
+          li
+            a(href="group-groups.html") Members
+      
+block content
+  
+  .row
+  
+    .col-xs-12
+      h4.section-title Topics in Happy Campers
+    
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') 
+        i.material-icons.pull-left add
+        | Add a topic
+
+      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filters
+      br 
+      br
+      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
+              i.material-icons close
+        
+        .offcanvas-body
+          form
+            .form-group
+              label Topic type
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All types
+                option(value="blog") Blog
+                option(value="discussion") Discussion
+                option(value="topic") Topic
+            .form-group
+              label Status
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All statusses
+                option(value="published") Published
+                option(value="unpublished") Unpublished
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+
+    .col-xs-12.col-sm-8
+      include molecules/_topic1.jade
+      include molecules/_topic2.jade
+      include molecules/_topic3.jade
+      include molecules/_topic4.jade
+        
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

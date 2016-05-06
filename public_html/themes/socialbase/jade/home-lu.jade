@@ -9,13 +9,16 @@ block breadcrumbs
       
 block content
   
-  .row.margin-top-xl
+  .row
+  
+    .col-xs-12
+      h2.h3.section-title Open Social
 
-    .col-sm-8
+    .col-xs-12.col-sm-8
           
       ul.stream
         li.stream-item
-          i.stream-icon 
+          i.stream-icon.stream-icon-new 
           .card.stream-card
             .card-body
               form
@@ -72,7 +75,7 @@ block content
               
     .col-sm-4.hidden-xs
       include ./molecules/_my-events.jade
-      include ./molecules/_suggested-events.jade
+      include ./molecules/_upcoming-events.jade
       include ./molecules/_new-topics.jade
       include ./molecules/_new-groups.jade
       include ./molecules/_new-users.jade

@@ -1,32 +1,34 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Amsterdam meetup
+  title Happy Campers
 
 block pagetitle
   
   .container.hero-container
-    .cover.cover-img.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
-      .cover-wrap   
-        a.pull-right.waves-effect.waves-light.btn.btn-raised.brand-user.btn-floating(href='node-edit-event.html')
-          i.material-icons mode_edit        
-        h1.page-title Amsterdam Meetup
+    .cover.cover-img.hidden-xs(style="background-image: url('content/images/group-hero.jpg')")
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='group-edit.html')
+          i.material-icons mode_edit
+      .cover-wrap          
+        h1.page-title Happy Campers
+        p.page-title 21 members
         .hero-footer
-          div
-            time.eventdate.updated June 6 2016 - 12:00 
-            span @ GoalGorilla, Amsterdam
-          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
-            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
-    
-      .primary-action-region
-        p.small.text-default-bright.hidden You have enrolled to this event.
-        button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3 Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+            .col-xs-12.col-md-3
+              .btn-group
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Joined        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Leave group  
     
   .container  
     .visible-xs-block.section
-      a.btn.btn-raised.btn-user(href="event.html")
+      a.btn.btn-raised.btn-user(href="group-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
-        | Back to event
+        | Back to group stream
 
   .container.hero-container  
     .brand-secondary.z-depth-1.hidden-xs
@@ -46,29 +48,12 @@ block pagetitle
 block content
       
   .row
-    .col-sm-12
-      h4.section-title Group members
-    
-    .col-sm-9
+    .col-xs-12.col-sm-12
+      h4.section-title Members of Happy Campers
+
+    .col-xs-12.col-sm-8
       include molecules/_member1.jade
       include molecules/_member2.jade
       include molecules/_member3.jade
       include molecules/_member4.jade
       include molecules/_member5.jade
-
-block scriptinline
-  script.
-    jQuery(document).ready(function($){
-      $('#enrollButton').on('click', function () {
-        
-        // button text will toggle "Cancel enrollment"
-        var buttonState = $(this).data("toggle-text");
-        $(this).data('toggle-text', $(this).text()).text(buttonState);
-        
-        // button active state will toggle
-        $(this).toggleClass('active') 
-        
-        // show / hide previous text element
-        $(this).prev('p').toggleClass('hidden');
-      })  
-    });

@@ -3,6 +3,11 @@ extends ./layout/base-lu.jade
 block title
   title Delete post
 
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li.active Delete post
+
 block pagetitle
 
   .container
@@ -13,14 +18,13 @@ block content
 
   .row.margin-top-l
   
-    .col-sm-8
+    .col-xs-12.col-sm-6
 
       .card
         .card-body.extra-padding
-          form
+          form(action="home-lu.html")
             p Are you sure you want to delete this post?
-            br
-            br
+            p &nbsp;
             .form-actions.clearfix
-              a.btn.btn-link(href='javascript:history.back()') Cancel
+              a.btn.btn-default(href='javascript:history.back()') Cancel
               button.btn.btn-primary.pull-right(type='submit') Delete

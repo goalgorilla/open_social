@@ -16,18 +16,19 @@
   color: white;
   background-color: $primary-color;
   text-align: center;
-  padding: 30px 20px;
+  padding: 20px;
 }
 
 .cover-img {
   background-size: cover;
-  background-position: center;
+  background-position: 50% 0;
+  background-repeat: no-repeat;
 
   &:before{
     display: block;
     position: absolute;
     content: '';
-    background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.35) 100%);
+    background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.5) 100%);
     width: 100%;
     left: 0;
     right: 0;
@@ -42,6 +43,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
+  text-align: center;
 
   @include MQ($medium) {
     height: 335px;
@@ -64,7 +66,7 @@
     margin: 2em 0 0.5em;
 
     @include MQ($small) {
-      margin: 1em 0;
+      margin: 1em 0 0;
     }
 
   }
@@ -81,26 +83,11 @@
     bottom: 0;
   }
 
-  a:hover {
-    text-decoration: underline;
-  }
 }
 
-.primary-action-region {
-  position: relative;
-  padding-top: 20px;
-  width: 100%;
-  z-index: 2;
 
-  @include MQ($small) {
-    position: absolute;
-    text-align: right;
-    right: 0;
-    bottom: 0;
-    width: 35%;
-    padding: ($grid-gutter-width / 2) 20px;
-  }
-
+.cover .btn-group {
+  margin-top: 10px;
 }
 
 .hero-action-button {
