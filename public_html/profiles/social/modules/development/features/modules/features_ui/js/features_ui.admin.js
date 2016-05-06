@@ -21,17 +21,17 @@
  * Credit: http://james.padolsey.com/javascript/sorting-elements-with-jquery/
  *
  */
-jQuery.fn.sortElements = (function(){
+jQuery.fn.sortElements = (function () {
 
   "use strict";
 
   var sort = [].sort;
 
-  return function(comparator, getSortable) {
+  return function (comparator, getSortable) {
 
-    getSortable = getSortable || function() {return this;};
+    getSortable = getSortable || function () {return this;};
 
-    var placements = this.map(function() {
+    var placements = this.map(function () {
 
       var sortElement = getSortable.call(this);
       var parentNode = sortElement.parentNode;
@@ -44,7 +44,7 @@ jQuery.fn.sortElements = (function(){
           sortElement.nextSibling
         );
 
-      return function() {
+      return function () {
 
         if (parentNode === this) {
           throw new Error(
@@ -61,7 +61,7 @@ jQuery.fn.sortElements = (function(){
 
     });
 
-    return sort.call(this, comparator).each(function(i){
+    return sort.call(this, comparator).each(function (i) {
       placements[i].call(getSortable.call(this));
     });
 
@@ -74,11 +74,11 @@ jQuery.fn.sortElements = (function(){
   "use strict";
 
   Drupal.behaviors.features = {
-    attach: function(context) {
+    attach: function (context) {
 
       // mark any conflicts with a class
-      if ((drupalSettings.features !== undefined) && (drupalSettings.features.conflicts !== undefined)) {
-        for (var configType in drupalSettings.features.conflicts) {
+      if ((typeof drupalSettings.features !== 'undefined') && (typeof drupalSettings.features.conflicts !== 'undefined')) {
+      //  for (var configType in drupalSettings.features.conflicts) {
           if (drupalSettings.features.conflicts) {
             var configConflicts = drupalSettings.features.conflicts;
             $('#features-export-wrapper input[type=checkbox]', context).each(function () {
@@ -93,19 +93,19 @@ jQuery.fn.sortElements = (function(){
               }
             });
           }
-        }
+        //}
       }
 
       function _checkAll(value) {
         if (value) {
-          $('#features-export-wrapper .component-select input[type=checkbox]:visible', context).each(function() {
+          $('#features-export-wrapper .component-select input[type=checkbox]:visible', context).each(function () {
             var move_id = $(this).attr('id');
             $(this).click();
             $('#'+ move_id).prop('checked', true);
           });
         }
         else {
-          $('#features-export-wrapper .component-added input[type=checkbox]:visible', context).each(function() {
+          $('#features-export-wrapper .component-added input[type=checkbox]:visible', context).each(function () {
             var move_id = $(this).attr('id');
             $(this).click();
             $('#'+ move_id).prop('checked', false);
@@ -164,10 +164,10 @@ jQuery.fn.sortElements = (function(){
 
         // re-sort new list of checkboxes based on labels
         $(newParent).find('label').sortElements(
-          function(a, b){
+          function (a, b) {
             return $(a).text() > $(b).text() ? 1 : -1;
           },
-          function(){
+          function () {
             return this.parentNode;
           }
         );
@@ -196,7 +196,7 @@ jQuery.fn.sortElements = (function(){
         // the auto-detected items
         var items = [];  // will contain a list of selected items exported to feature
         var components = {};  // contains object of component names that have checked items
-        $('#features-export-wrapper input[type=checkbox]:checked', context).each(function() {
+        $('#features-export-wrapper input[type=checkbox]:checked', context).each(function () {
           if (!$(this).hasClass('features-checkall')) {
             var key = $(this).attr('name');
             var matches = key.match(/^([^\[]+)(\[.+\])?\[(.+)\]\[(.+)\]$/);
@@ -215,7 +215,7 @@ jQuery.fn.sortElements = (function(){
         var excluded = drupalSettings.features.excluded;
         var required = drupalSettings.features.required;
         var postData = {'items': items, 'excluded': excluded, 'required': required};
-        jQuery.post(url, postData, function(data) {
+        jQuery.post(url, postData, function (data) {
           if (inTimeout > 0) { inTimeout--; }
           // if we have triggered another timeout then don't update with old results
           if (inTimeout === 0) {
@@ -228,7 +228,7 @@ jQuery.fn.sortElements = (function(){
                   // first remove any auto-detected items that are no longer in component
                   if ($(this).hasClass('component-detected')) {
                     if (!(key in itemList)) {
-                      moveCheckbox(this, 'select', false)
+                      moveCheckbox(this, 'select', false);
                     }
                   }
                   // next, add any new auto-detected items
@@ -253,7 +253,7 @@ jQuery.fn.sortElements = (function(){
       }
 
       // Handle component selection UI
-      $('#features-export-wrapper input[type=checkbox]', context).click(function() {
+      $('#features-export-wrapper input[type=checkbox]', context).click(function () {
         _resetTimeout();
         if ($(this).hasClass('component-select')) {
           moveCheckbox(this, 'added', true);
@@ -272,7 +272,7 @@ jQuery.fn.sortElements = (function(){
       });
 
       // Handle select/unselect all
-      $('#features-filter .features-checkall.form-checkbox', context).click(function() {
+      $('#features-filter .features-checkall.form-checkbox', context).click(function () {
         if ($(this).prop('checked')) {
           _checkAll(true);
           $(this).next().html(Drupal.t('Deselect all'));
@@ -306,7 +306,7 @@ jQuery.fn.sortElements = (function(){
         // collapse fieldsets
         var newState = {};
         var currentState = {};
-        $('#features-export-wrapper details.features-export-component', context).each(function() {
+        $('#features-export-wrapper details.features-export-component', context).each(function () {
           // expand parent fieldset
           var section = $(this).attr('id');
           var details = $(this);
@@ -316,7 +316,7 @@ jQuery.fn.sortElements = (function(){
             newState[section] = false;
           }
 
-          details.find('.form-checkboxes label').each(function() {
+          details.find('.form-checkboxes label').each(function () {
             if (filter === '') {
               // collapse the section, but make checkbox visible
               if (currentState[section]) {
@@ -345,10 +345,10 @@ jQuery.fn.sortElements = (function(){
           }
         }
       }
-      $('#features-filter input', context).bind("input", function() {
+      $('#features-filter input', context).bind("input", function () {
         _resetFilterTimeout();
       });
-      $('#features-filter .features-filter-clear', context).click(function() {
+      $('#features-filter .features-filter-clear', context).click(function () {
         $('#features-filter input').val('');
         _updateFilter();
       });

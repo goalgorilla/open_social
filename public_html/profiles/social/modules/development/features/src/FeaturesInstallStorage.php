@@ -13,7 +13,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
 
 /**
- * Storage to access configuration and schema in enabled extensions.
+ * Storage to access configuration and schema in installed extensions.
  *
  * Overrides the normal ExtensionInstallStorage to prevent profile from
  * overriding.
@@ -30,7 +30,7 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
    * Sets includeProfile to FALSE.
    *
    * @param \Drupal\Core\Config\StorageInterface $config_storage
-   *   The active configuration store where the list of enabled modules and
+   *   The active configuration store where the list of installed modules and
    *   themes is stored.
    * @param string $directory
    *   The directory to scan in each extension to scan for files. Defaults to
@@ -46,11 +46,13 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
   /**
    * Returns a map of all config object names and their folders.
    *
-   * The list is based on enabled modules and themes. The active configuration
-   * storage is used rather than \Drupal\Core\Extension\ModuleHandler and
-   *  \Drupal\Core\Extension\ThemeHandler in order to resolve circular
-   * dependencies between these services and \Drupal\Core\Config\ConfigInstaller
-   * and \Drupal\Core\Config\TypedConfigManager.
+   * The list is based on installed modules and themes. The active
+   * configuration storage is used rather than
+   * \Drupal\Core\Extension\ModuleHandler and
+   * \Drupal\Core\Extension\ThemeHandler in order to resolve circular
+   * dependencies between these services and
+   * \Drupal\Core\Config\ConfigInstaller and
+   * \Drupal\Core\Config\TypedConfigManager.
    *
    * NOTE: This code is copied from ExtensionInstallStorage::getAllFolders() with
    * the following changes (Notes in CHANGED below)
@@ -95,7 +97,7 @@ class FeaturesInstallStorage extends ExtensionInstallStorage {
 
       if (!empty($extensions['module'])) {
 
-        // CHANGED START: Find ANY modules, not just enabled ones.
+        // CHANGED START: Find ANY modules, not just installed ones.
         //$modules = $extensions['module'];
         $module_list_scan = $listing->scan('module');
         $modules = $module_list_scan;

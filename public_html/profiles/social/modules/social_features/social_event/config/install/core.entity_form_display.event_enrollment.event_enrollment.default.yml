@@ -1,8 +1,8 @@
-uuid: c4f26449-fb75-4009-b100-b3ff2c333684
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.event_enrollment.event_enrollment.field_account
     - field.field.event_enrollment.event_enrollment.field_enrollment_status
     - field.field.event_enrollment.event_enrollment.field_event
   module:
@@ -45,4 +45,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_account: true

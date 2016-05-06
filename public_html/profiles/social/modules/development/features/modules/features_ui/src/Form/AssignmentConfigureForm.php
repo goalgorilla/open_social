@@ -11,9 +11,7 @@ use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
 use Drupal\features\FeaturesManagerInterface;
 use Drupal\features\FeaturesAssignerInterface;
-use Drupal\features\Entity\FeaturesBundle;
 use Drupal\features\FeaturesBundleInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -167,7 +165,6 @@ class AssignmentConfigureForm extends FormBase {
       }
     }
 
-    $settings = $current_bundle->getSettings();
     $enabled_methods = $current_bundle->getEnabledAssignments();
     $methods_weight = $current_bundle->getAssignmentWeights();
 
@@ -325,7 +322,7 @@ class AssignmentConfigureForm extends FormBase {
     foreach ($methods_weight as $method_id => $weight) {
 
       // A packaging method might no longer be available if the defining module
-      // has been disabled after the last configuration saving.
+      // has been uninstalled after the last configuration saving.
       if (!isset($assignment_info[$method_id])) {
         continue;
       }

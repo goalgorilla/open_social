@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.profile.field_profile_expertise
+    - field.storage.profile.field_profile_interests
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
-    - field.field.profile.profile.field_profile_expertise
-    - field.field.profile.profile.field_profile_interests
   module:
     - search_api
     - profile
@@ -32,11 +32,17 @@ field_settings:
     datasource_id: 'entity:profile'
     property_path: field_profile_expertise
     type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_expertise
   field_profile_interests:
     label: Interests
     datasource_id: 'entity:profile'
     property_path: field_profile_interests
     type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_interests
 processor_settings:
   add_url:
     plugin_id: add_url
