@@ -5,23 +5,14 @@ block title
 
 block pagetitle
   .container.hidden-xs
-    .cover
-      .cover-wrap
-        h1.page-title.h2 Jenny Baker
-        img.img-circle.img-bordered(src='content/images/avatar5.jpg')
-        br
-        br
-        button.btn.btn-flat.btn--default-bright
-          i.material-icons.pull-left check
-          | Following
-      
-block secondary_navigation
-  .container
+    include ./molecules/_other-profile-hero.jade
+    
+  .container    
     .visible-xs-block.section
-      a.btn.btn-raised.btn-user(href="my-stream.html")
+      a.btn.btn-raised.btn-user(href="other-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
-        | Back to the stream
-
+        | Back to Jenny`s stream
+      
   .container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
@@ -37,16 +28,16 @@ block secondary_navigation
           li
             a(href='other-events.html') Events 
           li
-            a(href="#") Groups
+            a(href="other-groups.html") Groups
       
 block content
   
   .row
   
     .col-xs-12
-      h2.h3.section-title Jenny Bakers topics
+      h2.h3.section-title Jenny Baker`s topics
     
-    .col-xs-12.col-sm-4.pull-right.margin-bottom-l
+    .col-xs-12.col-sm-3.col-sm-last.col-md-4.margin-bottom-l
       btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filters
@@ -76,7 +67,7 @@ block content
             .form-group.margin-top-l.clearfix
               input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
 
-    .col-xs-12.col-sm-8
+    .col-xs-12.col-sm-9.col-md-8
       include molecules/_topic1.jade
       include molecules/_topic2.jade
       include molecules/_topic3.jade

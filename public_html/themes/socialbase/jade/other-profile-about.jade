@@ -5,23 +5,14 @@ block title
 
 block pagetitle
   .container.hidden-xs
-    .cover
-      .cover-wrap
-        h1.page-title.h2 Jenny Baker
-        img.img-circle(src='content/images/avatar5.jpg')
-        br
-        br
-        button.btn.btn-flat.btn--default-bright
-          i.material-icons.pull-left check
-          | Following
-          
-block secondary_navigation
-  .container
-    .visible-xs-block.section
-      a.btn.btn-raised.btn-user(href="my-stream.html")
-        i.material-icons.pull-left keyboard_arrow_left
-        | Back to the stream
+    include ./molecules/_other-profile-hero.jade
 
+  .container    
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user(href="other-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to Jenny`s stream
+          
   .container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
@@ -37,7 +28,7 @@ block secondary_navigation
           li
             a(href='other-events.html') Events  
           li
-            a(href="#") Groups
+            a(href="other-groups.html") Groups
       
 block content
   
@@ -59,7 +50,7 @@ block content
             li.collection-item 
               .collection-label E-mail
               .collection-field 
-                a(href="example@domain.com") jenny@jennybaker.com    
+                a(href="mailto:example@domain.com") jenny@jennybaker.com    
             li.collection-item 
               .collection-label Address
               .collection-field 
