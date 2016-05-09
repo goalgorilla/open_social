@@ -134,6 +134,7 @@ gulp.task('script-components', function() {
     folder.js_comp + "/sideNav.js",
     folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",
+    folder.js_comp + "/tabs.js",
     folder.js_comp + "/offcanvas.js",
     folder.js_comp + "/forms.js",
     folder.js_comp + "/character_counter.js"
