@@ -44,9 +44,9 @@ Note that the docker projects have to be somewhere in your /Users/ directory in 
     docker-machine ls
     ```
 
-6. Run the install script on your host machine.
+6. Run the install script on the docker web container, the name could be slightly different on your machine, in the example below the name is social_web_1.
     ```
-    sh docker_build/drupal8/install_script.sh
+    docker exec -it social_web_1 bash /root/dev-scripts/install/install_script.sh
     ```
 
 7. Add the proxy container.
