@@ -51,16 +51,15 @@ block content
     .col-xs-12
       h4.section-title Events in Happy Campers
       
-    .col-xs-12.col-sm-3.col-sm-last.col-md-4.margin-bottom-l
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-event.html') Create event
-
-      button.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
+      br 
+      br
+      btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filters
-      
-      br 
-      br 
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+
+      .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
@@ -80,11 +79,9 @@ block content
               .radio
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
               
     
-    .col-xs-12.col-sm-9.col-md-8
+    .col-xs-12.col-sm-8
       include molecules/_event1.jade
       include molecules/_event2.jade
       include molecules/_event3.jade

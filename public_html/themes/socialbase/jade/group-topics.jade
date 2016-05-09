@@ -42,7 +42,7 @@ block pagetitle
           li
             a(href='group-events.html') Events 
           li
-            a(href="group-groups.html") Members
+            a(href="group-members.html") Members
       
 block content
   
@@ -53,15 +53,14 @@ block content
     
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') 
-        i.material-icons.pull-left add
-        | Add a topic
-
-      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filters
+        | Create topic
       br 
       br
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+      btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filters
+
+      .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
@@ -83,8 +82,8 @@ block content
                 option(value="", selected="") All statusses
                 option(value="published") Published
                 option(value="unpublished") Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+            .form-group.margin-top-l
+              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-8
       include molecules/_topic1.jade

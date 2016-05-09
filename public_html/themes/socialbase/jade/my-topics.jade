@@ -49,14 +49,14 @@ block content
       h2.h3.section-title My topics
     
 
-    .col-xs-12.col-sm-3.col-sm-last.col-md-4.margin-bottom-l
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-user.btn-raised.btn-block(href='node-add-topic.html') Create topic
       br 
       br
       btn.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filter
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+      .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
@@ -78,10 +78,10 @@ block content
                 option(value="", selected="") All statusses
                 option(value="published") Published
                 option(value="unpublished") Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+            .form-group
+              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
 
-    .col-xs-12.col-sm-9.col-md-8
+    .col-xs-12.col-sm-8
       include molecules/_topic1.jade
       include molecules/_topic2.jade
       include molecules/_topic3.jade

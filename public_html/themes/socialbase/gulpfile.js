@@ -136,9 +136,7 @@ gulp.task('script-components', function() {
     folder.js_comp + "/waves.js",
     folder.js_comp + "/offcanvas.js",
     folder.js_comp + "/forms.js",
-    folder.js_comp + "/tabs.js",
-    folder.js_comp + "/character_counter.js",
-    folder.js_comp + "/dropdown.js"
+    folder.js_comp + "/character_counter.js"
     ])
     .pipe( concat('components.js') )
     .pipe( gulp.dest(folder.js) )
