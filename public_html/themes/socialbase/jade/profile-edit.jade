@@ -46,13 +46,27 @@ block content
                   input.form-control(type="text", value='Johnson')
                   
             .form-group.form__type-managed-file
-              label Image
+              label Profile image
               .image-widget.form-managed-file.clearfix
                 img.img-responsive.pull-left(src='content/images/avatar1.jpg', width='50')
                 .pull-left.padding-xs
                   .file.file--image
-                  a(href='#', type="image/jpeg; length=158378") my-picture.jpg
+                  a(href='#', type="image/jpeg; length=158378") my-profile-picture.jpg
                   .file-size (91.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-user.form-submit(type='submit', value='remove')
+                    i.material-icons.pull-left delete
+                    | Remove
+              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+            
+            .form-group.form__type-managed-file
+              label Cover image
+              .image-widget.form-managed-file.clearfix
+                img.img-responsive.pull-left(src='content/images/my-cover-big.jpg', width='150')
+                .pull-left.padding-xs
+                  .file.file--image
+                  a(href='#', type="image/jpeg; length=158378") my-cover.jpg
+                  .file-size (123.89kb)
                 .pull-left.padding-xs
                   button.btn.btn-user.form-submit(type='submit', value='remove')
                     i.material-icons.pull-left delete
@@ -70,10 +84,10 @@ block content
               .row
                 .col-sm-6
                   label Function
-                  input.form-control(type="text", value='Executive director animal relations')
+                  input.form-control(type="text", value='Receptionist')
                 .col-sm-6
                   label Organisation
-                  input.form-control(type="text", value='The pet shop')
+                  input.form-control(type="text", value='Bastion Hotels')
 
         #contact.card.card-underline.scrollspy
         
@@ -121,18 +135,18 @@ block content
               label.form-required Write some details about yourself
               .textarea--cke
                 textarea#ckeditor.form-control(required)
-                  p Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec id elit non mi porta gravida at eget metus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                  p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
 
             .form-group
               label Your expertises
-              input.form-control(type="text", value='')
+              input.form-control(type="text", value='drupal, sales, barbecues')
             
             .form-group
               label Your interests
-              input.form-control(type="text", value='')
+              input.form-control(type="text", value='php, interaction design, cooking')
               
         .form-actions.clearfix
-          a.waves-effect.waves-light.btn.btn-raised.btn-user(href="my-profile-about.html") Discard changes
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
 
     
