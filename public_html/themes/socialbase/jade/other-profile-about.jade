@@ -18,7 +18,7 @@ block pagetitle
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.hidden-xs
             a(href="other-stream.html") Stream  
           li.active
             a(href="other-profile-about.html") About
@@ -41,19 +41,20 @@ block content
       .card
         .card-body.extra-padding
         
-          ul.collection
-            li.collection-item
-              h4 Contact information
-            li.collection-item 
-              .collection-label Phone
-              .collection-field +31 658974324
-            li.collection-item 
-              .collection-label E-mail
-              .collection-field 
+          .list-group.list-group-divider
+            .list-group-item
+              .list-group-item-heading
+                h4 Contact information
+            .list-group-item
+              .list-group-label Phone
+              .list-group-field +31 658974324
+            .list-group-item
+              .list-group-label E-mail
+              .list-group-field 
                 a(href="mailto:example@domain.com") jenny@jennybaker.com    
-            li.collection-item 
-              .collection-label Address
-              .collection-field 
+            .list-group-item
+              .list-group-label Address
+              .list-group-field 
                 | My street name 123 
                 br
                 | 1234 BB
