@@ -68,6 +68,7 @@
     left: 0;
     right: 0;
     width: 100%;
+    max-width: none;
     max-height: 100%;
     max-height: calc(100% - 50px);
     overflow-x: hidden;
@@ -119,8 +120,8 @@
   }
 
 }
-.navbar-footer {
 
+.navbar-footer {
 
   .navbar-brand {
     color: white;
@@ -225,13 +226,6 @@
   transition: color .2s ease, background-color .2s ease;
   color: $grey-light-3;
   background-color: $brand-secondary;
-}
-
-// Temporary fix for aligning icons
-.navbar-default .navbar-nav .material-icons {
-  @include MQ($small) {
-    float: left;
-  }
 }
 
 // Hacking into responsive bootstrap behaviour

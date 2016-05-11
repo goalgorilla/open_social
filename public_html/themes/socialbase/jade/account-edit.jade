@@ -3,17 +3,16 @@ extends ./layout/base-lu.jade
 block title
   title Edit account
 
-block pagetitle
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Edit account         
+   
 
       
 block content
       
   .row
+    .col-xs-12
+      h4.section-title Edit account
   
-    .col-sm-8.margin-top-l
+    .col-xs-12.col-sm-8
     
       form(method='get', action='my-profile-about.html')
       
@@ -50,8 +49,8 @@ block content
                   input#edit-pass-pass2.password-confirm.js-password-confirm.form-control(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true', value="")
               
         .form-actions.clearfix
-          a.waves-effect.waves-light.btn.btn-raised.btn-user(href="my-profile-about.html") Discard changes
-          a.btn.btn-flat(href='#') Cancel account
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href='#') Cancel account
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
 
 

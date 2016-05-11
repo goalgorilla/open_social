@@ -3,17 +3,21 @@ extends ./layout/base-lu.jade
 block title
   title Edit Event
 
-block pagetitle
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Edit Event: Amsterdam Meetup      
-
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='event.html') Amsterdam Meetup
+  li.active Edit
       
 block content
       
   .row
   
-    .col-sm-4.col-sm-push-8
+    .col-xs-12
+      h1.h4.section-title Edit Event: Amsterdam Meetup
+  
+    .col-xs-12.col-sm-4.col-sm-last
       .toc-wrapper
         ul.table-of-contents
           li
@@ -29,14 +33,14 @@ block content
           li
             a(href='#comment-settings') Comment settings
     
-    .col-sm-8.col-sm-pull-4.margin-top-l
+    .col-xs-12.col-sm-8
     
       form(action='event.html', method='get')
       
         #content.card.card-underline.scrollspy
         
           .card-head
-            header Title and teaser image
+            header Title and image
       
           .card-body
 

@@ -138,15 +138,33 @@ ol {
 	letter-spacing: 0.05em;
 
   @include MQ($small) {
-    padding-left: 48px;
-    margin: 1em 0 .5em
+    padding-left: 20px;
+    margin: 1em 0 .5em;
+
+		&.section-title-stream {
+			padding-left: 40px;
+		}
+
+		&.section-title-node {
+			padding-left: 48px;
+		}
   }
+
 }
+
+
 
 .text-caption {
   display: block;
   margin-bottom: 24px;
   font-size: 12px;
+}
+
+.text-truncate {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 // Sizes
