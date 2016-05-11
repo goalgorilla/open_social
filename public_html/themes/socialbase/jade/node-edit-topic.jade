@@ -1,31 +1,26 @@
 extends ./layout/base-lu.jade
 
-- var ckeditor = true
-
 block title
   title Edit Topic Why are color runs so popular?
-
-block pagetitle
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Edit: Why are color runs so popular?
-
-      
+    
 block content
       
   .row
   
-    .col-sm-4.col-sm-push-8
+    .col-xs-12
+      h1.h4.section-title Edit: Why are color runs so popular?
+      
+    .col-xs-12.col-sm-4.col-sm-last
       .toc-wrapper
-        ul.section.table-of-contents
+        ul.table-of-contents
           li
             a(href='#content') Content
           li
             a(href='#description') Description
           li
             a(href='#comment-settings') Comment settings
-
-    .col-sm-8.col-sm-pull-4.margin-top-l
+      
+    .col-xs-12.col-sm-8
     
       form(action='topic.html', method='get')
       
