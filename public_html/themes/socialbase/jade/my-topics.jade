@@ -1,36 +1,24 @@
 extends ./layout/base-lu.jade
 
 block title
-  title Michael Angarano
+  title John Johnson
 
 block pagetitle
-  .container.hidden-xs
-    .cover
-      .hero-action-button
-        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
-          i.material-icons mode_edit
-      .cover-wrap
-        h1.page-title.h2 John Johnson
-        img.img-circle.img-bordered(src='content/images/avatar1.jpg')
-        br
-        br
-        button.btn.btn-flat.btn--default-bright
-          i.material-icons.pull-left check
-          | Following
-      
-block secondary_navigation
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-profile-hero.jade
+  
   .container
     .visible-xs-block.section
-      a.btn.btn-raised.btn-default(href="my-stream.html")
+      a.btn.btn-raised.btn-user(href="my-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to my stream
 
-  .container
+  .container.hero-container    
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.hidden-xs
             a(href="my-stream.html") Stream  
           li
             a(href="my-profile-about.html") About
@@ -49,21 +37,19 @@ block content
     .col-xs-12
       h2.h3.section-title My topics
     
-    .col-xs-12.col-sm-3.pull-right.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised(href='node-add-topic.html') 
-        i.material-icons.pull-left add
-        | Add a topic
 
-      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filters
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-user.btn-raised.btn-block(href='node-add-topic.html') Create topic
       br 
       br
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+      btn.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filter
+      .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-default-light.pull-right
+            .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
               i.material-icons close
         
         .offcanvas-body
@@ -81,10 +67,10 @@ block content
                 option(value="", selected="") All statusses
                 option(value="published") Published
                 option(value="unpublished") Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+            .form-group
+              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
 
-    .col-xs-12.col-sm-9
+    .col-xs-12.col-sm-8
       include molecules/_topic1.jade
       include molecules/_topic2.jade
       include molecules/_topic3.jade

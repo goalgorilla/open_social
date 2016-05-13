@@ -60,6 +60,11 @@
     border-bottom: none;
   }
 
+  &.card-head {
+    padding: 0;
+    overflow: hidden;
+  }
+
 
   &.nav-tabs-right {
     @include MQ($small) {
@@ -108,10 +113,10 @@
 
   }
 
-  .card-underline .card-head & {
-    margin-bottom: -1px;
-  }
+}
 
+.card-underline .card-head.nav-tabs-justified a {
+  margin-bottom: -1px;
 }
 
 @include MQ($small) {

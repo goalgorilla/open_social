@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- TODO set checkForUnintentionallyCoveredCode="true" once https://www.drupal.org/node/2626832 is resolved. -->
+<!-- TODO set printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" once
+ https://youtrack.jetbrains.com/issue/WI-24808 is resolved. Drupal provides a
+ result printer that links to the html output results for functional tests.
+ Unfortunately, this breaks the output of PHPStorm's PHPUnit runner. However, if
+ using the command line you can add
+ - -printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" to use it (note there
+ should be no spaces between the hyphens).
+-->
 <phpunit bootstrap="tests/bootstrap.php" colors="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutOutputDuringTests="true"
@@ -15,6 +23,8 @@
     <!-- Example SIMPLETEST_BASE_URL value: http://localhost -->
     <env name="SIMPLETEST_DB" value=""/>
     <!-- Example SIMPLETEST_DB value: mysql://username:password@localhost/databasename#table_prefix -->
+    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value=""/>
+    <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
   </php>
   <testsuites>
     <testsuite name="unit">
@@ -45,6 +55,17 @@
       <directory>../modules/*/tests/src/Functional</directory>
       <directory>../profiles/*/tests/src/Functional</directory>
       <directory>../sites/*/modules/*/tests/src/Functional</directory>
+      <!-- Exclude Composer's vendor directory so we don't run tests there. -->
+      <exclude>./vendor</exclude>
+      <!-- Exclude Drush tests. -->
+      <exclude>./drush/tests</exclude>
+    </testsuite>
+    <testsuite name="functional-javascript">
+      <directory>./tests/Drupal/FunctionalJavascriptTests</directory>
+      <directory>./modules/*/tests/src/FunctionalJavascript</directory>
+      <directory>../modules/*/tests/src/FunctionalJavascript</directory>
+      <directory>../profiles/*/tests/src/FunctionalJavascript</directory>
+      <directory>../sites/*/modules/*/tests/src/FunctionalJavascript</directory>
       <!-- Exclude Composer's vendor directory so we don't run tests there. -->
       <exclude>./vendor</exclude>
       <!-- Exclude Drush tests. -->

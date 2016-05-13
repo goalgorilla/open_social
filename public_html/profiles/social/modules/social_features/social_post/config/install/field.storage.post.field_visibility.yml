@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - dropdown
+    - social_post
+id: post.field_visibility
+field_name: field_visibility
+entity_type: post
+type: dropdown
+settings:
+  allowed_values:
+    -
+      value: '0'
+      label: Community
+      description: 'Visible only to members who are logged in'
+    -
+      value: '1'
+      label: Public
+      description: 'Visible to all visitors of the site'
+    -
+      value: '2'
+      label: Community
+      description: 'Visible only to members who are logged in'
+module: dropdown
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

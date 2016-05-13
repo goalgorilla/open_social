@@ -4,27 +4,21 @@ block title
   title John Johnson
 
 block pagetitle
-  .container.hidden-xs
-    .cover
-      .cover-wrap
-        a.pull-right.waves-effect.waves-light.btn.btn-raised.style-default-dark.btn-floating(href='profile-edit.html')
-          i.material-icons mode_edit   
-        h1.page-title.h2 John Johnson
-        img.img-circle.img-bordered(src='content/images/avatar1.jpg')
-      
-block secondary_navigation
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-profile-hero.jade
+
   .container
     .visible-xs-block.section
-      a.btn.btn-raised.btn-default(href="my-stream.html")
+      a.btn.btn-raised.btn-user(href="my-stream.html")
         i.material-icons.pull-left keyboard_arrow_left
         | Back to my stream
 
-  .container
+  .container.hero-container 
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.hidden-xs
             a(href="my-stream.html") Stream  
           li.active
             a(href="my-profile-about.html") About
@@ -42,24 +36,24 @@ block content
     .col-sm-12
       h4.section-title About you
     
-    .col-xs-12.col-sm-9
+    .col-xs-12.col-sm-8
       
       .card
         .card-body.extra-padding
         
-          ul.collection
-            li.collection-item
-              h4 Contact information
-            li.collection-item 
-              .collection-label Phone
-              .collection-field +31 612345678
-            li.collection-item 
-              .collection-label E-mail
-              .collection-field 
-                a(href="example@domain.com") john@johnjohnson.com    
-            li.collection-item 
-              .collection-label Address
-              .collection-field 
+          .list-group.list-group-divider
+            .list-group-item
+              h4.list-group-item-heading Contact information
+            .list-group-item
+              .list-group-label Phone
+              .list-group-field +31 612345678
+            .list-group-item
+              .list-group-label E-mail
+              .list-group-field 
+                a(href="mailto:example@domain.com") john@johnjohnson.com    
+            .list-group-item
+              .list-group-label Address
+              .list-group-field 
                 | My street name 123 
                 br
                 | 1234 BB

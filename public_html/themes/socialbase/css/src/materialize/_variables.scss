@@ -23,9 +23,9 @@
 // *  16. List group
 // *  17. Tabs
 // *  18. Tables
-// *  19. Thumbnails
-// *  20. Type
-// *  21. Flow Text
+// *  19. Labels
+// *  20. Thumbnails
+// *  21. Type
 // *  22. Chips
 //
 
@@ -34,7 +34,7 @@
 
 // Quickly modify global styling by enabling or disabling optional features.
 
-$enable-flex:               false !default;
+$enable-flex:               true !default;
 $enable-rounded:            true !default;
 $enable-shadows:            false !default;
 $enable-gradients:          false !default;
@@ -157,7 +157,7 @@ $caret-width-large:         5px !default;
  $font-family-webfont:     'montserrat', sans-serif !default;
 
  $font-size-base:          16px !default;
- $font-size-large:         ceil(($font-size-base * 1.25)) !default; // ~18px
+ $font-size-large:         floor(($font-size-base * 1.25)) !default; // ~18px
  $font-size-small:         ceil(($font-size-base * 0.875)) !default; // ~12px
 
  $font-size-h1:            floor(($font-size-base * 2.6)) !default; // ~36px
@@ -210,9 +210,10 @@ $badge-active-color:          $link-color !default;
 //** Badge background color in active nav link
 $badge-active-bg:             #fff !default;
 
-$badge-font-weight:           bold !default;
+$badge-font-size:             12px;
+$badge-font-weight:           500 !default;
 $badge-line-height:           1 !default;
-$badge-border-radius:         10px !default;
+$badge-border-radius:         $font-size-small !default;
 
 
 // 6. Buttons
@@ -248,8 +249,8 @@ $badge-border-radius:         10px !default;
 $btn-font-weight:                normal !default;
 
 $btn-default-color:              $default-color !default;
-$btn-default-bg:                 transparent !default;
-$btn-default-border:             $gray-light !default;
+$btn-default-bg:                 white !default;
+$btn-default-border:             $grey-light-1 !default;
 
 $btn-primary-color:              white !default;
 $btn-primary-bg:                 $brand-primary !default;
@@ -286,7 +287,7 @@ $btn-border-radius-small:        $border-radius-small !default;
 // 7. Cards
 // ==========================================================================
 
- $card-padding: 1.25rem !default;
+ $card-padding: 20px !default;
  $card-padding-large: 48px !default;
  $card-radius: 10px !default;
  $card-bg-color: white !default;
@@ -421,7 +422,7 @@ $input-disabled-solid-color: #BDBDBD !default;
 $radio-fill-color: $primary-color-dark !default;
 $radio-empty-color: #5a5a5a !default;
 $radio-border: 2px solid $radio-fill-color !default;
-$radio-width: 35px !default;
+$radio-width: 25px !default;
 
 // Switches
 $switch-bg-color: $primary-color-dark !default;
@@ -672,7 +673,7 @@ $navbar-inverse-toggle-border-color:        #333 !default;
 // ==========================================================================
 
 //** Background color on `.list-group-item`
-$list-group-bg:                 transparent !default;
+$list-group-bg:                 white !default;
 //** `.list-group-item` border color
 $list-group-border:             #ddd !default;
 //** List group border radius
@@ -726,10 +727,29 @@ $pagination-disabled-border:           transparent !default;
  $table-border-color: #d0d0d0 !default;
  $table-striped-color: #f2f2f2 !default;
 
+// 19. Labels
+// ==========================================================================
+
+//** Default label background color
+$label-default-bg:            $gray-light !default;
+//** Primary label background color
+$label-primary-bg:            $brand-secondary !default;
+//** Success label background color
+$label-success-bg:            $brand-success !default;
+//** Info label background color
+$label-info-bg:               $brand-info !default;
+//** Warning label background color
+$label-warning-bg:            $brand-warning !default;
+//** Danger label background color
+$label-danger-bg:             $brand-danger !default;
+
+//** Default label text color
+$label-color:                 #fff !default;
+//** Default text color of a linked label
+$label-link-hover-color:      #fff !default;
 
 
-
-// 19. Thumbnails
+// 20. Thumbnails
 // ==========================================================================
 
 //** Padding around the thumbnail image
@@ -747,7 +767,7 @@ $thumbnail-caption-color:     $text-color !default;
 $thumbnail-caption-padding:   9px !default;
 
 
-// 20. Type
+// 21. Type
 // ==========================================================================
 
 //** Horizontal offset for forms and lists.

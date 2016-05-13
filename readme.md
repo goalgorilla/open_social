@@ -1,4 +1,4 @@
-# Drupal Social #
+# Open Social #
 Check [drupal.org](https://www.drupal.org/project/social) for more information.
 For day to day technical documentation use the [Github Wiki](https://github.com/goalgorilla/drupal_social/wiki).
 
@@ -6,17 +6,13 @@ Useful links for developers:
 - [Roadmap](https://drupalsocial.storiesonboard.com/m/drupal-social-mvp)
 - [Lo-fi prototype](http://prototype.goalgorilla.com/drupalsocial/current/)
 - [Hifi styleguide and prototype](http://goalgorilla.github.io/drupal_social/)
+- [Travis CI](https://travis-ci.org/goalgorilla/drupal_social/builds)
+- [Docker Hub](https://hub.docker.com/r/goalgorilla/drupal_social/builds/)
 
-# Commit messages guidelines #
-[Jira](https://goalgorilla.cloudshards.net/secure/Dashboard.jspa) is used for the issue queue. In order to link the commits to profiles at drupal.org when we release the distribution use the following [template](https://www.drupal.org/node/52287):
+# Help Wanted #
+Do you want to join us in this effort? We are welcoming your [feedback](http://goalgorilla.github.io/drupal_social/prototype.html), (development) time and/or financial support. For feedback we will use [Drupal.org](https://www.drupal.org/project/social) for other questions or suggestions please contact taco@goalgorilla.com.
 
-```
-[DS-#Issue] by [comma-separated usernames]: [Summary of the change]
-```
-For example:
-```
-DS-123 by nielsvandermolen, ronaldtebrake: Login with email and custom validation constraint on create account username field.
-```
+Source-code and installation instructions are currently only available on [Github.com](https://github.com/goalgorilla/drupal_social). You are welcome to try the installation profile yourself although it is still work-in-progress. The coming months we will continue to work on the theme to match the [prototype](http://goalgorilla.github.io/drupal_social/prototype.html). If you find any issues feel free to file a bug report in the issue queue.
 
 # Installation #
 
@@ -48,9 +44,9 @@ Note that the docker projects have to be somewhere in your /Users/ directory in 
     docker-machine ls
     ```
 
-6. Run the install script on your host machine.
+6. Run the install script on the docker web container, the name could be slightly different on your machine, in the example below the name is social_web_1.
     ```
-    sh docker_build/drupal8/install_script.sh
+    docker exec -it social_web_1 bash /root/dev-scripts/install/install_script.sh
     ```
 
 7. Add the proxy container.

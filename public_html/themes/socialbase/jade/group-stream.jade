@@ -1,0 +1,96 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Happy Campers
+
+block pagetitle
+  
+  .container.hero-container
+    .cover.cover-img(style="background-image: url('content/images/group-hero.jpg')")  
+      .hero-action-button
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='group-edit.html')
+          i.material-icons mode_edit
+      .cover-wrap          
+        h1.page-title Happy Campers
+        p.page-title 21 members
+        .hero-footer
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3 Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+            .col-xs-12.col-md-3
+              .btn-group
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Joined        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Leave group        
+
+  .container.hero-container  
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.active.hidden-xs
+            a(href='group-stream.html') Stream
+              span.visually-hidden (active tab)
+          li
+            a(href='group-topics.html') Topics
+          li
+            a(href='group-events.html') Events
+          li
+            a(href="group-members.html") Members
+      
+block content
+      
+  .row
+    .col-xs-12
+      
+      h4.section-title.section-title-stream Happy Campers stream
+      
+    .col-xs-12.col-sm-8
+      
+      ul.stream
+        li.stream-item
+          i.stream-icon.stream-icon-new  
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post-form-group.jade
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade    
+      
+    .col-sm-4.hidden-xs
+
+      include ./molecules/_group-upcoming-events.jade
+      include ./molecules/_group-new-topics.jade
+      include ./molecules/_group-new-members.jade
+      
+block scriptinline  
+  
+  script.  
+    function showMe (it, radio) {
+      var visibility = radio.value;
+      var icon = jQuery(radio).prevAll('.material-icons').text();
+      jQuery('#' + it).find('.text').html(visibility);
+      jQuery('#' + it).find('.material-icons').html(icon);
+      jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
+      jQuery(radio).closest('.list-group-item').addClass('active');
+    }

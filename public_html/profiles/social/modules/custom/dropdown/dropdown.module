@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Contains dropdown.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html as HtmlUtility;
+
+/**
+ * Implements hook_help().
+ */
+function dropdown_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the dropdown module.
+    case 'help.page.dropdown':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Dropdown field.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function dropdown_theme() {
+  $items = [
+    'dropdown' => [
+      'render element' => 'element',
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Prepares variables for dropdown templates.
+ *
+ * Default template: dropdown.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #title, #value, #options, #description, #required,
+ *     #attributes, #children.
+ */
+function template_preprocess_dropdown(&$variables) {
+  $element = $variables['element'];
+  $variables['attributes'] = array();
+  if (isset($element['#id'])) {
+    $variables['attributes']['id'] = $element['#id'];
+  }
+  if (isset($element['#attributes']['title'])) {
+    $variables['attributes']['title'] = $element['#attributes']['title'];
+  }
+
+  $items = [];
+  foreach ($element as $key => $el) {
+    if (is_numeric($key) && isset($el['#type']) && $el['#type'] === 'radio') {
+      $items[] = $el;
+      if ($el['#return_value'] === $el['#value']) {
+        // @TODO Do we need to check for default_value also
+        $selected = HtmlUtility::escape($el['#title']);
+        $active = $key;
+      }
+    }
+  }
+  $variables['items'] = $items;
+  $variables['label'] = HtmlUtility::escape($element['#title']);
+  $variables['selected'] = isset($selected) ? $selected : $variables['label'];
+  $variables['active'] = isset($active) ? $active : 0;
+  $variables['children'] = $element['#children'];
+}

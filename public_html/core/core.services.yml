@@ -473,7 +473,7 @@ services:
     class: Drupal\Core\Extension\ModuleInstaller
     tags:
       - { name: service_collector, tag: 'module_install.uninstall_validator', call: addUninstallValidator }
-    arguments: ['@app.root', '@module_handler', '@kernel']
+    arguments: ['@app.root', '@module_handler', '@kernel', '@router.builder']
     lazy: true
   content_uninstall_validator:
     class: Drupal\Core\Entity\ContentUninstallValidator
@@ -763,6 +763,9 @@ services:
     tags:
       - { name: event_subscriber }
       - { name: backend_overridable }
+  router.route_provider.lazy_builder:
+    class: Drupal\Core\Routing\RouteProviderLazyBuilder
+    arguments: ['@router.route_provider', '@router.builder']
   router.route_preloader:
     class: Drupal\Core\Routing\RoutePreloader
     arguments: ['@router.route_provider', '@state', '@cache.bootstrap']
@@ -1069,6 +1072,11 @@ services:
     arguments: ['@entity.manager']
     tags:
       - { name: access_check, applies_to: _entity_create_access }
+  access_check.entity_create_any:
+    class: Drupal\Core\Entity\EntityCreateAnyAccessCheck
+    arguments: ['@entity_type.manager', '@entity_type.bundle.info']
+    tags:
+      - { name: access_check, applies_to: _entity_create_any_access }
   access_check.theme:
     class: Drupal\Core\Theme\ThemeAccessCheck
     arguments: ['@theme_handler']

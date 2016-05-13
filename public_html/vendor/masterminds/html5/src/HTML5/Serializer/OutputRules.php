@@ -185,7 +185,9 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
     {
         $this->doctype();
         if ($dom->documentElement) {
-            $this->traverser->node($dom->documentElement);
+            foreach ($dom->childNodes as $node) {
+                $this->traverser->node($node);
+            }
             $this->nl();
         }
     }
@@ -347,7 +349,7 @@ class OutputRules implements \Masterminds\HTML5\Serializer\RulesInterface
             // the XML, XMLNS, or XLink NS's should use the canonical
             // prefix. It seems that DOM does this for us already, but there
             // may be exceptions.
-            $name = $node->name;
+            $name = $node->nodeName;
 
             // Special handling for attributes in SVG and MathML.
             // Using if/elseif instead of switch because it's faster in PHP.

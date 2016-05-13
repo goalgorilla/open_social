@@ -14,18 +14,18 @@ Feature: Create Event
          | Time | 11:00:00 |
          | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-#    And I select "NL" from "Country"
-#    And I wait for AJAX to finish
-#    Then I should see "City"
-#    And I fill in the following:
-#         | City | Enschede |
-#         | Street address | Oldenzaalsestraat |
-#         | Postal code | 7514DR |
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
+    Then I should see "City"
+    And I fill in the following:
+         | City | Enschede |
+         | Street address | Oldenzaalsestraat |
+         | Postal code | 7514DR |
     And I press "Save"
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
     And I should see "Body description text" in the "Main content"
     And I should see "Wed, 01/01/2025 - 11:00" in the "Hero block"
-#    And I should see "Oldenzaalsestraat" in the "Hero block"
-#    And I should see "7514DR" in the "Hero block"
-#    And I should see "Enschede" in the "Hero block"
+    And I should see "Oldenzaalsestraat" in the "Hero block"
+    And I should see "7514DR" in the "Hero block"
+    And I should see "Enschede" in the "Hero block"

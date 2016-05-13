@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\toolbar\Element\Toolbar.
- */
-
 namespace Drupal\toolbar\Element;
 
 use Drupal\Component\Utility\Html;
@@ -61,7 +56,7 @@ class Toolbar extends RenderElement {
    * rendering to ensure that it is built only if it will be displayed.
    *
    * @param array $element
-   *  A renderable array.
+   *   A renderable array.
    *
    * @return array
    *  A renderable array.

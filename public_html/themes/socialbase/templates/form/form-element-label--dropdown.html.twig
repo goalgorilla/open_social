@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a form element label.
+ *
+ * Available variables:
+ * - element: an input element.
+ * - title: The label's text.
+ * - title_display: Elements title_display setting.
+ * - description: element description.
+ * - required: An indicator for whether the associated form element is required.
+ * - attributes: A list of HTML attributes for the label.
+ *
+ * @see template_preprocess_form_element_label()
+ *
+ * @ingroup templates
+ */
+#}
+<div class="form-group">
+  <label{{ attributes.removeAttribute('data-original-title', 'data-toggle') }}>
+    <i class="material-icons pull-left">{{ material_icon }}</i>
+    {{ title }}
+    {{ element }}
+    <div class="help-block">{{ description }}</div>
+  </label>
+</div>

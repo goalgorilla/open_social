@@ -1,9 +1,9 @@
-uuid: cf699b59-5649-4fcb-8c08-ee88d6832ed0
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.teaser
+    - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
@@ -11,13 +11,12 @@ dependencies:
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_self_introduction
     - image.style.teaser
     - profile.type.profile
   module:
     - image
-_core:
-  default_config_hash: Pv8AqRKfYCVvHu6MK5lBfc1j6Vz4IFrAF_-4ZIGtsFk
 id: profile.profile.teaser
 targetEntityType: profile
 bundle: profile
@@ -60,6 +59,8 @@ content:
     third_party_settings: {  }
     type: string
 hidden:
+  field_profile_address: true
   field_profile_expertise: true
   field_profile_interests: true
+  field_profile_phone_number: true
   field_profile_self_introduction: true

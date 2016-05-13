@@ -10,12 +10,10 @@ namespace Drupal\features_ui\Form;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\features\ConfigurationItem;
 use Drupal\features\FeaturesAssignerInterface;
-use Drupal\features\FeaturesGeneratorInterface;
 use Drupal\features\FeaturesManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\features\Package;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Diff\DiffFormatter;
 use Drupal\config_update\ConfigRevertInterface;
@@ -110,11 +108,11 @@ class FeaturesDiffForm extends FormBase {
 
     $machine_name = '';
     if (!empty($featurename) && empty($packages[$featurename])) {
-      drupal_set_message(t('Feature @name does not exist.', array('@name' => $featurename)), 'error');
+      drupal_set_message($this->t('Feature @name does not exist.', array('@name' => $featurename)), 'error');
       return array();
     }
     elseif (!empty($featurename)) {
-      $machine_name = $packages[$featurename]['machine_name'];
+      $machine_name = $packages[$featurename]->getMachineName();
       $packages = array($packages[$featurename]);
     }
     else {
@@ -124,24 +122,24 @@ class FeaturesDiffForm extends FormBase {
     $header = array(
       'row' => array(
         'data' => !empty($machine_name)
-        ? t('Differences in @name', array('@name' => $machine_name))
-        : ($current_bundle->isDefault() ? t('All differences') : t('All differences in bundle: @bundle', array('@bundle' => $current_bundle->getName()))),
+        ? $this->t('Differences in @name', array('@name' => $machine_name))
+        : ($current_bundle->isDefault() ? $this->t('All differences') : $this->t('All differences in bundle: @bundle', array('@bundle' => $current_bundle->getName()))),
       ),
     );
 
     $options = array();
     foreach ($packages as $package) {
-      if ($package['status'] != FeaturesManagerInterface::STATUS_NO_EXPORT) {
+      if ($package->getStatus() != FeaturesManagerInterface::STATUS_NO_EXPORT) {
         $missing = $this->featuresManager->reorderMissing($this->featuresManager->detectMissing($package));
         $overrides = $this->featuresManager->detectOverrides($package, TRUE);
         if (!empty($overrides) || !empty($missing)) {
           $options += array(
-            $package['machine_name'] => array(
+            $package->getMachineName() => array(
               'row' => array(
                 'data' => array(
                   '#type' => 'html_tag',
                   '#tag' => 'h2',
-                  '#value' => SafeMarkup::checkPlain($package['name']),
+                  '#value' => SafeMarkup::checkPlain($package->getName()),
                 ),
               ),
               '#attributes' => array(
@@ -159,16 +157,16 @@ class FeaturesDiffForm extends FormBase {
       '#header' => $header,
       '#options' => $options,
       '#attributes' => array('class' => array('features-diff-listing')),
-      '#empty' => t('No differences exist in exported features.'),
+      '#empty' => $this->t('No differences exist in exported features.'),
     );
 
     $form['actions'] = array('#type' => 'actions', '#tree' => TRUE);
     $form['actions']['revert'] = array(
       '#type' => 'submit',
-      '#value' => t('Import changes'),
+      '#value' => $this->t('Import changes'),
     );
     $form['actions']['help'] = array(
-      '#markup' => t('Import the selected changes above into the active configuration.'),
+      '#markup' => $this->t('Import the selected changes above into the active configuration.'),
     );
 
     $form['#attached']['library'][] = 'system/diff';
@@ -199,15 +197,15 @@ class FeaturesDiffForm extends FormBase {
         $type = ConfigurationItem::fromConfigStringToConfigType($item['type']);
         $this->configRevert->import($type, $item['name_short']);
       }
-      drupal_set_message(t('Imported @name', array('@name' => $config_name)));
+      drupal_set_message($this->t('Imported @name', array('@name' => $config_name)));
     }
   }
 
   /**
    * Returns a form element for the given overrides.
    *
-   * @param array $package
-   *   A package array.
+   * @param \Drupal\features\Package $package
+   *   A package.
    * @param array $overrides
    *   An array of overrides.
    * @param array $missing
@@ -216,16 +214,16 @@ class FeaturesDiffForm extends FormBase {
    * @return array
    *   A form element.
    */
-  protected function diffOutput($package, $overrides, $missing = array()) {
+  protected function diffOutput(Package $package, $overrides, $missing = array()) {
     $element = array();
     $config = $this->featuresManager->getConfigCollection();
     $components = array_merge($missing, $overrides);
 
     $header = array(
       array('data' => '', 'class' => 'diff-marker'),
-      array('data' => t('Active site config'), 'class' => 'diff-context'),
+      array('data' => $this->t('Active site config'), 'class' => 'diff-context'),
       array('data' => '', 'class' => 'diff-marker'),
-      array('data' => t('Feature code config'), 'class' => 'diff-context'),
+      array('data' => $this->t('Feature code config'), 'class' => 'diff-context'),
     );
 
     foreach ($components as $name) {
@@ -233,7 +231,7 @@ class FeaturesDiffForm extends FormBase {
 
       if (!isset($config[$name])) {
         $details = array(
-          '#markup' => t('Component in feature missing from active config.'),
+          '#markup' => $this->t('Component in feature missing from active config.'),
         );
       }
       else {
@@ -241,7 +239,7 @@ class FeaturesDiffForm extends FormBase {
         $extension = $this->featuresManager->getExtensionStorages()->read($name);
         if (empty($extension)) {
           $details = array(
-            '#markup' => t('Dependency detected in active config but not exported to the feature.'),
+            '#markup' => $this->t('Dependency detected in active config but not exported to the feature.'),
           );
         }
         else {
@@ -266,7 +264,7 @@ class FeaturesDiffForm extends FormBase {
           ),
         ),
         '#attributes' => array(
-          'class' => 'diff-' . $package['machine_name'],
+          'class' => 'diff-' . $package->getMachineName(),
         ),
       );
     }

@@ -1,0 +1,49 @@
+extends ./layout/base-lu.jade
+
+- var ckeditor = true
+
+block title
+  title Create a new Open group
+
+block pagetitle
+  .container.hero-container
+    .cover
+      h1.page-title.h2.text-center Create a new Open Group    
+
+      
+block content
+      
+  .row.margin-top-l
+    .col-md-9.margin-bottom-l
+    
+      form(action='group-stream.html', method='get')
+      
+        #content.card.card-underline.scrollspy
+        
+          .card-head
+            header Content
+      
+          .card-body 
+
+            .form-group
+              label.form-required Title
+              input.form-control(type="text", required)
+
+            .form-group
+              label.form-required Description
+              textarea.form-control(required)
+
+            .form-group.form__type-managed-file
+              label Image
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                  i.material-icons.pull-left file_upload
+                  | Upload
+              .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+
+
+              
+        .form-actions.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 

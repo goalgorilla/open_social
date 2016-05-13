@@ -1,7 +1,7 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
-
+use Drupal\Component\Utility\Html as HtmlUtility;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
@@ -11,18 +11,55 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
 }
 
 /**
- * Implements hook_theme_suggestions_alter().
+ * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Select the page layout a / b /c template based on the current route.
  */
+function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Default page suggestion.
+  $page_suggestion = 'page__layout_a';
 
-function socialbase_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  // Add your page mapping here. Please note:
+  // If there are multiple matches layout_c will always have priority.
+  $suggestions_mapping = array(
+    'layout_b' => array(
+      'page__node__topic',
+    ),
+    'layout_c' => array(
+      'page__node__enrollments',
+      'page__node_edit',
+    ),
+  );
 
-  if (in_array($hook, array('node__add'))) {
-    $suggestions[] = $hook . '__' . 'layout_c';
+  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
+    $page_suggestion = 'page__layout_c';
   }
-  else if (in_array($hook, array('page') ) && in_array($suggestions, array('page__front') ) ) {
-    $suggestions[] = $hook . '__' . 'layout_a';
+  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
+    $page_suggestion = 'page__layout_b';
+  }
+  // Add as second to last suggestion, so it can be overriden on specific pages.
+  array_unshift($suggestions, $page_suggestion);
+}
+
+/**
+ * Helper function to call all the process functions of a hook.
+ *
+ * @param $hook string function to preprocess (e.g. page).
+ * @param $variables array template variables to handle.
+ *
+ * @see socialbase_preprocess_page_layout_a();
+ */
+function _socialbase_call_preprocess_page($hook, &$variables) {
+  $theme_registry = theme_get_registry();
+  if (isset($theme_registry['page']['preprocess functions'])) {
+    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
+      if (function_exists($preprocessor_function)) {
+        $preprocessor_function($variables, $hook, $theme_registry['page']);
+      }
+    }
   }
 }
+
 
 /**
  * Implements hook_preprocess_block().
@@ -47,6 +84,41 @@ function socialbase_theme_suggestions_menu_alter(array &$suggestions, array $var
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_form_element_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#parents'][0])) {
+    $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_form_element_label_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== false) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== false) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_page().
  */
 
@@ -55,7 +127,58 @@ function socialbase_preprocess_page(&$variables) {
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
+}
 
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+function socialbase_preprocess_page_layout_a(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+
+}
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+
+function socialbase_preprocess_page_layout_b(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+
+function socialbase_preprocess_page_layout_c(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+/**
+ * Implements hook_theme().
+ *
+ * Bit of hacking to be able to call multiple page layout templates based on
+ * routes.
+ *
+ * See @socialbase_theme_suggestions_menu_alter().
+ */
+function socialbase_theme() {
+  $items = array();
+  $items['page_layout_a'] = array(
+    'template' => 'page--layout-a',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_b'] = array(
+    'template' => 'page--layout-b',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_c'] = array(
+    'template' => 'page--layout-c',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  return $items;
 }
 
 /**
@@ -91,7 +214,6 @@ function socialbase_preprocess_node(&$variables) {
   }
 }
 
-
 /**
  * Implements template_preprocess_image_style().
  */
@@ -100,4 +222,80 @@ function socialbase_preprocess_image_style(&$variables) {
     $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+  if($variables['style_name'] == 'micro'){
+    $variables['image']['#attributes']['class'][] = 'img-small';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
+  }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_form_element_label(&$variables) {
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      if (isset($variables['element']['#attributes']['title'])) {
+        $description = $variables['element']['#attributes']['title'];
+        $variables['element']['#attributes'] = [];
+        $variables['description'] = $description;
+      }
+      // Set the materialize icon.
+      $variables['material_icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
+    }
+  }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_input(&$variables) {
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
+    // Only reaction on the visibility field.
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      $title = $variables['element']['#title'];
+      $variables['selected_material_icon'] = _socialbase_get_visibility_icon($title);
+      if (isset($variables['element']['#return_value']) && isset($variables['element']['#default_value'])) {
+        if ($variables['element']['#return_value'] === $variables['element']['#default_value']) {
+          $variables['element']['active'] = 'active';
+          $variables['active'] = 'active';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_dropdown(&$variables) {
+  if (isset($variables['active']) && is_numeric($variables['active'])) {
+    $title = $variables['element'][$variables['active']]['#title'];
+    $selected_material_icon = _socialbase_get_visibility_icon($title);
+  }
+  $variables['selected_material_icon'] = isset($selected_material_icon) ? $selected_material_icon : '';
+}
+
+/**
+ * Helper function to retrieve the icon string for a visibility title.
+ *
+ * @param $title $string
+ * @return string $icon
+ */
+function _socialbase_get_visibility_icon($title) {
+
+  // Set the materialize icon.
+  switch ($title) {
+    case 'Community':
+      $icon = 'group';
+      break;
+
+    case 'Recipient':
+      $icon = 'group';
+      break;
+
+    default:
+      $icon = strtolower(HtmlUtility::escape($title));
+  }
+
+  return $icon;
 }

@@ -3,20 +3,7 @@ extends ./layout/base-an.jade
 block title
   title Login
 
-block secondary_navigation
-  
-  .style-default-bright
-    .container
-      nav(role="navigation" aria-label="Tabs")
-        h2.visually-hidden Secondary navigation
-        ul.nav.nav-tabs.tabs-center.style-default-bright.nav-tabs--xl
-          li.active
-            a(href="login.html") Log in
-              span.visually-hidden (active tab)
-          li
-            a(href="sign-up.html") Sign up
-          li
-            a(href='reset-password.html') Reset password
+block pagetitle
 
 block content
   
@@ -28,7 +15,7 @@ block content
       
         .card-body
 
-          form.user-login-form(accept-charset='UTF-8')
+          form.user-login-form(accept-charset='UTF-8', action="home-lu.html")
             .form-group
               label(for='edit-name') Username
               input.form-control(type='text', autocorrect='none', autofocus='autofocus', required)
@@ -36,6 +23,8 @@ block content
             .form-group
               label(for='edit-pass') Password
               input.form-control(type='password', required='required')
+              .help-block 
+                a(href="reset-password.html") Forgot password?
                 
             .margin-top-xxl.clearfix
               input.btn.btn-primary(type='submit', value='Log in')

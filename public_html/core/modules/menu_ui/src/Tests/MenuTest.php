@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\menu_ui\Tests\MenuTest.
- */
-
 namespace Drupal\menu_ui\Tests;
 
 use Drupal\block\Entity\Block;
@@ -601,7 +596,7 @@ class MenuTest extends MenuWebTestBase {
    *   test whether it works when we do the authenticatedUser tests. Defaults
    *   to FALSE.
    * @param string $weight
-   *  Menu weight. Defaults to 0.
+   *   Menu weight. Defaults to 0.
    *
    * @return \Drupal\menu_link_content\Entity\MenuLinkContent
    *   A menu link entity.

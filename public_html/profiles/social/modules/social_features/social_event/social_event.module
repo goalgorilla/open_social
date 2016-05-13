@@ -59,7 +59,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     }
 
     if (!$can_show_enrollments_link) {
-      unset($data['tabs'][0]['views_view:view.enrollments.view_enrollments']);
+      unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
     }
   }
 }

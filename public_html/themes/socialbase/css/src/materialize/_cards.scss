@@ -13,14 +13,15 @@
   position: relative;
   vertical-align: middle;
   border-radius: 10px 10px 0 0;
-  padding: 15px 20px 0;
+  padding: 15px $card-padding 0;
   color: $gray-light;
-  @include clearfix;
+  line-height: 1;
 }
 
 // This style can be used to separate the card title from the card body.
 .card-underline .card-head {
   border-bottom: 1px solid $grey-light-2;
+  padding-bottom: 15px;
 }
 
 .card-body {
@@ -70,14 +71,9 @@ a.card:hover {
 }
 
 .card-nested-section {
-  background: $grey-light-3;
-  border-top: 1px darken($gray-lighter, 10%) solid;
-  border-bottom: 1px darken($gray-lighter, 10%) solid;
-  margin-top: 0;
-  margin-left: -$card-padding;
-  margin-right: -$card-padding;
-  margin-bottom: $card-padding;
+  margin: 10px -20px -20px;
   padding: $card-padding;
+  background: $grey-light-3;
 
   .extra-padding & {
     @include MQ($small) {
@@ -87,8 +83,13 @@ a.card:hover {
     }
   }
 
-  hr {
-    border-top-color: darken($gray-lighter, 10%);
+  &.indented {
+    margin: -20px -20px 0;
+    background: transparent;
+  }
+
+  textarea {
+    height: 38px;
   }
 
   &:last-child {
@@ -106,18 +107,6 @@ a.card:hover {
   }
 }
 
-
-// Desktop cards are only displayed on desktop.
-.visible-sm-card {
-
-  @include MQ($small) {
-    border-radius: 10px;
-    transition: box-shadow .25s;
-    background-clip: padding-box;
-    @include z-depth-1;
-  }
-
-}
 
 .card {
   p:first-child {
@@ -170,6 +159,17 @@ a.card:hover {
     }
   }
 
+  .card-image-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    img {
+      flex: 0 1 110px;
+      width: 110px;
+    }
+  }
+
   .teaser-type {
     position: absolute;
     @include center(xy);
@@ -182,7 +182,7 @@ a.card:hover {
     position: absolute;
     @include center(xy);
     color: white;
-    font-size: 4em;
+    font-size: 3em;
     text-transform: uppercase;
     font-weight: 500;
     text-align: center;
@@ -203,8 +203,8 @@ a.card:hover {
   }
 
   .card-title {
-    margin-top: 5px;
-    margin-bottom: 15px;
+    margin-top: 0;
+    margin-bottom: 12px;
   }
 
   .card-body {
@@ -213,10 +213,15 @@ a.card:hover {
 
 }
 
+.card--teaser-desc {
+  max-height: 3em;
+  overflow: hidden;
+}
+
 @include MQ($small) {
 
-  .unpublished .card-image:before {
-    background-color: rgba($grey-dark-1, 0.8);
+  .unpublished .card-image.blue-overlay:before {
+    background: rgba($grey-dark-1, 0.8);
   }
 
   .unpublished .status {
@@ -249,7 +254,7 @@ a.card:hover {
   right: 0;
   z-index: 1;
   background-color: inherit;
-  padding: 6px 24px;
+  padding: 6px 12px;
 }
 
 .card-actionbar--with-border {

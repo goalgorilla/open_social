@@ -8,7 +8,6 @@
 namespace Drupal\features;
 
 use Drupal\Core\Config\InstallStorage;
-use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\Extension;
 
 /**

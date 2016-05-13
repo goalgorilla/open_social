@@ -13,49 +13,45 @@ html(lang="en")
 
       .container
         .row 
-          .col-xs-12.col-sm-9.col-md-10
+          .col-xs-12.col-sm-8.col-md-10
             
             #regions.section.scrollspy
               h2.header Regions
               p We have split up the <em>fluid</em> layout of the interface into regions to which in Drupal we can assign blocks to. The following regions are used. When you scroll down we see how these regions are placed in layouts. 
               
-              ul.collection 
-                li.collection__item.avatar
+              .list-group 
+                .list-group-item.avatar
                   span.circle(style='background-color: #e1bee7') 
-                  span.title Header
-                  p Primary navigation, user navigation, site search
-                li.collection__item.avatar
+                  h6.list-group-item-heading Header
+                  p.list-group-item-text Primary navigation, user navigation, site search
+                .list-group-item.avatar
                   span.circle(style='background-color: #80deea')
-                  span.title Breadcrumbs 
-                  p Pathway navigation for large screen and 'go back' navigation for mobile 
-                li.collection__item.avatar
+                  h6.list-group-item-heading Breadcrumbs 
+                  p.list-group-item-text Pathway navigation for large screen and 'go back' navigation for mobile 
+                .list-group-item.avatar
                   span.circle(style='background-color: #ef9a9a')
-                  span.title Hero
-                  p Provides a summary of the main content of this page, for example a person, a group or an event.
-                li.collection__item.avatar
-                  span.circle(style='background-color: #90caf9')
-                  span.title Primary action
-                  p Provides actions that are relevant to the main content such as follow a person, join a group, enrol to an event 
-                li.collection__item.avatar
+                  h6.list-group-item-heading Hero
+                  p.list-group-item-text Provides a summary of the main content of this page, for example a person, a group or an event.
+                .list-group-item.avatar
                   span.circle(style='background-color: #80cbc4')
-                  span.title Secondary navigation
-                  p Navigation options to the sub contents of a main content.
-                li.collection__item.avatar
+                  h6.list-group-item-heading Secondary navigation
+                  p.list-group-item-text Navigation options to the sub contents of a main content.
+                .list-group-item.avatar
                   span.circle(style='background-color: #dce775')
-                  span.title Title 
-                  p Explains what this page or section is about
-                li.collection__item.avatar
+                  h6.list-group-item-heading Title 
+                  p.list-group-item-text Explains what this page or section is about
+                .list-group-item.avatar
                   span.circle(style='background-color: #a5d6a7')
-                  span.title Main content 
-                  p Content about this section          
-                li.collection__item.avatar
+                  h6.list-group-item-heading Main content 
+                  p.list-group-item-text Content about this section          
+                .list-group-item.avatar
                   span.circle(style='background-color: #ffe082')
-                  span.title Complementary 
-                  p Complementary content, filters, actions, quick navigations that specific to the section     
-                li.collection__item.avatar
+                  h6.list-group-item-heading Complementary 
+                  p.list-group-item-text Complementary content, filters, actions, quick navigations that specific to the section  
+                .list-group-item.avatar
                   span.circle(style='background-color: #b0bec5')
-                  span.title Footer 
-                  p It is static and contains information about the whole application.
+                  h6.list-group-item-heading Footer 
+                  p.list-group-item-text It is static and contains information about the whole application.
 
             #layout-a.section.scrollspy
               h2.header Layout A | Parents
@@ -81,8 +77,6 @@ html(lang="en")
                       p Hero
                       p.flat-text.inline25
                       p.flat-text.inline25
-                      .col-xs-12.col-sm-3.pull-right(style='background-color:#90caf9; min-height: 60px;')
-                        p Primary action
                   .row
                     .col-xs-12(style='background-color:#80cbc4; min-height: 40px;')
                       p Secondary navigation
@@ -90,14 +84,14 @@ html(lang="en")
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12.col-sm-9(style='background-color:#dce775; min-height: 60px;')
+                    .col-xs-12(style='background-color:#dce775; min-height: 60px;')
                       p Title 
-                    .col-xs-12.col-sm-3.pull-right(style='background-color:#ffe082; min-height: 250px;')
+                    .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
                       p Complementary
                       p.flat-text.small
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.col-sm-9(style='background-color:#a5d6a7; min-height: 400px;')
+                    .col-xs-12.col-sm-8(style='background-color:#a5d6a7; min-height: 400px;')
                       p Main content 
                       p.flat-text-header 
                       p.flat-text
@@ -128,14 +122,12 @@ html(lang="en")
                     .col-md-12.hidden-xs(style='background-color:#80deea; min-height: 30px;')
                       p Breadcrumbs
                     .col-xs-12.hidden-tablet(style='background-color:#80deea; min-height: 30px;')
-                        p Back to main page
+                      p Back to main page
                   .row.hidden-xs
                     .col-xs-12(style='background-color:#ef9a9a; min-height: 120px;')
                       p Hero
                       p.flat-text.inline25
                       p.flat-text.inline25
-                      .col-xs-12.col-sm-3.pull-right(style='background-color:#90caf9; min-height: 60px;')
-                        p Primary action
                   .row.hidden-xs
                     .col-xs-12(style='background-color:#80cbc4; min-height: 40px;')
                       p Secondary navigation
@@ -143,14 +135,14 @@ html(lang="en")
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12.col-sm-9(style='background-color:#dce775; min-height: 60px;')
+                    .col-xs-12(style='background-color:#dce775; min-height: 60px;')
                       p Title 
-                    .col-xs-12.col-sm-3.pull-right(style='background-color:#ffe082; min-height: 250px;')
+                    .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
                       p Complementary
                       p.flat-text.small
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.col-sm-9(style='background-color:#a5d6a7; min-height: 400px;')
+                    .col-xs-12.col-sm-8(style='background-color:#a5d6a7; min-height: 400px;')
                       p Main content 
                       p.flat-text-header 
                       p.flat-text
@@ -176,22 +168,20 @@ html(lang="en")
                     .col-xs-12(style='background-color:#e1bee7; min-height: 80px;')
                       p Header
                   .row.visible-md-block.visible-lg-block
-                    .col-md-12(style='background-color:#80deea; min-height: 30px;')
+                    .col-xs-12(style='background-color:#80deea; min-height: 30px;')
                       p Breadcrumbs
                   .row
                     .col-xs-12(style='background-color:#ef9a9a; min-height: 120px;')
                       p Hero
                       p.flat-text.inline25
                       p.flat-text.inline25
-                      .col-xs-12.col-sm-3.pull-right(style='background-color:#90caf9; min-height: 60px;')
-                        p Primary action
                   .row
-                    .col-xs-12.col-sm-3.pull-right(style='background-color:#ffe082; min-height: 250px;')
+                    .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
                       p Complementary
                       p.flat-text.small
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.col-sm-9(style='background-color:#a5d6a7; min-height: 400px;')
+                    .col-xs-12.col-sm-8(style='background-color:#a5d6a7; min-height: 400px;')
                       p Main content 
                       p.flat-text-header 
                       p.flat-text
@@ -202,7 +192,7 @@ html(lang="en")
                       p Footer
           
           
-          .col-sm-3.col-md-2.hidden-xs
+          .col-sm-4.col-md-2.hidden-xs
             .toc-wrapper
               ul.table-of-contents
                 li

@@ -3,33 +3,50 @@ extends ./layout/base-lu.jade
 block title
   title Amsterdam meetup
 
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='group-stream.html') Happy campers
+  li.active Amsterdam Meetup
+
 block pagetitle
 
-  .container
+  .container.hero-container
     .cover.cover-img(style="background-image: url('content/images/event-hero.jpg')")  
       .hero-action-button
-        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-topic.html')
+        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='node-edit-event.html')
           i.material-icons mode_edit
       .cover-wrap   
         h1.page-title Amsterdam Meetup
         .hero-footer
-          div
-            time.eventdate.updated June 6 2016 - 12:00 
-            span @ GoalGorilla, Amsterdam
-          div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") published by 
-            a.author(itemprop="url", rel="author", href="/author/rachelandrew") Rachel Andrew
-    
-      .primary-action-region
-        p.small.text-default-bright.hidden You have enrolled to this event.
-        button#enrollButton.btn.btn-accent.btn-raised(type="button", autocomplete="off", data-toggle-text="Cancel enrollment") Enroll
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              div
+                time.eventdate.updated June 6 2016 - 12:00 
+                span @ Keizersgracht 376, Amsterdam
+              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") 
+                span By 
+                a(itemprop="url", rel="author", href="my-stream.html") John Johnson 
+                span in 
+                a(itemprop="organizer", href="group-stream.html") 
+                  i.custom-icons.icon-group
+                  span Happy Campers
+            .col-xs-12.col-md-3
+              .btn-group
+                button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Enrolled        
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href="#") Cancel enrollment     
 
 block secondary_navigation
-  .container
+  .container.hero-container
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active
+          li.active.hidden-xs
             a(href='event.html') Details
               span.visually-hidden (active tab)
           li
@@ -38,42 +55,37 @@ block secondary_navigation
 block content
       
   .row
-    .col-sm-12
-      h4.section-title Event details
+    .col-xs-12
+      h4.section-title.section-title-node Event details
   
-    .col-sm-3.col-sm-push-9
+    .col-xs-12.col-sm-4.col-sm-last
       .card.small-padding
         .card-head.text-center 
-          header 15 people have enrolled
+          header 5 people have enrolled
         .card-body.text-center
           .img-grid
-            - for (var i = 1; i < 13; ++i)
-              - var n = Math.floor(Math.random() * (1 - 6) + 6)
-                img.img-circle.img-small(src='content/images/avatar#{n}.jpg')
+            img.img-circle.img-medium(src='content/images/member2.jpg')
+            img.img-circle.img-medium(src='content/images/member3.jpg')
+            img.img-circle.img-medium(src='content/images/member5.jpg')
+            img.img-circle.img-medium(src='content/images/member4.jpg')
+            img.img-circle.img-medium(src='content/images/member1.jpg')
           
-          a.btn.btn-default(href="event-enrollments.html") View all
+          a.btn.btn-flat(href="event-enrollments.html") View all
   
-    .col-sm-9.col-sm-pull-3
+    .col-xs-12.col-sm-8
       .card
         .card-body.extra-padding
           p 
-            strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business. Your training can be free, as so many industry experts write and teach and share this information without charging for it. Even the tools you use to build websites can be downloaded free of charge, or purchased for very little.
+            strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business.
           
           p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
 
           p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
-
-          p I’m not unusual in that. Most of my friends in the industry have tales of invites to events where no payment is offered, a queue of issues raised on their personal project on GitHub, or people requesting general web development technical support via email.
-
-          p What pays the bills for me, and enables me to spend my spare time doing unpaid work, is my product Perch. Yet we launched Perch to complaints that it wasn’t open source. There are very good reasons why someone might want, or be required, to use software that has an open source license. However, when we ask about it, people rarely cite these reasons. When they say open source, they mean free of charge.
-
-          p I’ll be 41 this year. I don’t feel 41, but the reality is that at some point I won’t be able to keep up a pace of work that encompasses running a business, putting together talks and workshops, writing books, and contributing as much as possible to the industry that I love being a part of. I need to make sure that I am building not only a body of work and contributions that I’m proud of, but also financial security for when I can’t do this anymore. Yes, that free work does sometimes result in someone trying my software or offering me paid consultancy, but not as often as you might think. Despite having very marketable skills, I don’t own a home, much less have a pension and savings in place.
-          
-          img.img-responsive(src='content/images/iphone6.jpg')
+        
+          p 
+            img.img-responsive(src='content/images/iphone6.jpg')
 
           p I wondered how other independent and freelance web workers dealt with this conflict between earning money and contributing back. I also wondered if I was alone in feeling that the clock is ticking. I put together a survey (the responses to which probably will be the background to several other pieces of research), and a few things stood out immediately.
-
-          p Of the 211 people who responded and said they worked for themselves, 33% said they had some provision but not enough to fully retire, while 39% said they had no pension or retirement savings at all. In fact, 30% of the 211 said that they live pretty much “month to month” without so much as a contingency fund. Even filtering out the under-40 age groups, those percentages remained roughly the same.
           
           p John Gruber:
           blockquote
@@ -81,39 +93,22 @@ block content
           
           p I asked the question, “Are you involved in open source projects, writing tutorials, mentoring, speaking at events-that you do free of charge or for expenses only?” 59% said they were not involved, with 27% of those people citing time constraints. Some people did explain that they were involved in volunteer work outside of the web. By the time I filtered out the under-40s, the non-involvement figure rose to 70%.
 
-          p We know that not paying speakers and not covering speaker expenses causes events to become less diverse. The ability to give time, energy and professional skills free of charge is a privilege. It is a privilege that not everyone has to begin with, but that we can also lose as our responsibilities increase or as we start to lose the youthful ability to pull all-nighters. Perhaps we begin to realize how much that free work is taking us away from our families, friends, and hobbies; away from work that might improve our situation and enable us to save for the future.
-
-          p If you are in your early twenties, willing to work all night for the love of this industry, and have few pressing expenses, then building up your professional reputation on open source projects and sharing your ideas is a great thing to do. It’s how we all got started, how I and the majority of my peers found our voices. As I get older, however, I have started to feel the pressure of the finite amount of time we all have. I’ve started to see people of my generation taking a step back. I’ve seen people leave the industry, temporarily or permanently, due to burnout. Others disappear into companies, often in managerial (rather than hands-on) roles that leave limited time for giving back to the community.
-
       h4.section-title Comments
       
       .card
         .card-body.extra-padding
           include ./molecules/_comment1.jade
+          hr
           include ./molecules/_comment2.jade
+          hr
+          include ./molecules/_comment3.jade
           hr
           .media
             .media-left
-              img.img-small.img-circle(src='content/images/avatar1.jpg')
+              img.img-medium.img-circle(src='content/images/member5.jpg')
             .media-body
               form
                 .form-group.form-group-inline
                   textarea.form-control.form-control--block(placeholder='Add a new comment...', width='100%')
-                  button.btn.btn-primary(type='submit') Comment
+                  button.btn.btn-link(type='submit') Comment
       
-block scriptinline
-  script.
-    jQuery(document).ready(function($){
-      $('#enrollButton').on('click', function () {
-        
-        // button text will toggle "Cancel enrollment"
-        var buttonState = $(this).data("toggle-text");
-        $(this).data('toggle-text', $(this).text()).text(buttonState);
-        
-        // button active state will toggle
-        $(this).toggleClass('active') 
-        
-        // show / hide previous text element
-        $(this).prev('p').toggleClass('hidden');
-      })  
-    });

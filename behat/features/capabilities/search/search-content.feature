@@ -19,7 +19,7 @@ Feature: Search
     When I fill in the following:
       | search_input | one |
     And I press "Search"
-    And I should see "Search content" in the ".page-title" element
+    And I should see the heading "Search content"
     And I should see "Event one" in the "Main content"
     And I should see "Topic one"
     And I should not see "Event second"

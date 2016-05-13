@@ -9,6 +9,10 @@
       border-top-width: 0;
     }
 
+    &:last-child {
+      border-bottom-width: 0;
+    }
+
     &:hover {
       background-color: transparent;
     }
@@ -33,4 +37,38 @@
 
 .list-group-item.media {
   margin-top: 0;
+}
+
+
+.list-group {
+
+  .avatar {
+    min-height: 62px;
+    padding-left: 72px;
+    position: relative;
+
+    .circle {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      left: 15px;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 50%;
+    }
+  }
+
+}
+
+.list-group-label {
+  display: inline-block;
+  margin-right: 20px;
+  width: 180px;
+  font-weight: 500;
+  vertical-align: top;
+}
+
+.list-group-field {
+  display: inline-block;
 }

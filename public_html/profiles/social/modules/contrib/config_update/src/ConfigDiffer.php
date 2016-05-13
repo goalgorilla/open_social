@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigDiffer.
- */
-
 namespace Drupal\config_update;
 
 use Drupal\Component\Diff\Diff;
@@ -56,7 +52,7 @@ class ConfigDiffer implements ConfigDiffInterface {
    * @param string $value_prefix
    *   Prefix to use in diffs for array value.
    */
-  public function __construct(TranslationInterface $translation, $ignore = array('uuid'), $hierarchy_prefix = '::', $value_prefix = ' : ') {
+  public function __construct(TranslationInterface $translation, $ignore = ['uuid', '_core'], $hierarchy_prefix = '::', $value_prefix = ' : ') {
     $this->stringTranslation = $translation;
     $this->hierarchyPrefix = $hierarchy_prefix;
     $this->valuePrefix = $value_prefix;
@@ -145,7 +141,7 @@ class ConfigDiffer implements ConfigDiffInterface {
    * @see ConfigDiffer::$valuePrefix
    */
   protected function format($config, $prefix = '') {
-    $lines = array();
+    $lines = [];
 
     foreach ($config as $key => $value) {
       $section_prefix = ($prefix) ? $prefix . $this->hierarchyPrefix . $key : $key;

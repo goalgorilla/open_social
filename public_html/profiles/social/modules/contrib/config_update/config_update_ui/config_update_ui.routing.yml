@@ -35,3 +35,11 @@ config_update_ui.revert:
     _form: '\Drupal\config_update_ui\Form\ConfigRevertConfirmForm'
   requirements:
     _permission: 'revert configuration'
+
+config_update_ui.delete:
+  path: '/admin/config/development/configuration/report/delete/{config_type}/{config_name}'
+  defaults:
+    _title: 'Delete'
+    _form: '\Drupal\config_update_ui\Form\ConfigDeleteConfirmForm'
+  requirements:
+    _permission: 'delete configuration'

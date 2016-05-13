@@ -1,31 +1,26 @@
 extends ./layout/base-lu.jade
 
-- var ckeditor = true
-
 block title
-  title Edit Topic Where has all the corn in the midwest gone?
-
-block pagetitle
-  .container
-    .cover
-      h1.page-title.h2 Edit: Where has all the corn in the midwest gone?
-
-      
+  title Edit Topic Why are color runs so popular?
+    
 block content
       
   .row
   
-    .col-sm-3.col-sm-push-9
+    .col-xs-12
+      h1.h4.section-title Edit: Why are color runs so popular?
+      
+    .col-xs-12.col-sm-4.col-sm-last
       .toc-wrapper
-        ul.section.table-of-contents
+        ul.table-of-contents
           li
             a(href='#content') Content
           li
-            a(href='#placement') Placement and visibility
+            a(href='#description') Description
           li
             a(href='#comment-settings') Comment settings
-
-    .col-sm-9.col-sm-pull-3.margin-top-l
+      
+    .col-xs-12.col-sm-8
     
       form(action='topic.html', method='get')
       
@@ -47,63 +42,33 @@ block content
                 
             .form-group
               label.form-required Title
-              input.form-control(type="text", value='Where has all the corn in the midwest gone?')
-            
-            .form-group
-              label.form-required Description
-              .textarea--cke
-                textarea#ckeditor.form-control.form-textarea
-                  p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cupit enim dícere nihil posse ad beatam vitam deesse sapienti. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Summae mihi videtur inscitiae. Non enim iam stirpis bonum quaeret, sed animalis. Tu vero, inquam, ducas licet, si sequetur; In qua quid est boni praeter summam voluptatem, et eam sempiternam? Duo Reges: constructio interrete. Verba tu fingas et ea dicas, quae non sentias?
+              input.form-control(type="text", value='Why are color runs so popular?')
 
             .form-group.form__type-managed-file
               label Image
               .image-widget.form-managed-file.clearfix
-                img.img-responsive.pull-left(src='content/images/animals1-square.jpg', width='100')
+                img.img-responsive.pull-left(src='content/images/topic-hero.jpg', width='150')
                 .pull-left.padding-xs
                   .file.file--image
                   a(href='#', type="image/jpeg; length=158378") animals1-square.jpg
                   .file-size (154.78kb)
                 .pull-left.padding-xs
-                  button.btn.btn-default.form-submit(type='submit', value='remove')
+                  button.btn.btn-default(value='remove', style='pointer-events: none;')
                     i.material-icons.pull-left delete
                     | Remove
               .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
-        #placement.card.card-underline.scrollspy
+        #description.card.card-underline.scrollspy
         
           .card-head
-            header Placement and visibility
+            header Description
       
           .card-body 
-            .form-group.radios
-              label.form-required Add topic to
-              .radio
-                input#profile(type='radio', name='placement')
-                label(for='profile') My profile
-              .radio
-                input#group(type='radio', checked, name='placement', onclick="showMe('selectagroup', this)")
-                label(for='group') A group I am a member of:
-              #selectagroup
-                  select.form-control
-                    option(value='', disabled='',) Select a group
-                    option(value='1') Group name 1
-                    option(value='2', selected='') Group name 2
-                    option(value='3') Group name 3
-            
-            .form-group.radios
-              label.form-required Visibility
-              .radio
-                input#public(type='radio', name='visibility')
-                label(for='public') Public
-                .help-block Community visible to all visitors of the platform
-              .radio
-                input#community(type='radio', checked, name='visibility')
-                label(for='community') Community
-                .help-block visible only to logged in members
-              .radio
-                input#groups(type='radio', name='visibility')
-                label(for='groups') Groups
-                .help-block Visible only to group members
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control.form-textarea
+                  p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cupit enim dícere nihil posse ad beatam vitam deesse sapienti. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Summae mihi videtur inscitiae. Non enim iam stirpis bonum quaeret, sed animalis. Tu vero, inquam, ducas licet, si sequetur; In qua quid est boni praeter summam voluptatem, et eam sempiternam? Duo Reges: constructio interrete. Verba tu fingas et ea dicas, quae non sentias?
 
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
@@ -124,11 +89,10 @@ block content
                   .help-block Users cannot post comments.
               
         .form-actions.clearfix
-          a.waves-effect.waves-light.btn.btn-raised.btn-user(href="#") Discard changes
-          a.btn.btn-link(href='#') Delete
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
-      
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href="topic.html") Discard changes
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Delete
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href="topic.html") Preview
         
 block scriptinline  
   script(src='libs/ckeditor/ckeditor.js')

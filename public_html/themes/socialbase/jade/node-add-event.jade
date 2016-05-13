@@ -3,23 +3,36 @@ extends ./layout/base-lu.jade
 block title
   title Create Event
 
-block pagetitle
-  .container
-    .cover
-      h1.page-title.h2 Create event          
-
-      
 block content
       
-  .row.margin-top-l
-    .col-md-9.margin-bottom-l
+  .row
+  
+    .col-xs-12
+      h1.h4.section-title Create Event
+      
+    .col-xs-12.col-sm-4.col-sm-last
+      ul.section.table-of-contents
+        li
+          a(href='#content') Title &amp; image
+        li 
+          a(href='#eventtime') Date &amp; time
+        li 
+          a(href='#location') Location
+        li 
+          a(href='#description') Description
+        li
+          a(href='#attachments') Attachments
+        li
+          a(href='#comment-settings') Comment settings
+      
+    .col-xs-12.col-sm-8
     
       form(action='event.html', method='get')
       
         #content.card.card-underline.scrollspy
         
           .card-head
-            header Title and teaser image
+            header Title and image
       
           .card-body
 
@@ -35,45 +48,6 @@ block content
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-
-          
-        #placement.card.card-underline.scrollspy
-        
-          .card-head
-            header Placement and visibility
-      
-          .card-body 
-
-            .form-group.radios
-              label.form-required Add event to
-              .radio
-                input#profile(type='radio', name='placement')
-                label(for='profile') My profile
-              .radio
-                input#group(type='radio', name='placement', onclick="showMe('selectagroup', 'visibilitygroup', this)")
-                label(for='group') A group I am a member of:
-              #selectagroup(style='display:none;')
-                select.form-control
-                  option(value='', disabled='', selected='') Select a group
-                  option(value='1') Group 1
-                  option(value='2') Group 2
-                  option(value='3') Group 3
-        
-            .form-group.radios
-              label.form-required Visibility
-              .form__radios
-                .radio
-                  input#public(type='radio', name='visibility')
-                  label(for='public') Public
-                  .help-block Community visible to all visitors of the platform
-                .radio
-                  input#community(type='radio', name='visibility')
-                  label(for='community') Community
-                  .help-block visible only to logged in members
-                #visibilitygroup.radio(style='display: none')
-                  input#groups.form-radio(type='radio', name='visibility')
-                  label.option(for='groups') Groups
-                  .help-block Visible only to group members
 
         #eventtime.card.card-underline.scrollspy
         
@@ -181,25 +155,8 @@ block content
               
         .form-actions.clearfix
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn-secondary.pull-right(type='submit', value='Preview') 
-
-    .col-md-3
-      .toc-wrapper
-        ul.section.table-of-contents
-          li
-            a(href='#content') Title &amp; image
-          li
-            a(href='#placement') Placement and visibility
-          li 
-            a(href='#eventtime') Date &amp; time
-          li 
-            a(href='#location') Location
-          li 
-            a(href='#description') Description
-          li
-            a(href='#attachments') Attachments
-          li
-            a(href='#comment-settings') Comment settings
+          input.waves-effect.waves-light.btn.btn-raised.btn-default(type='submit', value='Preview') 
+      
 
         
 block scriptinline  

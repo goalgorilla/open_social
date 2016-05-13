@@ -1,7 +1,8 @@
 label {
   font-weight: 300;
 
-  .material-icons {
+  .material-icons,
+  .custom-icons {
     font-size: inherit;
     line-height: inherit;
   }
@@ -61,6 +62,11 @@ span.form-required {
   box-shadow: none;
   max-width: $form-control-max-width;
   appearance: none;
+  font-size: inherit;
+
+  @include MQ($medium) {
+    font-size:  $font-size-base;
+  }
 
   &:focus {
     border-bottom: 1px solid $primary-color;
@@ -77,10 +83,11 @@ span.form-required {
 
   &.materialize-textarea {
     overflow-y: hidden; // prevents scroll bar flash
-    padding-top: 1.6rem; // prevents text jump on Enter keypress
+    //padding-top: 1.6rem; // prevents text jump on Enter keypress
     padding-bottom: 1.6rem;
     resize: none;
     min-height: 5rem;
+    height: 38px;
   }
 
 }
@@ -133,12 +140,13 @@ span.form-required {
 
 /* Remove default Radio Buttons */
 [type="radio"]:not(:checked),
-[type="radio"]:checked {
+[type="radio"]:checked,
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
   position: absolute;
   left: -9999px;
   opacity: 0;
 }
-
 
 .checkbox label,
 .radio label {
@@ -147,11 +155,11 @@ span.form-required {
   padding-left: $radio-width;
   cursor: pointer;
   display: inline-block;
-  height: 25px;
-  line-height: 25px;
+  line-height: 21px;
   font-size: 1em;
   transition: .28s ease;
   user-select: none;
+  word-break: break-all;
 }
 
 [type="radio"]:checked + label {
@@ -164,7 +172,7 @@ span.form-required {
   position: absolute;
   left: 0;
   top: 0;
-  margin: 4px;
+  margin: 2px;
   width: 16px;
   height: 16px;
   z-index: 0;
@@ -223,10 +231,110 @@ span.form-required {
   background-color: $input-disabled-color;
 }
 
-[type="checkbox"]:focus + label:before,
 [type="radio"]:focus + label:before {
   box-shadow: 0 0 3px 2px lighten($brand-primary, 10%);
 }
+
+[type="checkbox"] {
+  // General
+  + label:after {
+    border-radius: 2px;
+  }
+  + label:before,
+  + label:after {
+    content: '';
+    left: 0;
+    position: absolute;
+    /* .1s delay is for check animation */
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+  }
+
+  // Unchecked style
+  &:not(:checked) + label:before {
+    width: 0;
+     height: 0;
+     border: 3px solid transparent;
+     left: 6px;
+     top: 10px;
+
+     -webkit-transform: rotateZ(37deg);
+             transform: rotateZ(37deg);
+     -webkit-transform-origin: 20% 40%;
+             transform-origin: 100% 100%;
+  }
+
+  &:not(:checked) + label:after {
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 2px solid $radio-empty-color;
+    top: 0px;
+    z-index: 0;
+  }
+
+
+
+  // Checked style
+  &:checked {
+    + label:before {
+      top: 0;
+      left: 1px;
+      width: 8px;
+      height: 13px;
+      border-top: 2px solid transparent;
+      border-left: 2px solid transparent;
+      border-right: 2px solid $input-bg-color;
+      border-bottom: 2px solid $input-bg-color;
+      transform: rotateZ(37deg);
+      margin-top: 2px;
+      transition: .2s;
+      transform-origin: 100% 100%;
+    }
+
+    + label:after {
+      top: 0px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid $primary-color-dark;
+      background-color: $primary-color-dark;
+      z-index: 0;
+    }
+  }
+
+  // Focused styles
+  &.tabbed:focus + label:after {
+    border-radius: 2px;
+    border-color: $radio-empty-color;
+    background-color: rgba(0,0,0,.1);
+  }
+  &.tabbed:checked:focus + label:after {
+    border-radius: 2px;
+    background-color: $primary-color-dark;
+    border-color: $primary-color-dark;
+  }
+
+  // Disabled style
+  &:disabled:not(:checked) + label:before {
+    background-color: transparent;
+    border: 2px solid transparent;
+  }
+
+  &:disabled:not(:checked) + label:after {
+    border-color: transparent;
+    background-color: $input-disabled-solid-color;
+  }
+
+  &:disabled:checked + label:before {
+    background-color: transparent;
+  }
+
+  &:disabled:checked + label:after {
+    background-color: $input-disabled-solid-color;
+    border-color: $input-disabled-solid-color;
+  }
+}
+
 
 // ***************
 // ckeditor
@@ -252,7 +360,7 @@ span.form-required {
 			line-height: 1.5em;
 			width: 100%;
 			text-align: left;
-      @extend %clearfix;
+      @extend .clearfix; // Was %extend but that one is not decla
 
 			> span {
 				font-size: 1em;
@@ -311,8 +419,8 @@ span.form-required {
     div.password-confirm {
       position: absolute;
       bottom: 0;
-      @include make-col-offset(7);
-      @include make-col-span(3);
+      @include make-col-offset(12);
+      width: 180px;
       padding-bottom: 0.5rem;
     }
 
@@ -326,9 +434,6 @@ span.form-required {
   margin-top: 2em;
   background-color: $grey-light-1;
 
-  @include MQ($small) {
-
-  }
 }
 
 .password-strength__indicator {
@@ -355,9 +460,15 @@ span.form-required {
 }
 
 .password-suggestions {
-  margin-top: 1em;
   color: lighten($text-color, 25%);
   font-size: 80%;
+  padding: 0 15px;
+  float: left;
+
+  @include MQ($small) {
+    flex: 100%;
+    float: none;
+  }
 }
 
 .password-suggestions ul {

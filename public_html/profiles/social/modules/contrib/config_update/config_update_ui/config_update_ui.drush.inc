@@ -12,97 +12,97 @@ use Drupal\Component\Diff\DiffFormatter;
  */
 function config_update_ui_drush_command() {
 
-  $items = array();
+  $items = [];
 
-  $items['config-list-types'] = array(
+  $items['config-list-types'] = [
     'description' => 'List config types',
-    'aliases' => array('clt'),
-    'core' => array('8+'),
-    'outputformat' => array(
+    'aliases' => ['clt'],
+    'core' => ['8+'],
+    'outputformat' => [
       'default' => 'list',
-    ),
-  );
+    ],
+  ];
 
-  $items['config-added-report'] = array(
+  $items['config-added-report'] = [
     'description' => 'Display a list of config items that did not come from your installed modules, themes, or install profile',
-    'arguments' => array(
+    'arguments' => [
       'name' => 'The type of config to report on. See config-list-types to list them. You can also use system.all for all types, or system.simple for simple config.',
-    ),
+    ],
     'required-arguments' => 1,
-    'examples' => array(
+    'examples' => [
       'drush config-added-report action' => 'Displays the added config report for action config.',
-    ),
-    'aliases' => array('cra'),
-    'core' => array('8+'),
-    'outputformat' => array(
+    ],
+    'aliases' => ['cra'],
+    'core' => ['8+'],
+    'outputformat' => [
       'default' => 'list',
-    ),
-  );
+    ],
+  ];
 
-  $items['config-missing-report'] = array(
+  $items['config-missing-report'] = [
     'description' => 'Display a list of config items from your installed modules, themes, or install profile that are not currently in your active config',
-    'arguments' => array(
+    'arguments' => [
       'type' => 'Run the report for: module, theme, profile, or "type" for config entity type.',
       'name' => 'The machine name of the module, theme, etc. to report on. See config-list-types to list types for config entities; you can also use system.all for all types, or system.simple for simple config.',
-    ),
+    ],
     'required-arguments' => 2,
-    'examples' => array(
+    'examples' => [
       'drush config-missing-report type action' => 'Displays the missing config report for action config.',
-    ),
-    'aliases' => array('crm'),
-    'core' => array('8+'),
-    'outputformat' => array(
+    ],
+    'aliases' => ['crm'],
+    'core' => ['8+'],
+    'outputformat' => [
       'default' => 'list',
-    ),
-  );
+    ],
+  ];
 
-  $items['config-inactive-report'] = array(
+  $items['config-inactive-report'] = [
     'description' => 'Display a list of optional config items from your installed modules, themes, or install profile that are not currently in your active config',
-    'arguments' => array(
+    'arguments' => [
       'type' => 'Run the report for: module, theme, profile, or "type" for config entity type.',
       'name' => 'The machine name of the module, theme, etc. to report on. See config-list-types to list types for config entities; you can also use system.all for all types, or system.simple for simple config.',
-    ),
+    ],
     'required-arguments' => 2,
-    'examples' => array(
+    'examples' => [
       'drush config-inactive-report type action' => 'Displays the inactive config report for action config.',
-    ),
-    'aliases' => array('cri'),
-    'core' => array('8+'),
-    'outputformat' => array(
+    ],
+    'aliases' => ['cri'],
+    'core' => ['8+'],
+    'outputformat' => [
       'default' => 'list',
-    ),
-  );
+    ],
+  ];
 
-  $items['config-different-report'] = array(
+  $items['config-different-report'] = [
     'description' => 'Display a list of config items that differ from the versions imported from your installed modules, themes, or install profile. See config-diff to show what the differences are.',
-    'arguments' => array(
+    'arguments' => [
       'type' => 'Run the report for: module, theme, profile, or "type" for config entity type.',
       'name' => 'The machine name of the module, theme, etc. to report on. See config-list-types to list types for config entities; you can also use system.all for all types, or system.simple for simple config.',
-    ),
+    ],
     'required-arguments' => 2,
-    'examples' => array(
+    'examples' => [
       'drush config-different-report type action' => 'Displays the differing config report for action config.',
-    ),
-    'drupal dependencies' => array('config_update_ui'),
-    'aliases' => array('crd'),
-    'core' => array('8+'),
-    'outputformat' => array(
+    ],
+    'drupal dependencies' => ['config_update_ui'],
+    'aliases' => ['crd'],
+    'core' => ['8+'],
+    'outputformat' => [
       'default' => 'list',
-    ),
-  );
+    ],
+  ];
 
-  $items['config-diff'] = array(
+  $items['config-diff'] = [
     'description' => 'Display line-by-line differences for one config item between your active config and the version currently being provided by an installed module, theme, or install profile',
-    'arguments' => array(
+    'arguments' => [
       'name' => 'The config item to diff. See config-different-report to list config items that are different.',
-    ),
+    ],
     'required-arguments' => 1,
-    'examples' => array(
+    'examples' => [
       'drush config-diff block.block.bartik_search' => 'Displays the config differences for the search block in the Bartik theme.',
-    ),
-    'aliases' => array('cfd'),
-    'core' => array('8+'),
-  );
+    ],
+    'aliases' => ['cfd'],
+    'core' => ['8+'],
+  ];
 
   return $items;
 }
@@ -111,7 +111,7 @@ function config_update_ui_drush_command() {
  * Lists available config types.
  */
 function drush_config_update_ui_config_list_types() {
-  $list = array();
+  $list = [];
 
   $definitions = \Drupal::service('config_update.config_list')->listTypes();
   return array_keys($definitions);
@@ -192,7 +192,7 @@ function drush_config_update_ui_config_different_report($type, $name) {
 
   $added = array_diff($active_list, $install_list, $optional_list);
   $both = array_diff($active_list, $added);
-  $different = array();
+  $different = [];
   foreach ($both as $name) {
     $active = $reverter->getFromActive('', $name);
     $extension = $reverter->getFromExtension('', $name);

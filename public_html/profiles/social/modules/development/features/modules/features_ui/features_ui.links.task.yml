@@ -1,20 +1,14 @@
-features.package:
-  route_name: features.export
-  title: 'Features'
-  base_route: config.sync
-
 features.export:
   route_name: features.export
   title: 'Features'
-  parent_id: features.package
-  weight: -1
+  base_route: features.export
 
 features.assignment:
   route_name: features.assignment
   title: 'Configure Bundles'
-  parent_id: features.package
+  base_route: features.export
 
 features.diff:
   route_name: features.diff
   title: 'Differences'
-  parent_id: features.package
+  base_route: features.export

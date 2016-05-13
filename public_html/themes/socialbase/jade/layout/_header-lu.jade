@@ -13,52 +13,123 @@
       
         ul.nav.navbar-nav.navbar-right
           li.hidden-xs
-            a(href='#')
-              i.material-icons(title='Add content') add
-              span.sr-only Add content
-          li.hidden-xs.active
             a(href='home-lu.html') Home
-          li
-            a(href='#')
-              i.material-icons.hidden-sm.hidden-md.hidden-lg(title='Notifications') people
-              span.hidden-xs Groups
+          li.dropdown
+            a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+              i.custom-icons.icon-group(title='My groups')
+            ul.dropdown-menu
+              li
+                .dropdown-header My groups
+              li 
+                ul.scrollable-menu
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body
+                          .text-truncate Happy campers
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Drupal Ninja's Italy
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate The Dallas Nerds
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Munich local group
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Innovaders
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body
+                          .text-truncate Happy campers
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Drupal Ninja's Italy
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate The Dallas Nerds
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Munich local group
+                  li
+                    a(href='group-stream.html')
+                      .media
+                        .media-left
+                          img.img-tiny.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
+                        .media-body.text-truncate Innovaders
+              li
+                .dropdown-header
+                  a.block.clearfix(href="my-groups.html") See all
+                    i.material-icons.pull-right chevron_right
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
               i.material-icons(title='Notifications') notifications
-              sup.badge 4
-            ul.dropdown-menu.notifications-nav
+              sup.badge 
+                strong 4
+            ul.dropdown-menu
               li
                 .dropdown-header Notifications
               li
-                a.media(href='#')
-                  .media-left
-                    img.img-small.img-circle(src='content/images/avatar2.jpg', alt='')
-                  .media-body Clive Owen
-                    br
-                    small.text-muted Commented on your post
-              li
-                a.media(href='#')
-                  .media-left
-                    img.img-small.img-circle(src='content/images/avatar3.jpg', alt='')
-                  .media-body Jeremy Bob
-                    br
-                    small.text-muted Liked your post
-              li
-                a.media(href='#')
-                  .media-left
-                    img.img-small.img-circle(src='content/images/avatar4.jpg', alt='')
-                  .media-body Bettie McLaren
-                    br
-                    small.text-muted likes your event 
-                      strong 8th anniversary our beloved company
+                ul.scrollable-menu
+                  li 
+                    a(href='single-post.html')
+                      .media
+                        .media-left
+                          img.img-small.img-circle(src='content/images/avatar2.jpg', alt='')
+                        .media-body Clive Owen
+                          br
+                          small.text-muted Commented on your post
+                  li
+                    a(href='single-post.html')
+                      .media
+                        .media-left
+                          img.img-small.img-circle(src='content/images/avatar3.jpg', alt='')
+                        .media-body Jeremy Bob
+                          br
+                          small.text-muted Liked your post
+                  li
+                    a(href='event.html')
+                      .media
+                        .media-left
+                          img.img-small.img-circle(src='content/images/avatar4.jpg', alt='')
+                        .media-body Bettie McLaren
+                          br
+                          small.text-muted likes your event 
+                            strong Amsterdam Meetup
               li
                 .dropdown-header
-                  a(href="#") See more
-                    span.pull-right 
-                      i.material-icons chevron_right
+                  a.block.clearfix(href="#") See more
+                    i.material-icons.pull-right chevron_right
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-              img.img-tiny.img-circle.pull-left(src='content/images/avatar1.jpg', alt='')
+              img.img-small.img-circle.pull-left(src='content/images/member5.jpg', alt='')
               span.profile.hidden-xs John Johnson
             ul.dropdown-menu
               li
@@ -73,8 +144,6 @@
           
       #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
         ul.nav.navbar-nav
-          li
-            a(href='#') Explore
           li
             form.navbar-form.navbar-left(role='search', method='get', action='search-content.html')
               #navbar-search.form-group

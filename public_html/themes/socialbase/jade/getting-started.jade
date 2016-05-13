@@ -11,6 +11,19 @@ html(lang="en")
       
     main.styleguide-container(role='main')
 
-    block content
+      .container
+        .row
+          .col-xs-12.col-sm-8.col-md-10            
+            h2 Installation
+            ul
+              li Clone the Open Social repository in your developing branch.
+              li Follow the steps described the <a href="https://github.com/goalgorilla/drupal_social/blob/master/readme.md#installation"> Installation guidelines</a> on Github and complete the Drupal installation.
+              li Check that your Installation works and Open social is your default theme.  
+              li In your terminal go the <code>social_base</code> folder and run <code>npm install</code>.
+            h2 Usage
+            ul
+              li In the folder <code>social_base</code> first run <code>gulp init</code> and then run <code>gulp</code> (default task)
+              
+        
   
     include ./layout/_scripts.jade

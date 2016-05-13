@@ -9,13 +9,12 @@ namespace Drupal\features;
 
 use Drupal\Core\Config\ConfigInstaller;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\features\FeaturesManagerInterface;
 
 /**
  * Class for customizing the test for pre existing configuration.
  *
  * Copy of ConfigInstaller with findPreExistingConfiguration() modified to
- * allow Feature modules to be enabled.
+ * allow Feature modules to be installed.
  */
 class FeaturesConfigInstaller extends ConfigInstaller {
 
