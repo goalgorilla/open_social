@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\config_update_ui\Controller\ConfigUpdateController.
- */
-
 namespace Drupal\config_update_ui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -72,7 +67,7 @@ class ConfigUpdateController extends ControllerBase {
    *   The config differ.
    * @param \Drupal\config_update\ConfigListInterface $config_list
    *   The config lister.
-   * @param \Drupal\config_update\ConfigREvertInterface $config_update
+   * @param \Drupal\config_update\ConfigRevertInterface $config_update
    *   The config reverter.
    * @param \Drupal\Core\Diff\DiffFormatter $diff_formatter
    *   The diff formatter to use.
@@ -142,34 +137,34 @@ class ConfigUpdateController extends ControllerBase {
       $this->configRevert->getFromActive($config_type, $config_name)
     );
 
-    $build = array();
+    $build = [];
     $definition = $this->configList->getType($config_type);
     $config_type_label = ($definition) ? $definition->getLabel() : $this->t('Simple configuration');
-    $build['#title'] = $this->t('Config difference for @type @name', array('@type' => $config_type_label, '@name' => $config_name));
+    $build['#title'] = $this->t('Config difference for @type @name', ['@type' => $config_type_label, '@name' => $config_name]);
     $build['#attached']['library'][] = 'system/diff';
 
-    $build['diff'] = array(
+    $build['diff'] = [
       '#type' => 'table',
-      '#header' => array(
-        array('data' => $this->t('Source config'), 'colspan' => '2'),
-        array('data' => $this->t('Site config'), 'colspan' => '2'),
-      ),
+      '#header' => [
+        ['data' => $this->t('Source config'), 'colspan' => '2'],
+        ['data' => $this->t('Site config'), 'colspan' => '2'],
+      ],
       '#rows' => $this->diffFormatter->format($diff),
-      '#attributes' => array('class' => array('diff')),
-    );
+      '#attributes' => ['class' => ['diff']],
+    ];
 
     $url = new Url('config_update_ui.report');
 
-    $build['back'] = array(
+    $build['back'] = [
       '#type' => 'link',
-      '#attributes' => array(
-        'class' => array(
+      '#attributes' => [
+        'class' => [
           'dialog-cancel',
-        ),
-      ),
+        ],
+      ],
       '#title' => $this->t("Back to 'Updates report' page."),
       '#url' => $url,
-    );
+    ];
 
     return $build;
   }
@@ -202,15 +197,15 @@ class ConfigUpdateController extends ControllerBase {
 
     // If there is a report, extract the title, put table of links in a
     // details element, and add report to build.
-    $build = array();
+    $build = [];
     $build['#title'] = $report['#title'];
     unset($report['#title']);
 
-    $build['links_wrapper'] = array(
+    $build['links_wrapper'] = [
       '#type' => 'details',
       '#title' => $this->t('Generate new report'),
       '#children' => $links,
-    );
+    ];
 
     $build['report'] = $report;
 
@@ -232,102 +227,109 @@ class ConfigUpdateController extends ControllerBase {
     // operations links is used as a class on the LI element. Some classes are
     // special in the Seven CSS, such as "contextual", so avoid hitting these
     // accidentally by prefixing.
+    $build = [];
 
-    $build = array();
-
-    $build['links'] = array(
+    $build['links'] = [
       '#type' => 'table',
-      '#header' => array(
+      '#header' => [
         $this->t('Report type'),
         $this->t('Report on'),
-      ),
-      '#rows' => array(),
-    );
+      ],
+      '#rows' => [],
+    ];
 
     $definitions = $this->configList->listTypes();
-    $links = array();
+    $links = [];
     foreach ($definitions as $entity_type => $definition) {
-      $links['type_' . $entity_type] = array(
+      $links['type_' . $entity_type] = [
         'title' => $definition->getLabel(),
-        'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'type', 'name' => $entity_type)),
-      );
+        'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'type', 'name' => $entity_type]),
+      ];
     }
 
-    uasort($links, array($this, 'sortLinks'));
+    uasort($links, [$this, 'sortLinks']);
 
-    $links = array(
-      'type_all' => array(
+    $links = [
+      'type_all' => [
         'title' => $this->t('All types'),
-        'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'type', 'name' => 'system.all')),
-      ),
-      'type_system.simple' => array(
+        'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'type', 'name' => 'system.all']),
+      ],
+      'type_system.simple' => [
         'title' => $this->t('Simple configuration'),
-        'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'type', 'name' => 'system.simple')),
-      ),
-    ) + $links;
+        'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'type', 'name' => 'system.simple']),
+      ],
+    ] + $links;
 
-    $build['links']['#rows'][] = array(
+    $build['links']['#rows'][] = [
       $this->t('Configuration type'),
-      array('data' => array(
-        '#type' => 'operations',
-        '#links' => $links,
-      )),
-    );
+      [
+        'data' => [
+          '#type' => 'operations',
+          '#links' => $links,
+        ],
+      ],
+    ];
 
     // Make a list of installed modules.
     $profile = Settings::get('install_profile');
     $modules = $this->moduleHandler->getModuleList();
-    $links = array();
+    $links = [];
     foreach ($modules as $machine_name => $module) {
       if ($machine_name != $profile) {
-        $links['module_' . $machine_name] = array(
+        $links['module_' . $machine_name] = [
           'title' => $this->moduleHandler->getName($machine_name),
-          'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'module', 'name' => $machine_name)),
-        );
+          'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'module', 'name' => $machine_name]),
+        ];
       }
     }
-    uasort($links, array($this, 'sortLinks'));
+    uasort($links, [$this, 'sortLinks']);
 
-    $build['links']['#rows'][] = array(
+    $build['links']['#rows'][] = [
       $this->t('Module'),
-      array('data' => array(
-        '#type' => 'operations',
-        '#links' => $links,
-      )),
-    );
+      [
+        'data' => [
+          '#type' => 'operations',
+          '#links' => $links,
+        ],
+      ],
+    ];
 
     // Make a list of installed themes.
     $themes = $this->themeHandler->listInfo();
-    $links = array();
+    $links = [];
     foreach ($themes as $machine_name => $theme) {
-      $links['theme_' . $machine_name] = array(
+      $links['theme_' . $machine_name] = [
         'title' => $this->themeHandler->getName($machine_name),
-        'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'theme', 'name' => $machine_name)),
-      );
+        'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'theme', 'name' => $machine_name]),
+      ];
     }
-    uasort($links, array($this, 'sortLinks'));
+    uasort($links, [$this, 'sortLinks']);
 
-    $build['links']['#rows'][] = array(
+    $build['links']['#rows'][] = [
       $this->t('Theme'),
-      array('data' => array(
-        '#type' => 'operations',
-        '#links' => $links,
-      )),
-    );
+      [
+        'data' => [
+          '#type' => 'operations',
+          '#links' => $links,
+        ],
+      ],
+    ];
 
     // Profile is just one option.
-    $links = array();
-    $links['profile_' . $profile] = array(
+    $links = [];
+    $links['profile_' . $profile] = [
       'title' => $this->moduleHandler->getName($profile),
-      'url' => Url::fromRoute('config_update_ui.report', array('report_type' => 'profile')),
-    );
-    $build['links']['#rows'][] = array(
+      'url' => Url::fromRoute('config_update_ui.report', ['report_type' => 'profile']),
+    ];
+    $build['links']['#rows'][] = [
       $this->t('Installation profile'),
-      array('data' => array(
-        '#type' => 'operations',
-        '#links' => $links,
-      )),
-    );
+      [
+        'data' => [
+          '#type' => 'operations',
+          '#links' => $links,
+        ],
+      ],
+    ];
 
     return $build;
   }
@@ -348,7 +350,7 @@ class ConfigUpdateController extends ControllerBase {
   protected function generateReport($report_type, $value) {
     // Figure out what to name the report, and incidentally, validate that
     // $value exists for this type of report.
-    switch($report_type) {
+    switch ($report_type) {
       case 'type':
         if ($value == 'system.all') {
           $label = $this->t('All configuration');
@@ -362,7 +364,7 @@ class ConfigUpdateController extends ControllerBase {
             return NULL;
           }
 
-          $label = $this->t('@name configuration', array('@name' => $definition->getLabel()));
+          $label = $this->t('@name configuration', ['@name' => $definition->getLabel()]);
         }
 
         break;
@@ -373,7 +375,7 @@ class ConfigUpdateController extends ControllerBase {
           return NULL;
         }
 
-        $label = $this->t('@name module', array('@name' => $this->moduleHandler->getName($value)));
+        $label = $this->t('@name module', ['@name' => $this->moduleHandler->getName($value)]);
         break;
 
       case 'theme':
@@ -382,12 +384,12 @@ class ConfigUpdateController extends ControllerBase {
           return NULL;
         }
 
-        $label = $this->t('@name theme', array('@name' => $this->themeHandler->getName($value)));
+        $label = $this->t('@name theme', ['@name' => $this->themeHandler->getName($value)]);
         break;
 
       case 'profile':
         $profile = Settings::get('install_profile');
-        $label = $this->t('@name profile', array('@name' => $this->moduleHandler->getName($profile)));
+        $label = $this->t('@name profile', ['@name' => $this->moduleHandler->getName($profile)]);
         break;
 
       default:
@@ -398,39 +400,39 @@ class ConfigUpdateController extends ControllerBase {
     list($active_list, $install_list, $optional_list) = $this->configList->listConfig($report_type, $value);
 
     // Build the report.
-    $build = array();
+    $build = [];
 
-    $build['#title'] = $this->t('Configuration updates report for @label', array('@label' => $label));
-    $build['report_header'] = array('#markup' => '<h3>' . $this->t('Updates report') . '</h3>');
+    $build['#title'] = $this->t('Configuration updates report for @label', ['@label' => $label]);
+    $build['report_header'] = ['#markup' => '<h3>' . $this->t('Updates report') . '</h3>'];
 
     // List items missing from site.
     $removed = array_diff($install_list, $active_list);
-    $build['removed'] = array(
+    $build['removed'] = [
       '#caption' => $this->t('Missing configuration items'),
       '#empty' => $this->t('None: all provided configuration items are in your active configuration.'),
-    ) + $this->makeReportTable($removed, 'extension', array('import'));
+    ] + $this->makeReportTable($removed, 'extension', ['import']);
 
     // List optional items that are not installed.
     $inactive = array_diff($optional_list, $active_list);
-    $build['inactive'] = array(
+    $build['inactive'] = [
       '#caption' => $this->t('Inactive optional items'),
       '#empty' => $this->t('None: all optional configuration items are in your active configuration.'),
-    ) + $this->makeReportTable($inactive, 'extension', array('import'));
+    ] + $this->makeReportTable($inactive, 'extension', ['import']);
 
     // List items added to site, which only makes sense in the report for a
     // config type.
     $added = array_diff($active_list, $install_list, $optional_list);
     if ($report_type == 'type') {
-      $build['added'] = array(
+      $build['added'] = [
         '#caption' => $this->t('Added configuration items'),
         '#empty' => $this->t('None: all active configuration items of this type were provided by modules, themes, or install profile.'),
-      ) + $this->makeReportTable($added, 'active', array('export'));
+      ] + $this->makeReportTable($added, 'active', ['export', 'delete']);
     }
 
     // For differences, we need to go through the array of config in both
     // and see if each config item is the same or not.
     $both = array_diff($active_list, $added);
-    $different = array();
+    $different = [];
     foreach ($both as $name) {
       if (!$this->configDiff->same(
         $this->configRevert->getFromExtension('', $name),
@@ -439,10 +441,10 @@ class ConfigUpdateController extends ControllerBase {
         $different[] = $name;
       }
     }
-    $build['different'] = array(
+    $build['different'] = [
       '#caption' => $this->t('Changed configuration items'),
       '#empty' => $this->t('None: no active configuration items differ from their current provided versions.'),
-    ) + $this->makeReportTable($different, 'active', array('diff', 'export', 'revert'));
+    ] + $this->makeReportTable($different, 'active', ['diff', 'export', 'revert']);
 
     return $build;
   }
@@ -461,39 +463,40 @@ class ConfigUpdateController extends ControllerBase {
    *   - revert
    *   - export
    *   - import
+   *   - delete
    *
    * @return array
    *   Render array for the table, not including the #empty and #prefix
    *   properties.
    */
   protected function makeReportTable($names, $storage, $actions) {
-    $build = array();
+    $build = [];
 
     $build['#type'] = 'table';
 
-    $build['#attributes'] = array('class' => array('config-update-report'));
+    $build['#attributes'] = ['class' => ['config-update-report']];
 
-    $build['#header'] = array(
-      'name' => array(
+    $build['#header'] = [
+      'name' => [
         'data' => $this->t('Machine name'),
-      ),
-      'label' => array(
+      ],
+      'label' => [
         'data' => $this->t('Label (if any)'),
-        'class' => array(RESPONSIVE_PRIORITY_LOW),
-      ),
-      'type' => array(
+        'class' => [RESPONSIVE_PRIORITY_LOW],
+      ],
+      'type' => [
         'data' => $this->t('Type'),
-        'class' => array(RESPONSIVE_PRIORITY_MEDIUM),
-      ),
-      'operations' => array(
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+      'operations' => [
         'data' => $this->t('Operations'),
-      ),
-    );
+      ],
+    ];
 
-    $build['#rows'] = array();
+    $build['#rows'] = [];
 
     foreach ($names as $name) {
-      $row = array();
+      $row = [];
       if ($storage == 'active') {
         $config = $this->configRevert->getFromActive('', $name);
       }
@@ -522,31 +525,35 @@ class ConfigUpdateController extends ControllerBase {
       $row[] = $label;
       $row[] = $type_label;
 
-      $links = array();
-      $routes = array(
+      $links = [];
+      $routes = [
         'export' => 'config.export_single',
         'import' => 'config_update_ui.import',
         'diff' => 'config_update_ui.diff',
         'revert' => 'config_update_ui.revert',
-      );
-      $titles = array(
+        'delete' => 'config_update_ui.delete',
+      ];
+      $titles = [
         'export' => $this->t('Export'),
         'import' => $this->t('Import from source'),
         'diff' => $this->t('Show differences'),
         'revert' => $this->t('Revert to source'),
-      );
+        'delete' => $this->t('Delete'),
+      ];
 
       foreach ($actions as $action) {
-        $links[$action] = array(
-          'url' => Url::fromRoute($routes[$action], array('config_type' => $entity_type, 'config_name' => $id)),
+        $links[$action] = [
+          'url' => Url::fromRoute($routes[$action], ['config_type' => $entity_type, 'config_name' => $id]),
           'title' => $titles[$action],
-        );
+        ];
       }
 
-      $row[] = array('data' => array(
+      $row[] = [
+        'data' => [
           '#type' => 'operations',
           '#links' => $links,
-        ));
+        ],
+      ];
 
       $build['#rows'][] = $row;
     }

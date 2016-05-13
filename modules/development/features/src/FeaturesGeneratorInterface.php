@@ -97,12 +97,12 @@ interface FeaturesGeneratorInterface {
    *
    * @param string $method_id
    *   The ID of the generation method to use.
+   * @param \Drupal\features\FeaturesBundleInterface $bundle
+   *   The bundle used for the generation.
    * @param array $package_names
    *   Array of names of packages to be generated. If none are specified, all
    *   available packages will be added.
-   * @param \Drupal\features\FeaturesBundleInterface $bundle
-   *   The optional bundle used for the generation.  Used to generate profiles.
    */
-  public function generatePackages($method_id, array $package_names = array(), FeaturesBundleInterface $bundle = NULL);
+  public function generatePackages($method_id, FeaturesBundleInterface $bundle, array $package_names = array());
 
 }

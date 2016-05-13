@@ -1,0 +1,116 @@
+<?php
+/**
+ * @file
+ * The Social post module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
+  $form['field_visibility']['#attributes']['class'][] = 'browser-default';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Alter the comment_post_comment_form form.
+ */
+function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set the action of the form to the current uri.
+  $uri = Url::fromRoute('<current>')->toString();
+  $form['#action'] = $uri;
+
+  // Submit function to retrieve the action uri and redirect to it.
+  $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for comment_post_comment_form.
+ */
+function _social_post_comment_post_comment_form_submit($form, FormStateInterface $form_state) {
+  // Get the Url from the Form action and redirect to this url.
+  $url = Url::fromUserInput($form['#action']);
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_post_views_data_alter(array &$data) {
+  $data['post']['post_visibility_access_filter'] = array(
+    'title' => t('Post visibility access'),
+    'filter' => array(
+      'title' => t('Post visibility access'),
+      'help' => t('Enable post access for public and community posts.'),
+      'field' => 'field_visibility',
+      'id' => 'post_visibility_access'
+    ),
+  );
+  $data['post']['post_account_stream_filter'] = array(
+    'title' => t('Post account stream'),
+    'filter' => array(
+      'title' => t('Post account stream'),
+      'help' => t('Enable post for the account stream.'),
+      'field' => 'field_visibility',
+      'id' => 'post_account_stream',
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_post_theme() {
+  $items = [
+    'post' => [
+      'render element' => 'elements',
+      'file' => 'post.page.inc',
+      'template' => 'post',
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function social_post_theme_suggestions_post(array $variables) {
+  $suggestions = array();
+  $post = $variables['elements']['#post'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'post__' . $sanitized_view_mode;
+  $suggestions[] = 'post__' . $post->id();
+  $suggestions[] = 'post__' . $post->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Prepares variables for comment field templates.
+ *
+ * Default template: field--comment.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing render arrays for the list of
+ *     comments, and the comment form. Array keys: comments, comment_form.
+ *
+ * @todo Rename to template_preprocess_field__comment() once
+ *   https://www.drupal.org/node/939462 is resolved.
+ */
+function social_post_preprocess_field(&$variables) {
+  $element = $variables['element'];
+  if ($element['#formatter'] == 'comment_post') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
+  }
+}

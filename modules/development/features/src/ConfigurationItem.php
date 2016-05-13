@@ -72,18 +72,25 @@ class ConfigurationItem {
   protected $package;
 
   /**
-   * Whether the configuration is provided by an extension.
+   * Whether the configuration is marked as excluded.
    *
    * @var bool
    */
-  protected $extensionProvided = FALSE;
+  protected $excluded = FALSE;
 
   /**
-   * The providing feature.
+   * Whether the configuration provider is excluded.
+   *
+   * @var bool
+   */
+  protected $providerExcluded = FALSE;
+
+  /**
+   * The provider of the config item.
    *
    * @var string
    */
-  protected $providingFeature;
+  protected $provider;
 
   /**
    * Array of package names that this item should be excluded from.
@@ -106,7 +113,11 @@ class ConfigurationItem {
     $this->name = $name;
     $this->data = $data;
 
+    $properties = get_object_vars($this);
     foreach ($additional_properties as $property => $value) {
+      if (!array_key_exists($property, $properties)) {
+        throw new \InvalidArgumentException('Invalid property: ' . $property);
+      }
       $this->{$property} = $value;
     }
   }
@@ -279,32 +290,49 @@ class ConfigurationItem {
   /**
    * @return boolean
    */
-  public function isExtensionProvided() {
-    return $this->extensionProvided;
+  public function isExcluded() {
+    return $this->excluded;
   }
 
   /**
-   * @param boolean $extensionProvided
+   * @param boolean $excluded
    *
    * @return ConfigurationItem
    */
-  public function setExtensionProvided($extensionProvided) {
-    $this->extensionProvided = $extensionProvided;
+  public function setExcluded($excluded) {
+    $this->excluded = $excluded;
+    return $this;
+  }
+
+  /**
+   * @return boolean
+   */
+  public function isProviderExcluded() {
+    return $this->providerExcluded;
+  }
+
+  /**
+   * @param boolean $providerExcluded
+   *
+   * @return ConfigurationItem
+   */
+  public function setProviderExcluded($providerExcluded) {
+    $this->providerExcluded = $providerExcluded;
     return $this;
   }
 
   /**
    * @return string
    */
-  public function getProvidingFeature() {
-    return $this->providingFeature;
+  public function getProvider() {
+    return $this->provider;
   }
 
   /**
-   * @param string $providingFeature
+   * @param string $provider
    */
-  public function setProvidingFeature($providingFeature) {
-    $this->providingFeature = $providingFeature;
+  public function setProvider($provider) {
+    $this->provider = $provider;
     return $this;
   }
 

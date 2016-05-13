@@ -8,9 +8,6 @@
 namespace Drupal\features;
 
 use Drupal\Component\Serialization\Yaml;
-use Drupal\features\FeaturesManagerInterface;
-use Drupal\features\FeaturesAssignerInterface;
-use Drupal\features\FeaturesBundleInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -84,11 +81,11 @@ abstract class FeaturesGenerationMethodBase implements FeaturesGenerationMethodI
 
     foreach ($packages as &$package) {
       list($full_name, $path) = $this->featuresManager->getExportInfo($package, $bundle);
-      $package['directory'] = $path;
+      $package->setDirectory($path);
 
       // If this is the profile, its directory is already assigned.
-      if (!isset($bundle) || !$bundle->isProfilePackage($package['machine_name'])) {
-        $package['directory'] .= '/' . $full_name;
+      if (!isset($bundle) || !$bundle->isProfilePackage($package->getMachineName())) {
+        $package->setDirectory($package->getDirectory() . '/' . $full_name);
       }
 
       $this->preparePackage($package, $existing_packages, $bundle);
@@ -100,7 +97,7 @@ abstract class FeaturesGenerationMethodBase implements FeaturesGenerationMethodI
   /**
    * Performs any required changes on a package prior to generation.
    *
-   * @param array $package
+   * @param \Drupal\features\Package $package
    *   The package to be prepared.
    * @param array $existing_packages
    *   An array of existing packages with machine names as keys and paths as
@@ -108,6 +105,6 @@ abstract class FeaturesGenerationMethodBase implements FeaturesGenerationMethodI
    * @param \Drupal\features\FeaturesBundleInterface $bundle
    *   Optional bundle used for export
    */
-  abstract protected function preparePackage(array &$package, array $existing_packages, FeaturesBundleInterface $bundle = NULL);
+  abstract protected function preparePackage(Package $package, array $existing_packages, FeaturesBundleInterface $bundle = NULL);
 
 }

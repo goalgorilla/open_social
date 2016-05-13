@@ -1,0 +1,289 @@
+<?php
+
+/**
+ * @file
+ * Contains Drupal\group\group.module
+ */
+
+use Drupal\group\Entity\GroupContent;
+use Drupal\group\Plugin\GroupContentEnablerHelper;
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_help().
+ */
+function group_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'entity.group_type.content_plugins':
+      return '<p>' . t('Entities that can be added to this group type.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function group_element_info_alter(array &$types) {
+  // Attach our extra CSS for toolbar icons.
+  if (isset($types['toolbar'])) {
+    $types['toolbar']['#attached']['library'][] = 'group/toolbar';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function group_theme() {
+  return [
+    'group' => [
+      'render element' => 'elements',
+    ],
+    'group_content' => [
+      'render element' => 'elements',
+    ],
+    'group_add_list' => [
+      'variables' => ['group_types' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function group_theme_suggestions_group(array $variables) {
+  $suggestions = [];
+
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['elements']['#group'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'group__' . $sanitized_view_mode;
+  $suggestions[] = 'group__' . $group->bundle();
+  $suggestions[] = 'group__' . $group->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'group__' . $group->id();
+  $suggestions[] = 'group__' . $group->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function group_theme_suggestions_group_content(array $variables) {
+  $suggestions = [];
+
+  /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+  $group_content = $variables['elements']['#group_content'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'group_content__' . $sanitized_view_mode;
+  $suggestions[] = 'group_content__' . $group_content->bundle();
+  $suggestions[] = 'group_content__' . $group_content->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'group_content__' . $group_content->id();
+  $suggestions[] = 'group_content__' . $group_content->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Prepares variables for the group template.
+ *
+ * Default template: group.html.twig
+ *
+ * @param array $variables
+ *   - elements: An array of elements to display in view mode.
+ *   - group: The group object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function template_preprocess_group(&$variables) {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['elements']['#group'];
+
+  $variables['group'] = $group;
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['label'] = $group->label();
+  $variables['url'] = $group->toUrl('canonical', ['language' => $group->language()]);
+
+  // See if we are rendering the group at its canonical route.
+  $route_match = \Drupal::routeMatch();
+  if ($route_match->getRouteName() == 'entity.group.canonical') {
+    $page_group = $route_match->getParameter('group');
+  }
+  $is_page = (!empty($page_group) ? $page_group->id() == $group->id() : FALSE);
+  $variables['page'] = $variables['view_mode'] == 'full' && $is_page;
+
+  // Helpful $content variable for templates.
+  $variables += array('content' => array());
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for the group content template.
+ *
+ * Default template: group-content.html.twig
+ *
+ * @param array $variables
+ *   - elements: An array of elements to display in view mode.
+ *   - group_content: The group content object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function template_preprocess_group_content(&$variables) {
+  /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+  $group_content = $variables['elements']['#group_content'];
+
+  $variables['group_content'] = $group_content;
+  $variables['view_mode'] = $variables['elements']['#view_mode'];
+  $variables['label'] = $group_content->label();
+  $variables['url'] = $group_content->toUrl('canonical', ['language' => $group_content->language()]);
+
+  // See if we are rendering the group at its canonical route.
+  $route_match = \Drupal::routeMatch();
+  if ($route_match->getRouteName() == $group_content->getContentPlugin()->getRouteName('canonical')) {
+    $page_group_content = $route_match->getParameter('group_content');
+  }
+  $is_page = (!empty($page_group_content) ? $page_group_content->id() == $group_content->id() : FALSE);
+  $variables['page'] = $variables['view_mode'] == 'full' && $is_page;
+
+  // Helpful $content variable for templates.
+  $variables += array('content' => array());
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Prepares variables for list of available group type templates.
+ *
+ * Default template: group-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - group_types: An array of group types.
+ *
+ * @see group_add_page()
+ */
+function template_preprocess_group_add_list(&$variables) {
+  $variables['types'] = [];
+
+  if (!empty($variables['group_types'])) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    foreach ($variables['group_types'] as $group_type) {
+      $variables['types'][$group_type->id()] = [
+        'type' => $group_type->id(),
+        'url' => Url::fromRoute('entity.group.add_form', ['group_type' => $group_type->id()]),
+        'label' => $group_type->label(),
+        'description' => ['#markup' => $group_type->getDescription()],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_rebuild().
+ */
+function group_rebuild() {
+  // Checks if there are any new enforced plugins to install.
+  GroupContentEnablerHelper::installEnforcedPlugins();
+}
+
+/**
+ * Implements hook_modules_installed().
+ */
+function group_modules_installed($modules) {
+  // Checks if there are any new enforced plugins to install.
+  GroupContentEnablerHelper::installEnforcedPlugins();
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function group_entity_type_alter(array &$entity_types) {
+  static $mute_self;
+
+  // Because we load content enabler plugins while rebuilding entity types, we
+  // need to make sure the code below does not keep triggering itself.
+  //
+  // This could happen because content enabler plugins may load entity types to
+  // create derivatives (like gnode does) and because we load all group types to
+  // see which plugins are actually installed.
+  if ($mute_self !== TRUE) {
+    $mute_self = TRUE;
+
+    // Enables extra forms for GroupContent entities as defined by plugins.
+    foreach (GroupContentEnablerHelper::getAdditionalEntityForms() as $name => $class) {
+      /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+      $entity_types['group_content']->setFormClass($name, $class);
+    }
+
+    $mute_self = FALSE;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param string $form_id
+ */
+function group_form_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['visibility']['group_type'])) {
+    $form['visibility_tabs']['#attached']['library'][] = 'group/block';
+    $form['visibility']['group_type']['#title'] = t('Group types');
+    $form['visibility']['group_type']['negate']['#type'] = 'value';
+    $form['visibility']['group_type']['negate']['#title_display'] = 'invisible';
+    $form['visibility']['group_type']['negate']['#value'] = $form['visibility']['group_type']['negate']['#default_value'];
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function group_entity_delete(EntityInterface $entity) {
+  if ($entity instanceof ContentEntityInterface) {
+    if ($group_contents = GroupContent::loadByEntity($entity)) {
+      /** @var \Drupal\group\Entity\GroupContent $group_content */
+      foreach ($group_contents as $group_content) {
+        $group_content->delete();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_field_access().
+ *
+ * {@inheritdoc}
+ *
+ * @todo Move this to a form controller so we can hide the field if it has no
+ *       options available to it?
+ */
+function group_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+  // We only care about the group roles field for now.
+  if ($field_definition->getName() != 'group_roles') {
+    return AccessResult::neutral();
+  }
+
+  /** @var \Drupal\group\Entity\GroupContent $group_content */
+  $group_content = $items->getEntity();
+  $group = $group_content->getGroup();
+
+  // Just to be safe, let's check the plugin ID.
+  if ($group_content->getContentPlugin()->getPluginId() == 'group_membership') {
+    // Only group administrators should be able to change the membership roles.
+    return AccessResult::forbiddenIf(!$group->hasPermission('administer members', $account));
+  }
+
+  // Don't show the field if the plugin ID didn't match.
+  return AccessResult::forbidden();
+}

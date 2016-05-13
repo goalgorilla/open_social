@@ -14,7 +14,12 @@ function features_ui_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'features.assignment':
       $output = '';
-      $output .= '<p>' . t('Manage bundles and assignment methods and select the order in which they will be run.') . '</p>';
+      $output .= '<p>' . t('Bundles are used to collect together groups of features. A bundle provides a shared <a href=":namespace">namespace</a> for all features included in it, which prevents conflicts and helps distinguish your features from those produced for other purposes. Common uses of bundles include:', array(':namespace' => 'http://en.wikipedia.org/wiki/Namespace'));
+      $output .= '<ul>';
+      $output .= '<li>' . t('Custom features for use on a particular site.') . '</li>';
+      $output .= '<li>' . t('The features of a given <a href=":distributions">distribution</a>.', array(':distributions' => 'https://www.drupal.org/documentation/build/distributions')) . '</li>';
+      $output .= '</ul></p>';
+      $output .= '<p>' . t('Use the form below to manage bundles. Each bundle comes with a set of assignment methods. By configuring and ordering the assignment methods, you can set the defaults for what does and doesn\'t get packaged into features for your bundle. Use the <em>Bundle</em> select to choose which bundle to edit, or chose <em>--New--</em> to create a new bundle. The <em>Default</em> bundle does not include a namespace and cannot be deleted.') . '</p>';
       return $output;
 
     case 'features.export':

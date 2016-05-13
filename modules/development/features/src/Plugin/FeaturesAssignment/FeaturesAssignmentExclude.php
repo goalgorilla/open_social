@@ -7,34 +7,36 @@
 
 namespace Drupal\features\Plugin\FeaturesAssignment;
 
-use Drupal\component\Utility\Unicode;
 use Drupal\features\FeaturesAssignmentMethodBase;
-use Drupal\features\FeaturesManagerInterface;
 
 /**
  * Class for excluding configuration from packages.
  *
  * @Plugin(
- *   id = \Drupal\features\Plugin\FeaturesAssignment\FeaturesAssignmentExclude::METHOD_ID,
+ *   id = "exclude",
  *   weight = -5,
  *   name = @Translation("Exclude"),
  *   description = @Translation("Exclude configuration items from packaging by various methods including by configuration type."),
- *   config_route_name = "features.assignment_exclude"
+ *   config_route_name = "features.assignment_exclude",
+ *   default_settings = {
+ *     "curated" = FALSE,
+ *     "module" = {
+ *       "installed" = FALSE,
+ *       "profile" = FALSE,
+ *       "namespace" = FALSE,
+ *       "namespace_any" = FALSE,
+ *     },
+ *     "types" = { "config" = {} }
+ *   }
  * )
  */
 class FeaturesAssignmentExclude extends FeaturesAssignmentMethodBase {
-
-  /**
-   * The package assignment method id.
-   */
-  const METHOD_ID = 'exclude';
-
   /**
    * {@inheritdoc}
    */
   public function assignPackages($force = FALSE) {
     $current_bundle = $this->assigner->getBundle();
-    $settings = $current_bundle->getAssignmentSettings(self::METHOD_ID);
+    $settings = $current_bundle->getAssignmentSettings($this->getPluginId());
 
     $config_collection = $this->featuresManager->getConfigCollection();
 
@@ -42,15 +44,16 @@ class FeaturesAssignmentExclude extends FeaturesAssignmentMethodBase {
     $exclude_types = $settings['types']['config'];
     if (!empty($exclude_types)) {
       foreach ($config_collection as $item_name => $item) {
-        if (in_array($item->getType(), $exclude_types)) {
-          unset($config_collection[$item_name]);
+        // Don't exclude already-assigned items.
+        if (empty($item->getPackage()) && in_array($item->getType(), $exclude_types)) {
+          $item->setExcluded(TRUE);
         }
       }
     }
 
     // Exclude configuration already provided by modules.
     $exclude_module = $settings['module'];
-    if (!empty($exclude_module['enabled'])) {
+    if (!empty($exclude_module['installed'])) {
       $install_list = $this->featuresManager->getExtensionStorages()->listAll();
 
       // There are two settings that can limit what's included.
@@ -85,7 +88,10 @@ class FeaturesAssignmentExclude extends FeaturesAssignmentMethodBase {
         if ($module_namespace) {
           $modules = $this->featuresManager->getFeaturesModules($current_bundle);
           foreach ($modules as $extension) {
-            $extension_list = array_merge($extension_list, $this->featuresManager->listExtensionConfig($extension));
+            // Only make exception for non-exported modules
+            if (!empty($exclude_module['namespace_any']) || !isset($all_modules[$extension->getName()])) {
+              $extension_list = array_merge($extension_list, $this->featuresManager->listExtensionConfig($extension));
+            }
           }
         }
         // If any configuration was found, remove it from the list.
@@ -95,7 +101,7 @@ class FeaturesAssignmentExclude extends FeaturesAssignmentMethodBase {
         if (isset($config_collection[$item_name])) {
           // Flag extension-provided configuration, which should not be added
           // to regular features but can be added to an install profile.
-          $config_collection[$item_name]->setExtensionProvided(TRUE);
+          $config_collection[$item_name]->setProviderExcluded(TRUE);
         }
       }
     }

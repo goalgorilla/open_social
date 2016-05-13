@@ -8,13 +8,12 @@
 namespace Drupal\features;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
-use Drupal\features\Entity\FeaturesBundle;
-use Drupal\features\FeaturesBundleInterface;
-use Drupal\features\FeaturesManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\features\Entity\FeaturesBundle;
 
 /**
  * Class responsible for performing package assignment.
@@ -49,6 +48,13 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
    * @var \Drupal\Core\Config\StorageInterface
    */
   protected $configStorage;
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
 
   /**
    * Local cache for package assignment method instances.
@@ -133,25 +139,32 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
   }
 
   /**
+   * Clean up the package list after all config has been assigned
+   */
+  protected function cleanup() {
+    $packages = $this->featuresManager->getPackages();
+    foreach ($packages as $index => $package) {
+      if ($package->getStatus() === FeaturesManagerInterface::STATUS_NO_EXPORT && empty($package->getConfig()) && empty($package->getConfigOrig())) {
+        unset($packages[$index]);
+      }
+    }
+    $this->featuresManager->setPackages($packages);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function assignConfigPackages($force = FALSE) {
     foreach ($this->getEnabledAssigners() as $method_id => $info) {
       $this->applyAssignmentMethod($method_id, $force);
     }
+    $this->cleanup();
   }
 
   /**
-   * Applies a given package assignment method.
-   *
-   * @param string $method_id
-   *   The string identifier of the package assignment method to use to package
-   *   configuration.
-   * @param bool $force
-   *   (optional) If TRUE, assign config regardless of restrictions such as it
-   *   being already assigned to a package.
+   * {@inheritdoc}
    */
-  protected function applyAssignmentMethod($method_id, $force = FALSE) {
+  public function applyAssignmentMethod($method_id, $force = FALSE) {
     $this->getAssignmentMethodInstance($method_id)->assignPackages($force);
   }
 
@@ -221,17 +234,17 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
   /**
    * {@inheritdoc}
    */
-  public function findBundle(array $info) {
+  public function findBundle(array $info, $features_info = NULL) {
     $bundle = NULL;
-    if (!empty($info['features']['bundle'])) {
-      $bundle = $this->getBundle($info['features']['bundle']);
+    if (!empty($features_info['bundle'])) {
+      $bundle = $this->getBundle($features_info['bundle']);
     }
     elseif (!empty($info['package'])) {
       $bundle = $this->findBundleByName($info['package']);
     }
     if (!isset($bundle)) {
       // Return the default bundle.
-      return $this->getBundle('');
+      return $this->getBundle(FeaturesBundleInterface::DEFAULT_BUNDLE);
     }
     return $bundle;
   }
@@ -254,7 +267,7 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
   public function getBundleList() {
     if (empty($this->bundles)) {
       $this->bundles = array();
-      foreach (\Drupal::entityTypeManager()->getStorage('features_bundle')->loadMultiple() as $machine_name => $bundle) {
+      foreach ($this->entityManager->getStorage('features_bundle')->loadMultiple() as $machine_name => $bundle) {
         $this->bundles[$machine_name] = $bundle;
       }
     }
@@ -283,7 +296,18 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
    */
   public function createBundleFromDefault($machine_name, $name = NULL, $description = NULL, $is_profile = FALSE, $profile_name = NULL) {
     // Duplicate the default bundle to get its default configuration.
-    $bundle = $this->getBundle(FeaturesBundleInterface::DEFAULT_BUNDLE)->createDuplicate();
+    $default = $this->getBundle(FeaturesBundleInterface::DEFAULT_BUNDLE);
+    if (!$default) {
+      // If we don't have the default installed, generate it from the install
+      // config file.
+      $ext_storage = new ExtensionInstallStorage($this->configStorage);
+      $record = $ext_storage->read('features.bundle.default');
+      $bundle_storage = $this->entityManager->getStorage('features_bundle');
+      $default = $bundle_storage->createFromStorageRecord($record);
+    }
+
+    /** @var \Drupal\features\Entity\FeaturesBundle $bundle */
+    $bundle = $default->createDuplicate();
 
     $bundle->setMachineName($machine_name);
     $bundle->setName($name);
@@ -309,18 +333,20 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
   public function createBundlesFromPackages() {
     $existing_bundles = $this->getBundleList();
     $new_bundles = [];
-    // Only parse from enabled features.
+    // Only parse from installed features.
     $modules = $this->featuresManager->getFeaturesModules(NULL, TRUE);
 
     foreach ($modules as $module) {
       $info = $this->featuresManager->getExtensionInfo($module);
+      // @todo This entire function could be simplified a lot using packages.
+      $features_info = $this->featuresManager->getFeaturesInfo($module);
       // Create a new bundle if:
       // - the feature specifies a bundle and
       // - that bundle doesn't yet exist locally.
       // Allow profiles to override previous values.
-      if (!empty($info['features']['bundle']) &&
-        !isset($existing_bundles[$info['features']['bundle']]) &&
-        (!in_array($info['features']['bundle'], $new_bundles) || $info['type'] == 'profile')) {
+      if (!empty($features_info['bundle']) &&
+        !isset($existing_bundles[$features_info['bundle']]) &&
+        (!in_array($features_info['bundle'], $new_bundles) || $info['type'] == 'profile')) {
         if ($info['type'] == 'profile') {
           $new_bundle = [
             'name' => $info['name'],
@@ -331,13 +357,13 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
         }
         else {
           $new_bundle = [
-            'name' => isset($info['package']) ? $info['package'] : ucwords(str_replace('_', ' ', $info['features']['bundle'])),
+            'name' => isset($info['package']) ? $info['package'] : ucwords(str_replace('_', ' ', $features_info['bundle'])),
             'description' => NULL,
             'is_profile' => FALSE,
             'profile_name' => NULL,
           ];
         }
-        $new_bundle['machine_name'] = $info['features']['bundle'];
+        $new_bundle['machine_name'] = $features_info['bundle'];
         $new_bundles[$new_bundle['machine_name']] = $new_bundle;
       }
     }
@@ -351,12 +377,9 @@ class FeaturesAssigner implements FeaturesAssignerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBundleOptions($none_text = NULL) {
+  public function getBundleOptions() {
     $list = $this->getBundleList();
     $result = array();
-    if (isset($empty_name)) {
-      $result[''] = $empty_name;
-    }
     foreach ($list as $machine_name => $bundle) {
       $result[$machine_name] = $bundle->getName();
     }

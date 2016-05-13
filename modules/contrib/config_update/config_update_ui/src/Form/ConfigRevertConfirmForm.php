@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\config_update_ui\Form\ConfigRevertConfirmForm.
- */
-
 namespace Drupal\config_update_ui\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
@@ -50,9 +45,9 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
   /**
    * Constructs a ConfigRevertConfirmForm object.
    *
-   * @param \Drupal\config_update\ConfigDiffInterface $config_list
+   * @param \Drupal\config_update\ConfigListInterface $config_list
    *   The config lister.
-   * @param \Drupal\config_update\ConfigUpdateInterface $config_update
+   * @param \Drupal\config_update\ConfigRevertInterface $config_update
    *   The config reverter.
    */
   public function __construct(ConfigListInterface $config_list, ConfigRevertInterface $config_update) {
@@ -89,7 +84,7 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
       $type_label = $definition->get('label');
     }
 
-    return $this->t('Are you sure you want to revert the %type config %item to its source configuration?', array('%type' => $type_label, '%item' => $this->name ));
+    return $this->t('Are you sure you want to revert the %type config %item to its source configuration?', ['%type' => $type_label, '%item' => $this->name]);
   }
 
   /**
@@ -130,7 +125,7 @@ class ConfigRevertConfirmForm extends ConfirmFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $value = $this->configRevert->getFromExtension($this->type, $this->name);
     if (!$value) {
-      $form_state->setErrorByName('', $this->t('There is no configuration @type named @name to import', array('@type' => $this->type, '@name' => $this->name)));
+      $form_state->setErrorByName('', $this->t('There is no configuration @type named @name to import', ['@type' => $this->type, '@name' => $this->name]));
       return;
     }
   }

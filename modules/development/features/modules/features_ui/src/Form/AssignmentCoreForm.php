@@ -7,7 +7,6 @@
 
 namespace Drupal\features_ui\Form;
 
-use Drupal\features_ui\Form\AssignmentFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**

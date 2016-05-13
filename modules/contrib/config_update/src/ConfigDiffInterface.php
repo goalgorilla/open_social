@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\config_update\ConfigDiffInterface.
- */
-
 namespace Drupal\config_update;
 
 /**

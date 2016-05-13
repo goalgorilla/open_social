@@ -28,14 +28,10 @@ function features_help($route_name, RouteMatchInterface $route_match) {
 function features_file_download($uri) {
   $scheme = file_uri_scheme($uri);
   $target = file_uri_target($uri);
-  $session = \Drupal::request()->getSession();
-  if (isset($session)) {
-    $archive_name = $session->get('features_download');
-    if ($scheme == 'temporary' && $target == $archive_name) {
-      return array(
-        'Content-disposition' => 'attachment; filename="' . $archive_name . '"',
-      );
-    }
+  if ($scheme == 'temporary' && $target) {
+    return array(
+      'Content-disposition' => 'attachment; filename="' . $target . '"',
+    );
   }
 }
 

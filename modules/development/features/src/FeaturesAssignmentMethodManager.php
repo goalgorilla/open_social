@@ -28,11 +28,10 @@ class FeaturesAssignmentMethodManager extends DefaultPluginManager {
    *   An object that implements ModuleHandlerInterface.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/FeaturesAssignment', $namespaces, $module_handler, 'Drupal\features\FeaturesAssignmentMethodInterface');
-    $this->cacheBackend = $cache_backend;
-    $this->cacheKeyPrefix = 'features_assignment_methods';
-    $this->cacheKey = 'features_assignment_methods';
+    parent::__construct('Plugin/FeaturesAssignment', $namespaces, $module_handler,
+      'Drupal\features\FeaturesAssignmentMethodInterface');
     $this->alterInfo('features_assignment_info');
+    $this->setCacheBackend($cache_backend, 'features_assignment_methods');
   }
 
 }
