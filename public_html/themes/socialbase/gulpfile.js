@@ -106,8 +106,7 @@ gulp.task('jade', function() {
     .pipe(jade({
       pretty: true
     })) // pip to jade plugin
-    .pipe(gulp.dest(folder.dist)) // tell gulp our output folder
-    .pipe(connect.reload());
+    .pipe(gulp.dest(folder.dist)); // tell gulp our output folder
 });
 
 
@@ -142,8 +141,7 @@ gulp.task('script-components', function() {
     .pipe( concat('components.js') )
     .pipe( gulp.dest(folder.js) )
     //.pipe( uglify() )
-    .pipe( gulp.dest(folder.dist + '/js') )
-    .pipe( connect.reload() );
+    .pipe( gulp.dest(folder.dist + '/js') );
 });
 
 // get project scripts and make available for dist in one file
@@ -154,8 +152,7 @@ gulp.task('script-materialize', function() {
     .pipe( concat('materialize.js') )
     .pipe( gulp.dest(folder.js) )
     //.pipe( uglify() )
-    .pipe( gulp.dest(folder.dist + '/js') )
-    .pipe( connect.reload() );
+    .pipe( gulp.dest(folder.dist + '/js') );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
