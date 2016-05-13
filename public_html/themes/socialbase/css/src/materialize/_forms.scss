@@ -65,12 +65,12 @@ span.form-required {
   font-size: inherit;
 
   @include MQ($medium) {
-    font-size:  $font-size-base;
+    font-size: $font-size-base;
   }
 
   &:focus {
-    border-bottom: 1px solid $primary-color;
-    box-shadow: 0 2px 0 0 $primary-color;
+    border-bottom: 1px solid $brand-primary;
+    box-shadow: 0 2px 0 0 $brand-primary;
   }
 
   &.form-control--block {
@@ -296,8 +296,8 @@ span.form-required {
       top: 0px;
       width: 20px;
       height: 20px;
-      border: 2px solid $primary-color-dark;
-      background-color: $primary-color-dark;
+      border: 2px solid $brand-primary-dark;
+      background-color: $brand-primary-dark;
       z-index: 0;
     }
   }
@@ -310,8 +310,8 @@ span.form-required {
   }
   &.tabbed:checked:focus + label:after {
     border-radius: 2px;
-    background-color: $primary-color-dark;
-    border-color: $primary-color-dark;
+    background-color: $brand-primary-dark;
+    border-color: $brand-primary-dark;
   }
 
   // Disabled style
@@ -439,7 +439,7 @@ span.form-required {
 .password-strength__indicator {
   height: 100%;
   width: 0;
-  background-color: $success-color;
+  background-color: $brand-success;
   transition: width 0.5s ease-out;
 }
 .password-confirm-match {
@@ -447,16 +447,16 @@ span.form-required {
 }
 
 .password-strength__indicator.is-weak {
-  background-color: $error-color;
+  background-color: $brand-danger;
 }
 .password-strength__indicator.is-fair {
-  background-color: $warning-color;
+  background-color: $brand-warning;
 }
 .password-strength__indicator.is-good {
-  background-color: $info-color;
+  background-color: $brand-info;
 }
 .password-strength__indicator.is-strong {
-  background-color: $success-color;
+  background-color: $brand-success;
 }
 
 .password-suggestions {
@@ -483,10 +483,10 @@ span.form-required {
 
 // Styling for the status indicator of the passwords match test.
 .password-confirm .ok {
-  color: $success-color;
+  color: $brand-success;
   font-weight: 500;
 }
 .password-confirm .error {
-  color: $error-color;
+  color: $brand-danger;
   font-weight: 500;
 }

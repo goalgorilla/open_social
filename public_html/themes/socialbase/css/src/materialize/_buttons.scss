@@ -4,7 +4,7 @@
   font-size: $button-font-size;
   text-transform: uppercase;
   touch-action: manipulation;
-  transition: .2s ease-out;
+  transition: .3s ease-out;
   will-change: opacity, transform;
 
   + .btn {
@@ -19,28 +19,48 @@
     margin-left: 3px;
   }
 
+  // override bootstrap default
+  &:active,
+  &.active {
+    @include box-shadow(none);
+  }
+
+  &:focus,
+  &:active:focus,
+  &.active:focus {
+    outline: 0;
+  }
+
 }
 
 
+// Styles
+.btn-xs {
+  font-size: $button-font-size-small;
+}
 
 .btn-sm {
   font-size: $button-font-size-small;
 }
 
-.btn-secondary {
-  @include button-variant(white, $brand-secondary, $brand-secondary);
+.btn-lg {
+  font-size: $button-font-size-large;
 }
 
+
+// Styles
 .btn-accent {
   @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
 }
 
-.btn-user {
-  @include button-variant(white, $user-color, $user-color);
-}
+.btn-flat {
+  @include button-variant($brand-primary, transparent, transparent);
 
-.btn-link-default {
-  color: $default-color;
+  &:hover,
+  &:focus {
+    background-color: rgba($brand-primary, 0.12);
+  }
+
 }
 
 
@@ -51,13 +71,15 @@
   @include z-depth-1;
 	transition: box-shadow, .15s ease-out;
 
-  &:active, &.active {
+  &:active,
+  &.active,
+  &:hover {
     @include z-depth-3;
   }
 
   &.disabled,
   &[disabled],
-  .pager .disabled & {
+  .disabled & {
     @include z-depth-0;
   }
 
@@ -108,10 +130,21 @@
   border-radius: $button-floating-radius;
   @include z-depth-2;
 
-  &.btn-large {
+  &:active,
+  &.active,
+  &:hover {
+    @include z-depth-4;
+  }
+
+  &.disabled,
+  &[disabled],
+  .disabled & {
+    @include z-depth-0;
+  }
+
+  &.btn-lg {
     width: $button-floating-large-size;
     height: $button-floating-large-size;
-    font-size: 1.5rem;
   }
 
 }
@@ -133,15 +166,15 @@
 }
 
 .btn-floating .material-icons {
-  line-height: $button-floating-size - 1;
-  height: $button-floating-size - 1;
-  font-size: inherit;
-  width: inherit;
-  text-align: center;
+  line-height: $button-floating-size - 2;
+  height: $button-floating-size - 2;
+  font-size: 1.3rem;
 }
 
-.btn-floating.btn-large .material-icons {
+.btn-floating.btn-lg .material-icons {
+  font-size: 2rem;
   line-height: $button-floating-large-size - 2;
+  height: $button-floating-large-size - 2;
 }
 
 // Fixed Action Button
@@ -195,62 +228,4 @@
       opacity: 0;
     }
   }
-}
-
-
-.btn-raised {
-
-  &.btn--default-dark {
-    @extend .style-default-dark;
-  }
-
-  &.btn--secondary {
-    background-color: $secondary-color;
-    color: white;
-
-    &:hover,
-  	&:focus {
-      background-color: darken($secondary-color, 15%);
-    }
-
-  }
-
-  &.btn--default-bright {
-    background-color: white;
-    color: $grey-dark-1;
-
-    &:hover,
-    &:focus {
-      background-color: $grey-light-3;
-    }
-
-  }
-
-  &.btn--default {
-    background-color: $grey-light-2;
-    color: $grey-dark-1;
-
-    &:hover,
-    &:focus {
-      background-color: $grey-light-1;
-    }
-
-  }
-
-}
-
-.btn-flat {
-  color: $primary-color;
-
-  &:hover,
-  &:focus {
-    color: $primary-color;
-    background-color: rgba($primary-color, 0.12);
-  }
-
-  &.btn--default-bright {
-    color: white;
-  }
-
-
 }

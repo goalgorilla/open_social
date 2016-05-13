@@ -1,0 +1,210 @@
+- var pagetype = "styleguide"
+- var page = "Buttons"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+          
+        .row
+          .col-xs-12
+          
+            h3 Button tags
+            p 
+              :markdown
+                Use the button classes on an `<a>`, `<button>`, or `<input>` element. Use logical elements for your buttons. If it is not a link do not use an `a` but a `<button>` tag instead. If the `<a>` elements are used to act as buttons – triggering in-page functionality, rather than navigating to another document or section within the current page – they should also be given an appropriate `role="button"`.
+                
+        .row.margin-top-l
+          .col-xs-12
+            h3 Types of buttons
+            p There are different types of buttons that can be used.
+            ul 
+             li <strong>Default button</strong>: Rectangular shaped buttons that is used in most cases. Does not lift (on same layer as the parent element) and should be placed cards. 
+             li <strong>Flat button</strong>: Are text-only buttons. They should always have a color to distinguish them from normal text. They can be used to put less emphasis or visual attraction to the action. They may be used in dialogs, toolbars, or inline. They do not lift, but fill with color on press.
+             li <strong>Raised button</strong>: Rectangular-shaped buttons that behave like a piece of material resting on another sheet – they lift and fill with color on press. Raised buttons add dimension to mostly flat layouts. They emphasize functions on busy or wide spaces. They may be used inline. They lift and display ink reactions on press.
+             li <strong>Floating action button</strong>: A circular material button that lifts and displays an ink reaction on press. A floating action button is used for a promoted action.
+             
+        .row.margin-top-l
+          .col-xs-12.col-sm-3
+            .card
+              .card-body
+                button.btn.btn-default.waves-effect(type='button') Button
+            .text-caption Default button
+          
+          .col-xs-12.col-sm-3
+            .card
+              .card-body
+                button.btn.btn-default.btn-flat.waves-effect(type='button') Button
+            .text-caption Flat button
+            
+          .col-xs-12.col-sm-3
+            .card
+              .card-body
+                button.btn.btn-default.btn-raised.waves-effect(type='button') Button
+            .text-caption Raised button
+          .col-xs-12.col-sm-3
+            .card
+              .card-body
+                button.btn.btn-accent.btn-floating.waves-effect.waves-circle(type='button')
+                  i.material-icons add
+            .text-caption Floating button
+            
+        .row.margin-top-l
+          .col-xs-12
+            h3 Style
+            p Use the following styles to determine importance of a button.
+            ul
+              li Default: Standard buttons
+              li Primary: Provides extra visual weight and identifies the primary action in a set of buttons.
+              li Accent: Give most importance to this buttons. Should be used very sparsely and only if you are 100% this is the most important button on the screen for the user. 
+              li Success: Indicates a successful or positive action
+              li Warning: Indicates caution should be taken with this action
+              li Danger: Indicates a dangerous or potentially negative action
+              li Flat button: Deemphasize a button by making it look like a link while maintaining button behavior
+              
+        .row.margin-top-l
+          .col-xs-12
+            .card
+              .card-body
+                button.btn.btn-default(type='button') Default
+                button.btn.btn-primary(type='button') Primary
+                button.btn.btn-accent(type='button') Accent
+                button.btn.btn-success(type='button') Success
+                button.btn.btn-warning(type='button') Warning
+                button.btn.btn-danger(type='button') Danger
+                button.btn.btn-flat(type='button') Flat
+            .text-caption Default button styles
+          
+          .col-xs-12
+            .card
+              .card-body
+                button.btn.btn-default.btn-raised(type='button') Default
+                button.btn.btn-primary.btn-raised(type='button') Primary
+                button.btn.btn-accent.btn-raised(type='button') Accent
+                button.btn.btn-success.btn-raised(type='button') Success
+                button.btn.btn-warning.btn-raised(type='button') Warning
+                button.btn.btn-danger.btn-raised(type='button') Danger
+                button.btn.btn-flat(type='button') Flat
+            .text-caption Raised button styles
+            
+        .row.margin-top-l
+          .col-xs-12
+            h3 Sizes
+            p
+              :markdown
+                Define a different button size with `.btn-lg`, `.btn-sm`, or `.btn-xs`.
+      
+        .row.margin-top-l
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-default.btn-xs(type='button') Extra small Button
+                p
+                  button.btn.btn-default.btn-sm(type='button') Small Button
+                p
+                  button.btn.btn-default(type='button') Default Button
+                p
+                  button.btn.btn-default.btn-lg(type='button') Large Button
+            .text-caption Default button sizes
+          
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-flat.btn-xs(type='button') Extra small Button
+                p
+                  button.btn.btn-flat.btn-sm(type='button') Small Button
+                p
+                  button.btn.btn-flat(type='button') Default Button
+                p
+                  button.btn.btn-flat.btn-lg(type='button') Large Button
+            .text-caption Flat button sizes
+                  
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-primary.btn-raised.btn-xs(type='button') Extra small Button
+                p
+                  button.btn.btn-primary.btn-raised.btn-sm(type='button') Small Button
+                p
+                  button.btn.btn-primary.btn-raised(type='button') Default Button
+                p
+                  button.btn.btn-primary.btn-raised.btn-lg(type='button') Large Button
+            .text-caption Raised button sizes
+                  
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p &nbsp;
+                p &nbsp;
+                p
+                  button.btn.btn-accent.btn-floating.waves-effect.waves-light.waves-circle(type='button')
+                    i.material-icons done
+                p
+                  button.btn.btn-accent.btn-floating.waves-effect.waves-light.waves-circle.btn-lg(type='button') 
+                    i.material-icons done
+            .text-caption Floating action button sizes
+                    
+                    
+        .row.margin-top-l
+          .col-xs-12
+            h3 States
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-default(type='button') Default
+                p
+                  button.btn.btn-default.active(type='button') Active
+                p
+                  button.btn.btn-default.disabled(type='button') Disabled 
+            .text-caption Default states
+          
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-flat(type='button') Default
+                p
+                  button.btn.btn-flat.active(type='button') Active
+                p
+                  button.btn.btn-flat.disabled(type='button') Disabled
+            .text-caption Flat button states
+                  
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-primary.btn-raised(type='button') Default
+                p
+                  button.btn.btn-primary.btn-raised.active(type='button') Active
+                p
+                  button.btn.btn-primary.btn-raised.disabled(type='button') Disabled
+            .text-caption Raised button states
+                  
+          .col-xs-12.col-sm-3
+            .card
+              .card-body.text-center
+                p
+                  button.btn.btn-accent.btn-floating.waves-effect.waves-light.waves-circle(type='button')
+                    i.material-icons done
+                p
+                  button.btn.btn-accent.btn-floating.waves-effect.waves-light.waves-circle.active(type='button') 
+                    i.material-icons done
+                p
+                  button.btn.btn-accent.btn-floating.waves-effect.waves-light.waves-circle.disabled(type='button') 
+                    i.material-icons done
+            .text-caption Floating action button states
+                
+            
+    include ./layout/_scripts.jade
+            

@@ -13,10 +13,23 @@ html(lang="en")
 
       .container
         .row 
-          .col-xs-12.col-sm-8.col-md-10
+        
+          .col-xs-12.col-sm-4.col-md-3.col-sm-last
+            .toc-wrapper
+              ul.table-of-contents
+                li
+                  a(href='#regions') Regions
+                li
+                  a(href='#layout-a') Layout A
+                li
+                  a(href='#layout-b') Layout B
+                li
+                  a(href='#layout-c') Layout C
+                  
+          .col-xs-12.col-sm-8.col-md-9
             
-            #regions.section.scrollspy
-              h2.header Regions
+            #regions.scrollspy.margin-top-xxl
+              h2 Regions
               p We have split up the <em>fluid</em> layout of the interface into regions to which in Drupal we can assign blocks to. The following regions are used. When you scroll down we see how these regions are placed in layouts. 
               
               .list-group 
@@ -53,8 +66,8 @@ html(lang="en")
                   h6.list-group-item-heading Footer 
                   p.list-group-item-text It is static and contains information about the whole application.
 
-            #layout-a.section.scrollspy
-              h2.header Layout A | Parents
+            #layout-a.scrollspy.margin-top-xxl
+              h2 Layout A | Parents
               
               p This layout is used on the section's parent pages. The parents form the landing pages of the platform such as the timeline page of a person or group or the detail page of an event. These pages always have child pages. 
 
@@ -101,8 +114,8 @@ html(lang="en")
                     .col-xs-12(style='background-color:#b0bec5; min-height: 50px;')
                       p Footer
             
-            #layout-b.section.scrollspy
-              h2.header Layout B | Children
+            #layout-b.scrollspy.margin-top-xxl
+              h2 Layout B | Children
 
               p This layout is used on section's child pages. For example an event node has enrollment as a child, but a topic node doesn't have children. So we use this template for event enrollment, but not for topic.
               
@@ -152,8 +165,8 @@ html(lang="en")
                     .col-xs-12(style='background-color:#b0bec5; min-height: 50px;')
                       p Footer
           
-            #layout-c.section.scrollspy
-              h2.header Layout C | Orphans
+            #layout-c.scrollspy.margin-top-xxl
+              h2 Layout C | Orphans
               
               p This layout is used on sections that has <strong>no</strong> sub content nor has sibling pages in the hierarchy. For example a topic node, or and edit node page. Compared to the other layouts we do not have a secondary navigation nor title region here. The title will be displayed in the Hero region.
               
@@ -190,18 +203,5 @@ html(lang="en")
                   .row
                     .col-xs-12(style='background-color:#b0bec5; min-height: 50px;')
                       p Footer
-          
-          
-          .col-sm-4.col-md-2.hidden-xs
-            .toc-wrapper
-              ul.table-of-contents
-                li
-                  a(href='#regions') Regions
-                li
-                  a(href='#layout-a') Layout A
-                li
-                  a(href='#layout-b') Layout B
-                li
-                  a(href='#layout-c') Layout C
 
     include ./layout/_scripts.jade
