@@ -144,7 +144,6 @@ class AccountHeaderBlock extends BlockBase {
     $links['search_block'] = $block_output;
 
     return [
-      'search_block' => $block_output,
       '#theme' => 'account_header_links',
       '#links' => $links,
       '#cache' => array(
