@@ -66,6 +66,15 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
  */
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+
+  // Preprocess search block header
+  if ( isset($variables['content']['search_content_form']) ) {
+    $variables['content']['search_content_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
+    $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-left';
+    $variables['content']['search_content_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
+    $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
+  }
 }
 
 /**
