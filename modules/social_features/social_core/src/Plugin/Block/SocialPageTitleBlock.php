@@ -63,15 +63,17 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#created_date' => $node->getCreatedTime(),
         '#topic_type' => $topic_type,
         '#hero_node' => $hero_node,
+        '#section_class' => 'page-title',
       ];
     }
     else {
       $request = \Drupal::request();
+
       if ($route = $request->attributes->get(\Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT)) {
         $title = \Drupal::service('title_resolver')->getTitle($request, $route);
       }
       return [
-        '#theme' => 'page_hero_data',
+        '#type' => 'page_title',
         '#title' => $title,
       ];
     }
