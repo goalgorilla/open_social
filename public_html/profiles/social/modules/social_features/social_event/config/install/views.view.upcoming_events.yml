@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.small_teaser
     - core.entity_view_mode.node.teaser
     - node.type.event
   module:
@@ -161,10 +162,21 @@ display:
             label: ''
           granularity: minute
           plugin_id: datetime
-      title: 'Upcoming events'
+      title: 'Upcoming events in the community'
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content: 'No upcoming events'
+          plugin_id: text_custom
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
@@ -193,6 +205,16 @@ display:
           offset: 0
       defaults:
         pager: false
+        style: false
+        row: false
+      style:
+        type: default
+        options: {  }
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: small_teaser
     cache_metadata:
       max-age: -1
       contexts:
@@ -221,6 +243,10 @@ display:
         arguments: false
         filters: false
         filter_groups: false
+        style: false
+        row: false
+        empty: false
+        title: false
       relationships:
         reverse__event_enrollment__field_event:
           id: reverse__event_enrollment__field_event
@@ -335,6 +361,27 @@ display:
         type: perm
         options:
           perm: 'create event content'
+      style:
+        type: default
+        options: {  }
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: small_teaser
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content: 'No upcoming events you have enrolled for'
+          plugin_id: text_custom
+      title: 'My upcoming events'
     cache_metadata:
       max-age: -1
       contexts:
