@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.hero
+    - field.field.group.open_group.field_group_description
+    - field.field.group.open_group.field_group_image
+    - group.type.open_group
+    - image.style.teaser
+  module:
+    - image
+    - text
+id: group.open_group.hero
+targetEntityType: group
+bundle: open_group
+mode: hero
+content:
+  field_group_description:
+    type: text_trimmed
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: 200
+    third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: teaser
+      image_link: content
+    third_party_settings: {  }
+hidden:
+  uid: true
