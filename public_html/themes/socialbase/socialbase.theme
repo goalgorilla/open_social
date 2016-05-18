@@ -24,6 +24,7 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
   $suggestions_mapping = array(
     'layout_b' => array(
       'page__node__topic',
+      'page__user',
     ),
     'layout_c' => array(
       'page__node__enrollments',
@@ -298,4 +299,10 @@ function _socialbase_get_visibility_icon($title) {
   }
 
   return $icon;
+}
+
+function hook_theme_suggestions_form_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#form_id'] == 'social_user_login_form') {
+    $suggestions[] = 'form__user_anonymous';
+  }
 }
