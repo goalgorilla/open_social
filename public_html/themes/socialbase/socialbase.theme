@@ -120,6 +120,16 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+
+function socialbase_theme_suggestions_container_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#type'] == 'view') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'view';
+  }
+}
+
+/**
  * Implements hook_preprocess_page().
  */
 
