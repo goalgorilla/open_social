@@ -301,8 +301,37 @@ function _socialbase_get_visibility_icon($title) {
   return $icon;
 }
 
-function hook_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#form_id'] == 'social_user_login_form') {
+function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form') {
     $suggestions[] = 'form__user_anonymous';
   }
+}
+
+
+/**
+ * Allows sub-themes to alter the array used for colorizing text.
+ *
+ * @param array $texts
+ *   An associative array containing the text and classes to be matched, passed
+ *   by reference.
+ *
+ * @see \Drupal\bootstrap\Bootstrap::cssClassFromString()
+ */
+function socialbase_bootstrap_colorize_text_alter(&$texts) {
+
+  $texts = [
+
+    // Text that match these specific strings are checked first.
+    'matches' => [
+      // Primary class.
+      t('Create new account')->render()   => 'primary',
+      t('Log in')->render()               => 'primary',
+    ],
+
+    // Text containing these words anywhere in the string are checked last.
+    'contains' => [
+
+    ],
+    
+  ];
 }
