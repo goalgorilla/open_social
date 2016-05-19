@@ -6,7 +6,7 @@ use Drupal\Component\Utility\Html as HtmlUtility;
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_social_user_password_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['mail']['#prefix'] = '<div class="form__description">';
+  $form['mail']['#prefix'] = '<div class="help-block">';
   $form['mail']['#suffix'] = '</div>';
 }
 
@@ -302,7 +302,7 @@ function _socialbase_get_visibility_icon($title) {
 }
 
 function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form') {
+  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
     $suggestions[] = 'form__user_anonymous';
   }
 }
@@ -330,8 +330,8 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
 
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
-
+      t('Submit')->render()               => 'primary',
     ],
-    
+
   ];
 }
