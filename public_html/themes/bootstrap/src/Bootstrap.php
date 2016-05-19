@@ -250,6 +250,7 @@ class Bootstrap {
 
     $theme = Bootstrap::getTheme();
     $texts = $theme->getCache('cssClassFromString', [$lang]);
+    dpm($texts);
 
     $string = (string) $string;
 

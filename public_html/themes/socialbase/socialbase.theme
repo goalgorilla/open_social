@@ -94,6 +94,15 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   }
 }
 
+function socialbase_bootstrap_colorize_text_alter(&$texts) {
+  $texts['matches'][t('Preview')] = 'taart';
+
+  // This would also match the string above, however the class returned would
+  // also be the one above; "matches" takes precedence over "contains".
+  $texts['contains'][t('and')] = 'kaas';
+  dpm($texts);
+}
+
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
