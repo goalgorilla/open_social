@@ -5,18 +5,7 @@ block title
 
 block pagetitle
   .container.hero-container.hidden-xs
-    .cover
-      .hero-action-button
-        a.waves-effect.waves-light.btn.brand-user.btn-floating(href='profile-edit.html')
-          i.material-icons mode_edit
-      .cover-wrap
-        h1.page-title.h2 John Johnson
-        br
-        img.img-circle.img-medium(src='content/images/avatar1.jpg')
-        .hero-footer
-          .row.row-md-center
-            .col-xs-12.col-md-6.col-md-offset-3
-              p Receptionist - Bastion Hotels
+    include ./molecules/_my-profile-hero.jade
   
   .container
     .visible-xs-block.section
@@ -29,7 +18,7 @@ block pagetitle
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.hidden-xs
             a(href="my-stream.html") Stream  
           li
             a(href="my-profile-about.html") About
@@ -50,14 +39,13 @@ block content
     
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-user.btn-raised(href='node-add-topic.html') Create topic
-
-      btn.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised.visible-xs-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filters
+      a.waves-effect.waves-light.btn.btn-user.btn-raised.btn-block(href='node-add-topic.html') Create topic
       br 
       br
-      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+      btn.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filter
+      .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
           header.card__label filter
           .offcanvas-tools.visible-xs-block
@@ -79,8 +67,8 @@ block content
                 option(value="", selected="") All statusses
                 option(value="published") Published
                 option(value="unpublished") Unpublished
-            .form-group.margin-top-l.clearfix
-              input#reset-button.btn.btn-primary.pull-right.disabled(type="submit", value="Reset")
+            .form-group
+              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-8
       include molecules/_topic1.jade

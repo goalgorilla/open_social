@@ -6,10 +6,10 @@
 }
 
 @font-face {
-    font-family: 'Custom-Icons';
+    font-family: 'custom-icons';
     font-weight: normal;
     font-style: normal;
-    font-path: '../font/custom-icons/icomoon';
+    font-path: '../font/custom-icons/custom-icons';
 }
 
 // prevent block rendering
@@ -19,6 +19,7 @@
   font-style: normal;
   font-size: 24px;  // Preferred icon size
   display: inline-block;
+  vertical-align: middle;
   width: 1em;
   height: 1em;
   line-height: 1;
@@ -45,7 +46,7 @@
 
 .custom-icons {
     // use !important to prevent issues with browser extensions that change fonts
-    font-family: 'Custom-Icons' !important;
+    font-family: 'custom-icons' !important;
     display: inline-block;
     vertical-align: middle;
     speak: none;
@@ -53,8 +54,9 @@
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
-    line-height: inherit;
-    font-size: 14px;  // Preferred icon size
+    height: 1em;
+    line-height: 1;
+    font-size: 24px;  // Preferred icon size
 
     // Support for all WebKit browsers.
     -webkit-font-smoothing: antialiased;

@@ -1,7 +1,7 @@
 .media
   .media-left
     a(href='my-stream.html')
-      img.media-object.img-circle.img-small(src='content/images/avatar1.jpg')
+      img.media-object.img-circle.img-medium(src='content/images/member5.jpg')
   .media-body
     h5.media-heading
       a(href="my-stream.html") John Johnson 
@@ -9,26 +9,25 @@
       small 12 hours ago
     .btn-group.pull-right
       button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
-        i.material-icons mode_edit
+        i.material-icons expand_more
       ul.dropdown-menu(role='menu')
         li 
           a(href='post-edit.html') Edit
         li
           a(href='post-delete.html') Delete
-p.margin-top-s 
-  | Our software empowers people to effectively collaborate and organize. Replacing traditional intranets, it fuels bottom-up organizational innovation. 
+.margin-top-s Our software empowers people to effectively collaborate and organize. Replacing traditional intranets, it fuels bottom-up organizational innovation. 
   a(href="#") www.getopensocial.com
-p
-  img(src="content/images/og_image.jpg", alt="", width="100%", height="auto")
+img.img-responsive(src="content/images/os_image.jpg", alt="", width="100%", height="auto")
 .card-nested-section
-  .media-left
-    img.img-small.img-circle(src='content/images/avatar1.jpg')
+  .media
+    .media-left
+      img.img-medium.img-circle(src='content/images/member5.jpg')
 
-  .media-body
-    form
-      .form-group.form-group-inline.clearfix
-        textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%', rows="1")
-        button.btn.btn-link(type='submit') Comment
+    .media-body
+      form
+        .form-group.form-group-inline.clearfix
+          textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%', rows="1")
+          button.btn.btn-link(type='submit') Comment
 
   include ./_post1-reply5.jade
   include ./_post1-reply4.jade

@@ -3,17 +3,19 @@ extends ./layout/base-lu.jade
 block title
   title A post
 
-block pagetitle
-  .container.hero-container
-    .cover
-        h1.page-title.h2 A post 
-      
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li.active Post
+          
 block content
       
-  .row.margin-top-l
+  .row
   
-    .col-sm-8
+    .col-xs-12.col-sm-8
+    
+      h4.section-title Post
     
       .card
-        .card-body.extra-padding
+        .card-body
           include ./molecules/_post1.jade

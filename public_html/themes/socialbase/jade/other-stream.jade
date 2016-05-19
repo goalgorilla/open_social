@@ -5,21 +5,13 @@ block title
 
 block pagetitle
   .container.hero-container
-    .cover
-      .cover-wrap
-        h1.page-title.h2 Jenny Baker
-        img.img-circle(src='content/images/avatar5.jpg')
-        br
-        br
-        button.btn.btn-flat.btn--default-bright
-          i.material-icons.pull-left check
-          | Following
+    include ./molecules/_other-profile-hero.jade
           
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active
+          li.active.hidden-xs
             a(href="other-stream.html") Stream  
             span.visually-hidden (active tab)
           li
@@ -29,18 +21,18 @@ block pagetitle
           li
             a(href='other-events.html') Events  
           li
-            a(href="#") Groups
+            a(href="other-groups.html") Groups
       
 block content
   
   .row
   
     .col-xs-12
-      h2.h3.section-title Jenny Bakers stream
+      h2.h3.section-title.section-title-stream Jenny Baker`s stream
       
   .row
 
-    .col-sm-8
+    .col-xs-12.col-sm-9.col-md-8
     
       ul.stream
         li.stream-item
@@ -71,7 +63,7 @@ block content
             .card-body
               include ./molecules/_stream-post2.jade    
       
-    .col-xs-12.col-sm-4.pull-right.margin-bottom-l
+    .col-xs-12.col-sm-3.col-sm-last.col-md-4.margin-bottom-l
       include ./molecules/_other-events.jade
       include ./molecules/_other-topics.jade
       include ./molecules/_other-groups.jade

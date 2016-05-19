@@ -68,6 +68,7 @@
     left: 0;
     right: 0;
     width: 100%;
+    max-width: none;
     max-height: 100%;
     max-height: calc(100% - 50px);
     overflow-x: hidden;
@@ -119,8 +120,8 @@
   }
 
 }
-.navbar-footer {
 
+.navbar-footer {
 
   .navbar-brand {
     color: white;
@@ -227,13 +228,6 @@
   background-color: $brand-secondary;
 }
 
-// Temporary fix for aligning icons
-.navbar-default .navbar-nav .material-icons {
-  @include MQ($small) {
-    float: left;
-  }
-}
-
 // Hacking into responsive bootstrap behaviour
 .navbar-right {
   margin-top: 0;
@@ -258,7 +252,7 @@
   font-size: 0.625em;
   top: 8px;
   left: 30px;
-  background-color: $accent-color;
+  background-color: $brand-accent;
   color: $default-color;
 }
 
@@ -279,7 +273,7 @@
     &:-moz-placeholder,
     &::-moz-placeholder,
     &:-ms-input-placeholder {
-      color: $primary-color-bright;
+      color: $brand-primary-bright;
     }
 
   }
@@ -300,7 +294,7 @@
 
   .search-icon {
     line-height: 38px;
-    color: $primary-color;
+    color: $brand-primary;
     background: white;
     speak: none;
     pointer-events: none;
@@ -351,7 +345,7 @@
     .search-icon {
       z-index: 90;
       border-radius: 0;
-      background: $user-color;
+      background: $gray-darker;
       color: white;
       pointer-events: initial;
       transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
@@ -371,7 +365,7 @@
 #navbar-search.is-open .search-icon,
 .no-js #navbar-search .search-icon {
 	background: white;
-	color: $primary-color;
+	color: $brand-primary;
 	z-index: 11;
   border-radius: 0 $input-border-radius $input-border-radius 0;
 }

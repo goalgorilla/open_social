@@ -13,7 +13,7 @@
   position: relative;
   vertical-align: middle;
   border-radius: 10px 10px 0 0;
-  padding: 15px 20px 0;
+  padding: 15px $card-padding 0;
   color: $gray-light;
   line-height: 1;
 }
@@ -71,14 +71,9 @@ a.card:hover {
 }
 
 .card-nested-section {
-  background: $grey-light-3;
-  border-top: 1px darken($gray-lighter, 10%) solid;
-  border-bottom: 1px darken($gray-lighter, 10%) solid;
-  margin-top: 0;
-  margin-left: -$card-padding;
-  margin-right: -$card-padding;
-  margin-bottom: $card-padding;
+  margin: 10px -20px -20px;
   padding: $card-padding;
+  background: $grey-light-3;
 
   .extra-padding & {
     @include MQ($small) {
@@ -88,8 +83,9 @@ a.card:hover {
     }
   }
 
-  hr {
-    border-top-color: darken($gray-lighter, 10%);
+  &.indented {
+    margin: -20px -20px 0;
+    background: transparent;
   }
 
   textarea {
@@ -111,18 +107,6 @@ a.card:hover {
   }
 }
 
-
-// Desktop cards are only displayed on desktop.
-.visible-sm-card {
-
-  @include MQ($small) {
-    border-radius: 10px;
-    transition: box-shadow .25s;
-    background-clip: padding-box;
-    @include z-depth-1;
-  }
-
-}
 
 .card {
   p:first-child {
@@ -208,14 +192,6 @@ a.card:hover {
     div {
       line-height: 1;
     }
-  }
-
-  .card-status {
-    line-height: $button-height;
-    font-size: $button-font-size;
-    color: $primary-color;
-    font-weight: 500;
-    text-transform: uppercase;
   }
 
   .card-title {

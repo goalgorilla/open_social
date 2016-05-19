@@ -48,7 +48,7 @@
         border-bottom-color: transparent;
 
         @include MQ($small) {
-          border-bottom: 2px solid $primary-color;
+          border-bottom: 2px solid $brand-primary;
         }
 
       }
@@ -58,6 +58,11 @@
 
   .card-underline .card-head & {
     border-bottom: none;
+  }
+
+  &.card-head {
+    padding: 0;
+    overflow: hidden;
   }
 
 
@@ -96,7 +101,7 @@
   > .active > a,
   > .active > a:hover,
   > .active > a:focus {
-    border-bottom: 2px solid $primary-color;
+    border-bottom: 2px solid $brand-primary;
   }
 
   @include MQ($small) {
@@ -108,10 +113,10 @@
 
   }
 
-  .card-underline .card-head & {
-    margin-bottom: -1px;
-  }
+}
 
+.card-underline .card-head.nav-tabs-justified a {
+  margin-bottom: -1px;
 }
 
 @include MQ($small) {
@@ -187,7 +192,7 @@
 .tabs-below > .nav-tabs > .active > a {
 	&, &:hover, &:focus {
 		border-bottom: none;
-		border-top: 2px solid $primary-color;
+		border-top: 2px solid $brand-primary;
 	}
 }
 
@@ -248,7 +253,7 @@
 .tabs-left > .nav-tabs .active > a {
 	&, &:hover, &:focus {
 		border-bottom: none;
-		border-right: 2px solid $primary-color;
+		border-right: 2px solid $brand-primary;
 	}
 }
 
@@ -273,6 +278,6 @@
 .tabs-right > .nav-tabs .active > a {
 	&, &:hover, &:focus {
 		border-bottom: none;
-		border-left: 2px solid $primary-color;
+		border-left: 2px solid $brand-primary;
 	}
 }

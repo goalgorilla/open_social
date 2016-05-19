@@ -145,16 +145,16 @@ html(lang="en")
               .form-group
                 .checkbox
                   input#test9(type='checkbox')
-                  label(for='test9') Red
+                  label(for='test9') Default
                 .checkbox
                   input#test6(type='checkbox', checked)
-                  label(for='test6') Yellow
+                  label(for='test6') Default checked
                 .checkbox
-                  input#test7(type='checkbox', checked, disabled='disabled')
-                  label(for='test7') Green
+                  input#test7(type='checkbox', disabled='disabled')
+                  label(for='test7') Disabled 
                 .checkbox
-                  input#test8(type='checkbox', disabled='disabled')
-                  label(for='test8') Brown
+                  input#test8(type='checkbox', checked, disabled='disabled')
+                  label(for='test8') Disabled checked
               pre
                 code.language-markup.
 
@@ -222,17 +222,14 @@ html(lang="en")
               .form-group.form__type-managed-file
                 label File input label
                 .image-widget.form-managed-file.clearfix
-                  input.form-control(type='file', multiple='')
-                  button.btn.style-default.js-hide(value="upload")
-                    i.material-icons file_upload
+                  input.form-control(type='file')
                   .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
               pre
                 code.language-markup.
                   <div class="form-group form__type-managed-file">
                     <label>File input label</label>
                     <div class="image-widget form-managed-file clearfix">
-                      <input type="file" multiple="" class="form-control">
-                      <button value="upload" class="btn style-default js-hide"><i class="material-icons">file_upload</i></button>
+                      <input type="file" class="form-control">
                       <div class="help-block">One file only - 2 MB limit - Allowed types: png gif jpg jpeg</div>
                     </div>
                   </div>

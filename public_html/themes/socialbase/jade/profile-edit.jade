@@ -3,19 +3,17 @@ extends ./layout/base-lu.jade
 block title
   title Edit profile
 
-block pagetitle
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Edit profile         
 
       
 block content
       
   .row
+    .col-xs-12
+      h4.section-title Edit profile
   
-    .col-sm-4.col-sm-push-8
+    .col-xs-12.col-sm-4.col-sm-last
       .toc-wrapper
-        ul.section.table-of-contents
+        ul.table-of-contents
           li
             a(href='#name') Name &amp; profile image
           li
@@ -25,9 +23,9 @@ block content
           li 
             a(href='#details') Details about you
   
-    .col-sm-8.col-sm-pull-4.margin-top-l
+    .col-xs-12.col-sm-8
     
-      form(method='get', action='#')
+      form(method='get', action='my-profile-about.html')
       
         #name.card.card-underline.scrollspy
         
@@ -36,29 +34,45 @@ block content
       
           .card-body
 
-            .form-group
-              .row
-                .col-sm-6
+            .row
+              .col-xs-12.col-sm-6
+                .form-group
                   label First name
                   input.form-control(type="text", value='John')
-                .col-sm-6
+              .col-xs-12.col-sm-6
+                .form-group
                   label Last name
                   input.form-control(type="text", value='Johnson')
-                  
-            .form-group.form__type-managed-file
-              label Image
-              .image-widget.form-managed-file.clearfix
-                img.img-responsive.pull-left(src='content/images/avatar1.jpg', width='50')
-                .pull-left.padding-xs
-                  .file.file--image
-                  a(href='#', type="image/jpeg; length=158378") my-picture.jpg
-                  .file-size (91.78kb)
-                .pull-left.padding-xs
-                  button.btn.btn-user.form-submit(type='submit', value='remove')
-                    i.material-icons.pull-left delete
-                    | Remove
-              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-          
+              
+              .col-xs-12    
+                .form-group.form__type-managed-file
+                  label Profile image
+                  .image-widget.form-managed-file.clearfix
+                    img.img-responsive.pull-left(src='content/images/member5.jpg', width='50')
+                    .pull-left.padding-xs
+                      .file.file--image
+                      a(href='#', type="image/jpeg; length=158378") my-profile-picture.jpg
+                      .file-size (91.78kb)
+                    .pull-left.padding-xs
+                      button.btn.btn-default.form-submit(type='submit', value='remove')
+                        i.material-icons.pull-left delete
+                        | Remove
+                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+                
+                .form-group.form__type-managed-file
+                  label Cover image
+                  .image-widget.form-managed-file.clearfix
+                    img.img-responsive.pull-left(src='content/images/my-cover-big.jpg', width='150')
+                    .pull-left.padding-xs
+                      .file.file--image
+                      a(href='#', type="image/jpeg; length=158378") my-cover.jpg
+                      .file-size (123.89kb)
+                    .pull-left.padding-xs
+                      button.btn.btn-default.form-submit(type='submit', value='remove')
+                        i.material-icons.pull-left delete
+                        | Remove
+                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              
         #work.card.card-underline.scrollspy
         
           .card-head
@@ -66,14 +80,15 @@ block content
       
           .card-body 
 
-            .form-group
-              .row
-                .col-sm-6
+            .row
+              .col-xs-12.col-sm-6
+                .form-group                
                   label Function
-                  input.form-control(type="text", value='Executive director animal relations')
-                .col-sm-6
+                  input.form-control(type="text", value='Receptionist')
+              .col-xs-12.col-sm-6
+                .form-group
                   label Organisation
-                  input.form-control(type="text", value='The pet shop')
+                  input.form-control(type="text", value='Bastion Hotels')
 
         #contact.card.card-underline.scrollspy
         
@@ -121,18 +136,18 @@ block content
               label.form-required Write some details about yourself
               .textarea--cke
                 textarea#ckeditor.form-control(required)
-                  p Nullam quis risus eget urna mollis ornare vel eu leo. Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec id elit non mi porta gravida at eget metus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                  p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
 
             .form-group
               label Your expertises
-              input.form-control(type="text", value='')
+              input.form-control(type="text", value='drupal, sales, barbecues')
             
             .form-group
               label Your interests
-              input.form-control(type="text", value='')
+              input.form-control(type="text", value='php, interaction design, cooking')
               
         .form-actions.clearfix
-          a.waves-effect.waves-light.btn.btn-raised.btn-user(href="my-profile-about.html") Discard changes
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
 
     

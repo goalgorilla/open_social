@@ -88,7 +88,7 @@ h6, .h6 {
 }
 
 .header {
-	color: $primary-color;
+	color: $brand-primary;
 	font-weight: 300;
 }
 
@@ -101,7 +101,7 @@ h6, .h6 {
 blockquote {
   margin: 20px 0;
   padding-left: 1.5em;
-  border-left: 3px solid $primary-color;
+  border-left: 3px solid $brand-primary;
 	font-weight: 500;
 }
 
@@ -138,15 +138,33 @@ ol {
 	letter-spacing: 0.05em;
 
   @include MQ($small) {
-    padding-left: 48px;
-    margin: 1em 0 .5em
+    padding-left: 20px;
+    margin: 1em 0 .5em;
+
+		&.section-title-stream {
+			padding-left: 40px;
+		}
+
+		&.section-title-node {
+			padding-left: 48px;
+		}
   }
+
 }
+
+
 
 .text-caption {
   display: block;
   margin-bottom: 24px;
   font-size: 12px;
+}
+
+.text-truncate {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 // Sizes
@@ -168,10 +186,12 @@ ol {
 
 
 //
+@include bg-variant('.bg-gray-light', $grey-light-3);
+@include bg-variant('.bg-white', white);
 
 @include style-variant('.brand-primary', $brand-primary, white);
 @include style-variant('.brand-secondary', $brand-secondary, white);
 @include style-variant('.brand-accent', $brand-accent, $default-color);
-@include style-variant('.brand-user', $user-color, white);
+@include style-variant('.brand-user', $gray-darker, white);
 
 @include style-variant('.default-light', $gray-lighter, $default-color);

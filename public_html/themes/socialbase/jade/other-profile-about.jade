@@ -5,29 +5,20 @@ block title
 
 block pagetitle
   .container.hidden-xs
-    .cover
-      .cover-wrap
-        h1.page-title.h2 Jenny Baker
-        img.img-circle(src='content/images/avatar5.jpg')
-        br
-        br
-        button.btn.btn-flat.btn--default-bright
-          i.material-icons.pull-left check
-          | Following
-          
-block secondary_navigation
-  .container
-    .visible-xs-block.section
-      a.btn.btn-raised.btn-user(href="my-stream.html")
-        i.material-icons.pull-left keyboard_arrow_left
-        | Back to the stream
+    include ./molecules/_other-profile-hero.jade
 
+  .container    
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user(href="other-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to Jenny`s stream
+          
   .container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li
+          li.hidden-xs
             a(href="other-stream.html") Stream  
           li.active
             a(href="other-profile-about.html") About
@@ -37,7 +28,7 @@ block secondary_navigation
           li
             a(href='other-events.html') Events  
           li
-            a(href="#") Groups
+            a(href="other-groups.html") Groups
       
 block content
   
@@ -50,19 +41,20 @@ block content
       .card
         .card-body.extra-padding
         
-          ul.collection
-            li.collection-item
-              h4 Contact information
-            li.collection-item 
-              .collection-label Phone
-              .collection-field +31 658974324
-            li.collection-item 
-              .collection-label E-mail
-              .collection-field 
-                a(href="example@domain.com") jenny@jennybaker.com    
-            li.collection-item 
-              .collection-label Address
-              .collection-field 
+          .list-group.list-group-divider
+            .list-group-item
+              .list-group-item-heading
+                h4 Contact information
+            .list-group-item
+              .list-group-label Phone
+              .list-group-field +31 658974324
+            .list-group-item
+              .list-group-label E-mail
+              .list-group-field 
+                a(href="mailto:example@domain.com") jenny@jennybaker.com    
+            .list-group-item
+              .list-group-label Address
+              .list-group-field 
                 | My street name 123 
                 br
                 | 1234 BB

@@ -48,14 +48,13 @@ html(lang="en")
               .row
                 .col-xs-12.col-md-6
                   .card.card-underline
-                    .card-head
-                      ul.nav.nav-tabs(data-toggle="tabs")
-                        li.active
-                          a(href="#first1") First item
-                        li
-                          a(href="#second1") Second item
-                        li
-                          a(href="#third1") Third item
+                    ul.card-head.nav.nav-tabs(data-toggle="tabs")
+                      li.active
+                        a(href="#first1") First item
+                      li
+                        a(href="#second1") Second item
+                      li
+                        a(href="#third1") Third item
                           
                     .card-body.tab-content
                       #first1.tab-pane.active
@@ -69,8 +68,8 @@ html(lang="en")
 
                 .col-xs-12.col-md-6
                   .card.card-underline
-                    .card-head
-                      ul.nav.nav-tabs.nav-tabs-right(data-toggle="tabs")
+                    .clearfix
+                      ul.card-head.nav.nav-tabs.nav-tabs-right(data-toggle="tabs")
                         li.active
                           a(href="#first2") First item
                         li
@@ -87,14 +86,13 @@ html(lang="en")
               .row
                 .col-xs-12.col-md-6
                   .card.card-underline
-                    .card-head
-                      ul.nav.nav-tabs.tabs-center(data-toggle="tabs")
-                        li.active
-                          a(href="#first3") First item
-                        li
-                          a(href="#second3") Second item
-                        li
-                          a(href="#third3") Third item
+                    ul.card-head.nav.nav-tabs.tabs-center(data-toggle="tabs")
+                      li.active
+                        a(href="#first3") First item
+                      li
+                        a(href="#second3") Second item
+                      li
+                        a(href="#third3") Third item
                           
                     .card-body.tab-content
                       #first3.tab-pane.active
@@ -108,12 +106,11 @@ html(lang="en")
 
                 .col-xs-12.col-md-6
                   .card.card-underline
-                    .card-head
-                      ul.nav.nav-tabs.nav-justified(data-toggle="tabs")
-                        li.active
-                          a(href="#first4") First item
-                        li
-                          a(href="#second4") Second item
+                    ul.card-head.nav.nav-tabs.nav-justified(data-toggle="tabs")
+                      li.active
+                        a(href="#first4") First item
+                      li
+                        a(href="#second4") Second item
                       
                     .card-body.tab-content
                       #first4.tab-pane.active
@@ -203,7 +200,7 @@ html(lang="en")
               .row 
                 .col-xs-12.col-sm-6
                   .card
-                    ul.card-head.nav.nav-tabs.style-default(data-toggle="tabs")
+                    ul.card-head.nav.nav-tabs.default-light(data-toggle="tabs")
                       li.active
                         a(href="#first8") First item
                       li
@@ -219,7 +216,7 @@ html(lang="en")
                         p Default color 3
                 .col-xs-12.col-sm-6
                   .card
-                    ul.card-head.nav.nav-tabs.style-default-light(data-toggle="tabs")
+                    ul.card-head.nav.nav-tabs(data-toggle="tabs")
                       li.active
                         a(href="#first9") First item
                       li
@@ -233,26 +230,10 @@ html(lang="en")
                         p Default light color 2
                       #third9.tab-pane  
                         p Default light color 3
-                .col-xs-12.col-sm-6
-                  .card
-                    ul.card-head.nav.nav-tabs.style-default-bright(data-toggle="tabs")
-                      li.active
-                        a(href="#first10") First item
-                      li
-                        a(href="#second10") Second item
-                      li
-                        a(href="#third10") Third item
-                    .card-body.tab-content
-                      #first10.tab-pane.active
-                        p Default bright color 1
-                      #second10.tab-pane  
-                        p Default bright color 2
-                      #third10.tab-pane  
-                        p Default bright color 3
                 
                 .col-xs-12.col-sm-6
                   .card
-                    ul.card-head.nav.nav-tabs.style-primary(data-toggle="tabs")
+                    ul.card-head.nav.nav-tabs.brand-primary(data-toggle="tabs")
                       li.active
                         a(href="#first11") First item
                       li
@@ -269,7 +250,7 @@ html(lang="en")
                                  
                 .col-xs-12.col-sm-6
                   .card
-                    ul.card-head.nav.nav-tabs.style-primary-dark(data-toggle="tabs")
+                    ul.card-head.nav.nav-tabs.brand-secondary(data-toggle="tabs")
                       li.active
                         a(href="#first12") First item
                       li
@@ -278,10 +259,10 @@ html(lang="en")
                         a(href="#third12") Third item
                     .card-body.tab-content
                       #first12.tab-pane.active
-                        p Primary dark color 1
+                        p Secondary color 1
                       #second12.tab-pane  
-                        p Primary dark color 2
+                        p Secondary color 2
                       #third12.tab-pane  
-                        p Primary dark color 3
+                        p Secondary color 3
                   
     include ./layout/_scripts.jade

@@ -31,29 +31,34 @@ i {
 }
 
 
-// Image sizes for profile pictures in hero areas and streams
-.img-medium {
+// Image sizes for in hero areas
+.img-large {
   width: 60px;
   height: 60px;
-  border: 2px solid white;
 
   @include MQ($small) {
     width: 128px;
     height: 128px;
-    border-width: 5px;
   }
 
 }
 
-.img-small {
+// Image sizes for in posts and streams
+.img-medium {
   width: 44px;
   height: 44px;
-  border-width: 2px;
 }
 
-.img-tiny {
+// Image sizes for in navbar
+.img-small {
   width: 24px;
   height: 24px;
+}
+
+// Image sizes for in lists
+.img-tiny {
+  width: 16px;
+  height: 16px;
 }
 
 .img-grid {
@@ -90,10 +95,17 @@ i {
 .padding-lg { padding: 48px; }
 .no-side-padding { padding: 24px 0; }
 
+.no-border { border: 0 !important;}
 
 .inline-center {
-  display: inline-block;
-  vertical-align: middle;  
+  vertical-align: middle;
+  line-height: 1;
+  margin-right: 5px;
+}
+
+// can be used on anchor that need to display as a block
+.block {
+  display: block;
 }
 
 // Pushpin
