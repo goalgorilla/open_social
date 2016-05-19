@@ -2,27 +2,27 @@ langcode: en
 status: true
 dependencies:
   config:
-    - views.view.search_users
+    - views.view.latest_topics
   module:
     - system
     - views
   theme:
     - socialbase
-id: exposed_form_search_users_page_sidebar
+id: views_block__latest_topics_default
 theme: socialbase
 region: complementary
-weight: -9
+weight: null
 provider: null
-plugin: 'views_exposed_filter_block:search_users-page'
+plugin: 'views_block:latest_topics-block_latest_topics'
 settings:
-  id: 'views_exposed_filter_block:search_users-page'
+  id: 'views_block:latest_topics-block_latest_topics'
   label: ''
   provider: views
   label_display: visible
-  views_label: 'Filter users'
+  views_label: ''
 visibility:
   request_path:
     id: request_path
-    pages: "/search/users\r\n/search/users/*"
+    pages: '<front>'
     negate: false
     context_mapping: {  }
