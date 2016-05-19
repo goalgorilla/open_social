@@ -125,18 +125,13 @@ gulp.task('script-components', function() {
     folder.js_comp + "/hammer.min.js",
     folder.js_comp + "/jquery.hammer.js",
     folder.js_comp + "/global.js",
-    folder.js_comp + "/responsive-dom.js",
-    folder.js_comp + "/jquery.timeago.min.js",
     folder.js_comp + "/collapsible.js",
     folder.js_comp + "/scrollspy.js",
     folder.js_comp + "/pushpin.js",
     folder.js_comp + "/sideNav.js",
-    folder.js_comp + "/buttons.js",
     folder.js_comp + "/waves.js",
-    folder.js_comp + "/tabs.js",
     folder.js_comp + "/offcanvas.js",
-    folder.js_comp + "/forms.js",
-    folder.js_comp + "/character_counter.js"
+    folder.js_comp + "/forms.js"
     ])
     .pipe( concat('components.js') )
     .pipe( gulp.dest(folder.js) )
