@@ -6,6 +6,7 @@ dependencies:
     - group.content_type.open_group-group_node-topic
   module:
     - group
+    - user
 id: group_topics
 label: 'Group Topics'
 module: views
@@ -22,8 +23,9 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access content'
       cache:
         type: tag
         options: {  }
@@ -228,6 +230,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags: {  }
   page_group_topics:
     display_plugin: page
@@ -244,4 +247,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags: {  }

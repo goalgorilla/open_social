@@ -6,6 +6,7 @@ dependencies:
     - group.content_type.open_group-group_node-event
   module:
     - group
+    - user
 id: group_events
 label: 'Group Events'
 module: views
@@ -22,8 +23,9 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access content'
       cache:
         type: tag
         options: {  }
@@ -197,6 +199,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags: {  }
   page_group_events:
     display_plugin: page
@@ -213,4 +216,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags: {  }
