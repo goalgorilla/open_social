@@ -2,27 +2,28 @@ langcode: en
 status: true
 dependencies:
   config:
-    - views.view.search_users
+    - views.view.upcoming_events
   module:
     - system
     - views
   theme:
     - socialbase
-id: exposed_form_search_users_page_sidebar
+id: views_block__upcoming_events_block_community_events
 theme: socialbase
 region: complementary
-weight: -9
+weight: -13
 provider: null
-plugin: 'views_exposed_filter_block:search_users-page'
+plugin: 'views_block:upcoming_events-block_community_events'
 settings:
-  id: 'views_exposed_filter_block:search_users-page'
+  id: 'views_block:upcoming_events-block_community_events'
   label: ''
   provider: views
   label_display: visible
-  views_label: 'Filter users'
+  views_label: ''
+  items_per_page: none
 visibility:
   request_path:
     id: request_path
-    pages: "/search/users\r\n/search/users/*"
+    pages: '<front>'
     negate: false
     context_mapping: {  }
