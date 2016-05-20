@@ -1,0 +1,43 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="list-group-item">
+    <a href="{{ profile_url }}" class="list-group-item media">
+        <div class="media-left media-middle">
+            {% if content.field_profile_image %}
+                {{ content.field_profile_image }}
+            {% endif %}
+        </div>
+
+        <div class="media-body media-middle">
+            {{ profile_name|render }}
+        </div>
+
+    </a>
+    {{ title_prefix }}
+    {% if not page %}
+        <h2{{ title_attributes }} class="h3 card-title">
+            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h2>
+    {% endif %}
+    {{ title_suffix }}
+    <div class="text-grey">{{ date }}</div>
+</div>

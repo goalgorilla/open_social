@@ -221,6 +221,12 @@ function socialbase_preprocess_node(&$variables) {
       $variables['attributes']['class'][] = 'unpublished';
     }
   }
+
+  if ($variables['view_mode'] === 'small_teaser') {
+    $date = $variables['node']->getCreatedTime();
+    $variables['date'] = \Drupal::service('date.formatter')->format($date, 'day_month');
+  }
+
 }
 
 /**
