@@ -7,7 +7,7 @@ cd /var/www/html/;
 # composer drupal-rebuild
 # composer update --lock
 
-EXTRA=$1
+LOCAL=$1
 
 fn_sleep() {
   if [[ $LOCAL != "nopause" ]]
