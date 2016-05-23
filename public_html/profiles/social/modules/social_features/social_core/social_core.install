@@ -20,4 +20,55 @@ function social_core_install() {
     'override topic published option',
   ));
 
+  _social_core_create_an_homepage_block();
+}
+
+function _social_core_create_an_homepage_block() {
+  // TODO: use a better image from the theme.
+  // Block image.
+  $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/06.jpg', 'public://06.jpg', FILE_EXISTS_REPLACE);
+
+  $media = \Drupal\file\Entity\File::create(array(
+    'langcode' => 'en',
+    'uid' => 1,
+    'status' => 1,
+    'uri' => $uri,
+  ));
+  $media->save();
+
+  $fid = $media->id();
+
+  // Create a block with a specific uuid so we can use it in the config
+  // to load it into the theme see block.block.anhomepageheroblock.yml.
+  $block = \Drupal::entityTypeManager()->getStorage('block_content')->create(array(
+    'type' => 'hero_call_to_action_block',
+    'info' => 'AN homepage hero block',
+    'uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4',
+  ));
+  $block->field_text_block = array(
+    'value' => '<h3>Title of the AN homepage bllock (todo change this)</h3><p> Text in the AN homepage block</p>',
+    'format' => 'full_html',
+  );
+
+  $block_image = array(
+    'target_id' => $fid,
+    'alt' => "Anonymous front page image homepage'",
+  );
+  $block->field_hero_image = $block_image;
+
+  // Set the links.
+  $action_links = array(
+    array(
+      'uri' => 'internal:/user/register',
+      'title' => 'Sign up',
+    ),
+    array(
+      'uri' => 'internal:/user/login',
+      'title' => 'Login',
+    ),
+  );
+  $itemList = new \Drupal\Core\Field\FieldItemList($block->field_call_to_action_link->getFieldDefinition());
+  $itemList->setValue($action_links);
+  $block->field_call_to_action_link = $itemList;
+  $block->save();
 }
