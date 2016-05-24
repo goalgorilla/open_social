@@ -1,40 +1,40 @@
+uuid: 6c345d9c-b48e-4a48-b71c-9d9c794b65c8
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_form_mode.post.group
     - field.field.post.post.field_post
     - field.field.post.post.field_post_comments
     - field.field.post.post.field_recipient_group
     - field.field.post.post.field_recipient_user
     - field.field.post.post.field_visibility
   module:
+    - dropdown
     - social_post
-    - user
-id: post.post.default
+_core:
+  default_config_hash: 39QDp9EiKWEfpmPm75fVDM3iKmTZzlCIazNdb-tV_cc
+id: post.post.group
 targetEntityType: post
 bundle: post
-mode: default
+mode: group
 content:
   field_post:
-    type: basic_string
-    weight: 1
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-  field_post_comments:
-    type: comment_post
-    weight: 2
+    type: string_textarea
+    weight: 0
     label: hidden
     settings:
-      num_comments: 0
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
-  user_id:
-    label: hidden
-    type: author
-    weight: 0
+  field_visibility:
+    type: dropdown_widget_type
+    weight: 1
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_post_comments: true
   field_recipient_group: true
   field_recipient_user: true
-  field_visibility: true
+  langcode: true
+  user_id: true

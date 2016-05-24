@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.post.teaser
   module:
     - social_post
     - user
@@ -227,6 +229,68 @@ display:
       display_extenders: {  }
       display_description: ''
       block_description: StreamAccountBlock
+      filters:
+        post_account_stream_filter:
+          id: post_account_stream_filter
+          table: post
+          field: post_account_stream_filter
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: post
+          plugin_id: post_account_stream
+      defaults:
+        filters: false
+        filter_groups: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  block_stream_group:
+    display_plugin: block
+    id: block_stream_group
+    display_title: StreamGroupBlock
+    position: 2
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      block_description: StreamGroupBlock
       filters:
         post_account_stream_filter:
           id: post_account_stream_filter
