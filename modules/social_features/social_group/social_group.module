@@ -159,11 +159,23 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
   $cache_tag = 'group_membership:' . $group->id();
   Cache::invalidateTags(array($cache_tag));
 
-  // Set redirect to group home page.
-  $form_state->setRedirect(
-    'entity.group.canonical',
-    array('group' => $group->id(), array())
-  );
+  // Get form that was submitted.
+  $complete_form = $form_state->getCompleteForm();
+
+  if ($complete_form['#form_id'] == 'group_content_open_group-group_membership_group-join_form') {
+    // Set redirect to group home page.
+    $form_state->setRedirect(
+      'entity.group.canonical',
+      array('group' => $group->id(), array())
+    );
+  }
+  else {
+    // Set redirect to the Group overview page when a user saves their profile.
+    $form_state->setRedirect(
+      'view.groups.user_groups',
+      array('user' =>\Drupal::currentUser()->id(), array())
+    );
+  }
 }
 
 /**
