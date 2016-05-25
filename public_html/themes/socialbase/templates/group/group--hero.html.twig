@@ -46,10 +46,10 @@
             {% if joined %}
               <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">Joined<span class="caret"></span></button>
               <ul class="dropdown-menu">
-                <li><a href="#">Leave group</a></li>
+                <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
               </ul>
             {% else %}
-              <a href="" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join group">Join</a>
+              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
             {% endif %}
           </div>
         </div>
