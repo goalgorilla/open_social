@@ -63,6 +63,15 @@ function social_post_views_data_alter(array &$data) {
       'id' => 'post_account_stream',
     ),
   );
+  $data['post']['post_group_stream_filter'] = array(
+    'title' => t('Post group stream'),
+    'filter' => array(
+      'title' => t('Post group stream'),
+      'help' => t('Enable post for the group stream.'),
+      'field' => 'field_visibility',
+      'id' => 'post_group_stream',
+    ),
+  );
 }
 
 /**
