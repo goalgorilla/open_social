@@ -16,6 +16,8 @@ block content
           li
             a(href='#content') Content
           li
+            a(href='#visibility') Visibility
+          li
             a(href='#description') Description
           li
             a(href='#comment-settings') Comment settings
@@ -58,6 +60,24 @@ block content
                     | Remove
               .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
           
+        #visibility.card.card-underline.scrollspy
+        
+          .card-head
+            header Visibility
+      
+          .card-body
+
+            .form-group.radios
+              label.form-required Visibility
+              .radio
+                input#community(type='radio', name='type', checked)
+                label(for='community') Community
+                .help-block Visible for members only
+              .radio
+                input#public(type='radio', name='type')
+                label(for='public') Public
+                .help-block Visible for everyone, including people who are not a member
+        
         #description.card.card-underline.scrollspy
         
           .card-head

@@ -15,6 +15,8 @@ block content
         li
           a(href='#content') Title &amp; image
         li 
+          a(href='#visibility') Visibility
+        li 
           a(href='#eventtime') Date &amp; time
         li 
           a(href='#location') Location
@@ -49,6 +51,24 @@ block content
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
 
+        #visibility.card.card-underline.scrollspy
+        
+          .card-head
+            header Visibility
+      
+          .card-body
+
+            .form-group.radios
+              label.form-required Visibility
+              .radio
+                input#community(type='radio', name='type')
+                label(for='community') Community
+                .help-block Visible for members only
+              .radio
+                input#public(type='radio', name='type')
+                label(for='public') Public
+                .help-block Visible for everyone, including people who are not a member
+                
         #eventtime.card.card-underline.scrollspy
         
           .card-head
