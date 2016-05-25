@@ -29,9 +29,17 @@
 {% endif %}
 
 {% if author_name and created_date_formatted %}
-{% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
+    {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
 {% endif %}
 
-{% if topic_type %}
-{% trans %}in {{ topic_type }}{% endtrans %}
-{% endif %}
+<div>
+    {% if topic_type %}
+        <i class="material-icons">label</i>
+        {{ topic_type }}
+    {% endif %}
+
+    {% if group_link %}
+        <i class="custom-icons icon-group"></i>
+        {{ group_link }}
+    {% endif %}
+</div>
