@@ -19,7 +19,7 @@
   <i class="stream-icon"></i>
 
   <div class="card stream-card">
-    <div class="card-body extra-padding">
+    <div class="card-body">
       <div class="media">
         <div class="media-left">
           {% if author_picture %}
@@ -34,6 +34,9 @@
             {% endif %}
             <small>{{ date }}</small>
           </h5>
+          {% if content.links|render %}
+            {{ content.links }}
+          {% endif %}
         </div>
       </div>
       <p class="margin-top-s">
@@ -41,9 +44,6 @@
           {{ content.field_post }}
         {% endif %}
       </p>
-      {% if content.links %}
-        {{ content.links }}
-      {% endif %}
       <div class="card-nested-section">
         {% if content.field_post_comments %}
           {{ content.field_post_comments }}

@@ -1,6 +1,9 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - system
+    - user
   theme:
     - socialbase
 id: socialbase_local_tasks
@@ -16,4 +19,16 @@ settings:
   label_display: '0'
   primary: true
   secondary: true
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: ''
+    negate: true
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
