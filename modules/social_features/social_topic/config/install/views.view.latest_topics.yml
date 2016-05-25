@@ -5,8 +5,10 @@ dependencies:
     - core.entity_view_mode.node.small_teaser
     - core.entity_view_mode.node.teaser
     - node.type.topic
+    - taxonomy.vocabulary.topic_types
   module:
     - node
+    - taxonomy
     - user
 id: latest_topics
 label: 'Latest topics'
@@ -203,6 +205,8 @@ display:
         style: false
         row: false
         pager: false
+        filters: false
+        filter_groups: false
       row:
         type: 'entity:node'
         options:
@@ -230,12 +234,85 @@ display:
             offset_label: Offset
           quantity: 9
       path: newest-topics
+      filters:
+        status:
+          value: true
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            topic: topic
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+        field_topic_type_target_id:
+          id: field_topic_type_target_id
+          table: node__field_topic_type
+          field: field_topic_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: field_topic_type_expose_filter
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topic_type_target_id_op
+            label: 'What type of topics do you want to see?'
+            description: ''
+            use_operator: false
+            operator: field_topic_type_target_id_op
+            identifier: field_topic_type_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: topic_types
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
