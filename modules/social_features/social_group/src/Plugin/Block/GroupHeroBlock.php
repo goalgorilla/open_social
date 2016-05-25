@@ -73,6 +73,7 @@ class GroupHeroBlock extends BlockBase {
 
     $build['#cache']['tags'] = $tags;
 
+    // @TODO remove this and make sure above cache tags work well!!!
     $build['#cache'] = array(
       'max-age' => 0
     );

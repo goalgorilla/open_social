@@ -7,6 +7,7 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Url;
 use Drupal\group\Plugin\GroupContentEnabler;
 use Drupal\Core\Cache\Cache;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * @file
@@ -75,6 +76,13 @@ function social_group_preprocess_group(&$variables) {
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
   }
 
+  // Add the hero styled image.
+  if (!empty($group->field_group_image->entity)) {
+    $variables['group_hero_styled_image_url'] = ImageStyle::load('hero_background')
+      ->buildUrl($group->field_group_image->entity->getFileUri());
+  }
+
+  // Add group edit url for management.
   if ($group instanceof Drupal\group\Entity\Group) {
     if ($group->access('update', $account)) {
       $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
