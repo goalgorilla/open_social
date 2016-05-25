@@ -121,3 +121,13 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
     }
   }
 }
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_group_menu_local_tasks_alter(&$data, $route_name) {
+  // Hide default Group "Members" tab, because we add our own tab.
+  if (isset($data['tabs'][0]['group.members'])){
+    unset($data['tabs'][0]['group.members']);
+  }
+}
