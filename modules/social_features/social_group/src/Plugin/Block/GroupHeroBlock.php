@@ -74,7 +74,7 @@ class GroupHeroBlock extends BlockBase {
     $build['#cache']['tags'] = $tags;
 
     $build['#cache'] = array(
-      'max-age' => 0;
+      'max-age' => 0
     );
 
     return $build;
