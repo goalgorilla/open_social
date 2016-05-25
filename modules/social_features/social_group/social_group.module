@@ -107,10 +107,12 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
           // Get Profile entity.
           $user_profile = $storage->loadByUser($user_entity, 'profile');
           if ($user_profile) {
+            // Use teaser for page and small_teaser for block.
+            $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
             // Replace output with profile teaser.
             $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
               ->getViewBuilder('profile')
-              ->view($user_profile, 'teaser');
+              ->view($user_profile, $view_mode);
           }
           else {
             // Remove output if user don't have profile (admin).
