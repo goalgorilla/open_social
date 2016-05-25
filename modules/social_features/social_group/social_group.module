@@ -5,6 +5,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Url;
+use Drupal\group\Plugin\GroupContentEnabler;
+use Drupal\Core\Cache\Cache;
 
 /**
  * @file
@@ -61,8 +63,16 @@ function social_group_preprocess_group(&$variables) {
 
   // Set joined to true for teaser when current logged in
   // user is member of the group.
-  if ($group->getMember($variables['user'])) {
+  if ($group->getMember($account)) {
     $variables['joined'] = TRUE;
+    if ($group->hasPermission('leave group', $account)) {
+      // @todo switch this to get URL from routes correctly.
+      $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
+    }
+  }
+  elseif ($group->hasPermission('join group', $account)) {
+    // @todo switch this to get URL from routes correctly.
+    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
   }
 
   if ($group instanceof Drupal\group\Entity\Group) {
@@ -97,6 +107,16 @@ function social_group_group_insert(GroupInterface $group) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $action_forms = array(
+    'group_content_open_group-group_membership_group-join_form',
+    'group_content_open_group-group_membership_group-leave_form'
+  );
+
+  // Perform alterations on joining / leaving groups.
+  if (in_array($form_id, $action_forms)) {
+    $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
+  }
+
   $content_forms = array(
     'group_content_open_group-group_node-topic_gnode-form_form',
     'group_content_open_group-group_node-event_gnode-form_form',
@@ -108,6 +128,34 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
   }
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for group join / leave form.
+ *
+ */
+function _social_group_action_form_submit($form, FormStateInterface $form_state) {
+  // Invalidate our cache!
+  $group = \Drupal::routeMatch()->getParameter('group');
+
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+
+  // Invalidate cache.
+  $cache_tag = 'group_membership:' . $group->id();
+  Cache::invalidateTags(array($cache_tag));
+
+  // Set redirect to group home page.
+  $form_state->setRedirect(
+    'entity.group.canonical',
+    array('group' => $group->id(), array())
+  );
 }
 
 /**
