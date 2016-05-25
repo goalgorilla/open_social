@@ -4,6 +4,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\Core\Url;
 
 /**
  * @file
@@ -37,7 +38,7 @@ function _social_group_group_open_group_edit_form_submit($form, FormStateInterfa
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
     'view.groups.user_groups',
-    array('user' =>\Drupal::currentUser()->id(), array())
+    array('user' => \Drupal::currentUser()->id(), array())
   );
 }
 
@@ -82,5 +83,47 @@ function social_group_group_insert(GroupInterface $group) {
         'entity_id' => $group->getOwnerId(),
       ] + $values);
     $group_content->save();
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $content_forms = array(
+    'group_content_open_group-group_node-topic_gnode-form_form',
+    'group_content_open_group-group_node-event_gnode-form_form',
+  );
+  // Check if form is group content create form.
+  // @TODO: Remove or fix checking of second step when group module changes.
+  if (in_array($form_id, $content_forms) && $form['actions']['submit']['#value'] == 'Create node in group') {
+    // Add custom submit handler just for redirect purposes. We don't want to
+    // override the form::save in group.
+    $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+  }
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for group content create form.
+ *
+ */
+function _social_group_node_form_submit($form, FormStateInterface $form_state) {
+  // Set redirect after group content creation to the default node '/node/%nid'
+  // not to the group node.
+  $route_params = $form_state->getRedirect()->getRouteParameters();
+  if (!empty($route_params['group_content'])) {
+    // Get node reference.
+    $group_content = \Drupal::entityTypeManager()
+      ->getStorage('group_content')
+      ->load($route_params['group_content']);
+    $node_reference = reset($group_content->get('entity_id')->getValue());
+    // Set redirect.
+    $form_state->setRedirect(
+      'entity.node.canonical',
+      array('node' => $node_reference['target_id'], array())
+    );
   }
 }
