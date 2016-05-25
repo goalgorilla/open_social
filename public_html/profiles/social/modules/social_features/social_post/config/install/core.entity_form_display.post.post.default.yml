@@ -23,22 +23,6 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-  field_recipient_group:
-    weight: 2
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-  field_recipient_user:
-    type: entity_reference_autocomplete
-    weight: 3
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_visibility:
     type: dropdown_widget_type
     weight: 1
@@ -46,5 +30,7 @@ content:
     third_party_settings: {  }
 hidden:
   field_post_comments: true
+  field_recipient_group: true
+  field_recipient_user: true
   langcode: true
   user_id: true
