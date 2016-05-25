@@ -79,8 +79,11 @@ Feature: Enroll for an event
     Given users:
       | name            | pass            | mail                        | status |
       | eventenrollment | eventenrollment | eventenrollment@example.com | 1      |
-    And I am logged in as "eventenrollment"
-    And I am viewing my "event" with the title "Enrollment test event"
+    When I am logged in as "eventenrollment"
+    And I am viewing my event:
+      | title            | Enrollment test event |
+      | field_event_date | 3014-10-17 8:00am     |
+      | status           | 1                     |
     And I click "eventenrollment"
     And I click "Events"
     Then I should not see "Enrolled"
