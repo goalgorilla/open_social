@@ -53,6 +53,9 @@ display:
           offset: 0
           id: 0
           total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -61,9 +64,6 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
       style:
         type: default
       row:
@@ -146,7 +146,14 @@ display:
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
-      sorts: {  }
+      sorts:
+        created:
+          id: created
+          table: group_content_field_data
+          field: created
+          entity_type: group_content
+          entity_field: created
+          plugin_id: date
       title: 'Group Members'
       header: {  }
       footer: {  }
@@ -211,6 +218,49 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
+      tags: {  }
+  block_newest_members:
+    display_plugin: block
+    id: block_newest_members
+    display_title: Block
+    position: 2
+    display_options:
+      display_extenders: {  }
+      title: 'Newest Members'
+      defaults:
+        title: false
+        pager: false
+        sorts: false
+        empty: false
+      pager:
+        type: some
+        options:
+          items_per_page: 2
+          offset: 0
+      sorts:
+        created:
+          id: created
+          table: group_content_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          entity_type: group_content
+          entity_field: created
+          plugin_id: date
+      empty: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
         - user.permissions
       tags: {  }
   page_group_members:
