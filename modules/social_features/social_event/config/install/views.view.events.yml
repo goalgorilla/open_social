@@ -210,18 +210,18 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '>='
+          operator: '='
           value:
             min: ''
             max: ''
             value: ''
-            type: date
+            type: offset
           group: 1
           exposed: true
           expose:
             operator_id: field_event_date_value_op
-            label: 'Event time'
-            description: ''
+            label: Start date
+            description: null
             use_operator: false
             operator: field_event_date_value_op
             identifier: field_event_date_value
@@ -230,8 +230,34 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
+          is_grouped: true
+          group_info:
+            label: 'What events do you want to see?'
+            description: ''
+            identifier: field_event_date_value
+            optional: false
+            widget: radios
+            multiple: false
+            remember: false
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'Upcoming events'
+                operator: '>='
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
+              2:
+                title: 'Events that have started or are finished'
+                operator: '<'
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
           is_grouped: false
           group_info:
             label: ''
@@ -303,7 +329,7 @@ display:
           entity_field: uid
           plugin_id: numeric
       display_extenders: {  }
-      use_ajax: true
+      use_ajax: false
       filter_groups:
         operator: AND
         groups:
