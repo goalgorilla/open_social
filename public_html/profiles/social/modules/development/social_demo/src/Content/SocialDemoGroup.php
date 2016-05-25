@@ -142,7 +142,12 @@ class SocialDemoGroup implements ContainerInjectionInterface {
     return strtotime($date);
   }
 
-
+  /**
+   * Load a Group from UUID.
+   *
+   * @param string $uuid
+   * @return int group id
+   */
   public function loadGroupFromUuid($uuid) {
     $groups = $this->groupStorage->loadByProperties(array('uuid' => $uuid));
 
