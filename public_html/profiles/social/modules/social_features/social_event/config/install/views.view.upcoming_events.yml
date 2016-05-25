@@ -12,7 +12,7 @@ dependencies:
     - social_event
     - user
 id: upcoming_events
-label: 'Upcoming events'
+label: '(Upcoming) Community events'
 module: views
 description: 'Show upcoming events (my, community and overview)'
 tag: ''
@@ -215,7 +215,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'No upcoming events'
+          content: 'No events found'
           plugin_id: text_custom
       relationships: {  }
       arguments: {  }
@@ -564,6 +564,7 @@ display:
         operator: AND
         groups:
           1: AND
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:
