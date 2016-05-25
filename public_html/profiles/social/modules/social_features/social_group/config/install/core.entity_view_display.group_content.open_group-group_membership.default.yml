@@ -9,13 +9,12 @@ targetEntityType: group_content
 bundle: open_group-group_membership
 mode: default
 content:
-  group_roles:
-    label: above
-    type: entity_reference_label
-    settings:
-      link: false
-    weight: -4
+  entity_id:
+    type: entity_reference_entity_id
+    weight: 0
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
 hidden:
-  entity_id: true
+  group_roles: true
   uid: true
