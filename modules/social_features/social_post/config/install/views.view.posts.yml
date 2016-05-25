@@ -167,12 +167,52 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: numeric
+        field_recipient_group_target_id:
+          id: field_recipient_group_target_id
+          table: post__field_recipient_group
+          field: field_recipient_group_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: empty
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: numeric
         post_visibility_access_filter:
           id: post_visibility_access_filter
           table: post
           field: post_visibility_access_filter
           entity_type: post
           plugin_id: post_visibility_access
+          group: 1
       sorts:
         created:
           id: created
@@ -197,6 +237,10 @@ display:
       arguments: {  }
       display_extenders: {  }
       css_class: stream
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
