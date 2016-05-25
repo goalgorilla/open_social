@@ -56,23 +56,18 @@ function social_group_preprocess_group(&$variables) {
   $group = $variables['group'];
   $variables['joined'] = FALSE;
 
+  $account = \Drupal::currentUser();
+
   // Set joined to true for teaser when current logged in
   // user is member of the group.
   if ($group->getMember($variables['user'])) {
     $variables['joined'] = TRUE;
   }
 
-  // See social_user_user_format_name_alter(), DisplayName is either first name
-  // + last name, or username if both first and last name aren't filled out.
-  $variables['profile_name'] = $user->getDisplayName();;
-  $variables['profile_contact_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
-  $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
-  $variables['user_mail'] = $user->getEmail();
-
-  // Edit profile URL
-  $account = \Drupal::currentUser();
-  if ($profile->access('edit', $account)) {
-    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+  if ($group instanceof Drupal\group\Entity\Group) {
+    if ($group->access('update', $account)) {
+      $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+    }
   }
 }
 
