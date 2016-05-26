@@ -1,0 +1,63 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+{% if group_hero_styled_image_url %}
+  <div style="background-image: url('{{ group_hero_styled_image_url }}')" class="cover cover-img">
+{% else %}
+  <div class="cover cover-img">
+{% endif %}
+  {% if group_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ group_edit_url }}"  title="Edit group" class="waves-effect waves-light btn brand-user btn-floating">
+        <i class="material-icons">mode_edit</i>
+      </a>
+    </div>
+  {% endif %}
+  <div class="cover-wrap">
+    <h1 class="page-title"> {{ content.label }}</h1>
+    <p class="page-title">
+      {% trans %}
+      1 member
+      {% plural group.getMembers()|length %}
+      @count members
+      {% endtrans %}
+    </p>
+    <div class="hero-footer">
+      <div class="row row-md-center">
+        {% if content.field_group_description %}
+          <div class="col-xs-12 col-md-6 col-md-offset-3">{{ content.field_group_description }}</div>
+        {% endif %}
+        <div class="col-xs-12 col-md-3">
+          <div class="btn-group">
+            {% if joined %}
+              <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">Joined<span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
+              </ul>
+            {% else %}
+              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
