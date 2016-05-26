@@ -122,6 +122,14 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
+    // Add cancel option on join and leave form.
+    $form['actions']['cancel'] = array(
+      '#type' => 'submit',
+      '#value' => t('Cancel'),
+      '#submit' => array('_social_group_cancel_join_leave_form'),
+      '#limit_validation_errors' => array(),
+    );
+
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
   }
 
@@ -146,7 +154,6 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
  *
  */
 function _social_group_action_form_submit($form, FormStateInterface $form_state) {
-  // Invalidate our cache!
   $group = \Drupal::routeMatch()->getParameter('group');
 
   if (!is_object($group) && !is_null($group)) {
@@ -176,6 +183,30 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       array('user' =>\Drupal::currentUser()->id(), array())
     );
   }
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form cancel for join and leave form.
+ *
+ */
+function _social_group_cancel_join_leave_form($form, FormStateInterface $form_state) {
+  // Get form that was submitted.
+  $group = \Drupal::routeMatch()->getParameter('group');
+
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+
+  // Set redirect only for cancel buttons. Just go back to the group page.
+  $form_state->setRedirect(
+    'entity.group.canonical',
+    array('group' => $group->id(), array())
+  );
 }
 
 /**
