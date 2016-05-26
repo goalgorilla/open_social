@@ -149,11 +149,13 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
   if ($variables['element']['#type'] == 'view') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'view';
   }
-  if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post';
-  }
-  if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
+  if (isset($variables['element']['#parents'])) {
+    if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'post';
+    }
+    if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
+    }
   }
   if (isset($variables['element']['submit']['#button_type'])) {
     if ($variables['element']['submit']['#button_type'] == 'flat' ) {
