@@ -72,7 +72,7 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
-    And I should see the link "See all enrollments"
+    And I should see the link "View all"
 
   @LU @cache
   Scenario: Successfully changed enrollment and see changes in teaser

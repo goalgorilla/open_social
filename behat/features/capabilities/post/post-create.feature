@@ -11,13 +11,13 @@ Feature: Create Post
       | PostUser2 |      1 | PostUser2 |
     And I am logged in as "PostUser1"
     And I am on the homepage
-  And I should not see "PostUser1" in the "Main content"
+  And I should not see "PostUser1" in the "Main content front"
   When I fill in "Post" with "This is a public post."
     And I select post visibility "Public"
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should see "This is a public post."
-    And I should see "PostUser1" in the "Main content"
+    And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: Succesfully create a private post
@@ -26,7 +26,7 @@ Feature: Create Post
     And I press "Save"
    Then I should see the success message "Created the Post."
     And I should see "This is a community post."
-    And I should see "PostUser1" in the "Main content"
+    And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: edit the post

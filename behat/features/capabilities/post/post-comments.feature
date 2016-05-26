@@ -17,8 +17,8 @@ Feature: Comment on a Post
     And I select post visibility "Community"
     And I press "Save"
    Then I should see the success message "Created the Post."
-    And I should see "This is a community post." in the "Main content"
-    And I should see "PostUser1" in the "Main content"
+    And I should see "This is a community post." in the "Main content front"
+    And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: Post a comment on this private post
