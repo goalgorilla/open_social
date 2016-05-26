@@ -15,6 +15,6 @@
     When I fill in the following:
       | search_input | one |
     And I press "Search"
-    And I should see "Search users" in the ".page-header" element
+    And I should see the heading "Search users" in the "Hero block" region
     And I should see "User one" in the "Main content"
     And I should not see "User two" in the "Main content"
