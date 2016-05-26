@@ -152,8 +152,13 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
   if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'post';
   }
-  if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper' || $variables['element']['submit']['#button_type'] == 'flat' ) {
+  if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
+  }
+  if (isset($variables['element']['submit']['#button_type'])) {
+    if ($variables['element']['submit']['#button_type'] == 'flat' ) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
+    }
   }
 }
 
@@ -347,7 +352,7 @@ function _socialbase_get_visibility_icon($title) {
 
 function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . '__user_anonymous';
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
 
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
@@ -386,6 +391,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
       t('Submit')->render()               => 'primary',
+      t('Enroll')->render()               => 'accent btn-lg',
     ],
 
   ];

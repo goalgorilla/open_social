@@ -20,15 +20,11 @@ settings:
   primary: true
   secondary: true
 visibility:
-  request_path:
-    id: request_path
-    pages: ''
-    negate: true
-    context_mapping: {  }
   user_role:
     id: user_role
     roles:
       authenticated: authenticated
+      administrator: administrator
     negate: false
     context_mapping:
       user: '@user.current_user_context:current_user'
