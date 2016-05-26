@@ -69,7 +69,9 @@ class GroupHeroBlock extends BlockBase {
 
     // Also add custom cache_tag for when a member is added to the group so we
     // can invalidate. It will be group_membership:gid.
-    $tags[] = 'group_membership:' . $group->id();
+    if (!empty($group)) {
+      $tags[] = 'group_membership:' . $group->id();
+    }
 
     $build['#cache']['tags'] = $tags;
 
