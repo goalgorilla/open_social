@@ -6,7 +6,6 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
-use Drupal\Core\Url;
 
 /**
  * @file
@@ -77,14 +76,25 @@ function social_group_group_insert(GroupInterface $group) {
   // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
   // sure the settings will be implemented accordingly.
   if ($group->getGroupType()->id() == 'open_group') {
+    // Get the group owner.
+    $account = $group->getOwner();
+    // Get membership.
+    $membership = \Drupal\group\GroupMembership::load($group, $account);
+    $content = $membership->getGroupContent();
+    // Delete the initial created membership.
+    $content->delete();
+
+    // Create a new membership.
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
     $values = array('group_roles' => array('open_group-group_manager'));
     $group_content = GroupContent::create([
         'type' => $plugin->getContentTypeConfigId(),
         'gid' => $group->id(),
         'entity_id' => $group->getOwnerId(),
-      ] + $values);
+      ] + $values
+    );
     $group_content->save();
+
   }
 }
 
