@@ -224,9 +224,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         },
         $elements
       );
+      $checkBefore = $textBefore;
+      $checkAfter = $textAfter;
+
+      foreach($items as $item) {
+        if (strpos($item, $textBefore) !== FALSE) {
+          $checkBefore = $item;
+        }
+        elseif (strpos($item, $textAfter) !== FALSE) {
+          $checkAfter = $item;
+        }
+      }
+
       PHPUnit::assertGreaterThan(
-        array_search($textBefore, $items),
-        array_search($textAfter, $items),
+        array_search($checkBefore, $items),
+        array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
       );
     }
