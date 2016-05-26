@@ -23,10 +23,6 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   $form['field_comment_body']['#prefix'] = '<div class="media-body"><div class="form-group form-group-inline clearfix text-right">';
   $form['actions']['submit']['#suffix'] = '</div></div>';
-  $style = &$form['actions']['submit']['#button_type'];
-  $style = array_filter($style , function($e){
-    return $e != 'primary';
-  });
   $form['actions']['submit']['#button_type'] = 'flat';
 
 }
