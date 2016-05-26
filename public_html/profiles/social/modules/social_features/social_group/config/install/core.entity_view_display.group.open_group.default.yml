@@ -5,19 +5,17 @@ dependencies:
     - field.field.group.open_group.field_group_description
     - field.field.group.open_group.field_group_image
     - group.type.open_group
-  module:
-    - text
 id: group.open_group.default
 targetEntityType: group
 bundle: open_group
 mode: default
 content:
   field_group_description:
-    type: text_default
-    weight: 0
+    weight: -4
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    type: basic_string
 hidden:
   field_group_image: true
   uid: true
