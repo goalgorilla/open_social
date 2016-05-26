@@ -9,7 +9,7 @@ Feature: Overview
     Given I am logged in as an "authenticated user"
     And I am on "user"
     When I click "Events"
-    Then I should see the "Events" in the "Page title block"
+    Then I should see the "EVENTS" in the "Page title block"
     And I should see the heading "Events filter" in the "Sidebar second"
     And I should see text matching "Event time"
     And I should see text matching "Publish status"
