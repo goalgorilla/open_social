@@ -46,17 +46,8 @@
  */
 #}
 
-<ul class="stream">
-  <li class="stream-item">
-
-    <i class="stream-icon stream-icon-new"></i>
-    <div class="card stream-card">
-      <div class="card-body">
-        {% block content %}
-          {{content}}
-        {% endblock %}
-      </div>
-    </div>
-
-  </li>
-</ul>
+<div class="card small-padding">
+{% block content %}
+  {{ content }}
+{% endblock %}
+</div>

@@ -102,6 +102,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
     }
 
+  /**
+   * @When I click the xth :position element with the css :css
+   */
+  public function iClickTheElementWithTheCSS($position, $css)
+  {
+    $session = $this->getSession();
+    $elements = $session->getPage()->findAll('css', $css);
+
+    $count = 0;
+
+    foreach($elements as $element) {
+      if ($count == $position) {
+        // Now click the element.
+        $element->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
     /**
      * @When /^I click the post visibility dropdown/
      */
@@ -203,9 +224,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         },
         $elements
       );
+      $checkBefore = $textBefore;
+      $checkAfter = $textAfter;
+
+      foreach($items as $item) {
+        if (strpos($item, $textBefore) !== FALSE) {
+          $checkBefore = $item;
+        }
+        elseif (strpos($item, $textAfter) !== FALSE) {
+          $checkAfter = $item;
+        }
+      }
+
       PHPUnit::assertGreaterThan(
-        array_search($textBefore, $items),
-        array_search($textAfter, $items),
+        array_search($checkBefore, $items),
+        array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
       );
     }

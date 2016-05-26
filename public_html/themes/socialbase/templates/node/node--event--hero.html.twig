@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default theme implementation to display a node.
+ * Theme override to display a node.
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
@@ -61,23 +61,9 @@
  * @todo Remove the id attribute (or make it a class), because if that gets
  *   rendered twice on a page this is invalid CSS for example: two lists
  *   in different view modes.
- *
- * @ingroup themeable
  */
 #}
 
-<div class="list-group-item">
-
-  {{ title_prefix }}
-
-  {% if not page %}
-    <h6{{ title_attributes }} class="list-group-item-heading">
-      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-    </h6>
-  {% endif %}
-
-  {{ title_suffix }}
-
-  <small class="text-gray-lighter list-group-item-text">{{ date }}</small>
-
-</div>
+  <div{{ content_attributes }}>
+    {{ content }}
+  </div>

@@ -27,23 +27,21 @@
  */
 #}
 <section{{ attributes }}>
+  {% if comments and not label_hidden %}
+    {{ title_prefix }}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+    {{ title_suffix }}
+  {% endif %}
 
-    {% if comments and not label_hidden %}
-        {{ title_prefix }}
-        <h2{{ title_attributes }}>{{ label }}</h2>
-        {{ title_suffix }}
-    {% endif %}
+  {{ comments }}
 
-    {% if comment_form %}
+  {% if comment_form %}
+    <h4{{ content_attributes.addClass('section-title') }}>{{ 'Comments'|t }}</h2>
+    <div class="card">
+      <div class="card-body extra-padding">
         {{ comment_form }}
-    {% endif %}
-
-    {{ comments }}
-
-    {% if more_link %}
-      <div class="margin-top-l text-center">
-        {{ more_link }}
       </div>
-    {% endif %}
+    </div>
+  {% endif %}
 
 </section>

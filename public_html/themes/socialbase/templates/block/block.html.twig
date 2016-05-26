@@ -46,17 +46,12 @@
  */
 #}
 
-<ul class="stream">
-  <li class="stream-item">
+{{ title_prefix }}
+{% if label %}
+  <h2{{ title_attributes.addClass('block-title') }}>{{ label }}</h2>
+{% endif %}
+{{ title_suffix }}
 
-    <i class="stream-icon stream-icon-new"></i>
-    <div class="card stream-card">
-      <div class="card-body">
-        {% block content %}
-          {{content}}
-        {% endblock %}
-      </div>
-    </div>
-
-  </li>
-</ul>
+{% block content %}
+  {{ content }}
+{% endblock %}
