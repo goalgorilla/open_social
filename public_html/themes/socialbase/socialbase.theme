@@ -67,6 +67,11 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
  */
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+  // Add group id for "See all groups link".
+  if ($variables['derivative_plugin_id'] === 'group_members-block_newest_members') {
+    $group = \Drupal::routeMatch()->getParameter('group');
+    $variables['group_id'] = $group->id();
+  }
 }
 
 /**

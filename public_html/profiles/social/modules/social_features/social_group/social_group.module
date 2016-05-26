@@ -4,6 +4,8 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
 use Drupal\group\Plugin\GroupContentEnabler;
 use Drupal\Core\Cache\Cache;
@@ -242,6 +244,53 @@ function _social_group_node_form_submit($form, FormStateInterface $form_state) {
       'entity.node.canonical',
       array('node' => $node_reference['target_id'], array())
     );
+  }
+}
+
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Alter "Group Members" views. Replace user IDs with profile teasers.
+ */
+function social_group_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->id() == 'group_members') {
+    foreach ($output['#rows'][0]['#rows'] as $key => $row) {
+      // Get Group membership content entity.
+      $group_content = $row['#group_content'];
+      // Get User entity.
+      $user_entity = $group_content->getEntity();
+      if (!empty($user_entity)) {
+        // Get Profile storage.
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          // Get Profile entity.
+          $user_profile = $storage->loadByUser($user_entity, 'profile');
+          if ($user_profile) {
+            // Use teaser for page and small_teaser for block.
+            $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
+            // Replace output with profile teaser.
+            $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, $view_mode);
+          }
+          else {
+            // Remove output if user don't have profile (admin).
+            unset($output['#rows'][0]['#rows'][$key]);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_group_menu_local_tasks_alter(&$data, $route_name) {
+  // Hide default Group "Members" tab, because we add our own tab.
+  if (isset($data['tabs'][0]['group.members'])){
+    unset($data['tabs'][0]['group.members']);
   }
 }
 
