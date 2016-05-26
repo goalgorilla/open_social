@@ -18,7 +18,7 @@
  * - hero_node
  */
 #}
-{% if hero_node %}
+{% if hero_node or topic_type %}
 <div class="cover-wrap">
 {% endif %}
 
@@ -30,7 +30,7 @@
 
 {{ title_suffix }}
 
-{% if hero_node %}
+{% if hero_node or topic_type %}
   <div class="hero-footer">
     <div class="row row-md-center">
       <div class="col-xs-12 col-md-6 col-md-offset-3">
@@ -60,6 +60,6 @@
   </div>
 {% endif %}
 
-{% if hero_node %}
+{% if hero_node or topic_type %}
 </div>
 {% endif %}
