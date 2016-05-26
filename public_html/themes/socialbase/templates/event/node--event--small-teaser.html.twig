@@ -66,15 +66,23 @@
  */
 #}
 <div class="list-group-item">
-    {{ title_prefix }}
-    {% if not page %}
-        <h2{{ title_attributes }} class="h3 card-title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-        </h2>
-    {% endif %}
-    {{ title_suffix }}
-    <div class="text-grey">{{ content.field_event_date }}</div>
+
+  {{ title_prefix }}
+
+  {% if not page %}
+    <h6{{ title_attributes }} class="list-group-item-heading">
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h6>
+  {% endif %}
+
+  {{ title_suffix }}
+
+  <small class="text-gray-lighter list-group-item-text">{{ content.field_event_date }}
     {% if content.enrolled %}
+      <span class="label label-primary">
         {{  content.enrolled }}
+      </span>
     {% endif %}
+  </small>
+
 </div>

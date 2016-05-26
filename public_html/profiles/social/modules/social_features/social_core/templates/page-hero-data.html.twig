@@ -18,28 +18,48 @@
  * - hero_node
  */
 #}
-{{ title_prefix }}
-{% if title %}
-    <h1{{ title_attributes.addClass('h2 page-title') }}>{{ title }}</h1>
+{% if hero_node or topic_type %}
+<div class="cover-wrap">
 {% endif %}
+
+{{ title_prefix }}
+
+{% if title %}
+    <h1{{ title_attributes.addClass(section_class) }}>{{ title }}</h1>
+{% endif %}
+
 {{ title_suffix }}
 
-{% if hero_node %}
-    {{ hero_node }}
+{% if hero_node or topic_type %}
+  <div class="hero-footer">
+    <div class="row row-md-center">
+      <div class="col-xs-12 col-md-6 col-md-offset-3">
+        {{ hero_node }}
+
+        {% if author_name and created_date_formatted %}
+            {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
+        {% endif %}
+
+        {% if topic_type %}
+            <i class="material-icons">label</i>
+            {{ topic_type }}
+        {% endif %}
+
+        {% if group_link %}
+            <i class="custom-icons icon-group"></i>
+            {{ group_link }}
+        {% endif %}
+
+      </div>
+
+      <div class="col-xs-12 col-md-3">
+        {# insert enroll action block here #}
+      </div>
+
+    </div>
+  </div>
 {% endif %}
 
-{% if author_name and created_date_formatted %}
-    {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
-{% endif %}
-
-<div>
-    {% if topic_type %}
-        <i class="material-icons">label</i>
-        {{ topic_type }}
-    {% endif %}
-
-    {% if group_link %}
-        <i class="custom-icons icon-group"></i>
-        {{ group_link }}
-    {% endif %}
+{% if hero_node or topic_type %}
 </div>
+{% endif %}
