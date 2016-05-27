@@ -279,28 +279,21 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
     foreach ($output['#rows'][0]['#rows'] as $key => $row) {
       // Get Group membership content entity.
       $group_content = $row['#group_content'];
-      // Get User entity.
-      $user_entity = $group_content->getEntity();
-      if (!empty($user_entity)) {
-        // Get Profile storage.
-        $storage = \Drupal::entityTypeManager()->getStorage('profile');
-        if (!empty($storage)) {
-          // Get Profile entity.
-          $user_profile = $storage->loadByUser($user_entity, 'profile');
-          if ($user_profile) {
-            // Use teaser for page and small_teaser for block.
-            $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
-            // Replace output with profile teaser.
-            $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
-              ->getViewBuilder('profile')
-              ->view($user_profile, $view_mode);
-          }
-          else {
-            // Remove output if user don't have profile (admin).
-            unset($output['#rows'][0]['#rows'][$key]);
-          }
-        }
+      // Get Profile.
+      $user_profile = _social_group_get_member_profile($group_content);
+      if ($user_profile) {
+        // Use teaser for page and small_teaser for block.
+        $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
+        // Replace output with profile teaser.
+        $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, $view_mode);
       }
+      else {
+        // Remove output if user don't have profile (admin).
+        unset($output['#rows'][0]['#rows'][$key]);
+      }
+
     }
   }
 }
