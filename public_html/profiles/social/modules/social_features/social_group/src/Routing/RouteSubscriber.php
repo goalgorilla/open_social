@@ -25,7 +25,11 @@ class RouteSubscriber extends RouteSubscriberBase {
     // Route the group view page to group/{group}/timeline
     if ($route = $collection->get('entity.group.canonical')) {
       $route->setPath('/group/{group}/stream');
+      $defaults = $route->getDefaults();
+      $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupStreamTitle';
+      $route->setDefaults($defaults);
     }
+
 
     // Route the group members page to the group/{group}/membership
     if ($route = $collection->get('entity.group_content.group_membership.collection')) {
