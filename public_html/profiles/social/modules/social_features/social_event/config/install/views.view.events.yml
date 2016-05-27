@@ -213,18 +213,18 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '>='
+          operator: '='
           value:
             min: ''
             max: ''
             value: ''
-            type: date
+            type: offset
           group: 1
-          exposed: false
+          exposed: true
           expose:
             operator_id: field_event_date_value_op
-            label: 'Event time'
-            description: ''
+            label: Start date
+            description: null
             use_operator: false
             operator: field_event_date_value_op
             identifier: field_event_date_value
@@ -233,21 +233,34 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
+          is_grouped: true
           group_info:
-            label: ''
+            label: 'What events do you want to see?'
             description: ''
-            identifier: ''
-            optional: true
-            widget: select
+            identifier: field_event_date_value
+            optional: false
+            widget: radios
             multiple: false
             remember: false
-            default_group: All
+            default_group: '1'
             default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
+            group_items:
+              1:
+                title: 'Upcoming events'
+                operator: '>='
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
+              2:
+                title: 'Events that have started or are finished'
+                operator: '<'
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
         event_enrolled_or_created_filter:
           id: event_enrolled_or_created_filter
           table: node
@@ -522,6 +535,10 @@ display:
             group_items: {  }
           entity_type: node
           plugin_id: event_enrolled_or_created
+          entity_field: uid
+          plugin_id: numeric
+      display_extenders: {  }
+      use_ajax: false
       filter_groups:
         operator: AND
         groups:
@@ -641,6 +658,61 @@ display:
           plugin_id: boolean
           entity_type: node
           entity_field: status
+        qfield_event_date_value:
+          id: field_event_date_value
+          table: node__field_event_date
+          field: field_event_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: offset
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_date_value_op
+            label: Start date
+            description: null
+            use_operator: false
+            operator: field_event_date_value_op
+            identifier: field_event_date_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: 'What events do you want to see?'
+            description: ''
+            identifier: field_event_date_value
+            optional: false
+            widget: radios
+            multiple: false
+            remember: false
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'Upcoming events'
+                operator: '>='
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
+              2:
+                title: 'Events that have started or are finished'
+                operator: '<'
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
         event_enrolled_or_created_filter:
           id: event_enrolled_or_created_filter
           table: node
