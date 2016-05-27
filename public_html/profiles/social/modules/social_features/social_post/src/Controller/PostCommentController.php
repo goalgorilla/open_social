@@ -2,52 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\social_comment\Controller\SocialCommentController.
+ * Contains \Drupal\social_post\Controller\PostCommentController.
  */
 
-namespace Drupal\social_comment\Controller;
+namespace Drupal\social_post\Controller;
 
-use Drupal\comment\CommentInterface;
-use Drupal\comment\CommentManagerInterface;
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\CacheableResponseInterface;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\social_comment\Controller\SocialCommentController;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Drupal\comment\Controller\CommentController;
-use Drupal\Component\Utility\Crypt;
 
 /**
  * Controller routine override to change relevant bits in the password reset.
  */
-class SocialCommentController extends CommentController {
-
-  /**
-   * @inheritdoc
-   */
-  public function commentPermalink(Request $request, CommentInterface $comment) {
-    if ($entity = $comment->getCommentedEntity()) {
-      // Check access permissions for the entity.
-      /** @var \Drupal\Core\Entity\Entity $entity */
-      if (!$entity->access('view')) {
-        throw new AccessDeniedHttpException();
-      }
-      /** @var \Drupal\Core\Url $url*/
-      if ($url = $entity->urlInfo('canonical')) {
-        // Redirect the user to the correct entity.
-        return $this->redirectToOriginalEntity($url, $comment, $entity);
-      }
-    }
-    throw new NotFoundHttpException();
-  }
+class PostCommentController extends SocialCommentController {
 
   /**
    * @inheritdoc
@@ -64,21 +33,27 @@ class SocialCommentController extends CommentController {
       }
     }
 
+    if ($entity->getEntityTypeId() === 'post') {
+      // Check if the post has been posted in a group.
+      /** @var @var \Drupal\social_post\Entity\Post $entity */
+      $group_id = $entity->field_recipient_group->target_id;
+      if ($group_id) {
+        /** @var \Drupal\group\Entity\Group $group */
+        $group = entity_load('group', $group_id);
+        if (!$group->hasPermission('access posts in group', $account)|| !$group->hasPermission('add post entities in group', $account)) {
+          if (!isset($comment)) {
+            $comment = NULL;
+          }
+          /** @var \Drupal\Core\Url $url*/
+          if ($url = $entity->urlInfo('canonical')) {
+            // Redirect the user to the correct entity.
+            return $this->redirectToOriginalEntity($url, $comment, $entity);
+          }
+        }
+      }
+    }
+
     return parent::getReplyForm($request, $entity, $field_name, $pid);
   }
-
-  /**
-   * @param $url
-   * @param $comment
-   * @param $entity
-   * @return \Symfony\Component\HttpFoundation\RedirectResponse
-   */
-  private function redirectToOriginalEntity(\Drupal\Core\Url $url, CommentInterface $comment, \Drupal\Core\Entity\Entity $entity) {
-    return $this->redirect($url->getRouteName(), $url->getRouteParameters(), array('fragment' => 'comment-' . $comment->id()));
-  }
-
-  // @TODO implement getReplyForm() method for comment.reply route.
-  // @TODO check if comment.node_redirect route needs work as well.
-  //
 
 }
