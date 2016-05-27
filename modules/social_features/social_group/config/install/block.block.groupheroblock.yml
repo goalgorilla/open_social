@@ -1,25 +1,26 @@
+uuid: 2c981658-bd36-49f9-bff0-adfcc465e8ec
 langcode: en
 status: true
 dependencies:
   module:
-    - social_core
+    - group
+    - social_group
     - system
   theme:
     - socialbase
-id: pagetitleblock_content
+id: groupheroblock
 theme: socialbase
-region: content
-weight: -10
+region: hero
 provider: null
-plugin: social_page_title_block
+plugin: group_hero_block
 settings:
-  id: social_page_title_block
-  label: 'Page title block'
-  provider: social_core
+  id: group_hero_block
+  label: 'Group hero block'
+  provider: social_group
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: "/user\r\n/user/*\r\n/group/*"
+    pages: '/group/*'
     negate: false
     context_mapping: {  }
