@@ -110,28 +110,36 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\group\Entity\GroupInterface $entity */
+    // Alter Group Membership table rows.
+    if ($entity->getContentPlugin()->getPluginId() == 'group_membership') {
+      // Prepare group roles.
+      $roles = array();
+      foreach ($entity->group_roles->referencedEntities() as $group_role) {
+        $roles[] = $group_role->label();
+      }
+      if (empty($roles)) {
+        $roles[] = $this->t('Member');
+      }
+      $roles = implode(', ', $roles);
 
-    // Prepare group roles.
-    $roles = array();
-    foreach ($entity->group_roles->referencedEntities() as $group_role) {
-      $roles[] = $group_role->label();
+      // Get user profile.
+      $profile = _social_group_get_member_profile($entity);
+      if (!empty($profile)) {
+        // EntityListBuilder sets the table rows using the #rows property, so we
+        // need to add the render array using the 'data' key.
+        $row['member']['data'] = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($profile, 'small_teaser');
+        $row['organization']['data'] = $profile->get('field_profile_organization')
+          ->view();
+        $row['group_role'] = $roles;
+      }
     }
-    if(empty($roles)){
-      $roles[] = $this->t('Member');
+    else {
+      $row['member'] = $entity->id();
+      $row['organization']['data'] = $entity->toLink()->toRenderable();
     }
-    $roles = implode(', ', $roles);
-
-    // Get user profile.
-    $profile = _social_group_get_member_profile($entity);
-    if (!empty($profile)) {
-      // EntityListBuilder sets the table rows using the #rows property, so we
-      // need to add the render array using the 'data' key.
-      $row['member']['data'] = \Drupal::entityTypeManager()
-        ->getViewBuilder('profile')
-        ->view($profile, 'small_teaser');
-      $row['organization']['data'] = $profile->get('field_profile_organization')
-        ->view();
-      $row['group_role'] = $roles;
+    if(isset($row)){
       return $row + parent::buildRow($entity);
     }
   }

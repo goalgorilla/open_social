@@ -325,6 +325,8 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
       }
     }
   }
+  // Hide Group "Nodes" tab.
+  unset($data['tabs'][0]['gnode.collection']);
 }
 
 /**
