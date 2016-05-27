@@ -11,7 +11,8 @@ Feature: See Comment
          | Add a comment | This is a first comment |
     And I press "Comment"
     Then I should see "This is a first comment" in the "Main content"
-    And I should see the link "Reply"
+    When I click the xth "1" element with the css ".dropdown-toggle"
+    Then I should see the link "Reply"
     When I click "Reply"
     And I fill in the following:
       | Add a comment | This is a reply comment |
@@ -22,4 +23,4 @@ Feature: See Comment
       | Add a comment | This is a second comment |
     And I press "Comment"
     Then I should see "This is a second comment"
-    And "This is a first comment" should precede "This is a second comment" for the query ".js-comment div"
+    And "This is a first comment" should precede "This is a second comment" for the query ".js-comment"

@@ -17,6 +17,7 @@ default:
         - Drupal\DrupalExtension\Context\DrupalContext
         - SocialMinkContext
         - Drupal\DrupalExtension\Context\MessageContext
+        - PostContext
   extensions:
       Behat\MinkExtension:
         default_session: 'selenium2'
@@ -42,4 +43,5 @@ default:
           'Page title block': '.section-title'
           'Hero block': '.cover'
           'Main content': '#content'
+          'Main content front': '.col-sm-8'
           'Sidebar second': 'div[role=complementary]'
