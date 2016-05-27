@@ -146,11 +146,19 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     );
 
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
+  }
 
-    // Change titles
-    if ($form_id === 'group_content_open_group-group_membership_add_form') {
-      $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
-      $form['group_roles']['widget']['#title'] = t('Group roles');
+  $membership_forms = array(
+    'group_content_open_group-group_membership_edit_form',
+    'group_content_open_group-group_membership_add_form',
+  );
+  if (in_array($form_id, $membership_forms)){
+    // Change titles on membership forms.
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+    $form['group_roles']['widget']['#title'] = t('Group roles');
+    // Remove the user selection autocomplete on editing group membership.
+    if('group_content_open_group-group_membership_edit_form' == $form_id){
+      $form['entity_id']['#access'] = FALSE;
     }
   }
 
