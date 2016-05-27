@@ -314,3 +314,33 @@ function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
 }
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_group_entity_type_alter(array &$entity_types) {
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+}
+
+/**
+ * Return user profile by given group membership content.
+ *
+ * @param \Drupal\group\Entity\GroupContent $group_content
+ *
+ * @return \Drupal\profile\Entity\Profile
+ */
+function _social_group_get_member_profile(GroupContent $group_content) {
+  $user_profile = NULL;
+  // Get User entity.
+  $user_entity = $group_content->getEntity();
+  if (!empty($user_entity)) {
+    // Get Profile storage.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      // Get Profile entity.
+      $user_profile = $storage->loadByUser($user_entity, 'profile');
+    }
+  }
+  return $user_profile;
+}
