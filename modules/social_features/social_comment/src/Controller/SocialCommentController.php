@@ -8,22 +8,11 @@
 namespace Drupal\social_comment\Controller;
 
 use Drupal\comment\CommentInterface;
-use Drupal\comment\CommentManagerInterface;
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\CacheableResponseInterface;
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Drupal\comment\Controller\CommentController;
-use Drupal\Component\Utility\Crypt;
 
 /**
  * Controller routine override to change relevant bits in the password reset.
