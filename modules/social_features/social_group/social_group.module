@@ -301,9 +301,28 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
  * Implements hook_menu_local_tasks_alter().
  */
 function social_group_menu_local_tasks_alter(&$data, $route_name) {
-  // Hide default Group "Members" tab, because we add our own tab.
-  if (isset($data['tabs'][0]['group.members'])){
-    unset($data['tabs'][0]['group.members']);
+  // Manage visibility of Group "Members" tab.
+  $account = \Drupal::currentUser();
+  // Get current Group.
+  $group = \Drupal::routeMatch()->getParameter('group');
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+  if (is_object($group)) {
+    // Check for the Group permission.
+    $permission = 'administer members';
+    if ($group_membership = $group->getMember($account)) {
+      if ($group_membership->hasPermission($permission)) {
+        // For group managers we will show membership management interface.
+        unset($data['tabs'][0]['social_group.members']);
+      }
+      else {
+        // For members we will show page with profile teasers of other members.
+        unset($data['tabs'][0]['group.members']);
+      }
+    }
   }
 }
 
