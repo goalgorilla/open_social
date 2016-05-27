@@ -9,7 +9,6 @@ namespace Drupal\social_post\Controller;
 
 use Drupal\social_comment\Controller\SocialCommentController;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
