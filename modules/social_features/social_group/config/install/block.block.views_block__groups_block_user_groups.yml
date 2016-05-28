@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.groups
+  module:
+    - system
+    - views
+  theme:
+    - socialbase
+id: views_block__groups_block_user_groups
+theme: socialbase
+region: complementary
+weight: null
+provider: null
+plugin: 'views_block:groups-block_user_groups'
+settings:
+  id: 'views_block:groups-block_user_groups'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/stream'
+    negate: false
+    context_mapping: {  }
