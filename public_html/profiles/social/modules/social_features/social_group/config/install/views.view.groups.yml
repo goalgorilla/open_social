@@ -2,13 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.group.small_teaser
     - core.entity_view_mode.group.teaser
   module:
     - group
     - social_group
     - user
 id: groups
-label: Groups
+label: 'User Groups'
 module: views
 description: ''
 tag: ''
@@ -203,10 +204,45 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
-  user_groups:
+  block_user_groups:
+    display_plugin: block
+    id: block_user_groups
+    display_title: 'User Groups Block'
+    position: 2
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      pager:
+        type: some
+        options:
+          items_per_page: 2
+          offset: 0
+      defaults:
+        pager: false
+        style: false
+        row: false
+        title: false
+      block_description: 'User Groups'
+      style:
+        type: default
+        options: {  }
+      row:
+        type: 'entity:group'
+        options:
+          relationship: none
+          view_mode: small_teaser
+      title: 'My Groups'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - user.permissions
+      tags: {  }
+  page_user_groups:
     display_plugin: page
-    id: user_groups
-    display_title: 'User Groups'
+    id: page_user_groups
+    display_title: 'User Groups Page'
     position: 1
     display_options:
       display_extenders: {  }
