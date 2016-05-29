@@ -97,8 +97,21 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       // display below the entity. Do not show the form for the print view mode.
       if ($status == CommentItemInterface::OPEN && $comment_settings['form_location'] == CommentItemInterface::FORM_BELOW && $this->viewMode != 'print') {
         // Only show the add comment form if the user has permission.
-        $elements['#cache']['contexts'][] = 'user.roles';
-        if ($this->currentUser->hasPermission('post comments')) {
+        $elements['#cache']['contexts'][] = 'user';
+        $add_comment_form = FALSE;
+        // Check if the post has been posted in a group.
+        $group_id = $entity->field_recipient_group->target_id;
+        if ($group_id) {
+          /** @var \Drupal\group\Entity\Group $group */
+          $group = entity_load('group', $group_id);
+          if ($group->hasPermission('add post entities in group', $this->currentUser) && $this->currentUser->hasPermission('post comments')) {
+            $add_comment_form = TRUE;
+          }
+        }
+        elseif ($this->currentUser->hasPermission('post comments')) {
+          $add_comment_form = TRUE;
+        }
+        if ($add_comment_form) {
           $output['comment_form'] = [
             '#lazy_builder' => ['comment.lazy_builders:renderForm', [
               $entity->getEntityTypeId(),
