@@ -2,24 +2,24 @@ langcode: en
 status: true
 dependencies:
   module:
-    - social_group
+    - social_post
     - system
   theme:
     - socialbase
-id: groupheroblock
+id: postongroupblock
 theme: socialbase
-region: hero
-weight: null
+region: content
+weight: -9
 provider: null
-plugin: group_hero_block
+plugin: post_group_block
 settings:
-  id: group_hero_block
-  label: 'Group hero block'
-  provider: social_group
+  id: post_group_block
+  label: 'Post on group block'
+  provider: social_post
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: '/group/*'
+    pages: '/group/*/stream'
     negate: false
     context_mapping: {  }
