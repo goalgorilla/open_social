@@ -32,7 +32,20 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
         switch ($visibility) {
           // Recipient.
           case "0":
+
             if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
+              // Check if the post has been posted in a group.
+              $group_id = $entity->field_recipient_group->target_id;
+              if ($group_id) {
+                $group = entity_load('group', $group_id);
+                if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                  return AccessResult::allowed();
+                }
+                else {
+                  return AccessResult::forbidden();
+                }
+              }
+              // Fallback for invalid groups or if there is no group recipient.
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
@@ -101,6 +114,18 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
+    // If group context is active.
+    $group = \Drupal::routeMatch()->getParameter('group');
+    if ($group) {
+      if ($group->hasPermission('add post entities in group', $account)) {
+        return AccessResult::allowed();
+      }
+      else {
+        // Not allowed to create posts.
+        return AccessResult::forbidden();
+      }
+    }
+    // Fallback.
     return AccessResult::allowedIfHasPermission($account, 'add post entities');
   }
 
