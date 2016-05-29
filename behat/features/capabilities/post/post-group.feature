@@ -16,8 +16,8 @@ Feature: Create Post on Group
       And I fill in "Post" with "This is a community post in a group."
       And I press "Save"
      Then I should see the success message "Created the Post."
-      And I should see "This is a community post in a group." in the ".stream-card" element
-      And I should see "PostUser1" in the ".stream-card" element
+      And I should see "This is a community post in a group."
+      And I should see "PostUser1" in the ".media-heading" element
 
           # Scenario: See post on profile stream
      When I am on "/user"
