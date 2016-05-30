@@ -10,6 +10,24 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
   $form['mail']['#suffix'] = '</div>';
 }
 
+function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['field_post']['#prefix'] = '<div class="form-group">';
+  $form['field_post']['#suffix'] = '</div>';
+  $form['field_visibility']['#prefix'] = '<div class="form-group media"><div class="media-body">';
+  $form['field_visibility']['#suffix'] = '</div>';
+  $form['actions']['#prefix'] = '<div class="media-right">';
+  $form['actions']['#suffix'] = '</div></div>';
+}
+
+function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $form['field_comment_body']['#prefix'] = '<div class="media-body"><div class="form-group form-group-inline clearfix text-right">';
+  $form['actions']['submit']['#suffix'] = '</div></div>';
+  $form['actions']['submit']['#button_type'] = 'flat';
+
+}
+
+
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  *
@@ -67,6 +85,18 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
  */
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+  // Add group id for "See all groups link".
+  if ($variables['derivative_plugin_id'] === 'group_members-block_newest_members') {
+    $group = \Drupal::routeMatch()->getParameter('group');
+    $variables['group_id'] = $group->id();
+  }
+  if ($variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile') {
+    $profile_user_id = \Drupal::routeMatch()->getParameter('user');
+    if (!is_null($profile_user_id) && is_object($profile_user_id)) {
+      $profile_user_id = $profile_user_id->id();
+    }
+    $variables['profile_user_id'] = $profile_user_id;
+  }
 }
 
 /**
@@ -115,6 +145,29 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
   if (isset($variables['element']['#id'])) {
     if (strpos($variables['element']['#id'], 'field-visibility') !== false) {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+
+function socialbase_theme_suggestions_container_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#type'] == 'view') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'view';
+  }
+  if (isset($variables['element']['#parents'])) {
+    if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'post';
+    }
+    if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
+    }
+  }
+  if (isset($variables['element']['submit']['#button_type'])) {
+    if ($variables['element']['submit']['#button_type'] == 'flat' ) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
     }
   }
 }
@@ -309,10 +362,20 @@ function _socialbase_get_visibility_icon($title) {
 
 function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
-    $suggestions[] = 'form__user_anonymous';
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
+
+  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+  }
+
 }
 
+function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
+  if ($variables['element']['#parents'][0] == 'field_comment_body') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
+  }
+}
 
 /**
  * Allows sub-themes to alter the array used for colorizing text.
@@ -337,7 +400,35 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
       t('Submit')->render()               => 'primary',
+      t('Enroll')->render()               => 'accent btn-lg',
     ],
 
   ];
+}
+
+
+/**
+ * Allows sub-themes to alter the array used for associating an icon with text.
+ *
+ * @param array $texts
+ *   An associative array containing the text and icons to be matched, passed
+ *   by reference.
+ *
+ * @see \Drupal\bootstrap\Bootstrap::glyphiconFromString()
+ */
+function socialbase_bootstrap_iconize_text_alter(&$texts) {
+
+  $texts = [
+
+    // Text that match these specific strings are checked first.
+    'matches' => [
+    ],
+
+    // Text containing these words anywhere in the string are checked last.
+    'contains' => [
+      t('Save')->render()       => '',
+    ],
+
+  ];
+
 }

@@ -27,6 +27,7 @@
  */
 #}
 <section{{ attributes }}>
+
     {% if comments and not label_hidden %}
         {{ title_prefix }}
         <h2{{ title_attributes }}>{{ label }}</h2>
@@ -40,7 +41,9 @@
     {{ comments }}
 
     {% if more_link %}
+      <div class="margin-top-l text-center">
         {{ more_link }}
+      </div>
     {% endif %}
 
 </section>

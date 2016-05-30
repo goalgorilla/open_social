@@ -48,7 +48,7 @@ class PostForm extends ContentEntityForm {
         unset($form['field_visibility']['widget'][0]['#options'][0]);
         $form['field_visibility']['widget'][0]['#default_value'] = "2";
       }
-      elseif ($display_id === 'post.post.profile') {
+      else {
         // Remove public option from options.
         $form['field_visibility']['widget'][0]['#default_value'] = "0";
         unset($form['field_visibility']['widget'][0]['#options'][1]);
@@ -66,12 +66,13 @@ class PostForm extends ContentEntityForm {
     $display = $this->getFormDisplay($form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === 'post.post.default') {
-
-      }
-      elseif ($display_id === 'post.post.profile') {
+      if ($display_id === 'post.post.profile') {
         $account_profile = \Drupal::routeMatch()->getParameter('user');
         $this->entity->get('field_recipient_user')->setValue($account_profile);
+      }
+      elseif ($display_id === 'post.post.group') {
+        $group = \Drupal::routeMatch()->getParameter('group');
+        $this->entity->get('field_recipient_group')->setValue($group);
       }
     }
 

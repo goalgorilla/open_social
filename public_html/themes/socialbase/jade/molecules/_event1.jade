@@ -10,7 +10,9 @@
       i.material-icons.pull-left event
       span.inline-center 19 jul 09:00 - 18:00
       | &nbsp; 
-      span.label.label-primary enrolled
+      
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
     p.text-grey-dark 
       i.material-icons.pull-left place
       span.inline-center Keizersgracht 376, Amsterdam

@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675
+@api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database
 Feature: Comment on a Post
   Benefit: In order to give my opinion on a post
   Role: As a LU
@@ -17,8 +17,8 @@ Feature: Comment on a Post
     And I select post visibility "Community"
     And I press "Save"
    Then I should see the success message "Created the Post."
-    And I should see "This is a community post." in the ".stream-card" element
-    And I should see "PostUser1" in the ".stream-card" element
+    And I should see "This is a community post." in the "Main content front"
+    And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: Post a comment on this private post
@@ -29,13 +29,16 @@ Feature: Comment on a Post
    Then I should see the success message "Your comment has been posted."
 
         # Scenario: edit comment
-   When I click "Edit"
+  When I click the xth "2" element with the css ".dropdown-toggle"
+    And I click "Edit"
     And I fill in "Comment #1 to be deleted" for "field_comment_body[0][value]"
     And I press "Comment"
    Then I should see the success message "Your comment has been posted."
 
         # Scenario: delete comment
-   When I click "Delete"
+   When I am on the homepage
+    And I click the xth "2" element with the css ".dropdown-toggle"
+    And I click "Delete"
    Then I should see "This action cannot be undone."
         # Confirm delete
    When I press "Delete"

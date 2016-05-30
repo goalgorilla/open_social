@@ -1,4 +1,4 @@
-@api @comment @stability
+@api @comment @stability @edit
 Feature: Edit Comment
   Benefit: Correct mistakes I made when adding comments
   Role: As a LU
@@ -11,6 +11,7 @@ Feature: Edit Comment
       | Add a comment | This is my comment |
     And I press "Comment"
     Then I should see "This is my comment" in the "Main content"
+    When I click the xth "1" element with the css ".dropdown-toggle"
     And I should see the link "Edit"
     When I click "Edit"
     And I should see "This is my comment"

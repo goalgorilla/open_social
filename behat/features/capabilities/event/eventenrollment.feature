@@ -1,4 +1,4 @@
-@api @event @eventenrollment @stability @perfect @DS-479 @profile 
+@api @event @eventenrollment @stability @perfect @DS-479 @profile
 Feature: Enroll for an event
   Benefit: In order to attend an Event
   Role: LU
@@ -16,9 +16,9 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
-    And I should see the link "See all enrollments"
+    And I should see the link "View all"
 
-    When I click "See all enrollments"
+    When I click "View all"
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see the link "Enrollments"
@@ -46,7 +46,7 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
-    And I should see the link "See all enrollments"
+    And I should see the link "View all"
 
   @LU
   Scenario: Successfully cancel enrollment for an event
@@ -60,7 +60,7 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
-    And I should see the link "See all enrollments"
+    And I should see the link "View all"
 
     When I press "Cancel enrollment"
     Then I should see "No one has enrolled for this event"
@@ -72,15 +72,18 @@ Feature: Enroll for an event
     Then I should see the button "Cancel enrollment"
     And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
-    And I should see the link "See all enrollments"
+    And I should see the link "View all"
 
   @LU @cache
   Scenario: Successfully changed enrollment and see changes in teaser
     Given users:
       | name            | pass            | mail                        | status |
       | eventenrollment | eventenrollment | eventenrollment@example.com | 1      |
-    And I am logged in as "eventenrollment"
-    And I am viewing my "event" with the title "Enrollment test event"
+    When I am logged in as "eventenrollment"
+    And I am viewing my event:
+      | title            | Enrollment test event |
+      | field_event_date | 3014-10-17 8:00am     |
+      | status           | 1                     |
     And I click "eventenrollment"
     And I click "Events"
     Then I should not see "Enrolled"

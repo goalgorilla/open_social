@@ -8,6 +8,7 @@ use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Drupal\profile\Entity\Profile;
+use Drupal\group\Entity\Group;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 
 /**
@@ -101,6 +102,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $this->iClickPostVisibilityDropdown();
 
     }
+
+  /**
+   * @When I click the xth :position element with the css :css
+   */
+  public function iClickTheElementWithTheCSS($position, $css)
+  {
+    $session = $this->getSession();
+    $elements = $session->getPage()->findAll('css', $css);
+
+    $count = 0;
+
+    foreach($elements as $element) {
+      if ($count == $position) {
+        // Now click the element.
+        $element->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
 
     /**
      * @When /^I click the post visibility dropdown/
@@ -203,9 +225,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         },
         $elements
       );
+      $checkBefore = $textBefore;
+      $checkAfter = $textAfter;
+
+      foreach($items as $item) {
+        if (strpos($item, $textBefore) !== FALSE) {
+          $checkBefore = $item;
+        }
+        elseif (strpos($item, $textAfter) !== FALSE) {
+          $checkAfter = $item;
+        }
+      }
+
       PHPUnit::assertGreaterThan(
-        array_search($textBefore, $items),
-        array_search($textAfter, $items),
+        array_search($checkBefore, $items),
+        array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
       );
     }
@@ -242,6 +276,83 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
           }
         }
       }
+    }
+
+    /**
+     * Creates group of a given type provided in the form:
+     * | title    | description     | author   | type        | language
+     * | My title | My description  | username | open_group  | en
+     * | ...      | ...             | ...      | ...         | ...
+     *
+     * @Given groups:
+     */
+    public function createGroups(TableNode $groupsTable) {
+      foreach ($groupsTable->getHash() as $groupHash) {
+        $group = (object) $groupHash;
+        $this->groupCreate($group);
+      }
+    }
+
+    /**
+     * Create a user.
+     *
+     * @return object
+     *   The created user.
+     */
+    public function groupCreate($group) {
+
+      $account = user_load_by_name($group->author);
+      if ($account->id() !== 0) {
+        $account_uid = $account->id();
+      }
+      else {
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
+      }
+
+      // Let's create some groups.
+      $group_object = Group::create([
+        'langcode' => $group->language,
+        'uid' => $account_uid,
+        'type' => $group->type,
+        'label' => $group->title,
+        'field_group_description' => $group->description,
+      ]);
+
+      $group_object->save();
+
+      return $group;
+    }
+
+    /**
+     * Opens group stream page.
+     *
+     * @Given /^(?:|I )am on the stream of group "(?P<group_title>[^"]+)"$/
+     * @When /^(?:|I )go to the stream of group "(?P<group_title>[^"]+)"$/
+     */
+    public function openGroupStreamPage($group_title)
+    {
+
+      $query = \Drupal::entityQuery('group')
+        ->condition('label', $group_title);
+
+      $group_ids = $query->execute();
+      $groups = entity_load_multiple('group', $group_ids);
+
+      if (count($groups) > 1) {
+        throw new \Exception(sprintf("Multiple groups with title '%s' exists.", $group_title));
+      }
+      else {
+        $group = reset($groups);
+        if ($group->id() !== 0) {
+          $group_id = $group->id();
+        }
+        else {
+          throw new \Exception(sprintf("Group with group_title '%s' does not exist.", $group_title));
+        }
+      }
+      $page = '/group/' . $group_id . '/stream';
+
+      $this->visitPath($page);
     }
 
 }

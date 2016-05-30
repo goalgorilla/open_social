@@ -4,6 +4,8 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
 use Drupal\group\Plugin\GroupContentEnabler;
 use Drupal\Core\Cache\Cache;
@@ -128,11 +130,13 @@ function social_group_group_insert(GroupInterface $group) {
 function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $action_forms = array(
     'group_content_open_group-group_membership_group-join_form',
-    'group_content_open_group-group_membership_group-leave_form'
+    'group_content_open_group-group_membership_group-leave_form',
+    'group_content_open_group-group_membership_add_form'
   );
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
+
     // Add cancel option on join and leave form.
     $form['actions']['cancel'] = array(
       '#type' => 'submit',
@@ -142,6 +146,20 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     );
 
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
+  }
+
+  $membership_forms = array(
+    'group_content_open_group-group_membership_edit_form',
+    'group_content_open_group-group_membership_add_form',
+  );
+  if (in_array($form_id, $membership_forms)){
+    // Change titles on membership forms.
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+    $form['group_roles']['widget']['#title'] = t('Group roles');
+    // Remove the user selection autocomplete on editing group membership.
+    if('group_content_open_group-group_membership_edit_form' == $form_id){
+      $form['entity_id']['#access'] = FALSE;
+    }
   }
 
   $content_forms = array(
@@ -185,9 +203,14 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       ->load($group);
   }
 
-  // Invalidate cache.
-  $cache_tag = 'group_membership:' . $group->id();
-  Cache::invalidateTags(array($cache_tag));
+  // Invalidate cache tags.
+  $cache_tags = array(
+    'group_membership:' . $group->id(),
+    'group_view'
+  );
+  foreach ($cache_tags as $cache_tag) {
+    Cache::invalidateTags(array($cache_tag));
+  }
 
   // Get form that was submitted.
   $complete_form = $form_state->getCompleteForm();
@@ -257,10 +280,109 @@ function _social_group_node_form_submit($form, FormStateInterface $form_state) {
   }
 }
 
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Alter "Group Members" views. Replace user IDs with profile teasers.
+ */
+function social_group_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->id() == 'group_members') {
+    foreach ($output['#rows'][0]['#rows'] as $key => $row) {
+      // Get Group membership content entity.
+      $group_content = $row['#group_content'];
+      // Get Profile.
+      $user_profile = _social_group_get_member_profile($group_content);
+      if ($user_profile) {
+        // Use teaser for page and small_teaser for block.
+        $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
+        // Replace output with profile teaser.
+        $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, $view_mode);
+      }
+      else {
+        // Remove output if user don't have profile (admin).
+        unset($output['#rows'][0]['#rows'][$key]);
+      }
+
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_group_menu_local_tasks_alter(&$data, $route_name) {
+  // Manage visibility of Group "Members" tab.
+  $account = \Drupal::currentUser();
+  // Get current Group.
+  $group = \Drupal::routeMatch()->getParameter('group');
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+  if (is_object($group)) {
+    // Check for the Group permission.
+    $permission = 'administer members';
+    if ($group_membership = $group->getMember($account)) {
+      if ($group_membership->hasPermission($permission)) {
+        // For group managers we will show membership management interface.
+        unset($data['tabs'][0]['social_group.members']);
+      }
+      else {
+        // For members we will show page with profile teasers of other members.
+        unset($data['tabs'][0]['group.members']);
+      }
+    }
+  }
+  // Hide Group "Nodes" tab.
+  unset($data['tabs'][0]['gnode.collection']);
+
+  // Hide default Group "Members" tab, because we add our own tab.
+  if (isset($data['tabs'][0]['group.members'])) {
+    unset($data['tabs'][0]['group.members']);
+  }
+  if (isset($data['tabs'][0]['group.view']['#link'])) {
+    $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
+  }
+}
+
 /**
  * Implements hook_local_tasks_alter().
  */
 function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_group_entity_type_alter(array &$entity_types) {
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+}
+
+/**
+ * Return user profile by given group membership content.
+ *
+ * @param \Drupal\group\Entity\GroupContent $group_content
+ *
+ * @return \Drupal\profile\Entity\Profile
+ */
+function _social_group_get_member_profile(GroupContent $group_content) {
+  $user_profile = NULL;
+  // Get User entity.
+  $user_entity = $group_content->getEntity();
+  if (!empty($user_entity)) {
+    // Get Profile storage.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      // Get Profile entity.
+      $user_profile = $storage->loadByUser($user_entity, 'profile');
+    }
+  }
+  return $user_profile;
 }

@@ -45,10 +45,18 @@
  * @ingroup templates
  */
 #}
-<div class="card no-margin">
-  <div class="card-body">
-    {% block content %}
-      {{ content }}
-    {% endblock %}
-  </div>
-</div>
+
+<ul class="stream">
+  <li class="stream-item">
+
+    <i class="stream-icon stream-icon-new"></i>
+    <div class="card stream-card">
+      <div class="card-body">
+        {% block content %}
+          {{content}}
+        {% endblock %}
+      </div>
+    </div>
+
+  </li>
+</ul>
