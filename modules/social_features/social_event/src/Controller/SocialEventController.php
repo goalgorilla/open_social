@@ -16,7 +16,6 @@ use Drupal\Core\Controller\ControllerBase;
  */
 class SocialEventController extends ControllerBase {
 
-
   /**
    * Redirectmyevents.
    *
