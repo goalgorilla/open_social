@@ -7,11 +7,15 @@
     h4.card-title 
       a(href="event.html") London Meetup
     p.text-grey-dark
-      i.material-icons.pull-left event
+      i.material-icons event
+      | &nbsp;
       span.inline-center 26 may 09:00 - 18:00 
       | &nbsp; 
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
     p.text-grey-dark
-      i.material-icons.pull-left place
+      i.material-icons place
+      | &nbsp;
       span.inline-center Tower Bridge, London
     .card-actionbar
       a.btn.btn-flat.pull-right(href="event.html") Read more
