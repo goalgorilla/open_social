@@ -6,10 +6,14 @@
     h4.card-title 
       a(href="topic.html") Will this be the cinema of the future?
     p.text-grey-dark
-      a(href="other-stream.html") Richard Ogylvie 
+      if user == "isAnonymous"
+        | Richard Ogylvie 
+      else
+        a(href="other-stream.html") Richard Ogylvie 
       | &bullet; 22 mar 2016
     p 
-      i.material-icons.pull-left label
+      i.material-icons label 
+      | &nbsp;
       span.inline-center Discussion
     .card-actionbar
       a.btn.btn-flat.pull-right(href="topic.html") Read more

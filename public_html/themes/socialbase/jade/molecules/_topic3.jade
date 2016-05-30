@@ -7,10 +7,14 @@
     h4.card-title 
       a(href="topic.html") 5 new cool features in Office 365
     p.text-grey-dark
-      a(href="other-stream.html") Dennis Rodman 
-      | &bullet; 28 mar 2016
+      if user == "isAnonymous"
+        | Dennis Rodman 
+      else
+        a(href="other-stream.html") Dennis Rodman 
+        | &bullet; 28 mar 2016
     p 
-      i.material-icons.pull-left label
+      i.material-icons label 
+      | &nbsp;
       span.inline-center Blog
     
     .card-actionbar
