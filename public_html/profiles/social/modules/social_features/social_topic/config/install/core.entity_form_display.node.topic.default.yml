@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.topic.body
+    - field.field.node.topic.field_content_visibility
     - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
@@ -20,7 +21,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 2
+    weight: 1
     settings:
       rows: 9
       summary_rows: 3
@@ -31,26 +32,31 @@ content:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+  field_content_visibility:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
   field_topic_comments:
-    weight: 27
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     type: comment_default
   field_topic_image:
-    weight: 26
+    weight: 6
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
     type: image_image
   field_topic_type:
-    weight: 3
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
   path:
     type: path
-    weight: 30
+    weight: 8
     settings: {  }
     third_party_settings: {  }
   title:
