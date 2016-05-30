@@ -42,7 +42,7 @@ class EnrollActionBlock extends BlockBase {
     }
     // By default, the block is not visible.
     return AccessResult::forbidden();
-}
+  }
 
   /**
    * {@inheritdoc}
