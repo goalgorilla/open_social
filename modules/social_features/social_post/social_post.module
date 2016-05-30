@@ -6,6 +6,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -79,6 +80,15 @@ function social_post_views_data_alter(array &$data) {
       'id' => 'post_account_stream',
     ),
   );
+  $data['post']['post_group_stream_filter'] = array(
+    'title' => t('Post group stream'),
+    'filter' => array(
+      'title' => t('Post group stream'),
+      'help' => t('Enable post for the group stream.'),
+      'field' => 'field_visibility',
+      'id' => 'post_group_stream',
+    ),
+  );
 }
 
 /**
@@ -129,4 +139,22 @@ function social_post_preprocess_field(&$variables) {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access().
+ */
+function social_post_comment_create_access(\Drupal\Core\Session\AccountInterface $account, array $context, $entity_bundle) {
+  if ($entity_bundle === 'post_comment') {
+    $group = \Drupal::routeMatch()->getParameter('group');
+    if ($group) {
+      if ($group->hasPermission('add post entities in group', $account)) {
+        return AccessResult::allowed()->cachePerUser();
+      }
+      else {
+        return AccessResult::forbidden()->cachePerUser();
+      }
+    }
+  }
+  return AccessResult::neutral();
 }

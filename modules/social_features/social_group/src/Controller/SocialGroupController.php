@@ -30,4 +30,18 @@ class SocialGroupController extends ControllerBase {
     return $this->t('Members of @name', ['@name' => $group_label]);
   }
 
+  /**
+   * The _title_callback for the view.posts.block_stream_group route.
+   *
+   * @param $group
+   *   The group ID.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function groupStreamTitle($group) {
+    $group_label = $group->label();
+    return $group_label;
+  }
+
 }
