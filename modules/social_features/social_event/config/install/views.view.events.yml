@@ -6,7 +6,6 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - node.type.event
   module:
-    - datetime
     - node
     - social_event
     - user
@@ -223,7 +222,7 @@ display:
           exposed: true
           expose:
             operator_id: field_event_date_value_op
-            label: Start date
+            label: 'Start date'
             description: null
             use_operator: false
             operator: field_event_date_value_op
@@ -536,8 +535,6 @@ display:
           entity_type: node
           plugin_id: event_enrolled_or_created
           entity_field: uid
-          plugin_id: numeric
-      display_extenders: {  }
       use_ajax: false
       filter_groups:
         operator: AND
@@ -675,7 +672,7 @@ display:
           exposed: true
           expose:
             operator_id: field_event_date_value_op
-            label: Start date
+            label: 'Start date'
             description: null
             use_operator: false
             operator: field_event_date_value_op

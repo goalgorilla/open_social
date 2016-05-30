@@ -6,10 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - node.type.event
   module:
-    - datetime
     - node
-    - options
-    - social_event
     - user
 id: upcoming_events
 label: '(Upcoming) Community events'
@@ -519,7 +516,7 @@ display:
           exposed: true
           expose:
             operator_id: field_event_date_value_op
-            label: Start date
+            label: 'Start date'
             description: null
             use_operator: false
             operator: field_event_date_value_op
@@ -570,7 +567,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions

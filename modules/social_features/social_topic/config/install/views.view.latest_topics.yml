@@ -5,10 +5,8 @@ dependencies:
     - core.entity_view_mode.node.small_teaser
     - core.entity_view_mode.node.teaser
     - node.type.topic
-    - taxonomy.vocabulary.topic_types
   module:
     - node
-    - taxonomy
     - user
 id: latest_topics
 label: 'Latest topics'
@@ -310,9 +308,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
