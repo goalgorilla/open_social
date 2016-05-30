@@ -19,25 +19,21 @@
  * @ingroup themeable
  */
 #}
-<div class="list-group-item">
-    <a href="{{ profile_url }}" class="list-group-item media">
-        <div class="media-left media-middle">
-            {% if content.field_profile_image %}
-                {{ content.field_profile_image }}
-            {% endif %}
-        </div>
 
-        <div class="media-body media-middle">
-            {{ profile_name|render }}
-        </div>
 
-    </a>
-    {{ title_prefix }}
-    {% if not page %}
-        <h2{{ title_attributes }} class="h3 card-title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-        </h2>
+<div class="list-group-item media">
+  <div class="media-left media-middle">
+    {% if content.field_profile_image %}
+      <a href="{{ profile_url }}">
+        {{ content.field_profile_image }}
+      </a>
     {% endif %}
-    {{ title_suffix }}
-    <div class="text-grey">{{ date }}</div>
+  </div>
+
+  <div class="media-body media-middle">
+    <a href="{{ profile_url }}">
+      {{ profile_name|render }}
+    </a>
+  </div>
+
 </div>

@@ -88,14 +88,17 @@ class SocialDemoPost implements ContainerInjectionInterface {
         $recipient_id = $accountClass->loadUserFromUuid($post['recipient']);
       }
 
+      // Try and fetch the group.
+      $container = \Drupal::getContainer();
+      $groupClass = SocialDemoGroup::create($container);
+
+      $group_id = NULL;
+      if (!empty($post['group'])) {
+        $group_id = $groupClass->loadGroupFromUuid($post['group']);
+      }
+
       // Calculate data.
       $posttime = $this->createDate($post['created']);
-
-/*
-0 => Recipient
-1 => Public
-2 => Comunity
-*/
 
       // Let's create some posts.
       $post_object = Post::create([
@@ -104,6 +107,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
         'field_post' => $post['post'],
         'field_visibility' => $post['visibility'],
         'field_recipient_user' => $recipient_id,
+        'field_recipient_group' => $group_id,
         'user_id' => $user_id,
         'created' => $posttime,
         'changed' => $posttime,

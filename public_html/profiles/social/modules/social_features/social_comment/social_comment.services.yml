@@ -4,3 +4,7 @@ services:
     class: Drupal\social_comment\SocialCommentBreadcrumbBuilder
     tags:
       - { name: breadcrumb_builder, priority: 101 }
+  social_comment.route_subscriber:
+    class: Drupal\social_comment\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

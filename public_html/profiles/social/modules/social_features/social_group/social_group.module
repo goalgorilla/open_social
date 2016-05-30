@@ -130,11 +130,13 @@ function social_group_group_insert(GroupInterface $group) {
 function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $action_forms = array(
     'group_content_open_group-group_membership_group-join_form',
-    'group_content_open_group-group_membership_group-leave_form'
+    'group_content_open_group-group_membership_group-leave_form',
+    'group_content_open_group-group_membership_add_form'
   );
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
+
     // Add cancel option on join and leave form.
     $form['actions']['cancel'] = array(
       '#type' => 'submit',
@@ -144,6 +146,12 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     );
 
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
+
+    // Change titles
+    if ($form_id === 'group_content_open_group-group_membership_add_form') {
+      $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+      $form['group_roles']['widget']['#title'] = t('Group roles');
+    }
   }
 
   $content_forms = array(
@@ -175,9 +183,14 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       ->load($group);
   }
 
-  // Invalidate cache.
-  $cache_tag = 'group_membership:' . $group->id();
-  Cache::invalidateTags(array($cache_tag));
+  // Invalidate cache tags.
+  $cache_tags = array(
+    'group_membership:' . $group->id(),
+    'group_view'
+  );
+  foreach ($cache_tags as $cache_tag) {
+    Cache::invalidateTags(array($cache_tag));
+  }
 
   // Get form that was submitted.
   $complete_form = $form_state->getCompleteForm();
@@ -289,8 +302,11 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
  */
 function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Hide default Group "Members" tab, because we add our own tab.
-  if (isset($data['tabs'][0]['group.members'])){
+  if (isset($data['tabs'][0]['group.members'])) {
     unset($data['tabs'][0]['group.members']);
+  }
+  if (isset($data['tabs'][0]['group.view']['#link'])) {
+    $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
   }
 }
 
