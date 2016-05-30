@@ -96,7 +96,10 @@ function socialbase_preprocess_block(&$variables) {
     $user = \Drupal::routeMatch()->getParameter('user');
     $variables['user_id'] = $user->id();
   }
-  if ($variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile') {
+  if (
+    $variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile' ||
+    $variables['attributes']['id'] === 'block-views-block-groups-block-user-groups'
+  ) {
     $profile_user_id = \Drupal::routeMatch()->getParameter('user');
     if (!is_null($profile_user_id) && is_object($profile_user_id)) {
       $profile_user_id = $profile_user_id->id();
