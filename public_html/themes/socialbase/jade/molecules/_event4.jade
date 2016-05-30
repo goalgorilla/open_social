@@ -11,7 +11,8 @@
       i.material-icons.pull-left event
       span.inline-center 28 Aug 10:00 - 12:00 
       | &nbsp; 
-      span.label.label-primary enrolled
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
     p.text-grey-dark
       i.material-icons.pull-left place
       span.inline-center Old Market, Groningen
