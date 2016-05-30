@@ -1,3 +1,9 @@
+if user == "isAnonymous"
+  - var link = "public-topics";
+else
+  - var link = "explore-topics";
+
+
 .card.card-with-actionbar
   .card-head
     header.text-center Newest topics
@@ -12,5 +18,5 @@
         small.text-gray-lighter.list-group-item-text 1 may
     
     .card-actionbar.text-center
-      a.btn.btn-flat(href="#") See all
+      a.btn.btn-flat(href="#{link}.html") See all
         i.material-icons chevron_right

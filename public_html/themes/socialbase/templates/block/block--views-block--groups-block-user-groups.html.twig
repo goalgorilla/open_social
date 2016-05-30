@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default theme implementation to display a block.
+ * Default theme implementation to display recently joined groups on a profile.
  *
  * Available variables:
  * - plugin_id: The ID of the block implementation.
@@ -23,17 +23,18 @@
  *   displayed in front of the main title tag that appears in the template.
  * - title_suffix: Additional output populated by modules, intended to be
  *   displayed after the main title tag that appears in the template.
- *
+ * - profile_user_id: The user id of the user of the profile the block is
+ *   displayed
  * @see template_preprocess_block()
  *
  * @ingroup themeable
  */
 #}
-<div class="card-with-actionbar">
+<div class="card card-with-actionbar">
     <div class="card-head">
         <header class="text-center">   {{ title_prefix }} {{ label }} {{ title_suffix }} </header>
         <div class="subtitle text-center">
-            {% trans %}in the group{% endtrans %}
+            {% trans %}for this user{% endtrans %}
         </div>
     </div>
     <div class="card-body">
@@ -41,7 +42,7 @@
             {{ content }}
         </div>
         <div class="card-actionbar text-center">
-            <a href="/group/{{ group_id }}/members" class="btn btn-flat">
+            <a href="{{  path('view.events.events_overview', {'user': profile_user_id} ) }}" class="btn btn-flat">
                 {% trans %}
                     View all
                 {% endtrans %}

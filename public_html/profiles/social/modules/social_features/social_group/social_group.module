@@ -42,7 +42,7 @@ function social_group_form_group_open_group_edit_form_alter(&$form, \Drupal\Core
 function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
-    'view.groups.user_groups',
+    'view.groups.page_user_groups',
     array('user' => \Drupal::currentUser()->id(), array())
   );
 }
@@ -225,7 +225,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
   else {
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
-      'view.groups.user_groups',
+      'view.groups.page_user_groups',
       array('user' =>\Drupal::currentUser()->id(), array())
     );
   }

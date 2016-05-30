@@ -1,10 +1,16 @@
 .media
   .media-left
-    a(href='other-stream.html')
+    if user == "isAnonymous"
       img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
+    else 
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
   .media-body
     h5.media-heading
-      a(href="other-stream.html") Getrud van Assen
+      if user == "isAnonymous"
+        | Getrud van Assen
+      else 
+        a(href="other-stream.html") Getrud van Assen
       br 
       small 2 hours 
 
