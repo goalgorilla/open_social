@@ -98,3 +98,18 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
     }
   }
 }
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_event_views_data_alter(array &$data) {
+  $data['node']['event_enrolled_or_created_filter'] = array(
+    'title' => t('Event enrolled or created'),
+    'filter' => array(
+      'title' => t('Event enrolled or created'),
+      'help' => t('Enable events for on the user profles.'),
+      'field' => 'field_event',
+      'id' => 'event_enrolled_or_created',
+    ),
+  );
+}
