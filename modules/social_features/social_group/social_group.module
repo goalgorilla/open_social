@@ -42,7 +42,7 @@ function social_group_form_group_open_group_edit_form_alter(&$form, \Drupal\Core
 function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
-    'view.groups.user_groups',
+    'view.groups.page_user_groups',
     array('user' => \Drupal::currentUser()->id(), array())
   );
 }
@@ -146,11 +146,19 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     );
 
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
+  }
 
-    // Change titles
-    if ($form_id === 'group_content_open_group-group_membership_add_form') {
-      $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
-      $form['group_roles']['widget']['#title'] = t('Group roles');
+  $membership_forms = array(
+    'group_content_open_group-group_membership_edit_form',
+    'group_content_open_group-group_membership_add_form',
+  );
+  if (in_array($form_id, $membership_forms)){
+    // Change titles on membership forms.
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+    $form['group_roles']['widget']['#title'] = t('Group roles');
+    // Remove the user selection autocomplete on editing group membership.
+    if('group_content_open_group-group_membership_edit_form' == $form_id){
+      $form['entity_id']['#access'] = FALSE;
     }
   }
 
@@ -165,6 +173,18 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
   }
+
+  $group_forms = array(
+    'group_open_group_add_form',
+    'group_open_group_edit_form',
+  );
+
+  // Perform alterations on group add/edit forms.
+  if (in_array($form_id, $group_forms)) {
+    // Add character count script for description textarea.
+    $form['#attached']['library'][] = 'social_group/add_form';
+  }
+
 }
 
 /**
@@ -205,7 +225,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
   else {
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
-      'view.groups.user_groups',
+      'view.groups.page_user_groups',
       array('user' =>\Drupal::currentUser()->id(), array())
     );
   }
@@ -271,28 +291,21 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
     foreach ($output['#rows'][0]['#rows'] as $key => $row) {
       // Get Group membership content entity.
       $group_content = $row['#group_content'];
-      // Get User entity.
-      $user_entity = $group_content->getEntity();
-      if (!empty($user_entity)) {
-        // Get Profile storage.
-        $storage = \Drupal::entityTypeManager()->getStorage('profile');
-        if (!empty($storage)) {
-          // Get Profile entity.
-          $user_profile = $storage->loadByUser($user_entity, 'profile');
-          if ($user_profile) {
-            // Use teaser for page and small_teaser for block.
-            $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
-            // Replace output with profile teaser.
-            $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
-              ->getViewBuilder('profile')
-              ->view($user_profile, $view_mode);
-          }
-          else {
-            // Remove output if user don't have profile (admin).
-            unset($output['#rows'][0]['#rows'][$key]);
-          }
-        }
+      // Get Profile.
+      $user_profile = _social_group_get_member_profile($group_content);
+      if ($user_profile) {
+        // Use teaser for page and small_teaser for block.
+        $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
+        // Replace output with profile teaser.
+        $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, $view_mode);
       }
+      else {
+        // Remove output if user don't have profile (admin).
+        unset($output['#rows'][0]['#rows'][$key]);
+      }
+
     }
   }
 }
@@ -301,6 +314,32 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
  * Implements hook_menu_local_tasks_alter().
  */
 function social_group_menu_local_tasks_alter(&$data, $route_name) {
+  // Manage visibility of Group "Members" tab.
+  $account = \Drupal::currentUser();
+  // Get current Group.
+  $group = \Drupal::routeMatch()->getParameter('group');
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+  if (is_object($group)) {
+    // Check for the Group permission.
+    $permission = 'administer members';
+    if ($group_membership = $group->getMember($account)) {
+      if ($group_membership->hasPermission($permission)) {
+        // For group managers we will show membership management interface.
+        unset($data['tabs'][0]['social_group.members']);
+      }
+      else {
+        // For members we will show page with profile teasers of other members.
+        unset($data['tabs'][0]['group.members']);
+      }
+    }
+  }
+  // Hide Group "Nodes" tab.
+  unset($data['tabs'][0]['gnode.collection']);
+
   // Hide default Group "Members" tab, because we add our own tab.
   if (isset($data['tabs'][0]['group.members'])) {
     unset($data['tabs'][0]['group.members']);
@@ -316,4 +355,34 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
 function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_group_entity_type_alter(array &$entity_types) {
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+}
+
+/**
+ * Return user profile by given group membership content.
+ *
+ * @param \Drupal\group\Entity\GroupContent $group_content
+ *
+ * @return \Drupal\profile\Entity\Profile
+ */
+function _social_group_get_member_profile(GroupContent $group_content) {
+  $user_profile = NULL;
+  // Get User entity.
+  $user_entity = $group_content->getEntity();
+  if (!empty($user_entity)) {
+    // Get Profile storage.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      // Get Profile entity.
+      $user_profile = $storage->loadByUser($user_entity, 'profile');
+    }
+  }
+  return $user_profile;
 }
