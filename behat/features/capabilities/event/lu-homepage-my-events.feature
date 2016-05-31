@@ -1,4 +1,4 @@
-@api @event @stability @perfect @upcoming @block @LU @critical @DS-1053
+@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053
 Feature: See my upcoming events
   Benefit: In order to know which events I signed up for
   Role: LU
