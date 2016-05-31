@@ -33,6 +33,11 @@ function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_
   }
 }
 
+function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_profile_address'])) {
+    $form['field_profile_address']['widget'][0]['#title'] = '';
+  }
+}
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
