@@ -40,7 +40,7 @@ Feature: Enroll for an event
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I click radio button "Public - visible to everyone including people who are not a member"
     And I press "Save"
-    And I go to "user/logout"
+    And I logout
     Given I open the "event" node with title "Enrollment redirect test event"
     Then I should see "Enrollment redirect test event"
 

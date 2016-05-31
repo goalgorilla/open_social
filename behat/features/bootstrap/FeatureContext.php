@@ -384,4 +384,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       }
     }
 
+    /**
+     * Log out.
+     *
+     * @Given /^(?:|I )logout$/
+     */
+    public function iLogOut()
+    {
+      $page = '/user/logout';
+      $this->visitPath($page);
+    }
+
 }
