@@ -67,6 +67,16 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
 
+  // Add search_block to account menu. 
+  if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
+    $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+    $block_output = \Drupal::entityManager()
+      ->getViewBuilder('block')
+      ->view($block);
+
+    $variables['content']['links']['search_block'] = $block_output;
+  }
+
   // Preprocess search block header
   if ( isset($variables['content']['search_content_form']) ) {
     $variables['content']['search_content_form']['#attributes']['role'] = 'search';
