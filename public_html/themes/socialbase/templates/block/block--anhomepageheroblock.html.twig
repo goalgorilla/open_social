@@ -45,7 +45,18 @@
  * @ingroup templates
  */
 #}
-<div{{ attributes }}>
+{%
+set classes = [
+'cover',
+content.has_image ? 'cover-image',
+]
+%}
+
+{% if content.has_image %}
+  <div{{ attributes.addClass(classes) }} style="background-image: url({{ content.image_url }})">
+{% else %}
+  <div{{ attributes.addClass(classes) }}>
+{% endif %}
     {{ title_prefix }}
     {% if label %}
         <h2{{ title_attributes }}>{{ label }}</h2>
