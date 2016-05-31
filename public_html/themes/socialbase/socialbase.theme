@@ -43,10 +43,12 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
     'layout_b' => array(
       'page__node__topic',
       'page__user',
+      'page__node__enrollments',
     ),
     'layout_c' => array(
-      'page__node__enrollments',
       'page__node_edit',
+      'page__newest_topics',
+      'page__community_events',
     ),
   );
 
@@ -85,12 +87,21 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
  */
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
-  // Add group id for "See all groups link".
+  // Add Group ID for "See all groups link".
   if ($variables['derivative_plugin_id'] === 'group_members-block_newest_members') {
     $group = \Drupal::routeMatch()->getParameter('group');
     $variables['group_id'] = $group->id();
   }
-  if ($variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile') {
+
+  // Add User ID for "See all link".
+  if ($variables['derivative_plugin_id'] === 'groups-block_user_groups') {
+    $user = \Drupal::routeMatch()->getParameter('user');
+    $variables['user_id'] = $user->id();
+  }
+  if (
+    $variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile' ||
+    $variables['attributes']['id'] === 'block-views-block-groups-block-user-groups'
+  ) {
     $profile_user_id = \Drupal::routeMatch()->getParameter('user');
     if (!is_null($profile_user_id) && is_object($profile_user_id)) {
       $profile_user_id = $profile_user_id->id();
@@ -122,6 +133,23 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   if (isset($variables['element']['#parents'][0])) {
     $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
+  if (isset($variables['element']['#type'])) {
+
+    if ($variables['element']['#type'] == 'radios') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
+    } else {
+      $suggestions[] = $variables['theme_hook_original'];
+    }
+
+  } else {
+    $suggestions[] = $variables['theme_hook_original'];
   }
 }
 

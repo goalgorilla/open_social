@@ -36,7 +36,9 @@
 
   {%- for key, item in links -%}
     {%- if item.link -%}
+    <div class="btn btn-flat pull-right">
       {{ item.link }}
+    </div>
     {%- elseif item.text_attributes -%}
       <span{{ item.text_attributes }}>{{ item.text }}</span>
       {%- else -%}
