@@ -31,7 +31,7 @@ class SocialDrupalContext extends DrupalContext {
     );
     foreach ($fields->getRowsHash() as $field => $value) {
       if (strpos($field, 'date') !== FALSE) {
-        $value =  date('Y-m-d g:ia', strtotime($value));
+        $value =  date('Y-m-d H:i:s', strtotime($value));
       }
       $node->{$field} = $value;
     }
@@ -55,7 +55,7 @@ class SocialDrupalContext extends DrupalContext {
     );
     foreach ($fields->getRowsHash() as $field => $value) {
       if (strpos($field, 'date') !== FALSE) {
-        $value = date('Y-m-d g:ia', strtotime($value));
+        $value = date('Y-m-d H:i:s', strtotime($value));
       }
       $node->{$field} = $value;
     }
@@ -75,7 +75,7 @@ class SocialDrupalContext extends DrupalContext {
       $node = (object) $nodeHash;
       $node->type = $type;
       if (isset($node->field_event_date)) {
-        $node->field_event_date = date('Y-m-d g:ia', strtotime($node->field_event_date));
+        $node->field_event_date = date('Y-m-d H:i:s', strtotime($node->field_event_date));
       }
       $this->nodeCreate($node);
     }
