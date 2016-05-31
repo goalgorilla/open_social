@@ -48,18 +48,6 @@ function socialbase_theme_suggestions_details_alter(array &$suggestions, array $
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
- */
-function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables, $hook) {
-  // Catch the fieldset element for radios and set a specific template suggestion
-  switch ($variables['element']['#type']){
-    case 'radios':
-      $suggestions[] =  'fieldset__' . $variables['element']['#type'];
-    break;
-  }
-}
-
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
  *
  * Select the page layout a / b /c template based on the current route.
  */
