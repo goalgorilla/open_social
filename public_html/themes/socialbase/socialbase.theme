@@ -42,7 +42,6 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
   switch ($variables['element']['#type']){
     case 'radios':
       $suggestions[] =  'fieldset__' . $variables['element']['#type'];
-      dpm($suggestions);
     break;
   }
 }
