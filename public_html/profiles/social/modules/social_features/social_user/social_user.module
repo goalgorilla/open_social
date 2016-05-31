@@ -60,7 +60,6 @@ function social_user_form_user_cancel_form_alter(&$form, \Drupal\Core\Form\FormS
   }
 }
 
-
 /**
  * Implements hook_theme().
  */
@@ -84,7 +83,39 @@ function social_user_theme() {
  *    - links
  */
 function template_preprocess_account_header_links(&$variables) {
+  // Add the search content block to account_header_links.
+  $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+  $block_output = \Drupal::entityManager()
+    ->getViewBuilder('block')
+    ->view($block);
 
+  $variables['links']['search_block'] = $block_output;
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function social_user_block_view_search_content_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+  // Add pre render to search content block in the header.
+  $build['#pre_render'][] = '_social_user_search_content_pre_render';
+}
+
+/**
+ * Pre render for the search content in the header. This will add the
+ * necessary javascript.
+ *
+ * @param array $build
+ * @return array
+ */
+function _social_user_search_content_pre_render(array $build) {
+  // Attach the social_search library defined in social_search.libraries.yml.
+  $build['#attached'] = array(
+    'library' => array(
+      'social_search/navbar-search'
+    ),
+  );
+
+  return $build;
 }
 
 /**
