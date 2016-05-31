@@ -114,7 +114,6 @@ function socialbase_preprocess_block(&$variables) {
     $entity = \Drupal\block_content\Entity\BlockContent::load($imageitem->id());
     $file_id = $entity->get('field_hero_image')->target_id;
 
-
     // If it's an existing file.
     if ($file = \Drupal\file\Entity\File::load($file_id)) {
       // Style and set it in the content.

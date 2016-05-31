@@ -45,11 +45,13 @@
  * @ingroup templates
  */
 #}
+
 {%
 set classes = [
-'cover',
-content.has_image ? 'cover-image',
-]
+  'cover',
+  'cover-with-canvas',
+  content.has_image ? 'cover-img',
+  ]
 %}
 
 {% if content.has_image %}
@@ -57,12 +59,19 @@ content.has_image ? 'cover-image',
 {% else %}
   <div{{ attributes.addClass(classes) }}>
 {% endif %}
-    {{ title_prefix }}
-    {% if label %}
-        <h2{{ title_attributes }}>{{ label }}</h2>
-    {% endif %}
-    {{ title_suffix }}
-    {% block content %}
-        {{ content }}
-    {% endblock %}
+
+  {% if content %}
+    <div class="cover-wrap">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8">
+          <div class="hero-canvas padding-md">
+            {% block content %}
+                {{ content }}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
 </div>
