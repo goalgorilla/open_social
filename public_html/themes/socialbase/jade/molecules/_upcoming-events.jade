@@ -1,3 +1,8 @@
+if user == "isAnonymous"
+  - var link = "public-events";
+else
+  - var link = "explore-events";
+
 .card.card-with-actionbar
   .card-head
     header.text-center Upcoming events
@@ -12,5 +17,5 @@
         small.text-gray-lighter.list-group-item-text 29 nov - 8:00
     
     .card-actionbar.text-center
-      a.btn.btn-flat(href="#") See all
+      a.btn.btn-flat(href="#{link}.html") See all
         i.material-icons chevron_right

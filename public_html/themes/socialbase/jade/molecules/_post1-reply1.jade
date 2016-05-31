@@ -1,10 +1,16 @@
 .media
   .media-left
-    a(href='other-stream.html')
+    if user == "isAnonymous"
       img.media-object.img-circle.img-medium(src='content/images/member1.jpg')
+    else
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member1.jpg')
   .media-body
     h5.media-heading
-      a(href="other-stream.html") Mary-Lou Wallace 
+      if user == "isAnonymous"
+        | Mary-Lou Wallace
+      else
+        a(href="other-stream.html") Mary-Lou Wallace 
       br 
       small 13 hours ago
 

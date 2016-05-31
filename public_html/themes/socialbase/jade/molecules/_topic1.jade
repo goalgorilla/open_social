@@ -6,10 +6,14 @@
     h4.card-title 
       a(href="topic.html") Technology for the handicapped
     p.text-grey-dark
-      a(href="other-stream.html") Clive Owen 
+      if user == "isAnonymous"
+        span Clive Owen 
+      else
+        a(href="other-stream.html") Clive Owen 
       | &bullet; 15 feb 2016
-    p
-      i.material-icons.pull-left label
+    p.clearfix
+      i.material-icons label
+      | &nbsp;
       span.inline-center Blog
     .card-actionbar
       a.btn.btn-flat.pull-right(href="topic.html") Read more
