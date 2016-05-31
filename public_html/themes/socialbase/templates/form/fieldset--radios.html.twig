@@ -38,13 +38,13 @@
       required ? 'js-form-required',
     ]
   %}
+  {% set label_data = legend_span %}
+  {% set label = legend %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label{{ legend.attributes }}>
-    <span{{ legend_span.attributes.addClass(legend_span_classes) }}>{{ legend.title }}</span>
-    {% if required %}
-      <span class="form-required">*</span>
-    {% endif %}
-  </label>
+  <label {{ label_data.attributes.addClass(legend_span_classes) }}>{{ label.title }}</label>
+  {% if required %}
+    <span class="form-required">*</span>
+  {% endif %}
   <div class="fieldset-wrapper">
     {% if errors %}
       <div>
