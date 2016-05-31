@@ -80,7 +80,7 @@ function social_group_preprocess_group(&$variables) {
 
   // Add the hero styled image.
   if (!empty($group->field_group_image->entity)) {
-    $variables['group_hero_styled_image_url'] = ImageStyle::load('hero_background')
+    $variables['group_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($group->field_group_image->entity->getFileUri());
   }
 
