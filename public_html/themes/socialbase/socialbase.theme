@@ -43,10 +43,12 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
     'layout_b' => array(
       'page__node__topic',
       'page__user',
+      'page__node__enrollments',
     ),
     'layout_c' => array(
-      'page__node__enrollments',
       'page__node_edit',
+      'page__newest_topics',
+      'page__community_events',
     ),
   );
 
@@ -153,6 +155,23 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   if (isset($variables['element']['#parents'][0])) {
     $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
+  if (isset($variables['element']['#type'])) {
+
+    if ($variables['element']['#type'] == 'radios') {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
+    } else {
+      $suggestions[] = $variables['theme_hook_original'];
+    }
+
+  } else {
+    $suggestions[] = $variables['theme_hook_original'];
   }
 }
 
