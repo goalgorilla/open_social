@@ -295,6 +295,8 @@ function social_group_field_widget_form_alter(&$element, \Drupal\Core\Form\FormS
     $node_forms = array(
       'node_topic_gnode-form_form',
       'node_event_gnode-form_form',
+      'node_topic_edit_form',
+      'node_event_edit_form',
     );
     if (in_array($build_info['form_id'], $node_forms)) {
       unset($element['#options']['public']);
