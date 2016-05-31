@@ -3,7 +3,7 @@
  * Entity Access By Field module file.
  */
 
-use Drupal\Core\Access\AccessResult;
+use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -14,28 +14,7 @@ use Drupal\Core\Session\AccountInterface;
  * Implements hook_node_access().
  */
 function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  if ($op === 'view') {
-    $field_definitions = $node->getFieldDefinitions();
-
-    /* @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
-    foreach ($field_definitions as $field_name => $field_definition) {
-      if ($field_definition->getType() === 'entity_access_field') {
-        $field_values = $node->get($field_name)->getValue();
-        if (!empty($field_values)) {
-          foreach ($field_values as $key => $field_value) {
-            if (isset($field_value['value'])) {
-              $permission_label = $field_definition->id() . ':' . $field_value['value'];
-              if ($account->hasPermission('view ' . $permission_label . ' content', $account)) {
-                return AccessResult::allowed()->cachePerPermissions()->addCacheableDependency($node);
-              }
-            }
-          }
-        }
-        return AccessResult::forbidden();
-      }
-    }
-  }
-  return AccessResult::neutral();
+  return EntityAccessHelper::getEntityAccessResult($node, $op, $account);
 }
 
 /**
