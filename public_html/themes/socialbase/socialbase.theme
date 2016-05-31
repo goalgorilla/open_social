@@ -27,11 +27,18 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
 }
 
+function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_event_address'])) {
+    $form['field_event_address']['widget'][0]['#title'] = '';
+  }
+}
+
+
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__vertical_tabs';
+  $suggestions[] = $hook . '__materialize';
 }
 
 /**
