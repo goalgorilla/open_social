@@ -111,7 +111,7 @@ function socialbase_preprocess_block(&$variables) {
   if ($variables['attributes']['id'] === 'block-anhomepageheroblock') {
     $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
     $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
-    $entity = entity_load('block_content',$imageitem->id());
+    $entity = \Drupal\block_content\Entity\BlockContent::load($imageitem->id());
     $file_id = $entity->get('field_hero_image')->target_id;
 
 
