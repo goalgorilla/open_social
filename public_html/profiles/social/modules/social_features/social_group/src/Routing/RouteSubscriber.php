@@ -30,11 +30,11 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
     }
 
-
     // Route the group members page to the group/{group}/membership
     if ($route = $collection->get('entity.group_content.group_membership.collection')) {
       $route->setPath('/group/{group}/membership');
     }
+
     // Override default title
     if ($route = $collection->get('view.group_members.page_group_members')) {
       $defaults = $route->getDefaults();

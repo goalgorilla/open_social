@@ -29,6 +29,6 @@ meta(name='theme-color', content='#ffffff')
 
 
 link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen')
-link(href='css/styleguide.css', type='text/css', rel='stylesheet', media='screen')
-if page
+unless pagetype == "template"
+  link(href='css/styleguide.css', type='text/css', rel='stylesheet', media='screen')
   link(href='css/prism.css', type='text/css', rel='stylesheet', media='screen')
