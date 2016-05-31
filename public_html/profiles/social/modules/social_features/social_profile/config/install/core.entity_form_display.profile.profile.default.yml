@@ -29,51 +29,40 @@ third_party_settings:
         - field_profile_image
       parent_name: ''
       weight: 0
-      label: 'Names and profile image'
+      label: 'Names & profile image'
       format_type: fieldset
       format_settings:
-        description: ''
-        classes: ''
-        id: ''
+        label: 'Names & profile image'
         required_fields: true
+        id: name
+        classes: scrollspy
     group_profile_funct_organization:
       children:
         - field_profile_function
         - field_profile_organization
       parent_name: ''
       weight: 1
-      label: 'Function and organization'
+      label: Work
       format_type: fieldset
       format_settings:
-        description: ''
-        classes: ''
-        id: ''
+        label: Work
         required_fields: true
+        id: work
+        classes: scollspy
     group_profile_self_intro:
       children:
         - field_profile_self_introduction
+        - field_profile_expertise
+        - field_profile_interests
       parent_name: ''
       weight: 3
-      label: 'Self introduction'
+      label: 'Details about you'
       format_type: fieldset
       format_settings:
-        description: ''
-        classes: ''
-        id: ''
+        label: 'Details about you'
         required_fields: true
-    group_profile_expertise_interest:
-      children:
-        - field_profile_interests
-        - field_profile_expertise
-      parent_name: ''
-      weight: 4
-      label: 'Expertise and interests'
-      format_type: fieldset
-      format_settings:
-        description: ''
-        classes: ''
-        id: ''
-        required_fields: true
+        id: details
+        classes: scrollspy
     group_profile_contact_info:
       children:
         - field_profile_phone_number
@@ -83,10 +72,10 @@ third_party_settings:
       label: 'Contact information'
       format_type: fieldset
       format_settings:
-        description: ''
-        classes: ''
-        id: ''
+        label: 'Contact information'
         required_fields: true
+        id: contact
+        classes: scollspy
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
@@ -99,7 +88,7 @@ content:
     third_party_settings: {  }
     type: address_default
   field_profile_expertise:
-    weight: 7
+    weight: 6
     settings:
       match_operator: CONTAINS
       size: 60
@@ -128,7 +117,7 @@ content:
     third_party_settings: {  }
     type: image_image
   field_profile_interests:
-    weight: 6
+    weight: 7
     settings:
       match_operator: CONTAINS
       size: 60
