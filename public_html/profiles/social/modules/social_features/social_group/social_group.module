@@ -299,7 +299,20 @@ function social_group_field_widget_form_alter(&$element, \Drupal\Core\Form\FormS
       'node_event_edit_form',
     );
     if (in_array($build_info['form_id'], $node_forms)) {
-      unset($element['#options']['public']);
+      // Check if we are editing a node.
+      $node = \Drupal::routeMatch()->getParameter('node');
+      if ($node) {
+
+        // Only react if it is actually posted inside a group.
+        $groupcontents = GroupContent::loadByEntity($node);
+        if (!empty($groupcontents)) {
+          unset($element['#options']['public']);
+        }
+      }
+      else {
+        // WE must be creating a node (in the group context).
+        unset($element['#options']['public']);
+      }
     }
   }
 }
