@@ -32,9 +32,9 @@ class EntityAccessHelper {
           }
           $access = FALSE;
         }
-        if (isset($access) && $access === FALSE) {
-          return 1;
-        }
+      }
+      if (isset($access) && $access === FALSE) {
+        return 1;
       }
     }
     return 0;
