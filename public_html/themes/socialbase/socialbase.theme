@@ -27,8 +27,24 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
 }
 
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
   $suggestions[] = $hook . '__vertical_tabs';
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables, $hook) {
+  // Catch the fieldset element for radios and set a specific template suggestion
+  switch ($variables['element']['#type']){
+    case 'radios':
+      $suggestions[] =  'fieldset__' . $variables['element']['#type'];
+      dpm($suggestions);
+    break;
+  }
 }
 
 /**
