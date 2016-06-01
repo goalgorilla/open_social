@@ -8,21 +8,20 @@ dependencies:
     - image.style.thumbnail
   module:
     - image
-    - text
 id: group.open_group.default
 targetEntityType: group
 bundle: open_group
 mode: default
 content:
   field_group_description:
-    weight: 3
+    weight: 1
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
+    type: string_textarea
   field_group_image:
-    weight: 4
+    weight: 2
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -30,7 +29,7 @@ content:
     type: image_image
   label:
     type: string_textfield
-    weight: -5
+    weight: 0
     settings:
       size: 60
       placeholder: ''

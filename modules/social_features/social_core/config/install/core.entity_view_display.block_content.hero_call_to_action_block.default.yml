@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.hero_call_to_action_block
+    - field.field.block_content.hero_call_to_action_block.field_call_to_action_link
+    - field.field.block_content.hero_call_to_action_block.field_hero_image
+    - field.field.block_content.hero_call_to_action_block.field_text_block
+    - image.style.hero_background
+  module:
+    - image
+    - link
+    - text
+id: block_content.hero_call_to_action_block.default
+targetEntityType: block_content
+bundle: hero_call_to_action_block
+mode: default
+content:
+  field_call_to_action_link:
+    type: link
+    weight: 2
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+  field_hero_image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: hero_background
+      image_link: ''
+    third_party_settings: {  }
+  field_text_block:
+    type: text_default
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
