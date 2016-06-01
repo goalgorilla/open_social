@@ -399,7 +399,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
   }
 
-  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form') {
+  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
 
