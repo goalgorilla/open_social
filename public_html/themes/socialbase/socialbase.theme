@@ -27,6 +27,36 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
 }
 
+function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_event_address'])) {
+    $form['field_event_address']['widget'][0]['#title'] = '';
+  }
+}
+
+function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_profile_address'])) {
+    $form['field_profile_address']['widget'][0]['#title'] = '';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
+  $suggestions[] = $hook . '__materialize';
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables, $hook) {
+  // Catch the fieldset element for radios and set a specific template suggestion
+  switch ($variables['element']['#type']){
+    case 'radios':
+      $suggestions[] =  'fieldset__' . $variables['element']['#type'];
+    break;
+  }
+}
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -133,23 +163,6 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   if (isset($variables['element']['#parents'][0])) {
     $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
-  }
-}
-
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
-function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
-  if (isset($variables['element']['#type'])) {
-
-    if ($variables['element']['#type'] == 'radios') {
-      $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-    } else {
-      $suggestions[] = $variables['theme_hook_original'];
-    }
-
-  } else {
-    $suggestions[] = $variables['theme_hook_original'];
   }
 }
 
@@ -350,6 +363,17 @@ function socialbase_preprocess_input(&$variables) {
       }
     }
   }
+
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'date') {
+    $variables['#attached']['library'][] = 'socialbase/pickadate';
+    if ( $variables['element']['#attributes']['type'] == 'time') {
+      $variables['attributes']['class'][] = 'timepicker';
+    }
+    if ( $variables['element']['#attributes']['type'] == 'date') {
+      $variables['attributes']['class'][] = 'datepicker';
+    }
+  }
+  
 }
 
 /**
