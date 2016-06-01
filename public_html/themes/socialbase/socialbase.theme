@@ -49,6 +49,8 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
       'page__node_edit',
       'page__newest_topics',
       'page__community_events',
+      'page__comment__edit',
+      'page__comment__delete',
     ),
   );
 
@@ -392,9 +394,13 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
-
+  /* TODO: distinguish edit comment form from normal comment form in stream */
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+    $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
+  }
+
+  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
 
 }
