@@ -9,6 +9,8 @@ namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Form\UserLoginForm;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Class SocialUserLoginForm.
@@ -53,11 +55,16 @@ class SocialUserLoginForm extends UserLoginForm {
       ),
     );
 
+    $reset_pass_url = Url::fromRoute('user.pass');
+    $reset_pass_link = Link::createFromRoute($this->t('Forgot password?'), $reset_pass_url->getRouteName());
+    $generated_reset_pass_link = $reset_pass_link->toString();
+    $pass_description = $generated_reset_pass_link->getGeneratedLink();
+
     $form['pass'] = array(
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#size' => 60,
-      '#description' => $this->t('Enter the password that accompanies your username.'),
+      '#description' => $pass_description,
       '#required' => TRUE,
     );
 
@@ -86,10 +93,7 @@ class SocialUserLoginForm extends UserLoginForm {
     // A destination was set, probably on an exception controller,
     // @TODO: Add validation if route exists.
     if (!$this->getRequest()->request->has('destination')) {
-      $form_state->setRedirect(
-        'view.user_information.user_information',
-        array('user' => $account->id())
-      );
+      $form_state->setRedirect('<front>');
     }
     else {
       $this->getRequest()->query->set('destination', $this->getRequest()->request->get('destination'));

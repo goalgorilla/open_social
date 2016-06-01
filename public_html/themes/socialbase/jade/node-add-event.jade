@@ -15,6 +15,8 @@ block content
         li
           a(href='#content') Title &amp; image
         li 
+          a(href='#visibility') Visibility
+        li 
           a(href='#eventtime') Date &amp; time
         li 
           a(href='#location') Location
@@ -44,11 +46,29 @@ block content
               label Image
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
-                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                button.btn.btn-default.js-hide(type='submit', value='remove')
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
 
+        #visibility.card.card-underline.scrollspy
+        
+          .card-head
+            header Visibility
+      
+          .card-body
+
+            .form-group.radios
+              label.form-required Visibility
+              .radio
+                input#community(type='radio', name='type')
+                label(for='community') Community
+                .help-block Visible for members only
+              .radio
+                input#public(type='radio', name='type')
+                label(for='public') Public
+                .help-block Visible for everyone, including people who are not a member
+                
         #eventtime.card.card-underline.scrollspy
         
           .card-head
@@ -130,7 +150,7 @@ block content
               label Files
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
-                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                button.btn.btn-default.js-hide(type='submit', value='remove')
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block 15 MB per file limit - Allowed types: xls xlsx doc 

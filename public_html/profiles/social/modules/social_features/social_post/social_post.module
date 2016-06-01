@@ -6,6 +6,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -22,8 +23,15 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
  */
 function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Set the action of the form to the current uri.
+  // This needs to be done, becuase we cannot override $form['#action']
+  // without breaking functionality.
   $uri = Url::fromRoute('<current>')->toString();
-  $form['#action'] = $uri;
+  // Store in a hidden field.
+  $form['redirect_after_save'] = array(
+    '#type' => 'hidden',
+    '#title' => 'Redir',
+    '#default_value' => $uri,
+  );
 
   // Submit function to retrieve the action uri and redirect to it.
   $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
@@ -36,9 +44,18 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
  * Form submit for comment_post_comment_form.
  */
 function _social_post_comment_post_comment_form_submit($form, FormStateInterface $form_state) {
-  // Get the Url from the Form action and redirect to this url.
-  $url = Url::fromUserInput($form['#action']);
-  $form_state->setRedirectUrl($url);
+  // Fetch from the form.
+  $uri = $form_state->getValue('redirect_after_save');
+  // Let's not trust this.
+  $uri = Drupal\Component\Utility\Html::escape($uri);
+
+  // Must be a valid URL.
+  if (Drupal\Component\Utility\UrlHelper::isValid($uri)) {
+    // Get the Url from the Form value and redirect to this url.
+    $url = Url::fromUserInput($uri);
+    // Set redirect.
+    $form_state->setRedirectUrl($url);
+  }
 }
 
 /**
@@ -61,6 +78,15 @@ function social_post_views_data_alter(array &$data) {
       'help' => t('Enable post for the account stream.'),
       'field' => 'field_visibility',
       'id' => 'post_account_stream',
+    ),
+  );
+  $data['post']['post_group_stream_filter'] = array(
+    'title' => t('Post group stream'),
+    'filter' => array(
+      'title' => t('Post group stream'),
+      'help' => t('Enable post for the group stream.'),
+      'field' => 'field_visibility',
+      'id' => 'post_group_stream',
     ),
   );
 }
@@ -113,4 +139,22 @@ function social_post_preprocess_field(&$variables) {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access().
+ */
+function social_post_comment_create_access(\Drupal\Core\Session\AccountInterface $account, array $context, $entity_bundle) {
+  if ($entity_bundle === 'post_comment') {
+    $group = \Drupal::routeMatch()->getParameter('group');
+    if ($group) {
+      if ($group->hasPermission('add post entities in group', $account)) {
+        return AccessResult::allowed()->cachePerUser();
+      }
+      else {
+        return AccessResult::forbidden()->cachePerUser();
+      }
+    }
+  }
+  return AccessResult::neutral();
 }

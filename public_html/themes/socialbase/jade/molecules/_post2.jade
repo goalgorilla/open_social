@@ -1,7 +1,10 @@
 .media
   .media-left
-    a(href='other-stream.html')
+    if user == "isAnonymous"
       img.media-object.img-circle.img-medium(src='content/images/avatar5.jpg')
+    else 
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/avatar5.jpg')
   .media-body
     h5.media-heading
       a(href="other-stream.html") Jenny Baker
