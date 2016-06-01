@@ -269,7 +269,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function resizeWindow()
     {
-      $this->getSession()->resizeWindow(1280, 1024, 'current');
+      $this->getSession()->resizeWindow(1280, 2024, 'current');
     }
 
     /**
