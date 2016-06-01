@@ -363,6 +363,17 @@ function socialbase_preprocess_input(&$variables) {
       }
     }
   }
+
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'date') {
+    $variables['#attached']['library'][] = 'socialbase/pickadate';
+    if ( $variables['element']['#attributes']['type'] == 'time') {
+      $variables['attributes']['class'][] = 'timepicker';
+    }
+    if ( $variables['element']['#attributes']['type'] == 'date') {
+      $variables['attributes']['class'][] = 'datepicker';
+    }
+  }
+  
 }
 
 /**
