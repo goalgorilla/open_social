@@ -197,6 +197,17 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
   }
+
+  // Custom theme hook suggestion for user_anon.
+  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
+  }
+
+  // Custom theme hook suggestion for post comment.
+  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+  }
+
 }
 
 /**
@@ -268,7 +279,6 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
 /**
  * Implements hook_preprocess_page().
  */
-
 function socialbase_preprocess_page(&$variables) {
   // if we have the admin toolbar on our screen we need overrides for our styles.
   if ($variables['is_admin']) {
@@ -281,13 +291,11 @@ function socialbase_preprocess_page(&$variables) {
  */
 function socialbase_preprocess_page_layout_a(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
-
 }
 
 /**
  * Implements socialbase_preprocess_page_layout_a().
  */
-
 function socialbase_preprocess_page_layout_b(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
 }
@@ -295,7 +303,6 @@ function socialbase_preprocess_page_layout_b(&$variables) {
 /**
  * Implements socialbase_preprocess_page_layout_a().
  */
-
 function socialbase_preprocess_page_layout_c(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
 }
@@ -435,7 +442,6 @@ function socialbase_preprocess_dropdown(&$variables) {
  * @return string $icon
  */
 function _socialbase_get_visibility_icon($title) {
-
   // Set the materialize icon.
   switch ($title) {
     case 'Community':
@@ -453,17 +459,9 @@ function _socialbase_get_visibility_icon($title) {
   return $icon;
 }
 
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
-  }
-
-}
-
+/**
+ * Implements hook_theme_suggestions_textarea_alter().
+ */
 function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
@@ -480,7 +478,6 @@ function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array 
  * @see \Drupal\bootstrap\Bootstrap::cssClassFromString()
  */
 function socialbase_bootstrap_colorize_text_alter(&$texts) {
-
   $texts = [
 
     // Text that match these specific strings are checked first.
@@ -510,9 +507,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
  * @see \Drupal\bootstrap\Bootstrap::glyphiconFromString()
  */
 function socialbase_bootstrap_iconize_text_alter(&$texts) {
-
   $texts = [
-
     // Text that match these specific strings are checked first.
     'matches' => [
     ],
@@ -523,5 +518,4 @@ function socialbase_bootstrap_iconize_text_alter(&$texts) {
     ],
 
   ];
-
 }
