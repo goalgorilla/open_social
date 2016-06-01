@@ -19,7 +19,6 @@ Feature: See newest topics in the community
     Given I am on the homepage
 
     Then I should see "Newest members"
-    And I break
     And I should see "Behat User 1"
     And I should see "Behat User 2"
 
