@@ -32,28 +32,47 @@
  * @see template_preprocess_links()
  */
 #}
-{% if links -%}
-  {%- if heading -%}
-    {%- if heading.level -%}
-      <{{ heading.level }}{{ heading.attributes }}>{{ heading.text }}</{{ heading.level }}>
-    {%- else -%}
-      <h2{{ heading.attributes }}>{{ heading.text }}</h2>
-    {%- endif -%}
-  {%- endif -%}
-  <div class="btn-group pull-right">
-    <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">expand_more</i></button>
-    <ul{{ attributes.addClass('dropdown-menu') }}>
-    {%- for key, item in links -%}
-      <li{{ item.attributes.addClass(key|clean_class) }}>
-        {%- if item.link -%}
+{% if links['comment-reply'] %}
+ <div class="clearfix">
+   {%- for key, item in links -%}
+     {%- if item.link -%}
+        <div class="btn btn-link btn-sm pull-right">
           {{ item.link }}
-        {%- elseif item.text_attributes -%}
-          <span{{ item.text_attributes }}>{{ item.text }}</span>
-        {%- else -%}
-          {{ item.text }}
-        {%- endif -%}
-      </li>
-    {%- endfor -%}
-  </ul>
-</div>
-{%- endif %}
+        </div>
+     {%- elseif item.text_attributes -%}
+       <span{{ item.text_attributes }}>{{ item.text }}</span>
+     {%- else -%}
+       {{ item.text }}
+     {%- endif -%}
+    {% endfor %}
+ </div>
+
+{% else %}
+
+  {% if links -%}
+    {%- if heading -%}
+      {%- if heading.level -%}
+        <{{ heading.level }}{{ heading.attributes }}>{{ heading.text }}</{{ heading.level }}>
+      {%- else -%}
+        <h2{{ heading.attributes }}>{{ heading.text }}</h2>
+      {%- endif -%}
+    {%- endif -%}
+    <div class="btn-group pull-right">
+      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">expand_more</i></button>
+      <ul{{ attributes.addClass('dropdown-menu') }}>
+      {%- for key, item in links -%}
+        <li{{ item.attributes.addClass(key|clean_class) }}>
+          {%- if item.link -%}
+            {{ item.link }}
+          {%- elseif item.text_attributes -%}
+            <span{{ item.text_attributes }}>{{ item.text }}</span>
+          {%- else -%}
+            {{ item.text }}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  {%- endif %}
+
+{% endif %}
