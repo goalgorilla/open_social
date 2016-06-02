@@ -79,10 +79,10 @@ gulp.task('css', function () {
       errorHandler: onError
     }))
     .pipe( sourcemaps.init() )
-    .pipe( sass() )
-    .pipe( nano( {
-      mergeRules: true
-    }) )
+    .pipe( sass({outputStyle: 'expanded'}) )
+    //.pipe( nano( {
+    //  mergeRules: true
+    //}) )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
     .pipe( sourcemaps.write('.') )
