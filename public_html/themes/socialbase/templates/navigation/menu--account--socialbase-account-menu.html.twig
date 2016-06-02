@@ -26,6 +26,10 @@
 #}
 {{ menus.menu_links(items, attributes, 0) }}
 
+{#
+ We attach a library for the search block.
+#}
+{{ attach_library('social_search/navbar-search') }}
 
 
 <a href="#" class="navbar-brand">
@@ -62,18 +66,4 @@
   {% endif %}
 {% endmacro %}
 
-</div>
-
-<div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
-  <ul class="nav navbar-nav">
-    <li><a href="#">Explore</a></li>
-    <li>
-      <form role="search" class="navbar-form navbar-left">
-        <div id="navbar-search" class="form-group">
-          <input id="search" type="text" placeholder="Search" name="search" class="form-control">
-          <input type="submit" value="" class="form-submit"><span class="search-icon"><i class="material-icons">search</i></span>
-        </div>
-      </form>
-    </li>
-  </ul>
 </div>

@@ -27,6 +27,24 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
 }
 
+function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_event_address'])) {
+    $form['field_event_address']['widget'][0]['#title'] = '';
+  }
+}
+
+function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id){
+  if (isset($form['field_profile_address'])) {
+    $form['field_profile_address']['widget'][0]['#title'] = '';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
+  $suggestions[] = $hook . '__materialize';
+}
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -87,6 +105,42 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
  */
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+
+  // Add search_block to account menu.
+  if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
+    $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+    $block_output = \Drupal::entityManager()
+      ->getViewBuilder('block')
+      ->view($block);
+
+    $variables['content']['links']['search_block'] = $block_output;
+  }
+
+  // Preprocess search block header
+  if (isset($variables['content']['search_content_form']) ) {
+    if ($variables['content']['search_content_form']['#form_id'] != 'search_hero_content_form') {
+      $variables['content']['search_content_form']['#attributes']['role'] = 'search';
+      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
+      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-left';
+      $variables['content']['search_content_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
+      $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
+    }
+    else {
+      $variables['content']['search_content_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
+      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
+      $variables['content']['search_content_form']['#attributes']['role'] = 'search';
+      $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
+    }
+  }
+  if (isset($variables['content']['search_users_form'])) {
+    // Add class for the forms as well.
+    $variables['content']['search_users_form']['#attributes']['class'][] = 'hero-form';
+    $variables['content']['search_users_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_users_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
+    $variables['content']['search_users_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
+  }
+
   // Add Group ID for "See all groups link".
   if ($variables['derivative_plugin_id'] === 'group_members-block_newest_members') {
     $group = \Drupal::routeMatch()->getParameter('group');
@@ -107,6 +161,41 @@ function socialbase_preprocess_block(&$variables) {
       $profile_user_id = $profile_user_id->id();
     }
     $variables['profile_user_id'] = $profile_user_id;
+  }
+
+  // AN Homepage block.
+  if ($variables['attributes']['id'] === 'block-anhomepageheroblock') {
+    $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
+    $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
+    $entity = \Drupal\block_content\Entity\BlockContent::load($imageitem->id());
+    $file_id = $entity->get('field_hero_image')->target_id;
+
+    // If it's an existing file.
+    if ($file = \Drupal\file\Entity\File::load($file_id)) {
+      // Style and set it in the content.
+      $styled_image_url = \Drupal\image\Entity\ImageStyle::load($imagestyle)->buildUrl($file->getFileUri());
+      $variables['content']['image_url'] = $styled_image_url;
+
+      // Add extra class.
+      $variables['content']['has_image'] = TRUE;
+
+      // Remove the origingal
+      unset($variables['content']['field_hero_image']);
+
+    }
+  } // AN Homepage block.
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_container(&$variables) {
+  $variables['search_context'] = FALSE;
+
+  // For pages in search we would like to render containers without divs.
+  $routename = \Drupal::request()->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
+  if (strpos($routename, 'search') !== false) {
+    $variables['search_context'] = TRUE;
   }
 }
 
@@ -139,16 +228,45 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
+function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
+  // Lets add the the search_content_form as the only theme suggestion if it
+  // really is the search_content_form.
+  if ($variables['element']['#id'] == 'search-content-form') {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
+  }
+  // Also for the search hero content form on the /search/content.
+  if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
+  }
+
+  // Custom theme hook suggestion for user_anon.
+  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
+  }
+
+  // Custom theme hook suggestion for post comment.
+  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
 function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
   if (isset($variables['element']['#type'])) {
-
     if ($variables['element']['#type'] == 'radios') {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-    } else {
+      $suggestions[] =  'fieldset__' . $variables['element']['#type'];
+    }
+    // Override bootstrap base theme suggestions.
+    else {
       $suggestions[] = $variables['theme_hook_original'];
     }
-
-  } else {
+  }
+  // Override bootstrap base theme suggestions.
+  else {
     $suggestions[] = $variables['theme_hook_original'];
   }
 }
@@ -203,7 +321,6 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
 /**
  * Implements hook_preprocess_page().
  */
-
 function socialbase_preprocess_page(&$variables) {
   // if we have the admin toolbar on our screen we need overrides for our styles.
   if ($variables['is_admin']) {
@@ -216,13 +333,11 @@ function socialbase_preprocess_page(&$variables) {
  */
 function socialbase_preprocess_page_layout_a(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
-
 }
 
 /**
  * Implements socialbase_preprocess_page_layout_a().
  */
-
 function socialbase_preprocess_page_layout_b(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
 }
@@ -230,7 +345,6 @@ function socialbase_preprocess_page_layout_b(&$variables) {
 /**
  * Implements socialbase_preprocess_page_layout_a().
  */
-
 function socialbase_preprocess_page_layout_c(&$variables) {
   _socialbase_call_preprocess_page('page', $variables);
 }
@@ -350,6 +464,17 @@ function socialbase_preprocess_input(&$variables) {
       }
     }
   }
+
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'date') {
+    $variables['#attached']['library'][] = 'socialbase/pickadate';
+    if ( $variables['element']['#attributes']['type'] == 'time') {
+      $variables['attributes']['class'][] = 'timepicker';
+    }
+    if ( $variables['element']['#attributes']['type'] == 'date') {
+      $variables['attributes']['class'][] = 'datepicker';
+    }
+  }
+  
 }
 
 /**
@@ -370,7 +495,6 @@ function socialbase_preprocess_dropdown(&$variables) {
  * @return string $icon
  */
 function _socialbase_get_visibility_icon($title) {
-
   // Set the materialize icon.
   switch ($title) {
     case 'Community':
@@ -388,17 +512,9 @@ function _socialbase_get_visibility_icon($title) {
   return $icon;
 }
 
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
-  }
-
-}
-
+/**
+ * Implements hook_theme_suggestions_textarea_alter().
+ */
 function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
@@ -415,7 +531,6 @@ function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array 
  * @see \Drupal\bootstrap\Bootstrap::cssClassFromString()
  */
 function socialbase_bootstrap_colorize_text_alter(&$texts) {
-
   $texts = [
 
     // Text that match these specific strings are checked first.
@@ -445,9 +560,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
  * @see \Drupal\bootstrap\Bootstrap::glyphiconFromString()
  */
 function socialbase_bootstrap_iconize_text_alter(&$texts) {
-
   $texts = [
-
     // Text that match these specific strings are checked first.
     'matches' => [
     ],
@@ -458,5 +571,4 @@ function socialbase_bootstrap_iconize_text_alter(&$texts) {
     ],
 
   ];
-
 }
