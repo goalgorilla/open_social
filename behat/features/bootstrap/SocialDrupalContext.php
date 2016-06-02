@@ -3,6 +3,7 @@
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 use Behat\Gherkin\Node\TableNode;
 
@@ -10,6 +11,16 @@ use Behat\Gherkin\Node\TableNode;
  * Provides pre-built step definitions for interacting with Open Social.
  */
 class SocialDrupalContext extends DrupalContext {
+
+
+  /**
+   * @beforeScenario @api
+   */
+  public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
+    $admin_user = user_load('1');
+    $current_user = \Drupal::getContainer()->get('current_user');
+    $current_user->setAccount($admin_user);
+  }
 
   /**
    * Creates content of the given type for the current user,

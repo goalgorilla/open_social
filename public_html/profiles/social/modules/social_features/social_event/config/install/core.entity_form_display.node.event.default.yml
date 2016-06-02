@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
     - field.field.node.event.field_event_address
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
@@ -87,9 +88,14 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 6
+    weight: 2
     settings: {  }
     third_party_settings: {  }
+  field_content_visibility:
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
   field_event_address:
     weight: 14
     settings:
@@ -97,7 +103,7 @@ content:
     third_party_settings: {  }
     type: address_default
   field_event_comments:
-    weight: 10
+    weight: 13
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -119,7 +125,7 @@ content:
     third_party_settings: {  }
     type: image_image
   field_event_location:
-    weight: 13
+    weight: 11
     settings:
       size: 60
       placeholder: ''
@@ -134,24 +140,24 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 3
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 4
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 0
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 1
     settings:
       match_operator: CONTAINS
       size: 60

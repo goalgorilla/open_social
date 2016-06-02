@@ -375,4 +375,45 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $this->visitPath($page);
     }
 
+    /**
+     * Opens specified node page of type and with title.
+     *
+     * @Given /^(?:|I )open the "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
+     * @When /^(?:|I )go the  "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
+     */
+    public function openNodeWithTitle($type, $title)
+    {
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', $type)
+        ->condition('title', $title, '=')
+        ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT');
+      $nids = $query->execute();
+
+      if (!empty($nids) && count($nids) === 1) {
+        $nid = reset($nids);
+        $page = '/node/' . $nid;
+
+        $this->visitPath($page);
+      }
+      else {
+        if (count($nids) > 1) {
+          throw new \Exception(sprintf("Multiple nodes of type '%s' with title '%s' found.", $type, $title));
+        }
+        else {
+          throw new \Exception(sprintf("Node of type '%s' with title '%s' does not exist.", $type, $title));
+        }
+      }
+    }
+
+    /**
+     * Log out.
+     *
+     * @Given /^(?:|I )logout$/
+     */
+    public function iLogOut()
+    {
+      $page = '/user/logout';
+      $this->visitPath($page);
+    }
+
 }
