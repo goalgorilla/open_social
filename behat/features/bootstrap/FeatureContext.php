@@ -365,7 +365,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     {
       $query = \Drupal::entityQuery('node')
         ->condition('type', $type)
-        ->condition('title', $title, '=');
+        ->condition('title', $title, '=')
+        ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT');
       $nids = $query->execute();
 
       if (!empty($nids) && count($nids) === 1) {
