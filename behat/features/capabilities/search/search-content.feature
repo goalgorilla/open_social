@@ -16,9 +16,11 @@ Feature: Search
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
+    And I press "Search"
     When I fill in the following:
       | search_input | one |
     And I press "Search"
+    And I break
     And I should see the heading "SEARCH CONTENT" in the "Hero block" region
     And I should see "Event one" in the "Main content"
     And I should see "Topic one"
