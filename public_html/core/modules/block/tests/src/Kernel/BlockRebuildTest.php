@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\block\Unit;
+namespace Drupal\Tests\block\Kernel;
 
 use Drupal\block\BlockInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;

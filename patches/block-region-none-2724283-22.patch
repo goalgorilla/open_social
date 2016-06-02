@@ -11,37 +11,15 @@ index bd46671..f1df1c8 100644
 
    /**
     * Returns the plugin instance.
-diff --git a/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php b/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
-index 6dfc66c..c7c6b60 100644
---- a/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
-+++ b/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
-@@ -84,7 +84,7 @@ protected function createTests() {
-       'dependencies' => array('module' => array('block_test'), 'theme' => array('stark')),
-       'id' => 'test_block',
-       'theme' => 'stark',
--      'region' => '-1',
-+      'region' => BlockInterface::BLOCK_REGION_NONE,
-       'weight' => NULL,
-       'provider' => NULL,
-       'plugin' => 'test_html',
-@@ -111,7 +111,7 @@ protected function loadTests() {
-     $this->assertTrue($entity instanceof Block, 'The loaded entity is a Block.');
-
-     // Verify several properties of the block.
--    $this->assertEqual($entity->getRegion(), '-1');
-+    $this->assertEqual($entity->getRegion(), BlockInterface::BLOCK_REGION_NONE);
-     $this->assertTrue($entity->status());
-     $this->assertEqual($entity->getTheme(), 'stark');
-     $this->assertTrue($entity->uuid());
-diff --git a/core/modules/block/tests/src/Unit/BlockRebuildTest.php b/core/modules/block/tests/src/Unit/BlockRebuildTest.php
+diff --git a/core/modules/block/tests/src/Kernel/BlockRebuildTest.php b/core/modules/block/tests/src/Kernel/BlockRebuildTest.php
 new file mode 100644
-index 0000000..65e4c57
+index 0000000..ce8cd69
 --- /dev/null
-+++ b/core/modules/block/tests/src/Unit/BlockRebuildTest.php
++++ b/core/modules/block/tests/src/Kernel/BlockRebuildTest.php
 @@ -0,0 +1,78 @@
 +<?php
 +
-+namespace Drupal\Tests\block\Unit;
++namespace Drupal\Tests\block\Kernel;
 +
 +use Drupal\block\BlockInterface;
 +use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -117,3 +95,25 @@ index 0000000..65e4c57
 +  }
 +
 +}
+diff --git a/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php b/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
+index 6dfc66c..c7c6b60 100644
+--- a/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
++++ b/core/modules/block/tests/src/Kernel/BlockStorageUnitTest.php
+@@ -84,7 +84,7 @@ protected function createTests() {
+       'dependencies' => array('module' => array('block_test'), 'theme' => array('stark')),
+       'id' => 'test_block',
+       'theme' => 'stark',
+-      'region' => '-1',
++      'region' => BlockInterface::BLOCK_REGION_NONE,
+       'weight' => NULL,
+       'provider' => NULL,
+       'plugin' => 'test_html',
+@@ -111,7 +111,7 @@ protected function loadTests() {
+     $this->assertTrue($entity instanceof Block, 'The loaded entity is a Block.');
+
+     // Verify several properties of the block.
+-    $this->assertEqual($entity->getRegion(), '-1');
++    $this->assertEqual($entity->getRegion(), BlockInterface::BLOCK_REGION_NONE);
+     $this->assertTrue($entity->status());
+     $this->assertEqual($entity->getTheme(), 'stark');
+     $this->assertTrue($entity->uuid());
