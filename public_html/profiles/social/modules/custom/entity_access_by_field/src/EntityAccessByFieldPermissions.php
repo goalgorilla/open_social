@@ -9,7 +9,6 @@ namespace Drupal\entity_access_by_field;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\user\PermissionHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\UrlGeneratorTrait;
 
@@ -29,21 +28,13 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   protected $entityManager;
 
   /**
-   * The permission handler.
-   *
-   * @var \Drupal\user\PermissionHandler
-   */
-  protected $permissionHandler;
-
-  /**
    * Constructs a new NodeViewPermissionsPermission instance.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, PermissionHandler $permission_handler) {
+  public function __construct(EntityManagerInterface $entity_manager) {
     $this->entityManager = $entity_manager;
-    $this->permissionHandler = $permission_handler;
   }
 
   /**
@@ -51,8 +42,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager'),
-      $container->get('user.permissions')
+      $container->get('entity.manager')
     );
   }
 
