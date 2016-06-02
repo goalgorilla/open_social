@@ -59,49 +59,40 @@ html(lang="en")
         .row.margin-top-l
           .col-xs-12
             h3 Style
-            p Use the following styles to determine importance of a button.
-            ul
-              li Default: Standard buttons
-              li Primary: Provides extra visual weight and identifies the primary action in a set of buttons.
-              li Accent: Give most importance to this buttons. Should be used very sparsely and only if you are 100% this is the most important button on the screen for the user. 
-              li Success: Indicates a successful or positive action
-              li Warning: Indicates caution should be taken with this action
-              li Danger: Indicates a dangerous or potentially negative action
-              li Flat button: Deemphasize a button by making it look like a link while maintaining button behavior
+            p Use the following styles to determine importance of a button. The success, danger, warning button styles from botstrap are available in the theme, but aren't used in this design.
+            ol
+              li <strong>Accent</strong>: For the actions that a community want to motivate users do. This button has most contrast to the brand color of the site. Therefore they really stand out. Examples: Enroll to an event, follow a person, join a group. 
+              li <strong>Primary</strong>: Provides extra visual weight and identifies the primary action in a set of buttons. This style can used for actions that are the most relevant to the current page. For example to save a node form or to create content.
+              li <strong>Default</strong>: Standard buttons.
+              li <strong>Flat</strong>: Deemphasize a button by making it look like a link while maintaining button behavior
               
         .row.margin-top-l
           .col-xs-12
             .card
               .card-body.bs-example
-                button.btn.btn-default(type='button') Default
-                button.btn.btn-primary(type='button') Primary
                 button.btn.btn-accent(type='button') Accent
-                button.btn.btn-success(type='button') Success
-                button.btn.btn-warning(type='button') Warning
-                button.btn.btn-danger(type='button') Danger
+                button.btn.btn-primary(type='button') Primary
+                button.btn.btn-default(type='button') Default
                 button.btn.btn-flat(type='button') Flat
             .text-caption Default button styles
           
           .col-xs-12
-            .card
-              .card-body.bs-example
-                button.btn.btn-default.btn-raised(type='button') Default
-                button.btn.btn-primary.btn-raised(type='button') Primary
-                button.btn.btn-accent.btn-raised(type='button') Accent
-                button.btn.btn-success.btn-raised(type='button') Success
-                button.btn.btn-warning.btn-raised(type='button') Warning
-                button.btn.btn-danger.btn-raised(type='button') Danger
-                button.btn.btn-flat(type='button') Flat
+            .bs-example
+              button.btn.btn-accent.btn-raised(type='button') Accent
+              button.btn.btn-primary.btn-raised(type='button') Primary
+              button.btn.btn-default.btn-raised(type='button') Default
+              button.btn.btn-flat(type='button') Flat
             .text-caption Raised button styles
             
         .row.margin-top-l
           .col-xs-12  
+            h3 Guidelines
             p In the overview above we have listed many options which you can use to style a button. For consistency we recommend the following:
             
             ul
               li Start with a default button style and type.
               li Is your button next (left, right, below) to a card? Consider making it a raised button to put it on the same elevation level as the card.
-              li Does the button need to be one level higher in terms of elevation? Then make it a floating button. This usually means that there is no direct relationship with a specific card or section, but the page as a whole. An example for this would be to edit a node, where this button to do this is put in a block, but you are not only editing the block but the whole node.
+              li Does the button need to be one level higher then card content in terms of elevation? Then make it a floating button. This usually means that there is no direct relationship with a specific card or section, but the page as a whole. An example for this would be to edit a node, where this button to do this is put in a block, but you are not only editing the block but the whole node.
               li Only when a button needs more emphasis use the primary style, or even the accent style. Per form or set of buttons you only want one emphasized button and this should be the preferred action in any context.
               li If you want to button to be less visible/prominent you can use a flat button style. You can combine this with a smaller size of course. This is mostly used when buttons are repeated on a page or you have limited space and other elements need more attention.
               li The succes, warning and danger buttons are inhereted from teh bootstrap framework and aren't used in the default style. You can use them however if you indicate positive action, negative action or caution when interaction with the button.
