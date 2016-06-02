@@ -246,11 +246,14 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
 
-  // Custom theme hook suggestion for post comment.
+  /* TODO: distinguish edit comment form from normal comment form in stream */
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+    $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
   }
 
+  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
+  }
 }
 
 /**
@@ -514,21 +517,6 @@ function _socialbase_get_visibility_icon($title) {
   return $icon;
 }
 
-
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#form_id'] == 'social_user_login_form' || $variables['element']['#form_id'] == 'user_register_form' || $variables['element']['#form_id'] == 'social_user_password_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
-  }
-  /* TODO: distinguish edit comment form from normal comment form in stream */
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
-  }
-
-}
 
 
 /**
