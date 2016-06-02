@@ -59,14 +59,11 @@
 
   {{ page.breadcrumb }}
 
-  {% if (page.hero) %}
+  {% if (page.title or page.hero) %}
 
     <div class="container hero-container">
-
-      <div class="cover">
-        {{ page.hero }}
-      </div>
-
+      {{ page.title }}
+      {{ page.hero }}
     </div>
 
   {% endif %}
