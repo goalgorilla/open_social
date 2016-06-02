@@ -69,7 +69,7 @@ var onError = function(err) {
 gulp.task('css', function () {
 
   var processors = [
-    autoprefixer({browsers: ['last 2 versions']}),
+    autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
     mqpacker({sort: true}),
     lost()
   ];

@@ -6,6 +6,7 @@ global-styling:
   js:
     js/vendor/jquery.touch-swipe.js: {}
     js/components.js: {}
+    js/materialize.js: {}
     js/bootstrap.min.js: {}
   dependencies:
     - core/jquery
@@ -19,6 +20,18 @@ admin:
   css:
     theme:
       css/admin.css: {}
+
+materialize:
+  version: 1.x
+  css:
+      theme:
+        css/materialize.css: {}
+  js:
+    js/materialize.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/forms
 
 pickadate:
   version: 1.x
