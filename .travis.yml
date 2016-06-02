@@ -12,10 +12,8 @@ services:
   - docker
 
 before_install:
-  - sudo rm -rf /var/lib/apt/lists/*
   - sudo apt-get clean
-  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1397BC53640DB551
-  - sudo apt-get -o Debug::pkgAcquire::Auth=true update
+  - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
   - docker --version
   - sudo rm /usr/local/bin/docker-compose
