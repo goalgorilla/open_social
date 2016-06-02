@@ -11,9 +11,38 @@ dependencies:
     - node.type.topic
   module:
     - comment
+    - field_group
     - image
     - path
     - text
+third_party_settings:
+  field_group:
+    group_topic_content:
+      children:
+        - field_topic_type
+        - title
+        - field_topic_image
+      parent_name: ''
+      weight: 0
+      label: Content
+      format_type: fieldset
+      format_settings:
+        label: Content
+        required_fields: true
+        id: content
+        classes: 'card card-underline scrollspy'
+    group_topic_description:
+      children:
+        - body
+      parent_name: ''
+      weight: 1
+      label: 'Topic description'
+      format_type: fieldset
+      format_settings:
+        label: 'Topic description'
+        required_fields: true
+        id: description
+        classes: 'card card-underline scrollspy'
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -29,7 +58,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 3
     settings: {  }
     third_party_settings: {  }
   field_content_visibility:
@@ -61,14 +90,14 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 4
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60

@@ -16,9 +16,63 @@ dependencies:
     - address
     - comment
     - datetime
+    - field_group
     - image
     - path
     - text
+third_party_settings:
+  field_group:
+    group_title_image:
+      children:
+        - title
+        - field_event_image
+      parent_name: ''
+      weight: 0
+      label: 'Title & image'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_date_time:
+      children:
+        - field_event_date
+        - field_event_date_end
+      parent_name: ''
+      weight: 1
+      label: 'Date & time'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_location:
+      children:
+        - field_event_location
+        - field_event_address
+      parent_name: ''
+      weight: 2
+      label: Location
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_description:
+      children:
+        - body
+      parent_name: ''
+      weight: 3
+      label: Description
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -26,7 +80,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 5
+    weight: 4
     settings:
       rows: 9
       summary_rows: 3
@@ -43,7 +97,7 @@ content:
     third_party_settings: {  }
     type: options_buttons
   field_event_address:
-    weight: 12
+    weight: 14
     settings:
       default_country: ''
     third_party_settings: {  }
@@ -54,17 +108,17 @@ content:
     third_party_settings: {  }
     type: comment_default
   field_event_date:
-    weight: 7
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
   field_event_date_end:
-    weight: 8
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
   field_event_image:
-    weight: 6
+    weight: 2
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
@@ -79,7 +133,7 @@ content:
     type: string_textfield
   path:
     type: path
-    weight: 10
+    weight: 9
     settings: {  }
     third_party_settings: {  }
   promote:
