@@ -103,6 +103,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
     }
 
+
+  /**
+   * @When I click the xth :position link with the text :locator
+   */
+  public function iClickTheLinkWithText($position, $locator)
+  {
+    $session = $this->getSession();
+    $links = $session->getPage()->findAll('named', array('link', $locator));
+    $count = 1;
+    foreach($links as $link) {
+      if ($count == $position) {
+        // Now click the element.
+        $link->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the locator: "%s"', $locator));
+  }
+
   /**
    * @When I click the xth :position element with the css :css
    */
@@ -249,7 +269,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function resizeWindow()
     {
-      $this->getSession()->resizeWindow(1280, 1024, 'current');
+      $this->getSession()->resizeWindow(1280, 2024, 'current');
     }
 
     /**
