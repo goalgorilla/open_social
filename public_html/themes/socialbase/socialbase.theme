@@ -236,6 +236,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#id'] == 'search-content-form') {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
+  
   // Also for the search hero content form on the /search/content.
   if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
@@ -254,6 +255,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
+
 }
 
 /**
@@ -516,8 +518,6 @@ function _socialbase_get_visibility_icon($title) {
 
   return $icon;
 }
-
-
 
 /**
  * Implements hook_theme_suggestions_textarea_alter().
