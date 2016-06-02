@@ -19,9 +19,7 @@ class SocialDrupalContext extends DrupalContext {
   public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
     $admin_user = user_load('1');
     $current_user = \Drupal::getContainer()->get('current_user');
-    var_dump($current_user);
     $current_user->setAccount($admin_user);
-    var_dump($current_user);
   }
 
   /**
