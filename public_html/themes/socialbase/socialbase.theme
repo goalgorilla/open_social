@@ -106,6 +106,7 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
 
+
   // Add search_block to account menu.
   if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
     $block = \Drupal\block\Entity\Block::load('search_content_block_header');
@@ -140,7 +141,6 @@ function socialbase_preprocess_block(&$variables) {
     $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
     $variables['content']['search_users_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
   }
-
 
   // Add Group ID for "See all groups link".
   if ($variables['attributes']['id'] === 'block-views-block-group-members-block-newest-members') {
