@@ -40,6 +40,10 @@ label {
 
 }
 
+.form-no-label label + .form-required {
+  float: right;
+}
+
 // Indication on labels for required fields
 span.form-required {
   margin: 0 3px;
@@ -417,9 +421,7 @@ span.form-required {
 
     .password-strength,
     div.password-confirm {
-      position: absolute;
       bottom: 0;
-      @include make-col-offset(12);
       width: 180px;
       padding-bottom: 0.5rem;
     }
