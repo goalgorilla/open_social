@@ -12,9 +12,9 @@ Feature: See upcoming events in the community
     And I should not see "Behat Event 2"
 
     Given event content:
-      | title         | field_event_date | status |
-      | Behat Event 1 | +10 minutes      | 1      |
-      | Behat Event 2 | +10 minutes      | 1      |
+      | title         | field_event_date | status | field_content_visibility |
+      | Behat Event 1 | +10 minutes      | 1      | public                   |
+      | Behat Event 2 | +10 minutes      | 1      | public                   |
 
     Given I am on the homepage
 

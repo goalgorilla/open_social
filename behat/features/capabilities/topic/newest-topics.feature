@@ -12,9 +12,9 @@ Feature: See newest topics in the community
     And I should not see "Behat Topic 2"
 
     Given topic content:
-      | title         | field_topic_type | status |
-      | Behat Topic 1 | Blog             | 1      |
-      | Behat Topic 2 | News             | 1      |
+      | title         | field_topic_type | status | field_content_visibility |
+      | Behat Topic 1 | Blog             | 1      | public                   |
+      | Behat Topic 2 | News             | 1      | public                   |
 
     Given I am on the homepage
 
