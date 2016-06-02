@@ -95,6 +95,7 @@ function socialbase_preprocess_block(&$variables) {
   // Add User ID for "See all link".
   if (
     $variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile' ||
+    $variables['attributes']['id'] === 'block-views-block-topics-block-user-topics' ||
     $variables['attributes']['id'] === 'block-views-block-groups-block-user-groups'
   ) {
     $profile_user_id = \Drupal::routeMatch()->getParameter('user');
