@@ -119,6 +119,7 @@ function socialbase_preprocess_block(&$variables) {
     $variables['content']['search_users_form']['#attributes']['class'][] = 'hero-form';
     $variables['content']['search_users_form']['#attributes']['role'] = 'search';
     $variables['content']['search_users_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
     $variables['content']['search_users_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
   }
 
