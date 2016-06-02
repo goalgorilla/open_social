@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme implementation to display a social hero block.
+ * Default theme implementation to display a block.
  *
  * Available variables:
  * - $block->subject: Block title.
@@ -46,32 +46,15 @@
  */
 #}
 
-{%
-set classes = [
-  'cover',
-  'cover-with-canvas',
-  content.has_image ? 'cover-img',
-  ]
-%}
-
-{% if content.has_image %}
-  <div{{ attributes.addClass(classes) }} style="background-image: url({{ content.image_url }})">
-{% else %}
-  <div{{ attributes.addClass(classes) }}>
-{% endif %}
-
-  {% if content %}
-    <div class="cover-wrap">
-      <div class="row">
-        <div class="col-xs-12 col-sm-8">
-          <div class="hero-canvas padding-md">
-            {% block content %}
-                {{ content }}
-            {% endblock %}
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="cover">
+  {{ title_prefix }}
+  {% if label %}
+    <h1{{ title_attributes.addClass('page-title h2') }}>{{ label }}</h1>
+    <br />
   {% endif %}
+  {{ title_suffix }}
 
+  {% block content %}
+    {{ content }}
+  {% endblock %}
 </div>

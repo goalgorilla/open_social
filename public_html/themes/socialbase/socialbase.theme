@@ -138,6 +138,28 @@ function socialbase_preprocess_block(&$variables) {
     }
     $variables['profile_user_id'] = $profile_user_id;
   }
+
+  // AN Homepage block.
+  if ($variables['attributes']['id'] === 'block-anhomepageheroblock') {
+    $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
+    $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
+    $entity = \Drupal\block_content\Entity\BlockContent::load($imageitem->id());
+    $file_id = $entity->get('field_hero_image')->target_id;
+
+    // If it's an existing file.
+    if ($file = \Drupal\file\Entity\File::load($file_id)) {
+      // Style and set it in the content.
+      $styled_image_url = \Drupal\image\Entity\ImageStyle::load($imagestyle)->buildUrl($file->getFileUri());
+      $variables['content']['image_url'] = $styled_image_url;
+
+      // Add extra class.
+      $variables['content']['has_image'] = TRUE;
+
+      // Remove the origingal
+      unset($variables['content']['field_hero_image']);
+
+    }
+  } // AN Homepage block.
 }
 
 /**
