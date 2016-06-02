@@ -45,7 +45,8 @@
   set classes = [
     'card',
     'card-underline',
-    'scrollspy',
+    'panel',
+    errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
   ]
 %}
 <div{{ attributes.addClass(classes) }}>
@@ -53,8 +54,19 @@
   {# Heading #}
   {% if heading %}
     {% block heading %}
-      <div class="card-head">
-        <header>{{ heading }}</header>
+      <div class="card-head panel-heading">
+        <header>
+          {%
+            set heading_classes = [
+              'panel-title',
+            ]
+          %}
+          {% if collapsible %}
+            <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
+          {% else %}
+            <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
+          {% endif %}
+        </header>
       </div>
     {% endblock %}
   {% endif %}
@@ -64,6 +76,11 @@
     {%
       set body_classes = [
       'card-body',
+      'panel-body',
+      collapsible ? 'panel-collapse',
+      collapsible ? 'collapse',
+      collapsible ? 'fade',
+      errors or collapsible and not collapsed ? 'in',
       ]
     %}
     {%
