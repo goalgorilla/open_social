@@ -66,24 +66,30 @@
  */
 #}
 <div class="card card--teaser card-with-actionbar">
-  <div class='card-image'>
+  <div class='card-image blue-overlay'>
     {{ content.field_topic_image }}
     <img src="/themes/socialbase/images/icon-topic.svg" alt="" class="teaser-type">
   </div>
     <div class="card-body">
-      <div class="text-default-dark">{{ content.field_topic_type }}</div>
       {{ title_prefix }}
       {% if not page %}
-          <h2{{ title_attributes }} class="h3 card-title">
-              <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-          </h2>
+          <h4{{ title_attributes }} class="card-title">
+            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+          </h4>
       {% endif %}
       {{ title_suffix }}
-      <div class="text-l text-grey-dark">
-          {{ author_name }}
-      </div>
+      <p class="text-grey-dark">
+        <span> {{ author_name }} </span>
+        {# Todo: fix date format #}
+        &bullet; {{ date }}
+      </p>
+      <p>
+        <i class="material-icons">label</i>
+        <span class="inline-center">
+          {{ content.field_topic_type }}
+        </span>
+      </p>
 
-      <div class="text-grey-dark">{{ date }}</div>
 
       {#TODO: Use content.links here and fix the theming#}
       <div class="card-actionbar">

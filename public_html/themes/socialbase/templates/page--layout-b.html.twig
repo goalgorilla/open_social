@@ -62,13 +62,8 @@
   {% if (page.title or page.hero or page.secondary_navigation) %}
     <div class="container hero-container">
 
-      {% if (page.title or page.hero) %}
-        <div class="cover">
-          {{ page.title }}
-          {{ page.hero }}
-        </div>
-      {% endif %}
-
+      {{ page.title }}
+      {{ page.hero }}
 
       {% if page.secondary_navigation %}
         <div class="brand-secondary z-depth-1">

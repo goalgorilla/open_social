@@ -8,6 +8,7 @@ cd /var/www/html/;
 # composer update --lock
 
 LOCAL=$1
+NFS=$2
 
 fn_sleep() {
   if [[ $LOCAL != "nopause" ]]
@@ -19,9 +20,12 @@ fn_sleep() {
 drush -y site-install social --db-url=mysql://root:root@db:3306/social --account-pass=admin install_configure_form.update_status_module='array(FALSE,FALSE)';
 fn_sleep
 echo "installed drupal"
-chown -R www-data:www-data /var/www/html/
-fn_sleep
-echo "set the correct owner"
+if [[ $NFS != "nfs" ]]
+  then
+    chown -R www-data:www-data /var/www/html/
+    fn_sleep
+    echo "set the correct owner"
+  fi
 php -r 'opcache_reset();';
 fn_sleep
 echo "opcache reset"
