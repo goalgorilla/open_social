@@ -20,7 +20,6 @@ Feature: Search
     When I fill in the following:
       | search_input | one |
     And I press "Search"
-    And I break
     And I should see the heading "SEARCH CONTENT" in the "Hero block" region
     And I should see "Event one" in the "Main content"
     And I should see "Topic one"
