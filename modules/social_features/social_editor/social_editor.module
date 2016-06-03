@@ -33,6 +33,9 @@ function social_editor_element_info_alter(array &$types) {
  * @see \Drupal\filter\Element\TextFormat::processFormat()
  */
 function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
+  // Init.
+  $disable_fields = FALSE;
+
   // Forms.
   $forms = array(
     "social_post_entity_form",
@@ -50,10 +53,8 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
         unset($element['format']['format']['#options'][$key]);
       }
     }
-    // Deny access to format fields.
-    $element['format']['format']['#access'] = FALSE;
-    $element['format']['guidelines']['#access'] = FALSE;
-    $element['format']['help']['#access'] = FALSE;
+    // No changes can be made in text formats, so remove the fields.
+    $disable_fields = TRUE;
   }
   else {
     // Remove simple_text.
@@ -62,6 +63,14 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
         unset($element['format']['format']['#options'][$key]);
       }
     }
+  }
+
+  // No changes can be made in text formats, so deny access to the fields.
+  if (($disable_fields == TRUE) || count($element['format']['format']['#options']) == 1) {
+    // Deny access to format fields.
+    $element['format']['format']['#access'] = FALSE;
+    $element['format']['guidelines']['#access'] = FALSE;
+    $element['format']['help']['#access'] = FALSE;
   }
 
   return $element;
