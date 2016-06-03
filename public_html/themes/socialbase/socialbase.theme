@@ -172,10 +172,10 @@ function socialbase_preprocess_block(&$variables) {
     if ($file = \Drupal\file\Entity\File::load($file_id)) {
       // Style and set it in the content.
       $styled_image_url = \Drupal\image\Entity\ImageStyle::load($imagestyle)->buildUrl($file->getFileUri());
-      $variables['content']['image_url'] = $styled_image_url;
+      $variables['image_url'] = $styled_image_url;
 
       // Add extra class.
-      $variables['content']['has_image'] = TRUE;
+      $variables['has_image'] = TRUE;
 
       // Remove the origingal
       unset($variables['content']['field_hero_image']);
