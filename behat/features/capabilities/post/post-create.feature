@@ -12,18 +12,18 @@ Feature: Create Post
     And I am logged in as "PostUser1"
     And I am on the homepage
   And I should not see "PostUser1" in the "Main content front"
-  When I fill in "Post" with "This is a public post."
+  When I fill in "What's on your mind?" with "This is a public post."
     And I select post visibility "Public"
-    And I press "Save"
+    And I press "Post"
    Then I should see the success message "Created the Post."
     And I should see "This is a public post."
     And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: Succesfully create a private post
-   When I fill in "Post" with "This is a community post."
+   When I fill in "What's on your mind?" with "This is a community post."
     And I select post visibility "Community"
-    And I press "Save"
+    And I press "Post"
    Then I should see the success message "Created the Post."
     And I should see "This is a community post."
     And I should see "PostUser1" in the "Main content front"
@@ -32,8 +32,8 @@ Feature: Create Post
         # Scenario: edit the post
    When I click the xth "2" element with the css ".dropdown-toggle"
     And I click "Edit"
-    And I fill in "Post" with "This is a community post edited."
-    And I press "Save"
+    And I fill in "What's on your mind?" with "This is a community post edited."
+    And I press "Post"
    Then I should see the success message "Saved the Post."
 
         # Scenario: See post on profile stream
@@ -43,8 +43,8 @@ Feature: Create Post
 
         # Scenario: Post on someones profile stream
   Given I am on the profile of "PostUser2"
-   When I fill in "Post" with "This is a post by PostUser1 for PostUser2."
-    And I press "Save"
+   When I fill in "What's on your mind?" with "This is a post by PostUser1 for PostUser2."
+    And I press "Post"
    Then I should see the success message "Created the Post."
     And I should see "This is a post by PostUser1 for PostUser2."
    When I go to the homepage
@@ -52,9 +52,9 @@ Feature: Create Post
 
         # Scenario: Succesfully delete a post
    When I click the xth "2" element with the css ".dropdown-toggle"
-    And I fill in "Post" with "This is a post to be deleted."
+    And I fill in "What's on your mind?" with "This is a post to be deleted."
     And I select post visibility "Community"
-    And I press "Save"
+    And I press "Post"
    Then I should see the success message "Created the Post."
     And I should be on "/stream"
 

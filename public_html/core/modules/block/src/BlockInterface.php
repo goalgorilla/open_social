@@ -17,7 +17,7 @@ interface BlockInterface extends ConfigEntityInterface {
   /**
    * Denotes that a block is not enabled in any region and should not be shown.
    */
-  const BLOCK_REGION_NONE = -1;
+  const BLOCK_REGION_NONE = '-1';
 
   /**
    * Returns the plugin instance.

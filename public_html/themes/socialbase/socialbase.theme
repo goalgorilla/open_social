@@ -67,6 +67,8 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
       'page__node_edit',
       'page__newest_topics',
       'page__community_events',
+      'page__comment__edit',
+      'page__comment__delete',
     ),
   );
 
@@ -172,10 +174,10 @@ function socialbase_preprocess_block(&$variables) {
     if ($file = \Drupal\file\Entity\File::load($file_id)) {
       // Style and set it in the content.
       $styled_image_url = \Drupal\image\Entity\ImageStyle::load($imagestyle)->buildUrl($file->getFileUri());
-      $variables['content']['image_url'] = $styled_image_url;
+      $variables['image_url'] = $styled_image_url;
 
       // Add extra class.
-      $variables['content']['has_image'] = TRUE;
+      $variables['has_image'] = TRUE;
 
       // Remove the origingal
       unset($variables['content']['field_hero_image']);
@@ -232,6 +234,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#id'] == 'search-content-form') {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
+  
   // Also for the search hero content form on the /search/content.
   if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
@@ -242,9 +245,13 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
 
-  // Custom theme hook suggestion for post comment.
+  /* TODO: distinguish edit comment form from normal comment form in stream */
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+    $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
+  }
+
+  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
 
 }
@@ -421,11 +428,11 @@ function socialbase_preprocess_node(&$variables) {
  * Implements template_preprocess_image_style().
  */
 function socialbase_preprocess_image_style(&$variables) {
-  if($variables['style_name'] == 'profile_hero'){
+  if($variables['style_name'] == 'social_large'){
     $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
-  if($variables['style_name'] == 'micro'){
+  if($variables['style_name'] == 'social_medium'){
     $variables['image']['#attributes']['class'][] = 'img-small';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
@@ -516,6 +523,7 @@ function _socialbase_get_visibility_icon($title) {
 /**
  * Implements hook_theme_suggestions_textarea_alter().
  */
+
 function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';

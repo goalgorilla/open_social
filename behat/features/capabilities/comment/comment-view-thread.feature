@@ -18,7 +18,6 @@ Feature: See Comment
       | Add a comment | This is a reply comment |
     And I press "Comment"
     And I should see "This is a reply comment"
-    And I should see 1 ".comment-reply" elements
     When I fill in the following:
       | Add a comment | This is a second comment |
     And I press "Comment"
