@@ -32,26 +32,26 @@ Feature: Create Open Group
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
 
-  # DS-647 As a LU I want to join a group
-    And I logout
-    And I am logged in as "Group User Two"
-    And I am on "newest-members"
-    And I click "Group User One"
-  # And I should see "Recently joined groups" in the "Sidebar second"
-    And I should see "Test open group" in the "Sidebar second"
-  # And I should see the link "View all"
-    And I click "Groups"
-    And I should see "Test open group" in the "Main content"
-  # And I should not see the link "Add a group" in the "Sidebar second"
-    And I click "Test open group"
-    And I should see the link "Join" in the "Hero block"
-    And I click "Join"
-    And I should see "Join group Test open group"
-    And I should see the button "Cancel"
-    And I should see the button "Join group"
-    And I press "Join group"
-    And I should see "2 member" in the "Hero block"
-    And I should see the button "Joined"
+#  # DS-647 As a LU I want to join a group
+#    And I logout
+#    And I am logged in as "Group User Two"
+#    And I am on "newest-members"
+#    And I click "Group User One"
+#  # And I should see "Recently joined groups" in the "Sidebar second"
+#    And I should see "Test open group" in the "Sidebar second"
+#  # And I should see the link "View all"
+#    And I click "Groups"
+#    And I should see "Test open group" in the "Main content"
+#  # And I should not see the link "Add a group" in the "Sidebar second"
+#    And I click "Test open group"
+#    And I should see the link "Join" in the "Hero block"
+#    And I click "Join"
+#    And I should see "Join group Test open group"
+#    And I should see the button "Cancel"
+#    And I should see the button "Join group"
+#    And I press "Join group"
+#    And I should see "2 member" in the "Hero block"
+#    And I should see the button "Joined"
 
   # DS-643 As a LU I want to see the events of a group
     When I click "Events"
@@ -87,7 +87,8 @@ Feature: Create Open Group
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
-    And I should see "Group User Two" in the "Hero block"
+  # And I should see "Group User Two" in the "Hero block"
+    And I should see "Group User One" in the "Hero block"
     And I should see "Groups"
 
   # TODO: Add check for latest groups block on LU homepage
