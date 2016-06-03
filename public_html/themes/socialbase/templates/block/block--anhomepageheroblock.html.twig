@@ -50,12 +50,12 @@
 set classes = [
   'cover',
   'cover-with-canvas',
-  content.has_image ? 'cover-img',
+  has_image ? 'cover-img',
   ]
 %}
 
-{% if content.has_image %}
-  <div{{ attributes.addClass(classes) }} style="background-image: url({{ content.image_url }})">
+{% if has_image %}
+  <div{{ attributes.addClass(classes) }} style="background-image: url({{ image_url }})">
 {% else %}
   <div{{ attributes.addClass(classes) }}>
 {% endif %}
