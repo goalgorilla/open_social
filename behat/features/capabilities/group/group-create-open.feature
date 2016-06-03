@@ -22,7 +22,7 @@ Feature: Create Open Group
     And I should see "Joined"
     And I should see the link "Read more"
 
-    # DS-761 As a LU I want to view the hero area of a group
+  # DS-761 As a LU I want to view the hero area of a group
     And I click "Test open group"
     And I should see "Test open group" in the "Hero block"
     And I should see "Description text" in the "Hero block"
@@ -32,7 +32,7 @@ Feature: Create Open Group
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
 
-    # DS-647 As a LU I want to join a group
+  # DS-647 As a LU I want to join a group
     And I logout
     And I am logged in as "Group User Two"
     And I am on "newest-members"
@@ -53,3 +53,15 @@ Feature: Create Open Group
     And I should see "2 member" in the "Hero block"
     And I should see the button "Joined"
 
+  # DS-703 As a LU I want to leave a group
+    And I click the xth "1" element with the css ".dropdown-toggle"
+    And I should see the link "Leave group"
+    And I click "Leave group"
+    And I should see "This action cannot be undone."
+    And I should see the button "Cancel"
+    And I should see the button "Leave group"
+    And I press "Leave group"
+    And I should see "Group User Two" in the "Hero block"
+    And I should see "Groups"
+
+  # TODO: Add check for latest groups block on LU homepage
