@@ -35,7 +35,9 @@ function social_editor_element_info_alter(array &$types) {
 function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
   // Forms.
   $forms = array(
-    "social_post_entity_form"
+    "social_post_entity_form",
+    "comment_post_comment_form",
+    "comment_comment_form"
   );
   // Allowed formats.
   $allowed_format = 'simple_text';
