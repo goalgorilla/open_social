@@ -15,5 +15,5 @@ Feature: Redirect comment page
          | Add a comment | This is a test comment |
     And I press "Comment"
     And I should see the success message "Your comment has been posted."
-    And I click "Permalink"
+    And I click the xth "1" link with the text "ago"
     Then I should see "Comment redirect topic" in the "Hero block"

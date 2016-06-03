@@ -1,4 +1,4 @@
-@api @comment @stability @DS-459
+@api @comment @stability @DS-459 @topic
 Feature: Create Comments
   Benefit: Participate in discussions on the platform
   Role: As a LU
@@ -20,4 +20,3 @@ Feature: Create Comments
     And I should see "Comment view user"
     And I should see "second"
     And I should see "ago"
-    And I should see the link "Permalink"

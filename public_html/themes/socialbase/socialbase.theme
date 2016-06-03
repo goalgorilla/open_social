@@ -67,6 +67,8 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
       'page__node_edit',
       'page__newest_topics',
       'page__community_events',
+      'page__comment__edit',
+      'page__comment__delete',
     ),
   );
 
@@ -232,6 +234,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#id'] == 'search-content-form') {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
+  
   // Also for the search hero content form on the /search/content.
   if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
@@ -242,9 +245,13 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
 
-  // Custom theme hook suggestion for post comment.
+  /* TODO: distinguish edit comment form from normal comment form in stream */
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'post_comment';
+    $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
+  }
+
+  if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
+    $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
 
 }
@@ -516,6 +523,7 @@ function _socialbase_get_visibility_icon($title) {
 /**
  * Implements hook_theme_suggestions_textarea_alter().
  */
+
 function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
