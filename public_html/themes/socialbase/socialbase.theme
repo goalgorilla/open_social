@@ -106,6 +106,7 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
 
+
   // Add search_block to account menu.
   if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
     $block = \Drupal\block\Entity\Block::load('search_content_block_header');
@@ -142,18 +143,15 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   // Add Group ID for "See all groups link".
-  if ($variables['derivative_plugin_id'] === 'group_members-block_newest_members') {
+  if ($variables['attributes']['id'] === 'block-views-block-group-members-block-newest-members') {
     $group = \Drupal::routeMatch()->getParameter('group');
     $variables['group_id'] = $group->id();
   }
 
   // Add User ID for "See all link".
-  if ($variables['derivative_plugin_id'] === 'groups-block_user_groups') {
-    $user = \Drupal::routeMatch()->getParameter('user');
-    $variables['user_id'] = $user->id();
-  }
   if (
     $variables['attributes']['id'] === 'block-views-block-events-block-events-on-profile' ||
+    $variables['attributes']['id'] === 'block-views-block-topics-block-user-topics' ||
     $variables['attributes']['id'] === 'block-views-block-groups-block-user-groups'
   ) {
     $profile_user_id = \Drupal::routeMatch()->getParameter('user');
