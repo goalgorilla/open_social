@@ -98,6 +98,12 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         $media_id = $file->id();
       }
 
+      if (isset($topic['field_content_visibility'])) {
+        $content_visibility = $topic['field_content_visibility'];
+      }
+      else {
+        $content_visibility = 'community';
+      }
       // Let's create some nodes.
       $node = Node::create([
         'uuid' => $topic['uuid'],
@@ -117,6 +123,11 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         'field_topic_image' => [
           [
             'target_id' => $media_id,
+          ],
+        ],
+        'field_content_visibility' => [
+          [
+            'value' => $content_visibility,
           ],
         ],
         'uid' => $uid,

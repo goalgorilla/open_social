@@ -103,6 +103,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
     }
 
+
+  /**
+   * @When I click the xth :position link with the text :locator
+   */
+  public function iClickTheLinkWithText($position, $locator)
+  {
+    $session = $this->getSession();
+    $links = $session->getPage()->findAll('named', array('link', $locator));
+    $count = 1;
+    foreach($links as $link) {
+      if ($count == $position) {
+        // Now click the element.
+        $link->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the locator: "%s"', $locator));
+  }
+
   /**
    * @When I click the xth :position element with the css :css
    */
@@ -249,7 +269,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function resizeWindow()
     {
-      $this->getSession()->resizeWindow(1280, 1024, 'current');
+      $this->getSession()->resizeWindow(1280, 2024, 'current');
     }
 
     /**
@@ -352,6 +372,47 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       }
       $page = '/group/' . $group_id . '/stream';
 
+      $this->visitPath($page);
+    }
+
+    /**
+     * Opens specified node page of type and with title.
+     *
+     * @Given /^(?:|I )open the "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
+     * @When /^(?:|I )go the  "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
+     */
+    public function openNodeWithTitle($type, $title)
+    {
+      $query = \Drupal::entityQuery('node')
+        ->condition('type', $type)
+        ->condition('title', $title, '=')
+        ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT');
+      $nids = $query->execute();
+
+      if (!empty($nids) && count($nids) === 1) {
+        $nid = reset($nids);
+        $page = '/node/' . $nid;
+
+        $this->visitPath($page);
+      }
+      else {
+        if (count($nids) > 1) {
+          throw new \Exception(sprintf("Multiple nodes of type '%s' with title '%s' found.", $type, $title));
+        }
+        else {
+          throw new \Exception(sprintf("Node of type '%s' with title '%s' does not exist.", $type, $title));
+        }
+      }
+    }
+
+    /**
+     * Log out.
+     *
+     * @Given /^(?:|I )logout$/
+     */
+    public function iLogOut()
+    {
+      $page = '/user/logout';
       $this->visitPath($page);
     }
 
