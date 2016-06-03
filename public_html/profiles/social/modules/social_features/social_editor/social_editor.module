@@ -55,6 +55,14 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
     $element['format']['guidelines']['#access'] = FALSE;
     $element['format']['help']['#access'] = FALSE;
   }
+  else {
+    // Remove simple_text.
+    foreach($element['format']['format']['#options'] as $key => $value) {
+      if ($key === $allowed_format) {
+        unset($element['format']['format']['#options'][$key]);
+      }
+    }
+  }
 
   return $element;
 }
