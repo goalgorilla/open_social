@@ -53,6 +53,32 @@ Feature: Create Open Group
     And I should see "2 member" in the "Hero block"
     And I should see the button "Joined"
 
+  # DS-643 As a LU I want to see the events of a group
+    When I click "Events"
+    And I should see the link "Create Event" in the "Sidebar second"
+    And I click "Create Event"
+    And I fill in the following:
+      | Title | Test group event |
+      | Date  | 2025-01-01  |
+      | Time  | 11:00:00    |
+      | Location name       | GG HQ |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+  # TODO: Change title of this button when we will have one step
+    And I press "Continue to final step"
+    And I press "Create node in group"
+    And I should see "Test group event"
+    And I should see "Body description text" in the "Main content"
+    And I should see "Wed, 01/01/2025 - 11:00" in the "Hero block"
+
+  # DS-639 As a LU I want to see which group the content belongs to, on the detail page
+    And I should see the link "Test open group" in the "Hero block"
+    And I click "Test open group"
+  # TODO: And I should see "Upcoming Events" in the "Sidebar second"
+  # And I should see "Test group event" in the "Sidebar second"
+  # And I should see "1 Jan" in the "Sidebar second"
+    And I click "Events"
+    And I should see "Test group event" in the "Main content"
+
   # DS-703 As a LU I want to leave a group
     And I click the xth "1" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
