@@ -46,6 +46,9 @@ class GroupHeroBlock extends BlockBase {
 
       $build['content'] = $content;
     }
+    else {
+      return;
+    }
 
 
     $build['#cache']['contexts'][] = 'group';
