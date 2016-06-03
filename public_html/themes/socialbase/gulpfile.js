@@ -69,7 +69,7 @@ var onError = function(err) {
 gulp.task('css', function () {
 
   var processors = [
-    autoprefixer({browsers: ['last 2 versions']}),
+    autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
     mqpacker({sort: true}),
     lost()
   ];
@@ -79,10 +79,10 @@ gulp.task('css', function () {
       errorHandler: onError
     }))
     .pipe( sourcemaps.init() )
-    .pipe( sass() )
-    .pipe( nano( {
-      mergeRules: true
-    }) )
+    .pipe( sass({outputStyle: 'expanded'}) )
+    //.pipe( nano( {
+    //  mergeRules: true
+    //}) )
     .pipe( postcss(processors) )
     .pipe( rucksack() )
     .pipe( sourcemaps.write('.') )

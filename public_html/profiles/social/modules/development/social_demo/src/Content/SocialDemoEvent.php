@@ -104,6 +104,13 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       $start_date = $this->createDate($event['field_event_date']);
       $end_date = $this->createDate($event['field_event_date_end']);
 
+      if (isset($event['field_content_visibility'])) {
+        $content_visibility = $event['field_content_visibility'];
+      }
+      else {
+        $content_visibility = 'community';
+      }
+
       // Let's create some nodes.
       $node = Node::create([
         'uuid' => $event['uuid'],
@@ -122,6 +129,11 @@ class SocialDemoEvent implements ContainerInjectionInterface {
         'field_event_image' => [
           [
             'target_id' => $media_id,
+          ],
+        ],
+        'field_content_visibility' => [
+          [
+            'value' => $content_visibility,
           ],
         ],
       ]);

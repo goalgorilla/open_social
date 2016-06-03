@@ -25,6 +25,10 @@
   background-repeat: no-repeat;
 }
 
+.cover-with-canvas {
+  padding: 40px;
+}
+
 .cover-img-gradient:before{
   display: block;
   position: absolute;
@@ -87,6 +91,23 @@
     font-size: inherit;
   }
 
+}
+
+.hero-canvas {
+  border-radius: $border-radius-base;
+  background-color: rgba($gray-dark, 0.8);
+  text-align: left; //overwrite .cover setting
+  color: white;
+
+  .page-title {
+    font-weight: 700;
+    margin-top: 0;
+    text-align: left;
+
+    @include MQ($small) {
+      margin: 1em 0 .5em;
+    }
+  }
 }
 
 
