@@ -47,39 +47,6 @@ class GroupHeroBlock extends BlockBase {
       $build['content'] = $content;
     }
 
-    // Also see GroupOperationsBlock.php for cache settings.
-    // This sets context per group type (private in future), per permission
-    // since some users may have the same roles in different group types granting
-    // them other permissions.
-    $build['#cache']['contexts'] = ['group.type', 'group_membership.permissions'];
-    $build['#cache']['contexts'][] = 'group_membership';
-
-    $service_1 = \Drupal::service('group.group_route_context');
-    $service_2 = \Drupal::service('current_user');
-
-    // Add's route based and current user based cache tags for grouptype & membership.
-    $context_1 = new GroupTypeCacheContext($service_1, $service_2);
-    $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
-
-    // Merge them with existing tags!
-    $tags = Cache::mergeTags(
-      $context_1->getCacheableMetadata()->getCacheTags(),
-      $context_2->getCacheableMetadata()->getCacheTags()
-    );
-
-    // Also add custom cache_tag for when a member is added to the group so we
-    // can invalidate. It will be group_membership:gid.
-    if (!empty($group)) {
-      $tags[] = 'group_membership:' . $group->id();
-    }
-
-    $build['#cache']['tags'] = $tags;
-
-    // @TODO remove this and make sure above cache tags work well!!!
-    $build['#cache'] = array(
-      'max-age' => 0
-    );
-
     return $build;
   }
 

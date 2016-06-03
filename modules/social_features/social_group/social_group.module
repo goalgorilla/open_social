@@ -10,6 +10,8 @@ use Drupal\Core\Url;
 use Drupal\group\Plugin\GroupContentEnabler;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\group\Cache\Context\GroupTypeCacheContext;
+use Drupal\group\Cache\Context\GroupMembershipCacheContext;
 
 /**
  * @file
@@ -121,6 +123,45 @@ function social_group_group_insert(GroupInterface $group) {
     );
     $group_content->save();
 
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
+  // For group entities.
+  if ($entity instanceof Drupal\group\Entity\Group) {
+    // We add cache tags for the hero view mode.
+    if ($build['#view_mode'] == 'hero') {
+      // Add cache tags for group type & permissions. We need join / leave for
+      // the CTA and also update permissions for the button to edit a group.
+      $build['#cache']['contexts'] = ['group.type', 'group_membership.permissions'];
+      $build['#cache']['contexts'][] = 'group_membership';
+
+      // Based on GroupOperationsBlock.php we add some more cache tags.
+      $service_1 = \Drupal::service('group.group_route_context');
+      $service_2 = \Drupal::service('current_user');
+      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
+      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
+
+      // Merge all cache tags together.
+      $tags = Cache::mergeTags(
+        $context_1->getCacheableMetadata()->getCacheTags(),
+        $context_2->getCacheableMetadata()->getCacheTags()
+      );
+
+      // This tag will invalidate the hero whenever a new member is added or
+      // updated or deleted. group_membership:2
+      $tags[] = 'group_membership:' . $entity->id();
+
+      $build['#cache']['tags'] = $tags;
+    }
+    if ($build['#view_mode'] == 'teaser') {
+      $tags[] = 'group_membership:' . $entity->id();
+
+      $build['#cache']['tags'] = $tags;
+    }
   }
 }
 
