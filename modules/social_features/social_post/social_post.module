@@ -14,6 +14,12 @@ use Drupal\Core\Access\AccessResult;
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
   $form['field_visibility']['#attributes']['class'][] = 'browser-default';
+
+  // Reset title display.
+  $form['field_post']['widget']['0']['value']['#title_display'] = '';
+
+  // Set submit button caption to Post instead of Save.
+  $form['actions']['submit']['#value'] = t('Post');
 }
 
 /**
