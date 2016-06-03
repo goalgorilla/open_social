@@ -24,6 +24,14 @@ function social_editor_element_info_alter(array &$types) {
   }
 }
 
+/**
+ * Process callback for form elements that have a text format selector attached.
+ *
+ * This callback runs after filter_process_format() and performs additional
+ * modifications to the form element.
+ *
+ * @see \Drupal\filter\Element\TextFormat::processFormat()
+ */
 function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
   // Forms.
   $forms = array(
