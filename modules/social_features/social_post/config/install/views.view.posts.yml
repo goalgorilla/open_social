@@ -2,6 +2,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - block.block.postblock
+    - block.block.postongroupblock
+    - block.block.postonprofileblock
     - core.entity_view_mode.post.teaser
   module:
     - social_post
@@ -230,7 +233,12 @@ display:
           entity_field: created
           plugin_id: date
       title: ''
-      header: {  }
+      header:
+        entity_block:
+          id: entity_block
+          table: views
+          field: entity_block
+          plugin_id: entity
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -257,6 +265,22 @@ display:
       display_extenders: {  }
       path: stream
       display_description: 'Stream on the homepage'
+      header:
+        entity_block:
+          id: entity_block
+          table: views
+          field: entity_block
+          relationship: none
+          group_type: group
+          admin_label: header_postblock
+          empty: true
+          tokenize: false
+          target: postblock
+          view_mode: default
+          bypass_access: false
+          plugin_id: entity
+      defaults:
+        header: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -314,10 +338,25 @@ display:
       defaults:
         filters: false
         filter_groups: false
+        header: false
       filter_groups:
         operator: AND
         groups:
           1: AND
+      header:
+        entity_block:
+          id: entity_block
+          table: views
+          field: entity_block
+          relationship: none
+          group_type: group
+          admin_label: header_postonprofileblock
+          empty: true
+          tokenize: false
+          target: postonprofileblock
+          view_mode: default
+          bypass_access: false
+          plugin_id: entity
     cache_metadata:
       max-age: -1
       contexts:
@@ -376,10 +415,25 @@ display:
       defaults:
         filters: false
         filter_groups: false
+        header: false
       filter_groups:
         operator: AND
         groups:
           1: AND
+      header:
+        entity_block:
+          id: entity_block
+          table: views
+          field: entity_block
+          relationship: none
+          group_type: group
+          admin_label: header_postongroupblock
+          empty: true
+          tokenize: false
+          target: postongroupblock
+          view_mode: default
+          bypass_access: false
+          plugin_id: entity
     cache_metadata:
       max-age: -1
       contexts:
