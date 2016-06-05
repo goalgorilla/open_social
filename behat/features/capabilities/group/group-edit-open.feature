@@ -8,6 +8,7 @@ Feature: Edit my group as a group manager
     Given users:
       | name              | mail             | field_profile_organization | status |
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      |
+      | Group Member Two  | gm_2@example.com | Drupal                     | 1      |
     And I am logged in as "Group Manager One"
     And I am on "user"
     And I click "Groups"
@@ -54,4 +55,30 @@ Feature: Edit my group as a group manager
     And I should see "Group Manager"
     And I should see the button "Save"
     And I should see the link "Delete"
+    And I press "Save"
+    And I should see "Members of Test open group"
+
+  # DS-767 As a Group Manager I want to add a user to the group
+    When I click "Add member"
+    Then I should see "Add a member"
+    And I fill in "Select a member" with "Group Member Two"
+    And I should see "Group roles"
+    And I should see "Group Manager"
+    And I should see the button "Cancel"
+    And I press "Save"
+    Then I should see "Members of Test open group"
+    And I should see "Group Member Two"
+    And I should see "Drupal"
+    And I should see "Member"
+    And I click the xth "2" element with the css ".form-submit"
+    And I show hidden checkboxes
+    And I check the box "Group Manager"
+    And I press "Save"
+#    Then I should not see "Member"
+    And I click the xth "2" element with the css ".dropdown-toggle"
+    And I click "Delete"
+    Then I should see "This action cannot be undone"
+    And I should see the link "Cancel"
+    And I should see the button "Delete"
+#   And I press "Delete"
 
