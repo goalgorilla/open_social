@@ -131,7 +131,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
           ->getViewBuilder('profile')
           ->view($profile, 'small_teaser');
         $row['organization']['data'] = $profile->get('field_profile_organization')
-          ->view();
+          ->view(array('label' => 'hidden'));
         $row['group_role'] = $roles;
       }
     }
