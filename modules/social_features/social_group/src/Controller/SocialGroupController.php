@@ -24,9 +24,14 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupMembersTitle($group) {
-    $storage = \Drupal::entityTypeManager()->getStorage('group');
-    $group_entity = $storage->load($group);
-    $group_label = empty($group_entity) ? 'group' : $group_entity->label();
+    if (is_object($group)) {
+      $group_label = $group->label();
+    }
+    else {
+      $storage = \Drupal::entityTypeManager()->getStorage('group');
+      $group_entity = $storage->load($group);
+      $group_label = empty($group_entity) ? 'group' : $group_entity->label();
+    }
     return $this->t('Members of @name', ['@name' => $group_label]);
   }
 
