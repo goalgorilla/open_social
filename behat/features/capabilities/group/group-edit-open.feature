@@ -108,4 +108,14 @@ Feature: Edit my group as a group manager
 #  # And I should not see the link "Edit"
 #  # And I should see the link "Delete"
 
+  # DS-705 As a Group Manager I want to delete my own group
+    And I click "Edit group"
+    And I click "Delete"
+    And I should see "This action cannot be undone."
+    And I should see the link "Cancel"
+    And I should see the button "Delete"
+  # TODO: Fix unexpected error
+  # And I press "Delete"
+
+
 
