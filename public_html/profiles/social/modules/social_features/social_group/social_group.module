@@ -376,10 +376,6 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Hide Group "Nodes" tab.
   unset($data['tabs'][0]['gnode.collection']);
 
-  // Hide default Group "Members" tab, because we add our own tab.
-  if (isset($data['tabs'][0]['group.members'])) {
-    unset($data['tabs'][0]['group.members']);
-  }
   if (isset($data['tabs'][0]['group.view']['#link'])) {
     $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
   }
