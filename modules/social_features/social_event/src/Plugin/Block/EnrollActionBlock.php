@@ -43,7 +43,7 @@ class EnrollActionBlock extends BlockBase {
         $groups = $this->getGroups($node);
         if (!empty($groups)) {
           foreach ($groups as $group) {
-            if ($group->hasPermission('enroll to events in group', $account)) {
+            if ($group->hasPermission('enroll to events in groups', $account)) {
               return AccessResult::allowed();
             }
           }
