@@ -28,23 +28,35 @@ class GroupAddBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    $url = Url::fromUserInput('/group/add/open_group');
-
-    $link_options = array(
-      'attributes' => array(
-        'class' => array(
-          'btn',
-          'btn-primary',
-          'btn-raised',
-          'btn-block',
-          'waves-effect',
-          'waves-light',
-        ),
-      ),
+    // @TODO Fix cache tags!
+    // Disable cache for this block to get correct user_id from path
+    $build['#cache'] = array(
+      'max-age' => 0,
     );
-    $url->setOptions($link_options);
 
-    $build['group_add_block'] = Link::fromTextAndUrl(t('Add a group'), $url)->toRenderable();
+    $current_user = \Drupal::currentUser();
+    $route_user_id = \Drupal::routeMatch()->getParameter('user');
+    // Show this block only on current user Groups page.
+    if ($current_user->id() == $route_user_id) {
+      $url = Url::fromUserInput('/group/add/open_group');
+      $link_options = array(
+        'attributes' => array(
+          'class' => array(
+            'btn',
+            'btn-primary',
+            'btn-raised',
+            'btn-block',
+            'waves-effect',
+            'waves-light',
+          ),
+        ),
+      );
+      $url->setOptions($link_options);
+
+      $build['content'] = Link::fromTextAndUrl(t('Add a group'), $url)
+        ->toRenderable();
+    }
+
     return $build;
   }
 

@@ -156,9 +156,13 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
-    // Remove the user selection autocomplete on editing group membership.
+
     if('group_content_open_group-group_membership_edit_form' == $form_id){
+      // Remove the user selection autocomplete on editing group membership.
       $form['entity_id']['#access'] = FALSE;
+
+      // Add redirect to Group Membership page
+      $form['actions']['submit']['#submit'][] = '_social_group_membership_edit_form_submit';
     }
   }
 
@@ -229,6 +233,29 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       array('user' =>\Drupal::currentUser()->id(), array())
     );
   }
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * Form submit for membership edit form.
+ *
+ */
+function _social_group_membership_edit_form_submit($form, FormStateInterface $form_state) {
+  $group = \Drupal::routeMatch()->getParameter('group');
+
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+
+  // Set redirect to the Group overview page when a user saves their profile.
+  $form_state->setRedirect(
+    'entity.group_content.group_membership.collection',
+    array('group' => $group->id(), array())
+  );
 }
 
 /**
@@ -376,10 +403,6 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Hide Group "Nodes" tab.
   unset($data['tabs'][0]['gnode.collection']);
 
-  // Hide default Group "Members" tab, because we add our own tab.
-  if (isset($data['tabs'][0]['group.members'])) {
-    unset($data['tabs'][0]['group.members']);
-  }
   if (isset($data['tabs'][0]['group.view']['#link'])) {
     $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
   }
