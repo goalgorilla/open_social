@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Implements of hook_install().
+ */
+function better_formats_install() {
+  // Increase module weight to prevent compatibility issues.
+  module_set_weight('better_formats', 100);
+}
