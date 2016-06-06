@@ -121,7 +121,9 @@ Feature: Create Open Group
     And I should see "Groups"
 
   # DS-722 As an outsider I am not allowed to enrol to an event in group
-    And I am on "community-events"
+    When I am on "search/content"
+    And I fill in "search_input" with "Test group event"
+    And I press "Search"
     And I click "Test group event"
     And I should not see "Enroll for this event"
 
