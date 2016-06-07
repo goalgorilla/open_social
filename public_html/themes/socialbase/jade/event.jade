@@ -22,16 +22,20 @@ block pagetitle
         .hero-footer
           .row.row-md-center
             .col-xs-12.col-md-6.col-md-offset-3
+              .badge.badge-gray-dark.badge--toggle
+                label
+                  input(type='checkbox')
+                  i.material-icons group        
+                  span.badge--toggle__label community
               div
                 time.eventdate.updated June 6 2016 - 12:00 
                 span @ Keizersgracht 376, Amsterdam
               div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") 
                 span By 
                 a(itemprop="url", rel="author", href="my-stream.html") John Johnson 
-                span in 
-                a(itemprop="organizer", href="group-stream.html") 
-                  i.custom-icons.icon-group
-                  span Happy Campers
+                span
+                  | in group 
+                  a(itemprop="organizer", href="group-stream.html") Happy Campers
             .col-xs-12.col-md-3
               .btn-group
                 button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Enrolled        
