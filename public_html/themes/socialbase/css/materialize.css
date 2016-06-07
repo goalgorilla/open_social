@@ -1953,7 +1953,7 @@ abbr[data-original-title] {
 blockquote {
   padding: 12px 24px;
   margin: 0 0 24px;
-  font-size: 20px;
+  font-size: 18px;
   border-left: 5px solid #eeeeee;
 }
 
@@ -3212,7 +3212,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   min-width: 10px;
   padding: 4px 8px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   color: #fff;
   line-height: 1;
   vertical-align: middle;
@@ -4331,6 +4331,10 @@ fieldset[disabled] .btn-flat.focus {
   opacity: 0;
 }
 
+.btn-group.open .dropdown-toggle {
+  box-shadow: none;
+}
+
 .breadcrumb {
   border-radius: 0;
   font-size: 16px;
@@ -4551,7 +4555,7 @@ a.card:hover {
   right: 0;
   z-index: 1;
   background-color: inherit;
-  padding: 6px 12px;
+  padding: 6px 20px;
 }
 
 .card-actionbar:before, .card-actionbar:after {
@@ -6019,12 +6023,79 @@ hr.ruler-l {
 
 .badge-primary {
   background-color: #29abe2;
-  color: white;
 }
 
 .badge-secondary {
   background-color: #1f80aa;
-  color: white;
+}
+
+.badge-gray-lighter {
+  background-color: #eeeeee;
+  color: #777777;
+}
+
+.badge-gray-lighter .material-icons {
+  background-color: white;
+}
+
+.badge-gray-dark {
+  background-color: transparent;
+}
+
+.badge label {
+  margin-bottom: 0;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.badge--toggle {
+  padding: 0;
+  -webkit-transition: width 0.3s ease;
+  transition: width 0.3s ease;
+}
+
+.badge--toggle .material-icons {
+  font-size: 18px;
+  width: auto;
+  padding-left: 4px;
+}
+
+.badge--toggle,
+.badge--toggle * {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.js .badge--toggle .badge--toggle__label {
+  width: 0;
+  opacity: 0;
+  display: inline-block;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.js .badge--toggle.badge-gray-dark input[type=checkbox]:checked ~ .material-icons,
+.js .badge--toggle.badge-gray-dark input[type=checkbox]:checked ~ .badge--toggle__label {
+  background-color: #333333;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .material-icons {
+  background-color: transparent;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
+  width: auto;
+  padding: 3px 12px 3px 6px;
+  opacity: 1;
 }
 
 a {
@@ -6338,10 +6409,9 @@ a.default-light:focus {
 
 .chip i.material-icons {
   cursor: pointer;
-  float: right;
   font-size: 16px;
   line-height: 32px;
-  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .table-of-contents {
