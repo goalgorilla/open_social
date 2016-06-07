@@ -59,10 +59,9 @@
 
   {{ page.breadcrumb }}
 
-  {% if (page.title or page.hero or page.secondary_navigation) %}
+  {% if (page.hero or page.secondary_navigation) %}
     <div class="container hero-container">
 
-      {{ page.title }}
       {{ page.hero }}
 
       {% if page.secondary_navigation %}
@@ -78,14 +77,12 @@
   <div class="container">
     <div class="row margin-top-l">
 
-      <div role="complementary" class="col-xs-12 col-sm-3 col-sm-push-9">
+      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last">
         {{ page.complementary }}
       </div>
 
-      <div class="col-xs-12 col-sm-9 col-sm-pull-3">
-        {% block card %}
-          {{ page.content }}
-        {% endblock %}
+      <div class="col-xs-12 col-sm-8">
+        {{ page.content }}
       </div>
 
     </div>
