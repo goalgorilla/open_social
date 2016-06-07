@@ -134,13 +134,36 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
   if ($entity instanceof Drupal\group\Entity\Group) {
     // We add cache tags for the hero view mode.
     if ($build['#view_mode'] == 'hero') {
-      // Add tags for group membership so whenever it changes we will invalidate
-      // the hero.
-      $build['#cache']['tags'][] = 'group_membership:' . $entity->id();
-    }
-    if ($build['#view_mode'] == 'teaser') {
-      // Alter teaser
-      $build['#cache']['tags'][] = 'group_membership:' . $entity->id();
+
+      $renderer = \Drupal::service('renderer');
+      $current_user = \Drupal::currentUser();
+      $membership = $entity->getMember($current_user);
+
+      // Add cache tags for group type & permissions. We need join / leave for
+      // the CTA and also update permissions for the button to edit a group.
+      $build['#cache']['contexts'][] = 'group.type';
+      $build['#cache']['contexts'][] = 'group_membership';
+
+      $tags = $build['#cache']['tags'];
+
+      // Based on GroupOperationsBlock.php we add some more cache tags.
+      $service_1 = \Drupal::service('group.group_route_context');
+      $service_2 = \Drupal::service('current_user');
+      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
+      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
+      // Merge all cache tags together.
+      $merged_tags = Cache::mergeTags(
+        $context_1->getCacheableMetadata()->getCacheTags(),
+        $context_2->getCacheableMetadata()->getCacheTags()
+      );
+      // Get all the tags to merge with the new ones.
+      foreach ($merged_tags as $merged_tag) {
+        $tags[] = $merged_tag;
+      }
+
+      $build['#cache']['tags'] = $tags;
+
+      $renderer->addCacheableDependency($build, $membership);
     }
   }
 }
@@ -173,12 +196,12 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     'group_content_open_group-group_membership_edit_form',
     'group_content_open_group-group_membership_add_form',
   );
-  if (in_array($form_id, $membership_forms)){
+  if (in_array($form_id, $membership_forms)) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
 
-    if('group_content_open_group-group_membership_edit_form' == $form_id){
+    if ('group_content_open_group-group_membership_edit_form' == $form_id) {
       // Remove the user selection autocomplete on editing group membership.
       $form['entity_id']['#access'] = FALSE;
 
@@ -251,7 +274,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
       'view.groups.page_user_groups',
-      array('user' =>\Drupal::currentUser()->id(), array())
+      array('user' => \Drupal::currentUser()->id(), array())
     );
   }
 }
@@ -441,7 +464,7 @@ function social_group_local_tasks_alter(&$local_tasks) {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] * */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
 }
 
