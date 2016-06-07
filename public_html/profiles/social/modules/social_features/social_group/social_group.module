@@ -187,6 +187,7 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
   if (in_array($form_id, $group_forms)) {
     // Add character count script for description textarea.
     $form['#attached']['library'][] = 'social_group/add_form';
+    $form['field_group_description']['widget']['0']['value']['#attributes'] = array('length' => '200');
   }
 
 }
