@@ -76,6 +76,7 @@ Feature: Create Open Group
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see "Wed, 01/01/2025 - 11:00" in the "Hero block"
+    And I should see the button "Enroll for this event"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
     And I should see the link "Test open group" in the "Hero block"
     And I click "Test open group"
@@ -86,26 +87,26 @@ Feature: Create Open Group
     And I should see "Test group event" in the "Main content"
 
   # DS-644 As a LU I want to see the topics of a group
-    When I click "Topics"
-    And I should see the link "Create Topic" in the "Sidebar second"
-    And I click "Create Topic"
-    When I fill in the following:
-      | Title |Test group topic |
-    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
-  # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
-    And I should see "Test group topic"
-    And I should see "Body description text" in the "Main content"
-    And I should see "Discussion" in the "Hero block"
-   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Hero block"
-    And I click "Test open group"
-  # TODO: And I should see "Latest Topics" in the "Sidebar second"
-  # And I should see "Test group topic" in the "Sidebar second"
-    And I click "Topics"
-    And I should see "Test group topic" in the "Main content"
+#    When I click "Topics"
+#    And I should see the link "Create Topic" in the "Sidebar second"
+#    And I click "Create Topic"
+#    When I fill in the following:
+#      | Title |Test group topic |
+#    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
+#    And I click radio button "Discussion"
+#  # TODO: Change title of this button when we will have one step
+#    And I press "Continue to final step"
+#    And I press "Create node in group"
+#    And I should see "Test group topic"
+#    And I should see "Body description text" in the "Main content"
+#    And I should see "Discussion" in the "Hero block"
+#   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
+#    And I should see the link "Test open group" in the "Hero block"
+#    And I click "Test open group"
+#  # TODO: And I should see "Latest Topics" in the "Sidebar second"
+#  # And I should see "Test group topic" in the "Sidebar second"
+#    And I click "Topics"
+#    And I should see "Test group topic" in the "Main content"
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "1" element with the css ".dropdown-toggle"
@@ -118,5 +119,10 @@ Feature: Create Open Group
   # And I should see "Group User Two" in the "Hero block"
     And I should see "Group User One" in the "Hero block"
     And I should see "Groups"
+
+  # DS-722 As an outsider I am not allowed to enrol to an event in group
+    When I click "Events"
+    And I click "Test group event"
+    And I should not see "Enroll for this event"
 
   # TODO: Add check for latest groups block on LU homepage
