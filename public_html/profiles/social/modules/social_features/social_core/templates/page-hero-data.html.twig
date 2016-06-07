@@ -20,6 +20,15 @@
 #}
 <div class="cover">
 {% if hero_node or topic_type %}
+
+{% if node_edit_url %}
+  <div class="hero-action-button">
+    <a href="{{ node_edit_url }}" title="{#something that works for events and topics #}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+      <i class="material-icons">mode_edit</i>
+    </a>
+  </div>
+{% endif %}
+
 <div class="cover-wrap">
 {% endif %}
 
@@ -38,17 +47,27 @@
         {{ hero_node }}
 
         {% if author_name and created_date_formatted %}
-            {% trans %}By {{ author_name }} on {{ created_date_formatted }}{% endtrans %}
-        {% endif %}
-
-        {% if topic_type %}
-            <i class="material-icons">label</i>
-            {{ topic_type }}
-        {% endif %}
-
-        {% if group_link %}
-            <i class="custom-icons icon-group"></i>
-            {{ group_link }}
+          {% if topic_type %}
+            {% trans %}
+              By {{ author_name }} on {{ created_date_formatted }}
+            {% endtrans %}
+            <div>
+              <i class="material-icons">label</i>
+              {{ topic_type }}
+              {% if group_link %}
+                  in group {{ group_link }}
+              {% endif %}
+            </div>
+          {% else %}
+            <div>
+              {% trans %}
+                By {{ author_name }}
+              {% endtrans %}
+              {% if group_link %}
+                  <span> in group {{ group_link }} </span>
+              {% endif %}
+            </div>
+          {% endif %}
         {% endif %}
 
       </div>
