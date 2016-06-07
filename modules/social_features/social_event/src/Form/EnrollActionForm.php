@@ -79,7 +79,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#value' => $nid,
     );
 
-    $submit_text = $this->t('Enroll for this event');
+    $submit_text = $this->t('Enroll');
 
     $current_user = \Drupal::currentUser();
     $uid = $current_user->id();
@@ -96,7 +96,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($current_enrollment_status ==='1') {
-        $submit_text = $this->t('Cancel enrollment');
+        $submit_text = $this->t('Enrolled');
         $to_enroll_status = '0';
       }
     }
@@ -111,6 +111,20 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#type' => 'submit',
       '#value' => $submit_text,
     );
+
+    if ($enrollment->field_enrollment_status->value === '1') {
+      $form['enroll_for_this_event']['#attributes'] = array(
+        'class' => array('btn', 'btn-accent', 'btn-lg btn-raised', 'dropdown-toggle'),
+        'autocomplete' => 'off',
+        'data-toggle' => 'dropdown',
+        'aria-haspopup' => "true",
+        'aria-expanded' => "false",
+      );
+
+      $form['feedback_user_has_enrolled'] = array(
+        '#markup' => '<ul class="dropdown-menu"><li><a href="#">Cancel enrollment</a></li></ul>',
+      );
+    }
 
     return $form;
   }
