@@ -48,6 +48,12 @@ class GroupAddTopicBlock extends BlockBase {
       $url->setOptions($link_options);
 
       $build['content'] = Link::fromTextAndUrl(t('Create Topic'), $url)->toRenderable();
+
+      // @TODO Fix cache tags!
+      // Disable cache for this block to get correct group_id in path
+      $build['#cache'] = array(
+        'max-age' => 0,
+      );
     }
 
     return $build;

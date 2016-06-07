@@ -16,7 +16,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_visibility']['#attributes']['class'][] = 'browser-default';
 
   // Reset title display.
-  $form['field_post']['widget']['0']['value']['#title_display'] = '';
+  $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
   $form['actions']['submit']['#value'] = t('Post');
@@ -28,6 +28,9 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
  * Alter the comment_post_comment_form form.
  */
 function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Reset title display.
+  $form['field_comment_body']['widget'][0]['#title_display'] = '';
+
   // Set the action of the form to the current uri.
   // This needs to be done, becuase we cannot override $form['#action']
   // without breaking functionality.
