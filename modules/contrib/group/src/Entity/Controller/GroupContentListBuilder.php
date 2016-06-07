@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,6 +31,13 @@ class GroupContentListBuilder extends EntityListBuilder {
   protected $group;
 
   /**
+   * The redirect destination service.
+   *
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
+   */
+  protected $redirectDestination;
+
+  /**
    * The group content types to show in the list.
    *
    * @var string[]
@@ -39,11 +47,13 @@ class GroupContentListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RouteMatchInterface $route_match) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RouteMatchInterface $route_match, RedirectDestinationInterface $redirect_destination) {
     parent::__construct($entity_type, $storage);
-    $parameters = $route_match->getParameters();
+
+    $this->redirectDestination = $redirect_destination;
 
     // Check if the route had a plugin_id parameter.
+    $parameters = $route_match->getParameters();
     if ($parameters->has('plugin_id') && $plugin_ids = (array) $parameters->get('plugin_id')) {
       // We are then able to retrieve the group content type from the group.
       if ($parameters->has('group') && $group = $parameters->get('group')) {
@@ -69,7 +79,8 @@ class GroupContentListBuilder extends EntityListBuilder {
     return new static(
       $entity_type,
       $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('redirect.destination')
     );
   }
 
@@ -122,6 +133,20 @@ class GroupContentListBuilder extends EntityListBuilder {
     $build = parent::render();
     $build['table']['#empty'] = $this->t('There is no group content yet.');
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDefaultOperations(EntityInterface $entity) {
+    $operations = parent::getDefaultOperations($entity);
+
+    $destination = $this->redirectDestination->getAsArray();
+    foreach ($operations as $key => $operation) {
+      $operations[$key]['query'] = $destination;
+    }
+    
+    return $operations;
   }
 
 }

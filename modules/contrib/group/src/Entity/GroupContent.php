@@ -7,8 +7,6 @@
 namespace Drupal\group\Entity;
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\group\Plugin\GroupContentEnablerBase;
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\user\UserInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -30,7 +28,7 @@ use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
  *
  * @ContentEntityType(
  *   id = "group_content",
- *   label = @Translation("Group content entity"),
+ *   label = @Translation("Group content"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "views_data" = "Drupal\group\Entity\Views\GroupContentViewsData",
@@ -372,7 +370,24 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
     if ($group_content_type = GroupContentType::load($bundle)) {
       $plugin = $group_content_type->getContentPlugin();
 
-      $fields['entity_id'] = clone $base_field_definitions['entity_id'];
+      /** @var \Drupal\Core\Field\BaseFieldDefinition $original */
+      $original = $base_field_definitions['entity_id'];
+
+      // Recreated the original entity_id field so that it does not contain any
+      // data in its "propertyDefinitions" or "schema" properties because those
+      // were set based on the base field which had no clue what bundle to serve
+      // up until now. This is a bug in core because we can't simply unset those
+      // two properties, see: https://www.drupal.org/node/2346329
+      $fields['entity_id'] = BaseFieldDefinition::create('entity_reference')
+        ->setLabel($original->getLabel())
+        ->setDescription($original->getDescription())
+        ->setConstraints($original->getConstraints())
+        ->setDisplayOptions('view', $original->getDisplayOptions('view'))
+        ->setDisplayOptions('form', $original->getDisplayOptions('form'))
+        ->setDisplayConfigurable('view', $original->isDisplayConfigurable('view'))
+        ->setDisplayConfigurable('form', $original->isDisplayConfigurable('form'))
+        ->setRequired($original->isRequired());
+
       foreach ($plugin->getEntityReferenceSettings() as $name => $setting) {
         $fields['entity_id']->setSetting($name, $setting);
       }
@@ -387,27 +402,17 @@ class GroupContent extends ContentEntityBase implements GroupContentInterface {
    * {@inheritdoc}
    */
   public static function loadByEntity(ContentEntityInterface $entity) {
-    $group_content_type_ids = [];
-
-    /** @var GroupContentEnablerBase $plugin */
-    foreach (GroupContentEnablerHelper::getAllContentEnablers() as $plugin_id => $plugin) {
-      // If the plugin handles the entity type of the provided entity, we need
-      // to add the group content types it created to the list of bundle IDs to
-      // check group content against.
-      if ($plugin->getEntityTypeId() === $entity->getEntityTypeId()) {
-        $group_content_type_ids = array_merge($group_content_type_ids, array_keys(GroupContentType::loadByContentPluginId($plugin_id)));
-      }
-    }
+    $group_content_types = GroupContentType::loadByEntityTypeId($entity->getEntityTypeId());
 
     // If no responsible group content types were found, we return nothing.
-    if (empty($group_content_type_ids)) {
+    if (empty($group_content_types)) {
       return [];
     }
 
     return \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->loadByProperties([
-        'type' => $group_content_type_ids,
+        'type' => array_keys($group_content_types),
         'entity_id' => $entity->id(),
       ]);
   }

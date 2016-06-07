@@ -12,7 +12,7 @@ use Drupal\Core\Extension\ModuleUninstallValidatorInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupContentType;
-use Drupal\group\Plugin\GroupContentEnablerHelper;
+use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 
 class GroupContentUninstallValidator implements ModuleUninstallValidatorInterface {
 
@@ -26,16 +26,26 @@ class GroupContentUninstallValidator implements ModuleUninstallValidatorInterfac
   protected $queryFactory;
 
   /**
+   * The group content plugin manager.
+   *
+   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   */
+  protected $pluginManager;
+
+  /**
    * Constructs a new GroupContentUninstallValidator object.
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
    *   The entity query object.
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
+   *   The group content plugin manager.
    */
-  public function __construct(TranslationInterface $string_translation, QueryFactory $query_factory) {
+  public function __construct(TranslationInterface $string_translation, QueryFactory $query_factory, GroupContentEnablerManagerInterface $plugin_manager) {
     $this->stringTranslation = $string_translation;
     $this->queryFactory = $query_factory;
+    $this->pluginManager = $plugin_manager;
   }
 
   /**
@@ -45,7 +55,7 @@ class GroupContentUninstallValidator implements ModuleUninstallValidatorInterfac
     $reasons = $plugin_names = [];
 
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-    foreach (GroupContentEnablerHelper::getAllContentEnablers() as $plugin_id => $plugin) {
+    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
       if ($plugin->getProvider() == $module && $this->hasGroupContent($plugin_id)) {
         $plugin_names[] = $plugin->getLabel();
       }

@@ -7,10 +7,10 @@
 
 namespace Drupal\group\Entity;
 
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\group\Plugin\GroupContentEnablerCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Config\Entity\Exception\ConfigEntityIdLengthException;
+use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
@@ -171,14 +171,14 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
       ])->save();
 
       // Enable enforced content plugins for new group types.
-      GroupContentEnablerHelper::installEnforcedPlugins($this);
+      $this->getContentEnablerManager()->installEnforced($this);
     }
   }
 
   /**
    * Returns the content enabler plugin manager.
    *
-   * @return \Drupal\Component\Plugin\PluginManagerInterface
+   * @return \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    *   The group content plugin manager.
    */
   protected function getContentEnablerManager() {
@@ -293,6 +293,33 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
 
     // Delete the group content type config entity.
     GroupContentType::load($content_type_id)->delete();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    // All dependencies should be recalculated on every save apart from enforced
+    // dependencies. This ensures stale dependencies are never saved.
+    $this->dependencies = array_intersect_key($this->dependencies, ['enforced' => '']);
+
+    // The parent calculateDependencies() would merge in the installed plugin
+    // dependencies at this point. However, because we have an uninstall
+    // validator preventing you from removing any module that provides a plugin
+    // which has content for it, we don't want the plugin's dependencies added
+    // to the group type as it would get deleted when the module which provides
+    // that plugin is uninstalled.
+
+    // Taken from the parent function 1:1.
+    if ($this instanceof ThirdPartySettingsInterface) {
+      // Configuration entities need to depend on the providers of any third
+      // parties that they store the configuration for.
+      foreach ($this->getThirdPartyProviders() as $provider) {
+        $this->addDependency('module', $provider);
+      }
+    }
 
     return $this;
   }
