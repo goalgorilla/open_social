@@ -37,28 +37,30 @@
  * @see template_preprocess_field()
  */
 #}
-{%
-  set classes = [
-    'field',
-    'field--name-' ~ field_name|clean_class,
-    'field--type-' ~ field_type|clean_class,
-    'field--label-' ~ label_display,
-  ]
-%}
-{%
-  set title_classes = [
-    'field--label',
-    label_display == 'visually_hidden' ? 'sr-only',
-  ]
-%}
 
-{# Fields in the event teaser need to render without a div, because it is a child element of a paragraph tag #}
-{% if entity_type == 'node' %}
-{% for item in items %}
-  {{ item.content }}
-{% endfor %}
+{# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
+{% if bare %}
+  {% for item in items %}
+    {{ item.content }}
+  {% endfor %}
 
 {% else %}
+
+  {%
+    set classes = [
+      'field',
+      'field--name-' ~ field_name|clean_class,
+      'field--type-' ~ field_type|clean_class,
+      'field--label-' ~ label_display,
+    ]
+  %}
+  {%
+    set title_classes = [
+      'field--label',
+      label_display == 'visually_hidden' ? 'sr-only',
+    ]
+  %}
+
 
   {% if label_hidden %}
     {% if multiple %}

@@ -21,9 +21,9 @@
 #}
 <div class="card card--teaser card-with-actionbar">
     <a href="{{ profile_stream_url }}" class="card-image">
-        {% if content.field_profile_image %}
-            {{ content.field_profile_image }}
-        {% endif %}
+      {% if content.field_profile_image %}
+          {{ content.field_profile_image }}
+      {% endif %}
     </a>
     <div class="card-body">
         <h2 class="h3 card-title">
@@ -31,8 +31,19 @@
                 {{ profile_name|render }}
             </a>
         </h2>
-        <div class="text-grey-dark">{{ content.field_profile_function }}</div>
-        <div class="text-grey">{{ content.field_profile_organization }}</div>
+        {% if content.field_profile_function or content.field_profile_organization %}
+        <p class="text-grey-dark">
+          <i class="material-icons pull-left">business_center</i>
+          <span class="inline-center">
+            {{ content.field_profile_function }}
+            {% if content.field_profile_function and content.field_profile_organization %}
+              at
+            {% endif %}
+            {{ content.field_profile_organization }}
+          </span>
+        </p>
+        {% endif %}
+
         <div class="card-actionbar">
             {#@todo: replace contact url#}
             <a href="{{ profile_contact_url }}" class="btn btn-flat pull-left btn-primary">
