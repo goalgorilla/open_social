@@ -14,13 +14,11 @@ Feature: Enroll for an event
 
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
-    And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
     And I should see the link "View all"
 
     When I click "View all"
     Then I should see the button "Enrolled"
-    And I should see "You have enrolled for this event"
     And I should see the link "Enrollments"
     And I should see "View profile"
     And I should see "Contact me"
@@ -55,7 +53,6 @@ Feature: Enroll for an event
 
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
-    And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
     And I should see the link "View all"
 
@@ -64,25 +61,23 @@ Feature: Enroll for an event
     Given I am logged in as an "authenticated user"
     When I am viewing a "event" with the title "Enrollment test event"
     Then I should see "No one has enrolled for this event"
-    And I should see the button "Enroll for this event"
+    And I should see the button "Enroll"
     And I should see the link "Enrollments"
 
-    When I press the "Enroll for this event" button
+    When I press the "Enroll" button
     Then I should see the button "Cancel enrollment"
-    And I should see "You have enrolled for this event"
     And I should see "1 people have enrolled"
     And I should see the link "View all"
 
-    When I press "Cancel enrollment"
+    When I press the "Enroll" button
+    And I press "Cancel enrollment"
     Then I should see "No one has enrolled for this event"
-    And I should see the button "Enroll for this event"
+    And I should see the button "Enroll"
     And I should see the link "Enrollments"
 
     # Enroll again, since this is technically something different.
-    When I press the "Enroll for this event" button
-    Then I should see the button "Cancel enrollment"
-    And I should see "You have enrolled for this event"
-    And I should see "1 people have enrolled"
+    When I press the "Enroll" button
+    Then I should see "1 people have enrolled"
     And I should see the link "View all"
 
   @LU @cache
@@ -100,8 +95,8 @@ Feature: Enroll for an event
     Then I should not see "Enrolled"
 
     When I click "Enrollment test event"
-    And I press the "Enroll for this event" button
-    Then I should see the button "Cancel enrollment"
+    And I press the "Enroll" button
+    Then I should see the button "Enrolled"
     And I click "eventenrollment"
     And I click "Events"
     Then I should see "Enrolled"
