@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - dropdown
+    - message
+id: message.field_destinations
+field_name: field_destinations
+entity_type: message
+type: dropdown
+settings:
+  allowed_values:
+    -
+      value: '0'
+      label: 'Explore stream'
+      description: 'Item will show up on the explore stream'
+    -
+      value: '1'
+      label: 'Profile stream'
+      description: 'Item will show up on the profile stream'
+    -
+      value: '2'
+      label: 'Home stream'
+      description: 'Item will show up on the homepage'
+    -
+      value: '3'
+      label: 'Group stream'
+      description: 'Item will show up on the group stream'
+    -
+      value: '4'
+      label: Notifications
+      description: 'Item will be a personal notification'
+module: dropdown
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
