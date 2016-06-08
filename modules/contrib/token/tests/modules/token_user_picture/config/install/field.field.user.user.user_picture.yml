@@ -1,0 +1,31 @@
+id: user.user.user_picture
+status: true
+langcode: en
+entity_type: user
+bundle: user
+field_name: user_picture
+label: Picture
+description: 'Your virtual face or picture.'
+required: false
+default_value: {  }
+default_value_function: ''
+settings:
+  file_extensions: 'png gif jpg jpeg'
+  file_directory: pictures
+  max_filesize: '30 KB'
+  alt_field: false
+  title_field: false
+  max_resolution: 85x85
+  min_resolution: ''
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  alt_field_required: false
+  title_field_required: false
+field_type: image
+dependencies:
+  config:
+    - field.storage.user.user_picture

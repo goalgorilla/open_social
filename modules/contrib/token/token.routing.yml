@@ -1,0 +1,22 @@
+token.tree:
+  path: '/token/tree'
+  defaults:
+    _controller: '\Drupal\token\Controller\TokenTreeController::outputTree'
+  requirements:
+    _csrf_token: 'TRUE'
+
+token.autocomplete:
+  path: '/token/autocomplete/{token_type}/{filter}'
+  defaults:
+    _controller: '\Drupal\token\Controller\TokenAutocompleteController::autocomplete'
+  requirements:
+    _access: 'TRUE'
+
+token.flush_cache:
+  path: '/token/flush-cache'
+  defaults:
+    _controller: '\Drupal\token\Controller\TokenCacheController::flush'
+  requirements:
+    _permission: 'flush caches'
+    _csrf_token: 'TRUE'
+    _module_dependencies: 'admin_menu'
