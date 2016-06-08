@@ -59,23 +59,18 @@
 
   {{ page.breadcrumb }}
 
-  {% if (page.hero) %}
+  {% if (page.hero or page.title) %}
 
     <div class="container hero-container">
       {{ page.hero }}
+      {{ page.title }}
     </div>
 
   {% endif %}
 
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
-    <div class="row">
-      {% if page.title %}
-        <div class="col-xs-12">
-          {{ page.title }}
-        </div>
-      {% endif %}
-
+    <div class="row margin-top-l">
       {% if page.complementary %}
         <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-bottom-l">
           {{ page.complementary }}
