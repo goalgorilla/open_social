@@ -70,7 +70,7 @@ Feature: Enroll for an event
     And I should see the link "View all"
 
     When I press the "Enrolled" button
-    And I press "Cancel enrollment"
+    And I click "Cancel enrollment"
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
     And I should see the link "Enrollments"
