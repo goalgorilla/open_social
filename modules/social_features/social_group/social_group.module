@@ -489,3 +489,20 @@ function _social_group_get_member_profile(GroupContent $group_content) {
   }
   return $user_profile;
 }
+
+/**
+ * Get current Group entity from the route.
+ *
+ * @return \Drupal\group\Entity\GroupInterface
+ */
+function _social_group_get_current_group() {
+  $group = \Drupal::routeMatch()->getParameter('group');
+
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::service('entity_type.manager')
+      ->getStorage('group')
+      ->load($group);
+  }
+
+  return $group;
+}

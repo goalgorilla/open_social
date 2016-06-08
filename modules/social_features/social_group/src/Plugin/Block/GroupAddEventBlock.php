@@ -10,6 +10,8 @@ namespace Drupal\social_group\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Provides a 'GroupAddEventBlock' block.
@@ -21,6 +23,24 @@ use Drupal\Core\Link;
  */
 class GroupAddEventBlock extends BlockBase {
 
+  /**
+   * {@inheritdoc}
+   *
+   * Custom access logic to display the block.
+   */
+  function blockAccess(AccountInterface $account) {
+    $group = _social_group_get_current_group();
+
+    if(is_object($group)){
+      if ($group->hasPermission('create event node', $account)) {
+        return AccessResult::allowed();
+      }
+    }
+
+    // By default, the block is not visible.
+    return AccessResult::forbidden();
+  }
+
 
   /**
    * {@inheritdoc}
@@ -28,10 +48,10 @@ class GroupAddEventBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    $group_id = \Drupal::routeMatch()->getParameter('group');
+    $group = _social_group_get_current_group();
 
-    if(!empty($group_id)){
-      $url = Url::fromUserInput("/group/$group_id/node/create/event");
+    if(is_object($group)){
+      $url = Url::fromUserInput("/group/{$group->id()}/node/create/event");
 
       $link_options = array(
         'attributes' => array(
@@ -49,11 +69,10 @@ class GroupAddEventBlock extends BlockBase {
 
       $build['content'] = Link::fromTextAndUrl(t('Create Event'), $url)->toRenderable();
 
-      // @TODO Fix cache tags!
-      // Disable cache for this block to get correct group_id in path
-      $build['#cache'] = array(
-        'max-age' => 0,
-      );
+      // Cache
+      $build['#cache']['contexts'][] = 'url.path';
+      $build['#cache']['tags'][] = 'group:' . $group->id();
+
     }
 
     return $build;
