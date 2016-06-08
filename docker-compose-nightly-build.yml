@@ -15,7 +15,7 @@ services:
       - DRUPAL_SETTINGS=production
     volumes:
      - /root/drupal_social/social-jenkins-data/workspace/nightly_build/dev-scripts:/root/dev-scripts
-     - sites_default:/var/www/html/sites/default
+     - social_sites_default:/var/www/html/sites/default
     network_mode: "bridge"
 
   social_nightly_db:
@@ -24,7 +24,7 @@ services:
        - MYSQL_ROOT_PASSWORD=root
        - MYSQL_DATABASE=social
     volumes:
-     - db_data:/var/lib/mysql
+     - social_db_data:/var/lib/mysql
     network_mode: "bridge"
 
   social_nightly_mailcatcher:
@@ -47,5 +47,5 @@ services:
   #  command: socialci.goalgorilla.com user:password
 
 volumes:
-  db_data:
-  sites_default:
+  social_db_data:
+  social_sites_default:
