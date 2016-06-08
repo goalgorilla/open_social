@@ -97,6 +97,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($current_enrollment_status ==='1') {
         $submit_text = $this->t('Enrolled');
+
         $to_enroll_status = '0';
       }
     }
@@ -120,6 +121,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         'aria-haspopup' => "true",
         'aria-expanded' => "false",
       );
+
+      $form['enroll_for_this_event']['caret'] = TRUE;
 
       $form['feedback_user_has_enrolled'] = array(
         '#markup' => '<ul class="dropdown-menu"><li><a href="#">Cancel enrollment</a></li></ul>',
