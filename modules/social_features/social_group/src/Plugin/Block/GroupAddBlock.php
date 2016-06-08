@@ -10,6 +10,8 @@ namespace Drupal\social_group\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Provides a 'GroupAddBlock' block.
@@ -21,6 +23,23 @@ use Drupal\Core\Link;
  */
 class GroupAddBlock extends BlockBase {
 
+  /**
+   * {@inheritdoc}
+   *
+   * Custom access logic to display the block.
+   */
+  function blockAccess(AccountInterface $account) {
+    $current_user = \Drupal::currentUser();
+    $route_user_id = \Drupal::routeMatch()->getParameter('user');
+
+    // Show this block only on current user Groups page.
+    if ($current_user->id() == $route_user_id) {
+      return AccessResult::allowed();
+    }
+
+    // By default, the block is not visible.
+    return AccessResult::forbidden();
+  }
 
   /**
    * {@inheritdoc}
@@ -28,34 +47,24 @@ class GroupAddBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    // @TODO Fix cache tags!
-    // Disable cache for this block to get correct user_id from path
-    $build['#cache'] = array(
-      'max-age' => 0,
-    );
-
-    $current_user = \Drupal::currentUser();
-    $route_user_id = \Drupal::routeMatch()->getParameter('user');
-    // Show this block only on current user Groups page.
-    if ($current_user->id() == $route_user_id) {
-      $url = Url::fromUserInput('/group/add/open_group');
-      $link_options = array(
-        'attributes' => array(
-          'class' => array(
-            'btn',
-            'btn-primary',
-            'btn-raised',
-            'btn-block',
-            'waves-effect',
-            'waves-light',
-          ),
+    //@TODO: Change url and add caching when closed groups will be added.
+    $url = Url::fromUserInput('/group/add/open_group');
+    $link_options = array(
+      'attributes' => array(
+        'class' => array(
+          'btn',
+          'btn-primary',
+          'btn-raised',
+          'btn-block',
+          'waves-effect',
+          'waves-light',
         ),
-      );
-      $url->setOptions($link_options);
+      ),
+    );
+    $url->setOptions($link_options);
 
-      $build['content'] = Link::fromTextAndUrl(t('Add a group'), $url)
-        ->toRenderable();
-    }
+    $build['content'] = Link::fromTextAndUrl(t('Add a group'), $url)
+      ->toRenderable();
 
     return $build;
   }
