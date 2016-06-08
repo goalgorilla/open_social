@@ -113,7 +113,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#value' => $submit_text,
     );
 
+    $form['#attributes']['name'] = 'enroll_action_form';
+
     if ($enrollment->field_enrollment_status->value === '1') {
+      // Extra attributes needed for when a user is logged in. This will make
+      // sure the button acts like a dropwdown.
       $form['enroll_for_this_event']['#attributes'] = array(
         'class' => array('btn', 'btn-accent', 'btn-lg btn-raised', 'dropdown-toggle'),
         'autocomplete' => 'off',
@@ -122,11 +126,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         'aria-expanded' => "false",
       );
 
+      $cancel_text = $this->t('Cancel enrollment');
+
+      // Make sure we add the caret span.
       $form['enroll_for_this_event']['caret'] = TRUE;
 
+      // Add markup for the button so it will be a dropdown.
       $form['feedback_user_has_enrolled'] = array(
-        '#markup' => '<ul class="dropdown-menu"><li><a href="#">Cancel enrollment</a></li></ul>',
+        '#markup' => '<ul class="dropdown-menu"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text .  ' </a></li></ul>',
       );
+
+      $form['#attached']['library'][] = 'social_event/form_submit';
     }
 
     return $form;
