@@ -2,3 +2,37 @@
 /**
  * Activity Creator module file.
  */
+
+/**
+ * Returns the allowed values for the activity status field.
+ *
+ * @return array $allowed_values
+ */
+function activity_creator_field_activity_status_allowed_values() {
+
+  $allowed_values = [
+    1 => 'Received',
+    2 => 'Seen',
+    3 => 'Read',
+  ];
+
+  return $allowed_values;
+}
+
+/**
+ * Returns the allowed values for the activity destinations field.
+ *
+ * @return array $allowed_values
+ */
+function activity_creator_field_activity_destinations_allowed_values() {
+
+  $allowed_values = [
+    'stream_profile' => 'Stream (profile)',
+    'stream_home' => 'Stream (home)',
+    'stream_group' => 'Stream (group)',
+    'stream_explore' => 'Stream (explore)',
+    'notifications' => 'Notifications',
+  ];
+
+  return $allowed_values;
+}
