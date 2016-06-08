@@ -205,6 +205,12 @@ function socialbase_preprocess_container(&$variables) {
     }
   }
 
+  if (isset($variables['element']['cancel'])) {
+    if ($variables['element']['cancel']['#type'] == 'link' && $variables['element']['#type'] == 'actions' ) {
+      $variables['element']['cancel']['#attributes']['class'] = 'btn btn-flat';
+    }
+  }
+
 }
 
 /**
@@ -270,11 +276,15 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
 function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
   if (isset($variables['element']['#type'])) {
     if ($variables['element']['#type'] == 'radios') {
-      $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-      $suggestions[] =  'fieldset__' . $variables['element']['#type'];
+      if ($variables['element']['#id'] == 'edit-user-cancel-method') {
+        $suggestions[] = 'bootstrap_panel';
+      } else {
+        $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
+        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+      }
     }
     elseif ($variables['element']['#type'] == 'fieldset') {
-      $suggestions[] =  'bootstrap_panel';
+      $suggestions[] = 'bootstrap_panel';
 
     // Override bootstrap base theme suggestions.
     }else {
@@ -532,6 +542,11 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger' ) {
+    $variables['element']['#button_type'] = 'flat';
+    $variables['button_type'] = 'flat';
+  }
+
 }
 
 /**
@@ -596,7 +611,6 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
-      t('Cancel account')->render()               => 'flat',
     ],
 
     // Text containing these words anywhere in the string are checked last.
