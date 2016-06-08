@@ -59,14 +59,14 @@
     is_checkbox ? 'checkbox',
     is_autocomplete ? 'form-autocomplete',
     errors ? 'error has-error',
-    name == 'pass' ? 'row',
+    name == 'pass' and logged_in ? 'row',
     name == 'pass[pass1]' ? 'col-xs-12 col-sm-7',
     name == 'pass[pass2]' ? 'col-xs-12 col-sm-7',
   ]
 %}{%
   set description_classes = [
     'help-block',
-    name == 'pass' ? 'col-xs-12',
+    name == 'pass' and logged_in ? 'col-xs-12',
     description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
