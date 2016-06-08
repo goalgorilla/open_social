@@ -191,12 +191,20 @@ function socialbase_preprocess_block(&$variables) {
  */
 function socialbase_preprocess_container(&$variables) {
   $variables['search_context'] = FALSE;
+  $variables['has_floats'] = FALSE;
 
   // For pages in search we would like to render containers without divs.
   $routename = \Drupal::request()->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
   if (strpos($routename, 'search') !== false) {
     $variables['search_context'] = TRUE;
   }
+
+  if (isset($variables['element']['submit']['#button_type'])) {
+    if ($variables['element']['submit']['#button_type'] == 'primary' && $variables['element']['#type'] == 'actions' ) {
+      $variables['has_floats'] = TRUE;
+    }
+  }
+
 }
 
 /**
@@ -518,6 +526,12 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  if ( isset($variables['element']['#type']) && isset($variables['element']['#button_type']) ) {
+    if ( in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary' ) {
+      $variables['float_right'] = TRUE;
+    }
+  }
+
 }
 
 /**
@@ -582,6 +596,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
+      t('Cancel account')->render()               => 'flat',
     ],
 
     // Text containing these words anywhere in the string are checked last.

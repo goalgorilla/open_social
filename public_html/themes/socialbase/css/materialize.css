@@ -4965,11 +4965,6 @@ span.form-required {
   font-size: 0.875rem;
 }
 
-#edit-pass {
-  color: #4d4d4d;
-  font-weight: 300;
-}
-
 #edit-pass .password-strength,
 #edit-pass div.password-confirm {
   margin-top: 1em;
@@ -5017,10 +5012,9 @@ span.form-required {
 }
 
 .password-suggestions {
-  color: #8d8d8d;
-  font-size: 80%;
-  padding: 0 15px;
-  float: left;
+  color: #777777;
+  padding: 0 0.9375rem;
+  font-size: 14px;
 }
 
 .password-suggestions ul {
@@ -8022,7 +8016,9 @@ input[type=range]:focus::-ms-fill-upper {
   }
   #edit-pass .password-strength,
   #edit-pass div.password-confirm{
-    bottom: 0;
+    position: absolute;
+    left: 100%;
+    bottom: 5px;
     width: 180px;
     padding-bottom: 0.5rem;
   }
@@ -8030,7 +8026,6 @@ input[type=range]:focus::-ms-fill-upper {
     -webkit-box-flex: 100%;
     -ms-flex: 100%;
     flex: 100%;
-    float: none;
   }
   .cover-wrap .page-title{
     margin: 1em 0 0;
