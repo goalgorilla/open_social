@@ -65,11 +65,11 @@ Feature: Enroll for an event
     And I should see the link "Enrollments"
 
     When I press the "Enroll" button
-    Then I should see the button "Cancel enrollment"
+    Then I should see the button "Enrolled"
     And I should see "1 people have enrolled"
     And I should see the link "View all"
 
-    When I press the "Enroll" button
+    When I press the "Enrolled" button
     And I press "Cancel enrollment"
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"

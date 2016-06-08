@@ -76,7 +76,7 @@ Feature: Create Open Group
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see "Wed, 01/01/2025 - 11:00" in the "Hero block"
-    And I should see the button "Enroll for this event"
+    And I should see the button "Enroll"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
     And I should see the link "Test open group" in the "Hero block"
     And I click "Test open group"
@@ -123,6 +123,6 @@ Feature: Create Open Group
   # DS-722 As an outsider I am not allowed to enrol to an event in group
     When I click "Events"
     And I click "Test group event"
-    And I should not see "Enroll for this event"
+    And I should not see "Enroll"
 
   # TODO: Add check for latest groups block on LU homepage
