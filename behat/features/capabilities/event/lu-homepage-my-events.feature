@@ -39,6 +39,3 @@ Feature: See my upcoming events
     Then I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"
     And I should see "enrolled"
-
-    When I click "my-events"
-    Then I should see "Events for this user"
