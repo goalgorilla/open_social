@@ -38,9 +38,9 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#description' => t('Select a context where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_context', 'activity_context', NULL),
     '#options' => array(
-      '1' => $this->t('Community'),
-      '2' => $this->t('Profile'),
-      '3' => $this->t('Group'),
+      '1' => t('Community'),
+      '2' => t('Profile'),
+      '3' => t('Group'),
     ),
   );
   $form['activity_destinations'] = array(
@@ -51,11 +51,11 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#description' => t('Select a context where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_context', 'activity_context', NULL),
     '#options' => array(
-      '1' => $this->t('Explore stream'),
-      '2' => $this->t('Home stream'),
-      '3' => $this->t('Group stream'),
-      '4' => $this->t('Profile stream'),
-      '5' => $this->t('Notifications'),
+      '1' => t('Explore stream'),
+      '2' => t('Home stream'),
+      '3' => t('Group stream'),
+      '4' => t('Profile stream'),
+      '5' => t('Notifications'),
     ),
   );
   $form['#entity_builders'][] = 'activity_logger_form_message_type_form_builder';
