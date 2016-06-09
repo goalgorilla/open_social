@@ -134,21 +134,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
-    if ($enrollment->field_enrollment_status->value === '1') {
+    if (isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1') {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_for_this_event']['#attributes'] = array(
         'class' => array('btn', 'btn-accent', 'btn-lg btn-raised', 'dropdown-toggle'),
         'autocomplete' => 'off',
         'data-toggle' => 'dropdown',
-        'aria-haspopup' => "true",
-        'aria-expanded' => "false",
+        'aria-haspopup' => 'true',
+        'aria-expanded' => 'false',
+        'data-caret' => 'true',
       );
 
       $cancel_text = $this->t('Cancel enrollment');
-
-      // Make sure we add the caret span.
-      $form['enroll_for_this_event']['caret'] = TRUE;
 
       // Add markup for the button so it will be a dropdown.
       $form['feedback_user_has_enrolled'] = array(
