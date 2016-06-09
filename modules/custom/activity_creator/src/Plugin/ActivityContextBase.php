@@ -18,6 +18,8 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_id, $limit) {
+    //TODO: Add basic implementation for the recipients based on the data given in the queue worker.
+
     return array();
   }
 
