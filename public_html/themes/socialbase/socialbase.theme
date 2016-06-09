@@ -191,12 +191,20 @@ function socialbase_preprocess_block(&$variables) {
  */
 function socialbase_preprocess_container(&$variables) {
   $variables['search_context'] = FALSE;
+  $variables['has_floats'] = FALSE;
 
   // For pages in search we would like to render containers without divs.
   $routename = \Drupal::request()->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
   if (strpos($routename, 'search') !== false) {
     $variables['search_context'] = TRUE;
   }
+
+  if (isset($variables['element']['submit']['#button_type'])) {
+    if ($variables['element']['submit']['#button_type'] == 'primary' && $variables['element']['#type'] == 'actions' ) {
+      $variables['has_floats'] = TRUE;
+    }
+  }
+
 }
 
 /**
@@ -234,7 +242,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#id'] == 'search-content-form') {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
-  
+
   // Also for the search hero content form on the /search/content.
   if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
@@ -294,6 +302,16 @@ function socialbase_theme_suggestions_form_element_label_alter(array &$suggestio
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
+function socialbase_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+  $views_display = $variables['view']->getDisplay();
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'view_enrollments') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'page';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
 function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
   // Lets add the form element parent to the theme suggestions.
   if (isset($variables['element']['#id'])) {
@@ -323,6 +341,31 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
     if ($variables['element']['submit']['#button_type'] == 'flat' ) {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+
+function socialbase_preprocess_field(&$variables) {
+  // for each field that doesn't need a div to wrap the content in.
+  switch ($variables['element']['#field_name']) {
+    case 'field_profile_image':
+    case 'field_profile_function':
+    case 'field_profile_organization':
+    case 'field_group_description':
+    case 'field_topic_image':
+    case 'field_comment_body':
+      $variables['bare'] = TRUE;
+      break;
+  }
+
+  switch ($variables['element']['#entity_type']) {
+    case 'node':
+    case 'post':
+      $variables['bare'] = TRUE;
+      break;
   }
 }
 
@@ -492,6 +535,12 @@ function socialbase_preprocess_input(&$variables) {
   else {
     $variables['element']['caret'] = NULL;
   }
+  if ( isset($variables['element']['#type']) && isset($variables['element']['#button_type']) ) {
+    if ( in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary' ) {
+      $variables['float_right'] = TRUE;
+    }
+  }
+
 }
 
 /**
@@ -556,6 +605,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
+      t('Cancel account')->render()               => 'flat',
     ],
 
     // Text containing these words anywhere in the string are checked last.

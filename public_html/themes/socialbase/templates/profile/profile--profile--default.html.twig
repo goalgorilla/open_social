@@ -67,29 +67,29 @@
 #}
 <div class="card">
     <div class="card-body extra-padding">
-        <ul class="collection">
-            <li class="collection-item">
-                <h4>{% trans %}Contact information{% endtrans %}</h4>
-            </li>
+        <div class="list-group list-group-divider">
+            <div class="list-group-item">
+                <h4 class="list-group-item-heading">{% trans %}Contact information{% endtrans %}</h4>
+            </div>
             {% if content.field_profile_phone_number|render %}
-            <li class="collection-item">
-                <div class="collection-label">{% trans %}Phone{% endtrans %}</div>
-                <div class="collection-field">{{ content.field_profile_phone_number }}</div>
-            </li>
+            <div class="list-group-item">
+                <div class="list-group-label">{% trans %}Phone{% endtrans %}</div>
+                <div class="list-group-field">{{ content.field_profile_phone_number }}</div>
+            </div>
             {% endif %}
-            <li class="collection-item">
-                <div class="collection-label">{% trans %}E-mail{% endtrans %}</div>
-                <div class="collection-field"><a href="{{ user_mail }}">{{ user_mail }}</a></div>
-            </li>
+            <div class="list-group-item">
+                <div class="list-group-label">{% trans %}E-mail{% endtrans %}</div>
+                <div class="list-group-field"><a href="{{ user_mail }}">{{ user_mail }}</a></div>
+            </div>
             {% if content.field_profile_address|render %}
-            <li class="collection-item">
-                <div class="collection-label">{% trans %}Address{% endtrans %}</div>
-                <div class="collection-field">
+            <div class="list-group-item">
+                <div class="list-group-label">{% trans %}Address{% endtrans %}</div>
+                <div class="list-group-field">
                     {{ content.field_profile_address }}
                 </div>
-            </li>
+            </div>
             {% endif %}
-        </ul>
+        </div>
 
         {% if content.field_profile_self_introduction|render %}
             <h4>{% trans %}Intro{% endtrans %}</h4>
