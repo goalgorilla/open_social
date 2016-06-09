@@ -23,6 +23,7 @@
  */
 #}
 {% spaceless %}
+
   {%
     set classes = [
       'btn',
@@ -39,9 +40,9 @@
       </button>
     {% else %}
       {% if icon_position == 'after' %}
-        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
       {% else %}
-        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
       {% endif %}
     {% endif %}
     {{ children }}

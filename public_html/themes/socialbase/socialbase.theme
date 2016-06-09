@@ -565,6 +565,15 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  // Make sure we can use a span class caret in the button.
+  if (!empty($variables['element']['#attributes']['data-caret']) && $variables['element']['#attributes']['data-caret'] === 'true' ) {
+    $variables['element']['caret'] = array(
+      '#markup' => '<span class="caret"></span>',
+    );
+  }
+  else {
+    $variables['element']['caret'] = NULL;
+  }
   if ( isset($variables['element']['#type']) && isset($variables['element']['#button_type']) ) {
     if ( in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary' ) {
       $variables['float_right'] = TRUE;
