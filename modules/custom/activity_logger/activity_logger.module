@@ -8,6 +8,8 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\message\MessageTypeInterface;
+use Drupal\message\Entity\Message;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_help().
@@ -36,7 +38,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => TRUE,
     '#title' => t('The activity context for this message'),
     '#description' => t('Select a context where to display this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_context', 'activity_context', NULL),
+    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL),
     '#options' => array(
       '1' => t('Community'),
       '2' => t('Profile'),
@@ -49,11 +51,11 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#multiple' => TRUE,
     '#required' => TRUE,
     '#description' => t('Select a context where to display this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_context', 'activity_context', NULL),
+    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
     '#options' => array(
       '1' => t('Explore stream'),
-      '2' => t('Home stream'),
-      '3' => t('Group stream'),
+      '2' => t('Group stream'),
+      '3' => t('Home stream'),
       '4' => t('Profile stream'),
       '5' => t('Notifications'),
     ),
@@ -69,4 +71,28 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
 function activity_logger_form_message_type_form_builder($entity_type, MessageTypeInterface $message_type, &$form, FormStateInterface $form_state) {
   $message_type->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
   $message_type->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_logger_node_insert(EntityInterface $entity) {
+  if ($entity->bundle() == 'topic') {
+    //\Drupal\Core\Entity\EntityTypeManagerInterface.
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+
+    $message_type = $entity_type_manager->getStorage('message_type')
+      ->load('create_topic_community');
+    if (isset($message_type)) {
+
+      // For every insert we create an activity item
+      $message = Message::create([
+        'type' => 'create_topic_community',
+        'uid' => $entity->getOwner()
+      ]);
+      $message->set('field_context', $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'));
+      $message->set('field_destinations', $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')));
+      $message->save();
+    }
+  };
 }
