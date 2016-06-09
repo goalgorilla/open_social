@@ -21,25 +21,6 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
   // Add get/set methods for your configuration properties here.
 
   /**
-   * Gets the Activity name.
-   *
-   * @return string
-   *   Name of the Activity.
-   */
-  public function getName();
-
-  /**
-   * Sets the Activity name.
-   *
-   * @param string $name
-   *   The Activity name.
-   *
-   * @return \Drupal\activity_creator\ActivityInterface
-   *   The called Activity entity.
-   */
-  public function setName($name);
-
-  /**
    * Gets the Activity creation timestamp.
    *
    * @return int
