@@ -17,7 +17,8 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   /**
    * {@inheritdoc}
    */
-  public function getLabel() {
-    return $this->t($this->pluginDefinition['label'], array(), array('context' => 'activity_context'));
+  public function getRecipients(array $data, $last_id, $limit) {
+    return array();
   }
+
 }
