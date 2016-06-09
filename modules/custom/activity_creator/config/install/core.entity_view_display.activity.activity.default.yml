@@ -4,11 +4,12 @@ status: true
 dependencies:
   config:
     - field.field.activity.activity.field_activity_destinations
+    - field.field.activity.activity.field_activity_entity
+    - field.field.activity.activity.field_activity_message
     - field.field.activity.activity.field_activity_output_text
     - field.field.activity.activity.field_activity_recipient_group
     - field.field.activity.activity.field_activity_recipient_user
     - field.field.activity.activity.field_activity_status
-    - field.field.activity.activity.field_activity_entity
   module:
     - activity_creator
     - dynamic_entity_reference
@@ -26,6 +27,20 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: list_default
+  field_activity_entity:
+    weight: 1
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: dynamic_entity_reference_label
+  field_activity_message:
+    weight: 7
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   field_activity_output_text:
     weight: 5
     label: above
@@ -52,13 +67,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: list_default
-  field_activity_entity:
-    weight: 1
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: dynamic_entity_reference_label
   name:
     label: above
     type: string
