@@ -53,9 +53,13 @@
 
       </div>
 
+    {% if event_enrollment %}
       <div class="col-xs-12 col-md-3">
-        {# insert enroll action block here #}
+          <div class="btn-group">
+            {{ event_enrollment }}
+          </div>
       </div>
+    {% endif %}
 
     </div>
   </div>
