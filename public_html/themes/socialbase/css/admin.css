@@ -1,24 +1,16 @@
-.toolbar-vertical .panel.show {
-  -webkit-transform: translateY(39px);
-          transform: translateY(39px);
-  overflow: visible;
-}
-
-.toolbar-tray-open.toolbar-vertical #header {
+.toolbar-tray-open.toolbar-vertical #header,
+.toolbar-tray-open.toolbar-vertical #content {
   margin-left: -15rem;
 }
 
-@media screen and (min-width: 960px) {
+.toolbar-vertical .off-canvas-right {
+  -webkit-transform: translateY(39px) translateX(280px);
+          transform: translateY(39px) translateX(280px);
+}
 
-  .toolbar-vertical #user-panel.show {
-    -webkit-transform: translateY(127px);
-    transform: translateY(127px);
-  }
-
-  .toolbar-horizontal #user-panel.show {
-    -webkit-transform: translateY(167px);
-    transform: translateY(167px);
-  }
+.toolbar-vertical .off-canvas-right.is-open {
+  -webkit-transform: translateY(39px) translateX(0);
+          transform: translateY(39px) translateX(0);
 }
 
 /*# sourceMappingURL=admin.css.map */

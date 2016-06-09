@@ -108,6 +108,18 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
 
+  if (isset($variables['configuration']['views_label'])) {
+    if ($variables['configuration']['label'] == '') {
+      $variables['label'] = $variables['configuration']['views_label'];
+    }
+  }
+
+  // check if the block is a views exposed form filter, add condition to add classes in twig file
+  if (isset($variables['content']['#form_id'])) {
+    if ($variables['content']['#form_id'] == 'views_exposed_form') {
+      $variables['complementary'] = TRUE;
+    }
+  }
 
   // Add search_block to account menu.
   if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
@@ -121,7 +133,7 @@ function socialbase_preprocess_block(&$variables) {
 
   // Preprocess search block header
   if (isset($variables['content']['search_content_form']) ) {
-    if ($variables['content']['search_content_form']['#form_id'] != 'search_hero_content_form') {
+    if ($variables['elements']['#id'] != 'search_content_block_title') {
       $variables['content']['search_content_form']['#attributes']['role'] = 'search';
       $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
       $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-left';
@@ -133,6 +145,7 @@ function socialbase_preprocess_block(&$variables) {
       $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
       $variables['content']['search_content_form']['#attributes']['role'] = 'search';
       $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
+      $variables['content']['search_content_form']['form_group'] = TRUE;
     }
   }
   if (isset($variables['content']['search_users_form'])) {
@@ -195,7 +208,7 @@ function socialbase_preprocess_container(&$variables) {
 
   // For pages in search we would like to render containers without divs.
   $routename = \Drupal::request()->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
-  if (strpos($routename, 'search') !== false) {
+  if (strpos($routename, 'search') !== FALSE) {
     $variables['search_context'] = TRUE;
   }
 
@@ -205,6 +218,32 @@ function socialbase_preprocess_container(&$variables) {
     }
   }
 
+  // identify the container used for search in the navbar
+  if (isset($variables['element']['submit']['#suffix'])) {
+    $icon_is_present = strpos($variables['element']['submit']['#suffix'], 'search-icon');
+
+    if ($icon_is_present !== FALSE ) {
+      $variables['search_context'] = TRUE;
+    }
+
+  }
+
+}
+
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_page_title(&$variables) {
+
+  // Get the current path and if is it stream return a variable
+  $current_path = \Drupal::service('path.current')->getPath();
+  if (strpos($current_path, 'stream') !== FALSE) {
+    $variables['stream'] = TRUE;
+  }
+  if (strpos($current_path, 'node') !== FALSE) {
+    $variables['node'] = TRUE;
+  }
 }
 
 /**
@@ -244,7 +283,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   }
 
   // Also for the search hero content form on the /search/content.
-  if ($variables['element']['#id'] == 'search-hero-content-form' || $variables['element']['#id'] == 'search-users-form') {
+  if (isset($variables['element']['form_group']) || $variables['element']['#form_id'] == 'search_users_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
   }
 

@@ -35,19 +35,16 @@ block pagetitle
 
 block content
               
-  .row
-    .col-xs-12
-      h4.section-title Member results
-      p If you are searching for content, <a href="search-content.html">click here</a>
+  .row.margin-top-l    
 
-    .col-xs-12.col-sm-3.col-sm-last.margin-bottom-l
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
     
       button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
         i.material-icons.pull-left tune
         | Filter
       .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
-          header.card__label filter
+          header.complementary-title filter
           .offcanvas-tools.visible-xs-block
             .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
               i.material-icons close
@@ -71,7 +68,10 @@ block content
               button.btn.btn-default(type='submit', value='Reset') Reset
               button.btn.btn-primary.pull-right(type='submit', value='Filter') Filter
           
-    .col-xs-12.col-sm-9
+    .col-xs-12.col-sm-8
+      
+      h4.section-title Member results
+      p If you are searching for content, <a href="search-content.html">click here</a>
         
       include molecules/_member1.jade
       include molecules/_member2.jade
