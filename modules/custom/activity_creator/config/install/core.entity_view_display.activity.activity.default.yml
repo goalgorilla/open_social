@@ -1,0 +1,75 @@
+uuid: dfb9066e-d85b-402a-8126-1dc8b57e4ac6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.activity.activity.field_activity_destinations
+    - field.field.activity.activity.field_activity_output_text
+    - field.field.activity.activity.field_activity_recipient_group
+    - field.field.activity.activity.field_activity_recipient_user
+    - field.field.activity.activity.field_activity_status
+    - field.field.activity.activity.field_activity_entity
+  module:
+    - activity_creator
+    - dynamic_entity_reference
+    - options
+    - text
+    - user
+id: activity.activity.default
+targetEntityType: activity
+bundle: activity
+mode: default
+content:
+  field_activity_destinations:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_activity_output_text:
+    weight: 5
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+  field_activity_recipient_group:
+    weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_activity_recipient_user:
+    weight: 2
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: dynamic_entity_reference_label
+  field_activity_status:
+    weight: 6
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_activity_entity:
+    weight: 1
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: dynamic_entity_reference_label
+  name:
+    label: above
+    type: string
+    weight: -4
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
