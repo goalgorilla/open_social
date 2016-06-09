@@ -13,19 +13,12 @@ function social_activity_logger_entity_insert(Drupal\Core\Entity\EntityInterface
   // For every insert we create an activity item
 
   // @TODO: Remove this.
-  if ($entity->getEntityTypeId() === 'node') {
+/*  if ($entity->getEntityTypeId() === 'node') {
     if ($entity->bundle() == 'topic') {
       $message = Message::create(['type' => 'create_topic_community', 'uid' => $entity->getOwner()]);
       $message->set('field_context', 'community');
       $message->set('field_destinations', array(0, 1, 2, 3, 4));
       $message->save();
     }
-  }
-}
-
-/**
- * Implements hook_entity_bundle_info().
- */
-function social_activity_logger_entity_bundle_info() {
-
+  }*/
 }
