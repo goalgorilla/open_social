@@ -4,11 +4,12 @@ status: true
 dependencies:
   config:
     - field.field.activity.activity.field_activity_destinations
+    - field.field.activity.activity.field_activity_entity
+    - field.field.activity.activity.field_activity_message
     - field.field.activity.activity.field_activity_output_text
     - field.field.activity.activity.field_activity_recipient_group
     - field.field.activity.activity.field_activity_recipient_user
     - field.field.activity.activity.field_activity_status
-    - field.field.activity.activity.field_activity_entity
   module:
     - activity_creator
     - dynamic_entity_reference
@@ -23,6 +24,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+  field_activity_entity:
+    weight: 11
+    settings:
+      match_operator: CONTAINS
+      size: 40
+      placeholder: ''
+    third_party_settings: {  }
+    type: dynamic_entity_reference_default
+  field_activity_message:
+    weight: 17
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   field_activity_output_text:
     weight: 15
     settings:
@@ -51,14 +68,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
-  field_activity_entity:
-    weight: 11
-    settings:
-      match_operator: CONTAINS
-      size: 40
-      placeholder: ''
-    third_party_settings: {  }
-    type: dynamic_entity_reference_default
   langcode:
     type: language_select
     weight: 10
