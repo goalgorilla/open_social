@@ -145,7 +145,7 @@ function socialbase_preprocess_block(&$variables) {
       $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
       $variables['content']['search_content_form']['#attributes']['role'] = 'search';
       $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-      $variables['content']['search_content_form']['form_group'] = TRUE;
+      $variables['content']['search_content_form']['#id'] = 'search-content-form-hero';
     }
   }
   if (isset($variables['content']['search_users_form'])) {
@@ -283,7 +283,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   }
 
   // Also for the search hero content form on the /search/content.
-  if ( isset($variables['element']['form_group']) || $variables['element']['#form_id'] == 'search_users_form' ) {
+  if ( $variables['element']['#id'] == 'search-content-form-hero' || $variables['element']['#form_id'] == 'search_users_form' ) {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
   }
 
