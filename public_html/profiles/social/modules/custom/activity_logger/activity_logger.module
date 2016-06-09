@@ -33,24 +33,25 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
 function activity_logger_form_message_type_form_alter(&$form, FormStateInterface $form_state) {
   /** @var \Drupal\contact\ContactFormInterface $contact_form */
   $message_type = $form_state->getFormObject()->getEntity();
+
+  $activity_recipient_manager = \Drupal::service('plugin.manager.activity_context.processor');
+  $options = $activity_recipient_manager->getOptionsList();
+
   $form['activity_context'] = array(
     '#type' => 'select',
     '#required' => TRUE,
     '#title' => t('The activity context for this message'),
     '#description' => t('Select a context where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL),
-    '#options' => array(
-      '1' => t('Community'),
-      '2' => t('Profile'),
-      '3' => t('Group'),
-    ),
+    '#options' => $options,
   );
+
   $form['activity_destinations'] = array(
     '#type' => 'select',
-    '#title' => t('The activity context for this message'),
+    '#title' => t('The activity destinations for this message'),
     '#multiple' => TRUE,
     '#required' => TRUE,
-    '#description' => t('Select a context where to display this message.'),
+    '#description' => t('Select destinations where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
     '#options' => array(
       '1' => t('Explore stream'),
@@ -60,6 +61,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
       '5' => t('Notifications'),
     ),
   );
+
   $form['#entity_builders'][] = 'activity_logger_form_message_type_form_builder';
 }
 
@@ -76,7 +78,7 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
 /**
  * Implements hook_ENTITY_TYPE_insert().
  *
- * TODO: Move this in a service and make it generic
+ * TODO: Move this in a service and make it generic.
  */
 function activity_logger_node_insert(EntityInterface $entity) {
   if ($entity->bundle() == 'topic') {
