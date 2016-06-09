@@ -49,7 +49,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
     $data = [
       'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
       'message_type' => $message_type, // this is needed for the activityfactory
-      'context' => $context, // either group, profile, community
+      'context' => $context[0]['value'], // either group, profile, community
       'last_uid' => 0, // last processed_uid
       'status' => NULL,
     ];

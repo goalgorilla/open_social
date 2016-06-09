@@ -6,6 +6,10 @@
  */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\State\StateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 /**
  * A report worker.
@@ -21,6 +25,20 @@ namespace Drupal\activity_creator\Plugin\QueueWorker;
  * QueueWorker ActivityWorkerActivities.
  */
 class ActivityWorkerLogger extends ActivityWorkerBase {
+
+  /**
+   * The ActivityContext manager
+   *
+   * @var \Drupal\activity_creator\Plugin\ActivityContextManager
+   */
+  protected $context_plugin_manager;
+
+  /**
+   * The state.
+   *
+   * @var \Drupal\Core\State\
+   */
+  protected $state;
 
   /**
    * {@inheritdoc}
@@ -40,6 +58,14 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     // Get 100 Recipients at a time.
     $limit = 100;
     $recipients = array(1, 2, 3, 4, 5);
+
+    // TODO: Change this to use depenceny injection (see construct code below)
+    // Currently gives an error.
+    $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
+
+    $plugin = $context_plugin_manager->createInstance($data['context']);
+
+    $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
 
     if (!empty($recipients)) {
 
@@ -62,5 +88,24 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
 
 //    $this->reportWork(1, $data);
   }
+
+//  public function __construct(array $configuration, $plugin_id, $plugin_definition, StateInterfacee $state, LoggerChannelFactoryInterface $logger, $context_plugin_manager) {
+//    parent::__construct($configuration, $plugin_id, $plugin_definition, $state, $logger);
+//    $this->context_plugin_manager = $context_plugin_manager;
+//  }
+//
+//  /**
+//   * {@inheritdoc}
+//   */
+//  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+//    return new static(
+//      $configuration,
+//      $plugin_id,
+//      $plugin_definition,
+//      $container->get('state'),
+//      $container->get('logger.factory'),
+//      $container->get('plugin.manager.activity_context.processor')
+//    );
+//  }
 
 }
