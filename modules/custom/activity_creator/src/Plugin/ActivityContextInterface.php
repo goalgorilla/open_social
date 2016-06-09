@@ -14,12 +14,17 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface ActivityContextInterface extends PluginInspectionInterface {
 
+
   /**
-   * Returns the translated label.
+   * Returns a batched list of recipients for this context.
    *
-   * @return string
-   *   The translated label.
+   * Format?
+   *  array (
+   *   id = uid or gip
+   *   type = "user / group"
+   * )
    */
-  public function getLabel();
+  public function getRecipients(array $data, $last_id, $limit);
+
 
 }

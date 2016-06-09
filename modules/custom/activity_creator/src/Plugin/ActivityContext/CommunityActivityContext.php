@@ -19,4 +19,11 @@ use Drupal\activity_creator\Plugin\ActivityContextBase;
  */
 class CommunityActivityContext extends ActivityContextBase {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getRecipients(array $data, $last_id, $limit) {
+    return array();
+  }
+
 }
