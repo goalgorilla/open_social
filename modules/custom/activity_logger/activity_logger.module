@@ -75,6 +75,8 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
+ *
+ * TODO: Move this in a service and make it generic
  */
 function activity_logger_node_insert(EntityInterface $entity) {
   if ($entity->bundle() == 'topic') {
