@@ -86,14 +86,13 @@ function activity_logger_node_insert(EntityInterface $entity) {
     $message_type = $entity_type_manager->getStorage('message_type')
       ->load('create_topic_community');
     if (isset($message_type)) {
-
-      // For every insert we create an activity item
+      // For every insert we create an activity item.
       $message = Message::create([
         'type' => 'create_topic_community',
-        'uid' => $entity->getOwner()
+        'uid' => $entity->getOwner()->id(),
+        'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
+        'field_destinations' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')),
       ]);
-      $message->set('field_context', $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'));
-      $message->set('field_destinations', $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')));
       $message->save();
     }
   };
