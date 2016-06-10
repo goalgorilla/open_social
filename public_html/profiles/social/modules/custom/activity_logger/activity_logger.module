@@ -94,6 +94,10 @@ function activity_logger_node_insert(EntityInterface $entity) {
         'uid' => $entity->getOwner()->id(),
         'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
         'field_destinations' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')),
+        'field_related_object' => [
+          'target_id' => $entity->id(),
+          'target_type' => $entity->getEntityTypeId()
+        ]
       ]);
       $message->save();
     }

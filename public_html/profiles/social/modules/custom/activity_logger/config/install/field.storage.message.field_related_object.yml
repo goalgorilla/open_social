@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - block_content
+    - comment
+    - dynamic_entity_reference
+    - file
+    - group
+    - menu_link_content
+    - message
+    - node
+    - profile
+    - search
+    - social_post
+    - taxonomy
+    - user
+id: message.field_related_object
+field_name: field_related_object
+entity_type: message
+type: dynamic_entity_reference
+settings:
+  exclude_entity_types: true
+  entity_type_ids:
+    activity: activity
+    block_content: block_content
+    menu_link_content: menu_link_content
+    message: message
+module: dynamic_entity_reference
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
