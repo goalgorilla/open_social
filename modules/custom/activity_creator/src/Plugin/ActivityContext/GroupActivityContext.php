@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContext\ProfileActivityContext.
+ * Contains \Drupal\activity_creator\Plugin\ActivityContext\GroupActivityContext.
  */
 
 namespace Drupal\activity_creator\Plugin\ActivityContext;
@@ -10,14 +10,14 @@ namespace Drupal\activity_creator\Plugin\ActivityContext;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 
 /**
- * Provides a 'ProfileActivityContext' activity context.
+ * Provides a 'GroupActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "profile_activity_context",
- *  label = @Translation("Profile activity context"),
+ *  id = "group_activity_context",
+ *  label = @Translation("Group activity context"),
  * )
  */
-class ProfileActivityContext extends ActivityContextBase {
+class GroupActivityContext extends ActivityContextBase {
 
   /**
    * {@inheritdoc}
@@ -26,7 +26,7 @@ class ProfileActivityContext extends ActivityContextBase {
     $recipients = [];
 
     // Only return the referenced entity here.
-    // @TODO Is referenced entity always the profile owner
+    // @TODO Is referenced entity always the Group owner
     if ($data['entity_type'] && $data['entity_id']) {
       $recipients[] = [
         'id' => $data['entity_id'],

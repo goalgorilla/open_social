@@ -62,6 +62,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
     /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+    // @TODO Do we need multiple context plugins? If so should we call Manager?
     $plugin = $context_plugin_manager->createInstance($data['context']);
     $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
 
@@ -71,6 +72,9 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         // Probably Recipient is an object.
 
         // Create new activity_creator_activities QueueItem..
+        
+
+
         $last_uid = $recipient;  // @TODO Put uid in here or object?
       }
 
