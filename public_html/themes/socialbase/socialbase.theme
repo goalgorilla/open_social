@@ -575,7 +575,7 @@ function socialbase_preprocess_input(&$variables) {
   }
 
   if (isset($variables['element']['#type']) && isset($variables['element']['#button_type'])) {
-    if (in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary') {
+    if (!empty($variables['element']['#array_parents']) && in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary') {
       $variables['float_right'] = TRUE;
     }
   }
