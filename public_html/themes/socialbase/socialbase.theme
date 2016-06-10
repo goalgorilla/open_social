@@ -124,7 +124,8 @@ function _socialbase_call_preprocess_page($hook, &$variables) {
 function socialbase_preprocess_block(&$variables) {
   $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
 
-  if (isset($variables['configuration']['views_label']) && empty($variables['configuration']['label'])) {
+  // Fix label for Views exposed filter blocks.
+  if (!empty($variables['configuration']['views_label']) && empty($variables['configuration']['label'])) {
     $variables['label'] = $variables['configuration']['views_label'];
   }
 
