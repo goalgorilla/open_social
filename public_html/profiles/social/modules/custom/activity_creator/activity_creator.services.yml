@@ -2,3 +2,6 @@ services:
   plugin.manager.activity_context.processor:
     class: Drupal\activity_creator\Plugin\ActivityContextManager
     parent: default_plugin_manager
+  activity_creator.activity_factory:
+    class: Drupal\activity_creator\ActivityFactory
+    arguments: ['@entity.manager']
