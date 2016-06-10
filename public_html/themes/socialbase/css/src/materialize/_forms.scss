@@ -404,8 +404,6 @@ span.form-required {
 // ***************
 
 #edit-pass {
-  color: $grey-dark-1;
-  font-weight: 300;
 
   .password-strength,
   div.password-confirm {
@@ -421,7 +419,9 @@ span.form-required {
 
     .password-strength,
     div.password-confirm {
-      bottom: 0;
+      position: absolute;
+      left: 100%;
+      bottom: 5px;
       width: 180px;
       padding-bottom: 0.5rem;
     }
@@ -462,14 +462,12 @@ span.form-required {
 }
 
 .password-suggestions {
-  color: lighten($text-color, 25%);
-  font-size: 80%;
-  padding: 0 15px;
-  float: left;
+  color: $gray-light;
+  padding: 0 ($grid-gutter-width/2);
+  font-size: $font-size-small;
 
   @include MQ($small) {
     flex: 100%;
-    float: none;
   }
 }
 
