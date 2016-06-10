@@ -18,10 +18,12 @@ interface ActivityContextInterface extends PluginInspectionInterface {
   /**
    * Returns a batched list of recipients for this context.
    *
-   * Format?
-   *  array (
-   *   id = uid or gip
-   *   type = "user / group"
+   * Format
+   * array(
+   *   array (
+   *     id = uid or gip
+   *     type = "user / group"
+   *   )
    * )
    */
   public function getRecipients(array $data, $last_id, $limit);

@@ -45,26 +45,24 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    */
   public function processItem($data) {
 
-    $data['mid']; // message id, or maybe full ActivityLog obj? Better not!
+//    $data['mid']; // message id, or maybe full ActivityLog obj? Better not!
 //    $data['output_text']; // with tokens .. activityfactory will replace tokens
-    $data['message_type']; // this is needed for the activityfactory
-    $data['entity_type']; // not sure
-    $data['entity_id']; // not sure
-    $data['context']; // either group, profile, community
-    $data['last_uid']; // last processed_uid
+//    $data['message_type']; // this is needed for the activityfactory
+//    $data['entity_type']; // not sure
+//    $data['entity_id']; // not sure
+//    $data['context']; // either group, profile, community
+//    $data['last_uid']; // last processed_uid
 //    $data['status']; // Perhaps to store the status of this queue item: 1, 2, 3
 
     // @TODO Replace with the recipients service.
     // Get 100 Recipients at a time.
     $limit = 100;
-    $recipients = array(1, 2, 3, 4, 5);
 
-    // TODO: Change this to use depenceny injection (see construct code below)
-    // Currently gives an error.
+    // TODO: Change this to use dependency injection (see construct code below)
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
+    /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
     $plugin = $context_plugin_manager->createInstance($data['context']);
-
     $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
 
     if (!empty($recipients)) {
