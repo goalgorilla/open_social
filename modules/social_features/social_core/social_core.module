@@ -21,6 +21,7 @@ function social_core_theme() {
         'group_link' => NULL,
         'hero_node' => NULL,
         'section_class' => NULL,
+        'event_enrollment' => NULL,
       ),
     ),
   );
@@ -55,6 +56,28 @@ function template_preprocess_page_hero_data(&$variables) {
     }
     else {
       $variables['topic_type'] = NULL;
+    }
+  }
+  if (empty($variables['event_enrollment'])) {
+    // Get current node object or node id.
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    if (!empty($node)) {
+      if (!is_object($node) && !is_null($node)) {
+        $node = \Drupal::service('entity_type.manager')
+          ->getStorage('node')
+          ->load($node);
+      }
+      if ($node->getType() == 'event') {
+        $form = \Drupal::formBuilder()
+          ->getForm('Drupal\social_event\Form\EnrollActionForm');
+
+        $render_array = array(
+          'enroll_action_form' => $form
+        );
+
+        $variables['event_enrollment'] = $render_array;
+      }
     }
   }
 }
