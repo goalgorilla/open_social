@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_creator
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_context: profile_activity_context
+    activity_destinations:
+      stream_profile: stream_profile
+      notifications: notifications
+type: create_post_profile
+label: 'Create post on profile'
+description: 'A user created a post on a profile'
+text:
+  - "[message:author:display-name] left a post on your profile"
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge:
+    override: false
+    enabled: false
+    quota: null
+    days: null
