@@ -2,15 +2,16 @@ langcode: en
 status: true
 dependencies:
   module:
-    - dropdown
     - message
+    - options
 id: message.field_context
 field_name: field_context
 entity_type: message
-type: dropdown
+type: list_string
 settings:
   allowed_values: {  }
-module: dropdown
+  allowed_values_function: ''
+module: options
 locked: false
 cardinality: 1
 translatable: true
