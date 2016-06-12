@@ -1,4 +1,4 @@
-uuid: 043d786c-09ac-4c3d-9626-aed774011f41
+uuid: 3ebadc47-34a8-4397-9afc-03f2e20ec43f
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,6 @@ dependencies:
     - field.storage.activity.field_activity_recipient_user
   module:
     - activity_creator
-    - dynamic_entity_reference
 id: activity.activity.field_activity_recipient_user
 field_name: field_activity_recipient_user
 entity_type: activity
@@ -18,43 +17,13 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  activity:
-    handler: 'default:activity'
-    handler_settings: {  }
-  comment:
-    handler: 'default:comment'
-    handler_settings: {  }
-  node:
-    handler: 'default:node'
-    handler_settings: {  }
-  block_content:
-    handler: 'default:block_content'
-    handler_settings: {  }
-  menu_link_content:
-    handler: 'default:menu_link_content'
-    handler_settings: {  }
-  event_enrollment:
-    handler: 'default:event_enrollment'
-    handler_settings: {  }
-  file:
-    handler: 'default:file'
-    handler_settings: {  }
-  group_content:
-    handler: 'default:group_content'
-    handler_settings: {  }
-  group:
-    handler: 'default:group'
-    handler_settings: {  }
-  post:
-    handler: 'default:post'
-    handler_settings: {  }
-  profile:
-    handler: 'default:profile'
-    handler_settings: {  }
-  taxonomy_term:
-    handler: 'default:taxonomy_term'
-    handler_settings: {  }
-  user:
-    handler: 'default:user'
-    handler_settings: {  }
-field_type: dynamic_entity_reference
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: true
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference
