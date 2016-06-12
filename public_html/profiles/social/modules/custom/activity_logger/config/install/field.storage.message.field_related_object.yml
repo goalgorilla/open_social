@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - activity_creator
     - block_content
     - comment
     - dynamic_entity_reference
@@ -11,7 +12,7 @@ dependencies:
     - message
     - node
     - profile
-    - search
+    - social_event
     - social_post
     - taxonomy
     - user
@@ -23,9 +24,17 @@ settings:
   exclude_entity_types: true
   entity_type_ids:
     activity: activity
+    comment: comment
     block_content: block_content
     menu_link_content: menu_link_content
+    event_enrollment: event_enrollment
+    file: file
+    group_content: group_content
+    group: group
     message: message
+    profile: profile
+    taxonomy_term: taxonomy_term
+    user: user
 module: dynamic_entity_reference
 locked: false
 cardinality: 1

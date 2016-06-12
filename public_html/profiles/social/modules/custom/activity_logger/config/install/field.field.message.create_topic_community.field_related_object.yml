@@ -17,14 +17,28 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
+  node:
+    handler: 'default:node'
+    handler_settings:
+      target_bundles:
+        event: event
+        topic: topic
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: event
+  post:
+    handler: 'default:post'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
   activity:
     handler: 'default:activity'
     handler_settings: {  }
   comment:
     handler: 'default:comment'
-    handler_settings: {  }
-  node:
-    handler: 'default:node'
     handler_settings: {  }
   block_content:
     handler: 'default:block_content'
@@ -46,9 +60,6 @@ settings:
     handler_settings: {  }
   message:
     handler: 'default:message'
-    handler_settings: {  }
-  post:
-    handler: 'default:post'
     handler_settings: {  }
   profile:
     handler: 'default:profile'
