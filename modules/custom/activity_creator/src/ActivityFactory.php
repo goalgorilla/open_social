@@ -5,7 +5,10 @@
 
 namespace Drupal\activity_creator;
 
+use Drupal\activity_creator\Entity\Activity;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityManager;
+use Drupal\message\Entity\Message;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -13,27 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\activity_creator
  */
-abstract class ActivityFactory implements ContainerInterface {
-
-  /**
-   * @var \Drupal\Core\Entity\EntityManager
-   */
-  private $entityManager;
-
-
-  /**
-   * ActivityFactory constructor.
-   */
-  public function __construct(EntityManager $entityManager) {
-    $this->entityManager = $entityManager;
-  }
-
-  public static function create(ContainerInterface $container) {
-    return new static(
-      // User the $container to get a query factory object. This object let's us create query objects.
-      $container->get('entity.manager')
-    );
-  }
+class ActivityFactory extends ControllerBase {
 
   /**
    * Create the activities based on a data array.
@@ -42,11 +25,84 @@ abstract class ActivityFactory implements ContainerInterface {
    * @return mixed
    */
   public function createActivities(array $data) {
-    $activities = [];
-
-    
+    $activities = $this->buildActivities($data);
 
     return $activities;
   }
-  
+
+  /**
+   * Build the activities based on a data array.
+   *
+   * @param array $data
+   * @return mixed
+   */
+  private function buildActivities(array $data) {
+    $activities = [];
+
+    // For every insert we create an activity item.
+    $activity = Activity::create([
+      'field_activity_destinations' => $this->getFieldDestinations($data),
+      'field_activity_entity' =>  $this->getFieldEntity($data),
+      'field_activity_message' => $this->getFieldMessage($data),
+      'field_activity_output_text' =>  $this->getFieldOutputText($data),
+      'field_activity_recipient_group' => $this->getFieldRecipientGroup($data),
+      'field_activity_recipient_user' => $this->getFieldRecipientUser($data),
+      'uid' => 0,
+    ]);
+    $activity->save();
+
+    return $activities;
+  }
+
+  private function getFieldDestinations(array $data) {
+    $value = NULL;
+    if (isset($data['destination'])) {
+      $value = $data['destination'];
+    }
+    return $value;
+  }
+
+  private function getFieldEntity($data) {
+    $value = NULL;
+    if (isset($data['related_object'])) {
+      $value = $data['related_object'];
+    }
+    return $value;
+  }
+
+  private function getFieldMessage($data) {
+    $value = NULL;
+    if (isset($data['mid'])) {
+      $value = [];
+      $value[] = [
+        'target_id' => $data['mid'],
+      ];
+    }
+    return $value;
+  }
+
+  private function getFieldOutputText($data) {
+    $value = NULL;
+    if (isset($data['mid'])) {
+
+      $message = Message::load($data['mid']);
+      // @TODO setArguments here? Replace tokens here? Or let message do work?
+      $value = $message->getText(NULL);
+    }
+
+    return $value;
+  }
+
+  private function getFieldRecipientGroup($data) {
+    // @TODO create logic here, based on recipients in data array.
+    $value = NULL;
+    return $value;
+  }
+
+  private function getFieldRecipientUser($data) {
+    // @TODO create logic here, based on recipients in data array.
+    $value = NULL;
+    return $value;
+  }
+
 }
