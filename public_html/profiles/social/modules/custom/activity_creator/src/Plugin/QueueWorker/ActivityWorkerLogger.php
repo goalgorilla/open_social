@@ -45,16 +45,8 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    */
   public function processItem($data) {
 
-//    $data['mid']; // message id, or maybe full ActivityLog obj? Better not!
-//    $data['output_text']; // with tokens .. activityfactory will replace tokens
-//    $data['message_type']; // this is needed for the activityfactory
-//    $data['entity_type']; // not sure
-//    $data['entity_id']; // not sure
-//    $data['context']; // either group, profile, community
-//    $data['last_uid']; // last processed_uid
-//    $data['status']; // Perhaps to store the status of this queue item: 1, 2, 3
+    $old_data = $data;
 
-    // @TODO Replace with the recipients service.
     // Get 100 Recipients at a time.
     $limit = 100;
 
@@ -62,6 +54,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
     /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+    // @TODO Do we need multiple context plugins? If so should we call Manager?
     $plugin = $context_plugin_manager->createInstance($data['context']);
     $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
 
@@ -70,12 +63,14 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
       foreach ($recipients as $recipient) {
         // Probably Recipient is an object.
 
-        // Create new activity_creator_activities QueueItem..
+        // Update the recipients in this $data array.
+        $data['recipients'][] = $recipient;
+
+        // @TODO Create new activities QueueItems or split in that queueworker
         $last_uid = $recipient;  // @TODO Put uid in here or object?
       }
 
       // Now create new queue item for activity_creator_logger if necessary.
-      // @TODO Discuss if $last_uid isset is justified here.
       if (count($recipients) >= $limit && isset($last_uid)) {
         $data['last_uid'] = $last_uid;
         $data['status'] = 'processing';
@@ -83,9 +78,20 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
       }
 
     }
+    else {
 
-//    $this->reportWork(1, $data);
+      $activity_creator_data = [
+        'mid' => $data['mid'],
+        'message_type' => $data['message_type'],
+        'context' => $data['context'], // Not necessary?
+        'destination' => $data['destination'],
+        'related_object' => $data['related_object'],
+      ];
+      $this->createQueueItem('activity_creator_activities', $activity_creator_data);
+    }
+
   }
+
 
 //  public function __construct(array $configuration, $plugin_id, $plugin_definition, StateInterfacee $state, LoggerChannelFactoryInterface $logger, $context_plugin_manager) {
 //    parent::__construct($configuration, $plugin_id, $plugin_definition, $state, $logger);

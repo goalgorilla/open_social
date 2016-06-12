@@ -13,20 +13,12 @@ dependencies:
   module:
     - activity_creator
     - dynamic_entity_reference
-    - options
     - text
-    - user
 id: activity.activity.default
 targetEntityType: activity
 bundle: activity
 mode: default
 content:
-  field_activity_destinations:
-    weight: 4
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: list_default
   field_activity_entity:
     weight: 1
     label: above
@@ -34,39 +26,12 @@ content:
       link: true
     third_party_settings: {  }
     type: dynamic_entity_reference_label
-  field_activity_message:
-    weight: 7
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
   field_activity_output_text:
-    weight: 5
-    label: above
-    settings: {  }
-    third_party_settings: {  }
     type: text_default
-  field_activity_recipient_group:
-    weight: 3
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-  field_activity_recipient_user:
-    weight: 2
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: dynamic_entity_reference_label
-  field_activity_status:
-    weight: 6
-    label: above
+    weight: 0
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: list_default
   name:
     label: above
     type: string
@@ -74,10 +39,10 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-  user_id:
-    label: hidden
-    type: author
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_activity_destinations: true
+  field_activity_message: true
+  field_activity_recipient_group: true
+  field_activity_recipient_user: true
+  field_activity_status: true
+  user_id: true
