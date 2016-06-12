@@ -1,30 +1,17 @@
-uuid: 3f8e7794-4b04-4308-a19b-9572556fc0cd
+uuid: 0405bef1-bd38-4f28-8361-ceeb23d2fc00
 langcode: en
 status: true
 dependencies:
   module:
     - activity_creator
-    - block_content
-    - comment
-    - dynamic_entity_reference
-    - file
-    - group
-    - menu_link_content
-    - node
-    - profile
-    - social_event
-    - social_post
-    - taxonomy
     - user
 id: activity.field_activity_recipient_user
 field_name: field_activity_recipient_user
 entity_type: activity
-type: dynamic_entity_reference
+type: entity_reference
 settings:
-  exclude_entity_types: false
-  entity_type_ids:
-    user: user
-module: dynamic_entity_reference
+  target_type: user
+module: core
 locked: false
 cardinality: 1
 translatable: true
