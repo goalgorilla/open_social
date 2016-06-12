@@ -102,9 +102,9 @@ function activity_logger_node_insert(EntityInterface $entity) {
       $message = Message::create([
         'type' => 'create_topic_community',
         'uid' => $entity->getOwner()->id(),
-        'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
-        'field_destinations' => $destinations,
-        'field_related_object' => [
+        'field_message_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
+        'field_message_destination' => $destinations,
+        'field_message_related_object' => [
           'target_id' => $entity->id(),
           'target_type' => $entity->getEntityTypeId()
         ]

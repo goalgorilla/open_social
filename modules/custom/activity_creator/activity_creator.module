@@ -45,9 +45,9 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
     $mid = $entity->id();
     $message_type = $entity->getEntityType()->id();
-    $context = $entity->get('field_context')->getValue();
-    $destinations = $entity->get('field_destinations')->getValue();
-    $related_object = $entity->get('field_related_object')->getValue();
+    $context = $entity->get('field_message_context')->getValue();
+    $destinations = $entity->get('field_message_destination')->getValue();
+    $related_object = $entity->get('field_message_related_object')->getValue();
 
     $data = [
       'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
