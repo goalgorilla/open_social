@@ -81,6 +81,14 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
  * TODO: Move this in a service and make it generic.
  */
 function activity_logger_node_insert(EntityInterface $entity) {
+
+  $contextGetter = \Drupal\activity_logger\Controller\ActivityLoggerController::create(\Drupal::getContainer());
+  // Fetch entity context.
+  $context = $contextGetter->getContext($entity);
+
+  // @TODO: Remove this.
+  $context = '1';
+
   if ($entity->bundle() == 'topic') {
     //\Drupal\Core\Entity\EntityTypeManagerInterface.
     $entity_type_manager = \Drupal::service('entity_type.manager');
@@ -92,7 +100,7 @@ function activity_logger_node_insert(EntityInterface $entity) {
       $message = Message::create([
         'type' => 'create_topic_community',
         'uid' => $entity->getOwner()->id(),
-        'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
+        'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', $context),
         'field_destinations' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')),
         'field_related_object' => [
           'target_id' => $entity->id(),
