@@ -113,3 +113,44 @@ function activity_logger_node_insert(EntityInterface $entity) {
     }
   };
 }
+
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * TODO: Move this in a service and make it generic.
+ */
+function activity_logger_post_insert(EntityInterface $entity) {
+  if ($entity->id()) {
+    //\Drupal\Core\Entity\EntityTypeManagerInterface.
+    $entity_type_manager = \Drupal::service('entity_type.manager');
+
+    $message_type = $entity_type_manager->getStorage('message_type')
+      ->load('create_post_profile');
+    if (isset($message_type)) {
+      $message_type_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+
+      $destinations = [];
+      if (!empty($message_type_destinations) && is_array($message_type_destinations)) {
+        foreach ($message_type_destinations as $destination) {
+          $destinations[] = array('value' => $destination);
+        }
+      }
+
+      // For every insert we create an activity item.
+      $message = Message::create([
+        'type' => 'create_post_profile',
+        'uid' => $entity->getOwner()->id(),
+        'field_message_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
+        'field_message_destination' => $destinations,
+        'field_message_related_object' => [
+          'target_id' => $entity->id(),
+          'target_type' => $entity->getEntityTypeId()
+        ]
+      ]);
+      $message->save();
+    }
+  };
+}
+
+
