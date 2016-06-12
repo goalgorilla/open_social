@@ -6,6 +6,9 @@
  */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
+use Drupal\activity_creator\ActivityFactory;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A report worker.
@@ -15,40 +18,47 @@ namespace Drupal\activity_creator\Plugin\QueueWorker;
  *   title = @Translation("Process activity activities."),
  *   cron = {"time" = 60}
  * )
+ * @TODO Change the weight to make sure it runs after the logger
+ * is this possible? See Cron.php::processQueues() and getDefinitions() in manager
  *
  * This QueueWorker is responsible for creating Activity entities and will
  * retrieve use information provided by activity_creator_logger.
  */
-class ActivityWorkerActivities extends ActivityWorkerBase {
+class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * @var \Drupal\activity_creator\ActivityFactory
+   */
+  private $activityFactory;
+
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ActivityFactory $activityFactory) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->activityFactory = $activityFactory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('activity_creator.activity_factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function processItem($data) {
 
-    $data->mid; // message id, or maybe full ActivityLog obj? Better not!
-    $data->output_text; // with tokens .. activityfactory will replace tokens
-    $data->message_type; // this is needed for the activityfactory
-    $data->entity_type; // not sure
-    $data->entity_id; // not sure
-    $data->context; // either group, profile, community
-    $data->last_uid; // last processed_uid
-    $data->status; // Perhaps to store the status of this queue item: 1, 2, 3
+    // @TODO Can one item have multiple destinations; if not: split
 
-    // Neccessary for activity factory:
-    // - verb (or string with tokens)
-    // - message_text
-    // - type (;e.g. create_topic_node)
-    // - entity: entity_id & type
-    // - actor
-    // - context
-    // - destinations (allowed? - messageType/ActivityLog)
-    // - activityLog ID (message ID)
+    // Let the factory work.
+    $this->activityFactory->createActivities($data);
 
-    // @TODO We should implement the ActivityFactory here.
-    // What does this factory need to create new activity items?
-
-//    $this->reportWork(1, $data);
   }
 
 }

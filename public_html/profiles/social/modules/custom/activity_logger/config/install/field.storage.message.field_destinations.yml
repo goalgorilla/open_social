@@ -2,35 +2,17 @@ langcode: en
 status: true
 dependencies:
   module:
-    - dropdown
+    - activity_creator
     - message
+    - options
 id: message.field_destinations
 field_name: field_destinations
 entity_type: message
-type: dropdown
+type: list_string
 settings:
-  allowed_values:
-    -
-      value: '1'
-      label: 'Explore stream'
-      description: 'Item will show up on the explore stream'
-    -
-      value: '2'
-      label: 'Group stream'
-      description: 'Item will show up on the group stream'
-    -
-      value: '3'
-      label: 'Home stream'
-      description: 'Item will show up on the homepage'
-    -
-      value: '4'
-      label: 'Profile stream'
-      description: 'Item will show up on the profile stream'
-    -
-      value: '5'
-      label: 'Notifications'
-      description: 'Item will be a personal notification'
-module: dropdown
+  allowed_values: {  }
+  allowed_values_function: 'activity_creator_field_activity_destinations_allowed_values'
+module: options
 locked: false
 cardinality: -1
 translatable: true

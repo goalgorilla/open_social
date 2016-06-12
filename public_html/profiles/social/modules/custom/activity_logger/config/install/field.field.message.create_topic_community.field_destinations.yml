@@ -5,7 +5,9 @@ dependencies:
     - field.storage.message.field_destinations
     - message.type.create_topic_community
   module:
-    - dropdown
+    - activity_creator
+    - activity_logger
+    - options
 id: message.create_topic_community.field_destinations
 field_name: field_destinations
 entity_type: message
@@ -17,4 +19,4 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: dropdown
+field_type: list_string

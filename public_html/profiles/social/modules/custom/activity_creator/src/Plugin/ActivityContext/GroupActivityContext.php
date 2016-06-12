@@ -25,7 +25,8 @@ class GroupActivityContext extends ActivityContextBase {
   public function getRecipients(array $data, $last_uid, $limit) {
     $recipients = [];
 
-    // Only return the referenced entity here.
+    // @TODO Retrieve the group members.
+    
     // @TODO Is referenced entity always the Group owner
     if ($data['entity_type'] && $data['entity_id']) {
       $recipients[] = [

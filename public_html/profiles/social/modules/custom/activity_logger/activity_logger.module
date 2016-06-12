@@ -53,12 +53,13 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => TRUE,
     '#description' => t('Select destinations where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
+    // @TODO activity_creator allowed_values function overlap (should be plugin)
     '#options' => array(
-      '1' => t('Explore stream'),
-      '2' => t('Group stream'),
-      '3' => t('Home stream'),
-      '4' => t('Profile stream'),
-      '5' => t('Notifications'),
+      'stream_profile' => 'Stream (profile)',
+      'stream_home' => 'Stream (home)',
+      'stream_group' => 'Stream (group)',
+      'stream_explore' => 'Stream (explore)',
+      'notifications' => 'Notifications',
     ),
   );
 
@@ -88,12 +89,21 @@ function activity_logger_node_insert(EntityInterface $entity) {
     $message_type = $entity_type_manager->getStorage('message_type')
       ->load('create_topic_community');
     if (isset($message_type)) {
+      $message_type_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+
+      $destinations = [];
+      if (!empty($message_type_destinations) && is_array($message_type_destinations)) {
+        foreach ($message_type_destinations as $destination) {
+          $destinations[] = array('value' => $destination);
+        }
+      }
+
       // For every insert we create an activity item.
       $message = Message::create([
         'type' => 'create_topic_community',
         'uid' => $entity->getOwner()->id(),
         'field_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
-        'field_destinations' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')),
+        'field_destinations' => $destinations,
         'field_related_object' => [
           'target_id' => $entity->id(),
           'target_type' => $entity->getEntityTypeId()

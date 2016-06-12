@@ -2,21 +2,22 @@ langcode: en
 status: true
 dependencies:
   module:
+    - activity_creator
     - activity_logger
 third_party_settings:
   activity_logger:
     activity_context: community_activity_context
     activity_destinations:
-      1: '1'
-      2: '2'
-      3: '3'
-      4: '4'
-      5: '5'
+      stream_profile: stream_profile
+      stream_home: stream_home
+      stream_group: stream_group
+      stream_explore: stream_explore
+      notifications: notifications
 type: create_topic_community
 label: 'Create topic'
 description: 'A user created a topic in the community'
 text:
-  - "[user:display-name] created a topic"
+  - "[message:author:display-name] created a topic"
 settings:
   'token options':
     clear: false
