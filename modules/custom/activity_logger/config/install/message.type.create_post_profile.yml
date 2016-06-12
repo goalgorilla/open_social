@@ -6,18 +6,15 @@ dependencies:
     - activity_logger
 third_party_settings:
   activity_logger:
-    activity_context: community_activity_context
+    activity_context: profile_activity_context
     activity_destinations:
       stream_profile: stream_profile
-      stream_home: stream_home
-      stream_group: stream_group
-      stream_explore: stream_explore
       notifications: notifications
-type: create_topic_community
-label: 'Create topic'
-description: 'A user created a topic in the community'
+type: create_post_profile
+label: 'Create post on profile'
+description: 'A user created a post on a profile'
 text:
-  - "[message:author:display-name] created a topic"
+  - "[message:author:display-name] left a post on your profile"
 settings:
   'token options':
     clear: false

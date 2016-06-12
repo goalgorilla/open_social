@@ -45,17 +45,19 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
     $mid = $entity->id();
     $message_type = $entity->getEntityType()->id();
-    $context = $entity->get('field_context')->getValue();
+    $context = $entity->get('field_message_context')->getValue();
+    $destinations = $entity->get('field_message_destination')->getValue();
+    $related_object = $entity->get('field_message_related_object')->getValue();
+
     $data = [
       'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
       'message_type' => $message_type, // this is needed for the activityfactory
       'context' => $context[0]['value'], // either group, profile, community
+      'destination' => $destinations,
+      'related_object' => $related_object,
       'last_uid' => 0, // last processed_uid
       'status' => NULL,
     ];
-//    $data['output_text'] ; // with tokens .. activityfactory will replace tokens
-//    $data['entity_type'] ; // not sure if needed
-//    $data['entity_id'] ; // not sure if needed
     $queue = \Drupal::queue('activity_creator_logger');
     $queue->createItem($data);
 

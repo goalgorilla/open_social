@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.message.field_related_object
-    - message.type.create_topic_community
+    - field.storage.message.field_message_related_object
+    - message.type.create_post_profile
   module:
     - dynamic_entity_reference
-id: message.create_topic_community.field_related_object
-field_name: field_related_object
+id: message.create_post_profile.field_message_related_object
+field_name: field_message_related_object
 entity_type: message
-bundle: create_topic_community
+bundle: create_post_profile
 label: 'Related object'
 description: ''
 required: false
@@ -17,14 +17,28 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
+  node:
+    handler: 'default:node'
+    handler_settings:
+      target_bundles:
+        event: event
+        topic: topic
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: event
+  post:
+    handler: 'default:post'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
   activity:
     handler: 'default:activity'
     handler_settings: {  }
   comment:
     handler: 'default:comment'
-    handler_settings: {  }
-  node:
-    handler: 'default:node'
     handler_settings: {  }
   block_content:
     handler: 'default:block_content'
@@ -46,9 +60,6 @@ settings:
     handler_settings: {  }
   message:
     handler: 'default:message'
-    handler_settings: {  }
-  post:
-    handler: 'default:post'
     handler_settings: {  }
   profile:
     handler: 'default:profile'
