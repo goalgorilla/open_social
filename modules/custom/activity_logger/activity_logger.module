@@ -129,7 +129,9 @@ function activity_logger_node_insert(EntityInterface $entity) {
  * TODO: Move this in a service and make it generic.
  */
 function activity_logger_post_insert(EntityInterface $entity) {
-  if ($entity->id()) {
+
+  $recipient_user = $entity->get('field_recipient_user')->getValue();
+  if (!empty($recipient_user)) {
     //\Drupal\Core\Entity\EntityTypeManagerInterface.
     $entity_type_manager = \Drupal::service('entity_type.manager');
 
