@@ -323,23 +323,15 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
  */
 function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
   if (isset($variables['element']['#type'])) {
-
-    if ($variables['element']['#type'] == 'radios') {
-      if ($variables['element']['#id'] == 'edit-user-cancel-method') {
-        $suggestions[] = 'bootstrap_panel';
-      } else {
-        $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
-      }
-    }
-    elseif ($variables['element']['#type'] == 'fieldset') {
-      $suggestions[] = 'bootstrap_panel';
-
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-        $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+        if ($variables['element']['#id'] == 'edit-user-cancel-method') {
+          $suggestions[] = 'bootstrap_panel';
+        } else {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
+          $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+        }
         break;
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
