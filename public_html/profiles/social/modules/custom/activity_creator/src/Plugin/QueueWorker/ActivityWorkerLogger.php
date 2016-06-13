@@ -48,7 +48,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     $old_data = $data;
 
     // Get 100 Recipients at a time.
-    $limit = 100;
+    $limit = 0;
 
     // TODO: Change this to use dependency injection (see construct code below)
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
@@ -61,17 +61,22 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     if (!empty($recipients)) {
 
       foreach ($recipients as $recipient) {
-        // Probably Recipient is an object.
+        // Create a queue item for activity creation.
+        $activity_creator_data = [
+          'mid' => $data['mid'],
+          'message_type' => $data['message_type'],
+          'context' => $data['context'], // Not necessary?
+          'destination' => $data['destination'],
+          'related_object' => $data['related_object'],
+          'recipient' => $recipient,
+        ];
+        $this->createQueueItem('activity_creator_activities', $activity_creator_data);
 
-        // Update the recipients in this $data array.
-        $data['recipients'][] = $recipient;
-
-        // @TODO Create new activities QueueItems or split in that queueworker
-        $last_uid = $recipient;  // @TODO Put uid in here or object?
+        $last_uid = $recipient;
       }
 
       // Now create new queue item for activity_creator_logger if necessary.
-      if (count($recipients) >= $limit && isset($last_uid)) {
+      if ($limit != 0 && count($recipients) >= $limit && isset($last_uid)) {
         $data['last_uid'] = $last_uid;
         $data['status'] = 'processing';
         $this->createQueueItem('activity_creator_logger', $data);

@@ -96,12 +96,23 @@ class ActivityFactory extends ControllerBase {
   private function getFieldRecipientGroup($data) {
     // @TODO create logic here, based on recipients in data array.
     $value = NULL;
+    if (isset($data['recipient'])) {
+      if ($data['recipient']['target_type'] === 'group') {
+        // Should be in an array for the field.
+        $value = array($data['recipient']);
+      }
+    }
     return $value;
   }
 
   private function getFieldRecipientUser($data) {
-    // @TODO create logic here, based on recipients in data array.
     $value = NULL;
+    if (isset($data['recipient']) && is_array($data['recipient'])) {
+      if ($data['recipient']['target_type'] === 'user') {
+        // Should be in an array for the field.
+        $value = array($data['recipient']);
+      }
+    }
     return $value;
   }
 

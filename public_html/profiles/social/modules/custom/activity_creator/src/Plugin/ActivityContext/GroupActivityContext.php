@@ -23,16 +23,25 @@ class GroupActivityContext extends ActivityContextBase {
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
-    $recipients = [];
 
     // @TODO Retrieve the group members.
-    
-    // @TODO Is referenced entity always the Group owner
-    if ($data['entity_type'] && $data['entity_id']) {
-      $recipients[] = [
-        'id' => $data['entity_id'],
-        'type' => $data['entity_type'],
-      ];
+    $recipients = [];
+
+    // We only know the context if there is a related object.
+    if (isset($data['related_object']) && !empty($data['related_object'])) {
+      $referenced_entity = $data['related_object']['0'];
+
+      if ($referenced_entity['target_type'] === 'post') {
+        $post = Post::load($referenced_entity['target_id']);
+
+        $recipient_group = $post->get('field_recipient_group')->getValue();
+        if (!empty($recipient_group)) {
+          $recipients[] = [
+            'target_type' => 'group',
+            'target_id' => $recipient_group['0']['target_id'],
+          ];
+        }
+      }
     }
 
     return $recipients;
