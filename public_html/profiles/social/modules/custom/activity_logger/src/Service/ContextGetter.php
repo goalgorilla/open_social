@@ -17,7 +17,10 @@ class ContextGetter {
       // Check if it's a post, since only those can be placed on profiles.
       // @TODO: Make this more generic!
       if ($entity->getEntityTypeId() === 'post') {
-        if (!empty($entity->get('field_recipient_user')->getValue())) {
+        if (!empty($entity->get('field_recipient_group')->getValue())) {
+          $context = $this->getFieldValue('group');
+        }
+        elseif (!empty($entity->get('field_recipient_user')->getValue())) {
           $context = $this->getFieldValue('profile');
         }
         else {
