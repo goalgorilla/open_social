@@ -32,11 +32,10 @@ block pagetitle
       
 block content
   
-  .row
+  .row.margin-top-l
   
     .col-xs-12
-      h2.h3.section-title My topics
-    
+      h1.h4.section-title My topics
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
       a.waves-effect.waves-light.btn.btn-primary.btn-raised.btn-block(href='node-add-topic.html') Create topic
@@ -68,7 +67,7 @@ block content
                 option(value="published") Published
                 option(value="unpublished") Unpublished
             .form-group
-              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
+              input#reset-button.btn.btn-link.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-8
       include molecules/_topic1.jade

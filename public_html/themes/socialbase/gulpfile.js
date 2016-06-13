@@ -310,7 +310,7 @@ gulp.task('deploy', ['build'], function() {
 // ===================================================
 // Run this one time when you install the project so you have all files in the dist folder
 // ===================================================
-gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap']);
+gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js']);
 
 
 gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
