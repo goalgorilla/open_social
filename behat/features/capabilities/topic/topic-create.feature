@@ -6,7 +6,9 @@ Feature: Create Topic
 
   Scenario: Successfully create topic
     Given I am logged in as an "authenticated user"
-    And I am on "node/add/topic"
+    And I am on "user"
+    And I click "Topics"
+    And I click "Create Topic"
     When I fill in "Title" with "This is a test topic"
     When I fill in the following:
       | Title | This is a test topic |
