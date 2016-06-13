@@ -83,15 +83,16 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
  */
 function activity_logger_entity_insert(EntityInterface $entity) {
 
+  // Turn off this feature for all non-content entities.
+  if (! $entity instanceof \Drupal\Core\Entity\ContentEntityInterface) {
+    return;
+  }
+
   // Get the service we need here.
-  $contextGetter = \Drupal::service('activity_logger.context_getter');
   $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
 
-  // Fetch entity context.
-  $context = $contextGetter->getContext($entity);
-
   // Get all messages that are responsible for creating items.
-  $message_types = $activityLoggerFactory->getMessageTypes('create', $context, $entity->bundle());
+  $message_types = $activityLoggerFactory->getMessageTypes('create', $entity);
   // Loop through those message types and create messages.
   foreach ($message_types as $message_type => $message_values) {
     // Create the ones applicable for this bundle.
