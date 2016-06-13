@@ -5,7 +5,6 @@ namespace Drupal\activity_logger\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Entity;
 use Drupal\activity_logger\Service\ContextGetter;
-use Drupal\group\Entity\Controller\GroupContentListBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
