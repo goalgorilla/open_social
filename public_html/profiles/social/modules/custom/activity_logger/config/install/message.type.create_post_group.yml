@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_creator
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_context: group_activity_context
+    activity_destinations:
+      stream_group: stream_group
+      stream_home: stream_home
+type: create_post_group
+label: 'Create post in a group'
+description: 'A user created a post in a group'
+text:
+  - "[message:author:display-name] created a post in [message:entity:title]"
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge:
+    override: false
+    enabled: false
+    quota: null
+    days: null
