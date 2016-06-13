@@ -19,8 +19,6 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['field_post']['#prefix'] = '<div class="form-group">';
-  $form['field_post']['#suffix'] = '</div>';
   $form['field_visibility']['#prefix'] = '<div class="form-group media"><div class="media-body">';
   $form['field_visibility']['#suffix'] = '</div>';
   $form['actions']['#prefix'] = '<div class="media-right">';
@@ -76,11 +74,11 @@ function socialbase_theme_suggestions_page_alter(array &$suggestions, array $var
   // If there are multiple matches layout_c will always have priority.
   $suggestions_mapping = array(
     'layout_b' => array(
-      'page__node__topic',
       'page__user',
       'page__node__enrollments',
     ),
     'layout_c' => array(
+      'page__node__topic',
       'page__node_edit',
       'page__newest_topics',
       'page__community_events',
@@ -325,23 +323,15 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
  */
 function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
   if (isset($variables['element']['#type'])) {
-
-    if ($variables['element']['#type'] == 'radios') {
-      if ($variables['element']['#id'] == 'edit-user-cancel-method') {
-        $suggestions[] = 'bootstrap_panel';
-      } else {
-        $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
-      }
-    }
-    elseif ($variables['element']['#type'] == 'fieldset') {
-      $suggestions[] = 'bootstrap_panel';
-
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-        $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+        if ($variables['element']['#id'] == 'edit-user-cancel-method') {
+          $suggestions[] = 'bootstrap_panel';
+        } else {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
+          $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+        }
         break;
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
@@ -352,6 +342,15 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
   }
   else {
     $suggestions[] = $variables['theme_hook_original'];
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_links_alter(array &$suggestions, array $variables) {
+  if ($variables['theme_hook_original'] == 'links__dropbutton__operations') {
+    $suggestions[] = 'bootstrap_dropdown__operations';
   }
 }
 
@@ -648,6 +647,11 @@ function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array 
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
   }
+
+  if ($variables['element']['#parents'][0] == 'field_post') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'autogrow_full';
+  }
+
 }
 
 /**
