@@ -38,35 +38,36 @@ block content
   .row.margin-top-l    
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-    
-      button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filter
-      .off-canvas.off-canvas-right.off-canvas-xs-only
-        .offcanvas-head
-          header.complementary-title filter
-          .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
-              i.material-icons close
+      .margin-top-exposed-filter
       
-        .offcanvas-body
-          form
-            .form-group.form-autocomplete
-              label Expertise
-              .input-group
-                input.form-control(type='text', autocomplete='off')
-                span.input-group-addon
-                  i.material-icons autorenew
-            .form-group.form-autocomplete
-              label Interests
-              .input-group
-                input.form-control(type='text', autocomplete='off')
-                span.input-group-addon
-                  i.material-icons autorenew
-            
-            .form-actions.clearfix
-              button.btn.btn-default(type='submit', value='Reset') Reset
-              button.btn.btn-primary.pull-right(type='submit', value='Filter') Filter
+        button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+          i.material-icons.pull-left tune
+          | Filter
+        .off-canvas.off-canvas-right.off-canvas-xs-only
+          .offcanvas-head
+            header.complementary-title Filter
+            .offcanvas-tools.visible-xs-block
+              .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
+                i.material-icons close
+        
+          .offcanvas-body
+            form
+              .form-group.form-autocomplete
+                label Expertise
+                .input-group
+                  input.form-control(type='text', autocomplete='off', size='30')
+                  span.input-group-addon
+                    i.material-icons autorenew
+              .form-group.form-autocomplete
+                label Interests
+                .input-group
+                  input.form-control(type='text', autocomplete='off', size='30')
+                  span.input-group-addon
+                    i.material-icons autorenew
+              
+              .form-actions.clearfix
+                button.btn.btn-link(type='submit', value='Reset') Reset
+                button.btn.btn-default.pull-right(type='submit', value='Filter') Filter
           
     .col-xs-12.col-sm-8
       
