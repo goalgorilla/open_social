@@ -23,10 +23,12 @@
  */
 #}
 {% spaceless %}
+
   {%
     set classes = [
       'btn',
       type == 'submit' ? 'js-form-submit',
+      float_right ? 'pull-right',
       icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
     ]
   %}
@@ -38,9 +40,9 @@
       </button>
     {% else %}
       {% if icon_position == 'after' %}
-        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
       {% else %}
-        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
       {% endif %}
     {% endif %}
     {{ children }}
