@@ -66,7 +66,7 @@
  * @ingroup themeable
  */
 #}
-<article{{ attributes.addClass('js-comment') }}>
+<article{{ attributes.addClass('js-comment clearfix') }}>
   {#
     Hide the "new" indicator by default, let a piece of JavaScript ask the
     server which comments are new for the user. Rendering the final "new"
@@ -76,7 +76,6 @@
   <footer class="media">
     <div class="media-left">
       {{ author_picture }}
-      {# Need to replace  {{ author }} with {{ user_picture }} when user profile will be ready. #}
     </div>
 
     <div class="media-body">
