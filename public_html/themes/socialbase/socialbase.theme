@@ -709,3 +709,27 @@ function socialbase_bootstrap_iconize_text_alter(&$texts) {
     ],
   ];
 }
+
+/**
+ * Implements template_preprocess_form().
+ */
+function socialbase_preprocess_form(&$variables) {
+  $element = $variables['element'];
+
+  if ($element['#form_id'] === 'comment_comment_form') {
+    $current_user = \Drupal::currentUser();
+    if ($current_user) {
+      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      if (!empty($storage)) {
+        $user_profile = $storage->loadByUser($current_user, 'profile');
+        if ($user_profile) {
+          $content = \Drupal::entityTypeManager()
+            ->getViewBuilder('profile')
+            ->view($user_profile, 'compact');
+          $variables['current_user_picture'] = $content;
+        }
+      }
+    }
+  }
+
+}
