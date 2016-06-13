@@ -8,6 +8,7 @@
 namespace Drupal\activity_creator\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\social_post\Entity\Post;
 
 /**
  * Provides a 'GroupActivityContext' activity context.

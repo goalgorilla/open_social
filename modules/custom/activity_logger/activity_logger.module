@@ -116,7 +116,7 @@ function activity_logger_entity_insert(EntityInterface $entity) {
       $new_message['field_message_context'] = $context;
       $new_message['field_message_destination'] = $destinations;
       $new_message['field_message_related_object'] = [
-        'target_type' => $entity->bundle(),
+        'target_type' => $entity->getEntityTypeId(),
         'target_id' => $entity->id(),
       ];
 
