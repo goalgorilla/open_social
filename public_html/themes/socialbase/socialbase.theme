@@ -510,7 +510,10 @@ function socialbase_theme() {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
+  // Get current node.
   $node = $variables['node'];
+  // Get current user.
+  $account = \Drupal::currentUser();
 
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
@@ -535,7 +538,7 @@ function socialbase_preprocess_node(&$variables) {
   }
 
   // Content visibility
-  if($content_visibility = $node->get('field_content_visibility')->value){
+  if($content_visibility = $node->get('field_content_visibility')->value && !$account->isAnonymous()){
     switch ($content_visibility) {
       case 'community':
         $variables['visibility_icon'] = 'group';
