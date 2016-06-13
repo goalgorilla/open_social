@@ -510,6 +510,8 @@ function socialbase_theme() {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
+  $node = $variables['node'];
+
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
     $variables['display_submitted'] = TRUE;
@@ -531,6 +533,21 @@ function socialbase_preprocess_node(&$variables) {
     $variables['date'] = \Drupal::service('date.formatter')
       ->format($date, 'day_month');
   }
+
+  // Content visibility
+  if($content_visibility = $node->get('field_content_visibility')->value){
+    switch ($content_visibility) {
+      case 'community':
+        $variables['visibility_icon'] = 'group';
+        $variables['visibility_label'] = t('community');
+        break;
+      case 'public':
+        $variables['visibility_icon'] = 'public';
+        $variables['visibility_label'] = t('public');
+        break;
+    }
+  }
+
 }
 
 /**

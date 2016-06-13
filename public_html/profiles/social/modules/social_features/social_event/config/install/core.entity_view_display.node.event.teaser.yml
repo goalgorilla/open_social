@@ -17,12 +17,19 @@ dependencies:
     - address
     - datetime
     - image
+    - options
     - user
 id: node.event.teaser
 targetEntityType: node
 bundle: event
 mode: teaser
 content:
+  field_content_visibility:
+    type: list_default
+    weight: 6
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
   field_event_address:
     type: address_default
     weight: 4
@@ -66,5 +73,4 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
-  field_content_visibility: true
   field_event_comments: true
