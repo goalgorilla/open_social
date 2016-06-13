@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_creator
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_context: group_activity_context
+    activity_destinations:
+      stream_home: stream_home
+      stream_group: stream_group
+      notifications: notifications
+type: create_topic_group
+label: 'Create topic in group'
+description: 'A user created a topic in a group'
+text:
+  - "[message:author:display-name] created a topic in [message:entity:title]"
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge:
+    override: false
+    enabled: false
+    quota: null
+    days: null
