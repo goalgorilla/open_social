@@ -22,15 +22,15 @@ Feature: See my upcoming events
       | field_event_date | +8 days                 |
       | status           | 1                       |
 
-    When I press the "Enroll for this event" button
-    Then I should see "You have enrolled for this event"
+    When I press the "Enroll" button
+    Then I should see "Enrolled"
 
     When I go to the homepage
     Then I should not see "My Behat Event created"
     And I should see "My Behat Event enrolled"
     And I should see "Enrolled"
 
-    When I click "View all"
+    When I am at "my-events"
     Then I should see "Events for this user"
     And I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"
@@ -39,6 +39,3 @@ Feature: See my upcoming events
     Then I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"
     And I should see "enrolled"
-
-    When I click "View all"
-    Then I should see "Events for this user"

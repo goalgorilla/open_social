@@ -22,12 +22,11 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
 
-    When I click "View all"
+    When I am at "community-events"
     Then I should see "Community events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
     And I should see "Upcoming events"
-
 
     Given I am logged in as an "authenticated user"
     Then I should see "Behat Event 1"

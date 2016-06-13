@@ -1,31 +1,26 @@
-.toolbar-vertical {
-
-  .panel.show {
-    transform: translateY(39px);
-    overflow: visible;
-  }
-
-  #user-panel.show {
-    @media screen and (min-width: 960px) {
-      transform: translateY(127px);
-    }
-  }
-
-}
-
-.toolbar-horizontal {
-
-  #user-panel.show {
-    @media screen and (min-width: 960px) {
-      transform: translateY(167px);
-    }
-  }
-
-}
-
+// make sure the site doesn't get pushed by the admin toolbar
 .toolbar-tray-open.toolbar-vertical {
-  #header {
+  #header,
+  #content {
     margin-left: -15rem;
+  }
+
+}
+
+// make sure to take the admin into account when opening a off-canvas sidebar
+.toolbar-vertical .off-canvas-right {
+  transform: translateY(39px) translateX(280px);
+
+  @include MQ($small) {
+    transform: none;
+  }
+}
+
+.toolbar-vertical .off-canvas-right.is-open {
+  transform: translateY(39px) translateX(0);
+
+  @include MQ($small) {
+    transform: none;
   }
 
 }
