@@ -1,0 +1,50 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.activity
+    - field.field.node.topic.body
+    - field.field.node.topic.field_content_visibility
+    - field.field.node.topic.field_topic_comments
+    - field.field.node.topic.field_topic_image
+    - field.field.node.topic.field_topic_type
+    - image.style.social_x_large
+    - node.type.topic
+  module:
+    - comment
+    - image
+    - user
+id: node.topic.activity
+targetEntityType: node
+bundle: topic
+mode: activity
+content:
+  field_topic_comments:
+    weight: 3
+    label: hidden
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
+  field_topic_image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  field_topic_type:
+    type: entity_reference_label
+    weight: 2
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+  links:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_content_visibility: true

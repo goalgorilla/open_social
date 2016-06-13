@@ -1,11 +1,11 @@
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - block.block.postblock
     - block.block.postongroupblock
     - block.block.postonprofileblock
-    - core.entity_view_mode.post.teaser
+    - core.entity_view_mode.post.activity
   module:
     - social_post
     - user
@@ -76,7 +76,7 @@ display:
         type: 'entity:post'
         options:
           relationship: none
-          view_mode: teaser
+          view_mode: activity
       fields:
         operations:
           table: post
