@@ -83,12 +83,10 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
  */
 function activity_logger_node_insert(EntityInterface $entity) {
 
-  $contextGetter = \Drupal\activity_logger\Controller\ActivityLoggerController::create(\Drupal::getContainer());
+  // Get the service that determines the context of the posted entity.
+  $contextGetter = \Drupal::service('activity_logger.context_getter');
   // Fetch entity context.
   $context = $contextGetter->getContext($entity);
-
-  // @TODO: Remove this.
-  $context = '1';
 
   if ($entity->bundle() == 'topic') {
     //\Drupal\Core\Entity\EntityTypeManagerInterface.
@@ -130,6 +128,11 @@ function activity_logger_node_insert(EntityInterface $entity) {
  */
 function activity_logger_post_insert(EntityInterface $entity) {
   if ($entity->id()) {
+    // Get the service that determines the context of the posted entity.
+    $contextGetter = \Drupal::service('activity_logger.context_getter');
+    // Fetch entity context.
+    $context = $contextGetter->getContext($entity);
+
     //\Drupal\Core\Entity\EntityTypeManagerInterface.
     $entity_type_manager = \Drupal::service('entity_type.manager');
 
@@ -149,7 +152,7 @@ function activity_logger_post_insert(EntityInterface $entity) {
       $message = Message::create([
         'type' => 'create_post_profile',
         'uid' => $entity->getOwner()->id(),
-        'field_message_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
+        'field_message_context' => $context,
         'field_message_destination' => $destinations,
         'field_message_related_object' => [
           'target_id' => $entity->id(),
@@ -160,5 +163,4 @@ function activity_logger_post_insert(EntityInterface $entity) {
     }
   };
 }
-
 
