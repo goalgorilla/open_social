@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.post.teaser
+    - core.entity_view_mode.post.activity
     - field.field.post.post.field_post
     - field.field.post.post.field_post_comments
     - field.field.post.post.field_recipient_group
@@ -11,10 +11,10 @@ dependencies:
   module:
     - social_post
     - user
-id: post.post.teaser
+id: post.post.activity
 targetEntityType: post
 bundle: post
-mode: teaser
+mode: activity
 content:
   field_post:
     type: basic_string
