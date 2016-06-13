@@ -88,8 +88,9 @@ function activity_logger_entity_insert(EntityInterface $entity) {
     return;
   }
 
-  // Get the service we need here.
+  // Get the services we need here.
   $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
+  $contextGetter = \Drupal::service('activity_logger.context_getter');
 
   // Get all messages that are responsible for creating items.
   $message_types = $activityLoggerFactory->getMessageTypes('create', $entity);
@@ -106,12 +107,18 @@ function activity_logger_entity_insert(EntityInterface $entity) {
         }
       }
 
+      // Get context
+      $context = $contextGetter->getContext($entity);
+
       // Set the values.
       $new_message['type'] = $message_type;
       $new_message['uid'] = $entity->getOwner()->id();
-      $new_message['context'] = $context;
-      $new_message['destination'] = $destinations;
-      $new_message['related_object'] = $entity->getOwner()->id();
+      $new_message['field_message_context'] = $context;
+      $new_message['field_message_destination'] = $destinations;
+      $new_message['field_message_related_object'] = [
+        'target_type' => $entity->bundle(),
+        'target_id' => $entity->id(),
+      ];
 
       // Create the message
       $message = Message::create($new_message);
