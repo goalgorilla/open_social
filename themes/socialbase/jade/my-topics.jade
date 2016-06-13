@@ -1,0 +1,103 @@
+extends ./layout/base-lu.jade
+
+block title
+  title John Johnson
+
+block pagetitle
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-profile-hero.jade
+  
+  .container
+    .visible-xs-block.section
+      a.btn.btn-flat(href="my-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to my stream
+
+  .container.hero-container    
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href="my-stream.html") Stream  
+          li
+            a(href="my-profile-about.html") About
+          li.active
+            a(href='my-topics.html') Topics
+            span.visually-hidden (active tab) 
+          li
+            a(href='my-events.html') Events 
+          li
+            a(href="my-groups.html") Groups
+      
+block content
+  
+  .row
+  
+    .col-xs-12
+      h2.h3.section-title My topics
+    
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-primary.btn-raised.btn-block(href='node-add-topic.html') Create topic
+      br 
+      br
+      btn.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filter
+      .off-canvas.off-canvas-right.off-canvas-xs-only
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
+              i.material-icons close
+        
+        .offcanvas-body
+          form
+            .form-group
+              label Topic type
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All types
+                option(value="blog") Blog
+                option(value="discussion") Discussion
+                option(value="topic") Topic
+            .form-group
+              label Status
+              select.form-control(onchange="enableMe('reset-button', this)")
+                option(value="", selected="") All statusses
+                option(value="published") Published
+                option(value="unpublished") Unpublished
+            .form-group
+              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
+
+    .col-xs-12.col-sm-8
+      include molecules/_topic1.jade
+      include molecules/_topic2.jade
+      include molecules/_topic3.jade
+      include molecules/_topic4.jade
+        
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

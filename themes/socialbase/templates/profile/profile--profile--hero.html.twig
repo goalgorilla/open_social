@@ -1,0 +1,40 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+{% if profile_edit_url %}
+  <a href="{{ profile_edit_url }}" title="Edit profile information" class="pull-right waves-effect waves-light btn btn-raised btn-default btn-floating">
+    <i class="material-icons">mode_edit</i>
+  </a>
+{% endif %}
+<h1 class="hero-title">
+  {{ profile_name }}
+</h1>
+{{ content.field_profile_image }}
+{% if (content.field_profile_function|render or content.field_profile_organization|render) %}
+  <p>
+    {% if content.field_profile_function|render %}
+      <strong>{{ content.field_profile_function|render }}</strong>
+    {% endif %}
+    {% if content.field_profile_organization|render %}
+      {{ content.field_profile_organization|render }}
+    {% endif %}
+  </p>
+{% endif %}

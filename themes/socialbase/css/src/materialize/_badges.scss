@@ -1,0 +1,79 @@
+.badge-accent {
+  background-color: $brand-accent;
+  color: $default-color;
+}
+
+.badge-primary {
+  background-color: $brand-primary;
+}
+
+.badge-secondary {
+  background-color: $brand-secondary;
+}
+
+.badge-gray-lighter {
+  background-color: $gray-lighter;
+  color: $gray-light;
+
+  .material-icons {
+    background-color: white;
+  }
+}
+
+.badge-gray-dark {
+  background-color: transparent;
+}
+
+.badge label {
+  margin-bottom: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.badge--toggle {
+  padding: 0;
+  transition: width 0.3s ease;
+
+  .material-icons {
+    font-size: 18px;
+    width: auto;
+    padding-left: ($badge-font-size/3);
+  }
+
+}
+
+.badge--toggle,
+.badge--toggle * {
+  user-select: none;
+}
+
+// custom chip modifier
+.js .badge--toggle {
+
+  .badge--toggle__label {
+    width: 0;
+    opacity: 0;
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+
+  &.badge-gray-dark {
+    input[type=checkbox]:checked ~ .material-icons,
+    input[type=checkbox]:checked ~ .badge--toggle__label {
+      background-color: $gray-dark;
+    }
+  }
+
+  input[type=checkbox]:checked ~ .material-icons {
+    background-color: transparent;
+  }
+
+  input[type=checkbox]:checked ~ .badge--toggle__label {
+    width: auto;
+    padding: 3px $badge-font-size 3px ($badge-font-size/2);
+    opacity: 1;
+  }
+}

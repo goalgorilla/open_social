@@ -1,0 +1,21 @@
+extends ./layout/base-lu.jade
+
+block title
+  title A post
+
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li.active Post
+          
+block content
+      
+  .row
+  
+    .col-xs-12.col-sm-8
+    
+      h4.section-title Post
+    
+      .card
+        .card-body
+          include ./molecules/_post1.jade

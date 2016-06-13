@@ -1,0 +1,380 @@
+// Layout and behaviour overrides
+
+.navbar-nav {
+  margin: 0;
+}
+
+.navbar-fixed-top {
+  top: auto;
+  z-index: 200;
+}
+
+.navbar-header {
+  @include MQ($small) {
+    float: right;
+  }
+}
+
+.navbar-right .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.navbar > .container .navbar-brand {
+  margin-left: -$navbar-padding-horizontal;
+
+  object {
+    pointer-events: none;
+  }
+}
+
+@media (min-width: $grid-float-breakpoint) {
+
+  .navbar > .container .navbar-brand {
+    margin-left: 0;
+  }
+
+  .container > .navbar-collapse {
+    margin-left: 60px; // make sure navbar-brand is clickable
+  }
+
+  .navbar-right {
+    margin-right: 0;
+  }
+
+}
+
+//
+
+@media (max-width: $grid-float-breakpoint-max) {
+  // Dropdowns get same display when collapsed
+  // This is an override of bootstrap navbar line 241
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    margin-top: 0;
+    background-color: $dropdown-bg;
+    border: 1px solid $dropdown-border;
+    @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+    > li > a,
+    .dropdown-header {
+      padding: 5px 20px;
+    }
+
+  }
+
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    position: fixed;
+    top: auto;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 100%;
+    max-height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
+  }
+
+  .navbar-collapse .navbar-nav {
+    margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+  }
+
+  .navbar-collapse .nav > li > a  {
+    padding: 13px 20px;
+  }
+
+}
+
+// Style overrides
+
+@media (max-width: $grid-float-breakpoint-max) {
+
+  .navbar-default .navbar-nav .open .dropdown-menu {
+
+    > li > a {
+      color: $dropdown-link-color;
+      &:hover,
+      &:focus {
+        color: $dropdown-link-hover-color;
+        background-color: $dropdown-link-hover-bg;
+      }
+    }
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-active-color;
+        background-color: $dropdown-link-active-bg;
+      }
+    }
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-color;
+        background-color: $dropdown-link-disabled-color;
+      }
+    }
+
+  }
+
+}
+
+.navbar-footer {
+
+  .navbar-brand {
+    color: white;
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: left;
+    }
+
+  }
+
+  .navbar-right {
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: right;
+    }
+  }
+
+  .navbar-right li {
+    float: none;
+
+    @include MQ($small) {
+      float: left;
+    }
+
+  }
+
+  .navbar-right a {
+    color: white;
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: white;
+      background: transparent
+    }
+  }
+
+}
+
+.navbar-default {
+  border: 0;
+  font-size: $navbar-font-size;
+
+  .navbar-toggle {
+    border: 0;
+    border-radius: 0;
+    color: white;
+    padding: 13px 15px 8px;
+    height: 50px;
+    min-width: 50px;
+    margin: 0;
+  }
+
+  .navbar-form {
+    box-shadow: none;
+    border: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:focus,
+.navbar-default .navbar-brand:hover {
+  background-color: $brand-primary;
+  padding: 10px 15px;
+  width: 60px;
+}
+
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > li > a:hover {
+  background-color: $brand-secondary;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover {
+  &:after {
+    background-color: $brand-primary;
+    display: block;
+    content: '';
+    height: 5px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+  transition: color .2s ease, background-color .2s ease;
+  color: $grey-light-3;
+  background-color: $brand-secondary;
+}
+
+// Hacking into responsive bootstrap behaviour
+.navbar-right {
+  margin-top: 0;
+  float: right;
+
+  > li {
+    float: left;
+
+    > a {
+      padding: 13px 15px 8px;
+      height: $navbar-height;
+      min-width: $navbar-height;
+    }
+  }
+
+}
+
+.navbar .dropdown .badge {
+  position: absolute;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 0.625em;
+  top: 8px;
+  left: 30px;
+  background-color: $brand-accent;
+  color: $default-color;
+}
+
+
+.navbar-form[role='search'] {
+  width: 100%;
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-control {
+    padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
+    border-radius: $input-border-radius;
+    max-width: none;
+    border: 0;
+
+    &::-webkit-input-placeholder,
+    &:-moz-placeholder,
+    &::-moz-placeholder,
+    &:-ms-input-placeholder {
+      color: $brand-primary-bright;
+    }
+
+  }
+
+  .form-submit,
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    line-height: 38px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+	}
+
+  .search-icon {
+    line-height: 38px;
+    color: $brand-primary;
+    background: white;
+    speak: none;
+    pointer-events: none;
+
+    i {
+      line-height: 38px;
+      width: 38px;
+      height: 38px;
+    }
+
+  }
+
+	@include MQ($small) {
+
+    .form-group {
+  		border-radius: $input-border-radius;
+      width: 0%;
+      min-width: 38px;
+      height: 38px;
+      transition: width 0.3s;
+      -webkit-backface-visibility: hidden;
+    }
+
+		.form-control {
+      position: absolute;
+      right: 0;
+      border: none;
+      outline: none;
+      background: white;
+      width: 100%;
+      height: 38px;
+      margin: 0;
+      z-index: 10;
+      padding-left: 0;
+      transition: padding 0.3s;
+		}
+
+    .form-submit {
+      background: white; // IE needs this
+      opacity: 0;
+    	color: transparent;
+    	border: none;
+    	outline: none;
+    	z-index: -1;
+    }
+
+    .search-icon {
+      z-index: 90;
+      border-radius: 0;
+      background: $gray-darker;
+      color: white;
+      pointer-events: initial;
+      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
+    }
+
+  }
+
+}
+
+
+// Open state
+#navbar-search.is-open,
+.no-js #navbar-search {
+	width: 180px;
+
+  .form-control {
+    padding-left: $padding-base-horizontal;
+  }
+
+  .search-icon {
+  	background: white;
+  	color: $brand-primary;
+  	z-index: 11;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+  }
+
+  .form-submit {
+  	z-index: 90;
+  }
+
+}

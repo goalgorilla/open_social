@@ -1,0 +1,33 @@
+extends ./layout/base-an.jade
+
+block title
+  title Sign up
+
+block pagetitle
+
+
+block content
+  
+  .row
+    .col-md-8.section-header
+      h2.h3.section-title Sign up
+
+      .card.form-card
+      
+        .card-body
+              
+          form(accept-charset='UTF-8')
+            .form-group
+              label(for='edit-email') E-mail address
+              span.form-required *
+              input#edit-email.form-control(type='email', autocorrect='none', autofocus='autofocus', required='required')
+              .help-block A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
+
+            .form-group
+              label(for='edit-username') Username
+              span.form-required *
+              input#edit-username.form-control(type='text', required='required')
+              .help-block Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
+                
+            .margin-top-xxl.clearfix
+              input.btn.btn-primary(type='submit', value='Sign up')

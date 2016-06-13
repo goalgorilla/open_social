@@ -1,0 +1,30 @@
+extends ./layout/base-an.jade
+
+block title
+  title Login
+
+block pagetitle
+
+block content
+  
+  .row
+    .col-xs-12.col-md-8.section-header
+      h2.h3.section-title Login
+
+      .card
+      
+        .card-body
+
+          form.user-login-form(accept-charset='UTF-8', action="home-lu.html")
+            .form-group
+              label(for='edit-name') Username
+              input.form-control(type='text', autocorrect='none', autofocus='autofocus', required)
+
+            .form-group
+              label(for='edit-pass') Password
+              input.form-control(type='password', required='required')
+              .help-block 
+                a(href="reset-password.html") Forgot password?
+                
+            .margin-top-xxl.clearfix
+              input.btn.btn-primary(type='submit', value='Log in')

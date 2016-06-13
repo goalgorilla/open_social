@@ -1,0 +1,63 @@
+- var user = "isAnonymous"
+- var pagetype = "template"
+
+include layout/_head.jade
+
+body
+  include layout/_gtm.jade
+  include layout/_header-an.jade
+  
+  main.main-container(role='main')
+  
+    nav.visible-md-block.visible-lg-block.bg-white
+      ol.breadcrumb.container
+        li.active Home
+        
+    .main-content
+      .container
+      
+        .cover.cover-img.cover-with-canvas(style="background-image: url('content/images/platform-hero.jpg')")  
+          .cover-wrap
+            .row
+              .col-xs-12.col-sm-8
+                .hero-canvas.padding-md
+                  h1.page-title.h2 Welcome to the XUY community
+                  p Cras mattis consectetur purus sit amet fermentum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
+                  .row
+                    .col-xs-12
+                      a.btn.btn-default.btn-raised(href='sign-up.html') Sign up
+                      a.btn.btn-primary.btn-raised(href='login.html') Login
+              
+        .row.margin-top-xl
+          .col-xs-12.col-sm-8
+                
+            ul.stream
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-post1.jade
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-post2.jade
+                    
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-post1.jade
+                    
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-post2.jade
+                    
+          .col-sm-4.hidden-xs
+            include ./molecules/_upcoming-events.jade
+            include ./molecules/_new-topics.jade
+
+  include layout/_footer.jade
+  include layout/_scripts.jade

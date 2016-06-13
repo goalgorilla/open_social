@@ -1,0 +1,31 @@
+{% extends "input--button.html.twig" %}
+{#
+/**
+ * @file
+ * Theme suggestion for "button__dropdown" input form element.
+ *
+ * Available variables:
+ * - attributes: A list of HTML attributes for the input element.
+ * - children: Optional additional rendered elements.
+ * - icon: An icon.
+ * - icon_only: Flag to display only the icon and not the label.
+ * - icon_position: Where an icon should be displayed.
+ * - label: button label.
+ * - prefix: Markup to display before the input element.
+ * - suffix: Markup to display after the input element.
+ * - type: The type of input.
+ *
+ * @see \Drupal\bootstrap\Plugin\Preprocess\InputButton
+ * @see \Drupal\bootstrap\Plugin\Preprocess\Input
+ * @see template_preprocess_input()
+ *
+ * @ingroup templates
+ */
+#}
+{% spaceless %}
+  {% block input %}
+    <a href="#" data-target="dropdown-button">{{ label }}</a>
+    <button{{ attributes.addClass('hidden') }}>{{ label }}</button>
+    {{ children }}
+  {% endblock %}
+{% endspaceless %}

@@ -1,0 +1,114 @@
+- var pagetype = "styleguide"
+- var page = "Color"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+          
+        .row
+          .col-xs-12
+            h2 Color palette
+            p You can use your own brand colors for your version of this application. We have defined a few color names based on the material design guidelines.
+        
+        .row
+          .col-xs-12
+            h3.text-primary Primary color      
+          .col-md-6
+            p When using a primary color in your palette, this color should be the most widely used across all screens and components.
+          .col-md-6
+            .card
+              .card-body.brand-primary Our default primary color is #29abe2.
+        .row
+          .col-xs-12
+            h3.text-secondary Secondary color     
+          .col-md-6
+            p Palettes with a secondary color may use this color to indicate a related action or information.
+            p The secondary color may be a darker or lighter variation of the primary color.
+          .col-md-6
+            .card
+              .card-body.brand-secondary  Our default secondary color is #1f80aa.
+        
+        .row
+          .col-xs-12
+            h3.text-accent Accent color 
+          .col-md-6
+            p The accent should be used for the floating action button and interactive elements, such as:
+            ul
+              li Text fields and cursors
+              li Text selection
+              li Progress bars
+              li Selection controls, buttons, and sliders
+              li Links
+                            
+          .col-md-6
+            .card
+              .card-body.brand-accent  Our default accent color is #ffc142.
+          
+      
+        .row
+          .col-xs-12
+            h3 State color
+            p For states in forms, messages and other feedback we use state colors to indicate whether user actions were performed succesfully or failed for example.
+        .row
+          .col-xs-12.col-md-6
+            .card
+              .card-body.style-success.center Success color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.style-error.center Error color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.style-warning.center Warning color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.style-info.center Info color
+      
+        .row
+          .col-xs-12
+            h2.header Usage 
+            br
+            h4 Background color
+            p To apply a background color, just add the color name as a class to the element.
+        .row
+          .col-xs-12.col-md-6
+            .card
+              .card-body.brand-primary This is a card with a brand-primary class
+          .col-xs-12.col-md-6
+            .card
+              .card-body.brand-secondary This is a card with a brand-secondary class
+        .row      
+          .col-xs-12.col-md-6
+            .card
+              .card-body.brand-accent This is a card with a style-default class
+          .col-xs-12.col-md-6
+            .card
+              .card-body.brand-user This is a card with a vertical-tabs-list class
+
+        .row
+          .col-xs-12
+            h4 Text color
+            p To apply a text color, just apply text-{color} to the text element.
+        .row
+          .col-xs-12.col-md-6
+            .card
+              .card-body
+                p.text-primary.center This is a paragraph with a text-primary class
+          .col-xs-12.col-md-6
+            .card
+              .card-body
+                p.text-gray.center This is a paragraph with a text-gray class
+          
+        .row
+          .col-xs-12.col-md-8
+            h2.header Customize
+            p Material only has a few basic theme colors. These colors can be changed in the <code>css/src/theme</code> folder. Simply duplicate the example-theme.scss file and change it to your designed theme name. Then include the new file as import in the base materialize.scss file. 
+  
+    include ./layout/_scripts.jade

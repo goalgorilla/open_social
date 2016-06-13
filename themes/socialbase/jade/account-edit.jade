@@ -1,0 +1,62 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Edit account
+
+   
+
+      
+block content
+      
+  .row
+    .col-xs-12
+      h4.section-title Edit account
+  
+    .col-xs-12.col-sm-8
+    
+      form(method='get', action='my-profile-about.html')
+      
+        #name.card.card-underline
+        
+          .card-head
+            header Account information
+      
+          .card-body
+
+            .form-group
+              label.form-required(for='edit-email') E-mail address
+              input#edit-email.form-control(type='email', autocorrect='none', autofocus='autofocus', required='required', value="mail@johnjohnson.com")
+              .help-block A valid email address. All emails from the system will be sent to this address. The email address is not made public and will only be used if you wish to receive a new password or wish to receive certain news or notifications by email.
+
+            .form-group
+              label.form-required(for='edit-username') Username
+              input#edit-username.form-control(type='text', required='required', value="john-johnson")
+              .help-block Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
+                  
+            .form-group.row
+              .col-xs-12.col-sm-7
+                label Current password
+                input.form-control(type='password', autocomplete='off', value="youfigureditout!")
+                  
+            #edit-pass.js-form-item.form-group.js-form-type-password-confirm.form-type-password-confirm.js-form-item-pass.form-item-pass.form-no-label.row
+                
+                .js-form-item.form-group.js-form-type-password.form-type-password.js-form-item-pass-pass1.form-item-pass-pass1.col-xs-12.col-sm-7
+                  label(for='edit-pass-pass1') New password
+                  input#edit-pass-pass1.password-field.js-password-field.form-control(data-drupal-selector='edit-pass-pass1', type='password', name='pass[pass1]', size='25', maxlength='128', required='required', aria-required='true', value="")
+                
+                .js-form-item.form-group.js-form-type-password.form-type-password.js-form-item-pass-pass2.form-item-pass-pass2.col-xs-12.col-sm-7
+                  label(for='edit-pass-pass2') Confirm new password
+                  input#edit-pass-pass2.password-confirm.js-password-confirm.form-control(data-drupal-selector='edit-pass-pass2', type='password', name='pass[pass2]', size='25', maxlength='128', required='required', aria-required='true', value="")
+              
+        .form-actions.clearfix
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href='#') Cancel account
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+
+
+
+        
+block scriptinline_before
+  script(type='application/json', data-drupal-selector='drupal-settings-json').
+    {"path":{"baseUrl":"\\/","scriptPath":null,"pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","ajaxTrustedUrl":{"form_action_cc611e1d":true},"password":{"confirmTitle":"Passwords match:","confirmSuccess":"yes", "confirmFailure":"no", "showStrengthIndicator":true, "strengthTitle":"Password strength:","hasWeaknesses":"To make your password stronger:","tooShort":"Make it at least 12 characters","addLowerCase":"Add lowercase letters","addUpperCase":"Add uppercase letters","addNumbers":"Add numbers","addPunctuation":"Add punctuation","sameAsUsername":"Make it different from your username","weak":"Weak","fair":"Fair","good":"Good","strong":"Strong","username":""},"user":{"uid":0,"permissionsHash":"9079ad224d4b0fce406984c277ed66ca1008545fc31b1bfc7dfd6d40a4b15c1b"}}
+    

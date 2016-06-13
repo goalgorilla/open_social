@@ -1,0 +1,41 @@
+name: Social base theme
+type: theme
+base theme: bootstrap
+description: Theme layer for drupal social.
+core: 8.x
+
+libraries:
+  - socialbase/global-styling
+
+libraries-override:
+
+  # Remove jQuery UI datepicker
+  core/jquery.ui/ui:
+    js:
+      datepicker-min.js: false
+
+stylesheets-remove:
+  - '@classy/css/components/tabs.css'
+  - core/assets/vendor/normalize-css/normalize.css
+
+regions:
+  header: Header
+  menu_panel: Main navigation panel
+  notification_panel: Notifications panel
+  user_panel: User navigation panel
+  breadcrumb: Breadcrumb
+  hero: Hero
+  primary_action: Primary action
+  secondary_navigation: Secondary navigation
+  title: Section title
+  content: Content
+  complementary: Complementary
+  footer: Footer
+
+debug: false
+
+forms_smart_descriptions: 0
+cdn_provider: ''
+modal_enabled: 0
+popover_enabled: 0
+tooltip_enabled: 0
