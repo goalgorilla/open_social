@@ -61,7 +61,7 @@
         }
       }
 
-      // Init jQuery characterCounter for all inputs and textareas.
+      // Init jQuery characterCounter for all input and textarea elements.
       $('input, textarea').once().characterCounter();
     }
   };
