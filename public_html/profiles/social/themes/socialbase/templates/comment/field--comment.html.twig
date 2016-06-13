@@ -32,14 +32,18 @@
   {{ title_suffix }}
 {% endif %}
 
-<div class="card">
-  <div class="card-body extra-padding">
+{% if comments %}
 
-    {{ comments }}
+  <div class="card">
+    <div class="card-body extra-padding">
 
-    {% if comment_form %}
-      {{ comment_form }}
-    {% endif %}
+      {{ comments }}
 
+      {% if comment_form %}
+        {{ comment_form }}
+      {% endif %}
+
+    </div>
   </div>
-</div>
+
+{% endif %}

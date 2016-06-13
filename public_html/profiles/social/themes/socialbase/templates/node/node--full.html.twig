@@ -78,4 +78,6 @@
 
 </article>
 
-{{ content|without('body') }}
+{% if content.field_event_comments %}
+  {{ content.field_event_comments }}
+{% endif %}
