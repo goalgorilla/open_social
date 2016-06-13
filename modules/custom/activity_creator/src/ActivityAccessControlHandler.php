@@ -25,16 +25,27 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\activity_creator\ActivityInterface $entity */
     switch ($operation) {
       case 'view':
-        if ($this->getRecipientFromActivity($entity) === NULL) {
+        $recipient = $this->getRecipientFromActivity($entity);
+        if ($recipient === NULL) {
           // This is simple, the message is not specific for group / user.
           // So we should check, does the user have permission to view entity?
-          $related_object = $entity->get('field_activity_entity')->getValue();
-          if (!empty($related_object)) {
-            $ref_entity_type = $related_object['0']['target_type'];
-            $ref_entity_id = $related_object['0']['target_id'];
-            $ref_entity = entity_load($ref_entity_type, $ref_entity_id);
+          return $this->returnAccessRelatedObject($entity, $operation, $account);
+        }
+        else {
+          $recipient_type = $recipient['0']['target_type'];
+          if ($recipient_type === 'user') {
+            $recipient_id = $recipient['0']['target_id'];
+            // If it is personalised, lets check recipient id vs account id.
+            if ($this->checkIfPersonalNotification($entity) === TRUE) {
+              return AccessResult::allowedIf($account->id() === $recipient_id);
+            }
+            else {
+              // Lets fallback to the related object access permission.
+              return $this->returnAccessRelatedObject($entity, $operation, $account);
+            }
+          }
+          if ($recipient_type === 'group') {
 
-            return AccessResult::allowedIf($ref_entity->access($operation, $account));
           }
         }
         return AccessResult::allowedIfHasPermission($account, 'view all published activity entities');
@@ -64,10 +75,12 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     $value = NULL;
     $recipient_user = $entity->get('field_activity_recipient_user')->getValue();
     if (!empty($recipient_user)) {
+      $recipient_user['0']['target_type'] = 'user';
       return $recipient_user;
     }
     $recipient_group = $entity->get('field_activity_recipient_group')->getValue();
     if (!empty($recipient_group)) {
+      $recipient_group['0']['target_type'] = 'group';
       return $recipient_group;
     }
     return $value;
@@ -79,6 +92,46 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
   protected function getDestinationFromActivity(EntityInterface $entity) {
     $destinations = $entity->get('field_activity_destinations')->getValue();
     return $destinations;
+  }
+
+  /**
+   * Return access control from the related entity.
+   */
+  protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account) {
+    $related_object = $entity->get('field_activity_entity')->getValue();
+    if (!empty($related_object)) {
+      $ref_entity_type = $related_object['0']['target_type'];
+      $ref_entity_id = $related_object['0']['target_id'];
+      $ref_entity = entity_load($ref_entity_type, $ref_entity_id);
+
+      return AccessResult::allowedIf($ref_entity->access($operation, $account));
+    }
+  }
+
+  /**
+   * Check if this is a personal notification.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @return bool
+   */
+  protected function checkIfPersonalNotification(EntityInterface $entity) {
+    $recipient = $this->getRecipientFromActivity($entity);
+    $value = FALSE;
+    if (!empty($recipient) && $recipient['0']['target_type'] === 'user') {
+      // This could be personalised, but first lets check the destinations.
+      $is_notification = FALSE;
+      $destinations = $this->getDestinationFromActivity($entity);
+      foreach ($destinations as $key => $destination) {
+        if ($destination['value'] === 'notifications') {
+          $is_notification = TRUE;
+        }
+      }
+      // It is only personal if the only destination is notifications.
+      if (count($destinations) <= 1 && $is_notification === TRUE) {
+        $value = TRUE;
+      }
+    }
+    return $value;
   }
 
 }
