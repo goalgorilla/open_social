@@ -1,0 +1,100 @@
+mixin collection(link, name)
+  a.list-group-item(href=link)
+    p.list-group-item-text= name
+
+extends ./layout/base-lu.jade
+
+block title
+  title Explore
+
+block pagetitle
+  .container.hero-container
+    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/event-hero.jpg')")  
+      .cover-wrap   
+        h1.page-title Amsterdam Meetup
+        .hero-footer
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              .badge.badge-gray-dark.badge--toggle
+                label
+                  input(type='checkbox')
+                  i.material-icons group        
+                  span.badge--toggle__label community
+              div
+                time.eventdate.updated June 6 2016 - 12:00 
+                span @ Keizersgracht 376, Amsterdam
+              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") 
+                span By 
+                a(itemprop="url", rel="author", href="my-stream.html") John Johnson 
+                span
+                  | in group 
+                  a(itemprop="organizer", href="group-stream.html") Happy Campers
+            .col-xs-12.col-md-3
+              .btn-group
+                a.btn.btn-accent.btn-lg.btn-raised(href="event.html") See more
+                  
+
+
+block breadcrumbs  
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='explore.html') Explore
+
+block content
+              
+  .row.margin-top-l    
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      include ./molecules/_explore-highlighted.jade
+      include ./molecules/_explore-upcoming-events.jade
+      include ./molecules/_explore-new-topics.jade
+      include ./molecules/_explore-new-users.jade
+      include ./molecules/_explore-new-groups.jade
+  
+    .col-xs-12.col-sm-8
+      
+      ul.stream
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post1.jade
+              
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.jade
+      
+      
+      
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right
