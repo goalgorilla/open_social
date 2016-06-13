@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.activity.render_entity
     - field.field.activity.activity.field_activity_destinations
     - field.field.activity.activity.field_activity_entity
     - field.field.activity.activity.field_activity_message
@@ -12,11 +13,10 @@ dependencies:
   module:
     - activity_creator
     - dynamic_entity_reference
-    - text
-id: activity.activity.default
+id: activity.activity.render_entity
 targetEntityType: activity
 bundle: activity
-mode: default
+mode: render_entity
 content:
   field_activity_entity:
     weight: 1
@@ -26,12 +26,6 @@ content:
       view_mode: activity
     third_party_settings: {  }
     type: dynamic_entity_reference_entity_view
-  field_activity_output_text:
-    type: text_default
-    weight: 0
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
   name:
     label: above
     type: string
@@ -42,6 +36,7 @@ content:
 hidden:
   field_activity_destinations: true
   field_activity_message: true
+  field_activity_output_text: true
   field_activity_recipient_group: true
   field_activity_recipient_user: true
   field_activity_status: true
