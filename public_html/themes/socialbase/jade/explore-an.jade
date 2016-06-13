@@ -1,53 +1,63 @@
-extends ./layout/base-lu.jade
+- var user = "isAnonymous"
+- var pagetype = "template"
+
+extends ./layout/base-an.jade
 
 block title
   title Explore
-
-block pagetitle
-  .container.hero-container
-    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/event-hero.jpg')")  
-      .cover-wrap   
-        h1.page-title Amsterdam Meetup
-        .hero-footer
-          .row.row-md-center
-            .col-xs-12.col-md-6.col-md-offset-3
-              .badge.badge-gray-dark.badge--toggle
-                label
-                  input(type='checkbox')
-                  i.material-icons group        
-                  span.badge--toggle__label community
-              div
-                time.eventdate.updated June 6 2016 - 12:00 
-                span @ Keizersgracht 376, Amsterdam
-              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") 
-                span By 
-                a(itemprop="url", rel="author", href="my-stream.html") John Johnson 
-                span
-                  | in group 
-                  a(itemprop="organizer", href="group-stream.html") Happy Campers
-            .col-xs-12.col-md-3
-              .btn-group
-                a.btn.btn-accent.btn-lg.btn-raised(href="event.html") See more
-                  
-
+  
 
 block breadcrumbs  
   li
     a(href='home-lu.html') Home
   li
     a(href='explore.html') Explore
+    
+    
+block pagetitle
+  .container.hero-container
+    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/topic-hero.jpg')")  
+      .cover-wrap         
+        h1.page-title The High Price of Free
+        .hero-footer
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              .badge.badge-gray-dark.badge--toggle
+                label
+                  input(type='checkbox')
+                  i.material-icons public        
+                  span.badge--toggle__label public
+              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") By 
+                a.author(itemprop="url", rel="author", href="my-stream.html") John Johnson 
+                | on 
+                time.pubdate.updated(datetime="2016-01-26T10:00:00-05:00", itemprop="datePublished")  January 26, 2016 
+                div  
+                  a(itemprop="category", href="group-topics.html") 
+                    i.material-icons label
+                    | Blog
+                  | &nbsp;
+                  span.inline-center
+                    | in group 
+                    a(itemprop="organizer", href="group-stream.html") Happy Campers
+            .col-xs-12.col-md-3
+              .btn-group
+                a.btn.btn-accent.btn-lg.btn-raised(href="topic.html") See more        
+                  
+block breadcrumbs  
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='explore-an.html') Explore
+
 
 block content
               
   .row.margin-top-l    
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-      include ./molecules/_explore-highlighted.jade
       include ./molecules/_explore-upcoming-events.jade
       include ./molecules/_explore-new-topics.jade
-      include ./molecules/_explore-new-users.jade
-      include ./molecules/_explore-new-groups.jade
-  
+      
     .col-xs-12.col-sm-8
       
       ul.stream
