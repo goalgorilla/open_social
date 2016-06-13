@@ -63,3 +63,19 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
   }
 }
+
+/**
+ * Implements hook_views_data().
+ */
+function activity_creator_views_data() {
+  $data['activity']['activity_visibility_access_filter'] = array(
+    'title' => t('Activity visibility access'),
+    'filter' => array(
+      'title' => t('Activity visibility access'),
+      'help' => t('Enable activity access control.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_visibility_access'
+    ),
+  );
+  return $data;
+}
