@@ -65,6 +65,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         $activity_creator_data = [
           'mid' => $data['mid'],
           'message_type' => $data['message_type'],
+          'actor' => $data['actor'],
           'context' => $data['context'], // Not necessary?
           'destination' => $data['destination'],
           'related_object' => $data['related_object'],
@@ -88,6 +89,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
       $activity_creator_data = [
         'mid' => $data['mid'],
         'message_type' => $data['message_type'],
+        'actor' => $data['actor'],
         'context' => $data['context'], // Not necessary?
         'destination' => $data['destination'],
         'related_object' => $data['related_object'],

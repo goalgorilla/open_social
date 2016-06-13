@@ -45,6 +45,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
     $mid = $entity->id();
     $message_type = $entity->getEntityType()->id();
+    $actor = $entity->getOwner()->id();
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();
     $related_object = $entity->get('field_message_related_object')->getValue();
@@ -52,6 +53,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
     $data = [
       'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
       'message_type' => $message_type, // this is needed for the activityfactory
+      'actor' => $actor,
       'context' => $context[0]['value'], // either group, profile, community
       'destination' => $destinations,
       'related_object' => $related_object,
