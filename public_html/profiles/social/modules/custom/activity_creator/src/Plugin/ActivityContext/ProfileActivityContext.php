@@ -41,10 +41,7 @@ class ProfileActivityContext extends ActivityContextBase {
             'target_id' => $recipient_user['0']['target_id'],
           ];
         }
-
-
       }
-
     }
 
     return $recipients;
