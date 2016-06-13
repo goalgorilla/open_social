@@ -81,84 +81,40 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
  *
  * TODO: Move this in a service and make it generic.
  */
-function activity_logger_node_insert(EntityInterface $entity) {
+function activity_logger_entity_insert(EntityInterface $entity) {
 
-  $contextGetter = \Drupal\activity_logger\Controller\ActivityLoggerController::create(\Drupal::getContainer());
+  // Get the service we need here.
+  $contextGetter = \Drupal::service('activity_logger.context_getter');
+  $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
+
   // Fetch entity context.
   $context = $contextGetter->getContext($entity);
 
-  // @TODO: Remove this.
-  $context = '1';
+  // Get all messages that are responsible for creating items.
+  $message_types = $activityLoggerFactory->getMessageTypes('create', $context, $entity->bundle());
+  // Loop through those message types and create messages.
+  foreach ($message_types as $message_type => $message_values) {
+    // Create the ones applicable for this bundle.
+    if ($message_values['bundle'] === $entity->bundle()) {
 
-  if ($entity->bundle() == 'topic') {
-    //\Drupal\Core\Entity\EntityTypeManagerInterface.
-    $entity_type_manager = \Drupal::service('entity_type.manager');
-
-    $message_type = $entity_type_manager->getStorage('message_type')
-      ->load('create_topic_community');
-    if (isset($message_type)) {
-      $message_type_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-
+      // Determine destinations.
       $destinations = [];
-      if (!empty($message_type_destinations) && is_array($message_type_destinations)) {
-        foreach ($message_type_destinations as $destination) {
+      if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
+        foreach ($message_values['destinations'] as $destination) {
           $destinations[] = array('value' => $destination);
         }
       }
 
-      // For every insert we create an activity item.
-      $message = Message::create([
-        'type' => 'create_topic_community',
-        'uid' => $entity->getOwner()->id(),
-        'field_message_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', $context),
-        'field_message_destination' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', array('3')),
-        'field_message_related_object' => [
-          'target_id' => $entity->id(),
-          'target_type' => $entity->getEntityTypeId()
-        ]
-      ]);
+      // Set the values.
+      $new_message['type'] = $message_type;
+      $new_message['uid'] = $entity->getOwner()->id();
+      $new_message['context'] = $context;
+      $new_message['destination'] = $destinations;
+      $new_message['related_object'] = $entity->getOwner()->id();
+
+      // Create the message
+      $message = Message::create($new_message);
       $message->save();
     }
-  };
+  }
 }
-
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- *
- * TODO: Move this in a service and make it generic.
- */
-function activity_logger_post_insert(EntityInterface $entity) {
-  if ($entity->id()) {
-    //\Drupal\Core\Entity\EntityTypeManagerInterface.
-    $entity_type_manager = \Drupal::service('entity_type.manager');
-
-    $message_type = $entity_type_manager->getStorage('message_type')
-      ->load('create_post_profile');
-    if (isset($message_type)) {
-      $message_type_destinations = $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-
-      $destinations = [];
-      if (!empty($message_type_destinations) && is_array($message_type_destinations)) {
-        foreach ($message_type_destinations as $destination) {
-          $destinations[] = array('value' => $destination);
-        }
-      }
-
-      // For every insert we create an activity item.
-      $message = Message::create([
-        'type' => 'create_post_profile',
-        'uid' => $entity->getOwner()->id(),
-        'field_message_context' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', '1'),
-        'field_message_destination' => $destinations,
-        'field_message_related_object' => [
-          'target_id' => $entity->id(),
-          'target_type' => $entity->getEntityTypeId()
-        ]
-      ]);
-      $message->save();
-    }
-  };
-}
-
-
