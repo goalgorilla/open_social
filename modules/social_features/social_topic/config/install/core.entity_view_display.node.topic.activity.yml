@@ -11,13 +11,21 @@ dependencies:
     - image.style.social_x_large
     - node.type.topic
   module:
+    - comment
     - image
     - user
 id: node.topic.activity
 targetEntityType: node
 bundle: topic
-mode: teaser
+mode: activity
 content:
+  field_topic_comments:
+    weight: 3
+    label: hidden
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
   field_topic_image:
     type: image
     weight: 0
@@ -31,7 +39,7 @@ content:
     weight: 2
     label: hidden
     settings:
-      link: false
+      link: true
     third_party_settings: {  }
   links:
     weight: 1
@@ -40,4 +48,3 @@ content:
 hidden:
   body: true
   field_content_visibility: true
-  field_topic_comments: true
