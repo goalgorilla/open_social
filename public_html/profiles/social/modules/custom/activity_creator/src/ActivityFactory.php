@@ -47,7 +47,7 @@ class ActivityFactory extends ControllerBase {
       'field_activity_output_text' =>  $this->getFieldOutputText($data),
       'field_activity_recipient_group' => $this->getFieldRecipientGroup($data),
       'field_activity_recipient_user' => $this->getFieldRecipientUser($data),
-      'uid' => 0,
+      'user_id' => $this->getActor($data),
     ]);
     $activity->save();
 
@@ -112,6 +112,20 @@ class ActivityFactory extends ControllerBase {
         // Should be in an array for the field.
         $value = array($data['recipient']);
       }
+    }
+    return $value;
+  }
+
+  /**
+   * Return the actor uid.
+   *
+   * @param $data
+   * @return int
+   */
+  private function getActor($data) {
+    $value = 0;
+    if (isset($data['actor'])) {
+      $value = $data['actor'];
     }
     return $value;
   }
