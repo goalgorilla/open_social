@@ -10,8 +10,17 @@
 // make sure to take the admin into account when opening a off-canvas sidebar
 .toolbar-vertical .off-canvas-right {
   transform: translateY(39px) translateX(280px);
+
+  @include MQ($small) {
+    transform: none;
+  }
 }
 
 .toolbar-vertical .off-canvas-right.is-open {
   transform: translateY(39px) translateX(0);
+
+  @include MQ($small) {
+    transform: none;
+  }
+
 }

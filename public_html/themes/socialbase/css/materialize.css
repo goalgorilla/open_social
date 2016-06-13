@@ -5900,6 +5900,11 @@ hr.ruler-l {
   width: 180px;
 }
 
+#navbar-search.is-open .form-control,
+.no-js #navbar-search .form-control {
+  padding-left: 12px;
+}
+
 #navbar-search.is-open .search-icon,
 .no-js #navbar-search .search-icon {
   background: white;
@@ -8066,17 +8071,9 @@ input[type=range]:focus::-ms-fill-upper {
     width: 0%;
     min-width: 38px;
     height: 38px;
-    overflow: hidden;
     -webkit-transition: width 0.3s;
     transition: width 0.3s;
     -webkit-backface-visibility: hidden;
-  }
-  .navbar-form[role='search'] .form-group:before, .navbar-form[role='search'] .form-group:after{
-    content: " ";
-    display: table;
-  }
-  .navbar-form[role='search'] .form-group:after{
-    clear: both;
   }
   .navbar-form[role='search'] .form-control{
     position: absolute;
@@ -8088,6 +8085,9 @@ input[type=range]:focus::-ms-fill-upper {
     height: 38px;
     margin: 0;
     z-index: 10;
+    padding-left: 0;
+    -webkit-transition: padding 0.3s;
+    transition: padding 0.3s;
   }
   .navbar-form[role='search'] .form-submit{
     background: white;
