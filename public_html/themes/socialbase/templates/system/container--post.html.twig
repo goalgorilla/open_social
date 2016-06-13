@@ -20,11 +20,7 @@
 
 {%
   set classes = [
-    not attributes.hasClass('toolbar-menu-administration') ? 'form-group',
-    has_parent ? 'js-form-wrapper',
-    has_parent ? 'form-wrapper',
-    attributes.hasClass('form-actions') ? 'margin-top-xxl',
+    'form-group',
   ]
 %}
-
 <div{{ attributes.addClass(classes) }}>{{ children }}</div>

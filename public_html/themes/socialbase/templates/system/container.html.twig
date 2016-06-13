@@ -22,7 +22,7 @@
     not attributes.hasClass('toolbar-menu-administration') ? 'form-group',
     has_parent ? 'js-form-wrapper',
     has_parent ? 'form-wrapper',
-    has_floats ? 'clearfix',
+    has_floats ? 'clearfix margin-top-xxl',
     attributes.hasClass('field--name-field-comment-body') ? 'media-body',
   ]
 %}
@@ -32,6 +32,6 @@
   {% if attributes.hasClass('more-link') %}
     <div{{ attributes.addClass('btn btn-link') }}>{{ children }}</div>
   {% else %}
-    <div{{ attributes.addClass(classes) }}>{{ children }}</div>
+    {{ children }}
   {% endif %}
 {% endif %}

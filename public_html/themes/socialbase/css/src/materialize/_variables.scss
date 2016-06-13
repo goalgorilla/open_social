@@ -69,8 +69,11 @@ $gray-base:              #000 !default;
 $gray-darker:            lighten($gray-base, 13.5%) !default; // #222
 $gray-dark:              lighten($gray-base, 20%) !default;   // #333
 $gray:                   lighten($gray-base, 33.5%) !default; // #555
-$gray-light:             lighten($gray-base, 46.7%) !default; // #777
-$gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
+$gray-light-1:           #aaaaaa !default;
+$gray-light:             #dddddd !default;
+$gray-lighter:           #e6e6e6 !default;
+$gray-lightest:          #f2f2f2 !default;
+
 
 
 $default-color-dark: mix(black, $default-color, 30%) !default;
@@ -318,7 +321,7 @@ $dropdown-link-active-bg:        $component-active-bg !default;
 $dropdown-link-disabled-color:   $gray-light !default;
 
 //** Text color for headers within dropdown menus.
-$dropdown-header-color:          $gray-light !default;
+$dropdown-header-color:          $gray !default;
 //** Background color for headers within dropdown menus.
 $dropdown-header-bg:             $gray-lighter;
 
@@ -566,7 +569,7 @@ $grid-float-breakpoint-max: ($grid-float-breakpoint - 1) !default;
 
 // Basics of a navbar
 $navbar-height:                    50px !default;
-$navbar-font-size:                 0.875em !default;
+$navbar-font-size:                 0.875rem !default;
 $navbar-margin-bottom:             $line-height-computed !default;
 $navbar-border-radius:             $border-radius-base !default;
 $navbar-padding-horizontal:        1rem !default;
@@ -574,7 +577,7 @@ $navbar-padding-vertical:          (($navbar-height - $line-height-computed) / 2
 $navbar-collapse-max-height:       340px !default;
 
 $navbar-default-color:             white !default;
-$navbar-default-bg:                $gray-darker !default;
+$navbar-default-bg:                $gray-dark !default;
 $navbar-default-border:            white !default;
 
 // Navbar links
@@ -582,7 +585,7 @@ $navbar-default-link-color:                white !default;
 $navbar-default-link-hover-color:          $gray-lighter !default;
 $navbar-default-link-hover-bg:             transparent !default;
 $navbar-default-link-active-color:         white !default;
-$navbar-default-link-active-bg:            $gray-darker !default;
+$navbar-default-link-active-bg:            $gray-dark !default;
 $navbar-default-link-disabled-color:       #ccc !default;
 $navbar-default-link-disabled-bg:          transparent !default;
 
@@ -592,7 +595,7 @@ $navbar-default-brand-hover-color:         darken($navbar-default-brand-color, 1
 $navbar-default-brand-hover-bg:            transparent !default;
 
 // Navbar toggle
-$navbar-default-toggle-hover-bg:           $gray-darker !default;
+$navbar-default-toggle-hover-bg:           $gray-dark !default;
 $navbar-default-toggle-icon-bar-bg:        #888 !default;
 $navbar-default-toggle-border-color:       #ddd !default;
 
@@ -701,8 +704,21 @@ $pagination-disabled-border:           transparent !default;
 // 18. Tables
 // ==========================================================================
 
- $table-border-color: #d0d0d0 !default;
- $table-striped-color: #f2f2f2 !default;
+ //** Padding for `<th>`s and `<td>`s.
+ $table-cell-padding:            8px !default;
+ //** Padding for cells in `.table-condensed`.
+ $table-condensed-cell-padding:  5px !default;
+
+ //** Default background color used for all tables.
+ $table-bg:                      transparent !default;
+ //** Background color used for `.table-striped`.
+ $table-bg-accent:               #f9f9f9 !default;
+ //** Background color used for `.table-hover`.
+ $table-bg-hover:                #f5f5f5 !default;
+ $table-bg-active:               $table-bg-hover !default;
+
+ //** Border color for table and cell borders.
+ $table-border-color:            #ddd !default;
 
 // 19. Labels
 // ==========================================================================
