@@ -11,16 +11,13 @@ block breadcrumbs
   li
     a(href='explore-events.html') Events
 
-block pagetitle
-
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Community events 
-      
 
 block content
               
   .row.margin-top-l    
+  
+    .col-xs-12
+      h4.section-title Community events
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
     
@@ -29,7 +26,7 @@ block content
         | Filter
       .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
-          header.complementary-title Filter events
+          header.complementary-title Filter
           .offcanvas-tools.visible-xs-block
             .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
               i.material-icons close
@@ -38,14 +35,11 @@ block content
           form
             .form-group(onclick="enableMe('reset-button')")
               .radio
-                input(type="radio", name="group1", id="option1") 
+                input(type="radio", name="group1", id="option1", checked) 
                 label(for="option1") Upcoming events
               .radio
                 input(type="radio", name="group1", id="option2") 
                 label(for="option2") Past events
-                  
-            .form-group
-              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
               
   
     .col-xs-12.col-sm-8

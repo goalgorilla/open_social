@@ -11,38 +11,13 @@ block breadcrumbs
   li
     a(href='explore-groups.html') Groups
 
-block pagetitle
-
-  .container.hero-container
-    .cover
-      h1.page-title.h2 Community groups
-      
-
 block content
               
-  .row.margin-top-l    
-
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-    
-      button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
-        i.material-icons.pull-left tune
-        | Filter
-      .off-canvas.off-canvas-right.off-canvas-xs-only
-        .offcanvas-head
-          header.complementary-title Filter groups
-          .offcanvas-tools.visible-xs-block
-            .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
-              i.material-icons close
-      
-        .offcanvas-body
-          form
-            .form-group
-              | t.b.d.
-                  
-            .form-group
-              input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
+  .row.margin-top-l              
               
     .col-xs-12.col-sm-8
+    
+      h4.section-title Community groups
     
       include molecules/_group2.jade
       include molecules/_group1.jade
