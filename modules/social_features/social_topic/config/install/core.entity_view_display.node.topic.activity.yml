@@ -11,8 +11,8 @@ dependencies:
     - image.style.social_x_large
     - node.type.topic
   module:
-    - comment
     - image
+    - social_core
     - user
 id: node.topic.activity
 targetEntityType: node
@@ -23,9 +23,9 @@ content:
     weight: 3
     label: hidden
     settings:
-      pager_id: 0
+      num_comments: 2
     third_party_settings: {  }
-    type: comment_default
+    type: comment_node
   field_topic_image:
     type: image
     weight: 0
