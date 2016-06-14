@@ -42,9 +42,9 @@ function activity_creator_field_activity_destinations_allowed_values() {
  */
 function activity_creator_message_insert(\Drupal\message\Entity\Message $entity) {
   if ($entity) {
-
+    // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
-    $message_type = $entity->getEntityType()->id();
+    $message_type_id = $entity->getEntityType()->id();
     $actor = $entity->getOwner()->id();
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();
@@ -52,7 +52,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
     $data = [
       'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
-      'message_type' => $message_type, // this is needed for the activityfactory
+      'message_type' => $message_type_id, // this is needed for the activityfactory
       'actor' => $actor,
       'context' => $context[0]['value'], // either group, profile, community
       'destination' => $destinations,
@@ -60,9 +60,51 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
       'last_uid' => 0, // last processed_uid
       'status' => NULL,
     ];
-    $queue = \Drupal::queue('activity_creator_logger');
-    $queue->createItem($data);
 
+    $message_type = $entity->getType();
+
+    $activity_create_direct = $message_type->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
+
+    if ($activity_create_direct) {
+
+      $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
+      /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+
+      $plugin = $context_plugin_manager->createInstance($data['context']);
+      $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
+      $activity_factory = \Drupal::service('activity_creator.activity_factory');
+      if (!empty($recipients)) {
+
+        foreach ($recipients as $recipient) {
+          // Create a queue item for activity creation.
+          $activity_creator_data = [
+            'mid' => $data['mid'],
+            'message_type' => $data['message_type'],
+            'actor' => $data['actor'],
+            'context' => $data['context'], // Not necessary?
+            'destination' => $data['destination'],
+            'related_object' => $data['related_object'],
+            'recipient' => $recipient,
+          ];
+          $activity_factory->createActivities($activity_creator_data);
+        }
+      }
+      else {
+        $activity_creator_data = [
+          'mid' => $data['mid'],
+          'message_type' => $data['message_type'],
+          'actor' => $data['actor'],
+          'context' => $data['context'], // Not necessary?
+          'destination' => $data['destination'],
+          'related_object' => $data['related_object'],
+        ];
+        $activity_factory->createActivities($activity_creator_data);
+      }
+    }
+    else {
+      $queue = \Drupal::queue('activity_creator_logger');
+      $queue->createItem($data);
+    }
   }
 }
 
