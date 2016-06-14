@@ -31,7 +31,7 @@ class ActivityRow extends EntityRow {
 
         // TODO: discriminate on view and / or destinations.
         // Do not change the view mode if is for notifications.
-        if ($target_entity_type === 'post') {
+        if ($target_entity_type === 'post' && $this->options['view_mode'] !== 'notification') {
           $this->options['view_mode'] = 'render_entity';
         }
         else {
