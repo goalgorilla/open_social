@@ -73,7 +73,7 @@ a.card:hover {
 .card-nested-section {
   margin: 10px -20px -20px;
   padding: $card-padding;
-  background: $grey-light-3;
+  background: $gray-lightest;
 
   .extra-padding & {
     @include MQ($small) {
@@ -276,4 +276,28 @@ a.card:hover {
     text-align: right;
     flex: 1;
   }
+}
+
+.card--teaser-stream {
+  margin: 20px -20px -10px;
+  background: $gray-lighter;
+
+  @include MQ($small) {
+    height: 200px; // matches width of image
+  }
+
+  .card-image {
+
+    @include MQ($small) {
+      height: 200px;
+      flex: 0 0 200px;
+      border-radius: 0;
+    }
+
+  }
+
+  .badge-gray-lighter .material-icons {
+    background-color: $gray-lighter;
+  }
+
 }

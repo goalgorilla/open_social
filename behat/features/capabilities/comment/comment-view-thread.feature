@@ -11,7 +11,6 @@ Feature: See Comment
          | Add a comment | This is a first comment |
     And I press "Comment"
     Then I should see "This is a first comment" in the "Main content"
-    When I click the xth "1" element with the css ".dropdown-toggle"
     Then I should see the link "Reply"
     When I click "Reply"
     And I fill in the following:
