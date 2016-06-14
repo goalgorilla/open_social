@@ -23,7 +23,7 @@ body
                 .hero-canvas.padding-md
                   h1.page-title.h2 Welcome to the XUY community
                   p Cras mattis consectetur purus sit amet fermentum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
-                  .row
+                  .row.margin-top-l
                     .col-xs-12
                       a.btn.btn-default.btn-raised(href='sign-up.html') Sign up
                       a.btn.btn-primary.btn-raised(href='login.html') Login
@@ -36,24 +36,36 @@ body
                 i.stream-icon 
                 .card.stream-card
                   .card-body
-                    include ./molecules/_stream-post1.jade
+                    include ./molecules/_stream-activity6.jade
+                    //- created an event in a group with no comments
+              
               li.stream-item
                 i.stream-icon 
                 .card.stream-card
                   .card-body
-                    include ./molecules/_stream-post2.jade
+                    include ./molecules/_stream-activity7.jade
+                    //- created a topic in a group
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-activity2.jade
+                    //- created post on own profile
                     
               li.stream-item
                 i.stream-icon 
                 .card.stream-card
                   .card-body
-                    include ./molecules/_stream-post1.jade
+                    include ./molecules/_stream-activity8.jade
+                    //- commented on an event in a group
                     
               li.stream-item
                 i.stream-icon 
                 .card.stream-card
                   .card-body
-                    include ./molecules/_stream-post2.jade
+                    include ./molecules/_stream-activity4.jade
+                    //- commented on a post on a profile
+                    
                     
           .col-sm-4.hidden-xs
             include ./molecules/_upcoming-events.jade

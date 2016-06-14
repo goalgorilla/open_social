@@ -1,0 +1,54 @@
+//- commented on an event in a group
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member1.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member1.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Mary-Lou Wallace commented on an event
+      else 
+        a(href="my-stream.html") Mary-Lou Wallace 
+        | commented an event       
+      br
+      .text-gray-lighter 2 hours ago
+.card--teaser.card--teaser-stream.card-with-actionbar
+  a.card-image.blue-overlay(href="event.html")
+    img.img-responsive(src="content/images/people3-square.jpg")
+    .teaser-date 19
+      .text-xs jul
+  .card-body
+    h4.card-title 
+      a(href="event.html") Security and modern internet
+    p.text-grey-dark
+      i.material-icons event
+      | &nbsp;
+      span.inline-center 19 jul 09:00 - 18:00
+      | &nbsp; 
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
+    p.text-grey-dark 
+      i.material-icons place
+      | &nbsp;
+      span.inline-center Keizersgracht 376, Amsterdam
+    .card-actionbar
+      if user != "isAnonymous"
+        .badge.badge-gray-lighter.badge--toggle
+          label
+            input(type='checkbox')
+            i.material-icons public        
+            span.badge--toggle__label public
+      a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
+
+.card-nested-section
+
+  include ./_activity3-reply1.jade
+  
+  .margin-top-l.text-center
+    if user != "isAnonymous"
+      a.btn.btn-link(href='topic.html#comment-form') Comment
+    a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+      i.material-icons chevron_right

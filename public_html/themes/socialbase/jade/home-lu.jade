@@ -50,28 +50,48 @@ block content
                             
                   .media-right
                     input.btn.btn-primary(type='submit', value="post")
+        
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-activity5.jade
+              //- created an event in a group with no comments
+        
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post2.jade
+              include ./molecules/_stream-activity6.jade
+              //- created an event on profile with no comments
+        
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-activity1.jade
+              //- created a topic in a group
+  
+        li.stream-item
+          i.stream-icon 
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-activity2.jade
+              //- created post on own profile
               
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post1.jade
+              include ./molecules/_stream-activity3.jade
+              //- commented on an event in a group
               
         li.stream-item
           i.stream-icon 
           .card.stream-card
             .card-body
-              include ./molecules/_stream-post2.jade
+              include ./molecules/_stream-activity4.jade
+              //- commented on a post on a profile
               
     .col-sm-4.hidden-xs
       include ./molecules/_my-events.jade
