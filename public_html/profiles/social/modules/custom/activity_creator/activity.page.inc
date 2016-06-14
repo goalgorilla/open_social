@@ -30,6 +30,12 @@ function template_preprocess_activity(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 
+  // Display comment created date in format 'time ago'.
+  $created_time_ago = \Drupal::service('date.formatter')
+    ->formatTimeDiffSince($activity->getCreatedTime(), array('granularity' => 2));
+  $date = t('%time ago', array('%time' => $created_time_ago));
+  $variables['date'] = $date;
+
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might
   // not be configured, so remember to always check the theme setting first.
