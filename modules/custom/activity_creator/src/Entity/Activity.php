@@ -194,4 +194,22 @@ class Activity extends ContentEntityBase implements ActivityInterface {
     return $fields;
   }
 
+  /**
+   * Get related entity url.
+   *
+   * @return \Drupal\Core\Url|string
+   */
+  public function getRelatedEntityUrl() {
+    $link = "";
+    $related_object = $this->get('field_activity_entity')->getValue();
+    if (!empty($related_object)) {
+      $entity = entity_load($related_object['0']['target_type'], $related_object['0']['target_id']);
+      if (!empty($entity)) {
+        /** @var \Drupal\Core\Url $link */
+        $link = $entity->urlInfo('canonical');
+      }
+    }
+    return $link;
+  }
+
 }
