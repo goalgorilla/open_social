@@ -55,6 +55,7 @@
     include ./_activity1-reply2.jade
   
     .margin-top-l.text-center
-
-        a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
-          i.material-icons chevron_right
+      if user != "isAnonymous"
+        a.btn.btn-link(href='topic.html#comment-form') Comment
+      a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+        i.material-icons chevron_right
