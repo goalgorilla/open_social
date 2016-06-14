@@ -66,14 +66,10 @@
  * @ingroup themeable
  */
 #}
-<article{{ attributes.addClass('js-comment clearfix') }}>
-  {#
-    Hide the "new" indicator by default, let a piece of JavaScript ask the
-    server which comments are new for the user. Rendering the final "new"
-    indicator here would break the render cache.
-  #}
-  <mark class="hidden" data-comment-timestamp="{{ new_indicator_timestamp }}"></mark>
-  <footer class="media">
+
+<article{{ attributes.addClass('js-comment media-wrapper') }}>
+
+  <div class="media">
     <div class="media-left">
       {{ author_picture }}
     </div>
@@ -83,21 +79,10 @@
         {{ author }}
       </h5> <br />
       <small>{{ submitted }}</small>
-
-      {#
-        Indicate the semantic relationship between parent and child comments for
-        accessibility. The list is difficult to navigate in a screen reader
-        without this information.
-      #}
-      {% if parent %}
-        <p class="visually-hidden">{{ parent }}</p>
-      {% endif %}
     </div>
-  </footer>
+  </div>
 
   <div {{ content_attributes.addClass('margin-top-s') }}>
     {{ content }}
   </div>
 </article>
-
-<hr />

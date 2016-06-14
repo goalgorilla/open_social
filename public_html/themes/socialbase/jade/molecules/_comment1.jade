@@ -1,26 +1,27 @@
-.media 
-  .media-left
-    a(href="my-stream.html")
-      img.media-object.img-circle.img-medium(src="content/images/member5.jpg")
-  .media-body
-    h5.media-heading
-      a(href="my-stream.html") John Johnson 
-    .btn-group.pull-right
-      button.btn.btn-icon-toggle.dropdown-toggle(type="button", data-toggle="dropdown", aria-expanded="false", aria-haspopup="true")
-        i.material-icons expand_more
-      ul.dropdown-menu(role="menu")
-        li 
-          a(href="comment-edit.html") Edit
-        li
-          a(href="comment-delete.html") Delete
-    br
-    small 
-      a(href="comment.html") 6 hours ago
+.media-wrapper
+  .media
+    .media-left
+      a(href="my-stream.html")
+        img.media-object.img-circle.img-medium(src="content/images/member5.jpg")
+    .media-body
+      h5.media-heading
+        a(href="my-stream.html") John Johnson
+      br
+      small
+        a(href="comment.html") 6 hours ago
 
-.margin-top-s We know that not paying speakers and not covering speaker expenses causes events to become less diverse. The ability to give time, energy and professional skills free of charge is a privilege. 
+  .margin-top-s We know that not paying speakers and not covering speaker expenses causes events to become less diverse. The ability to give time, energy and professional skills free of charge is a privilege.
 
-.clearfix
-  a.btn.btn-link.btn-sm.pull-right(href="comment.html#insert-comment") Reply
+  .btn-group
+    button.btn.btn-icon-toggle.dropdown-toggle(type="button", data-toggle="dropdown", aria-expanded="false", aria-haspopup="true")
+      i.material-icons expand_more
+    ul.dropdown-menu(role="menu")
+      li
+        a(href="comment-edit.html") Edit
+      li
+        a(href="comment-delete.html") Delete
+  .clearfix
+    a.btn.btn-link.btn-sm.pull-right(href="comment.html#insert-comment") Reply
 
 .card-nested-section.indented
   include ./_reply1.jade
