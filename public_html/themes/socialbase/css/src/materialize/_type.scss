@@ -22,6 +22,9 @@ body {
 	word-wrap: break-word;
 }
 
+p {
+  margin-bottom: 0.75rem;
+}
 
 h1, h2, h3, h4, h5, h6 {
 	font-weight: 500;
@@ -108,9 +111,18 @@ blockquote {
 
 
 // Text Styles
-em { font-style: italic; }
-strong { font-weight: 700; }
-.light { font-weight: 300; }
+em {
+	font-style: normal;
+	font-weight: 500;
+}
+
+strong {
+	font-weight: 700;
+}
+
+.light {
+	font-weight: 300;
+}
 
 .flow-text{
   font-size: responsive;
@@ -132,15 +144,17 @@ ol {
 }
 
 .section-title {
-  text-transform: uppercase;
-  font-weight: 700;
   padding: 1.25rem;
   margin: 0;
-	letter-spacing: 0.05em;
 
   @include MQ($small) {
     padding-left: 20px;
-    margin: 1em 0 .5em;
+    margin: 0 0 .5em;
+
+		// the title cannot wrap because we want to align filters vertically with the content
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
 		&.section-title-stream {
 			padding-left: 40px;
@@ -153,6 +167,9 @@ ol {
 
 }
 
+.complementary-title {
+	font-size: 1.25rem;
+}
 
 
 .text-caption {
@@ -185,9 +202,11 @@ ol {
 @include text-emphasis-variant('.text-gray-lighter', $grey-light-1);
 @include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
 
-
 //
-@include bg-variant('.bg-gray-light', $grey-light-3);
+@include bg-variant('.bg-gray', $gray);
+@include bg-variant('.bg-gray-light', $gray-light);
+@include bg-variant('.bg-gray-lighter', $gray-lighter);
+@include bg-variant('.bg-gray-lightest', $gray-lightest);
 @include bg-variant('.bg-white', white);
 
 @include style-variant('.brand-primary', $brand-primary, white);

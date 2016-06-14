@@ -20,13 +20,13 @@
  */
 #}
 {% if group_hero_styled_image_url %}
-  <div style="background-image: url('{{ group_hero_styled_image_url }}')" class="cover cover-img">
+  <div style="background-image: url('{{ group_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
 {% else %}
-  <div class="cover cover-img">
+  <div class="cover">
 {% endif %}
   {% if group_edit_url %}
     <div class="hero-action-button">
-      <a href="{{ group_edit_url }}"  title="Edit group" class="waves-effect waves-light btn brand-user btn-floating">
+      <a href="{{ group_edit_url }}"  title="Edit group" class="waves-effect waves-light btn btn-default btn-floating">
         <i class="material-icons">mode_edit</i>
       </a>
     </div>

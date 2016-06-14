@@ -40,34 +40,39 @@
  */
 #}
 <div class="card card--teaser card-with-actionbar">
-    <div class='card-image'>
+    <div class='card-image blue-overlay'>
         {{ content.field_group_image }}
     </div>
     <div class='card-body'>
         {{ title_prefix }}
         {% if not page %}
-            <h2{{ title_attributes }} class="h3 card-title">
-                <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-            </h2>
+          <h4{{ title_attributes }} class="card-title">
+            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+          </h4>
         {% endif %}
         {{ title_suffix }}
-        <div class="text-grey">{{ content.field_group_description }}</div>
-        <div class="text-grey-dark">
+        <p class="text-grey-dark">
+          <i class="custom-icons icon-group"></i>
+          <span class="inline-center">
             {% trans %}
-            1 member
+              1 member
             {% plural group.getMembers()|length %}
-            @count members
+              @count members
             {% endtrans %}
-        </div>
+            &nbsp;
+          </span>
+          {% if joined %}
+            <span class="label label-primary">
+              {% trans %}Joined{% endtrans %}
+            </span>
+          {% endif %}
+        </p>
+        <div class="card--teaser-desc">{{ content.field_group_description }}</div>
+
         <div class="card-actionbar">
-            {% if joined %}
-                <p class="pull-left">
-                    {% trans %}Joined{% endtrans %}
-                </p>
-            {% endif %}
-            <a href="{{ profile_url }}" class="btn btn-flat pull-right">
-                <a href="{{ url }}" rel="tag" title="{{ label }}">{% trans %}Read more{% endtrans %}</a>
-            </a>
+          <a href="{{ url }}" class="btn btn-flat pull-right" title="{{ label }}">
+            {% trans %}Read more{% endtrans %}
+          </a>
         </div>
     </div>
 </div>

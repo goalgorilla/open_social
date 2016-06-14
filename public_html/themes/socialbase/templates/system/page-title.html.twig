@@ -16,6 +16,16 @@
  * @ingroup themeable
  */
 #}
+
+{%
+  set classes = [
+    'h4',
+    'section-title',
+    stream ? 'section-title-stream',
+    node ? 'section-title-node',
+  ]
+%}
+
 {% if title %}
-  <h1{{ title_attributes.addClass('h4 section-title') }}>{{ title }}</h1>
+  <h1{{ title_attributes.addClass(classes) }}>{{ title }}</h1>
 {% endif %}

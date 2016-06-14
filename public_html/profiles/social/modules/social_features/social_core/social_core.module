@@ -44,30 +44,20 @@ function social_core_theme() {
 function template_preprocess_page_hero_data(&$variables) {
   // @todo create $variables['author_formatted']?
   // @todo Pass in all the page_title variables?
-  if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
-    $variables['created_date_formatted'] = \Drupal::service('date.formatter')->format($variables['created_date']);
-  }
-  if (isset($variables['topic_type'])) {
-    $topic_type_entities = $variables['topic_type']->referencedEntities();
-    if (count($topic_type_entities) === 1) {
-      foreach($topic_type_entities as $topic) {
-        $variables['topic_type'] = $topic->link();
-      }
-    }
-    else {
-      $variables['topic_type'] = NULL;
-    }
-  }
-  if (empty($variables['event_enrollment'])) {
-    // Get current node object or node id.
-    $node = \Drupal::routeMatch()->getParameter('node');
 
-    if (!empty($node)) {
-      if (!is_object($node) && !is_null($node)) {
-        $node = \Drupal::service('entity_type.manager')
-          ->getStorage('node')
-          ->load($node);
-      }
+  // Get current user.
+  $account = \Drupal::currentUser();
+
+  // Get current node object or node id.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (!is_object($node) && !is_null($node)) {
+    $node = \Drupal::service('entity_type.manager')
+      ->getStorage('node')
+      ->load($node);
+  }
+
+  if (is_object($node)) {
+    if (empty($variables['event_enrollment'])) {
       if ($node->getType() == 'event') {
         $form = \Drupal::formBuilder()
           ->getForm('Drupal\social_event\Form\EnrollActionForm');
@@ -78,6 +68,29 @@ function template_preprocess_page_hero_data(&$variables) {
 
         $variables['event_enrollment'] = $render_array;
       }
+    }
+
+    // Add node edit url for management.
+    if ($node instanceof Drupal\node\Entity\Node) {
+      if ($node->access('update', $account)) {
+        $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+      }
+    }
+  }
+
+  if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
+    $variables['created_date_formatted'] = \Drupal::service('date.formatter')->format($variables['created_date']);
+  }
+
+  if (isset($variables['topic_type'])) {
+    $topic_type_entities = $variables['topic_type']->referencedEntities();
+    if (count($topic_type_entities) === 1) {
+      foreach($topic_type_entities as $topic) {
+        $variables['topic_type'] = $topic->link();
+      }
+    }
+    else {
+      $variables['topic_type'] = NULL;
     }
   }
 }

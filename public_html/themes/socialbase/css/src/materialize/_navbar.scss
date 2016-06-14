@@ -6,6 +6,7 @@
 
 .navbar-fixed-top {
   top: auto;
+  z-index: 200;
 }
 
 .navbar-header {
@@ -70,7 +71,7 @@
     width: 100%;
     max-width: none;
     max-height: 100%;
-    max-height: calc(100% - 50px);
+    height: calc(95% - 50px);
     overflow-x: hidden;
     overflow-y: auto;
     backface-visibility: hidden;
@@ -259,7 +260,7 @@
 
 .navbar-form[role='search'] {
   width: 100%;
-  
+
   .form-group {
     position: relative;
   }
@@ -312,12 +313,9 @@
 
     .form-group {
   		border-radius: $input-border-radius;
-      @include clearfix;
       width: 0%;
       min-width: 38px;
       height: 38px;
-      float: right;
-      overflow: hidden;
       transition: width 0.3s;
       -webkit-backface-visibility: hidden;
     }
@@ -332,6 +330,8 @@
       height: 38px;
       margin: 0;
       z-index: 10;
+      padding-left: 0;
+      transition: padding 0.3s;
 		}
 
     .form-submit {
@@ -346,7 +346,7 @@
     .search-icon {
       z-index: 90;
       border-radius: 0;
-      background: $gray-darker;
+      background: $navbar-default-bg;
       color: white;
       pointer-events: initial;
       transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
@@ -361,17 +361,20 @@
 #navbar-search.is-open,
 .no-js #navbar-search {
 	width: 180px;
-}
 
-#navbar-search.is-open .search-icon,
-.no-js #navbar-search .search-icon {
-	background: white;
-	color: $brand-primary;
-	z-index: 11;
-  border-radius: 0 $input-border-radius $input-border-radius 0;
-}
+  .form-control {
+    padding-left: $padding-base-horizontal;
+  }
 
-#navbar-search.is-open .form-submit,
-.no-js #navbar-search .form-submit {
-	z-index: 90;
+  .search-icon {
+  	background: white;
+  	color: $brand-primary;
+  	z-index: 11;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+  }
+
+  .form-submit {
+  	z-index: 90;
+  }
+
 }

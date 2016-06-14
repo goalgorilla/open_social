@@ -49,12 +49,21 @@ html(lang="en")
     
     main.main-container(role='main')
       
+      nav.visible-md-block.visible-lg-block.bg-white
+        ol.breadcrumb.container
+          block breadcrumbs  
+            li
+              a(href='home-lu.html') Home
+            li
+              a(href='#!') Overview
+            li.active Detail
+
       block pagetitle
-        
+
       .main-content
       
         block secondary_navigation
-        
+      
         .container
           block content
       

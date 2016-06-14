@@ -30,15 +30,15 @@ class AccountHeaderBlock extends BlockBase {
       $account_uid = $account->id();
 
       $links = [
-        'add' => array(
-          'classes' => 'hidden-xs',
-          'link_attributes' => '',
-          'icon_classes' => '',
-          'icon_label' => 'Add',
-          'label' => 'Add Content',
-          'label_classes' => 'hidden',
-          'url' => Url::fromRoute('node.add_page'),
-        ),
+        // 'add' => array(
+        //   'classes' => 'hidden-xs',
+        //   'link_attributes' => '',
+        //   'icon_classes' => '',
+        //   'icon_label' => 'Add',
+        //   'label' => 'Add Content',
+        //   'label_classes' => 'hidden',
+        //   'url' => Url::fromRoute('node.add_page'),
+        // ),
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
@@ -51,11 +51,11 @@ class AccountHeaderBlock extends BlockBase {
         'groups' => array(
           'classes' => '',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-sm hidden-md hidden-lg ',
-          'icon_label' => 'Group',
-          'label' => 'Groups',
-          'label_classes' => 'hidden-xs',
-          'url' => Url::fromRoute('<front>'),
+          'icon_classes' => 'custom-icons icon-group',
+          'icon_label' => '',
+          'label' => '',
+          'label_classes' => '',
+          'url' => '/user/' . $account_uid . '/groups',
         ),
       ];
 

@@ -7,7 +7,9 @@ Feature: Create Event
   @LU @perfect @critical @wip
   Scenario: Successfully create event
     Given I am logged in as an "authenticated user"
-    And I am on "node/add/event"
+    And I am on "user"
+    And I click "Events"
+    And I click "Create Event"
     When I fill in the following:
          | Title | This is a test event |
          | Date | 2025-01-01 |

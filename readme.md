@@ -3,7 +3,7 @@ Check [drupal.org](https://www.drupal.org/project/social) for more information.
 For day to day technical documentation use the [Github Wiki](https://github.com/goalgorilla/drupal_social/wiki).
 
 Useful links for developers:
-- [Roadmap](https://drupalsocial.storiesonboard.com/m/drupal-social-mvp)
+- [Roadmap](https://drupalsocial.storiesonboard.com/m/open-social)
 - [Lo-fi prototype](http://prototype.goalgorilla.com/drupalsocial/current/)
 - [Hifi styleguide and prototype](http://goalgorilla.github.io/drupal_social/)
 - [Travis CI](https://travis-ci.org/goalgorilla/drupal_social/builds)
