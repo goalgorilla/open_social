@@ -60,4 +60,12 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    */
   public function setPublished($published);
 
+  /**
+   * Get related entity url.
+   *
+   * @return \Drupal\Core\Url|string
+   *   Empty string if entity canonical url could not be found.
+   */
+  public function getRelatedEntityUrl();
+
 }

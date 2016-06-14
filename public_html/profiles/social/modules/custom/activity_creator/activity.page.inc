@@ -29,4 +29,24 @@ function template_preprocess_activity(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
+
+  // To change user picture settings (e.g. image style), edit the 'compact'
+  // view mode on the User entity. Note that the 'compact' view mode might
+  // not be configured, so remember to always check the theme setting first.
+  $account = $activity->getOwner();
+  if ($account) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, 'compact');
+        $variables['actor'] = $content;
+      }
+    }
+  }
+
+  $full_url = $activity->getRelatedEntityUrl();
+  $variables['full_url'] = $full_url;
 }

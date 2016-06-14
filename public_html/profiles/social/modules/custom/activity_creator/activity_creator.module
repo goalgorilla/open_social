@@ -89,3 +89,32 @@ function activity_creator_views_data() {
   );
   return $data;
 }
+
+/**
+ * Implements hook_theme().
+ */
+function activity_creator_theme() {
+  $items = [
+    'activity' => [
+      'render element' => 'elements',
+      'file' => 'activity.page.inc',
+      'template' => 'activity',
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function activity_creator_theme_suggestions_activity(array $variables) {
+  $suggestions = array();
+  $activity = $variables['elements']['#activity'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'activity__' . $sanitized_view_mode;
+  $suggestions[] = 'activity__' . $activity->id();
+  $suggestions[] = 'activity__' . $activity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
