@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_message_destination
+    - message.type.create_event_group
+  module:
+    - activity_creator
+    - activity_logger
+    - options
+id: message.create_event_group.field_message_destination
+field_name: field_message_destination
+entity_type: message
+bundle: create_event_group
+label: Destinations
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
