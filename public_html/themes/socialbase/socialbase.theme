@@ -538,8 +538,9 @@ function socialbase_preprocess_node(&$variables) {
   }
 
   // Content visibility
-  if($content_visibility = $node->get('field_content_visibility')->value && !$account->isAnonymous()){
-    switch ($content_visibility) {
+  if((isset($node->field_content_visibility)) && !$account->isAnonymous()){
+    $content_visibility = reset($node->field_content_visibility->getValue());
+    switch ($content_visibility['value']) {
       case 'community':
         $variables['visibility_icon'] = 'group';
         $variables['visibility_label'] = t('community');
