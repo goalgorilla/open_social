@@ -46,7 +46,7 @@
     <div class="btn-group pull-right">
       <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">expand_more</i></button>
       <ul{{ attributes.addClass('dropdown-menu') }}>
-        {%- for key, item in links|reverse if keys != "comment-reply" -%}
+        {%- for key, item in links|reverse if key != "comment-reply" -%}
           <li{{ item.attributes.addClass(key|clean_class) }}>
             {%- if item.link -%}
               {{ item.link }}
@@ -60,7 +60,8 @@
       </ul>
     </div>
   {% else %}
-    {%- for key, item in links -%}
+
+    {%- for key, item in links if key != "comment-reply" -%}
       <li{{ item.attributes.addClass(key|clean_class) }}>
         {%- if item.link -%}
           {{ item.link }}
@@ -72,15 +73,18 @@
       </li>
     {%- endfor -%}
 
-  {%- endif %}
+  {% endif %}
+
 {%- endif %}
 
 {% if links['comment-reply'] %}
- <div class="clearfix">
-   <div class="btn btn-link btn-sm pull-right">
-     {%- for key, item in links| keys == "comment-reply" -%}
+
+  <div class="clearfix">
+    <div class="btn btn-link btn-sm pull-right">
+      {%- for key, item in links|reverse if key == "comment-reply" -%}
         {{ item.link }}
-     {%- endfor -%}
-   </div>
- </div>
-{% endif %}
+      {%- endfor -%}
+    </div>
+  </div>
+
+{%- endif %}

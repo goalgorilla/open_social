@@ -35,6 +35,10 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
   $form['actions']['submit']['#button_type'] = 'flat';
 
 }
+function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['field_comment_body']['widget'][0]['#title'] = '';
+  $form['actions']['submit']['#button_type'] = 'primary';
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -298,6 +302,11 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
 
+  // Alter comment form
+  if ($variables['element']['#id'] == 'comment-form') {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
+  }
+
   // Also for the search hero content form on the /search/content.
   if ($variables['element']['#id'] == 'search-content-form-hero' || $variables['element']['#form_id'] == 'search_users_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
@@ -542,7 +551,7 @@ function socialbase_preprocess_image_style(&$variables) {
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
   if ($variables['style_name'] == 'social_medium') {
-    $variables['image']['#attributes']['class'][] = 'img-small';
+    $variables['image']['#attributes']['class'][] = 'img-medium';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
 }
@@ -699,4 +708,39 @@ function socialbase_bootstrap_iconize_text_alter(&$texts) {
       t('Save')->render() => '',
     ],
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_comment_alter().
+ */
+function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
+  $comment = $variables['elements']['#comment'];
+  if($comment->hasParentComment()){
+    $suggestions[] = 'comment__child';
+  }
+}
+
+
+/**
+ * Implements template_preprocess_form().
+ */
+function socialbase_preprocess_form(&$variables) {
+  $element = $variables['element'];
+
+  if ($element['#form_id'] === 'comment_comment_form') {
+    $current_user = \Drupal::currentUser();
+    if ($current_user) {
+      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      if (!empty($storage)) {
+        $user_profile = $storage->loadByUser($current_user, 'profile');
+        if ($user_profile) {
+          $content = \Drupal::entityTypeManager()
+            ->getViewBuilder('profile')
+            ->view($user_profile, 'compact');
+          $variables['current_user_picture'] = $content;
+        }
+      }
+    }
+  }
+
 }

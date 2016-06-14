@@ -23,7 +23,8 @@
     title_display == 'invisible' ? 'visually-hidden',
   ]
 -%}
-{%- if title is not empty or required -%}
+
+{%- if title is not empty -%}
   {{ element }}
   <label{{ attributes.addClass(classes) }}>{{ title }}
     {%- if description -%}
