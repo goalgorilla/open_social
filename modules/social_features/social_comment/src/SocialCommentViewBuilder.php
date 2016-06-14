@@ -22,7 +22,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
 
       // Add indentation div or close open divs as needed.
       if ($build['#comment_threaded']) {
-        $prefix .= $build['#comment_indent'] <= 0 ? str_repeat('</div>', abs($build['#comment_indent'])) : "\n" . '<div class="card-nested-section indented">';
+        $prefix .= $build['#comment_indent'] <= 0 ? str_repeat('<hr /></div>', abs($build['#comment_indent'])) : "\n" . '<div class="card-nested-section indented">';
       }
 
       // Add anchor for each comment.
