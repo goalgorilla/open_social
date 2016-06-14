@@ -38,13 +38,14 @@ class ActivityFactory extends ControllerBase {
    */
   private function buildActivities(array $data) {
     $activities = [];
-
+    $message = Message::load($data['mid']);
     // For every insert we create an activity item.
     $activity = Activity::create([
+      'created' => $this->getCreated($message),
       'field_activity_destinations' => $this->getFieldDestinations($data),
       'field_activity_entity' =>  $this->getFieldEntity($data),
       'field_activity_message' => $this->getFieldMessage($data),
-      'field_activity_output_text' =>  $this->getFieldOutputText($data),
+      'field_activity_output_text' =>  $this->getFieldOutputText($message),
       'field_activity_recipient_group' => $this->getFieldRecipientGroup($data),
       'field_activity_recipient_user' => $this->getFieldRecipientUser($data),
       'user_id' => $this->getActor($data),
@@ -81,15 +82,21 @@ class ActivityFactory extends ControllerBase {
     return $value;
   }
 
-  private function getFieldOutputText($data) {
+  private function getFieldOutputText(Message $message) {
     $value = NULL;
-    if (isset($data['mid'])) {
-
-      $message = Message::load($data['mid']);
+    if (isset($message)) {
       // @TODO setArguments here? Replace tokens here? Or let message do work?
       $value = $message->getText(NULL);
     }
 
+    return $value;
+  }
+
+  private function getCreated(Message $message) {
+    $value = NULL;
+    if (isset($message)) {
+      $value = $message->getCreatedTime();
+    }
     return $value;
   }
 
