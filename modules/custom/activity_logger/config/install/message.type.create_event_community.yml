@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_creator
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_context: community_activity_context
+    activity_destinations:
+      stream_profile: stream_profile
+      stream_home: stream_home
+      stream_group: stream_group
+      stream_explore: stream_explore
+      notifications: notifications
+type: create_event_community
+label: 'Create event'
+description: 'A user created an event in the community'
+text:
+  - "[message:author:display-name] created an event"
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge:
+    override: false
+    enabled: false
+    quota: null
+    days: null
