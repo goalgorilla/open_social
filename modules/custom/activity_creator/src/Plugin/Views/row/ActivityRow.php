@@ -20,6 +20,8 @@ class ActivityRow extends EntityRow {
    */
   public function preRender($result) {
 
+    $view_mode = $this->options['view_mode'];
+
     if ($result) {
       foreach ($result as $row) {
         $render_result = array();
@@ -27,14 +29,18 @@ class ActivityRow extends EntityRow {
         $entity = $row->_entity;
         $target_entity_type = $entity->field_activity_entity->target_type;
 
+        // TODO: discriminate on view and / or destinations.
+        // Do not change the view mode if is for notifications.
         if ($target_entity_type === 'post') {
           $this->options['view_mode'] = 'render_entity';
         }
         else {
-          $this->options['view_mode'] = 'default';
+          $this->options['view_mode'] = $view_mode;
         }
         $this->getEntityTranslationRenderer()->preRender($render_result);
       }
     }
+    $this->options['view_mode'] = $view_mode;
+
   }
 }
