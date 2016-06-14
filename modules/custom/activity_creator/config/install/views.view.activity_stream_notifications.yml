@@ -4,11 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.activity.notification
+    - user.role.authenticated
   module:
     - activity_creator
     - options
-_core:
-  default_config_hash: Filuvr-t95DOklxjpQIaGjUkN2TfHE8GOWHY2XQXijs
+    - user
 id: activity_stream_notifications
 label: 'Activity stream notifications'
 module: views
@@ -25,8 +25,10 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
       cache:
         type: none
         options: {  }
@@ -55,6 +57,10 @@ display:
           offset: 0
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
       row:
         type: 'entity:activity'
         options:
@@ -247,7 +253,7 @@ display:
           not: false
           plugin_id: numeric
       display_extenders: {  }
-      use_more: true
+      use_more: false
       use_more_always: true
       use_more_text: 'View all'
     cache_metadata:
@@ -256,10 +262,11 @@ display:
         - 'languages:language_interface'
         - url
         - user
+        - user.roles
       tags:
+        - 'config:core.entity_view_display.activity.activity.render_entity'
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
   block_1:
     display_plugin: block
     id: block_1
@@ -267,12 +274,27 @@ display:
     position: 2
     display_options:
       display_extenders: {  }
+      style:
+        type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
+      defaults:
+        style: false
+        row: false
+      row:
+        type: 'entity:activity'
+        options:
+          relationship: none
+          view_mode: notification
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_interface'
         - url
         - user
+        - user.roles
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
@@ -284,7 +306,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: user/%user/notifications
+      path: notifications
       pager:
         type: full
         options:
@@ -315,6 +337,7 @@ display:
         - url
         - url.query_args
         - user
+        - user.roles
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
