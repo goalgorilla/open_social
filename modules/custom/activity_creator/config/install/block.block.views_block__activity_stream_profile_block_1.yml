@@ -1,21 +1,22 @@
+uuid: aaac279c-38aa-472a-b8d6-43da454f480e
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.posts
+    - views.view.activity_stream_profile
   module:
     - system
     - views
   theme:
     - socialbase
-id: views_block__posts_block_stream_group
+id: views_block__activity_stream_profile_block_1
 theme: socialbase
 region: content
-weight: -4
+weight: -17
 provider: null
-plugin: 'views_block:posts-block_stream_group'
+plugin: 'views_block:activity_stream_profile-block_1'
 settings:
-  id: 'views_block:posts-block_stream_group'
+  id: 'views_block:activity_stream_profile-block_1'
   label: ''
   provider: views
   label_display: '0'
@@ -24,6 +25,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: '/group/*/stream'
+    pages: '/user/*/stream'
     negate: false
     context_mapping: {  }
