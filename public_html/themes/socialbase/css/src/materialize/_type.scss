@@ -111,9 +111,18 @@ blockquote {
 
 
 // Text Styles
-em { font-style: italic; }
-strong { font-weight: 700; }
-.light { font-weight: 300; }
+em {
+	font-style: normal;
+	font-weight: 500;
+}
+
+strong {
+	font-weight: 700;
+}
+
+.light {
+	font-weight: 300;
+}
 
 .flow-text{
   font-size: responsive;
@@ -193,9 +202,11 @@ ol {
 @include text-emphasis-variant('.text-gray-lighter', $grey-light-1);
 @include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
 
-
 //
-@include bg-variant('.bg-gray-light', $grey-light-3);
+@include bg-variant('.bg-gray', $gray);
+@include bg-variant('.bg-gray-light', $gray-light);
+@include bg-variant('.bg-gray-lighter', $gray-lighter);
+@include bg-variant('.bg-gray-lightest', $gray-lightest);
 @include bg-variant('.bg-white', white);
 
 @include style-variant('.brand-primary', $brand-primary, white);

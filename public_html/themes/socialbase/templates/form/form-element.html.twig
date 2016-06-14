@@ -47,14 +47,10 @@
 #}
 {%
   set classes = [
-    'js-form-item',
-    'form-item',
-    'js-form-type-' ~ type|clean_class,
-    'form-item-' ~ name|clean_class,
-    'js-form-item-' ~ name|clean_class,
     title_display not in ['after', 'before'] ? 'form-no-label',
     disabled == 'disabled' ? 'form-disabled',
     is_form_group ? 'form-group',
+    type == 'textarea' ? 'form-group',
     is_radio ? 'radio',
     is_checkbox ? 'checkbox',
     is_autocomplete ? 'form-autocomplete',
