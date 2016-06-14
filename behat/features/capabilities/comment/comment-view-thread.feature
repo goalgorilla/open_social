@@ -11,7 +11,7 @@ Feature: See Comment
          | Add a comment | This is a first comment |
     And I press "Comment"
     Then I should see "This is a first comment" in the "Main content"
-    Then I should see the link "reply"
+    Then I should see the link "Reply"
     When I click "Reply"
     And I fill in the following:
       | Add a comment | This is a reply comment |
