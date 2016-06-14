@@ -1,8 +1,11 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - block.block.postblock
   module:
     - activity_creator
+    - options
 id: activity_stream
 label: 'Activity Stream'
 module: views
@@ -117,8 +120,99 @@ display:
           empty_zero: false
           hide_alter_empty: true
           view_mode: default
-      filters: {  }
-      sorts: {  }
+      filters:
+        activity_visibility_access_filter:
+          id: activity_visibility_access_filter
+          table: activity
+          field: activity_visibility_access_filter
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          plugin_id: activity_visibility_access
+        field_activity_destinations_value:
+          id: field_activity_destinations_value
+          table: activity__field_activity_destinations
+          field: field_activity_destinations_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            stream_home: stream_home
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          plugin_id: list_field
+      sorts:
+        created:
+          id: created
+          table: activity
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          entity_type: activity
+          entity_field: created
+          plugin_id: date
       title: Stream
       header:
         entity_block:
@@ -141,6 +235,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      css_class: stream
     cache_metadata:
       max-age: -1
       contexts:
@@ -148,6 +243,7 @@ display:
         - url.query_args
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
+        - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.render_entity'
   page_activity_stream:
     display_plugin: page
@@ -164,4 +260,5 @@ display:
         - url.query_args
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
+        - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.render_entity'
