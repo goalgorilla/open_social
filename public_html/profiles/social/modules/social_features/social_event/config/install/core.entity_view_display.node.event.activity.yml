@@ -15,9 +15,9 @@ dependencies:
     - node.type.event
   module:
     - address
-    - comment
     - datetime
     - image
+    - social_core
     - user
 id: node.event.activity
 targetEntityType: node
@@ -34,9 +34,9 @@ content:
     weight: 6
     label: hidden
     settings:
-      pager_id: 0
+      num_comments: 2
     third_party_settings: {  }
-    type: comment_default
+    type: comment_node
   field_event_date:
     type: datetime_default
     weight: 1

@@ -104,3 +104,21 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   unset($links['comment__field_topic_comments']);
   unset($links['comment__field_event_comments']);
 }
+
+/**
+ * Prepares variables for comment field templates.
+ *
+ * Default template: field--comment.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing render arrays for the list of
+ *     comments, and the comment form. Array keys: comments, comment_form.
+ */
+function social_core_preprocess_field(&$variables) {
+  $element = $variables['element'];
+  if ($element['#formatter'] == 'comment_node') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
+  }
+}

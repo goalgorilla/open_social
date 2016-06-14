@@ -68,18 +68,18 @@
 #}
 
 <div class="media">
-  <div class="media-left">
-    {% if author_picture %}
-      {{ author_picture }}
-    {% endif %}
-  </div>
-  <div class="media-body">
-    <h5 class="media-heading">
-      {{ author }} <br /> <small>{{ submitted }}</small>
-    </h5>
-    {% if content.links|render %}
-      {{ content.links }}
-    {% endif %}
-    <p>{{ content.field_comment_body }}</p>
-  </div>
+    <div class="media-left">
+        {% if author_picture %}
+            {{ author_picture }}
+        {% endif %}
+    </div>
+    <div class="media-body">
+        <h5 class="media-heading">
+            {{ author }} <br /> <small>{{ submitted }}</small>
+        </h5>
+        {% if content.links|render %}
+            {{ content.links }}
+        {% endif %}
+        <p>{{ content.field_comment_body }}</p>
+    </div>
 </div>
