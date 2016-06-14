@@ -49,7 +49,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
 
     // Get 100 Recipients at a time.
     $limit = 0;
-
+    // TODO: Move all this logic to a service.
     // TODO: Change this to use dependency injection (see construct code below)
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
