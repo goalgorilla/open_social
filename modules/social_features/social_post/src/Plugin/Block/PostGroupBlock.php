@@ -7,6 +7,9 @@
 
 namespace Drupal\social_post\Plugin\Block;
 
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
+
 /**
  * Provides a 'PostGroupBlock' block.
  *
@@ -30,4 +33,29 @@ class PostGroupBlock extends PostBlock {
     $this->bundle = 'post';
     $this->form_display = 'group';
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    $group = _social_group_get_current_group();
+
+    if (is_object($group)) {
+      if ($group->hasPermission('add post entities in group', $account)) {
+        $membership = $group->getMember($account);
+        $context = [];
+        if (!empty($membership)) {
+          $group_content = $membership->getGroupContent();
+          $context = ['group_content' => $group_content];
+        }
+        return \Drupal::entityTypeManager()
+          ->getAccessControlHandler($this->entity_type)
+          ->createAccess($this->bundle, $account, $context, TRUE);
+      }
+    }
+
+    // By default, the block is not visible.
+    return AccessResult::forbidden()->setCacheMaxAge(0);
+  }
+
 }

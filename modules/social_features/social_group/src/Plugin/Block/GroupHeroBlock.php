@@ -57,7 +57,7 @@ class GroupHeroBlock extends BlockBase {
       $current_user = \Drupal::currentUser();
       $membership = $group->getMember($current_user);
 
-      $tags = $build['#cache']['tags'];
+      $tags = empty($build['#cache']['tags']) ? array() : $build['#cache']['tags'];
 
       // Based on GroupOperationsBlock.php we add some more cache tags.
       $service_1 = \Drupal::service('group.group_route_context');
