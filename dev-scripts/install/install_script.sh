@@ -41,8 +41,8 @@ drush sda file user group topic event eventenrollment comment post # Add the dem
 drush pm-uninstall social_demo -y
 fn_sleep
 echo "Run activity queues"
-drush queue-run activity_creator_logger
-drush queue-run activity_creator_activities
+#drush queue-run activity_creator_logger
+#drush queue-run activity_creator_activities
 fn_sleep
 echo "Rebuild node access"
 drush php-eval 'node_access_rebuild()';
