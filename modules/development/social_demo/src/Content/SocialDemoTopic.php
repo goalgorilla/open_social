@@ -12,7 +12,9 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\file\Entity\File;
+use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
@@ -37,12 +39,20 @@ class SocialDemoTopic implements ContainerInjectionInterface {
    */
   protected $nodeStorage;
 
+  /**
+   * The node storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface;
+   */
+  protected $entityStorage;
+
   /*
    * Read file contents on construction.
    */
-  public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage) {
+  public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage, EntityStorageInterface $entity_storage) {
     $this->userStorage = $user_storage;
     $this->nodeStorage = $node_storage;
+    $this->entityStorage = $entity_storage;
 
     $yml_data = new SocialDemoParser();
     $this->topics = $yml_data->parseFile('entity/topic.yml');
@@ -51,7 +61,8 @@ class SocialDemoTopic implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('node')
+      $container->get('entity.manager')->getStorage('node'),
+      $container->get('entity.manager')->getStorage('group')
     );
   }
 
@@ -137,6 +148,24 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       ]);
 
       $node->save();
+
+      // Check if the referenced group exists.
+      if (isset($topic['group'])) {
+        // Load the group.
+        $groups = $this->entityStorage->loadByProperties(array('uuid' => $topic['group']));
+        $group = reset($groups);
+        // Get the group content plugin
+        $plugin_id = 'group_node:' . $node->bundle();
+        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+        // Create the group content entity.
+        $group_content = GroupContent::create([
+          'type' => $plugin->getContentTypeConfigId(),
+          'gid' => $group->id(),
+          'entity_id' => $node->id(),
+        ]);
+        // Save it.
+        $group_content->save();
+      }
 
       $content_counter++;
     }
