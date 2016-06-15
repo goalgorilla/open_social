@@ -442,3 +442,35 @@ display:
         - url.query_args
         - user.permissions
       tags: {  }
+  page_1:
+    display_plugin: page
+    id: page_1
+    display_title: Explore
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: explore
+      display_description: 'Explore page for LU'
+      header:
+        entity_block:
+          id: entity_block
+          table: views
+          field: entity_block
+          relationship: none
+          group_type: group
+          admin_label: header_postblock
+          empty: true
+          tokenize: false
+          target: postblock
+          view_mode: default
+          bypass_access: false
+          plugin_id: entity
+      defaults:
+        header: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
