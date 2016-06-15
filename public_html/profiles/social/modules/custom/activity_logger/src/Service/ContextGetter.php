@@ -10,7 +10,7 @@ class ContextGetter {
   public function getContext(Entity $entity) {
 
     // Check if it's placed in a group (regardless off content type).
-    if ($group_entity = GroupContent::loadByEntity($entity)) {
+    if ($group_entity = GroupContent::loadByEntity($entity) || strpos(\Drupal::routeMatch()->getRouteName(),'entity.group_content') === 0) {
       $context = $this->getFieldValue('group');
     }
     else {
