@@ -4,6 +4,8 @@ services:
     parent: default_plugin_manager
   activity_creator.activity_factory:
     class: Drupal\activity_creator\ActivityFactory
+  activity_creator.activity_notifications:
+    class: Drupal\activity_creator\ActivityNotifications
   plugin.manager.activity_destination.processor:
     class: Drupal\activity_creator\Plugin\ActivityDestinationManager
     parent: default_plugin_manager
