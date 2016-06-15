@@ -19,7 +19,6 @@
 <div class="navbar-header">
   <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
   <ul class="nav navbar-nav navbar-right">
-  {{ kint(links) }}
   {% for item in links %}
       <li class="{{ item.classes }}">
           <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
