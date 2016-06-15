@@ -452,6 +452,10 @@ function socialbase_preprocess_page(&$variables) {
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
+  // Add plain title for node preview page templates.
+  if (!empty($variables['page']['#title'])) {
+    $variables['plain_title'] = strip_tags($variables['page']['#title']);
+  }
 }
 
 /**
