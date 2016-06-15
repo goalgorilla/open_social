@@ -64,7 +64,7 @@ services:
     volumes:
      - ./public_html/:/var/www/html
      - ./dev-scripts/:/root/dev-scripts
-     - ./behat/:/root/behat
+     - ./public_html/profiles/social/tests/behat/:/root/behat
     links:
      - web:web
      - db:db
