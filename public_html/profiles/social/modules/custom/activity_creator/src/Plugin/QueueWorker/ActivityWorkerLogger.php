@@ -6,8 +6,7 @@
  */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\State\StateInterface;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
