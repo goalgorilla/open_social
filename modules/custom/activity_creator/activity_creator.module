@@ -191,3 +191,15 @@ function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityI
     \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
   }
 }
+
+/**
+ * Implements hook_preprocess_views_view_unformatted().
+ */
+function activity_creator_preprocess_views_view_unformatted(&$variables) {
+  $view = $variables['view'];
+  $view_name = $view->storage->id();
+  if ($view_name == 'activity_stream_notifications') {
+    $notification_url = \Drupal\Core\Url::fromRoute('view.activity_stream_notifications.page_1');
+    $variables['notification_url'] = $notification_url;
+  }
+}

@@ -215,7 +215,20 @@ display:
       title: 'Activity stream'
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'You do not have any notifications.'
+            format: basic_html
+          plugin_id: text
       relationships: {  }
       arguments:
         field_activity_recipient_user_target_id:
@@ -264,9 +277,9 @@ display:
         - user
         - user.roles
       tags:
-        - 'config:core.entity_view_display.activity.activity.render_entity'
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.render_entity'
   block_1:
     display_plugin: block
     id: block_1
