@@ -64,7 +64,7 @@ class AccountHeaderBlock extends BlockBase {
         $notifications = \Drupal::service('renderer')->render($notifications_view);
 
         $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-        $num_notifications = count($account_notifications->getNotifications($account));
+        $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
 
         $notifications_icon_label = 'notifications';
         if ($num_notifications === 0) {
@@ -72,7 +72,7 @@ class AccountHeaderBlock extends BlockBase {
         }
 
         $links['notifications'] = array(
-          'classes' => 'dropdown',
+          'classes' => 'dropdown notification-bell',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle',
           'icon_classes' => '',
@@ -80,7 +80,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_label' => $notifications_icon_label,
           'label' => $num_notifications,
           'label_classes' => 'badge',
-          'url' => Url::fromRoute('<front>'),
+          'url' => '#',
           'below' => $notifications,
         );
       }
@@ -157,6 +157,11 @@ class AccountHeaderBlock extends BlockBase {
       '#links' => $links,
       '#cache' => array(
          'contexts' => array('user'),
+      ),
+      '#attached' => array(
+        'library' => array(
+          'activity_creator/activity_creator.notifications',
+        ),
       ),
     ];
   }
