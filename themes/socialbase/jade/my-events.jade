@@ -1,0 +1,94 @@
+extends ./layout/base-lu.jade
+
+block title
+  title John Johnson
+
+block pagetitle
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-profile-hero.jade
+
+  .container  
+
+    .visible-xs-block.section
+      a.btn.btn-flat(href="my-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to my stream
+
+  .container.hero-container
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href="my-stream.html") Stream  
+          li
+            a(href="my-profile-about.html") About
+          li
+            a(href='my-topics.html') Topics
+          li.active
+            a(href='my-events.html') Events 
+            span.visually-hidden (active tab) 
+          li
+            a(href="my-groups.html") Groups
+      
+block content
+  
+  .row.margin-top-l
+  
+    .col-xs-12
+      h1.h4.section-title My events
+    
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='node-add-event.html') Create event
+      br 
+      br
+      button.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filters
+
+      .off-canvas.off-canvas-right.off-canvas-xs-only
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            button.js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
+              i.material-icons close
+    
+        .offcanvas-body
+          form
+            .form-group.radios
+              label Event status 
+              .radio
+                input#radio1(name='event', type='radio', checked)
+                label(for='radio1') Upcoming
+              .radio
+                input#radio2(name='event', type='radio')
+                label(for='radio2') Past
+              .radio
+                input#radio3(name='event', type='radio')
+                label(for='radio3') Unpublished
+              
+
+    .col-xs-12.col-sm-8
+      include molecules/_event1.jade
+      include molecules/_event2.jade
+      include molecules/_event3.jade
+      include molecules/_event4.jade
+        
+      nav
+        ul.pagination
+          li.pager__item.pager__item--previous.disabled
+            a(href="#0", aria-label='Previous')    
+              span(aria-hidden="true") 
+                i.material-icons chevron_left
+          li.pager__item.active
+            a(href="#1") 1
+          li.pager__item 
+            a(href="#1") 2
+          li.pager__item 
+            a(href="#1") 3          
+          li.pager__item 
+            a(href="#1") 4
+          li.pager__item.pager__item--next
+            a(href='#', aria-label='Next')
+              span(aria-hidden="true")
+                i.material-icons chevron_right

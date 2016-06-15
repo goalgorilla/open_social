@@ -1,0 +1,61 @@
+//- created a topic in a group
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Henry Bond
+      else 
+        a(href="other-stream.html") Henry Bond 
+        | created a topic in group 
+        a(href='group-stream.html') Happy campers        
+      br
+      .text-gray-lighter 32 minutes ago
+.card--teaser.card--teaser-stream.card-with-actionbar
+  a.card-image.blue-overlay(href="topic.html")
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+    img.teaser-type(src='images/icon-topic.svg', alt='')
+  .card-body
+    h4.card-title 
+      a(href="topic.html") Technology for the handicapped
+    p.text-grey-dark.text-m
+      if user == "isAnonymous"
+        span Clive Owen 
+      else
+        a(href="other-stream.html") Henry Bond 
+      | &bullet; 15 feb 2016
+    p.clearfix.text-m
+      i.material-icons label
+      | &nbsp;
+      span.inline-center Blog
+    .card-actionbar
+      .badge.badge-gray-lighter.badge--toggle
+        label
+          input(type='checkbox')
+          i.material-icons group        
+          span.badge--toggle__label community
+      a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
+
+.card-nested-section
+
+  .visible-xs-block
+    a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
+    hr.ruler-xs
+    a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
+      i.material-icons chevron_right
+
+  .hidden-xs
+
+    include ./_activity1-reply1.jade
+    include ./_activity1-reply2.jade
+  
+    .margin-top-l.text-center
+      if user != "isAnonymous"
+        a.btn.btn-link(href='topic.html#comment-form') Comment
+      a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+        i.material-icons chevron_right

@@ -1,0 +1,72 @@
+@font-face {
+  font-family: 'Material-Design-Icons';
+  font-style: normal;
+  font-weight: 400;
+  font-path: '../font/material-icons/MaterialIcons-Regular';
+}
+
+@font-face {
+    font-family: 'custom-icons';
+    font-weight: normal;
+    font-style: normal;
+    font-path: '../font/custom-icons/custom-icons';
+}
+
+// prevent block rendering
+.material-icons {
+  font-family: 'Material-Design-Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  // Preferred icon size
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  // Support for all WebKit browsers.
+  -webkit-font-smoothing: antialiased;
+  // Support for Safari and Chrome.
+  text-rendering: optimizeLegibility;
+
+  // Support for Firefox.
+  -moz-osx-font-smoothing: grayscale;
+
+  // Support for IE.
+  font-feature-settings: 'liga';
+}
+
+
+// custom icons
+
+.custom-icons {
+    // use !important to prevent issues with browser extensions that change fonts
+    font-family: 'custom-icons' !important;
+    display: inline-block;
+    vertical-align: middle;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    height: 1em;
+    line-height: 1;
+    font-size: 24px;  // Preferred icon size
+
+    // Support for all WebKit browsers.
+    -webkit-font-smoothing: antialiased;
+    // Support for Safari and Chrome.
+    text-rendering: optimizeLegibility;
+
+    // Support for Firefox.
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-group:before {
+    content: "\e900";
+}

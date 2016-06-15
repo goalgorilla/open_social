@@ -1,0 +1,125 @@
+- var pagetype = "styleguide"
+- var page = "Typography"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+        .row
+          .col-xs-12.col-sm-8.col-md-10
+
+            .section
+              h2.header Montserrat
+              p.caption The standard font Drupal social uses is Montserrat. We have included the font files with our framework.
+              p We bundle our framework with 3 different font weights you can use: 300, 500 and 700
+              ul.list
+                li.h4(style='font-weight:300') Font with weight 300 
+                li.h4(style='font-weight:500') Font with weight 500 
+                li.h4(style='font-weight:700') Font with weight 700
+
+            .section
+              h4 Removing default font
+              p In case you don't want to use Montserrat on your webpage, fear not. Simply change the font stack by modifying the code below to your liking and add it to your custom css.
+              pre      
+                code.language-css.
+                  html {
+                    font-family: 'montserrat', sans-serif;
+                  }
+                    
+            .section
+              h2.header Headers
+              
+              p 
+                :markdown
+                  We provide some basic styling on header tags. In the example, you can see the the 6 header tags' different sizes. In the `_default.scss` you can define the heading sizes per breakpoint.
+              
+              .card-panel
+                h1 Heading h1
+                h2 Heading h2
+                h3 Heading h3
+                h4 Heading h4
+                h5 Heading h5
+                h6 Heading h6
+            .section
+              h2.header Blockquotes
+              p Blockquotes are mainly used to give emphasis to a quote or citation. You can also use these for some extra text hierarchy and emphasis.
+              blockquote
+                | This is an example quotation that uses the blockquote tag.
+                br
+                | Here is another line to make it look bigger.
+
+              pre      
+                code.language-markup.
+                  <blockquote>
+                    This is an example quotation that uses the blockquote tag.
+                  </blockquote>
+            
+            .section
+              h2.header Flow text
+              #flow-text-demo.card-panel
+                p.flow-text
+                  :markdown
+                    Create automagical fluid typography with a new `responsive` property on `font-size`. 
+                p.flow-text
+                  :markdown
+                    To see Flow Text in action, slowly resize your browser and watch the size of this text body change! Use the button above to toggle off/on flow-text to see the difference!
+              a#flow-toggle.btn.waves-effect.waves-light Toggle flow-text
+              br
+              br
+              p To use flow-text on a body of text, simply just add the class `flow-text` to a tag, see the code blow.
+              pre      
+                code.language-markup.
+                  <p class="flow-text">I am Flow Text</p>
+            .section
+              h4 Specifying parameters
+              p
+                :markdown
+                  You’ll probably want to change those defaults and have some control over the bounds of a font size. The best way to do this is with a new shorthand syntax in `font-size`, and a new property called `font-range`. Font range specifies the viewport widths between which the font size is fluid, outside of this range the font sizes are set to min/max values.
+              p The format of each property is very simple
+              pre      
+                code.language-css.
+                  font-size: responsive [min-font-size] [max-font-size]
+                  font-range: [lower-bound] [upper-bound]
+              p For example
+              pre      
+                code.language-css.
+                  .flow-text {
+                    font-size: responsive 12px 21px;
+                    font-range: 420px 1280px;
+                  }
+                  
+              h5 Output
+              p Flow text outputs complex calc and vw based font-sizes, along with media queries to set the range between which a font size is fluid.
+              pre
+                code.language-css.
+                
+                  html {
+                    font-size: calc(12px + 9 * ( (100vw - 420px) / 860));
+                  }
+
+                  @media screen and (max-width: 420px) {
+                    html {
+                      font-size: 12px;
+                    }
+                  }
+
+                  @media screen and (min-width: 1280px) {
+                    html {
+                      font-size: 21px;
+                    }
+                  }
+                  
+              p With the calc expression above being equivalent to
+              pre
+                code.language-css.
+                  min-size + (min-size - max-size) * ( (100vw - min-width) / ( max-width - min-width) )
+
+  
+    include ./layout/_scripts.jade

@@ -1,0 +1,99 @@
+.stream {
+  padding: 0;
+  list-style: none;
+  position: relative;
+  margin-left: -15px;
+
+  @include MQ($small) {
+    margin-left: 0;
+  }
+
+  &:before {
+    top: 21px;
+    bottom: 0;
+    left: 7px;
+    width: 2px;
+    content: '';
+    background: darken($gray-lighter, 20%);
+    position: absolute;
+
+    @include MQ($small) {
+      left: 14px;
+      top: 42px;
+    }
+  }
+
+}
+
+.stream-item {
+  position: relative;
+}
+
+.stream-icon {
+  top: 19px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  background: $gray-light;
+  @include z-depth-1;
+  border-radius: 50%;
+  border: 1px solid white;
+
+  @include MQ($small) {
+    left: 7px;
+    top: 36px;
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+}
+
+.stream-icon-new {
+  background:$brand-secondary;
+}
+
+.stream-card {
+  margin: 0 0 $card-padding $card-padding;
+
+  @include MQ($small) {
+    margin-left: (2 * $card-padding)
+  }
+
+  &:before,
+  &:after {
+    right: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  &:before {
+    border-right-color: rgba(0,0,0,0.12);
+    border-width: 7px;
+    top: 16px;
+
+    @include MQ($small) {
+      border-width: 9px;
+      top: 35px;
+    }
+  }
+
+  &:after {
+    border-right-color: white;
+    border-width: 6px;
+    top: 17px;
+
+    @include MQ($small) {
+      border-width: 8px;
+      top: 36px;
+    }
+  }
+
+  .btn-link {
+    padding: 6px;
+  }
+}

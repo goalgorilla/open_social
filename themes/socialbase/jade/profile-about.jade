@@ -1,0 +1,87 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Profile of Christian Bay
+
+block pagetitle
+  .container.hero-container.hidden-xs
+    .cover
+      .cover-wrap 
+        h1.page-title Christian Bay
+        img.img-circle.img-bordered(src='content/images/avatar3.jpg')
+        br
+        br
+        button.btn.btn-flat.btn--default-bright
+          i.material-icons.pull-left check
+          | Following
+      
+block secondary_navigation
+  .container
+    .visible-xs-block.section
+      a.btn.btn-raised.btn-user 
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to stream
+
+  .container.hero-container
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href="stream.html") Stream  
+          li.active
+            a(href="profile-about.html") About
+            span.visually-hidden (active tab)
+          li
+            a(href='topics.html') Topics
+          li
+            a(href='events.html') Events  
+          li
+            a(href="groups.html") Groups
+      
+block content
+  
+  .row.margin-top-l
+    .col-sm-12
+      h4.section-title About Christian
+    
+    .col-xs-12.col-sm-8
+      
+      .card
+        .card-body.extra-padding
+        
+          ul.collection
+            li.collection-item
+              h4 Contact information
+            li.collection-item 
+              .collection-label Phone
+              .collection-field +1 2612345678
+            li.collection-item 
+              .collection-label E-mail
+              .collection-field 
+                a(href="example@domain.com") christian@domain.com    
+            li.collection-item 
+              .collection-label Address
+              .collection-field 
+                | Tree lane 1423
+                br
+                | 563921
+                br
+                | Los Angeles
+          
+          h4 Intro
+          p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
+          
+          h4 Interests
+          .chip cycling
+          .chip triathlons
+          .chip raw food
+          
+          h4 Expertise
+          .chip Biochemistry
+          .chip Mechanics 
+              
+                    
+              
+          
+          

@@ -1,0 +1,190 @@
+
+// force the direct child of the container to take 100% of width screen on xs-screens
+.hero-container > div {
+  margin-right: -1rem;
+  margin-left: -1rem;
+
+  @include MQ($medium) {
+    margin: 0;
+  }
+
+}
+
+// Used on a hero block that can hold a background image.
+.cover {
+  position: relative; // keep hero-footer contained
+  color: white;
+  background-color: $brand-primary;
+  text-align: center;
+  padding: 20px;
+}
+
+.cover-img {
+  background-size: cover;
+  background-position: 50% 0;
+  background-repeat: no-repeat;
+}
+
+.cover-with-canvas {
+  padding: 40px;
+}
+
+.cover-img-gradient:before{
+  display: block;
+  position: absolute;
+  content: '';
+  background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.5) 100%);
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.cover-wrap {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+
+  @include MQ($medium) {
+    height: 335px;
+  }
+
+
+}
+
+.page-title {
+	color: white;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+
+  .cover-img & {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+  }
+
+  .cover-wrap & {
+    margin: 2em 0 0.5em;
+
+    @include MQ($small) {
+      margin: 1em 0 0;
+    }
+
+  }
+
+}
+
+.hero-footer {
+  padding-top: 20px;
+
+  @include MQ($medium) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .material-icons,
+  .custom-icons {
+    font-size: inherit;
+  }
+
+}
+
+.hero-canvas {
+  border-radius: $border-radius-base;
+  background-color: rgba($gray-dark, 0.8);
+  text-align: left; //overwrite .cover setting
+  color: white;
+
+  .page-title {
+    font-weight: 700;
+    margin-top: 0;
+    text-align: left;
+
+    @include MQ($small) {
+      margin: 1em 0 .5em;
+    }
+  }
+}
+
+
+.cover .btn-group {
+  margin-top: 10px;
+}
+
+.hero-action-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+
+// Hero search
+
+.hero-form[role='search'] {
+
+  .form-group {
+    position: relative;
+    max-width: 400px;
+    margin: auto;
+  }
+
+  .form-control {
+    padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
+    border-radius: $input-border-radius;
+    max-width: none;
+    border: 0;
+
+    &::-webkit-input-placeholder,
+    &:-moz-placeholder,
+    &::-moz-placeholder,
+    &:-ms-input-placeholder {
+      color: $brand-primary-bright;
+    }
+
+    &:focus,
+    &:active,
+    &:focus ~ .search-icon,
+    &:active ~ .search-icon {
+      border-bottom: 1px solid $brand-secondary;
+      box-shadow: 0 2px 0 0 $brand-secondary;
+    }
+
+  }
+
+  .form-submit,
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    color: white;
+    right: 0;
+    top: 0;
+    line-height: 38px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+	}
+
+  .search-icon {
+    line-height: 38px;
+    color: $brand-primary;
+    background: white;
+    speak: none;
+    pointer-events: none;
+    transition: 0.3s;
+
+    i {
+      line-height: 38px;
+      width: 38px;
+      height: 38px;
+    }
+
+  }
+
+}

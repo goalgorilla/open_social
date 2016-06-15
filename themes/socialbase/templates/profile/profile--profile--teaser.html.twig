@@ -1,0 +1,57 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="card card--teaser card-with-actionbar">
+    <a href="{{ profile_stream_url }}" class="card-image">
+      {% if content.field_profile_image %}
+          {{ content.field_profile_image }}
+      {% endif %}
+    </a>
+    <div class="card-body">
+        <h2 class="h3 card-title">
+            <a href="{{ profile_stream_url }}">
+                {{ profile_name|render }}
+            </a>
+        </h2>
+        {% if content.field_profile_function or content.field_profile_organization %}
+        <p class="text-grey-dark">
+          <i class="material-icons pull-left">business_center</i>
+          <span class="inline-center">
+            {{ content.field_profile_function }}
+            {% if content.field_profile_function and content.field_profile_organization %}
+              at
+            {% endif %}
+            {{ content.field_profile_organization }}
+          </span>
+        </p>
+        {% endif %}
+
+        <div class="card-actionbar">
+            {#@todo: replace contact url#}
+            <a href="{{ profile_contact_url }}" class="btn btn-flat pull-left btn-primary">
+                {% trans %}Contact me {% endtrans %}
+            </a>
+            <a href="{{ profile_stream_url }}" class="btn btn-flat pull-right">
+                {% trans %}View profile {% endtrans %}
+            </a>
+        </div>
+    </div>
+</div>
