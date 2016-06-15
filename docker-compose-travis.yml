@@ -55,7 +55,7 @@ services:
     volumes:
      - ./public_html/:/var/www/html
      - ./dev-scripts/:/root/dev-scripts
-     - ./behat/:/root/behat
+     - ./public_html/profiles/social/tests/behat/:/root/behat
      - ./docker_build/drupal8/travis/:/root/travis
     links:
      - web:web

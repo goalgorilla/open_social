@@ -22,6 +22,8 @@ function social_core_theme() {
         'hero_node' => NULL,
         'section_class' => NULL,
         'event_enrollment' => NULL,
+        'visibility_icon' => NULL,
+        'visibility_label' => NULL,
       ),
     ),
   );
@@ -74,6 +76,21 @@ function template_preprocess_page_hero_data(&$variables) {
     if ($node instanceof Drupal\node\Entity\Node) {
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+      }
+    }
+
+    // Content visibility
+    if((isset($node->field_content_visibility)) && !$account->isAnonymous()){
+      $content_visibility = reset($node->field_content_visibility->getValue());
+      switch ($content_visibility['value']) {
+        case 'community':
+          $variables['visibility_icon'] = 'group';
+          $variables['visibility_label'] = t('community');
+          break;
+        case 'public':
+          $variables['visibility_icon'] = 'public';
+          $variables['visibility_label'] = t('public');
+          break;
       }
     }
   }

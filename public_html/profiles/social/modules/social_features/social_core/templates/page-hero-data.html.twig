@@ -46,6 +46,15 @@
       <div class="col-xs-12 col-md-6 col-md-offset-3">
         {{ hero_node }}
 
+        {% if visibility_icon and  visibility_label %}
+          <div class="badge badge-gray-dark badge--toggle">
+            <label>
+              <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
+            </label>
+          </div>
+        {% endif %}
+
+        <div>
         {% if author_name and created_date_formatted %}
           {% if topic_type %}
             {% trans %}
@@ -69,6 +78,7 @@
             </div>
           {% endif %}
         {% endif %}
+        </div>
 
       </div>
 
