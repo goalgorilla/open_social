@@ -23,19 +23,22 @@ class ActivityRow extends EntityRow {
     $view_mode = $this->options['view_mode'];
 
     if ($result) {
+      // TODO: Move all this logic to a service.
+      // TODO: Change this to use dependency injection (see construct code below)
+      /** @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationManager */
+      $destination_plugin_manager = \Drupal::service('plugin.manager.activity_destination.processor');
+
       foreach ($result as $row) {
         $render_result = array();
         $render_result[] = $row;
         $entity = $row->_entity;
-        $target_entity_type = $entity->field_activity_entity->target_type;
 
-        // TODO: discriminate on view and / or destinations.
-        // Do not change the view mode if is for notifications.
-        if ($target_entity_type === 'post' && $this->options['view_mode'] !== 'notification') {
-          $this->options['view_mode'] = 'render_entity';
-        }
-        else {
-          $this->options['view_mode'] = $view_mode;
+        foreach ($entity->field_activity_destinations as $destination) {
+          /** @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationBase */
+          $plugin = $destination_plugin_manager->createInstance($destination->value);
+          if ($plugin->isActiveInView($this->view)) {
+            $this->options['view_mode'] = $plugin->getViewMode($view_mode, $entity);
+          }
         }
         $this->getEntityTranslationRenderer()->preRender($render_result);
       }

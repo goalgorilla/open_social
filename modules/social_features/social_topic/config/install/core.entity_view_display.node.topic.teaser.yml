@@ -12,12 +12,19 @@ dependencies:
     - node.type.topic
   module:
     - image
+    - options
     - user
 id: node.topic.teaser
 targetEntityType: node
 bundle: topic
 mode: teaser
 content:
+  field_content_visibility:
+    type: list_default
+    weight: 3
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
   field_topic_image:
     type: image
     weight: 0
@@ -39,5 +46,4 @@ content:
     third_party_settings: {  }
 hidden:
   body: true
-  field_content_visibility: true
   field_topic_comments: true
