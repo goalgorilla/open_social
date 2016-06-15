@@ -1,0 +1,42 @@
+.hidden {
+  display: none !important;
+}
+
+.hidden-mobile {
+  display: none;
+
+  @include MQ($small) {
+    display: initial;
+  }
+
+}
+
+.only-desktop {
+  display: none;
+
+  @include MQ($medium) {
+    display: inherit;
+  }
+
+}
+
+.hidden-tablet {
+  @include MQ($small) {
+      display: none;
+  }
+}
+
+.hidden-desktop {
+  @include MQ($medium){
+    display: none;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  word-wrap: normal;
+}

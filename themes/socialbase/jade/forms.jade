@@ -1,0 +1,344 @@
+- var pagetype = "styleguide"
+- var page = "Forms"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+        .row
+          .col-xs-12.col-sm-8.col-md-10
+            #input.section.scrollspy
+              p.caption Forms are the standard way to receive user inputted data. The transitions and smoothness of these elements are very important because of the inherent user interaction associated with forms.
+              
+              h2.header Input fields
+              p
+                :markdown
+                  Input fields allow user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have put a `.form-control` class on each input.
+                
+              .row
+                form.col-xs-12
+                  .row
+                    .col-xs-6
+                      .form-group
+                        label(for='first_name') First Name
+                        input#first_name.form-control(placeholder='Placeholder', type='text')
+                    .col-xs-6
+                      .form-group
+                        label(for='last_name') Last Name
+                        input#last_name.form-control(type='text')
+                  .form-group
+                    label(for='disabled') Disabled
+                    input#disabled.form-control(disabled='', value='I am not editable', type='text')
+                  .form-group
+                    label(for='password') Password
+                    input#password.form-control(type='password')
+                  .form-group
+                    label(for='email') Email
+                    input#email.form-control(type='email')
+              pre      
+                code.language-markup.
+                    <div class="form-group">
+                      <label for="first_name">First Name</label>
+                      <input id="first_name" type="text" class="form-control">
+                    </div>
+                  
+              
+            // Textarea Section
+            #textarea.section.scrollspy
+              h2.header Textarea
+              :markdown
+                Textareas allow larger expandable user input. The border should light up simply and clearly indicating which field the user is currently editing. You must have a `.form-control` class on the textarea element.
+                
+                If you want the textarea to autogrow you need to add `.materialize-textarea` to the element as well.  
+              p
+                strong Textareas will auto resize to the text inside.
+              form
+                .form-group
+                  label(for='textarea1') Textarea
+                  textarea#textarea1.form-control.materialize-textarea
+                    
+              pre
+                code.language-markup.
+                  <form>
+                    <div class="form-group">
+                      <label for="textarea1">Textarea</label>
+                      <textarea id="textarea1" class="form-control materialize-textarea"></textarea>         
+                    </div>
+                  </form>
+                
+              :markdown
+                **Advanced note**: When dynamically changing the value of a textarea with methods like jQuery's `.val()`, you must trigger an autoresize on it afterwords because `.val()` does not automatically trigger the events we've binded to the textarea.
+              
+              pre
+                code.language-javascript.
+                  $('#textarea1').val('New Text');
+                  $('#textarea1').trigger('autoresize');
+              
+            #select.section.scrollspy
+              h2.header Select
+              :markdown
+                Select allows user input through specified options. Make sure you add the class `.form-control` to the select element.
+              
+              .row
+                .col-sm-6
+                  .form-group
+                    label Select
+                    select.form-control
+                      option(value='', disabled='', selected='') Choose your option
+                      option(value='1') Option 1
+                      option(value='2') Option 2
+                      option(value='3') Option 3
+                  
+                      
+                      
+            #radio.section.scrollspy
+              h2.header Radio Buttons
+              p Radio Buttons are used when the user must make only one selection out of a group of items
+              .form-group
+                .radio
+                  input#test1(name='group1', type='radio', checked='')
+                  label(for='test1') Red
+                .radio
+                  input#test2(name='group1', type='radio')
+                  label(for='test2') Yellow
+                .radio
+                  input#test3.with-gap(name='group1', type='radio')
+                  label(for='test3') Green
+                .radio
+                  input#test4(name='group1', type='radio', disabled='disabled')
+                  label(for='test4') Brown
+              p Add radio buttons to a group by adding the name attribute along with the same corresponding value for each of the radio  buttons in the group. Create disabled radio buttons by adding the disabled attribute as shown below.
+              pre
+                code.language-markup.
+                  <div class="form-group">
+                    <div class="radio">
+                      <input name="group1" type="radio" id="test1" />
+                      <label for="test1">Red</label>
+                    </div>
+                    <div class="radio">
+                      <input name="group1" type="radio" id="test2" />
+                      <label for="test2">Yellow</label>
+                    </div>
+                    <div class="radio">
+                      <input class="with-gap" name="group1" type="radio" id="test3"  />
+                      <label for="test3">Green</label>
+                    </div>
+                    <div class="radio">
+                      <input name="group1" type="radio" id="test4" disabled="disabled" />
+                      <label for="test4">Brown</label>
+                    </div>
+                  </div>
+                
+              
+            // Checkboxes
+            #checkbox.section.scrollspy
+              h2.header Checkboxes
+              :markdown
+                Use checkboxes when looking for yes or no answers. The `for` attribute is necessary to bind the our custom checkbox with the input. Add the input's `id` as the value of the `for` attribute of the label.
+              .form-group
+                .checkbox
+                  input#test9(type='checkbox')
+                  label(for='test9') Default
+                .checkbox
+                  input#test6(type='checkbox', checked)
+                  label(for='test6') Default checked
+                .checkbox
+                  input#test7(type='checkbox', disabled='disabled')
+                  label(for='test7') Disabled 
+                .checkbox
+                  input#test8(type='checkbox', checked, disabled='disabled')
+                  label(for='test8') Disabled checked
+              pre
+                code.language-markup.
+
+                  <div class="form-group">
+                    <div class="checkbox">
+                      <input type="checkbox" id="test5" />
+                      <label for="test5">Red</label>
+                    </div>
+                    <div class="checkbox">
+                      <input type="checkbox" id="test6" checked />
+                      <label for="test6">Yellow</label>
+                    </div>
+                    <div class="checkbox">
+                      <input type="checkbox" id="test7" checked disabled="disabled" />
+                      <label for="test7">Green</label>
+                    </div>
+                    <div class="checkbox">
+                      <input type="checkbox" id="test8" disabled="disabled" />
+                      <label for="test8">Brown</label>
+                    </div>
+                  </div>
+            // Switches
+            #switches.section.scrollspy
+              h2.header Switches
+              form(action='#')
+                p
+                  .switch
+                    label
+                      | Off
+                      input(checked='', type='checkbox')
+                      span.lever
+                      | On
+                p
+                  .switch
+                    label
+                      | Off
+                      input(disabled='', type='checkbox')
+                      span.lever
+                      | On
+              pre
+                code.language-markup.
+                  <!-- Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+
+                  <!-- Disabled Switch -->
+                  <div class="switch">
+                    <label>
+                      Off
+                      <input disabled type="checkbox">
+                      <span class="lever"></span>
+                      On
+                    </label>
+                  </div>
+                  
+            #file.section.scrollspy
+              h2.header File Input
+              p If you want to style an input button with a path input we provide this structure.
+              .form-group.form__type-managed-file
+                label File input label
+                .image-widget.form-managed-file.clearfix
+                  input.form-control(type='file')
+                  .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              pre
+                code.language-markup.
+                  <div class="form-group form__type-managed-file">
+                    <label>File input label</label>
+                    <div class="image-widget form-managed-file clearfix">
+                      <input type="file" class="form-control">
+                      <div class="help-block">One file only - 2 MB limit - Allowed types: png gif jpg jpeg</div>
+                    </div>
+                  </div>
+                
+              :markdown
+                You can also use the `multiple` attribute to allow multiple file uploads.
+              
+                
+            #range.section.scrollspy
+              h2.header Range
+              :markdown
+                Add a range slider for values with a wide range. This one is set to be a number between 0 and 100. We have two different types of sliders. nouiSlider is a 3rd party plugin which we've modified. To use the noUiSlider, you will have to manually link the `nouislider.css` and `nouislider.js` files located in the extras folder.
+              h4 noUiSlider
+              p See noUiSlider's official documentation 
+                a.social-blue-text(href='http://refreshless.com/nouislider/') here
+                |  to see a variety of slider options
+              #range-input
+              br
+              pre
+                code.language-javascript.
+                  var slider = document.getElementById('test5');
+                  noUiSlider.create(slider, {
+                   start: [20, 80],
+                   connect: true,
+                   step: 1,
+                   range: {
+                     'min': 0,
+                     'max': 100
+                   },
+                   format: wNumb({
+                     decimals: 0
+                   })
+                  });
+                  
+              h4 HTML5 Range
+              form(action='#')
+                p.range-field
+                  input(type='range', name='points', min='0', max='100')
+              pre
+                code.language-markup.
+                  <form action="#">
+                    <p class="range-field">
+                      <input type="range" id="test5" min="0" max="100" />
+                    </p>
+                  </form>
+                  
+            #date-picker.section.scrollspy
+              h2.header Date Picker
+              p We use a modified version of pickadate.js to create a materialized date picker. Test it out below!
+              label(for='birthdate') Birthdate
+              input#birthdate.datepicker.form-control(type='text')
+              pre
+                code.language-markup.
+                  <input type="date" class="form-control datepicker">
+                  
+              h4 Initialization
+              p At this time, not all pickadate.js options are working with our implementation
+              
+              pre
+                code.language-javascript.
+                  $('.datepicker').pickadate({
+                    selectMonths: true, // Creates a dropdown to control month
+                    selectYears: 15 // Creates a dropdown of 15 years to control year
+                  });
+        
+                
+          .col-sm-4.col-md-2.hidden-xs
+            .toc-wrapper
+              ul.section.table-of-contents
+                li
+                  a(href='#input') Input Fields
+                li
+                  a(href='#textarea') Textareas
+                li
+                  a(href='#select') Select
+                li
+                  a(href='#radio') Radio Buttons
+                li
+                  a(href='#checkbox') Checkboxes
+                li
+                  a(href='#switches') Switches
+                li
+                  a(href='#file') File Input Button
+                li
+                  a(href='#range') Range
+                li
+                  a(href='#date-picker') Date picker
+                
+
+  
+    include ./layout/_scripts.jade
+    script(src="libs/date_picker/picker.js")
+    script(src="libs/date_picker/picker.date.js")
+    link(href='libs/noUiSlider/nouislider.css', rel='stylesheet')
+    script(src="libs/noUiSlider/nouislider.js")
+    script(type='text/javascript').
+      var slider = document.getElementById('range-input');
+      noUiSlider.create(slider, {
+       start: [20, 80],
+       connect: true,
+       step: 1,
+       range: {
+         'min': 0,
+         'max': 100
+       },
+       format: wNumb({
+         decimals: 0
+       })
+      });
+      (function($){
+        $('.datepicker').pickadate({selectYears: 20});
+      })(jQuery); // end of jQuery name space

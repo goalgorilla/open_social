@@ -1,0 +1,17 @@
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
+    else
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Claire Davis
+      else
+        a(href="other-stream.html") Claire Davis
+      br
+      .text-gray-light 3 hours ago
+
+.margin-top-s Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. 

@@ -1,0 +1,16 @@
+- var pagetype = "styleguide"
+- var page = "Waves"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+    block content
+  
+    include ./layout/_scripts.jade
