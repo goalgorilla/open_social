@@ -9,3 +9,7 @@ services:
   plugin.manager.activity_destination.processor:
     class: Drupal\activity_creator\Plugin\ActivityDestinationManager
     parent: default_plugin_manager
+#  activity_creator.mark_notifications_as_read:
+#    class: Drupal\activity_creator\EventSubscriber\MarkNotificationsAsRead
+#    tags:
+#      - { name: event_subscriber }
