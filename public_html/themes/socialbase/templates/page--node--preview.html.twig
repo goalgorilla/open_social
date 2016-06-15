@@ -62,7 +62,7 @@
   <div class="container hero-container">
     <div class="cover">
       <div class="cover-wrap">
-        {{ page.hero }}
+        <h1 class="page-title">{{ plain_title }}</h1>
       </div>
     </div>
   </div>
@@ -72,11 +72,12 @@
     <div class="row margin-top-l">
 
       <div class="col-xs-12 col-sm-8">
-        <div class="card">
+        {{ page.content }}
+        {#<div class="card">
           <div class="card-body extra-padding">
             {{ page.content }}
           </div>
-        </div>
+        </div>#}
       </div>
 
     </div>
