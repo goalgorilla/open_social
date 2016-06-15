@@ -11,9 +11,9 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 /**
  * Provides a 'NotificationsActivityDestination' acitivy destination.
  *
- * @ActivityContext(
+ * @ActivityDestination(
  *  id = "notifications",
- *  label = @Translation("notifications activity "),
+ *  label = @Translation("Notifications"),
  * )
  */
 class NotificationsActivityDestination extends ActivityDestinationBase {

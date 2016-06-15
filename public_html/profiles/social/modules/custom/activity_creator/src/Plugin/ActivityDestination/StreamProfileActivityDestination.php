@@ -11,9 +11,9 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 /**
  * Provides a 'StreamProfileActivityDestination' acitivy destination.
  *
- * @ActivityContext(
+ * @ActivityDestination(
  *  id = "stream_profile",
- *  label = @Translation("Stream profile activity "),
+ *  label = @Translation("Stream (profile)"),
  * )
  */
 class StreamProfileActivityDestination extends ActivityDestinationBase {

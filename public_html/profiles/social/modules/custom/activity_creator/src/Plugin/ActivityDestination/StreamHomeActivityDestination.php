@@ -11,9 +11,9 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 /**
  * Provides a 'StreamHomeActivityDestination' acitivy destination.
  *
- * @ActivityContext(
+ * @ActivityDestination(
  *  id = "stream_home",
- *  label = @Translation("Stream homepage activity "),
+ *  label = @Translation("Stream (home)"),
  * )
  */
 class StreamHomeActivityDestination extends ActivityDestinationBase {

@@ -35,7 +35,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
   $message_type = $form_state->getFormObject()->getEntity();
 
   $activity_recipient_manager = \Drupal::service('plugin.manager.activity_context.processor');
-  $options = $activity_recipient_manager->getOptionsList();
+  $context_options = $activity_recipient_manager->getOptionsList();
 
   $form['activity_context'] = array(
     '#type' => 'select',
@@ -43,8 +43,12 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#title' => t('The activity context for this message'),
     '#description' => t('Select a context where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL),
-    '#options' => $options,
+    '#options' => $context_options,
   );
+
+  $activity_recipient_manager = \Drupal::service('plugin.manager.activity_destination.processor');
+  $destination_options = $activity_recipient_manager->getOptionsList();
+
 
   $form['activity_destinations'] = array(
     '#type' => 'select',
@@ -54,13 +58,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#description' => t('Select destinations where to display this message.'),
     '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
     // @TODO activity_creator allowed_values function overlap (should be plugin)
-    '#options' => array(
-      'stream_profile' => 'Stream (profile)',
-      'stream_home' => 'Stream (home)',
-      'stream_group' => 'Stream (group)',
-      'stream_explore' => 'Stream (explore)',
-      'notifications' => 'Notifications',
-    ),
+    '#options' => $destination_options,
   );
 
   $form['activity_create_direct'] = array(

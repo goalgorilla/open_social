@@ -7,6 +7,7 @@
 
 namespace Drupal\activity_creator\Plugin;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -34,4 +35,18 @@ class ActivityDestinationManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'activity_creator_activity_destination_plugins');
   }
 
+  /**
+   * Retrieves an options list of available trackers.
+   *
+   * @return string[]
+   *   An associative array mapping the IDs of all available tracker plugins to
+   *   their labels.
+   */
+  public function getOptionsList() {
+    $options = array();
+    foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
+      $options[$plugin_id] = Html::escape($plugin_definition['label']);
+    }
+    return $options;
+  }
 }
