@@ -134,13 +134,22 @@ strong {
   margin-bottom: 30px;
 }
 
-ul,
-ol {
-  padding-left: 24px;
+ol, ul {
+  padding-left: 1.5em;
+
+  .popover &:last-child {
+    margin-bottom: 0;
+  }
+	
 }
 
 ol {
   list-style-position: outside;
+}
+
+// override bootstrap default
+code {
+  border-radius: 2px;
 }
 
 .section-title {
