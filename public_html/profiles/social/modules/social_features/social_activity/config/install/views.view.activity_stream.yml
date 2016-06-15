@@ -287,10 +287,97 @@ display:
           plugin_id: entity
       defaults:
         header: false
+        title: false
+        filters: false
+        filter_groups: false
+      title: 'Explore Stream'
+      filters:
+        activity_visibility_access_filter:
+          id: activity_visibility_access_filter
+          table: activity
+          field: activity_visibility_access_filter
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          plugin_id: activity_visibility_access
+        field_activity_destinations_value:
+          id: field_activity_destinations_value
+          table: activity__field_activity_destinations
+          field: field_activity_destinations_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            stream_explore: stream_explore
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          plugin_id: list_field
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_interface'
         - url.query_args
-        - user.permissions
-      tags: {  }
+      tags:
+        - 'config:core.entity_view_display.activity.activity.default'
+        - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.render_entity'
