@@ -63,15 +63,23 @@ class AccountHeaderBlock extends BlockBase {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
         $notifications = \Drupal::service('renderer')->render($notifications_view);
 
+        $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+        $num_notifications = count($account_notifications->getNotifications($account));
+
+        $notifications_icon_label = 'notifications';
+        if ($num_notifications === 0) {
+          $notifications_icon_label = 'notifications_none';
+        }
+
         $links['notifications'] = array(
-          'classes' => '',
+          'classes' => 'dropdown',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle',
           'icon_classes' => '',
           // the following changes based on whether the user has notifications or not
-          'icon_label' => 'notifications_none',
-          'label' => 'Notifications',
-          'label_classes' => 'hidden',
+          'icon_label' => $notifications_icon_label,
+          'label' => $num_notifications,
+          'label_classes' => 'badge',
           'url' => Url::fromRoute('<front>'),
           'below' => $notifications,
         );
