@@ -93,6 +93,13 @@
 
       {#TODO: Use content.links here and fix the theming#}
       <div class="card-actionbar">
+        {% if visibility_icon and  visibility_label %}
+        <div class="badge badge-gray-lighter badge--toggle">
+          <label>
+            <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
+          </label>
+        </div>
+        {% endif %}
           {{ content.links }}
       </div>
     </div>
