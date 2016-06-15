@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default theme implementation to display a node.
+ * Theme override to display a node.
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
@@ -61,46 +61,21 @@
  * @todo Remove the id attribute (or make it a class), because if that gets
  *   rendered twice on a page this is invalid CSS for example: two lists
  *   in different view modes.
- *
- * @ingroup themeable
  */
 #}
-<div class="card card--teaser card-with-actionbar">
-  <div class='card-image blue-overlay'>
-    {{ content.field_topic_image }}
-    <img src="/themes/socialbase/images/icon-topic.svg" alt="" class="teaser-type">
+{%
+  set classes = [
+    node.bundle|clean_class,
+    view_mode ? view_mode|clean_class,
+    'clearfix',
+  ]
+%}
+<article{{ attributes.addClass('card') }}>
+
+  <div{{ content_attributes.addClass('card-body extra-padding') }}>
+    {{ content.body }}
   </div>
-    <div class="card-body">
-      {{ title_prefix }}
-      {% if not page %}
-          <h4{{ title_attributes }} class="card-title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-          </h4>
-      {% endif %}
-      {{ title_suffix }}
-      <p class="text-grey-dark">
-        <span> {{ author_name }} </span>
-        {# Todo: fix date format #}
-        &bullet; {{ date }}
-      </p>
-      <p>
-        <i class="material-icons">label</i>
-        <span class="inline-center">
-          {{ content.field_topic_type }}
-        </span>
-      </p>
 
+</article>
 
-      {#TODO: Use content.links here and fix the theming#}
-      <div class="card-actionbar">
-        {% if visibility_icon and  visibility_label %}
-        <div class="badge badge-gray-lighter badge--toggle">
-          <label>
-            <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
-          </label>
-        </div>
-        {% endif %}
-          {{ content.links }}
-      </div>
-    </div>
-</div>
+{{ content|without('body') }}
