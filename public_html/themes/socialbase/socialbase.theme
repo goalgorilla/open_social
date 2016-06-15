@@ -325,6 +325,14 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
+  // Add templates for post add/edit forms.
+  if ($variables['element']['#form_id'] == 'social_post_entity_form') {
+    if(\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form'){
+      $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
+    } else {
+      $suggestions[] = $variables['theme_hook_original'] . '__post_add';
+    }
+  }
 }
 
 /**
