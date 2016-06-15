@@ -55,4 +55,21 @@ function template_preprocess_activity(array &$variables) {
 
   $full_url = $activity->getRelatedEntityUrl();
   $variables['full_url'] = $full_url;
+
+  $status = $activity->get('field_activity_status')->getValue();
+
+  switch ($status['0']['value']) {
+    case ACTIVITY_STATUS_READ:
+      $status_class = 'bg-white';
+      break;
+
+    default:
+      $status_class = 'bg-gray-lightest';
+      break;
+  }
+
+  if (isset($status_class)) {
+    $variables['status_class'] = $status_class;
+  }
+
 }
