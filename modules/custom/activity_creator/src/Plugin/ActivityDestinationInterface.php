@@ -14,6 +14,14 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface ActivityDestinationInterface extends PluginInspectionInterface {
 
-  // Add get/set methods for your plugin type here.
+  /**
+   * Returns a view mode for the entity
+   */
+  public function getViewMode($original_view_mode, $entity);
+
+  /**
+   * True or false if the activity destination is set.
+   */
+  public function isActiveInView($view);
 
 }
