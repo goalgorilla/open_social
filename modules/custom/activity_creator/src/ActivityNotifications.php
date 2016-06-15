@@ -46,7 +46,6 @@ class ActivityNotifications extends ControllerBase {
     return entity_load_multiple('activity', $ids);
   }
 
-
   /**
    * Returns the Activity objects with destination 'notification' for account.
    *
@@ -61,6 +60,46 @@ class ActivityNotifications extends ControllerBase {
     return $activity->save();
   }
 
+  /**
+   * Returns the Activity objects with destination 'notification' for account.
+   *
+   * @param \Drupal\activity_creator\Entity\Activity $activity
+   * @return int
+   *   Number of remaining notifications.
+   */
+  public function markAllNotificationsAsSeen(AccountInterface $account) {
+
+    // Retrieve all the activities referring this entity for this account.
+    $ids = $this->getNotificationIds($account, $status = array(ACTIVITY_STATUS_RECEIVED));
+
+    foreach ($ids as $activity_id) {
+      $activity = Activity::load($activity_id);
+      $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_SEEN);
+    }
+
+    $remaining_notifications = 0;
+    return $remaining_notifications;
+  }
+
+  /**
+   * Returns the Activity objects with destination 'notification' for account.
+   *
+   * @param \Drupal\activity_creator\Entity\Activity $activity
+   * @param array $status
+   *   see: activity_creator_field_activity_status_allowed_values()
+   */
+  public function markEntityNotificationsAsRead(AccountInterface $account, Entity $entity) {
+
+    // Retrieve all the activities referring this entity for this account.
+    $ids = $this->getNotificationIds($account, array(ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN), $entity);
+
+    foreach ($ids as $activity_id) {
+      $activity = Activity::load($activity_id);
+      $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
+    }
+
+  }
+  
   /**
    * Returns the Activity objects with destination 'notification' for account.
    *

@@ -188,6 +188,6 @@ function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityI
   if ($view_mode === 'full') {
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
-    \Drupal::service('activity_creator.activity_notifications')->markEntityAsRead($account, $entity);
+    \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
   }
 }
