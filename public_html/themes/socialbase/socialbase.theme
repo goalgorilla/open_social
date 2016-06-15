@@ -38,7 +38,6 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title'] = '';
   $form['actions']['submit']['#button_type'] = 'primary';
-  dpm($form);
 }
 
 /**
