@@ -11,9 +11,9 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 /**
  * Provides a 'StreamExploreActivityDestination' acitivy destination.
  *
- * @ActivityContext(
+ * @ActivityDestination(
  *  id = "stream_explore",
- *  label = @Translation("Stream explore activity "),
+ *  label = @Translation("Stream (explore)"),
  * )
  */
 class StreamExploreActivityDestination extends ActivityDestinationBase {

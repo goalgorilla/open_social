@@ -11,9 +11,9 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 /**
  * Provides a 'StreamGroupActivityDestination' acitivy destination.
  *
- * @ActivityContext(
+ * @ActivityDestination(
  *  id = "stream_group",
- *  label = @Translation("Stream group activity "),
+ *  label = @Translation("Stream (group)"),
  * )
  */
 class StreamGroupActivityDestination extends ActivityDestinationBase {
