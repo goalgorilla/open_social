@@ -1,4 +1,3 @@
-
 <?php
 /**
  * MarkNotificationsAsRead event subscriber.
@@ -17,6 +16,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
  * Subscribe to KernelEvents::REQUEST events and mark notifications as read.
  */
 class MarkNotificationsAsRead implements EventSubscriberInterface {
+
   /**
    * {@inheritdoc}
    */
@@ -32,9 +32,8 @@ class MarkNotificationsAsRead implements EventSubscriberInterface {
    * @param GetResponseEvent $event
    */
   public function markNotificationsAsRead(GetResponseEvent $event) {
-    if ($event) {
-      $account = \Drupal::currentUser();
-      
-    }
+    // TODO Mark notifications for current user as read if we are on entity page
+    // $request = $event->getRequest();
+    // $account = \Drupal::currentUser();
   }
 }
