@@ -14,6 +14,23 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class ActivityDestinationBase extends PluginBase implements ActivityDestinationInterface {
 
-  // Add common methods and abstract methods for your plugin type here.
+  /**
+   * {@inheritdoc}
+   */
+  public function getViewMode($original_view_mode, $entity) {
+    return $original_view_mode;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isActiveInView($view) {
+    if (isset($view->filter['field_activity_destinations_value']->value[$this->pluginId])) {
+      if ($view->filter['field_activity_destinations_value']->value[$this->pluginId] === $this->pluginId) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
 
 }
