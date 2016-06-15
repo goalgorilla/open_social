@@ -4,6 +4,13 @@
  */
 
 /**
+ * Activity statuses.
+ */
+const ACTIVITY_STATUS_RECEIVED = 1;
+const ACTIVITY_STATUS_SEEN = 2;
+const ACTIVITY_STATUS_READ = 3;
+
+/**
  * Returns the allowed values for the activity status field.
  *
  * @return array $allowed_values
@@ -11,9 +18,9 @@
 function activity_creator_field_activity_status_allowed_values() {
 
   $allowed_values = [
-    1 => 'Received',
-    2 => 'Seen',
-    3 => 'Read',
+    ACTIVITY_STATUS_RECEIVED => 'Received',
+    ACTIVITY_STATUS_SEEN => 'Seen',
+    ACTIVITY_STATUS_READ => 'Read',
   ];
 
   return $allowed_values;
@@ -167,4 +174,20 @@ function activity_creator_theme_suggestions_activity(array $variables) {
   $suggestions[] = 'activity__' . $activity->id() . '__' . $sanitized_view_mode;
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_view().
+ *
+ * Mark notifications as read.
+ *
+ * TODO: Maybe this should be an event subscriber service
+ */
+function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  // TODO WIll this work with caching?
+  if ($view_mode === 'full') {
+    $account = \Drupal::currentUser();
+    // @TODO Check if this entity is even specified in ActivityLoggerFactory
+    \Drupal::service('activity_creator.activity_notifications')->markEntityAsRead($account, $entity);
+  }
 }
