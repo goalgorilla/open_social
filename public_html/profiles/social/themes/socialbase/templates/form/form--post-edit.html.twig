@@ -12,6 +12,25 @@
  * @ingroup themeable
  */
 #}
-<form{{ attributes }}>
-  {{ children }}
-</form>
+<div class="card card-body ">
+  <div class="media">
+    <div class="media-left">
+      picture
+    </div>
+    <div class="media-body">
+      <h5 class="media-heading">
+        user id
+        <small>date</small>
+      </h5>
+    </div>
+  </div>
+  <div class="margin-top-s">
+    <form{{ attributes }}>
+      {{ children }}
+    </form>
+  </div>
+  {% if content.links %}
+    {{ content.links }}
+  {% endif %}
+</div>
+</div>
