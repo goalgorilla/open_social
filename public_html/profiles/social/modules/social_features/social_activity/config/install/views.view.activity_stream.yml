@@ -5,6 +5,7 @@ dependencies:
     - block.block.postblock
   module:
     - activity_creator
+    - node
     - options
 id: activity_stream
 label: 'Activity Stream'
@@ -197,6 +198,42 @@ display:
             group_items: {  }
           reduce_duplicates: false
           plugin_id: list_field
+        nid:
+          id: nid
+          table: node_access
+          field: nid
+          relationship: node__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: node_access
       sorts:
         created:
           id: created
@@ -232,15 +269,29 @@ display:
         header: false
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        node__field_activity_entity:
+          id: node__field_activity_entity
+          table: activity__field_activity_entity
+          field: node__field_activity_entity
+          relationship: none
+          group_type: group
+          admin_label: 'field_activity_entity: Content'
+          required: false
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
       css_class: stream
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_interface'
         - url.query_args
+        - 'user.node_grants:view'
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
@@ -258,6 +309,7 @@ display:
       contexts:
         - 'languages:language_interface'
         - url.query_args
+        - 'user.node_grants:view'
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
