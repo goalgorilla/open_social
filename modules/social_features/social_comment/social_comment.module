@@ -28,6 +28,12 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   }
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
+
+  // The reply to comment form should be different from default comment form.
+  if(\Drupal::routeMatch()->getRouteName() === 'comment.reply'){
+    $form['actions']['submit']['#value'] = t('Reply');
+    $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
+  }
 }
 
 /**
@@ -64,7 +70,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
   $bundle = $entity->bundle();
   switch ($bundle) {
     default:
-      if (!empty($entity->getParentComment())) {
+      if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
         unset($links['comment']['#links']['comment-reply']);
       }
       break;
