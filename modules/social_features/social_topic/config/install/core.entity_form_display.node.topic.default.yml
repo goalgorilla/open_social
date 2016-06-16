@@ -1,3 +1,4 @@
+uuid: f2670aaa-4cb0-4573-bdf0-bc52d90c44cb
 langcode: en
 status: true
 dependencies:
@@ -35,7 +36,7 @@ third_party_settings:
       children:
         - body
       parent_name: ''
-      weight: 1
+      weight: 3
       label: 'Topic description'
       format_type: fieldset
       format_settings:
@@ -43,6 +44,20 @@ third_party_settings:
         required_fields: true
         id: description
         classes: 'card card-underline scrollspy'
+    group_topic_visibility:
+      children:
+        - field_content_visibility
+      parent_name: ''
+      weight: 1
+      label: Visibility
+      format_type: fieldset
+      format_settings:
+        label: Visibility
+        required_fields: true
+        id: visibility
+        classes: 'card card-underline scrollspy'
+_core:
+  default_config_hash: fKqachrA6TE3ackEC_JwqTY0_vR8w-aGMD1F5v1sFmo
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -58,21 +73,21 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 5
     settings: {  }
     third_party_settings: {  }
   field_content_visibility:
-    weight: 26
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
   field_topic_comments:
-    weight: 7
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     type: comment_default
   field_topic_image:
-    weight: 6
+    weight: 4
     settings:
       progress_indicator: throbber
       preview_image_style: social_x_large
@@ -85,19 +100,19 @@ content:
     type: options_buttons
   path:
     type: path
-    weight: 8
+    weight: 7
     settings: {  }
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 4
+    weight: 3
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
