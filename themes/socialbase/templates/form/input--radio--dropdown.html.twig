@@ -29,7 +29,7 @@
     {% endif %}
 
     {% block input %}
-        <input{{ attributes.setAttribute('onClick', 'showMe(\'post-visibility\', this);').addClass('invisible') }} />
+        <input{{ attributes.addClass('invisible') }} />
     {% endblock %}
 
     {% if suffix %}
