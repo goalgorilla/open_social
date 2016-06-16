@@ -8,7 +8,6 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\message\MessageTypeInterface;
-use Drupal\message\Entity\Message;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -94,42 +93,17 @@ function activity_logger_entity_insert(EntityInterface $entity) {
   if (! $entity instanceof \Drupal\Core\Entity\ContentEntityInterface) {
     return;
   }
+  // For nodes we make an exception, since they are potentially placed in
+  // groups, which we cannot know here yet.
+  elseif ($entity instanceof \Drupal\node\Entity\Node) {
+    $data['entity'] = $entity;
+    $queue = \Drupal::queue('activity_logger_message');
+    $queue->createItem($data);
+    return;
+  }
 
   // Get the services we need here.
   $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
-  $contextGetter = \Drupal::service('activity_logger.context_getter');
-
-  // Get all messages that are responsible for creating items.
-  $message_types = $activityLoggerFactory->getMessageTypes('create', $entity);
-  // Loop through those message types and create messages.
-  foreach ($message_types as $message_type => $message_values) {
-    // Create the ones applicable for this bundle.
-    if ($message_values['bundle'] === $entity->bundle()) {
-
-      // Determine destinations.
-      $destinations = [];
-      if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
-        foreach ($message_values['destinations'] as $destination) {
-          $destinations[] = array('value' => $destination);
-        }
-      }
-
-      // Get context
-      $context = $contextGetter->getContext($entity);
-
-      // Set the values.
-      $new_message['type'] = $message_type;
-      $new_message['uid'] = $entity->getOwner()->id();
-      $new_message['field_message_context'] = $context;
-      $new_message['field_message_destination'] = $destinations;
-      $new_message['field_message_related_object'] = [
-        'target_type' => $entity->getEntityTypeId(),
-        'target_id' => $entity->id(),
-      ];
-
-      // Create the message
-      $message = Message::create($new_message);
-      $message->save();
-    }
-  }
+  // Create messages for all other types of content.
+  $activityLoggerFactory->createMessages($entity, 'create');
 }
