@@ -15,7 +15,7 @@ Feature: See Comment
     When I click "Reply"
     And I fill in the following:
       | Add a reply | This is a reply comment |
-    And I press "Comment"
+    And I press "Reply"
     And I should see "This is a reply comment"
     When I fill in the following:
       | Add a comment | This is a second comment |
