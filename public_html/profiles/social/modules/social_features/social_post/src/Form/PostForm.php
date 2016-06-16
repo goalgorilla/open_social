@@ -56,6 +56,13 @@ class PostForm extends ContentEntityForm {
       }
     }
 
+    // Do some alterations on this form.
+    if ($this->operation == 'edit') {
+      /** @var \Drupal\social_post\Entity\Post $post */
+      $post = $this->entity;
+      $form['#post_id'] = $post->id();
+    }
+
     return $form;
   }
 
