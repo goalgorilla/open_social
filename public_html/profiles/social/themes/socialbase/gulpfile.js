@@ -35,8 +35,8 @@ var folder = {
   js: 'js',
   js_comp: 'js/components',
   js_materialize: 'js/materialize',
-  js_vendor: '../../core/assets/vendor',
-  js_drupal: '../../core',
+  js_vendor: '../../../../core/assets/vendor',
+  js_drupal: '../../../../core',
   jade: 'jade',
   dist: 'dist'
 }

@@ -45,9 +45,7 @@
             span.badge--toggle__label community
       a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
 
-.card-nested-section
-  
-  .text-center
-    if user != "isAnonymous"
-      a.btn.btn-link(href='event.html#comment-form') Comment
-    a.btn.btn-link.disabled 0 comments
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='event.html#comment-form') Comment
+  hr.ruler-xs
+  a.btn.btn-block.btn-link.disabled 0 comments
