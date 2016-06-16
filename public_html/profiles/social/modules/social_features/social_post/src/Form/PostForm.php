@@ -29,6 +29,7 @@ class PostForm extends ContentEntityForm {
     // Retrieve the form display before it is overwritten in the parent.
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
+    $form['#attached']['library'][] = 'social_post/visibility-settings';
     if (isset($display)) {
       $this->setFormDisplay($display, $form_state);
     }
