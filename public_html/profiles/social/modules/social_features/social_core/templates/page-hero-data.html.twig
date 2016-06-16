@@ -18,7 +18,11 @@
  * - hero_node
  */
 #}
+{% if hero_styled_image_url %}
+<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+{% else %}
 <div class="cover">
+{% endif %}
 {% if hero_node or topic_type %}
 
 {% if node_edit_url %}
