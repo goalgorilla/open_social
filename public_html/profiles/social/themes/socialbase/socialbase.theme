@@ -6,6 +6,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -391,6 +393,10 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   if (!empty($views_display->display['id']) && $views_display->display['id'] == 'view_enrollments') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'page';
   }
+
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream';
+  }
 }
 
 /**
@@ -440,6 +446,8 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_group_description':
     case 'field_topic_image':
     case 'field_comment_body':
+    case 'field_activity_output_text':
+    case 'field_activity_entity':
       $variables['bare'] = TRUE;
       break;
   }
@@ -450,6 +458,31 @@ function socialbase_preprocess_field(&$variables) {
       $variables['bare'] = TRUE;
       break;
   }
+
+  switch ($variables['element']['#formatter']) {
+    case 'comment_default':
+      $variables['node'] = TRUE;
+      break;
+    case 'comment_node':
+      $variables['stream'] = TRUE;
+      break;
+  }
+
+  if ($variables['element']['#formatter'] == 'comment_node') {
+    $node = $variables['element']['#object'];
+    $link_options = array(
+      'fragment' => 'comment-form',
+      'attributes' => array(
+        'class' => array(
+          'btn btn-block btn-link',
+        ),
+      ),
+    );
+
+    $urlwithoptions = $node->toUrl('canonical', $link_options);
+    $variables['nodelink'] = Link::fromTextAndUrl('Comment', $urlwithoptions);
+  }
+  
 }
 
 /**
@@ -693,6 +726,17 @@ function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array 
 
   if ($variables['element']['#parents'][0] == 'field_post') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'autogrow_full';
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_field_alter().
+ */
+function socialbase_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+
+  if (!empty($variables['node']) && $variables['node'] == TRUE) {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
   }
 
 }

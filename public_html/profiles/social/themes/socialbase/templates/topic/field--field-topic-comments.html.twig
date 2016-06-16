@@ -26,7 +26,30 @@
  * @see comment_preprocess_field()
  */
 #}
-<section{{ attributes }}>
+
+{% if node %}
+
+  {% if comments and not label_hidden %}
+    {{ title_prefix }}
+    <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+    {{ title_suffix }}
+  {% endif %}
+
+  <div class="card">
+    <div class="card-body extra-padding">
+
+      {{ comments }}
+
+      {% if comment_form %}
+        {{ comment_form }}
+      {% endif %}
+
+    </div>
+  </div>
+
+{% else %}
+
+    {{nodelink}}
 
     {% if comments and not label_hidden %}
         {{ title_prefix }}
@@ -38,12 +61,26 @@
         {{ comment_form }}
     {% endif %}
 
-    {{ comments }}
+    <div class="visible-xs-block">
+      <hr class="ruler-sm">
+      <div class="btn btn-block btn-link">
+        {{ more_link }}
+      </div>
+    </div>
 
-    {% if more_link %}
+    <div class="hidden-xs card-nested-section">
+
+      {{ comments }}
+
+      {% if more_link %}
         <div class="margin-top-l text-center">
+          <div class="btn btn-block btn-link">
             {{ more_link }}
+          </div>
         </div>
-    {% endif %}
+      {% endif %}
 
-</section>
+    </div>
+
+
+{% endif %}

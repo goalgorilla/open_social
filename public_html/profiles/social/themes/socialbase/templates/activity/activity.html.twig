@@ -15,15 +15,43 @@
  * @ingroup themeable
  */
 #}
-<div{{ attributes.addClass('media') }}>
-  <div class="media-left">
-    {% if actor %}
-      {{- actor -}}
-    {% endif %}
+
+<li {{ attributes.addClass('stream-item') }}>
+
+  <i class="stream-icon"></i>
+
+  <div class="card stream-card">
+
+    <div class="card-body">
+
+      <div class="media">
+
+        <div class="media-left">
+          {% if actor %}
+            {{- actor -}}
+          {% endif %}
+        </div>
+
+        <div class="media-body">
+          <div class="media-heading text-m">
+            {% if content.field_activity_output_text %}
+              {{- content.field_activity_output_text -}}
+            {% endif %}
+
+            <div class="text-gray-lighter"> {{ date }}</div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {% if content.field_activity_entity %}
+        {{- content.field_activity_entity -}}
+      {% endif %}
+
+    </div>
+
   </div>
-  <div class="media-body">
-    {% if content %}
-      {{- content -}}
-    {% endif %}
-  </div>
-</div>
+
+
+</li>
