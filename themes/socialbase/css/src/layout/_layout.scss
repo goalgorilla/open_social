@@ -28,6 +28,10 @@
   float: none;
 }
 
+.align-center {
+  align-self: center;
+}
+
 .section {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -40,5 +44,12 @@
   }
   &.no-pad-top {
     padding-top: 0;
+  }
+}
+
+@include MQ($small) {
+  .margin-top-sidebar {
+    // line-height * section-title font size + padding top + padding bottom
+    margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
   }
 }

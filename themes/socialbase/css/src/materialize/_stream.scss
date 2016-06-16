@@ -55,6 +55,7 @@
 
 .stream-card {
   margin: 0 0 $card-padding $card-padding;
+  font-size: 0.875rem;
 
   @include MQ($small) {
     margin-left: (2 * $card-padding)
@@ -93,7 +94,46 @@
     }
   }
 
-  .btn-link {
-    padding: 6px;
+  > .card-body {
+    padding: 15px;
+
+    > .card-nested-section {
+      margin: 10px -15px -15px;
+      padding: 15px;
+    }
   }
+
+  .media {
+    margin-top: 15px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+}
+
+
+.card--teaser-stream {
+  margin: 10px -15px 10px;
+  background: $gray-lighter;
+
+  @include MQ($small) {
+    height: 200px; // matches width of image
+  }
+
+  .card-image {
+
+    @include MQ($small) {
+      height: 200px;
+      flex: 0 0 200px;
+      border-radius: 0;
+    }
+
+  }
+
+  .badge-gray-lighter .material-icons {
+    background-color: $gray-lighter;
+  }
+
 }
