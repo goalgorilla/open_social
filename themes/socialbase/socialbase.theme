@@ -460,10 +460,6 @@ function socialbase_preprocess_page(&$variables) {
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
-  // Add plain title for node preview page templates.
-  if (!empty($variables['page']['#title'])) {
-    $variables['plain_title'] = strip_tags($variables['page']['#title']);
-  }
 }
 
 /**
@@ -531,11 +527,6 @@ function socialbase_theme() {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
-  // Get current node.
-  $node = $variables['node'];
-  // Get current user.
-  $account = \Drupal::currentUser();
-
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
     $variables['display_submitted'] = TRUE;
@@ -557,22 +548,6 @@ function socialbase_preprocess_node(&$variables) {
     $variables['date'] = \Drupal::service('date.formatter')
       ->format($date, 'day_month');
   }
-
-  // Content visibility
-  if((isset($node->field_content_visibility)) && !$account->isAnonymous()){
-    $content_visibility = reset($node->field_content_visibility->getValue());
-    switch ($content_visibility['value']) {
-      case 'community':
-        $variables['visibility_icon'] = 'group';
-        $variables['visibility_label'] = t('community');
-        break;
-      case 'public':
-        $variables['visibility_icon'] = 'public';
-        $variables['visibility_label'] = t('public');
-        break;
-    }
-  }
-
 }
 
 /**
