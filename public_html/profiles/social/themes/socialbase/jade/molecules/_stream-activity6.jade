@@ -9,10 +9,10 @@
   .media-body
     .media-heading.text-m
       if user == "isAnonymous"
-        | Henry Bond created an event
+        | Henry Bond created an event in the community
       else 
         a(href="my-stream.html") Henry Bond    
-        | created an event   
+        | created an event in the community   
       br
       .text-gray-lighter 31 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
@@ -41,9 +41,7 @@
             span.badge--toggle__label public
       a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
 
-.card-nested-section
-  
-  .text-center
-    if user != "isAnonymous"
-      a.btn.btn-link(href='event.html#comment-form') Comment
-    a.btn.btn-link.disabled 0 comments
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='event.html#comment-form') Comment
+  hr.ruler-xs
+  a.btn.btn-block.btn-link.disabled 0 comments
