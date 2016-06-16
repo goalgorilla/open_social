@@ -27,6 +27,9 @@
           {% endif %}
         </div>
         <div class="media-body">
+          {% if content.links|render %}
+            {{ content.links }}
+          {% endif %}
           <h5 class="media-heading">
             {% if content.user_id %}
               {{- content.user_id -}}
@@ -34,9 +37,6 @@
             {% endif %}
             <small>{{ date }}</small>
           </h5>
-          {% if content.links|render %}
-            {{ content.links }}
-          {% endif %}
         </div>
       </div>
       <div class="margin-top-s">
