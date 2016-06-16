@@ -41,21 +41,19 @@
           span.badge--toggle__label community
       a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
 
-.card-nested-section
-
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
   .visible-xs-block
-    a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
-    hr.ruler-xs
+    hr.ruler-sm
     a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
       i.material-icons chevron_right
 
-  .hidden-xs
+.hidden-xs.card-nested-section
 
-    include ./_activity1-reply1.jade
-    include ./_activity1-reply2.jade
-  
+  include ./_activity1-reply1.jade
+  include ./_activity1-reply2.jade
+
+  if user != "isAnonymous"
     .margin-top-l.text-center
-      if user != "isAnonymous"
-        a.btn.btn-link(href='topic.html#comment-form') Comment
-      a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+      a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
         i.material-icons chevron_right
