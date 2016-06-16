@@ -2,33 +2,30 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContext\GroupActivityContext.
+ * Contains \Drupal\activity_creator\Plugin\ActivityContext\ContentInMyGroupActivityContext.
  */
 
 namespace Drupal\activity_creator\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\Entity;
-use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\Group;
+use Drupal\group\GroupMembership;
 use Drupal\social_group\SocialGroupHelperService;
-use Drupal\social_post\Entity\Post;
-use \Drupal\node\Entity\Node;
 
 /**
- * Provides a 'GroupActivityContext' activity context.
+ * Provides a 'ContentInMyGroupActivityContext' acitivy context.
  *
  * @ActivityContext(
- *  id = "group_activity_context",
- *  label = @Translation("Group activity context"),
+ *  id = "content_in_my_group_activity_context",
+ *  label = @Translation("Content in my group activity context"),
  * )
  */
-class GroupActivityContext extends ActivityContextBase {
+class ContentInMyGroupActivityContext extends ActivityContextBase {
 
   /**
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
-
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -41,9 +38,18 @@ class GroupActivityContext extends ActivityContextBase {
           'target_type' => 'group',
           'target_id' => $gid,
         ];
+        $group = Group::load($gid);
+        $memberships = GroupMembership::loadByGroup($group);
+        foreach ($memberships as $membership) {
+          $recipients[] = [
+            'target_type' => 'user',
+            'target_id' => $membership->getUser()->id(),
+          ];
+        }
       }
     }
 
     return $recipients;
   }
+
 }
