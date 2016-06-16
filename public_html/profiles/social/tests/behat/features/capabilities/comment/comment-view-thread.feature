@@ -14,7 +14,7 @@ Feature: See Comment
     Then I should see the link "Reply"
     When I click "Reply"
     And I fill in the following:
-      | Add a comment | This is a reply comment |
+      | Add a reply | This is a reply comment |
     And I press "Comment"
     And I should see "This is a reply comment"
     When I fill in the following:
