@@ -32,6 +32,9 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   // The reply to comment form should be different from default comment form.
   if(\Drupal::routeMatch()->getRouteName() === 'comment.reply'){
     $form['actions']['submit']['#value'] = t('Reply');
+    $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
+
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
 }
