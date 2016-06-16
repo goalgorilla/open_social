@@ -1,3 +1,11 @@
+body {
+  font-size: $font-size-small;
+
+  @include MQ($small) {
+    font-size: $font-size-base;
+  }
+}
+
 a {
 	font-weight: 500;
 	color: inherit;
@@ -67,27 +75,27 @@ h3, .h3 {
 }
 
 h4, .h4 {
-	font-size: 1.2em;
+	font-size: 1.2rem;
 
 	@include MQ($medium) {
-		font-size: 1.25em;
+		font-size: 1.25rem;
 	}
 
 }
 
 h5, .h5{
-	font-size: 1.1em;
+	font-size: 1rem;
 
 	@include MQ($medium) {
-		font-size: 1.1em;
+		font-size: 1rem;
 	}
 }
 
 h6, .h6 {
-	font-size: 1em;
+	font-size: 0.875rem;;
 
 	@include MQ($medium) {
-		font-size: 1em;
+		font-size: 0.875rem;
 	}
 }
 
@@ -97,7 +105,7 @@ h6, .h6 {
 }
 
 .subtitle {
-	font-size: 0.75em;
+	font-size: 0.75rem;
 	line-height: 1;
 }
 
@@ -140,7 +148,7 @@ ol, ul {
   .popover &:last-child {
     margin-bottom: 0;
   }
-	
+
 }
 
 ol {
@@ -158,9 +166,8 @@ code {
 
   @include MQ($small) {
     padding-left: 20px;
-    margin: 0 0 .5em;
 
-		// the title cannot wrap because we want to align filters vertically with the content
+		// the title cannot wrap because we want to align sidebar cards vertical top with the content
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
