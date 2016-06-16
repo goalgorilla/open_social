@@ -96,7 +96,7 @@ function activity_logger_entity_insert(EntityInterface $entity) {
   // For nodes we make an exception, since they are potentially placed in
   // groups, which we cannot know here yet.
   elseif ($entity instanceof \Drupal\node\Entity\Node) {
-    $data['entity'] = $entity;
+    $data['entity_id'] = $entity->id();
     $queue = \Drupal::queue('activity_logger_message');
     $queue->createItem($data);
     return;

@@ -7,7 +7,8 @@
 
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
-use Drupal\message\Entity\Message;
+use Drupal\Core\Entity\Entity;
+use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -28,44 +29,28 @@ class MessageQueueCreator extends MessageQueueBase {
    * {@inheritdoc}
    */
   public function processItem($data) {
-    $entity = $data['entity'];
 
-    // Get the services we need here.
-    $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
-    $contextGetter = \Drupal::service('activity_logger.context_getter');
+    // First make sure it's an actual entity.
+    if ($entity = Node::load($data['entity_id'])) {
+      // Check if it's created more than 20 seconds ago.
+      $timestamp = $entity->getCreatedTime();
+      // Current time.
+      $now = time();
+      $diff = $now - $timestamp;
 
-    // Get all messages that are responsible for creating items.
-    $message_types = $activityLoggerFactory->getMessageTypes('create', $entity);
-    // Loop through those message types and create messages.
-    foreach ($message_types as $message_type => $message_values) {
-      // Create the ones applicable for this bundle.
-      if ($message_values['bundle'] === $entity->bundle()) {
-
-        // Determine destinations.
-        $destinations = [];
-        if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
-          foreach ($message_values['destinations'] as $destination) {
-            $destinations[] = array('value' => $destination);
-          }
-        }
-
-        // Get context
-        $context = $contextGetter->getContext($entity);
-
-        // Set the values.
-        $new_message['type'] = $message_type;
-        $new_message['uid'] = $entity->getOwner()->id();
-        $new_message['field_message_context'] = $context;
-        $new_message['field_message_destination'] = $destinations;
-        $new_message['field_message_related_object'] = [
-          'target_type' => $entity->getEntityTypeId(),
-          'target_id' => $entity->id(),
-        ];
-
-        // Create the message
-        $message = Message::create($new_message);
-        $message->setArguments(array());
-        $message->save();
+      // Items must be at least 5 seconds old.
+      if ($diff <= 5) {
+        // Wait for 100 milliseconds.
+        // We don't want to flood the DB with unprocessable queue items.
+        usleep(100000);
+        $queue = \Drupal::queue('activity_logger_message');
+        $queue->createItem($data);
+      }
+      else {
+        // Get the services we need here.
+        $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
+        // Create messages for nodes.
+        $activityLoggerFactory->createMessages($entity, 'create');
       }
     }
   }
