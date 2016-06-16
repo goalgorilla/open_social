@@ -531,7 +531,7 @@ class EntityManagerWrapper extends DefaultPluginManager implements EntityManager
    * {@inheritdoc}
    */
   public function setContainer(ContainerInterface $container = NULL) {
-    $this->entityManager->setContainer($container = NULL);
+    $this->entityManager->setContainer($container);
   }
 
   /**
