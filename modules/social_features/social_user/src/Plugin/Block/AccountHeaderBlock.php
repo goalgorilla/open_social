@@ -66,8 +66,10 @@ class AccountHeaderBlock extends BlockBase {
         $account_notifications = \Drupal::service('activity_creator.activity_notifications');
         $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
 
+        $label_classes = 'badge';
         if ($num_notifications === 0) {
           $notifications_icon_label = 'notifications_none';
+          $label_classes .= ' invisible';
         }
         else {
           $notifications_icon_label = 'notifications';
@@ -85,7 +87,7 @@ class AccountHeaderBlock extends BlockBase {
           // the following changes based on whether the user has notifications or not
           'icon_label' => $notifications_icon_label,
           'label' => (string) $num_notifications,
-          'label_classes' => 'badge',
+          'label_classes' => $label_classes,
           'url' => '#',
           'below' => $notifications,
         );
