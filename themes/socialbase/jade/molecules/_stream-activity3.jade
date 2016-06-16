@@ -43,12 +43,13 @@
           span.badge--toggle__label community
       a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
 
-.card-nested-section
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='event.html#comment-form') Comment
 
-  include ./_activity3-reply1.jade
+  .card-nested-section
+
+    include ./_activity3-reply1.jade
   
-  .margin-top-l.text-center
-    if user != "isAnonymous"
-      a.btn.btn-link(href='topic.html#comment-form') Comment
-    a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
-      i.material-icons chevron_right
+    .margin-top-l.text-center
+      a.btn.btn-link(href='event.html#comment-1') show all 2 comments
+        i.material-icons chevron_right
