@@ -5,6 +5,7 @@
  * The Social core module.
  */
 use Drupal\node\NodeInterface;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_theme().
@@ -24,6 +25,7 @@ function social_core_theme() {
         'event_enrollment' => NULL,
         'visibility_icon' => NULL,
         'visibility_label' => NULL,
+        'hero_styled_image_url' => NULL,
       ),
     ),
   );
@@ -93,6 +95,14 @@ function template_preprocess_page_hero_data(&$variables) {
           break;
       }
     }
+
+    // Add the hero styled image.
+    $image_field = "field_{$node->getType()}_image";
+    if (!empty($node->{$image_field}->entity)) {
+      $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+        ->buildUrl($node->{$image_field}->entity->getFileUri());
+    }
+
   }
 
   if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
