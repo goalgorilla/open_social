@@ -4852,7 +4852,7 @@ fieldset[disabled] .btn-flat.focus {
   vertical-align: middle;
   font-weight: 500;
   text-transform: uppercase;
-  font-size: 0.875em;
+  font-size: 0.875rem;
 }
 
 a.card:hover {
@@ -5020,15 +5020,6 @@ a.card:hover {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
-}
-
-.card--teaser-stream {
-  margin: 20px -20px -10px;
-  background: #e6e6e6;
-}
-
-.card--teaser-stream .badge-gray-lighter .material-icons {
-  background-color: #e6e6e6;
 }
 
 .z-depth-0 {
@@ -5813,10 +5804,6 @@ span.form-required {
   background-repeat: no-repeat;
 }
 
-.cover-with-canvas {
-  padding: 40px;
-}
-
 .cover-img-gradient:before {
   display: block;
   position: absolute;
@@ -5981,10 +5968,6 @@ span.form-required {
   font-size: 1em;
 }
 
-body {
-  font-size: 14px;
-}
-
 i {
   line-height: inherit;
 }
@@ -6143,6 +6126,14 @@ hr.ruler-xs {
   margin: 2px 0;
 }
 
+hr.ruler-sm {
+  margin: 10px 0;
+}
+
+hr.ruler-md {
+  margin: 15px 0;
+}
+
 hr.ruler-s {
   margin: 9.6px 0;
 }
@@ -6229,8 +6220,7 @@ hr.ruler-l {
 .navbar-default .navbar-form {
   box-shadow: none;
   border: 0;
-  margin-left: 0;
-  margin-right: 0;
+  margin: 6px 0;
 }
 
 .navbar-default .navbar-brand,
@@ -6553,6 +6543,10 @@ hr.ruler-l {
   opacity: 1;
 }
 
+body {
+  font-size: 14px;
+}
+
 a {
   font-weight: 500;
   color: inherit;
@@ -6604,15 +6598,15 @@ h3, .h3 {
 }
 
 h4, .h4 {
-  font-size: 1.2em;
+  font-size: 1.2rem;
 }
 
 h5, .h5 {
-  font-size: 1.1em;
+  font-size: 1rem;
 }
 
 h6, .h6 {
-  font-size: 1em;
+  font-size: 0.875rem;
 }
 
 .header {
@@ -6621,7 +6615,7 @@ h6, .h6 {
 }
 
 .subtitle {
-  font-size: 0.75em;
+  font-size: 0.75rem;
   line-height: 1;
 }
 
@@ -7057,6 +7051,7 @@ a.default-light:focus {
 
 .stream-card {
   margin: 0 0 20px 20px;
+  font-size: 0.875rem;
 }
 
 .stream-card:before, .stream-card:after {
@@ -7081,8 +7076,30 @@ a.default-light:focus {
   top: 17px;
 }
 
-.stream-card .btn-link {
-  padding: 6px;
+.stream-card > .card-body {
+  padding: 15px;
+}
+
+.stream-card > .card-body > .card-nested-section {
+  margin: 10px -15px -15px;
+  padding: 15px;
+}
+
+.stream-card .media {
+  margin-top: 15px;
+}
+
+.stream-card .media:first-child {
+  margin-top: 0;
+}
+
+.card--teaser-stream {
+  margin: 10px -15px 10px;
+  background: #e6e6e6;
+}
+
+.card--teaser-stream .badge-gray-lighter .material-icons {
+  background-color: #e6e6e6;
 }
 
 .list-group {
@@ -7874,6 +7891,11 @@ input[type=range]:focus::-ms-fill-upper {
   float: none;
 }
 
+.align-center {
+  -ms-flex-item-align: center;
+      align-self: center;
+}
+
 .section {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -8598,16 +8620,6 @@ input[type=range]:focus::-ms-fill-upper {
     -ms-flex-pack: start;
     justify-content: flex-start;
   }
-  .card--teaser-stream{
-    height: 200px;
-  }
-  .card--teaser-stream .card-image{
-    height: 200px;
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 200px;
-    flex: 0 0 200px;
-    border-radius: 0;
-  }
   .form-group-inline{
     display: -webkit-box;
     display: -ms-flexbox;
@@ -8638,6 +8650,9 @@ input[type=range]:focus::-ms-fill-upper {
     -ms-flex: 100%;
     flex: 100%;
   }
+  .cover-with-canvas{
+    padding: 40px;
+  }
   .cover-wrap .page-title{
     margin: 1em 0 0;
   }
@@ -8646,9 +8661,6 @@ input[type=range]:focus::-ms-fill-upper {
   }
   .pagination > li{
     display: inline-block;
-  }
-  body{
-    font-size: 16px;
   }
   .img-large{
     width: 128px;
@@ -8714,9 +8726,11 @@ input[type=range]:focus::-ms-fill-upper {
   .dropdown-menu.dropdown-md{
     right: 0;
   }
+  body{
+    font-size: 16px;
+  }
   .section-title{
     padding-left: 20px;
-    margin: 0 0 .5em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -8759,6 +8773,16 @@ input[type=range]:focus::-ms-fill-upper {
   .stream-card:after{
     border-width: 8px;
     top: 36px;
+  }
+  .card--teaser-stream{
+    height: 200px;
+  }
+  .card--teaser-stream .card-image{
+    height: 200px;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 200px;
+    flex: 0 0 200px;
+    border-radius: 0;
   }
   .file{
     margin-top: 0;
@@ -8815,6 +8839,9 @@ input[type=range]:focus::-ms-fill-upper {
   }
   .margin-top-exposed-filter{
     margin-top: 4.375rem;
+  }
+  .margin-top-sidebar{
+    margin-top: 3.875rem;
   }
 }
 
@@ -8878,13 +8905,13 @@ input[type=range]:focus::-ms-fill-upper {
     font-size: 1.5rem;
   }
   h4, .h4{
-    font-size: 1.25em;
+    font-size: 1.25rem;
   }
   h5, .h5{
-    font-size: 1.1em;
+    font-size: 1rem;
   }
   h6, .h6{
-    font-size: 1em;
+    font-size: 0.875rem;
   }
 }
 

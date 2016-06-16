@@ -9,10 +9,10 @@
   .media-body
     .media-heading.text-m
       if user == "isAnonymous"
-        | Henry Bond created a topic  
+        | Henry Bond created a topic in the community
       else 
         a(href="other-stream.html") Henry Bond 
-        | created a topic    
+        | created a topic in the community   
       br
       .text-gray-lighter 32 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
@@ -41,15 +41,14 @@
             span.badge--toggle__label public
       a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
 
-.card-nested-section
-
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
   .visible-xs-block
-    a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
-    hr.ruler-xs
+    hr.ruler-sm
     a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
       i.material-icons chevron_right
 
-  .hidden-xs
+  .hidden-xs.card-nested-section
 
     include ./_activity1-reply1.jade
     include ./_activity1-reply2.jade
