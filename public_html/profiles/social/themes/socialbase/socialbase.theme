@@ -22,7 +22,7 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
   $form['field_visibility']['#prefix'] = '<div class="form-group media"><div class="media-body">';
   $form['field_visibility']['#suffix'] = '</div>';
 
-  $form['actions']['submit']['#value'] = t('Save');
+  // $form['actions']['submit']['#value'] = t('Save'); // This needs to be save on post/*/edit pages
   $form['actions']['submit']['#prefix'] = '<div class="media-right">';
   $form['actions']['submit']['#suffix'] = '</div>';
 
