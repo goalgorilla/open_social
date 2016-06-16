@@ -37,7 +37,22 @@ class ActivityVisibilityAccess extends FilterPluginBase {
    * See https://www.drupal.org/node/777578
    */
   public function query() {
-    // @TODO Implement visibility access control, see PostVisibilityAccess.
+
+    // We have a few scenarios:
+    // 1. There is a recipient user and destination is only notification,
+    //   if current user is not recipient always deny access.
+    // 2. There is a recipient group:
+    //   Check if the user has access to the related entity.
+    // 3. There is a related entity of type node
+    //   Check if user has access to the related entity,
+    //   use node_access_grants system.
+    //   views filter content access with relationship to node
+    // 4. There is a related entity of type post
+    //   Check if user has access to the post, we can use PostVisibilityAccess.
+
+    // Note: in future we should implement entity grant system instead!
+    // to support other entities as well.
+
   }
 
 }
