@@ -29,13 +29,17 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
 
-  // The reply to comment form should be different from default comment form.
+  // Comment reply form.
   if(\Drupal::routeMatch()->getRouteName() === 'comment.reply'){
     $form['#attributes']['class'][] = 'card-nested-section';
     $form['actions']['submit']['#value'] = t('Reply');
     $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
 
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
+  }
+  // Comment edit form.
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form'){
+    $form['actions']['submit']['#value'] = t('Submit');
   }
 }
 
