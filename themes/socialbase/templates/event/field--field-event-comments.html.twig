@@ -62,23 +62,25 @@
     {% endif %}
 
     <div class="visible-xs-block">
+      {% if more_link %}
       <hr class="ruler-sm">
-      <div class="btn btn-block btn-link">
-        {{ more_link }}
-      </div>
+        <div class="btn btn-block btn-link">
+          {{ more_link }}
+        </div>
+      {% endif %}
     </div>
 
     <div class="hidden-xs card-nested-section">
 
       {{ comments }}
 
-      {% if more_link %}
-        <div class="margin-top-l text-center">
+      <div class="margin-top-l text-center">
+        {% if more_link %}
           <div class="btn btn-block btn-link">
             {{ more_link }}
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
 
     </div>
 
