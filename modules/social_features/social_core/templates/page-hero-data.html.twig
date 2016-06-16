@@ -48,7 +48,6 @@
   <div class="hero-footer">
     <div class="row row-md-center">
       <div class="col-xs-12 col-md-6 col-md-offset-3">
-        {{ hero_node }}
 
         {% if visibility_icon and  visibility_label %}
           <div class="badge badge-gray-dark badge--toggle">
@@ -57,6 +56,8 @@
             </label>
           </div>
         {% endif %}
+
+        {{ hero_node }}
 
         <div>
         {% if author_name and created_date_formatted %}
