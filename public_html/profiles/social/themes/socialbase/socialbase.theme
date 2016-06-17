@@ -398,14 +398,14 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'page';
   }
 
-  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream') {
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream';
   }
+
 
   if (!empty($views_display->display['id']) && $view_id == 'activity_stream_notifications' && $views_display->display['id'] == 'page_1') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream_notifications';
   }
-
 
 }
 
@@ -868,4 +868,19 @@ function socialbase_preprocess_form(&$variables) {
     }
   }
 
+}
+
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_activity(&$variables) {
+  // Check if the view mode is one of the notification view modes.
+  if (in_array($variables['content']['field_activity_output_text']['#view_mode'],array('notification', 'notification_archive'))) {
+    // Remove href from date.
+    $variables['date'] = strip_tags($variables['date']->toString()->getGeneratedLink());
+    // Remove href from output text.
+    $variables['content']['field_activity_output_text'][0]['#text'] = strip_tags($variables['content']['field_activity_output_text'][0]['#text']);
+    // Remove href from profile image.
+    $variables['actor'] = $variables['actor']->getText();
+  }
 }
