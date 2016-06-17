@@ -100,6 +100,9 @@ function social_comment_preprocess_comment(&$variables) {
     ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
   $submitted = t('@time ago', array('@time' => $created_time_ago));
 
+  dpm($variables['elements']);
+//  dpm($submitted);
+
   $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
 
   $account = $comment->getOwner();
