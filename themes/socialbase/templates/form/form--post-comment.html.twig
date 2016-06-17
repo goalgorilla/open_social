@@ -12,7 +12,13 @@
  * @ingroup themeable
  */
 #}
-<form{{ attributes.addClass('media') }}>
-{# insert user profile image here #}
-  {{ children }}
-</form>
+<div class="media">
+  <div class="media-left">{{ current_user_picture }}</div>
+  <div class="media-body">
+    <form{{ attributes }}>
+      <div class="form-group form-group-inline">
+        {{ children }}
+      </div>
+    </form>
+  </div>
+</div>

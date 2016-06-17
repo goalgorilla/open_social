@@ -49,40 +49,43 @@
 
 {% else %}
 
-    {{nodelink}}
+    {% if logged_in %}
+      {{nodelink}}
 
-    {% if comments and not label_hidden %}
-        {{ title_prefix }}
-        <h2{{ title_attributes }}>{{ label }}</h2>
-        {{ title_suffix }}
-    {% endif %}
-
-    {% if comment_form %}
-        {{ comment_form }}
-    {% endif %}
-
-    <div class="visible-xs-block">
-      {% if more_link %}
-      <hr class="ruler-sm">
-        <div class="btn btn-block btn-link">
-          {{ more_link }}
-        </div>
+      {% if comments and not label_hidden %}
+          {{ title_prefix }}
+          <h2{{ title_attributes }}>{{ label }}</h2>
+          {{ title_suffix }}
       {% endif %}
-    </div>
 
-    <div class="hidden-xs card-nested-section">
+      {% if comment_form %}
+          {{ comment_form }}
+      {% endif %}
 
-      {{ comments }}
-
-      <div class="margin-top-l text-center">
+      <div class="visible-xs-block">
         {% if more_link %}
+        <hr class="ruler-sm">
           <div class="btn btn-block btn-link">
             {{ more_link }}
           </div>
         {% endif %}
       </div>
 
-    </div>
+      <div class="hidden-xs card-nested-section">
+
+        {{ comments }}
+
+        <div class="margin-top-l text-center">
+          {% if more_link %}
+            <div class="btn btn-block btn-link">
+              {{ more_link }}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+
+    {% endif %}
 
 
 {% endif %}

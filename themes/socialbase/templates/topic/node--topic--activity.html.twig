@@ -68,7 +68,7 @@
 <div class="card--teaser card--teaser-stream card-with-actionbar">
   <div class='card-image blue-overlay'>
     {{ content.field_topic_image }}
-    <img src="/themes/socialbase/images/icon-topic.svg" alt="" class="teaser-type">
+    <img src="/{{ directory }}/images/icon-topic.svg" alt="" class="teaser-type">
   </div>
     <div class="card-body">
       {{ title_prefix }}
@@ -78,12 +78,12 @@
           </h4>
       {% endif %}
       {{ title_suffix }}
-      <p class="text-grey-dark">
+      <p class="text-grey-dark margin-bottom-s">
         <span> {{ author_name }} </span>
         {# Todo: fix date format #}
         &bullet; {{ date }}
       </p>
-      <p>
+      <p class="text-grey-dark clearfix margin-bottom-s">
         <i class="material-icons">label</i>
         <span class="inline-center">
           {{ content.field_topic_type }}
