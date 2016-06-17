@@ -50,7 +50,6 @@ class Dropdown extends FormElement {
    * Expands a radios element into individual radio elements.
    */
   public static function processDropdown(&$element, FormStateInterface $form_state, &$complete_form) {
-
     if (count($element['#options']) > 0) {
       $weight = 0;
       foreach ($element['#options'] as $key => $option) {
