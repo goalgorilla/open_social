@@ -115,23 +115,35 @@ gulp.task('jade', function() {
 // Scripts
 // ===================================================
 
+// get component scripts used for styleguide only
+gulp.task('styleguides-components', function() {
+  return gulp
+    .src([
+      folder.js_comp + "/collapsible.js",
+      folder.js_comp + "/sideNav.js"
+    ])
+    .pipe( concat('styleguide.js') )
+    .pipe( gulp.dest(folder.dist + '/js')
+  );
+});
+
 // get component scripts and make available for dist in one file
 gulp.task('script-components', function() {
   return gulp.src([
-    folder.js_comp + "/initial.js",
-    folder.js_comp + "/jquery.easing.1.3.js",
-    folder.js_comp + "/animation.js",
-    folder.js_comp + "/velocity.min.js",
-    folder.js_comp + "/hammer.min.js",
-    folder.js_comp + "/jquery.hammer.js",
-    folder.js_comp + "/global.js",
-    folder.js_comp + "/collapsible.js",
-    folder.js_comp + "/scrollspy.js",
-    folder.js_comp + "/pushpin.js",
-    folder.js_comp + "/sideNav.js",
-    folder.js_comp + "/waves.js",
-    folder.js_comp + "/offcanvas.js",
-    folder.js_comp + "/forms.js"
+      folder.js_comp + "/initial.js",
+      folder.js_comp + "/jquery.easing.1.3.js",
+      folder.js_comp + "/animation.js",
+      folder.js_comp + "/velocity.min.js",
+      folder.js_comp + "/hammer.min.js",
+      folder.js_comp + "/jquery.hammer.js",
+      folder.js_comp + "/global.js",
+      //folder.js_comp + "/collapsible.js",
+      folder.js_comp + "/scrollspy.js",
+      folder.js_comp + "/pushpin.js",
+      //folder.js_comp + "/sideNav.js",
+      folder.js_comp + "/waves.js",
+      folder.js_comp + "/offcanvas.js",
+      folder.js_comp + "/forms.js"
     ])
     .pipe( concat('components.js') )
     .pipe( gulp.dest(folder.js) )
@@ -183,7 +195,11 @@ gulp.task('script-drupal', function() {
 
 //copy init script to the styleguide
 gulp.task('script-init', function() {
-  return gulp.src([folder.js + "/init.js"])
+  return gulp.src([
+    folder.js + "/init.js",
+    //folder.js + "/init-styleguide.js"
+  ])
+  //.pipe( concat('init.js') )
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
@@ -313,7 +329,7 @@ gulp.task('deploy', ['build'], function() {
 gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js']);
 
 
-gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
+gulp.task('scripts', ['styleguides-components', 'script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
 
 gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);
 
