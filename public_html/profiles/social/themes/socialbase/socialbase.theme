@@ -402,9 +402,14 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream';
   }
 
-
+  // for view notification_archive we need a separate template
   if (!empty($views_display->display['id']) && $view_id == 'activity_stream_notifications' && $views_display->display['id'] == 'page_1') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream_notifications';
+  }
+
+  // remove extra wrapping divs for these views
+  if (!empty($view_id) && ($view_id == 'events' || $view_id == 'topics' || $view_id == 'groups'  )) {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'bare';
   }
 
 }
@@ -624,13 +629,13 @@ function socialbase_preprocess_node(&$variables) {
  */
 function socialbase_preprocess_image_style(&$variables) {
   if ($variables['style_name'] == 'social_large') {
-    $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
   if ($variables['style_name'] == 'social_medium') {
     $variables['image']['#attributes']['class'][] = 'img-medium';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+
 }
 
 /**
