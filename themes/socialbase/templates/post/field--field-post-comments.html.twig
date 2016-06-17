@@ -26,17 +26,21 @@
  * @see comment_preprocess_field()
  */
 #}
-<section{{ attributes }}>
 
-    {% if comments and not label_hidden %}
-        {{ title_prefix }}
-        <h2{{ title_attributes }}>{{ label }}</h2>
-        {{ title_suffix }}
-    {% endif %}
 
-    {% if comment_form %}
-        {{ comment_form }}
-    {% endif %}
+  {% if comments and not label_hidden %}
+      {{ title_prefix }}
+      <h2{{ title_attributes }}>{{ label }}</h2>
+      {{ title_suffix }}
+  {% endif %}
+
+  {% if comment_form %}
+
+    <div {{ attributes.addClass('media margin-bottom-xl') }}>
+      {{ comment_form }}
+    </div>
+
+  {% endif %}
 
     {{ comments }}
 
@@ -45,5 +49,3 @@
         {{ more_link }}
       </div>
     {% endif %}
-
-</section>
