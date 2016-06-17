@@ -27,25 +27,38 @@
  */
 #}
 
+{%
+  set classes = [
+    'media',
+    more_link ? 'margin-bottom-xl',
+  ]
+%}
 
-  {% if comments and not label_hidden %}
-      {{ title_prefix }}
-      <h2{{ title_attributes }}>{{ label }}</h2>
-      {{ title_suffix }}
-  {% endif %}
 
-  {% if comment_form %}
+{% if comments and not label_hidden %}
+    {{ title_prefix }}
+    <h2{{ title_attributes }}>{{ label }}</h2>
+    {{ title_suffix }}
+{% endif %}
 
-    <div {{ attributes.addClass('media margin-bottom-xl') }}>
-      {{ comment_form }}
-    </div>
+{% if comment_form %}
 
-  {% endif %}
+  <div {{ attributes.addClass(classes) }}>
+    {{ comment_form }}
+  </div>
 
-    {{ comments }}
+{% endif %}
+
+{{ comments }}
+
+{% if logged_in %}
+
+  <div class="margin-top-l text-center">
 
     {% if more_link %}
-      <div class="margin-top-l text-center">
         {{ more_link }}
-      </div>
     {% endif %}
+
+  </div>
+
+{% endif %}
