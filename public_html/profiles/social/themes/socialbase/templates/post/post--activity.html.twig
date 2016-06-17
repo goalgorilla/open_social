@@ -15,41 +15,31 @@
   * @ingroup themeable
   */
   #}
-<div class="stream-item">
-  <i class="stream-icon"></i>
 
-  <div class="card stream-card">
-    <div class="card-body">
-      <div class="media">
-        <div class="media-left">
-          {% if author_picture %}
-            {{ author_picture }}
-          {% endif %}
-        </div>
-        <div class="media-body">
-          <h5 class="media-heading">
-            {% if content.user_id %}
-              {{- content.user_id -}}
-              <br />
-            {% endif %}
-            <small>{{ date }}</small>
-          </h5>
-          {% if content.links|render %}
-            {{ content.links }}
-          {% endif %}
-        </div>
-      </div>
-      <div class="margin-top-s">
-        {% if content.field_post %}
-          {{ content.field_post }}
-        {% endif %}
-      </div>
-      <div class="card-nested-section">
-        {% if content.field_post_comments %}
-          {{ content.field_post_comments }}
-        {% endif %}
-      </div>
-    </div>
-  </div>
+{%
+  set classes = [
+    'margin-top-s',
+    logged_in ? 'margin-bottom-m',
+  ]
+%}
+
+
+{% if content.links|render %}
+  {{ content.links }}
+{% endif %}
+
+<div{{ attributes.addClass(classes) }}>
+
+  {% if content.field_post %}
+    {{ content.field_post }}
+  {% endif %}
 
 </div>
+
+{% if logged_in %}
+  <div class="card-nested-section">
+    {% if content.field_post_comments %}
+      {{ content.field_post_comments }}
+    {% endif %}
+  </div>
+{% endif %}
