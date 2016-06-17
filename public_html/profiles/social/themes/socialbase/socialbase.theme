@@ -482,7 +482,7 @@ function socialbase_preprocess_field(&$variables) {
     $urlwithoptions = $node->toUrl('canonical', $link_options);
     $variables['nodelink'] = Link::fromTextAndUrl('Comment', $urlwithoptions);
   }
-  
+
 }
 
 /**
@@ -805,7 +805,7 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
 function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
-  if ($element['#form_id'] === 'comment_comment_form') {
+  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
