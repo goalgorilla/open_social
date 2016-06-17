@@ -31,7 +31,7 @@ class PostForm extends ContentEntityForm {
     $form = parent::buildForm($form, $form_state);
     $form['#attached']['library'][] = 'social_post/visibility-settings';
     // Default is create/add mode.
-    $form['field_visibility']['widget'][0]['edit_mode'] = FALSE;
+    $form['field_visibility']['widget'][0]['#edit_mode'] = FALSE;
 
     if (isset($display)) {
       $this->setFormDisplay($display, $form_state);
@@ -82,7 +82,7 @@ class PostForm extends ContentEntityForm {
       }
 
       // Set button to disabled in our template, users have no option anyway.
-      $form['field_visibility']['widget'][0]['edit_mode'] = TRUE;
+      $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
     }
 
     return $form;
