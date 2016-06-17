@@ -24,30 +24,34 @@
 
     <div class="card-body">
 
-      <div class="media">
+      <div class="media-wrapper">
 
-        <div class="media-left">
-          {% if actor %}
-            {{- actor -}}
-          {% endif %}
-        </div>
+        <div class="media">
 
-        <div class="media-body">
-          <div class="media-heading text-m">
-            {% if content.field_activity_output_text %}
-              {{- content.field_activity_output_text -}}
+          <div class="media-left">
+            {% if actor %}
+              {{- actor -}}
             {% endif %}
+          </div>
 
-            <div class="text-gray-lighter"> {{ date }}</div>
+          <div class="media-body">
+            <div class="media-heading text-m">
+              {% if content.field_activity_output_text %}
+                {{- content.field_activity_output_text -}}
+              {% endif %}
+
+              <div class="text-gray-lighter"> {{ date }}</div>
+            </div>
+
           </div>
 
         </div>
 
-      </div>
+        {% if content.field_activity_entity %}
+          {{- content.field_activity_entity -}}
+        {% endif %}
 
-      {% if content.field_activity_entity %}
-        {{- content.field_activity_entity -}}
-      {% endif %}
+      </div>
 
     </div>
 
