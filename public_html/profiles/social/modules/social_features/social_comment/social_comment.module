@@ -41,6 +41,7 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   if(\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form'){
     $form['actions']['submit']['#value'] = t('Submit');
     $form['#title'] = t('Edit comment');
+    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
   }
 }
 
