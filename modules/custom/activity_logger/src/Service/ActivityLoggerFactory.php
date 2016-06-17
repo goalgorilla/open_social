@@ -3,6 +3,8 @@
 namespace Drupal\activity_logger\Service;
 
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupContent;
 use Drupal\message\Entity\Message;
 
 /**
@@ -51,6 +53,18 @@ class ActivityLoggerFactory {
 
         // Create the message
         $message = Message::create($new_message);
+
+        // If it's a group.. add it in the arguments.
+        if ($groupcontent = GroupContent::loadByEntity($entity)) {
+          $groupcontent = reset($groupcontent);
+          $group = $groupcontent->getGroup();
+          $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
+          $message->setArguments(array('groups' => [
+            'gtitle' => $group->label(),
+            'gabsolute-url' => $gurl->toString()
+          ]));
+        }
+
         $message->save();
       }
     }
