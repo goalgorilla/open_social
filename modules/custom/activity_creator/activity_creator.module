@@ -212,3 +212,39 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
     $variables['notification_url'] = $notification_url;
   }
 }
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * Delete activity items when related entities are deleted.
+ */
+function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+
+  // TODO Move this into a service?
+  if ($entity !== NULL) {
+    $entity_type = $entity->getEntityTypeId();
+    $entity_id = $entity->id();
+    if ($entity_type !== 'activity') {
+
+      $entity_query = \Drupal::entityQuery('activity');
+      $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
+      $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
+      $ids = $entity_query->execute();
+      if (!empty($ids)) {
+        entity_delete_multiple('activity', $ids);
+      }
+    }
+
+    // TODO: When group is deleted delete activities where group is recipient.
+    // TODO: When user is deleted delete activities where user is recipient.
+//    if ($entity_type == 'user' || $entity_type == 'group') {
+//      $entity_query = \Drupal::entityQuery('activity');
+//      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
+//      $ids = $entity_query->execute();
+//      if (!empty($ids)) {
+//        entity_delete_multiple('activity', $ids);
+//      }
+//    }
+  }
+
+}
