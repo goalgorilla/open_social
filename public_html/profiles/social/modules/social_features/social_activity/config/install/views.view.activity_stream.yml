@@ -1,3 +1,4 @@
+uuid: eff41d68-7b0d-4783-ab80-4c3f1a1b860f
 langcode: en
 status: true
 dependencies:
@@ -246,8 +247,9 @@ display:
         - 'languages:language_interface'
         - url.query_args
       tags:
-        - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
+        - 'config:core.entity_view_display.activity.activity.default'
   page_activity_stream:
     display_plugin: page
     id: page_activity_stream
@@ -264,6 +266,7 @@ display:
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   page_explore:
     display_plugin: page
     id: page_explore
@@ -294,43 +297,6 @@ display:
         filter_groups: false
       title: 'Explore Stream'
       filters:
-        activity_visibility_access_filter:
-          id: activity_visibility_access_filter
-          table: activity
-          field: activity_visibility_access_filter
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: ''
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: activity
-          plugin_id: activity_visibility_access
         field_activity_destinations_value:
           id: field_activity_destinations_value
           table: activity__field_activity_destinations
@@ -370,6 +336,43 @@ display:
             group_items: {  }
           reduce_duplicates: false
           plugin_id: list_field
+        activity_post_visibility_access_filter:
+          id: activity_post_visibility_access_filter
+          table: activity
+          field: activity_post_visibility_access_filter
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          plugin_id: activity_post_visibility_access
       filter_groups:
         operator: AND
         groups:
@@ -382,3 +385,4 @@ display:
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'

@@ -1,11 +1,14 @@
+uuid: 18977909-0bb1-4d64-9ee6-d1802aba389f
 langcode: en
 status: true
 dependencies:
   config:
     - block.block.postongroupblock
+    - user.role.authenticated
   module:
     - activity_creator
     - options
+    - user
 id: activity_stream_group
 label: activity_stream_group
 module: views
@@ -22,8 +25,10 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
       cache:
         type: none
         options: {  }
@@ -276,10 +281,11 @@ display:
         - route
         - url
         - url.query_args
+        - user.roles
       tags:
-        - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.default'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   block_stream_group:
     display_plugin: block
     id: block_stream_group
@@ -295,7 +301,8 @@ display:
         - route
         - url
         - url.query_args
+        - user.roles
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'

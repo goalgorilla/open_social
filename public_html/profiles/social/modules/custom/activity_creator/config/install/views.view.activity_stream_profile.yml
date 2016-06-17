@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - block.block.postonprofileblock
+    - user.role.authenticated
   module:
     - activity_creator
     - options
+    - user
 id: activity_stream_profile
 label: activity_stream_profile
 module: views
@@ -23,8 +25,10 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
       cache:
         type: none
         options: {  }
@@ -277,10 +281,11 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.roles
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   block_1:
     display_plugin: block
     id: block_1
@@ -295,7 +300,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.roles
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
