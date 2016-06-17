@@ -57,6 +57,7 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb = new Breadcrumb();
     $breadcrumb->addCacheContexts(['route']);
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
+    $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
 
     switch ($route_match->getRouteName()) {
       case 'comment.reply':
