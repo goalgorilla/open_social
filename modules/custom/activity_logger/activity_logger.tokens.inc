@@ -26,6 +26,10 @@ function activity_logger_token_info() {
     'name' => t("Groups title"),
     'description' => t("The related group title."),
   ];
+  $message['gurl'] = [
+    'name' => t("Groups url"),
+    'description' => t("The related group url."),
+  ];
 
   return [
     'types' => ['message' => $type],

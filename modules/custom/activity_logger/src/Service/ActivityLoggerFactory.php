@@ -61,7 +61,7 @@ class ActivityLoggerFactory {
           $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
           $message->setArguments(array('groups' => [
             'gtitle' => $group->label(),
-            'gabsolute-url' => $gurl->toString()
+            'gurl' => $gurl->toString()
           ]));
         }
 
