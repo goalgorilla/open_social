@@ -30,6 +30,9 @@ class PostForm extends ContentEntityForm {
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
     $form['#attached']['library'][] = 'social_post/visibility-settings';
+    // Default is create/add mode.
+    $form['field_visibility']['widget'][0]['edit_mode'] = FALSE;
+
     if (isset($display)) {
       $this->setFormDisplay($display, $form_state);
     }
@@ -62,6 +65,24 @@ class PostForm extends ContentEntityForm {
       /** @var \Drupal\social_post\Entity\Post $post */
       $post = $this->entity;
       $form['#post_id'] = $post->id();
+
+      // In edit mode we don't want people to actually change visibility setting
+      // of the post.
+      if ($current_value = $this->entity->get('field_visibility')->value) {
+        // We set the default value.
+        $form['field_visibility']['widget'][0]['#default_value'] = $current_value;
+      }
+
+      // Unset the other options, because we do not want to be able to change
+      // it but we do want to use the button for informing the user.
+      foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
+        if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value'] ) {
+          unset($form['field_visibility']['widget'][0]['#options'][$key]);
+        }
+      }
+
+      // Set button to disabled in our template, users have no option anyway.
+      $form['field_visibility']['widget'][0]['edit_mode'] = TRUE;
     }
 
     return $form;
