@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.activity.notification
+    - core.entity_view_mode.activity.notification_archive
     - user.role.authenticated
   module:
     - activity_creator
@@ -65,7 +66,7 @@ display:
         type: 'entity:activity'
         options:
           relationship: none
-          view_mode: notification
+          view_mode: notification_archive
       fields:
         rendered_entity:
           table: activity
@@ -279,7 +280,7 @@ display:
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   block_1:
     display_plugin: block
     id: block_1
@@ -311,7 +312,7 @@ display:
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   page_1:
     display_plugin: page
     id: page_1
@@ -354,4 +355,4 @@ display:
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.render_entity'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
