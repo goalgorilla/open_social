@@ -33,6 +33,8 @@ class ActivityLoggerFactory {
 
         // Determine destinations.
         $destinations = [];
+        $group = [];
+        $groupcontent = [];
         if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
           foreach ($message_values['destinations'] as $destination) {
             $destinations[] = array('value' => $destination);
@@ -66,11 +68,14 @@ class ActivityLoggerFactory {
               $group = Group::load($group_id = $entity->field_recipient_group->target_id);
             }
           }
-          $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
-          $message->setArguments(array('groups' => [
-            'gtitle' => $group->label(),
-            'gurl' => $gurl->toString()
-          ]));
+
+          if ($group instanceof Group) {
+            $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
+            $message->setArguments(array('groups' => [
+              'gtitle' => $group->label(),
+              'gurl' => $gurl->toString()
+            ]));
+          }
         }
 
         $message->save();
