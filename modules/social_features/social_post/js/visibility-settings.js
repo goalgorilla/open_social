@@ -26,6 +26,10 @@
         $(dropDown).find('input').prop("checked", false);
         // Just check the input below the list item we clicked.
         $(this).find('input').prop("checked", true);
+
+        $(this).siblings('li').removeClass('active');
+        $(this).addClass('active');
+
       });
 
     }
