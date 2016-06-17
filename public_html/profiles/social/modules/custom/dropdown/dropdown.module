@@ -61,7 +61,7 @@ function template_preprocess_dropdown(&$variables) {
   $items = [];
   foreach ($element as $key => $el) {
     if (is_numeric($key) && isset($el['#type']) && $el['#type'] === 'radio') {
-      $items[] = $el;
+      $items[$key] = $el;
       if ($el['#return_value'] === $el['#value']) {
         // @TODO Do we need to check for default_value also
         $selected = HtmlUtility::escape($el['#title']);
