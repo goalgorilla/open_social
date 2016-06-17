@@ -40,6 +40,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   public static function defaultSettings() {
     return array(
       'num_comments' => 2,
+      'always_show_all_comments' => FALSE,
     );
   }
 
@@ -82,14 +83,26 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
             $output['comments'] += $build;
           }
 
-          if ($comments_per_page && $comment_count > $comments_per_page) {
-            $t_args = array(':num_comments' => $comment_count);
-            $more_link = $this->t('Show all :num_comments comments', $t_args);
-
-            $more_button = Link::fromTextAndUrl($more_link, $entity->urlInfo('canonical'));
-            $output['more_link'] = $more_button;
-          }
         }
+
+        // Prepare the show all comments link.
+        $t_args = array(':num_comments' => $comment_count);
+        if ($comment_count == 0) {
+          $more_link = $this->t(':num_comments comments', $t_args);
+        } else {
+          $more_link = $this->t('Show comments', $t_args);
+        }
+
+        $more_button = Link::fromTextAndUrl($more_link, $entity->urlInfo('canonical'));
+
+        $always_show_all_comments = $this->getSetting('always_show_all_comments');
+        if ($always_show_all_comments && $comment_count != 0) {
+          $output['more_link'] = $more_button;
+        }
+        elseif ($comments_per_page && $comment_count > $comments_per_page) {
+          $output['more_link'] = $more_button;
+        }
+
       }
 
       $elements[] = $output + array(
@@ -117,6 +130,12 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       '#max' => 10,
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
+    );
+    $element['always_show_all_comments'] = array(
+      '#type' => 'checkbox',
+      '#title' => $this->t('Always show all comments link'),
+      '#description' => $this->t('If selected it will show a "all comments" link if there is at least 1 comment.'),
+      '#default_value' => $this->getSetting('always_show_all_comments'),
     );
     return $element;
   }
