@@ -21,8 +21,12 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
 function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_visibility']['#prefix'] = '<div class="form-group media"><div class="media-body">';
   $form['field_visibility']['#suffix'] = '</div>';
-  $form['actions']['#prefix'] = '<div class="media-right">';
-  $form['actions']['#suffix'] = '</div></div>';
+
+  // $form['actions']['submit']['#value'] = t('Save'); // This needs to be save on post/*/edit pages
+  $form['actions']['submit']['#prefix'] = '<div class="media-right">';
+  $form['actions']['submit']['#suffix'] = '</div>';
+
+  unset($form['actions']['delete']);
 }
 
 /**
@@ -771,6 +775,43 @@ function socialbase_preprocess_form(&$variables) {
             ->getViewBuilder('profile')
             ->view($user_profile, 'compact');
           $variables['current_user_picture'] = $content;
+        }
+      }
+    }
+  }
+
+  if ($element['#form_id'] === 'social_post_entity_form') {
+
+    if(\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
+      $post_id = $element['#post_id'];
+      /** @var \Drupal\social_post\Entity\Post $post */
+      $post = entity_load('post', $post_id);
+
+      $form['#post_id'] = $post->id();
+      // Display comment created date in format 'time ago'.
+      $created_time_ago = \Drupal::service('date.formatter')
+        ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 2));
+      $date = t('%time ago', array('%time' => $created_time_ago));
+
+      $variables['date']['#markup'] = $date;
+
+      // To change user picture settings (e.g. image style), edit the 'compact'
+      // view mode on the User entity. Note that the 'compact' view mode might
+      // not be configured, so remember to always check the theme setting first.
+      $account = $post->getOwner();
+      if ($account) {
+        $author_name = $account->getDisplayName();
+        $variables['author_name']['#markup'] = $author_name;
+
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          $user_profile = $storage->loadByUser($account, 'profile');
+          if ($user_profile) {
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'compact');
+            $variables['author_picture'] = $content;
+          }
         }
       }
     }
