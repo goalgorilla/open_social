@@ -51,6 +51,7 @@ class ActivityFactory extends ControllerBase {
       'field_activity_status' => ACTIVITY_STATUS_RECEIVED, // Default status.
       'user_id' => $this->getActor($data),
     ]);
+
     $activity->save();
 
     return $activities;
@@ -88,6 +89,14 @@ class ActivityFactory extends ControllerBase {
     if (isset($message)) {
       // @TODO setArguments here? Replace tokens here? Or let message do work?
       $value = $message->getText(NULL);
+      $text = reset($value);
+      // Add format.
+      $value = [
+        '0' => array(
+          'value' => $text,
+          'format' => 'basic_html'
+        )
+      ];
     }
 
     return $value;
