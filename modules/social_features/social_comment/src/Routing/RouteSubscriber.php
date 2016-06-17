@@ -28,6 +28,15 @@ class RouteSubscriber extends RouteSubscriberBase {
         '_controller' => '\Drupal\social_comment\Controller\SocialCommentController::commentPermalink',
       ));
     }
+
+    // Override default title for comment reply page
+    // @TODO: For some reason this doesn't work.
+    if ($route = $collection->get('comment.reply')) {
+      $defaults = $route->getDefaults();
+      $defaults['_title'] = 'Add new reply';
+      $route->setDefaults($defaults);
+    }
+
   }
 
 }
