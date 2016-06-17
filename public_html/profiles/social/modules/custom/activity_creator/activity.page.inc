@@ -38,7 +38,12 @@ function template_preprocess_activity(array &$variables) {
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($activity->getCreatedTime(), array('granularity' => 2));
   $date = t('%time ago', array('%time' => $created_time_ago));
-  $variables['date'] = Link::fromTextAndUrl($date, $full_url);
+  if ($full_url == '') {
+    $variables['date'] = $date;
+  }
+  else {
+    $variables['date'] = Link::fromTextAndUrl($date, $full_url);
+  }
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might
@@ -52,7 +57,12 @@ function template_preprocess_activity(array &$variables) {
         $content = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
           ->view($user_profile, 'compact');
-        $variables['actor'] = Link::fromTextAndUrl($content, $full_url);
+        if ($full_url == '') {
+          $variables['actor'] = Link::fromTextAndUrl($content, $full_url);;
+        }
+        else {
+          $variables['actor'] = $content;
+        }
       }
     }
   }
