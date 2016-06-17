@@ -40,6 +40,7 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   // Comment edit form.
   if(\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form'){
     $form['actions']['submit']['#value'] = t('Submit');
+    $form['#title'] = t('Edit comment');
   }
 }
 
