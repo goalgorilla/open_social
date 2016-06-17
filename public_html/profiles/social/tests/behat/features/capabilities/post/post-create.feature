@@ -30,7 +30,7 @@ Feature: Create Post
     And I should be on "/stream"
 
         # Scenario: edit the post
-   When I click the xth "2" element with the css ".dropdown-toggle"
+   When I click the xth "3" element with the css ".dropdown-toggle"
     And I click "Edit"
     And I fill in "What's on your mind?" with "This is a community post edited."
     And I press "Post"
@@ -50,15 +50,9 @@ Feature: Create Post
    When I go to the homepage
    Then I should not see "This is a post by PostUser1 for PostUser2."
 
-        # Scenario: Succesfully delete a post
-   When I click the xth "2" element with the css ".dropdown-toggle"
-    And I fill in "What's on your mind?" with "This is a post to be deleted."
-    And I select post visibility "Community"
-    And I press "Post"
-   Then I should see the success message "Created the Post."
-    And I should be on "/stream"
+        # TODO: Scenario: Succesfully delete a post
 
-   Given I am an anonymous user
+  Given I am an anonymous user
     And I am on the homepage
    Then I should see "This is a public post." in the ".stream-card" element
    Then I should not see "This is a community post."

@@ -63,18 +63,20 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
     // Fetch arguments from group.
     $arguments = $message->getArguments();
-    $group = $arguments['groups'];
+    if (isset($arguments['groups'])) {
+      $group = $arguments['groups'];
 
-    foreach ($tokens as $name => $original) {
-      switch ($name) {
-        case 'gtitle':
-          // Set the group title.
-          $replacements[$original] = $group['gtitle'];
-          break;
-        case 'gurl':
-          // Set the group title.
-          $replacements[$original] = $group['gurl'];
-          break;
+      foreach ($tokens as $name => $original) {
+        switch ($name) {
+          case 'gtitle':
+            // Set the group title.
+            $replacements[$original] = $group['gtitle'];
+            break;
+          case 'gurl':
+            // Set the group title.
+            $replacements[$original] = $group['gurl'];
+            break;
+        }
       }
     }
   }
