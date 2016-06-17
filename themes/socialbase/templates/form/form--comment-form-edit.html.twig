@@ -14,9 +14,9 @@
 #}
 
 <div class="media">
-  <div class="media-left">{{ current_user_picture }}</div>
+  <div class="media-left">{{ author_picture }}</div>
   <div class="media-body">
-    {#<h5 class="media-heading"><a href="my-stream.html">John Johnson </a>&bullet; <small>6 hours ago</small></h5>#}
+    <h5 class="media-heading">{{ author }}&bullet;<br><small>{{ submitted }}</small></h5>
     <form{{ attributes|without('class') }}>
       <div class="form-group form-group-inline">
         {{ children }}

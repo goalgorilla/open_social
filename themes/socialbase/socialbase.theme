@@ -6,6 +6,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -778,6 +779,44 @@ function socialbase_preprocess_form(&$variables) {
         }
       }
     }
+
+    // Comment edit form.
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+      $comment = \Drupal::routeMatch()->getParameter('comment');
+
+      if (is_object($comment)) {
+        // Display comment created date in format 'time ago'.
+        $created_time_ago = \Drupal::service('date.formatter')
+          ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+        $submitted = t('@time ago', array('@time' => $created_time_ago));
+        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+
+        // Display author information.
+        $account = $comment->getOwner();
+        if ($account) {
+          // Author profile picture.
+          $storage = \Drupal::entityTypeManager()->getStorage('profile');
+          if (!empty($storage)) {
+            $user_profile = $storage->loadByUser($account, 'profile');
+            if ($user_profile) {
+              $content = \Drupal::entityTypeManager()
+                ->getViewBuilder('profile')
+                ->view($user_profile, 'compact');
+              $variables['author_picture'] = $content;
+            }
+          }
+
+          // Author name.
+          $username = array(
+            '#theme' => 'username',
+            '#account' => $account,
+          );
+          $variables['author'] = drupal_render($username);
+        }
+      }
+
+    }
+
   }
 
 }
