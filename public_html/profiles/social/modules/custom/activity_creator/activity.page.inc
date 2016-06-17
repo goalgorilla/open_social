@@ -23,6 +23,7 @@ use Drupal\Core\Url;
  */
 function template_preprocess_activity(array &$variables) {
   // Fetch Activity Entity Object.
+  /** @var \Drupal\activity_creator\Entity\Activity $activity */
   $activity = $variables['elements']['#activity'];
 
   // Helpful $content variable for templates.
@@ -30,11 +31,14 @@ function template_preprocess_activity(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 
+  // Get the url to the related entity.
+  $full_url = $activity->getRelatedEntityUrl();
+
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($activity->getCreatedTime(), array('granularity' => 2));
   $date = t('%time ago', array('%time' => $created_time_ago));
-  $variables['date'] = $date;
+  $variables['date'] = Link::fromTextAndUrl($date, $full_url);
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might
@@ -48,12 +52,11 @@ function template_preprocess_activity(array &$variables) {
         $content = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
           ->view($user_profile, 'compact');
-        $variables['actor'] = $content;
+        $variables['actor'] = Link::fromTextAndUrl($content, $full_url);
       }
     }
   }
 
-  $full_url = $activity->getRelatedEntityUrl();
   $variables['full_url'] = $full_url;
 
   $status = $activity->get('field_activity_status')->getValue();
