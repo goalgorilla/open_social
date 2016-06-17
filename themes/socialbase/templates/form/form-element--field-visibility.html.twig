@@ -45,4 +45,34 @@
  * @ingroup templates
  */
 #}
-{{ label }}
+<div{{ attributes.addClass("form-group") }}>
+    {% if label_display in ['before', 'invisible'] %}
+        {{ label }}
+    {% endif %}
+
+    {% if prefix is not empty %}
+        {{ prefix }}
+    {% endif %}
+
+    {% if description_display == 'before' and description.content %}
+        <div{{ description.attributes }}>
+            {{ description.content }}
+        </div>
+    {% endif %}
+
+    {{ children }}
+
+    {% if suffix is not empty %}
+        {{ suffix }}
+    {% endif %}
+
+    {% if label_display == 'after' %}
+        {{ label }}
+    {% endif %}
+
+    {% if description_display in ['after', 'invisible'] and description.content %}
+        <div{{ description.attributes.addClass('help-block') }}>
+            {{ description.content }}
+        </div>
+    {% endif %}
+</div>
