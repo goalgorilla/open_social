@@ -4,6 +4,7 @@ namespace Drupal\activity_logger\Service;
 
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Url;
+use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\message\Entity\Message;
 
@@ -55,9 +56,16 @@ class ActivityLoggerFactory {
         $message = Message::create($new_message);
 
         // If it's a group.. add it in the arguments.
-        if ($groupcontent = GroupContent::loadByEntity($entity)) {
-          $groupcontent = reset($groupcontent);
-          $group = $groupcontent->getGroup();
+        if ($groupcontent = GroupContent::loadByEntity($entity) || $entity->getEntityTypeId() === 'post') {
+          if ($groupcontent instanceof GroupContent) {
+            $groupcontent = reset($groupcontent);
+            $group = $groupcontent->getGroup();
+          }
+          else {
+            if (!empty($entity->get('field_recipient_group')->getValue())) {
+              $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+            }
+          }
           $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
           $message->setArguments(array('groups' => [
             'gtitle' => $group->label(),
