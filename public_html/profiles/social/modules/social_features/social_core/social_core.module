@@ -134,6 +134,22 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   // Remove the comment links.
   unset($links['comment__field_topic_comments']);
   unset($links['comment__field_event_comments']);
+
+  if (isset($context['view_mode']) && $context['view_mode'] === 'activity') {
+    // Add a readmore link.
+    $node_title_stripped = strip_tags($entity->label());
+    $links['node']['#links']['node-readmore'] = array(
+      'title' => t('Read more<span class="visually-hidden"> about @title</span>', array(
+        '@title' => $node_title_stripped,
+      )),
+      'url' => $entity->urlInfo(),
+      'language' => $entity->language(),
+      'attributes' => array(
+        'rel' => 'tag',
+        'title' => $node_title_stripped,
+      ),
+    );
+  }
 }
 
 /**

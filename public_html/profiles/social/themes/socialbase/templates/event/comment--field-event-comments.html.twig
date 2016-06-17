@@ -68,7 +68,7 @@
 #}
 
 
-
+<div class="media-wrapper">
   <div class="media">
     <div class="media-left">
         {% if author_picture %}
@@ -79,12 +79,13 @@
       <div class="media-heading text-m">
         {{ author }} <br /> <div class="text-gray-light">{{ submitted }}</div>
       </div>
-      {% if content.links|render %}
-          {{ content.links }}
-      {% endif %}
     </div>
   </div>
 
   <div class="margin-top-s">
     {{ content.field_comment_body }}
   </div>
+  {% if content.links|render %}
+      {{ content.links }}
+  {% endif %}
+</div>
