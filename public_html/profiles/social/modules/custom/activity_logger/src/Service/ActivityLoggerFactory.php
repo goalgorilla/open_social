@@ -57,25 +57,25 @@ class ActivityLoggerFactory {
         // Create the message
         $message = Message::create($new_message);
 
+        // Try to get the group.
+        $groupcontent = GroupContent::loadByEntity($entity);
+        if (!empty($groupcontent)) {
+          $groupcontent = reset($groupcontent);
+          $group = $groupcontent->getGroup();
+        }
+        // Or special handling for post entities.
+        if ($entity->getEntityTypeId() === 'post') {
+          if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')->getValue())) {
+            $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+          }
+        }
         // If it's a group.. add it in the arguments.
-        if ($groupcontent = GroupContent::loadByEntity($entity) || $entity->getEntityTypeId() === 'post') {
-          if ($groupcontent instanceof GroupContent) {
-            $groupcontent = reset($groupcontent);
-            $group = $groupcontent->getGroup();
-          }
-          else {
-            if (!empty($entity->get('field_recipient_group')->getValue())) {
-              $group = Group::load($group_id = $entity->field_recipient_group->target_id);
-            }
-          }
-
-          if ($group instanceof Group) {
-            $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
-            $message->setArguments(array('groups' => [
-              'gtitle' => $group->label(),
-              'gurl' => $gurl->toString()
-            ]));
-          }
+        if ($group instanceof Group) {
+          $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
+          $message->setArguments(array('groups' => [
+            'gtitle' => $group->label(),
+            'gurl' => $gurl->toString()
+          ]));
         }
 
         $message->save();
