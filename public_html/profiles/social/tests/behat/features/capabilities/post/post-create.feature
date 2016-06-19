@@ -54,5 +54,5 @@ Feature: Create Post
 
   Given I am an anonymous user
     And I am on the homepage
-   Then I should see "This is a public post." in the ".stream-card" element
+   Then I should see "This is a public post."
    Then I should not see "This is a community post."
