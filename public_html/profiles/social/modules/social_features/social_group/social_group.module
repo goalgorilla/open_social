@@ -299,7 +299,8 @@ function _social_group_node_form_submit($form, FormStateInterface $form_state) {
     $group_content = \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->load($route_params['group_content']);
-    $node_reference = reset($group_content->get('entity_id')->getValue());
+    $group_entity_id = $group_content->get('entity_id')->getValue();
+    $node_reference = reset($group_entity_id);
     // Set redirect.
     $form_state->setRedirect(
       'entity.node.canonical',

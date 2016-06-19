@@ -7,17 +7,17 @@ Feature: Create Post
   Scenario: Successfully create, edit and delete post
   Given users:
       | name      | status | pass |
-      | PostUser1 |      1 | PostUser1 |
-      | PostUser2 |      1 | PostUser2 |
-    And I am logged in as "PostUser1"
+      | PostCreateUser1 |      1 | PostCreateUser1 |
+      | PostCreateUser2 |      1 | PostCreateUser2 |
+    And I am logged in as "PostCreateUser1"
     And I am on the homepage
-  And I should not see "PostUser1" in the "Main content front"
+  And I should not see "PostCreateUser1" in the "Main content front"
   When I fill in "What's on your mind?" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
    Then I should see the success message "Created the Post."
     And I should see "This is a public post."
-    And I should see "PostUser1" in the "Main content front"
+    And I should see "PostCreateUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: Succesfully create a private post
@@ -26,11 +26,11 @@ Feature: Create Post
     And I press "Post"
    Then I should see the success message "Created the Post."
     And I should see "This is a community post."
-    And I should see "PostUser1" in the "Main content front"
+    And I should see "PostCreateUser1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: edit the post
-   When I click the xth "2" element with the css ".dropdown-toggle"
+   When I click the xth "3" element with the css ".dropdown-toggle"
     And I click "Edit"
     And I fill in "What's on your mind?" with "This is a community post edited."
     And I press "Post"
@@ -42,23 +42,17 @@ Feature: Create Post
     And I should see "This is a public post."
 
         # Scenario: Post on someones profile stream
-  Given I am on the profile of "PostUser2"
-   When I fill in "What's on your mind?" with "This is a post by PostUser1 for PostUser2."
+  Given I am on the profile of "PostCreateUser2"
+   When I fill in "What's on your mind?" with "This is a post by PostCreateUser1 for PostCreateUser2."
     And I press "Post"
    Then I should see the success message "Created the Post."
-    And I should see "This is a post by PostUser1 for PostUser2."
+    And I should see "This is a post by PostCreateUser1 for PostCreateUser2."
    When I go to the homepage
-   Then I should not see "This is a post by PostUser1 for PostUser2."
+   Then I should not see "This is a post by PostCreateUser1 for PostCreateUser2."
 
-        # Scenario: Succesfully delete a post
-   When I click the xth "2" element with the css ".dropdown-toggle"
-    And I fill in "What's on your mind?" with "This is a post to be deleted."
-    And I select post visibility "Community"
-    And I press "Post"
-   Then I should see the success message "Created the Post."
-    And I should be on "/stream"
+        # TODO: Scenario: Succesfully delete a post
 
-   Given I am an anonymous user
+  Given I am an anonymous user
     And I am on the homepage
-   Then I should see "This is a public post." in the ".stream-card" element
+   Then I should see "This is a public post."
    Then I should not see "This is a community post."

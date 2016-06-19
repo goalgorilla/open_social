@@ -6,7 +6,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
-use Drupal\Core\Link;
+use \Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -396,10 +396,26 @@ function socialbase_theme_suggestions_form_element_label_alter(array &$suggestio
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+  $view_id = $variables['view']->id();
   $views_display = $variables['view']->getDisplay();
   if (!empty($views_display->display['id']) && $views_display->display['id'] == 'view_enrollments') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'page';
   }
+
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream';
+  }
+
+  // for view notification_archive we need a separate template
+  if (!empty($views_display->display['id']) && $view_id == 'activity_stream_notifications' && $views_display->display['id'] == 'page_1') {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'stream_notifications';
+  }
+
+  // remove extra wrapping divs for these views
+  if (!empty($view_id) && ($view_id == 'events' || $view_id == 'topics' || $view_id == 'groups'  )) {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'bare';
+  }
+
 }
 
 /**
@@ -449,6 +465,8 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_group_description':
     case 'field_topic_image':
     case 'field_comment_body':
+    case 'field_activity_output_text':
+    case 'field_activity_entity':
       $variables['bare'] = TRUE;
       break;
   }
@@ -459,6 +477,31 @@ function socialbase_preprocess_field(&$variables) {
       $variables['bare'] = TRUE;
       break;
   }
+
+  switch ($variables['element']['#formatter']) {
+    case 'comment_default':
+      $variables['node'] = TRUE;
+      break;
+    case 'comment_node':
+      $variables['stream'] = TRUE;
+      break;
+  }
+
+  if ($variables['element']['#formatter'] == 'comment_node') {
+    $node = $variables['element']['#object'];
+    $link_options = array(
+      'fragment' => 'comment-form',
+      'attributes' => array(
+        'class' => array(
+          'btn btn-block btn-link',
+        ),
+      ),
+    );
+
+    $urlwithoptions = $node->toUrl('canonical', $link_options);
+    $variables['nodelink'] = Link::fromTextAndUrl('Comment', $urlwithoptions);
+  }
+
 }
 
 /**
@@ -568,8 +611,9 @@ function socialbase_preprocess_node(&$variables) {
   }
 
   // Content visibility
-  if((isset($node->field_content_visibility)) && !$account->isAnonymous()){
-    $content_visibility = reset($node->field_content_visibility->getValue());
+  if((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+    $node_visibility_value = $node->field_content_visibility->getValue();
+    $content_visibility = reset($node_visibility_value);
     switch ($content_visibility['value']) {
       case 'community':
         $variables['visibility_icon'] = 'group';
@@ -589,13 +633,13 @@ function socialbase_preprocess_node(&$variables) {
  */
 function socialbase_preprocess_image_style(&$variables) {
   if ($variables['style_name'] == 'social_large') {
-    $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
   if ($variables['style_name'] == 'social_medium') {
     $variables['image']['#attributes']['class'][] = 'img-medium';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+
 }
 
 /**
@@ -706,6 +750,17 @@ function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array 
 }
 
 /**
+ * Implements hook_theme_suggestions_field_alter().
+ */
+function socialbase_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+
+  if (!empty($variables['node']) && $variables['node'] == TRUE) {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
+  }
+
+}
+
+/**
  * Allows sub-themes to alter the array used for colorizing text.
  *
  * @param array $texts
@@ -769,7 +824,7 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
 function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
-  if ($element['#form_id'] === 'comment_comment_form') {
+  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -859,5 +914,21 @@ function socialbase_preprocess_form(&$variables) {
       }
     }
   }
+}
 
+/**
+ * @param $variables
+ */
+function socialbase_preprocess_activity(&$variables) {
+  // Check if the view mode is one of the notification view modes.
+  if (in_array($variables['content']['field_activity_output_text']['#view_mode'],array('notification', 'notification_archive'))) {
+    // Remove href from date.
+    $variables['date'] = strip_tags($variables['date']->toString()->getGeneratedLink());
+    // Remove href from output text.
+    $variables['content']['field_activity_output_text'][0]['#text'] = strip_tags($variables['content']['field_activity_output_text'][0]['#text']);
+    // Remove href from profile image.
+    if (is_object($variables['actor'])) {
+      $variables['actor'] = $variables['actor']->getText();
+    }
+  }
 }

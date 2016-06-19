@@ -1,0 +1,97 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.activity.field_activity_entity
+  module:
+    - activity_creator
+    - dynamic_entity_reference
+id: activity.activity.field_activity_entity
+field_name: field_activity_entity
+entity_type: activity
+bundle: activity
+label: Entity
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  comment:
+    handler: 'default:comment'
+    handler_settings:
+      target_bundles:
+        comment: comment
+        post_comment: post_comment
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: comment
+  node:
+    handler: 'default:node'
+    handler_settings:
+      target_bundles:
+        event: event
+        topic: topic
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: event
+  event_enrollment:
+    handler: 'default:event_enrollment'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
+  group:
+    handler: 'default:group'
+    handler_settings:
+      target_bundles:
+        open_group: open_group
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: ''
+  message:
+    handler: 'default:message'
+    handler_settings:
+      target_bundles:
+        create_post_profile: create_post_profile
+        create_topic_community: create_topic_community
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: create_post_profile
+  post:
+    handler: 'default:post'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
+  activity:
+    handler: 'default:activity'
+    handler_settings: {  }
+  block_content:
+    handler: 'default:block_content'
+    handler_settings: {  }
+  menu_link_content:
+    handler: 'default:menu_link_content'
+    handler_settings: {  }
+  file:
+    handler: 'default:file'
+    handler_settings: {  }
+  group_content:
+    handler: 'default:group_content'
+    handler_settings: {  }
+  profile:
+    handler: 'default:profile'
+    handler_settings: {  }
+  taxonomy_term:
+    handler: 'default:taxonomy_term'
+    handler_settings: {  }
+  user:
+    handler: 'default:user'
+    handler_settings: {  }
+field_type: dynamic_entity_reference

@@ -6469,6 +6469,10 @@ hr.ruler-l {
   margin: 2px 0;
 }
 
+.scrollable-menu p {
+  margin-bottom: 0;
+}
+
 .badge-accent {
   background-color: #ffc142;
   color: #4d4d4d;
@@ -6958,12 +6962,8 @@ a.default-light:focus {
   margin-top: 15px;
 }
 
-.media-wrapper:first-child {
+.media-wrapper:first-of-type {
   margin-top: 0;
-}
-
-.media-wrapper p {
-  margin-bottom: 0;
 }
 
 .media {
@@ -7013,6 +7013,10 @@ a.default-light:focus {
   margin-top: 0;
   margin-bottom: 5px;
   padding-right: 40px;
+}
+
+.media-heading p {
+  margin: 0;
 }
 
 .media-list {
@@ -7092,17 +7096,22 @@ a.default-light:focus {
   padding: 15px;
 }
 
-.stream-card > .card-body > .card-nested-section {
+.stream-card > .card-body > .card-nested-section,
+.stream-card > .card-body > .media-wrapper > .card-nested-section {
   margin: 10px -15px -15px;
   padding: 15px;
 }
 
-.stream-card .media {
+.stream-card .mediawrapper {
   margin-top: 15px;
 }
 
-.stream-card .media:first-child {
+.stream-card .mediawrapper:first-child {
   margin-top: 0;
+}
+
+.stream-card .reply-placeholder {
+  display: none;
 }
 
 .card--teaser-stream {

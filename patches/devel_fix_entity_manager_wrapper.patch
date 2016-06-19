@@ -1,0 +1,31 @@
+diff --git a/public_html/profiles/social/modules/development/devel/webprofiler/src/Entity/EntityManagerWrapper.php b/public_html/profiles/social/modules/development/devel/webprofiler/src/Entity/EntityManagerWrapper.php
+index 3c40d9b..4b6e18c 100644
+--- a/public_html/profiles/social/modules/development/devel/webprofiler/src/Entity/EntityManagerWrapper.php
++++ b/public_html/profiles/social/modules/development/devel/webprofiler/src/Entity/EntityManagerWrapper.php
+@@ -130,7 +130,7 @@ public function getRendered($type) {
+    * {@inheritdoc}
+    */
+   public function useCaches($use_caches = FALSE) {
+-    $this->entityManager->useCaches($use_caches = FALSE);
++    $this->entityManager->useCaches($use_caches);
+   }
+ 
+   /**
+@@ -158,7 +158,7 @@ public function onBundleDelete($bundle, $entity_type_id) {
+    * {@inheritdoc}
+    */
+   public function getEntityTypeLabels($group = FALSE) {
+-    return $this->entityManager->getEntityTypeLabels($group = FALSE);
++    return $this->entityManager->getEntityTypeLabels($group);
+   }
+ 
+   /**
+@@ -531,7 +531,7 @@ public function getInstance(array $options) {
+    * {@inheritdoc}
+    */
+   public function setContainer(ContainerInterface $container = NULL) {
+-    $this->entityManager->setContainer($container = NULL);
++    $this->entityManager->setContainer($container);
+   }
+
+   /**
