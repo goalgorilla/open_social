@@ -17,5 +17,5 @@ Feature: Edit Comment
     And I should see "This is my comment"
     When I fill in the following:
       | Add a comment | This is my edited comment |
-    And I press "Comment"
+    And I press "Submit"
     And I should see "This is my edited comment"
