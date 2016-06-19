@@ -32,7 +32,7 @@ Feature: Comment on a Post
   When I click the xth "3" element with the css ".dropdown-toggle"
     And I click "Edit"
     And I fill in "Comment #1 to be deleted" for "field_comment_body[0][value]"
-    And I press "Comment"
+    And I press "Submit"
    Then I should see the success message "Your comment has been posted."
 
         # Scenario: delete comment

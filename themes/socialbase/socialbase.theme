@@ -309,7 +309,11 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
 
   // Alter comment form
   if ($variables['element']['#id'] == 'comment-form') {
-    $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
+    if(\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form'){
+      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form_edit');
+    } else {
+      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
+    }
   }
 
   // Also for the search hero content form on the /search/content.
@@ -834,6 +838,44 @@ function socialbase_preprocess_form(&$variables) {
         }
       }
     }
+
+    // Comment edit form.
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+      $comment = \Drupal::routeMatch()->getParameter('comment');
+
+      if (is_object($comment)) {
+        // Display comment created date in format 'time ago'.
+        $created_time_ago = \Drupal::service('date.formatter')
+          ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+        $submitted = t('@time ago', array('@time' => $created_time_ago));
+        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+
+        // Display author information.
+        $account = $comment->getOwner();
+        if ($account) {
+          // Author profile picture.
+          $storage = \Drupal::entityTypeManager()->getStorage('profile');
+          if (!empty($storage)) {
+            $user_profile = $storage->loadByUser($account, 'profile');
+            if ($user_profile) {
+              $content = \Drupal::entityTypeManager()
+                ->getViewBuilder('profile')
+                ->view($user_profile, 'compact');
+              $variables['author_picture'] = $content;
+            }
+          }
+
+          // Author name.
+          $username = array(
+            '#theme' => 'username',
+            '#account' => $account,
+          );
+          $variables['author'] = drupal_render($username);
+        }
+      }
+
+    }
+
   }
 
   if ($element['#form_id'] === 'social_post_entity_form') {

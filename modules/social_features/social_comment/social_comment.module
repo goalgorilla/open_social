@@ -28,6 +28,21 @@ function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormSt
   }
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
+
+  // Comment reply form.
+  if(\Drupal::routeMatch()->getRouteName() === 'comment.reply'){
+    $form['#attributes']['class'][] = 'card-nested-section';
+    $form['actions']['submit']['#value'] = t('Reply');
+    $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
+
+    $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
+  }
+  // Comment edit form.
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form'){
+    $form['actions']['submit']['#value'] = t('Submit');
+    $form['#title'] = t('Edit comment');
+    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
+  }
 }
 
 /**
@@ -64,7 +79,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
   $bundle = $entity->bundle();
   switch ($bundle) {
     default:
-      if (!empty($entity->getParentComment())) {
+      if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
         unset($links['comment']['#links']['comment-reply']);
       }
       break;
@@ -84,7 +99,7 @@ function social_comment_preprocess_comment(&$variables) {
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
   $submitted = t('@time ago', array('@time' => $created_time_ago));
-
+  
   $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
 
   $account = $comment->getOwner();
