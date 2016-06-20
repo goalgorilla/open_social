@@ -81,7 +81,9 @@
         <p class="text-grey-dark">
           <i class="material-icons pull-left">event</i>
           <span class="inline-center">
-            {{ event_date }}
+              {% if event_date }}
+                {{ event_date }}
+              {% endif %}
           </span>&nbsp;
           {% if content.enrolled %}
             <span class="label label-primary">enrolled</span>
