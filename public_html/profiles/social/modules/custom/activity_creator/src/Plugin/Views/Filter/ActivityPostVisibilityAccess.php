@@ -96,7 +96,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
     $node_access->condition($grants);
     $or->condition($node_access);
-    
+
     $post_access = db_and();
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
     if (!$account->hasPermission('view public posts')) {
