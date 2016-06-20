@@ -135,12 +135,17 @@ function social_event_views_data_alter(array &$data) {
  * Formats the event start end date.
  */
 function _social_event_format_date($event, $view_mode) {
+  $event_date = '';
   // Get start and end dates
   if ($start_date_field = $event->field_event_date) {
-    $start_datetime = strtotime($start_date_field->value);
+    if (!empty($start_date_field->value)) {
+      $start_datetime = strtotime($start_date_field->value);
+    }
   }
   if ($end_date_field = $event->field_event_date_end) {
-    $end_datetime = strtotime($end_date_field->value);
+    if (!empty($end_date_field->value)) {
+      $end_datetime = strtotime($end_date_field->value);
+    }
   }
 
   // Get date and time formats.
@@ -148,26 +153,28 @@ function _social_event_format_date($event, $view_mode) {
   $date_format = ($view_mode === 'hero') ? 'social_long_date' : 'social_short_date';
   $time_format = 'social_time';
 
-  // Date are the same or there are no end date.
-  if (empty($end_datetime) || $start_datetime == $end_datetime) {
-    $date = $date_formatter->format($start_datetime, $date_format);
-    $time = $date_formatter->format($start_datetime, $time_format);
-    $event_date = "$date - $time";
-  }
-  // The date is the same, the time is different.
-  elseif (date('Y-m-d', $start_datetime) == date('Y-m-d', $end_datetime)) {
-    $date = $date_formatter->format($start_datetime, $date_format);
-    $start_time = $date_formatter->format($start_datetime, $time_format);
-    $end_time = $date_formatter->format($end_datetime, $time_format);
-    $event_date = "$date $start_time - $end_time";
-  }
-  // They are not the same day (or empty?).
-  else {
-    $start_date = $date_formatter->format($start_datetime, $date_format);
-    $end_date = $date_formatter->format($end_datetime, $date_format);
-    $start_time = $date_formatter->format($start_datetime, $time_format);
-    $end_time = $date_formatter->format($end_datetime, $time_format);
-    $event_date = "$start_date $start_time - $end_date $end_time";
+  if (!empty($start_datetime)) {
+    // Date are the same or there are no end date.
+    if (empty($end_datetime) || $start_datetime == $end_datetime) {
+      $date = $date_formatter->format($start_datetime, $date_format);
+      $time = $date_formatter->format($start_datetime, $time_format);
+      $event_date = "$date - $time";
+    }
+    // The date is the same, the time is different.
+    elseif (date('Y-m-d', $start_datetime) == date('Y-m-d', $end_datetime)) {
+      $date = $date_formatter->format($start_datetime, $date_format);
+      $start_time = $date_formatter->format($start_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, $time_format);
+      $event_date = "$date $start_time - $end_time";
+    }
+    // They are not the same day (or empty?).
+    elseif (!empty($end_datetime)) {
+      $start_date = $date_formatter->format($start_datetime, $date_format);
+      $end_date = $date_formatter->format($end_datetime, $date_format);
+      $start_time = $date_formatter->format($start_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, $time_format);
+      $event_date = "$start_date $start_time - $end_date $end_time";
+    }
   }
   return $event_date;
 }
