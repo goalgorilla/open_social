@@ -119,7 +119,7 @@ gulp.task('jade', function() {
 gulp.task('styleguides-components', function() {
   return gulp
     .src([
-      folder.js_comp + "/collapsible.js",
+      //folder.js_comp + "/collapsible.js",
       folder.js_comp + "/sideNav.js"
     ])
     .pipe( concat('styleguide.js') )
