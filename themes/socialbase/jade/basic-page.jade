@@ -1,0 +1,54 @@
+- var user = "isAnonymous"
+- var pagetype = "template"
+- var page = "Basic page"
+
+include layout/_head.jade
+
+body
+  include layout/_gtm.jade
+  include layout/_header-an.jade
+  
+  main.main-container(role='main')
+  
+    nav.visible-md-block.visible-lg-block.bg-white
+      ol.breadcrumb.container
+        li
+          a(href='home-an.html') Home
+        li.active Information on the use of cookies
+        
+    .container.hero-container
+      .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/basic-page-hero.jpg')")  
+        .cover-wrap   
+          h1.page-title Information on the use of cookies
+          .hero-footer
+            .row.row-md-center
+              .col-xs-12.col-md-6.col-md-offset-3
+                .badge.badge-gray-dark.badge--toggle
+                  label
+                    input(type='checkbox')
+                    i.material-icons public        
+                    span.badge--toggle__label public
+    
+    .main-content
+    
+      .container
+    
+        .row.margin-top-l
+        
+          .col-xs-12.col-sm-8
+            .card
+              .card-body.extra-padding
+                :markdown
+                  We can't unfortunately offer a cookie-free experience, and here's why:
+
+                  The new EU law, and in particular the amended Dutch Telecommunications Act, requiring visitor consent to use cookies put us in a difficult situation. We built our entire global website around a concept of making visits to our national sites, the selection of language, the sharing and spreading of content, and the taking of online actions as easy for regular visitors as possible. Cookies were an essential part of the design of our web presence from top to bottom.
+
+                  When the new EU law was announced, we considered the cost of recoding our content management system and website to make cookies optional. However, their use is so deeply ingrained, and so distributed across different language and national content sites, that this would have been an extremely expensive prospect. As our website's primary mission is to inspire, engage, and mobilize, we came to the conclusion that investing in a cookie-free, information only experience simply wouldn't be the best use of our supporter's money. We decided to bias toward the convenience of the our regular visitors, and make cookies mandatory for visits to the site.
+
+                  We're really sorry that we can't offer a cookie-free experience on our website, and can only hope that you understand the choice we had to make.
+
+                  Open Social uses cookies to make it easier for you to take action and make change by allowing you to stay logged in, remembering your location and language preferences, and providing you with social sharing features to easily spread the word and make change.
+
+
+  include layout/_footer.jade
+  include layout/_scripts.jade
