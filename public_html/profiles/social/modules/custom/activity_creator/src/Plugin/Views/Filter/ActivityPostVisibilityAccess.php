@@ -104,6 +104,8 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
     if (!$account->hasPermission('view community posts')) {
       $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
+      // Also do not show recipient posts (e.g. on groups).
+      $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
     }
 
     $or->condition($post_access);
