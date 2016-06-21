@@ -12,5 +12,5 @@ projects:
     type: profile
     download:
       type: git
-      branch: 'profile'
-      url: 'git@github.com:goalgorilla/drupal_social.git'
+      branch: '8.x-1.x'
+      tag: '8.x-1.x-dev'
