@@ -1,7 +1,4 @@
 <?php
-/**
- * EntityAccessHelper
- */
 
 namespace Drupal\entity_access_by_field;
 
@@ -9,10 +6,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
 
-
+/**
+ * Helper class for checking entity access.
+ */
 class EntityAccessHelper {
 
-  static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
+  /**
+   * NodeAccessCheck for given operation, node and user account.
+   */
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
     if ($op === 'view') {
       $field_definitions = $node->getFieldDefinitions();
 
@@ -40,7 +42,10 @@ class EntityAccessHelper {
     return 0;
   }
 
-  static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
+  /**
+   * Gets the Entity access for the given node.
+   */
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
     $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {
@@ -53,4 +58,5 @@ class EntityAccessHelper {
 
     return AccessResult::neutral();
   }
+
 }

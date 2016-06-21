@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\entity_access_by_field\EntityAccessByFieldPermissions.
- */
 
 namespace Drupal\entity_access_by_field;
 
@@ -13,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\UrlGeneratorTrait;
 
 /**
- * EntityAccessByFieldPermissions
+ * EntityAccessByFieldPermissions.
  */
 class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
 
@@ -64,7 +60,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
-            // e.g. label = node.article.field_content_visibility:public
+            // e.g. label = node.article.field_content_visibility:public.
             $permission_label = $field->id() . ':' . $field_key;
             $permission = 'view ' . $permission_label . ' content';
             $permissions[$permission] = [
@@ -98,7 +94,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
-            // e.g. label = node.article.field_content_visibility:public
+            // e.g. label = node.article.field_content_visibility:public.
             $permission_label = $field->id() . ':' . $field_key;
             $op = 'view';
             $permission = $op . ' ' . $permission_label . ' content';
@@ -115,15 +111,13 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
   }
 
   /**
-   * @param $op
-   * @param $entity_type
-   * @param $bundle
-   * @param $field_name
-   * @param $field_key
+   * Returns a realm for a field value in order to create access.
+   *
    * @return string $realm
+   *   The string with the realm created.
    */
   public function getRealmForFieldValue($op, $entity_type, $bundle_id, $field_name, $field_value) {
-    $realm = $op . '_' . $entity_type . '_' . $bundle_id. '_' . $field_name . '_' . $field_value;
+    $realm = $op . '_' . $entity_type . '_' . $bundle_id . '_' . $field_name . '_' . $field_value;
     return $realm;
   }
 
@@ -131,6 +125,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    * Get all the content types.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
+   *   Returns the entity interface containing all the content types.
    */
   protected function getContentTypes() {
     $contentTypes = $this->entityManager->getStorage('node_type')->loadMultiple();
@@ -141,6 +136,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
    * Get all fields of type entity_access_field.
    *
    * @return array $fields
+   *   Returns all the fields with the entity type entity_acces_field.
    */
   public function getEntityAccessFields($entity, $bundle) {
     $fields = [];

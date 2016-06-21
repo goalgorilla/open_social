@@ -4,7 +4,11 @@
  * @file
  * The Social core module.
  */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_theme().
@@ -24,6 +28,7 @@ function social_core_theme() {
         'event_enrollment' => NULL,
         'visibility_icon' => NULL,
         'visibility_label' => NULL,
+        'hero_styled_image_url' => NULL,
       ),
     ),
   );
@@ -41,7 +46,7 @@ function social_core_theme() {
  *   - created_date: Timestamp
  *   - created_date_formatted: Formatted date as a string
  *   - topic_type: List of topic types as an array or NULL
- *   - hero_node: Rendered hero display of the current active node or NULL
+ *   - hero_node: Rendered hero display of the current active node or NULL.
  */
 function template_preprocess_page_hero_data(&$variables) {
   // @todo create $variables['author_formatted']?
@@ -65,7 +70,7 @@ function template_preprocess_page_hero_data(&$variables) {
           ->getForm('Drupal\social_event\Form\EnrollActionForm');
 
         $render_array = array(
-          'enroll_action_form' => $form
+          'enroll_action_form' => $form,
         );
 
         $variables['event_enrollment'] = $render_array;
@@ -73,14 +78,14 @@ function template_preprocess_page_hero_data(&$variables) {
     }
 
     // Add node edit url for management.
-    if ($node instanceof Drupal\node\Entity\Node) {
+    if ($node instanceof Node) {
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
       }
     }
 
-    // Content visibility
-    if((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+    // Content visibility.
+    if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
       $node_visibility_value = $node->field_content_visibility->getValue();
       $content_visibility = reset($node_visibility_value);
       switch ($content_visibility['value']) {
@@ -88,12 +93,21 @@ function template_preprocess_page_hero_data(&$variables) {
           $variables['visibility_icon'] = 'group';
           $variables['visibility_label'] = t('community');
           break;
+
         case 'public':
           $variables['visibility_icon'] = 'public';
           $variables['visibility_label'] = t('public');
           break;
       }
     }
+
+    // Add the hero styled image.
+    $image_field = "field_{$node->getType()}_image";
+    if (!empty($node->{$image_field}->entity)) {
+      $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+        ->buildUrl($node->{$image_field}->entity->getFileUri());
+    }
+
   }
 
   if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
@@ -103,7 +117,7 @@ function template_preprocess_page_hero_data(&$variables) {
   if (isset($variables['topic_type'])) {
     $topic_type_entities = $variables['topic_type']->referencedEntities();
     if (count($topic_type_entities) === 1) {
-      foreach($topic_type_entities as $topic) {
+      foreach ($topic_type_entities as $topic) {
         $variables['topic_type'] = $topic->link();
       }
     }
@@ -118,7 +132,7 @@ function template_preprocess_page_hero_data(&$variables) {
  *
  * For Site information Site details form.
  */
-function social_core_form_system_site_information_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Hide site slogan field and make it disabled as well whenever the user
   // is able to fill out the textfield.
   if (!empty($form['site_information']['site_slogan'])) {

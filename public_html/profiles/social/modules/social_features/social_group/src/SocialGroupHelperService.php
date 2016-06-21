@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\SocialGroupHelperService.
- */
-
 namespace Drupal\social_group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
-
 
 /**
  * Class SocialGroupHelperService.
@@ -17,6 +11,7 @@ use Drupal\social_post\Entity\Post;
  * @package Drupal\social_group
  */
 class SocialGroupHelperService {
+
   /**
    * Constructor.
    */
@@ -31,7 +26,7 @@ class SocialGroupHelperService {
     $gid = NULL;
 
     if ($entity['target_type'] === 'post') {
-      /** @var /Drupal/social_post/Entity/Post $post */
+      /* @var /Drupal/social_post/Entity/Post $post */
       $post = Post::load($entity['target_id']);
       $recipient_group = $post->get('field_recipient_group')->getValue();
       if (!empty($recipient_group)) {

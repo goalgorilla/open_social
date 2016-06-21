@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Activity Creator module file.
  */
 
@@ -13,7 +14,8 @@ const ACTIVITY_STATUS_READ = 3;
 /**
  * Returns the allowed values for the activity status field.
  *
- * @return array $allowed_values
+ * @return array
+ *    Return an array of allowed values for status field.
  */
 function activity_creator_field_activity_status_allowed_values() {
 
@@ -29,7 +31,8 @@ function activity_creator_field_activity_status_allowed_values() {
 /**
  * Returns the allowed values for the activity destinations field.
  *
- * @return array $allowed_values
+ * @return array
+ *    Return an array of allowed values for destinations field.
  */
 function activity_creator_field_activity_destinations_allowed_values() {
 
@@ -58,13 +61,17 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
     $related_object = $entity->get('field_message_related_object')->getValue();
 
     $data = [
-      'mid' => $mid, // message id, or maybe full ActivityLog obj? Better not!
-      'message_type' => $message_type_id, // this is needed for the activityfactory
+    // Message id, or maybe full ActivityLog obj? Better not!
+      'mid' => $mid,
+    // This is needed for the activityfactory.
+      'message_type' => $message_type_id,
       'actor' => $actor,
-      'context' => $context[0]['value'], // either group, profile, community
+    // Either group, profile, community.
+      'context' => $context[0]['value'],
       'destination' => $destinations,
       'related_object' => $related_object,
-      'last_uid' => 0, // last processed_uid
+    // Last processed_uid.
+      'last_uid' => 0,
       'status' => NULL,
     ];
 
@@ -75,8 +82,8 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
     if ($activity_create_direct) {
 
       $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
-      /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
 
+      /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
       $plugin = $context_plugin_manager->createInstance($data['context']);
       $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
       $activity_factory = \Drupal::service('activity_creator.activity_factory');
@@ -88,7 +95,8 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
             'mid' => $data['mid'],
             'message_type' => $data['message_type'],
             'actor' => $data['actor'],
-            'context' => $data['context'], // Not necessary?
+          // Not necessary?
+            'context' => $data['context'],
             'destination' => $data['destination'],
             'related_object' => $data['related_object'],
             'recipient' => $recipient,
@@ -101,7 +109,8 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
           'mid' => $data['mid'],
           'message_type' => $data['message_type'],
           'actor' => $data['actor'],
-          'context' => $data['context'], // Not necessary?
+        // Not necessary?
+          'context' => $data['context'],
           'destination' => $data['destination'],
           'related_object' => $data['related_object'],
         ];
@@ -125,7 +134,7 @@ function activity_creator_views_data() {
       'title' => t('Activity visibility access'),
       'help' => t('Enable activity access control.'),
       'field' => 'field_visibility',
-      'id' => 'activity_visibility_access'
+      'id' => 'activity_visibility_access',
     ),
   );
   $data['activity']['activity_post_visibility_access_filter'] = array(
@@ -134,7 +143,7 @@ function activity_creator_views_data() {
       'title' => t('Activity post visibility access'),
       'help' => t('Enable activity access control for related post entities.'),
       'field' => 'field_visibility',
-      'id' => 'activity_post_visibility_access'
+      'id' => 'activity_post_visibility_access',
     ),
   );
   $data['activity']['activity_profile_argument'] = array(
@@ -142,7 +151,7 @@ function activity_creator_views_data() {
     'argument' => array(
       'title' => t('Activity profile argument'),
       'help' => t('Activity profile context argument.'),
-      'id' => 'activity_profile_argument'
+      'id' => 'activity_profile_argument',
     ),
   );
   $data['activity']['activity_group_argument'] = array(
@@ -150,7 +159,7 @@ function activity_creator_views_data() {
     'argument' => array(
       'title' => t('Activity group argument'),
       'help' => t('Activity group context argument.'),
-      'id' => 'activity_group_argument'
+      'id' => 'activity_group_argument',
     ),
   );
   return $data;
@@ -217,6 +226,9 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
  * Implements hook_entity_delete().
  *
  * Delete activity items when related entities are deleted.
+ *
+ * @TODO: When group is deleted delete activities where group is recipient.
+ * @TODO: When user is deleted delete activities where user is recipient.
  */
 function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
 
@@ -235,16 +247,14 @@ function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $enti
       }
     }
 
-    // TODO: When group is deleted delete activities where group is recipient.
-    // TODO: When user is deleted delete activities where user is recipient.
-//    if ($entity_type == 'user' || $entity_type == 'group') {
-//      $entity_query = \Drupal::entityQuery('activity');
-//      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
-//      $ids = $entity_query->execute();
-//      if (!empty($ids)) {
-//        entity_delete_multiple('activity', $ids);
-//      }
-//    }
+    if ($entity_type == 'user' || $entity_type == 'group') {
+      $entity_query = \Drupal::entityQuery('activity');
+      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
+      $ids = $entity_query->execute();
+      if (!empty($ids)) {
+        entity_delete_multiple('activity', $ids);
+      }
+    }
   }
 
 }

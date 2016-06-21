@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_search\Form\SearchContentForm.
- */
-
 namespace Drupal\social_search\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -53,10 +48,11 @@ class SearchContentForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if(empty($form_state->getValue('search_input'))){
+    if (empty($form_state->getValue('search_input'))) {
       // Redirect to the search content page with empty search values.
       $search_content_page = Url::fromRoute('view.search_content.page_no_value');
-    } else {
+    }
+    else {
       // Redirect to the search content page with filters in the GET parameters.
       $search_input = $form_state->getValue('search_input');
       $search_content_page = Url::fromRoute('view.search_content.page', array('keys' => $search_input));
@@ -69,4 +65,5 @@ class SearchContentForm extends FormBase {
 
     $form_state->setRedirectUrl($redirect);
   }
+
 }

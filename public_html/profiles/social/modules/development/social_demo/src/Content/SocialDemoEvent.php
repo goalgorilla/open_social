@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoTopic.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -12,13 +7,7 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\address\Entity\AddressFormat;
-use Drupal\address\Plugin\Field\FieldType\AddressItem;
-use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Datetime\Element\Datetime;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Field\FieldItemInterface;
-use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeStorageInterface;
@@ -26,6 +15,9 @@ use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Implements Demo content for Events.
+ */
 class SocialDemoEvent implements ContainerInjectionInterface {
 
   private $events;
@@ -44,7 +36,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
    */
   protected $nodeStorage;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage) {
@@ -55,6 +47,9 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     $this->events = $yml_data->parseFile('entity/event.yml');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
@@ -62,7 +57,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -70,14 +65,14 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->events as $uuid => $event) {
+    foreach ($this->events as $uuid => $event) {
       // Must have uuid and same key value.
       if ($uuid !== $event['uuid']) {
         var_dump('Node with uuid: ' . $uuid . ' has a different uuid in content.');
         continue;
       }
 
-      // Check if the node does not exist yet
+      // Check if the node does not exist yet.
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
       $node = reset($nodes);
 
@@ -137,15 +132,15 @@ class SocialDemoEvent implements ContainerInjectionInterface {
           ],
         ],
       ]);
-      $node->set('field_event_date',$start_date);
-      $node->set('field_event_date_end',$end_date);
+      $node->set('field_event_date', $start_date);
+      $node->set('field_event_date_end', $end_date);
 
       // TODO: Actually make this work.
       $address_entity = AddressFormat::create([
         'country_code' => $event['country_code'],
         'locality' => $event['locality'],
         'postal_code' => $event['postal_code'],
-        'address_line1' => $event['address_line1']
+        'address_line1' => $event['address_line1'],
       ]);
       $node->set('field_event_address', $address_entity);
 
@@ -157,12 +152,12 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->events as $uuid => $event) {
+    foreach ($this->events as $uuid => $event) {
 
       // Must have uuid and same key value.
       if ($uuid !== $event['uuid']) {
@@ -173,7 +168,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($nodes as $key => $node) {
+      foreach ($nodes as $key => $node) {
         // And delete them.
         $node->delete();
       }
@@ -185,7 +180,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
    */
   public function createDate($date_string) {
     // Split from delimiter.
-    $timestamp = explode('|',$date_string);
+    $timestamp = explode('|', $date_string);
 
     $date = strtotime($timestamp[0]);
     $date = date("Y-m-d", $date) . "T" . $timestamp[1] . ":00";
@@ -197,19 +192,21 @@ class SocialDemoEvent implements ContainerInjectionInterface {
   /**
    * Load a file object by uuid.
    *
-   * @param $uuid
-   *  the uuid of the file.
+   * @param string $uuid
+   *   The uuid of the file.
    *
    * @return int $fid
+   *   Returns the file id for the given uuid.
    */
   public function loadByUuid($uuid) {
     $query = \Drupal::entityQuery('node');
     $query->condition('type', 'event');
     $query->condition('uuid', $uuid);
     $fids = $query->execute();
-    // Get a single item
+    // Get a single item.
     $fid = reset($fids);
     // And return it.
     return $fid;
   }
+
 }
