@@ -10,7 +10,7 @@ use Drupal\Core\Controller\ControllerBase;
 class SocialCoreController extends ControllerBase {
 
   /**
-   *
+   * Custom function for returning markup on the access denied page.
    */
   public function accessDenied() {
     // Get the front page URL.
