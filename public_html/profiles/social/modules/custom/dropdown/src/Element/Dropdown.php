@@ -1,9 +1,5 @@
 <?php
-/**
- * @file
- * Contains \Drupal\dropdown\Element\Dropdown.
- */
- 
+
 namespace Drupal\dropdown\Element;
 
 use Drupal\Core\Render\Element\FormElement;
