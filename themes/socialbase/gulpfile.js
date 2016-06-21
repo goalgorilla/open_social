@@ -139,8 +139,8 @@ gulp.task('script-components', function() {
       folder.js_comp + "/global.js",
       //folder.js_comp + "/collapsible.js",
       //folder.js_comp + "/scrollspy.js",
-      folder.js_comp + "/pushpin.js",
       //folder.js_comp + "/sideNav.js",
+      //folder.js_comp + "/pushpin.js",
       folder.js_comp + "/waves.js",
       folder.js_comp + "/offcanvas.js",
       folder.js_comp + "/forms.js"

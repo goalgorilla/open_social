@@ -19,28 +19,6 @@
       });
     }
 
-    // Plugin initialization
-    //$('.scrollspy').scrollSpy();
-    var scrollSpyItem = '#scrollspy';
-    $('body').scrollspy({
-      target: scrollSpyItem,
-      offset: 200
-    });
-
-    $(scrollSpyItem).find('a').on('click', function(event){
-      if (this.hash !== "") {
-        event.preventDefault();
-
-        var hash = this.hash;
-
-        $('html, body').animate({
-          scrollTop: $(hash).offset().top - 200
-        }, 400, function () {
-          window.location.hash = hash;
-        });
-      }
-    });
-
     $('.button-collapse').sideNav({'edge': 'left'});
 
 
