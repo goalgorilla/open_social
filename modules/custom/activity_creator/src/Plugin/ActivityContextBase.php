@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Contains \Drupal\activity_creator\Plugin\ActivityContextBase.
@@ -59,7 +58,6 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
-    // TODO: Add basic implementation for the recipients based on the data.
     $recipients = [];
 
     return $recipients;
