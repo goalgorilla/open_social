@@ -1,4 +1,4 @@
-@api @group @stability @DS-811 @DS-816
+@api @group @stability @DS-811 @DS-816 @maikel
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -75,7 +75,7 @@ Feature: Create Open Group
     And I press "Create node in group"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
-    And I should see "January 1 2025 - 11:00" in the "Hero block"
+    And I should see "1 January 2025 - 11:00" in the "Hero block"
     And I should see the button "Enroll"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
     And I should see the link "Test open group" in the "Hero block"
