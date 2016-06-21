@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoParser.
-*/
-
 namespace Drupal\social_demo\Yaml;
 
 /*
@@ -12,13 +7,23 @@ namespace Drupal\social_demo\Yaml;
  */
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ *
+ */
 class SocialDemoParser extends Yaml {
 
+  /**
+   *
+   */
   private function getPath($file) {
     return '/root/dev-scripts/content/' . $file;
   }
 
+  /**
+   *
+   */
   public function parseFile($file) {
-    return $this->parse( file_get_contents($this->getPath($file)));
+    return $this->parse(file_get_contents($this->getPath($file)));
   }
+
 }
