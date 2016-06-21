@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Row style plugin for Views.
+ */
 
 namespace Drupal\activity_creator\Plugin\views\row;
 
@@ -24,8 +28,8 @@ class ActivityRow extends EntityRow {
 
     if ($result) {
       // TODO: Move all this logic to a service.
-      // TODO: Change this to use dependency injection (see construct code below)
-      /** @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationManager */
+      // TODO: Change this to use dependency injection.
+      /* @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationManager */
       $destination_plugin_manager = \Drupal::service('plugin.manager.activity_destination.processor');
 
       foreach ($result as $row) {
@@ -34,7 +38,7 @@ class ActivityRow extends EntityRow {
         $entity = $row->_entity;
 
         foreach ($entity->field_activity_destinations as $destination) {
-          /** @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationBase */
+          /* @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationBase */
           $plugin = $destination_plugin_manager->createInstance($destination->value);
           if ($plugin->isActiveInView($this->view)) {
             $this->options['view_mode'] = $plugin->getViewMode($view_mode, $entity);
@@ -46,4 +50,5 @@ class ActivityRow extends EntityRow {
     $this->options['view_mode'] = $view_mode;
 
   }
+
 }

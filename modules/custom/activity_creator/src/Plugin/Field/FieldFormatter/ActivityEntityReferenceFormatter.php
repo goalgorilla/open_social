@@ -84,4 +84,5 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
 
     return $elements;
   }
+
 }

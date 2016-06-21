@@ -9,7 +9,6 @@ namespace Drupal\activity_creator\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides base functionality for the ReportWorkers.
@@ -27,7 +26,8 @@ abstract class ActivityWorkerBase extends QueueWorkerBase {
    *   The $data which should be stored in the queue item.
    */
   protected function createQueueItem($queue_name, $data) {
-    $queue = \Drupal::queue($queue_name); // @TODO Use dependency injection here
+    // @TODO Use dependency injection here
+    $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
 

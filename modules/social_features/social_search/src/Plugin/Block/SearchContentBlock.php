@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_search\Plugin\Block\SearchContentBlock.
- */
-
 namespace Drupal\social_search\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -18,7 +13,6 @@ use Drupal\Core\Block\BlockBase;
  * )
  */
 class SearchContentBlock extends BlockBase {
-
 
   /**
    * {@inheritdoc}

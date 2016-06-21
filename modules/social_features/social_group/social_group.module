@@ -1,13 +1,18 @@
 <?php
 
-use Drupal\Core\Render\Element;
+/**
+ * @file
+ * The Social group module.
+ */
+
+use Drupal\group\GroupMembership;
+use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
-use Drupal\group\Plugin\GroupContentEnabler;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
 
@@ -19,7 +24,7 @@ use Drupal\image\Entity\ImageStyle;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_form_group_open_group_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
   $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
 }
@@ -27,17 +32,18 @@ function social_group_form_group_open_group_add_form_alter(&$form, \Drupal\Core\
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_form_group_open_group_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
   $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form submit for group_open_group_add_form and group_open_group_edit_form.
  *
+ * @param array $form
+ *   Group add or group edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
@@ -85,7 +91,7 @@ function social_group_preprocess_group(&$variables) {
   }
 
   // Add group edit url for management.
-  if ($group instanceof Drupal\group\Entity\Group) {
+  if ($group instanceof Group) {
     if ($group->access('update', $account)) {
       $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
     }
@@ -105,7 +111,7 @@ function social_group_group_insert(GroupInterface $group) {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
-    $membership = \Drupal\group\GroupMembership::load($group, $account);
+    $membership = GroupMembership::load($group, $account);
     $content = $membership->getGroupContent();
     // Delete the initial created membership.
     $content->delete();
@@ -114,10 +120,10 @@ function social_group_group_insert(GroupInterface $group) {
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
     $values = array('group_roles' => array('open_group-group_manager'));
     $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values
+      'type' => $plugin->getContentTypeConfigId(),
+      'gid' => $group->id(),
+      'entity_id' => $group->getOwnerId(),
+    ] + $values
     );
     $group_content->save();
 
@@ -127,11 +133,11 @@ function social_group_group_insert(GroupInterface $group) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $action_forms = array(
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
-    'group_content_open_group-group_membership_add_form'
+    'group_content_open_group-group_membership_add_form',
   );
 
   // Perform alterations on joining / leaving groups.
@@ -152,16 +158,16 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
     'group_content_open_group-group_membership_edit_form',
     'group_content_open_group-group_membership_add_form',
   );
-  if (in_array($form_id, $membership_forms)){
+  if (in_array($form_id, $membership_forms)) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
 
-    if('group_content_open_group-group_membership_edit_form' == $form_id){
+    if ('group_content_open_group-group_membership_edit_form' == $form_id) {
       // Remove the user selection autocomplete on editing group membership.
       $form['entity_id']['#access'] = FALSE;
 
-      // Add redirect to Group Membership page
+      // Add redirect to Group Membership page.
       $form['actions']['submit']['#submit'][] = '_social_group_membership_edit_form_submit';
     }
   }
@@ -193,11 +199,12 @@ function social_group_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $f
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form submit for group join / leave form.
  *
+ * @param array $form
+ *   Action form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_action_form_submit($form, FormStateInterface $form_state) {
   $group = \Drupal::routeMatch()->getParameter('group');
@@ -211,7 +218,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
   // Invalidate cache tags.
   $cache_tags = array(
     'group_membership:' . $group->id(),
-    'group_view'
+    'group_view',
   );
   foreach ($cache_tags as $cache_tag) {
     Cache::invalidateTags(array($cache_tag));
@@ -231,17 +238,18 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
       'view.groups.page_user_groups',
-      array('user' =>\Drupal::currentUser()->id(), array())
+      array('user' => \Drupal::currentUser()->id(), array())
     );
   }
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form submit for membership edit form.
  *
+ * @param array $form
+ *   Membership edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_membership_edit_form_submit($form, FormStateInterface $form_state) {
   $group = \Drupal::routeMatch()->getParameter('group');
@@ -260,11 +268,12 @@ function _social_group_membership_edit_form_submit($form, FormStateInterface $fo
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form cancel for join and leave form.
  *
+ * @param array $form
+ *   Join and leave form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_cancel_join_leave_form($form, FormStateInterface $form_state) {
   // Get form that was submitted.
@@ -284,11 +293,12 @@ function _social_group_cancel_join_leave_form($form, FormStateInterface $form_st
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form submit for group content create form.
  *
+ * @param array $form
+ *   Group node form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_node_form_submit($form, FormStateInterface $form_state) {
   // Set redirect after group content creation to the default node '/node/%nid'
@@ -312,7 +322,7 @@ function _social_group_node_form_submit($form, FormStateInterface $form_state) {
 /**
  * Implements hook_field_widget_form_alter().
  */
-function social_group_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   // Add a css class to widget form elements for all fields of type mytype.
   $field_definition = $context['items']->getFieldDefinition();
   if ($field_definition->getType() == 'entity_access_field') {
@@ -422,7 +432,7 @@ function social_group_local_tasks_alter(&$local_tasks) {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
 }
 
@@ -430,8 +440,10 @@ function social_group_entity_type_alter(array &$entity_types) {
  * Return user profile by given group membership content.
  *
  * @param \Drupal\group\Entity\GroupContent $group_content
+ *   Group content entity.
  *
  * @return \Drupal\profile\Entity\Profile
+ *   Returns the Profile entity for the member.
  */
 function _social_group_get_member_profile(GroupContent $group_content) {
   $user_profile = NULL;

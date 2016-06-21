@@ -48,7 +48,6 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
   $activity_recipient_manager = \Drupal::service('plugin.manager.activity_destination.processor');
   $destination_options = $activity_recipient_manager->getOptionsList();
 
-
   $form['activity_destinations'] = array(
     '#type' => 'select',
     '#title' => t('The activity destinations for this message'),
@@ -90,7 +89,7 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
 function activity_logger_entity_insert(EntityInterface $entity) {
 
   // Turn off this feature for all non-content entities.
-  if (! $entity instanceof \Drupal\Core\Entity\ContentEntityInterface) {
+  if (!$entity instanceof \Drupal\Core\Entity\ContentEntityInterface) {
     return;
   }
   // For nodes we make an exception, since they are potentially placed in
@@ -103,7 +102,7 @@ function activity_logger_entity_insert(EntityInterface $entity) {
   }
 
   // Get the services we need here.
-  $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
+  $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
   // Create messages for all other types of content.
-  $activityLoggerFactory->createMessages($entity, 'create');
+  $activity_logger_factory->createMessages($entity, 'create');
 }

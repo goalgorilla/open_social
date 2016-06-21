@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoEventenrollment.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -12,13 +7,15 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Implements Demo content for Event Enrollments.
+ */
 class SocialDemoEventenrollment implements ContainerInjectionInterface {
 
   private $eventenrollments;
@@ -37,7 +34,7 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
    */
   protected $entityStorage;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct(EntityStorageInterface $entity_storage, UserStorageInterface $user_storage) {
@@ -48,6 +45,9 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
     $this->eventenrollments = $yml_data->parseFile('entity/eventenrollment.yml');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('event_enrollment'),
@@ -55,7 +55,7 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -63,14 +63,14 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->eventenrollments as $uuid => $eventenrollment) {
+    foreach ($this->eventenrollments as $uuid => $eventenrollment) {
       // Must have uuid and same key value.
       if ($uuid !== $eventenrollment['uuid']) {
         var_dump('Entity with uuid: ' . $uuid . ' has a different uuid in content.');
         continue;
       }
 
-      // Check if the node does not exist yet
+      // Check if the node does not exist yet.
       $entities = $this->entityStorage->loadByProperties(array('uuid' => $uuid));
       $entity = reset($entities);
 
@@ -98,7 +98,7 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
         'created' => REQUEST_TIME,
         'field_event' => $event_id,
         'field_enrollment_status' => $eventenrollment['field_enrollment_status'],
-        'field_account' => $user_id
+        'field_account' => $user_id,
       ]);
 
       $enrollment->save();
@@ -109,12 +109,12 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->eventenrollments as $uuid => $eventenrollment) {
+    foreach ($this->eventenrollments as $uuid => $eventenrollment) {
 
       // Must have uuid and same key value.
       if ($uuid !== $eventenrollment['uuid']) {
@@ -125,10 +125,11 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
       $entities = $this->entityStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($entities as $key => $entity) {
+      foreach ($entities as $key => $entity) {
         // And delete them.
         $entity->delete();
       }
     }
   }
+
 }

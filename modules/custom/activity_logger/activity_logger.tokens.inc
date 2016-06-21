@@ -72,6 +72,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
             // Set the group title.
             $replacements[$original] = $group['gtitle'];
             break;
+
           case 'gurl':
             // Set the group title.
             $replacements[$original] = $group['gurl'];

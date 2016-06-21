@@ -1,18 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\dropdown\Plugin\Field\FieldType\Dropdown.
- */
-
 namespace Drupal\dropdown\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\Random;
-
 
 /**
  * Plugin implementation of the 'dropdown' field type.
@@ -91,12 +84,12 @@ class Dropdown extends FieldItemBase {
   }
 
   /**
-   * #element_validate callback for options field allowed values.
+   * Element_validate callback for options field allowed values.
    *
-   * @param $element
+   * @param array $element
    *   An associative array containing the properties and children of the
    *   generic form element.
-   * @param $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form for the form this element belongs to.
    *
    * @see \Drupal\Core\Render\Element\FormElement::processPattern()
@@ -221,11 +214,8 @@ class Dropdown extends FieldItemBase {
    *
    * @param string $option
    *   The option value entered by the user.
-   *
-   * @return string
-   *   The error message if the specified value is invalid, NULL otherwise.
    */
-  protected static function validateAllowedValue($option) { }
+  protected static function validateAllowedValue($option) {}
 
   /**
    * {@inheritdoc}

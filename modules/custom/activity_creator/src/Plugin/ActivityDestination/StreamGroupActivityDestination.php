@@ -17,5 +17,5 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
  * )
  */
 class StreamGroupActivityDestination extends ActivityDestinationBase {
-  
+
 }
