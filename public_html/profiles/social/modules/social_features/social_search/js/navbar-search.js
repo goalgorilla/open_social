@@ -11,6 +11,6 @@
         attach: function (context, settings) {
             new UISearch(document.getElementById('navbar-search'));
         }
-    };
+  };
 
 })(jQuery);
