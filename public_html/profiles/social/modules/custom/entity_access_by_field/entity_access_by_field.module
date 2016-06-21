@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Entity Access By Field module file.
  */
 
@@ -25,7 +26,7 @@ function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInt
 /**
  * Implements hook_node_grants().
  */
-function entity_access_by_field_node_grants(\Drupal\Core\Session\AccountInterface $account, $op) {
+function entity_access_by_field_node_grants(AccountInterface $account, $op) {
   $grants = [];
   if ($op === 'view') {
 
@@ -47,7 +48,7 @@ function entity_access_by_field_node_grants(\Drupal\Core\Session\AccountInterfac
 /**
  * Implements hook_node_access_records().
  */
-function entity_access_by_field_node_access_records(\Drupal\node\NodeInterface $node) {
+function entity_access_by_field_node_access_records(NodeInterface $node) {
 
   $grants = [];
 
