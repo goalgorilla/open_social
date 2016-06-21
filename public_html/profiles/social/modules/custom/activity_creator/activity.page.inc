@@ -9,7 +9,6 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Link;
-use Drupal\Core\Url;
 
 /**
  * Prepares variables for Activity templates.

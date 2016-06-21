@@ -7,7 +7,6 @@
 
 namespace Drupal\activity_creator\Plugin\Views\Filter;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 
 /**
@@ -19,12 +18,9 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
  */
 class ActivityVisibilityAccess extends FilterPluginBase {
 
-  public function adminSummary() {
-  }
-
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
-  }
-
+  /**
+   * {@inheritdoc}
+   */
   public function canExpose() {
     return FALSE;
   }
@@ -40,19 +36,17 @@ class ActivityVisibilityAccess extends FilterPluginBase {
 
     // We have a few scenarios:
     // 1. There is a recipient user and destination is only notification,
-    //   if current user is not recipient always deny access.
+    // if current user is not recipient always deny access.
     // 2. There is a recipient group:
-    //   Check if the user has access to the related entity.
+    // Check if the user has access to the related entity.
     // 3. There is a related entity of type node
-    //   Check if user has access to the related entity,
-    //   use node_access_grants system.
-    //   views filter content access with relationship to node
+    // Check if user has access to the related entity,
+    // use node_access_grants system.
+    // views filter content access with relationship to node
     // 4. There is a related entity of type post
-    //   Check if user has access to the post, we can use PostVisibilityAccess.
-
+    // Check if user has access to the post, we can use PostVisibilityAccess.
     // Note: in future we should implement entity grant system instead!
     // to support other entities as well.
-
   }
 
 }

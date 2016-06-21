@@ -8,7 +8,6 @@
 namespace Drupal\activity_creator\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\Entity;
 use Drupal\social_post\Entity\Post;
 
 /**

@@ -87,7 +87,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
   }
 
   /**
-   * Get destinations
+   * Get destinations.
    */
   protected function getDestinationFromActivity(EntityInterface $entity) {
     $destinations = $entity->get('field_activity_destinations')->getValue();
@@ -112,7 +112,10 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
    * Check if this is a personal notification.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *    Entity object.
+   *
    * @return bool
+   *    Returns TRUE if entity is personal notification, FALSE if it isn't.
    */
   protected function checkIfPersonalNotification(EntityInterface $entity) {
     $recipient = $this->getRecipientFromActivity($entity);

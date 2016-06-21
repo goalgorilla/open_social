@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Plugin\Block\EnrollActionBlock.
- */
-
 namespace Drupal\social_event\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
@@ -24,13 +18,12 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
  */
 class EnrollActionBlock extends BlockBase {
 
-
   /**
    * {@inheritdoc}
    *
    * Custom access logic to display the block on the hero region for an event.
    */
-  function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account) {
     $route_name = \Drupal::request()->get(RouteObjectInterface::ROUTE_NAME);
     if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
       $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -65,12 +58,12 @@ class EnrollActionBlock extends BlockBase {
     $form = \Drupal::formBuilder()->getForm('Drupal\social_event\Form\EnrollActionForm');
 
     $render_array = array(
-      'enroll_action_form' => $form
+      'enroll_action_form' => $form,
     );
 
     $text = (string) t('You have enrolled for this event.');
 
-    // Add extra text to
+    // Add extra text to.
     if ($form['to_enroll_status']['#value'] === '0') {
       $render_array['feedback_user_has_enrolled'] = array(
         '#markup' => '<div><strong>' . $text . '</strong></div>',
@@ -85,7 +78,8 @@ class EnrollActionBlock extends BlockBase {
    *
    * Returns an array of Group Objects.
    *
-   * @return array $groups
+   * @return array
+   *   Group entities.
    */
   public function getGroups($node) {
 
@@ -95,9 +89,9 @@ class EnrollActionBlock extends BlockBase {
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /** @var \Drupal\group\Entity\Group $group*/
+        /* @var \Drupal\group\Entity\Group $group*/
         $groups[] = $group;
       }
     }

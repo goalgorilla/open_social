@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\dropdown\Plugin\Field\FieldWidget\DropdownWidgetType.
- */
-
 namespace Drupal\dropdown\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -13,7 +8,6 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
-
 
 /**
  * Plugin implementation of the 'dropdown_widget_type' widget.
@@ -30,8 +24,7 @@ use Drupal\Core\Form\FormStateInterface;
 class DropdownWidgetType extends WidgetBase {
 
   /**
-   * Abstract over the actual field columns, to allow different field types to
-   * reuse those widgets.
+   * Allow different field types to re-use those widgets.
    *
    * @var string
    */
@@ -50,8 +43,7 @@ class DropdownWidgetType extends WidgetBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
-    ) + parent::defaultSettings();
+    return array() + parent::defaultSettings();
   }
 
   /**

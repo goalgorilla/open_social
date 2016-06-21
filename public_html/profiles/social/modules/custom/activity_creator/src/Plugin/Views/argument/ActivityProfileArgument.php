@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Activity Profile Argument for Views.
+ */
 
 namespace Drupal\activity_creator\Plugin\views\argument;
 
@@ -21,8 +25,7 @@ class ActivityProfileArgument extends ArgumentPluginBase {
   public function query($group_by = FALSE) {
     $this->ensureMyTable();
 
-    // \Drupal\views\Plugin\views\query\QueryPluginBase
-
+    // \Drupal\views\Plugin\views\query\QueryPluginBase.
     $this->query->addTable('activity__field_activity_recipient_user');
     $this->query->addTable('activity__field_activity_entity');
     $this->query->addTable('activity__field_activity_destinations');
@@ -37,8 +40,7 @@ class ActivityProfileArgument extends ArgumentPluginBase {
     $by_user = db_and();
     $by_user->condition('activity.user_id', $this->argument, '=');
     $by_user->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', NULL, 'IS NULL');
-    // TODO Add condition for posts in a group as well (do not show them)
-
+    // TODO Add condition for posts in a group as well (do not show them).
     $or_condition->condition($by_user);
 
     $this->query->addWhere('activity_profile_argument', $or_condition);

@@ -5,7 +5,6 @@
  */
 
 use Drupal\taxonomy\Entity\Term;
-use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
 /**
@@ -34,7 +33,7 @@ function social_topic_install() {
     'News',
   );
 
-  foreach($terms as $term_name) {
+  foreach ($terms as $term_name) {
     $term = Term::create([
       'vid' => 'topic_types',
       'name' => $term_name,

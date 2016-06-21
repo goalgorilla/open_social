@@ -23,7 +23,7 @@ class TopicAddBlock extends BlockBase {
    *
    * Custom access logic to display the block only on current user Topic page.
    */
-  function blockAccess(AccountInterface $account) {
+  protected function blockAccess(AccountInterface $account) {
     $route_user_id = \Drupal::routeMatch()->getParameter('user');
     if ($account->id() == $route_user_id) {
       return AccessResult::allowed();
