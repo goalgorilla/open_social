@@ -16,16 +16,18 @@ use Drupal\comment\Controller\CommentController;
 class SocialCommentController extends CommentController {
 
   /**
+   * Redirects comment links to the correct page depending on permissions.
+   *
    * @inheritdoc
    */
   public function commentPermalink(Request $request, CommentInterface $comment) {
     if ($entity = $comment->getCommentedEntity()) {
       // Check access permissions for the entity.
-      /** @var \Drupal\Core\Entity\Entity $entity */
+      /* @var \Drupal\Core\Entity\Entity $entity */
       if (!$entity->access('view')) {
         throw new AccessDeniedHttpException();
       }
-      /** @var \Drupal\Core\Url $url*/
+      /* @var \Drupal\Core\Url $url */
       if ($url = $entity->urlInfo('canonical')) {
         // Redirect the user to the correct entity.
         return $this->redirectToOriginalEntity($url, $comment, $entity);
@@ -35,10 +37,17 @@ class SocialCommentController extends CommentController {
   }
 
   /**
-   * @param $url
-   * @param $comment
-   * @param $entity
+   * Redirects to the original entity when conditions are met.
+   *
+   * @param \Drupal\Core\Url $url
+   *   The canonical url.
+   * @param \Drupal\comment\CommentInterface $comment
+   *   The comment interface.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *   The Entity to redirect to.
+   *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns the Redirect Response.
    */
   public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, Entity $entity = NULL) {
     $options = array();
