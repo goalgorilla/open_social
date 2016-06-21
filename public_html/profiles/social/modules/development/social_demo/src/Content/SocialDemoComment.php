@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\Entity\Node;
 
 /**
- *
+ * Implements Demo content for Comments.
  */
 class SocialDemoComment implements ContainerInjectionInterface {
 
@@ -56,7 +56,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -170,10 +170,11 @@ class SocialDemoComment implements ContainerInjectionInterface {
   /**
    * Load a file object by uuid.
    *
-   * @param $uuid
-   *   the uuid of the file.
+   * @param string $uuid
+   *   The uuid of the file.
    *
    * @return int $fid
+   *   Returns the fid for the related nodes.
    */
   public function fetchRelatedNode($uuid) {
     $query = \Drupal::entityQuery('node');

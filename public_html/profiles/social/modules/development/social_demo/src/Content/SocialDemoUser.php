@@ -16,7 +16,7 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * Implements Demo content for Users.
  */
 class SocialDemoUser implements ContainerInjectionInterface {
 
@@ -37,7 +37,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
   protected $entityStorage;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function __construct(UserStorageInterface $user_storage, EntityStorageInterface $entity_storage) {
     $this->userStorage = $user_storage;
@@ -48,7 +48,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -154,7 +154,13 @@ class SocialDemoUser implements ContainerInjectionInterface {
   }
 
   /**
+   * Load a User from UUID.
    *
+   * @param string $uuid
+   *   The uuid of the user.
+   *
+   * @return int user id
+   *   The user id.
    */
   public function loadUserFromUuid($uuid) {
     $user_accounts = $this->userStorage->loadByProperties(array('uuid' => $uuid));

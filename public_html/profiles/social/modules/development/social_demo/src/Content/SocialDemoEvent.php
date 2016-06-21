@@ -16,7 +16,7 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * Implements Demo content for Events.
  */
 class SocialDemoEvent implements ContainerInjectionInterface {
 
@@ -48,7 +48,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -192,10 +192,11 @@ class SocialDemoEvent implements ContainerInjectionInterface {
   /**
    * Load a file object by uuid.
    *
-   * @param $uuid
-   *   the uuid of the file.
+   * @param string $uuid
+   *   The uuid of the file.
    *
    * @return int $fid
+   *   Returns the file id for the given uuid.
    */
   public function loadByUuid($uuid) {
     $query = \Drupal::entityQuery('node');

@@ -6,7 +6,7 @@
  */
 
 /**
- *
+ * Implements hook_drush_command().
  */
 function social_demo_drush_command() {
   $items['social-demo-add'] = array(

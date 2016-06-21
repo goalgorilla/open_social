@@ -17,7 +17,7 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * Implements Demo content for Topics.
  */
 class SocialDemoTopic implements ContainerInjectionInterface {
 
@@ -57,7 +57,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(

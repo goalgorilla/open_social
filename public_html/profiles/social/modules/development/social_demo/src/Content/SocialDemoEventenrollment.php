@@ -14,7 +14,7 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * Implements Demo content for Event Enrollments.
  */
 class SocialDemoEventenrollment implements ContainerInjectionInterface {
 
@@ -46,7 +46,7 @@ class SocialDemoEventenrollment implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
