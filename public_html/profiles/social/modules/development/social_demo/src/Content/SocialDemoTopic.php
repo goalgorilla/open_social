@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoTopic.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -21,6 +16,9 @@ use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *
+ */
 class SocialDemoTopic implements ContainerInjectionInterface {
 
   private $topics;
@@ -46,7 +44,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
    */
   protected $entityStorage;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage, EntityStorageInterface $entity_storage) {
@@ -58,6 +56,9 @@ class SocialDemoTopic implements ContainerInjectionInterface {
     $this->topics = $yml_data->parseFile('entity/topic.yml');
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
@@ -66,7 +67,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -74,14 +75,14 @@ class SocialDemoTopic implements ContainerInjectionInterface {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->topics as $uuid => $topic) {
+    foreach ($this->topics as $uuid => $topic) {
       // Must have uuid and same key value.
       if ($uuid !== $topic['uuid']) {
         var_dump('Node with uuid: ' . $uuid . ' has a different uuid in content.');
         continue;
       }
 
-      // Check if the node does not exist yet
+      // Check if the node does not exist yet.
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
       $node = reset($nodes);
 
@@ -154,7 +155,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         // Load the group.
         $groups = $this->entityStorage->loadByProperties(array('uuid' => $topic['group']));
         $group = reset($groups);
-        // Get the group content plugin
+        // Get the group content plugin.
         $plugin_id = 'group_node:' . $node->bundle();
         $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
         // Create the group content entity.
@@ -173,12 +174,12 @@ class SocialDemoTopic implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->topics as $uuid => $topic) {
+    foreach ($this->topics as $uuid => $topic) {
 
       // Must have uuid and same key value.
       if ($uuid !== $topic['uuid']) {
@@ -189,7 +190,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($nodes as $key => $node) {
+      foreach ($nodes as $key => $node) {
         // And delete them.
         $node->delete();
       }

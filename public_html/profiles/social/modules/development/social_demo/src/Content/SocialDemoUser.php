@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_demo\SocialDemoUser.
- */
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -20,6 +15,9 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ *
+ */
 class SocialDemoUser implements ContainerInjectionInterface {
 
   private $accounts;
@@ -38,6 +36,9 @@ class SocialDemoUser implements ContainerInjectionInterface {
    */
   protected $entityStorage;
 
+  /**
+   *
+   */
   public function __construct(UserStorageInterface $user_storage, EntityStorageInterface $entity_storage) {
     $this->userStorage = $user_storage;
     $this->entityStorage = $entity_storage;
@@ -46,6 +47,9 @@ class SocialDemoUser implements ContainerInjectionInterface {
     $this->accounts = $yml_data->parseFile('entity/user.yml');
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
@@ -53,21 +57,21 @@ class SocialDemoUser implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->accounts as $uuid => $account) {
+    foreach ($this->accounts as $uuid => $account) {
 
       // Must have uuid and same key value.
       if ($uuid !== $account['uuid']) {
         continue;
       }
 
-      // Check if the accounts does not exist yet
+      // Check if the accounts does not exist yet.
       $user_accounts = $this->userStorage->loadByProperties(array('uuid' => $uuid));
       $user_account = reset($user_accounts);
 
@@ -126,12 +130,12 @@ class SocialDemoUser implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->accounts as $uuid => $account) {
+    foreach ($this->accounts as $uuid => $account) {
 
       // Must have uuid and same key value.
       if ($uuid !== $account['uuid']) {
@@ -142,13 +146,16 @@ class SocialDemoUser implements ContainerInjectionInterface {
       $user_accounts = $this->userStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($user_accounts as $key => $user_account) {
+      foreach ($user_accounts as $key => $user_account) {
         // And delete them.
         $user_account->delete();
       }
     }
   }
 
+  /**
+   *
+   */
   public function loadUserFromUuid($uuid) {
     $user_accounts = $this->userStorage->loadByProperties(array('uuid' => $uuid));
 
@@ -157,4 +164,5 @@ class SocialDemoUser implements ContainerInjectionInterface {
       return $user_account->id();
     }
   }
+
 }

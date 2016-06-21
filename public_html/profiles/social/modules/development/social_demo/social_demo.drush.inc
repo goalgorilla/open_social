@@ -5,6 +5,9 @@
  * Contains social_demo.drush.inc.
  */
 
+/**
+ *
+ */
 function social_demo_drush_command() {
   $items['social-demo-add'] = array(
     'description' => dt('Add demo content.'),

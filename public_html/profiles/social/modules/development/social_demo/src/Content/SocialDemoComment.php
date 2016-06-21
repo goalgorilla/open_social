@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoComment.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -20,6 +15,9 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\Entity\Node;
 
+/**
+ *
+ */
 class SocialDemoComment implements ContainerInjectionInterface {
 
   private $comments;
@@ -45,7 +43,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
    */
   protected $commentStorage;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage, EntityStorageInterface $entity_storage) {
@@ -57,6 +55,9 @@ class SocialDemoComment implements ContainerInjectionInterface {
     $this->comments = $yml_data->parseFile('entity/comment.yml');
   }
 
+  /**
+   *
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
@@ -65,7 +66,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -73,14 +74,14 @@ class SocialDemoComment implements ContainerInjectionInterface {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->comments as $uuid => $content) {
+    foreach ($this->comments as $uuid => $content) {
       // Must have uuid and same key value.
       if ($uuid !== $content['uuid']) {
         var_dump('Comment with uuid: ' . $uuid . ' has a different uuid in content.');
         continue;
       }
 
-      // Check if the entity does not exist yet
+      // Check if the entity does not exist yet.
       $comments = $this->commentStorage->loadByProperties(array('uuid' => $uuid));
       $comment = reset($comments);
 
@@ -125,7 +126,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
         'field_name' => $comment_field_type,
         'comment_type' => 'comment',
         'entity_type' => 'node',
-        'status' => 1
+        'status' => 1,
       ]);
 
       $comment->save();
@@ -136,14 +137,14 @@ class SocialDemoComment implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->comments as $uuid => $content) {
+    foreach ($this->comments as $uuid => $content) {
 
       // Must have uuid and same key value.
       if ($uuid !== $content['uuid']) {
@@ -154,7 +155,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
       $comments = $this->commentStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($comments as $key => $comment) {
+      foreach ($comments as $key => $comment) {
         // And delete them.
         $comment->delete();
 
@@ -170,7 +171,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
    * Load a file object by uuid.
    *
    * @param $uuid
-   *  the uuid of the file.
+   *   the uuid of the file.
    *
    * @return int $fid
    */
@@ -178,9 +179,10 @@ class SocialDemoComment implements ContainerInjectionInterface {
     $query = \Drupal::entityQuery('node');
     $query->condition('uuid', $uuid);
     $nids = $query->execute();
-    // Get a single item
+    // Get a single item.
     $nid = reset($nids);
     // And return it.
     return $nid;
   }
+
 }
