@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\views\filter\PostVisibilityAccess.
- */
-
 namespace Drupal\social_post\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -19,12 +14,21 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
  */
 class PostVisibilityAccess extends FilterPluginBase {
 
+  /**
+   *
+   */
   public function adminSummary() {
   }
 
+  /**
+   *
+   */
   protected function operatorForm(&$form, FormStateInterface $form_state) {
   }
 
+  /**
+   *
+   */
   public function canExpose() {
     return FALSE;
   }

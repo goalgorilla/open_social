@@ -1,18 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\Field\FieldFormatter\CommentPostFormatter.
- */
-
 namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
-use Drupal\comment\CommentStorage;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
@@ -118,19 +111,20 @@ class CommentPostFormatter extends CommentDefaultFormatter {
               $entity->id(),
               $field_name,
               $this->getFieldSetting('comment_type'),
-            ]],
+            ],
+            ],
             '#create_placeholder' => TRUE,
           ];
         }
       }
 
       $elements[] = $output + array(
-          '#comment_type' => $this->getFieldSetting('comment_type'),
-          '#comment_display_mode' => $this->getFieldSetting('default_mode'),
-          'comments' => array(),
-          'comment_form' => array(),
-          'more_link' => array(),
-        );
+        '#comment_type' => $this->getFieldSetting('comment_type'),
+        '#comment_display_mode' => $this->getFieldSetting('default_mode'),
+        'comments' => array(),
+        'comment_form' => array(),
+        'more_link' => array(),
+      );
     }
 
     return $elements;

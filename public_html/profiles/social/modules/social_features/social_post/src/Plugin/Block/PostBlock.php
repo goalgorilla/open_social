@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\Block\PostBlock.
- */
-
 namespace Drupal\social_post\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'PostBlock' block.

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Form\PostForm.
- */
-
 namespace Drupal\social_post\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -18,6 +13,9 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class PostForm extends ContentEntityForm {
 
+  /**
+   *
+   */
   public function getFormId() {
     return 'social_post_entity_form';
   }
@@ -76,7 +74,7 @@ class PostForm extends ContentEntityForm {
       // Unset the other options, because we do not want to be able to change
       // it but we do want to use the button for informing the user.
       foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
-        if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value'] ) {
+        if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value']) {
           unset($form['field_visibility']['widget'][0]['#options'][$key]);
         }
       }

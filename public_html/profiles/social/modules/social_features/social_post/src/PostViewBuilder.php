@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\PostViewBuilder.
- */
-
 namespace Drupal\social_post;
 
 use Drupal\Core\Entity\EntityViewBuilder;
@@ -33,7 +28,8 @@ class PostViewBuilder extends EntityViewBuilder {
           $view_mode,
           $entity->language()->getId(),
           !empty($entity->in_preview),
-        ]],
+        ],
+        ],
       );
     }
   }
