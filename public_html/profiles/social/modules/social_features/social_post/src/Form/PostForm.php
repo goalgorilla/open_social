@@ -14,7 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 class PostForm extends ContentEntityForm {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'social_post_entity_form';
@@ -46,7 +46,7 @@ class PostForm extends ContentEntityForm {
       if ($display_id === 'post.post.default') {
         // Set default value to community.
         // Remove recipient option.
-        // Only needed for 'private' permissions which we currently do not support.
+        // Only needed for 'private' permissions which we do not support yet.
         unset($form['field_visibility']['widget'][0]['#options'][0]);
         $form['field_visibility']['widget'][0]['#default_value'] = "2";
       }

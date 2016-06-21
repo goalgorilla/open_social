@@ -35,7 +35,7 @@ class PostViewBuilder extends EntityViewBuilder {
   }
 
   /**
-   * #lazy_builder callback; builds a post's links.
+   * Lazy_builder callback; builds a post's links.
    *
    * @param string $post_entity_id
    *   The post entity ID.

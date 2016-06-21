@@ -50,10 +50,12 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form submit for comment_post_comment_form.
  *
- *   Form submit for comment_post_comment_form.
+ * @param array $form
+ *   Commnent on a post form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_post_comment_post_comment_form_submit($form, FormStateInterface $form_state) {
   // Fetch from the form.

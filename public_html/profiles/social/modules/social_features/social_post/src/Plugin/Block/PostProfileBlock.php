@@ -12,25 +12,25 @@ namespace Drupal\social_post\Plugin\Block;
  */
 class PostProfileBlock extends PostBlock {
 
-  public $entity_type;
+  public $entityType;
   public $bundle;
-  public $form_display;
+  public $formDisplay;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entity_type = 'post';
+    $this->entityType = 'post';
     $this->bundle = 'post';
-    $this->form_display = 'profile';
+    $this->formDisplay = 'profile';
 
     // Check if current user is the same as the profile.
     // In this case use the default form display.
     $uid = \Drupal::currentUser()->id();
     $account_profile = \Drupal::routeMatch()->getParameter('user');
     if (isset($account_profile) && ($account_profile === $uid || (is_object($account_profile) && $uid === $account_profile->id()))) {
-      $this->form_display = 'default';
+      $this->formDisplay = 'default';
     }
 
   }

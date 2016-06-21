@@ -155,7 +155,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    *
-   * @see Drupal\comment\CommentStorage::loadThead().
+   * @see Drupal\comment\CommentStorage::loadThead()
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
     // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.

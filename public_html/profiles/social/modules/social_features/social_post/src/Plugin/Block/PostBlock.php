@@ -17,18 +17,18 @@ use Drupal\user\EntityOwnerInterface;
  */
 class PostBlock extends BlockBase {
 
-  public $entity_type;
+  public $entityType;
   public $bundle;
-  public $form_display;
+  public $formDisplay;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entity_type = 'post';
+    $this->entityType = 'post';
     $this->bundle = 'post';
-    $this->form_display = 'default';
+    $this->formDisplay = 'default';
   }
 
   /**
@@ -36,7 +36,7 @@ class PostBlock extends BlockBase {
    */
   protected function blockAccess(AccountInterface $account) {
     return \Drupal::entityTypeManager()
-      ->getAccessControlHandler($this->entity_type)
+      ->getAccessControlHandler($this->entityType)
       ->createAccess($this->bundle, $account, [], TRUE);
   }
 
@@ -46,13 +46,13 @@ class PostBlock extends BlockBase {
   public function build() {
     $values = array();
     // Specify selected bundle if the entity has bundles.
-    if (\Drupal::entityTypeManager()->getDefinition($this->entity_type)->hasKey('bundle')) {
-      $bundle_key = \Drupal::entityTypeManager()->getDefinition($this->entity_type)->getKey('bundle');
+    if (\Drupal::entityTypeManager()->getDefinition($this->entityType)->hasKey('bundle')) {
+      $bundle_key = \Drupal::entityTypeManager()->getDefinition($this->entityType)->getKey('bundle');
       $values = array($bundle_key => $this->bundle);
     }
 
     $entity = \Drupal::entityTypeManager()
-      ->getStorage($this->entity_type)
+      ->getStorage($this->entityType)
       ->create($values);
 
     if ($entity instanceof EntityOwnerInterface) {
@@ -61,7 +61,7 @@ class PostBlock extends BlockBase {
 
     $display = \Drupal::entityTypeManager()
       ->getStorage('entity_form_display')
-      ->load($this->entity_type . '.' . $this->bundle . '.' . $this->form_display);
+      ->load($this->entityType . '.' . $this->bundle . '.' . $this->formDisplay);
 
     $form_object = \Drupal::entityTypeManager()
       ->getFormObject($entity->getEntityTypeId(), 'default');
