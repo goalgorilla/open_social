@@ -63,12 +63,14 @@
  *   in different view modes.
  */
 #}
-
 <div{{ content_attributes }}>
-    {% if event_date %}
-        {{ event_date }}
-    {% endif %}
-    {% if content.field_event_location or content.field_event_address %}
-        <span>@ {{ content.field_event_location }} {{ content.field_event_address }}</span>
-    {% endif %}
+
+  {% if event_date %}
+      {{ event_date }}
+  {% endif %}
+
+  {# Location or address field must be filled in before showing the @ character #}
+  {% if content.field_event_location.0 is defined or content.field_event_address.0 is defined %}
+      <span>@ {{ content.field_event_location }} {{ content.field_event_address }}</span>
+  {% endif %}
 </div>

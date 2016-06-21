@@ -1,4 +1,4 @@
-@api @event @stability @javascript @DS-406
+@api @event @stability @javascript @DS-406 @maikel
 Feature: Create Event
   Benefit: In order to connect with other people offline
   Role: As a LU
@@ -27,7 +27,7 @@ Feature: Create Event
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
     And I should see "Body description text" in the "Main content"
-    And I should see "January 1 2025 - 11:00" in the "Hero block"
+    And I should see "1 January 2025 - 11:00" in the "Hero block"
     And I should see "Oldenzaalsestraat" in the "Hero block"
     And I should see "7514DR" in the "Hero block"
     And I should see "Enschede" in the "Hero block"
