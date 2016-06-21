@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\EventEnrollmentAccessControlHandler.
- */
-
 namespace Drupal\social_event;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -18,6 +13,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\social_event\Entity\EventEnrollment.
  */
 class EventEnrollmentAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Entity\EventEnrollment.
- */
-
 namespace Drupal\social_event\Entity;
 
 use Drupal\views\EntityViewsData;
@@ -14,6 +9,7 @@ use Drupal\views\EntityViewsDataInterface;
  * Provides Views data for Event enrollment entities.
  */
 class EventEnrollmentViewsData extends EntityViewsData implements EntityViewsDataInterface {
+
   /**
    * {@inheritdoc}
    */

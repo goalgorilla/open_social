@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_access_by_field\Plugin\Field\FieldType\EntityAccessField.
- */
-
 namespace Drupal\entity_access_by_field\Plugin\Field\FieldType;
 
 use Drupal\options\Plugin\Field\FieldType\ListStringItem;
@@ -19,7 +14,7 @@ use Drupal\options\Plugin\Field\FieldType\ListStringItem;
  *   category = @Translation("Text"),
  *   default_widget = "options_buttons",
  *   default_formatter = "list_default",
- *   
+ *
  * )
  */
 class EntityAccessField extends ListStringItem {

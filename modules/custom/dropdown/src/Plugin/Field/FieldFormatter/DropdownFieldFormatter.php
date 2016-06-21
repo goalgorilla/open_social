@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\dropdown\Plugin\Field\FieldFormatter\DropdownFieldFormatter.
- */
-
 namespace Drupal\dropdown\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\Html;
