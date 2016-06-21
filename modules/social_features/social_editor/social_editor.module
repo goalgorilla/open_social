@@ -1,0 +1,77 @@
+<?php
+/**
+ * @file
+ * The Social editor module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_editor_element_info_alter(array &$types) {
+  // Our process callback must run directly after TextFormat::processFormat().
+  if (isset($types['text_format']) && isset($types['text_format']['#process'])) {
+    $search_value = ['Drupal\filter\Element\TextFormat', 'processFormat'];
+    $key = array_search($search_value, $types['text_format']['#process']);
+    if ($key !== FALSE) {
+      $key++;
+      array_splice($types['text_format']['#process'], $key, 0, 'social_editor_filter_process_format');
+    }
+    else {
+      $types['text_format']['#process'][] = 'social_editor_filter_process_format';
+    }
+  }
+}
+
+/**
+ * Process callback for form elements that have a text format selector attached.
+ *
+ * This callback runs after filter_process_format() and performs additional
+ * modifications to the form element.
+ *
+ * @see \Drupal\filter\Element\TextFormat::processFormat()
+ */
+function social_editor_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
+  // Init.
+  $disable_fields = FALSE;
+
+  // Forms.
+  $forms = array(
+    "social_post_entity_form",
+    "comment_post_comment_form",
+    "comment_comment_form",
+  );
+  // Allowed formats.
+  $allowed_format = 'simple_text';
+
+  // Check if it needs to be done here.
+  if (in_array($complete_form['#form_id'], $forms)) {
+    // Remove user formats except simple_text.
+    foreach ($element['format']['format']['#options'] as $key => $value) {
+      if ($key !== $allowed_format) {
+        unset($element['format']['format']['#options'][$key]);
+      }
+    }
+    // No changes can be made in text formats, so remove the fields.
+    $disable_fields = TRUE;
+  }
+  else {
+    // Remove simple_text.
+    foreach ($element['format']['format']['#options'] as $key => $value) {
+      if ($key === $allowed_format) {
+        unset($element['format']['format']['#options'][$key]);
+      }
+    }
+  }
+
+  // No changes can be made in text formats, so deny access to the fields.
+  if (($disable_fields == TRUE) || count($element['format']['format']['#options']) == 1) {
+    // Deny access to format fields.
+    $element['format']['format']['#access'] = FALSE;
+    $element['format']['guidelines']['#access'] = FALSE;
+    $element['format']['help']['#access'] = FALSE;
+  }
+
+  return $element;
+}

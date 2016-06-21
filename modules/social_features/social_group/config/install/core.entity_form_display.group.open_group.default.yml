@@ -1,0 +1,56 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.open_group.field_group_description
+    - field.field.group.open_group.field_group_image
+    - group.type.open_group
+    - image.style.social_x_large
+  module:
+    - field_group
+    - image
+    - text
+third_party_settings:
+  field_group:
+    group_content:
+      children:
+        - label
+        - field_group_description
+        - field_group_image
+      parent_name: ''
+      weight: 0
+      label: Content
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+id: group.open_group.default
+targetEntityType: group
+bundle: open_group
+mode: default
+content:
+  field_group_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+  field_group_image:
+    weight: 3
+    settings:
+      progress_indicator: throbber
+      preview_image_style: social_x_large
+    third_party_settings: {  }
+    type: image_image
+  label:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  uid: true

@@ -1,0 +1,115 @@
+<?php
+/**
+ * @file
+ * Entity Access By Field module file.
+ */
+
+use Drupal\entity_access_by_field\EntityAccessHelper;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Session\AccountInterface;
+
+// @TODO Prevent creating multiple visibility fields on one node.
+// @TODO Add support for multiple entity types.
+
+/**
+ * Here we define a constant for our node access grant ID.
+ */
+define('ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM', 1);
+
+/**
+ * Implements hook_node_access().
+ */
+function entity_access_by_field_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  return EntityAccessHelper::getEntityAccessResult($node, $op, $account);
+}
+
+/**
+ * Implements hook_node_grants().
+ */
+function entity_access_by_field_node_grants(AccountInterface $account, $op) {
+  $grants = [];
+  if ($op === 'view') {
+
+    // @TODO Check performance hit, this is not cached.
+    $entityAccessPermissions = \Drupal::getContainer()->get('entity_access_by_field.permissions');
+    $permissions = $entityAccessPermissions->getRealmWithPermission();
+
+    if (!empty($permissions)) {
+      foreach ($permissions as $realm => $permission) {
+        if ($account->hasPermission($permission)) {
+          $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
+        }
+      }
+    }
+  }
+  return $grants;
+}
+
+/**
+ * Implements hook_node_access_records().
+ */
+function entity_access_by_field_node_access_records(NodeInterface $node) {
+
+  $grants = [];
+
+  // Get the field definitions of the node.
+  $field_definitions = $node->getFieldDefinitions();
+  /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+  foreach ($field_definitions as $field_name => $field_definition) {
+    // Lets add a node access realm if the field is implemented.
+    if ($field_definition->getType() === 'entity_access_field') {
+      $field_values = $node->get($field_name)->getValue();
+      if (!empty($field_values)) {
+        foreach ($field_values as $key => $field_value) {
+          if (isset($field_value['value'])) {
+            $entityAccessPermissions = \Drupal::getContainer()->get('entity_access_by_field.permissions');
+            $realm = $entityAccessPermissions->getRealmForFieldValue('view', 'node', $node->getType(), $field_name, $field_value['value']);
+            $grants[] = array(
+              'realm' => $realm,
+              'gid' => ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM,
+              'grant_view' => 1,
+              'grant_update' => 0,
+              'grant_delete' => 0,
+              'priority' => 0,
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return $grants;
+}
+
+/**
+ * Implements hook_node_access_explain().
+ */
+function entity_access_by_field_node_access_explain($row) {
+
+  $entityAccessPermissions = \Drupal::getContainer()->get('entity_access_by_field.permissions');
+  $permissions = $entityAccessPermissions->getRealmWithPermission();
+
+  foreach ($permissions as $realm => $permission) {
+    if ($row->realm === $realm) {
+      return 'Users with permission "' . $permission . '" may view this node.';
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function entity_access_by_field_field_widget_info_alter(&$info) {
+  if (isset($info['options_buttons'])) {
+    $info['options_buttons']['field_types'][] = 'entity_access_field';
+  }
+}
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function entity_access_by_field_field_formatter_info_alter(array &$info) {
+  if (isset($info['list_default'])) {
+    $info['list_default']['field_types'][] = 'entity_access_field';
+  }
+}

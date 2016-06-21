@@ -1,0 +1,65 @@
+- var user = "isAnonymous"
+- var pagetype = "template"
+- var page = "Home Anonymous"
+
+include layout/_head.jade
+
+body
+  include layout/_gtm.jade
+  include layout/_header-an.jade
+  
+  main.main-container(role='main')
+  
+    nav.visible-md-block.visible-lg-block.bg-white
+      ol.breadcrumb.container
+        li.active Home
+        
+    .main-content
+      .container
+      
+        .cover.cover-img.cover-with-canvas(style="background-image: url('content/images/platform-hero.jpg')")  
+          .cover-wrap
+            .row
+              .col-xs-12.col-sm-8
+                .hero-canvas.padding-md
+                  h1.page-title.h2 Welcome to the XUY community
+                  p Cras mattis consectetur purus sit amet fermentum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
+                  .row.margin-top-l
+                    .col-xs-12
+                      a.btn.btn-default.btn-raised(href='sign-up.html') Sign up
+                      a.btn.btn-primary.btn-raised(href='login.html') Login
+              
+        .row.margin-top-xl
+        
+          .col-sm-4.col-sm-last
+            include ./molecules/_upcoming-events.jade
+            include ./molecules/_new-topics.jade
+          
+          .col-xs-12.col-sm-8
+                
+            ul.stream
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-activity6.jade
+                    //- created an event in a group with no comments
+              
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-activity7.jade
+                    //- created a topic on his profile
+                    
+              li.stream-item
+                i.stream-icon 
+                .card.stream-card
+                  .card-body
+                    include ./molecules/_stream-activity2.jade
+                    //- created post on own profile                    
+                    
+          
+
+  include layout/_footer.jade
+  include layout/_scripts.jade

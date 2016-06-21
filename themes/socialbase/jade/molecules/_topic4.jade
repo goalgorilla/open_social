@@ -1,0 +1,24 @@
+.card.card--teaser.card-with-actionbar
+  a.card-image.blue-overlay(href="topic.html")
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+    img.teaser-type(src='images/icon-topic.svg', alt='')
+  .card-body
+    h4.card-title 
+      a(href="topic.html") Top 10 zoos to visit in 2016
+    p.text-grey-dark 
+      if user == "isAnonymous"
+        | Amanda Boxer 
+      else
+        a(href="other-stream.html") Amanda Boxer
+      | &bullet; 12 apr 2016
+    p 
+      i.material-icons label
+      | &nbsp;
+      span.inline-center Topic
+    .card-actionbar
+      .badge.badge-gray-lighter.badge--toggle
+        label
+          input(type='checkbox')
+          i.material-icons public        
+          span.badge--toggle__label public
+      a.btn.btn-flat.pull-right(href="topic.html") Read more

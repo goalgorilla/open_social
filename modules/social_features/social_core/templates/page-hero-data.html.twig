@@ -1,0 +1,105 @@
+{#
+/**
+ * @file
+ * Theme override for page titles.
+ *
+ * Available variables:
+ * - title_attributes: HTML attributes for the page title element.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title: The page title, for use in the actual content.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+
+ * - author_name
+ * - created_date
+ * - created_date_formatted
+ * - topic_type
+ * - hero_node
+ */
+#}
+{% if hero_styled_image_url %}
+<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+{% else %}
+<div class="cover">
+{% endif %}
+{% if hero_node or topic_type %}
+
+{% if node_edit_url %}
+  <div class="hero-action-button">
+    <a href="{{ node_edit_url }}" title="Edit content" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+      <i class="material-icons">mode_edit</i>
+    </a>
+  </div>
+{% endif %}
+
+<div class="cover-wrap">
+{% endif %}
+
+{{ title_prefix }}
+
+{% if title %}
+    <h1{{ title_attributes.addClass(section_class) }}>{{ title }}</h1>
+{% endif %}
+
+{{ title_suffix }}
+
+{% if hero_node or topic_type %}
+  <div class="hero-footer">
+    <div class="row row-md-center">
+      <div class="col-xs-12 col-md-6 col-md-offset-3">
+
+        {% if visibility_icon and  visibility_label %}
+          <div class="badge badge-gray-dark badge--toggle">
+            <label>
+              <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
+            </label>
+          </div>
+        {% endif %}
+
+        {{ hero_node }}
+
+        <div>
+        {% if author_name and created_date_formatted %}
+          {% if topic_type %}
+            {% trans %}
+              By {{ author_name }} on {{ created_date_formatted }}
+            {% endtrans %}
+            <div>
+              <i class="material-icons">label</i>
+              {{ topic_type }}
+              {% if group_link %}
+                  in group {{ group_link }}
+              {% endif %}
+            </div>
+          {% else %}
+            <div>
+              {% trans %}
+                By {{ author_name }}
+              {% endtrans %}
+              {% if group_link %}
+                  <span> in group {{ group_link }} </span>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endif %}
+        </div>
+
+      </div>
+
+    {% if event_enrollment %}
+      <div class="col-xs-12 col-md-3">
+          <div class="btn-group">
+            {{ event_enrollment }}
+          </div>
+      </div>
+    {% endif %}
+
+    </div>
+  </div>
+{% endif %}
+
+{% if hero_node or topic_type %}
+</div>
+{% endif %}
+</div>

@@ -1,0 +1,156 @@
+<?php
+
+/**
+ * @file
+ * The Social profile module.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_field_widget_form_alter().
+ *
+ * Fix theme issues in profile fields.
+ */
+function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+  switch ($field_definition->getName()) {
+    case 'field_profile_phone_number':
+      // @TODO: remove this when rule for .form-tel elements will be added.
+      $element['value']['#attributes']['class'][] = 'form-text';
+      break;
+
+    case 'field_profile_address':
+      // @TODO: remove this when script for custom selects will be added.
+      $element['country_code']['#attributes']['class'][] = 'browser-default';
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Remove the save and set default submit button on profile creation.
+  if (isset($form['actions']['set_default'])) {
+    unset($form['actions']['set_default']);
+  }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Remove the save and set default submit button on profile edit.
+  if (isset($form['actions']['set_default'])) {
+    unset($form['actions']['set_default']);
+  }
+
+  // Add custom submit handler just for redirect purposes. We don't want to
+  // override the form::save in profile.
+  $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+}
+
+/**
+ * Form submit for profile_profile_edit_form and profile_profile_add_form.
+ *
+ * @param array $form
+ *   The profile edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state interface.
+ */
+function _social_profile_profile_edit_form_submit($form, FormStateInterface $form_state) {
+  // Set redirect to the profile overview page when a user saves their profile.
+  $form_state->setRedirect(
+    'view.user_information.user_information',
+    array('user' => \Drupal::currentUser()->id(), array())
+  );
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function social_profile_local_tasks_alter(&$local_tasks) {
+  // Remove the profile main "Profile information" from the local tabs.
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
+  }
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_profile_theme_suggestions_profile_alter(array &$suggestions, array $variables) {
+  // @todo remove this when it lands in the profile module, make sure it will have the same hooks though.
+  $original = $variables['theme_hook_original'];
+  $entity = $variables['elements']['#profile'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions = array();
+  $suggestions[] = $original;
+  $suggestions[] = $original . '__' . $sanitized_view_mode;
+  $suggestions[] = $original . '__' . $entity->bundle();
+  $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = $original . '__' . $entity->id();
+  $suggestions[] = $original . '__' . $entity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Prepares variables for profile templates.
+ *
+ * Default template: profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - profile: The profile object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_profile_preprocess_profile(&$variables) {
+  $profile = $variables['profile'];
+  $user = User::load($profile->getOwnerId());
+
+  // See social_user_user_format_name_alter(), DisplayName is either first name
+  // + last name, or username if both first and last name aren't filled out.
+  $variables['profile_name'] = $user->getDisplayName();;
+  $variables['profile_contact_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
+  $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
+  $variables['user_mail'] = $user->getEmail();
+
+  // Edit profile URL.
+  $account = \Drupal::currentUser();
+  if ($profile->access('edit', $account)) {
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * In order to save a new default profile on user creation.
+ */
+function social_profile_user_insert(UserInterface $account) {
+  // If the new account has a UID, we can create a default profile.
+  // Default image is added through the field settings.
+  if (!empty($account->id())) {
+    $profile = Profile::create($expected = [
+      'type' => ProfileType::load('profile')->id(),
+      'uid' => $account->id(),
+    ]);
+    $profile->save();
+  }
+}

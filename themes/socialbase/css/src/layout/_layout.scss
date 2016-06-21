@@ -1,0 +1,55 @@
+.main-container {
+  overflow: hidden;
+  min-height: 100%;
+  min-height: 100vh;
+  padding-top: 50px;
+  padding-bottom: 100px;
+}
+
+.main-footer {
+  background-color: $brand-primary-dark;
+  overflow: hidden;
+  padding-top: 50px;
+}
+
+.valign {
+  display: table-cell;
+}
+
+.valign-wrapper-center {
+  display: table;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.valign-wrapper-bottom {
+  display: inline-block;
+  vertical-align: bottom;
+  float: none;
+}
+
+.align-center {
+  align-self: center;
+}
+
+.section {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  &.no-pad {
+    padding: 0;
+  }
+  &.no-pad-bot {
+    padding-bottom: 0;
+  }
+  &.no-pad-top {
+    padding-top: 0;
+  }
+}
+
+@include MQ($small) {
+  .margin-top-sidebar {
+    // line-height * section-title font size + padding top + padding bottom
+    margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
+  }
+}

@@ -1,0 +1,9 @@
+services:
+  social_user.route_subscriber:
+    class: Drupal\social_user\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  social_user.username_constraint:
+    class: Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator
+    arguments: ['@typed_data_manager']
+

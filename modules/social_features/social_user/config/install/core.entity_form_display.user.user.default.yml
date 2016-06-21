@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - field_group
+    - user
+third_party_settings:
+  field_group:
+    group_information:
+      children:
+        - account
+      parent_name: ''
+      weight: 0
+      label: 'Account information'
+      format_type: fieldset
+      format_settings:
+        label: 'Account information'
+        required_fields: true
+        id: ''
+        classes: ''
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  account:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+  contact:
+    weight: 5
+hidden:
+  language: true
+  timezone: true

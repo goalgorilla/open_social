@@ -1,0 +1,149 @@
+<?php
+
+/**
+ * @file
+ * The Social comment module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\comment\CommentInterface;
+
+/**
+ * @file
+ * The Social comment module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Enhance the comment form.
+ */
+function social_comment_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Change value of 'Save' button.
+  $form['actions']['submit']['#value'] = t('Comment');
+  // Hide title of 'Comment' field.
+  if (!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])) {
+    $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'none';
+  }
+  // Validate replies to comments deeper than 1.
+  $form['#validate'][] = 'social_comment_form_reply_validate';
+
+  // Comment reply form.
+  if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+    $form['#attributes']['class'][] = 'card-nested-section';
+    $form['actions']['submit']['#value'] = t('Reply');
+    $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
+
+    $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
+  }
+  // Comment edit form.
+  if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+    $form['actions']['submit']['#value'] = t('Submit');
+    $form['#title'] = t('Edit comment');
+    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
+  }
+}
+
+/**
+ * Form validation handler for comment_form().
+ *
+ * Validate replies to comments deeper than 1.
+ */
+function social_comment_form_reply_validate($form, FormStateInterface $form_state) {
+  // Get parrent comment ID.
+  $pid = \Drupal::routeMatch()->getParameter('pid');
+  if ($pid) {
+    $comment = \Drupal::entityTypeManager()->getStorage('comment')->load($pid);
+    $bundle = $comment->bundle();
+    switch ($bundle) {
+      default:
+        if (!empty($comment->getParentComment())) {
+          $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
+        }
+        break;
+
+      case "post_comment":
+        $form_state->setErrorByName('', t('Replies for comments on posts are not allowed'));
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_comment_links_alter().
+ *
+ * Alter the links of a comment.
+ */
+function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+  $bundle = $entity->bundle();
+  switch ($bundle) {
+    default:
+      if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+        unset($links['comment']['#links']['comment-reply']);
+      }
+      break;
+
+    case "post_comment":
+      unset($links['comment']['#links']['comment-reply']);
+      break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_comment().
+ */
+function social_comment_preprocess_comment(&$variables) {
+  $comment = $variables['elements']['#comment'];
+  // Display comment created date in format 'time ago'.
+  $created_time_ago = \Drupal::service('date.formatter')
+    ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+  $submitted = t('@time ago', array('@time' => $created_time_ago));
+
+  $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+
+  $account = $comment->getOwner();
+  if ($account) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, 'compact');
+        $variables['author_picture'] = $content;
+      }
+    }
+  }
+
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ *
+ * Allow users to delete their own comments.
+ */
+function social_comment_comment_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($operation == 'delete') {
+    if ($account->hasPermission('administer comments', $account)) {
+      return AccessResult::allowed()->cachePerPermissions();
+    }
+    else {
+      return AccessResult::allowedIf($account->hasPermission('delete own comments', $account) && ($account->id() == $entity->getOwnerId()))
+        ->cachePerPermissions()
+        ->cachePerUser()
+        ->addCacheableDependency($entity);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_comment_entity_type_alter(array &$entity_types) {
+  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
+  $entity_types['comment']->setViewBuilderClass('Drupal\social_comment\SocialCommentViewBuilder');
+}

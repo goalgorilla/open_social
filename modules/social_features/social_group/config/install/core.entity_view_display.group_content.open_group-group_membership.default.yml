@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.open_group-group_membership.group_roles
+    - group.content_type.open_group-group_membership
+id: group_content.open_group-group_membership.default
+targetEntityType: group_content
+bundle: open_group-group_membership
+mode: default
+content:
+  entity_id:
+    type: entity_reference_entity_id
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  group_roles: true
+  uid: true

@@ -1,0 +1,260 @@
+<?php
+/**
+ * @file
+ * Activity Creator module file.
+ */
+
+/**
+ * Activity statuses.
+ */
+const ACTIVITY_STATUS_RECEIVED = 1;
+const ACTIVITY_STATUS_SEEN = 2;
+const ACTIVITY_STATUS_READ = 3;
+
+/**
+ * Returns the allowed values for the activity status field.
+ *
+ * @return array
+ *    Return an array of allowed values for status field.
+ */
+function activity_creator_field_activity_status_allowed_values() {
+
+  $allowed_values = [
+    ACTIVITY_STATUS_RECEIVED => 'Received',
+    ACTIVITY_STATUS_SEEN => 'Seen',
+    ACTIVITY_STATUS_READ => 'Read',
+  ];
+
+  return $allowed_values;
+}
+
+/**
+ * Returns the allowed values for the activity destinations field.
+ *
+ * @return array
+ *    Return an array of allowed values for destinations field.
+ */
+function activity_creator_field_activity_destinations_allowed_values() {
+
+  $allowed_values = [
+    'stream_profile' => 'Stream (profile)',
+    'stream_home' => 'Stream (home)',
+    'stream_group' => 'Stream (group)',
+    'stream_explore' => 'Stream (explore)',
+    'notifications' => 'Notifications',
+  ];
+
+  return $allowed_values;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_creator_message_insert(\Drupal\message\Entity\Message $entity) {
+  if ($entity) {
+    // TODO Move all this logic to services (also in Queue).
+    $mid = $entity->id();
+    $message_type_id = $entity->getEntityType()->id();
+    $actor = $entity->getOwner()->id();
+    $context = $entity->get('field_message_context')->getValue();
+    $destinations = $entity->get('field_message_destination')->getValue();
+    $related_object = $entity->get('field_message_related_object')->getValue();
+
+    $data = [
+    // Message id, or maybe full ActivityLog obj? Better not!
+      'mid' => $mid,
+    // This is needed for the activityfactory.
+      'message_type' => $message_type_id,
+      'actor' => $actor,
+    // Either group, profile, community.
+      'context' => $context[0]['value'],
+      'destination' => $destinations,
+      'related_object' => $related_object,
+    // Last processed_uid.
+      'last_uid' => 0,
+      'status' => NULL,
+    ];
+
+    $message_type = $entity->getType();
+
+    $activity_create_direct = $message_type->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
+
+    if ($activity_create_direct) {
+
+      $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
+
+      /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+      $plugin = $context_plugin_manager->createInstance($data['context']);
+      $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
+      $activity_factory = \Drupal::service('activity_creator.activity_factory');
+      if (!empty($recipients)) {
+
+        foreach ($recipients as $recipient) {
+          // Create a queue item for activity creation.
+          $activity_creator_data = [
+            'mid' => $data['mid'],
+            'message_type' => $data['message_type'],
+            'actor' => $data['actor'],
+          // Not necessary?
+            'context' => $data['context'],
+            'destination' => $data['destination'],
+            'related_object' => $data['related_object'],
+            'recipient' => $recipient,
+          ];
+          $activity_factory->createActivities($activity_creator_data);
+        }
+      }
+      else {
+        $activity_creator_data = [
+          'mid' => $data['mid'],
+          'message_type' => $data['message_type'],
+          'actor' => $data['actor'],
+        // Not necessary?
+          'context' => $data['context'],
+          'destination' => $data['destination'],
+          'related_object' => $data['related_object'],
+        ];
+        $activity_factory->createActivities($activity_creator_data);
+      }
+    }
+    else {
+      $queue = \Drupal::queue('activity_creator_logger');
+      $queue->createItem($data);
+    }
+  }
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function activity_creator_views_data() {
+  $data['activity']['activity_visibility_access_filter'] = array(
+    'title' => t('Activity visibility access'),
+    'filter' => array(
+      'title' => t('Activity visibility access'),
+      'help' => t('Enable activity access control.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_visibility_access',
+    ),
+  );
+  $data['activity']['activity_post_visibility_access_filter'] = array(
+    'title' => t('Activity post visibility access'),
+    'filter' => array(
+      'title' => t('Activity post visibility access'),
+      'help' => t('Enable activity access control for related post entities.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_post_visibility_access',
+    ),
+  );
+  $data['activity']['activity_profile_argument'] = array(
+    'title' => t('Activity profile argument'),
+    'argument' => array(
+      'title' => t('Activity profile argument'),
+      'help' => t('Activity profile context argument.'),
+      'id' => 'activity_profile_argument',
+    ),
+  );
+  $data['activity']['activity_group_argument'] = array(
+    'title' => t('Activity group argument'),
+    'argument' => array(
+      'title' => t('Activity group argument'),
+      'help' => t('Activity group context argument.'),
+      'id' => 'activity_group_argument',
+    ),
+  );
+  return $data;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function activity_creator_theme() {
+  $items = [
+    'activity' => [
+      'render element' => 'elements',
+      'file' => 'activity.page.inc',
+      'template' => 'activity',
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function activity_creator_theme_suggestions_activity(array $variables) {
+  $suggestions = array();
+  $activity = $variables['elements']['#activity'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'activity__' . $sanitized_view_mode;
+  $suggestions[] = 'activity__' . $activity->id();
+  $suggestions[] = 'activity__' . $activity->id() . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_entity_view().
+ *
+ * Mark notifications as read.
+ *
+ * TODO: Maybe this should be an event subscriber service
+ */
+function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  // TODO WIll this work with caching?
+  if ($view_mode === 'full') {
+    $account = \Drupal::currentUser();
+    // @TODO Check if this entity is even specified in ActivityLoggerFactory
+    \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view_unformatted().
+ */
+function activity_creator_preprocess_views_view_unformatted(&$variables) {
+  $view = $variables['view'];
+  $view_name = $view->storage->id();
+  if ($view_name == 'activity_stream_notifications') {
+    $notification_url = \Drupal\Core\Url::fromRoute('view.activity_stream_notifications.page_1');
+    $variables['notification_url'] = $notification_url;
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * Delete activity items when related entities are deleted.
+ *
+ * @TODO: When group is deleted delete activities where group is recipient.
+ * @TODO: When user is deleted delete activities where user is recipient.
+ */
+function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+
+  // TODO Move this into a service?
+  if ($entity !== NULL) {
+    $entity_type = $entity->getEntityTypeId();
+    $entity_id = $entity->id();
+    if ($entity_type !== 'activity') {
+
+      $entity_query = \Drupal::entityQuery('activity');
+      $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
+      $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
+      $ids = $entity_query->execute();
+      if (!empty($ids)) {
+        entity_delete_multiple('activity', $ids);
+      }
+    }
+
+    if ($entity_type == 'user' || $entity_type == 'group') {
+      $entity_query = \Drupal::entityQuery('activity');
+      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
+      $ids = $entity_query->execute();
+      if (!empty($ids)) {
+        entity_delete_multiple('activity', $ids);
+      }
+    }
+  }
+
+}

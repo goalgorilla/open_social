@@ -1,0 +1,20 @@
+- var pagetype = "styleguide"
+- var page = "Grid"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+        .section
+          p The grid system we use is the Bootstrap Grid system (v4.0). The default settings for breakpoints can be found in the variables scss file. 
+          a.btn.btn-raised.btn-primary(href='http://v4-alpha.getbootstrap.com/layout/grid/', target="_blank") View Bootstrap documentation
+              
+
+    include ./layout/_scripts.jade

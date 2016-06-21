@@ -1,7 +1,22 @@
-name: Social Comment
-type: module
-description: 'Provide social fields.'
-core: 8.x
+name: Social
+type: profile
+description: 'Drupal Social install profile.'
+project: 'social'
+version: '8.0.2'
+core: '8.x'
 dependencies:
-  - field
-configure: social.settings
+  - tour
+  - help
+  - config
+  - system
+  - user
+  - breakpoint
+  - r4032login
+  - override_node_options
+themes:
+  - bartik
+  - seven
+  - socialbase
+features: true
+distribution:
+  name: Social

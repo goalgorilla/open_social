@@ -1,0 +1,47 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.hero_call_to_action_block
+    - field.field.block_content.hero_call_to_action_block.field_call_to_action_link
+    - field.field.block_content.hero_call_to_action_block.field_hero_image
+    - field.field.block_content.hero_call_to_action_block.field_text_block
+    - image.style.social_xx_large
+  module:
+    - image
+    - link
+    - text
+id: block_content.hero_call_to_action_block.default
+targetEntityType: block_content
+bundle: hero_call_to_action_block
+mode: default
+content:
+  field_call_to_action_link:
+    type: link_default
+    weight: 0
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_hero_image:
+    type: image_image
+    weight: 0
+    settings:
+      preview_image_style: social_xx_large
+      progress_indicator: throbber
+    third_party_settings: {  }
+  field_text_block:
+    type: text_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

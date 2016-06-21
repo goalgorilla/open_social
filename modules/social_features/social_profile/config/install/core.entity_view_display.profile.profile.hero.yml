@@ -1,0 +1,66 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.hero
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_self_introduction
+    - image.style.social_large
+    - profile.type.profile
+  module:
+    - image
+id: profile.profile.hero
+targetEntityType: profile
+bundle: profile
+mode: hero
+content:
+  field_profile_first_name:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_function:
+    type: string
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_profile_image:
+    weight: 2
+    label: hidden
+    settings:
+      image_style: social_large
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+  field_profile_last_name:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_profile_organization:
+    type: string
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  field_profile_address: true
+  field_profile_expertise: true
+  field_profile_interests: true
+  field_profile_phone_number: true
+  field_profile_self_introduction: true

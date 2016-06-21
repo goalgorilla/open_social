@@ -1,0 +1,181 @@
+uuid: d5b21819-02a5-4956-89e4-de650d05d280
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - image.style.social_x_large
+    - node.type.event
+  module:
+    - address
+    - comment
+    - datetime
+    - field_group
+    - image
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_title_image:
+      children:
+        - title
+        - field_event_image
+      parent_name: ''
+      weight: 0
+      label: 'Title & image'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_date_time:
+      children:
+        - field_event_date
+        - field_event_date_end
+      parent_name: ''
+      weight: 3
+      label: 'Date & time'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_location:
+      children:
+        - field_event_location
+        - field_event_address
+      parent_name: ''
+      weight: 5
+      label: Location
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_description:
+      children:
+        - body
+      parent_name: ''
+      weight: 7
+      label: Description
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_event_visibility:
+      children:
+        - field_content_visibility
+      parent_name: ''
+      weight: 2
+      label: Visibility
+      format_type: fieldset
+      format_settings:
+        label: Visibility
+        required_fields: true
+        id: visibility
+        classes: 'card card-underline scrollspy'
+_core:
+  default_config_hash: PzknErbLCFpt2izP7BgaDdXj_ObcrnqXkjMwUyJoWFQ
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 4
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+  field_content_visibility:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+  field_event_address:
+    weight: 14
+    settings:
+      default_country: ''
+    third_party_settings: {  }
+    type: address_default
+  field_event_comments:
+    weight: 11
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
+  field_event_date:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+  field_event_date_end:
+    weight: 11
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+  field_event_image:
+    weight: 3
+    settings:
+      progress_indicator: throbber
+      preview_image_style: social_x_large
+    third_party_settings: {  }
+    type: image_image
+  field_event_location:
+    weight: 11
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  path:
+    type: path
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 8
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

@@ -1,0 +1,28 @@
+uuid: 393bb367-ebf2-4297-9549-d62bd2660cc7
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_post
+    - system
+  theme:
+    - socialbase
+_core:
+  default_config_hash: F4tddmRz5gZGjqALwP2qm79FZxhoUq-jIaDKMNAAk58
+id: postonprofileblock
+theme: socialbase
+region: '-1'
+weight: -9
+provider: null
+plugin: post_profile_block
+settings:
+  id: post_profile_block
+  label: 'Post on profile block'
+  provider: social_post
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/stream'
+    negate: false
+    context_mapping: {  }

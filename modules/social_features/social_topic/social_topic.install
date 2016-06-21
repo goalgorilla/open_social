@@ -1,0 +1,44 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_topic module.
+ */
+
+use Drupal\taxonomy\Entity\Term;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_topic.
+ */
+function social_topic_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
+    'view node.topic.field_content_visibility:public content',
+  ));
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'create topic content',
+    'delete own topic content',
+    'edit own topic content',
+    'view node.topic.field_content_visibility:public content',
+    'view node.topic.field_content_visibility:community content',
+  ));
+
+  // Create some default taxonomy terms.
+  $terms = array(
+    'Blog',
+    'Discussion',
+    'News',
+  );
+
+  foreach ($terms as $term_name) {
+    $term = Term::create([
+      'vid' => 'topic_types',
+      'name' => $term_name,
+    ]);
+    $term->save();
+  }
+
+}

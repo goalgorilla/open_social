@@ -1,0 +1,26 @@
+# Event enrollment routing definition
+event_enrollment.settings_tab:
+  route_name: event_enrollment.settings
+  title: 'Settings'
+  base_route: event_enrollment.settings
+entity.event_enrollment.canonical:
+  route_name: entity.event_enrollment.canonical
+  base_route: entity.event_enrollment.canonical
+  title: 'View'
+
+entity.event_enrollment.edit_form:
+  route_name: entity.event_enrollment.edit_form
+  base_route: entity.event_enrollment.canonical
+  title: Edit
+
+entity.event_enrollment.delete_form:
+  route_name:  entity.event_enrollment.delete_form
+  base_route:  entity.event_enrollment.canonical
+  title: Delete
+  weight: 10
+
+social_user.events:
+  route_name: view.events.events_overview
+  base_route: entity.user.canonical
+  title: Events
+

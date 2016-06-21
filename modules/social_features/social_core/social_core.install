@@ -1,0 +1,79 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_comment module.
+ */
+
+use Drupal\Core\Field\FieldItemList;
+use Drupal\file\Entity\File;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_comment.
+ */
+function social_core_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'view own unpublished content',
+    'override event published option',
+    'override topic published option',
+  ));
+
+  _social_core_create_an_homepage_block();
+}
+
+/**
+ * Custom function to create the homepage block for AN users.
+ */
+function _social_core_create_an_homepage_block() {
+  // TODO: use a better image from the theme.
+  // Block image.
+  $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/06.jpg', 'public://06.jpg', FILE_EXISTS_REPLACE);
+
+  $media = File::create(array(
+    'langcode' => 'en',
+    'uid' => 1,
+    'status' => 1,
+    'uri' => $uri,
+  ));
+  $media->save();
+
+  $fid = $media->id();
+
+  // Create a block with a specific uuid so we can use it in the config
+  // to load it into the theme see block.block.anhomepageheroblock.yml.
+  $block = \Drupal::entityTypeManager()->getStorage('block_content')->create(array(
+    'type' => 'hero_call_to_action_block',
+    'info' => 'AN homepage hero block',
+    'uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4',
+  ));
+  $block->field_text_block = array(
+    'value' => '<h3>Title of the AN homepage block (TODO: change this later!)</h3><p> Text in the AN homepage block</p>',
+    'format' => 'full_html',
+  );
+
+  $block_image = array(
+    'target_id' => $fid,
+    'alt' => "Anonymous front page image homepage'",
+  );
+  $block->field_hero_image = $block_image;
+
+  // Set the links.
+  $action_links = array(
+    array(
+      'uri' => 'internal:/user/register',
+      'title' => 'Sign up',
+    ),
+    array(
+      'uri' => 'internal:/user/login',
+      'title' => 'Login',
+    ),
+  );
+  $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
+  $itemList->setValue($action_links);
+  $block->field_call_to_action_link = $itemList;
+  $block->save();
+}

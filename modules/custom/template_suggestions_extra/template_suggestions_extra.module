@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Contains template_suggestions_extra.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function template_suggestions_extra_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the template_suggestions_extra module.
+    case 'help.page.template_suggestions_extra':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Add extra useful template suggestsions') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function template_suggestions_extra_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  $altered_suggestions = array();
+  // Add node type to page suggestions.
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    if (!is_object($node)) {
+      $node = node_load($node);
+    }
+  }
+
+  foreach ($suggestions as $suggestion) {
+    $add_extra = FALSE;
+    $extra_suggeston = '';
+
+    if (isset($node) && is_object($node)) {
+      // Add node type after the wildcard.
+      if ($suggestion === 'page__node__%') {
+        $extra_suggeston = 'page__node__' . $node->getType();
+        $add_extra = TRUE;
+      }
+    }
+    $altered_suggestions[] = $suggestion;
+    if ($add_extra) {
+      $altered_suggestions[] = $extra_suggeston;
+    }
+  }
+  $suggestions = $altered_suggestions;
+}

@@ -1,0 +1,21 @@
+.card.card--teaser.card-with-actionbar
+  a.card-image.blue-overlay(href="event.html")
+    img.img-responsive(src="content/images/people3-square.jpg")
+    .teaser-date 26
+      .text-xs may
+  .card-body
+    h4.card-title 
+      a(href="event.html") London Meetup
+    p.text-grey-dark
+      i.material-icons event
+      | &nbsp;
+      span.inline-center 26 may 09:00 - 18:00 
+      | &nbsp; 
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
+    p.text-grey-dark
+      i.material-icons place
+      | &nbsp;
+      span.inline-center Tower Bridge, London
+    .card-actionbar
+      a.btn.btn-flat.pull-right(href="event.html") Read more

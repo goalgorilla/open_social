@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TODO set checkForUnintentionallyCoveredCode="true" once https://www.drupal.org/node/2626832 is resolved. -->
+<phpunit bootstrap="../../core/tests/bootstrap.php" colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         checkForUnintentionallyCoveredCode="false">
+  <php>
+    <!-- Set error reporting to E_ALL. -->
+    <ini name="error_reporting" value="32767"/>
+    <!-- Do not limit the amount of memory tests take to run. -->
+    <ini name="memory_limit" value="-1"/>
+  </php>
+  <testsuites>
+    <testsuite name="unit-core">
+      <directory>../../core/tests/Drupal/Tests</directory>
+      <directory>../../core/modules/*/tests/src/Unit</directory>
+      <directory>../../modules/*/tests/src/Unit</directory>
+      <!-- Exclude Composer's vendor directory so we don't run tests there. -->
+      <exclude>../../core/vendor</exclude>
+      <!-- Exclude Drush tests. -->
+      <exclude>../../core/drush/tests</exclude>
+      <exclude>
+        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
+      </exclude>
+    </testsuite>
+    <testsuite name="social">
+      <directory>modules/*/*/tests/src/Unit</directory>
+      <exclude>
+        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
+      </exclude>
+    </testsuite>
+    <testsuite name="core-contrib">
+      <directory>../../core/tests/Drupal/Tests</directory>
+      <directory>../../core/modules/*/tests/src/Unit</directory>
+      <directory>../../modules/*/tests/src/Unit</directory>
+      <directory>modules/*/*/tests/src/Unit</directory>
+      <!-- Exclude Composer's vendor directory so we don't run tests there. -->
+      <exclude>../../core/vendor</exclude>
+      <!-- Exclude Drush tests. -->
+      <exclude>../../core/drush/tests</exclude>
+      <exclude>
+        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
+      </exclude>
+    </testsuite>
+  </testsuites>
+  <listeners>
+    <listener class="\Drupal\Tests\Listeners\DrupalStandardsListener">
+    </listener>
+  </listeners>
+</phpunit>

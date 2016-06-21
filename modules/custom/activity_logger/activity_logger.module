@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * @file
+ * Contains activity_logger.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\message\MessageTypeInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_help().
+ */
+function activity_logger_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the activity_logger module.
+    case 'help.page.activity_logger':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Used to log activities based on the message module') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for message_type_form().
+ */
+function activity_logger_form_message_type_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\contact\ContactFormInterface $contact_form */
+  $message_type = $form_state->getFormObject()->getEntity();
+
+  $activity_recipient_manager = \Drupal::service('plugin.manager.activity_context.processor');
+  $context_options = $activity_recipient_manager->getOptionsList();
+
+  $form['activity_context'] = array(
+    '#type' => 'select',
+    '#required' => TRUE,
+    '#title' => t('The activity context for this message'),
+    '#description' => t('Select a context where to display this message.'),
+    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL),
+    '#options' => $context_options,
+  );
+
+  $activity_recipient_manager = \Drupal::service('plugin.manager.activity_destination.processor');
+  $destination_options = $activity_recipient_manager->getOptionsList();
+
+  $form['activity_destinations'] = array(
+    '#type' => 'select',
+    '#title' => t('The activity destinations for this message'),
+    '#multiple' => TRUE,
+    '#required' => TRUE,
+    '#description' => t('Select destinations where to display this message.'),
+    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
+    // @TODO activity_creator allowed_values function overlap (should be plugin)
+    '#options' => $destination_options,
+  );
+
+  $form['activity_create_direct'] = array(
+    '#type' => 'checkbox',
+    '#required' => FALSE,
+    '#title' => t('Create activity items direct instead of in Queue'),
+    '#description' => t('Select if items should be created directly instead of in the queue. Warning: performance implications!'),
+    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL),
+  );
+
+  $form['#entity_builders'][] = 'activity_logger_form_message_type_form_builder';
+}
+
+/**
+ * Entity builder for the message type edit form with third party options.
+ *
+ * @see activity_logger_form_message_type_form_alter()
+ */
+function activity_logger_form_message_type_form_builder($entity_type, MessageTypeInterface $message_type, &$form, FormStateInterface $form_state) {
+  $message_type->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
+  $message_type->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));
+  $message_type->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * TODO: Move this in a service and make it generic.
+ */
+function activity_logger_entity_insert(EntityInterface $entity) {
+
+  // Turn off this feature for all non-content entities.
+  if (!$entity instanceof \Drupal\Core\Entity\ContentEntityInterface) {
+    return;
+  }
+  // For nodes we make an exception, since they are potentially placed in
+  // groups, which we cannot know here yet.
+  elseif ($entity instanceof \Drupal\node\Entity\Node) {
+    $data['entity_id'] = $entity->id();
+    $queue = \Drupal::queue('activity_logger_message');
+    $queue->createItem($data);
+    return;
+  }
+
+  // Get the services we need here.
+  $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
+  // Create messages for all other types of content.
+  $activity_logger_factory->createMessages($entity, 'create');
+}

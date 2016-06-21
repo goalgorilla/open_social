@@ -1,0 +1,79 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Why are color runs so popular?
+
+block pagetitle
+
+  .container.hero-container
+    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/topic-hero.jpg')")  
+      .hero-action-button
+        a.waves-effect.waves-light.btn.btn-default.btn-floating(href='node-edit-topic.html')
+          i.material-icons mode_edit
+      .cover-wrap         
+        h1.page-title The High Price of Free
+        .hero-footer
+          .row.row-md-center
+            .col-xs-12.col-md-6.col-md-offset-3
+              .badge.badge-gray-dark.badge--toggle
+                label
+                  input(type='checkbox')
+                  i.material-icons public        
+                  span.badge--toggle__label public
+              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") By 
+                a.author(itemprop="url", rel="author", href="my-stream.html") John Johnson 
+                | on 
+                time.pubdate.updated(datetime="2016-01-26T10:00:00-05:00", itemprop="datePublished")  January 26, 2016 
+                div  
+                  a(itemprop="category", href="group-topics.html") 
+                    i.material-icons label
+                    | Blog
+                  | &nbsp;
+                  span.inline-center
+                    | in group 
+                    a(itemprop="organizer", href="group-stream.html") Happy Campers
+      
+                
+block content
+      
+  .row.margin-top-l
+  
+    
+    .col-xs-12.col-sm-8
+      h4.section-title.section-title-topic Topic details
+      
+      .card
+        .card-body.extra-padding
+          p 
+            strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business.
+          
+          p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
+
+          p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
+        
+          p 
+            img.img-responsive(src='content/images/iphone6.jpg')
+
+          p I wondered how other independent and freelance web workers dealt with this conflict between earning money and contributing back. I also wondered if I was alone in feeling that the clock is ticking. I put together a survey (the responses to which probably will be the background to several other pieces of research), and a few things stood out immediately.
+          
+          p John Gruber:
+          blockquote
+            q I worry that the inherent slowness of the web and ill-considered trend toward over-produced web design is going to start hurting traffic to DF.
+          
+          p I asked the question, “Are you involved in open source projects, writing tutorials, mentoring, speaking at events-that you do free of charge or for expenses only?” 59% said they were not involved, with 27% of those people citing time constraints. Some people did explain that they were involved in volunteer work outside of the web. By the time I filtered out the under-40s, the non-involvement figure rose to 70%.
+
+      h4.section-title Comments
+          
+      .card
+        .card-body.extra-padding
+          include ./molecules/_comment1.jade
+          include ./molecules/_comment2.jade
+          hr
+          .media
+            .media-left
+              img.img-medium.img-circle(src='content/images/avatar1.jpg')
+            .media-body
+              form#comment-form
+                .form-group.form-group-inline
+                  textarea.form-control.form-control--block(placeholder='Add a new comment...', width='100%')
+                  button.btn.btn-primary(type='submit') Comment

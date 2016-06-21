@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.teaser
+    - field.field.group.open_group.field_group_description
+    - field.field.group.open_group.field_group_image
+    - group.type.open_group
+    - image.style.social_x_large
+  module:
+    - image
+id: group.open_group.teaser
+targetEntityType: group
+bundle: open_group
+mode: teaser
+content:
+  field_group_description:
+    type: basic_string
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+hidden:
+  uid: true

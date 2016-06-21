@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group
+    - system
+  theme:
+    - socialbase
+id: groupheroblock
+theme: socialbase
+region: hero
+weight: null
+provider: null
+plugin: group_hero_block
+settings:
+  id: group_hero_block
+  label: 'Group hero block'
+  provider: social_group
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*'
+    negate: false
+    context_mapping: {  }
