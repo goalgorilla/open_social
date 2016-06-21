@@ -28,5 +28,4 @@ interface ActivityContextInterface extends PluginInspectionInterface {
    */
   public function getRecipients(array $data, $last_id, $limit);
 
-
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\search\SocialSearchBreadcrumbBuilder.
- */
-
 namespace Drupal\social_search;
 
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
@@ -43,10 +38,12 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       case 'view.search_content.page_no_value':
         $page_title = $this->t('Search content');
         break;
+
       case 'view.search_users.page':
       case 'view.search_users.page_no_value':
         $page_title = $this->t('Search users');
         break;
+
       default:
         $page_title = $this->t('Search');
     }
@@ -60,4 +57,5 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
     return $breadcrumb;
   }
+
 }

@@ -8,15 +8,18 @@ namespace Drupal\activity_creator\Controller;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 
+/**
+ * Notifications controller.
+ */
 class NotificationsController extends ControllerBase {
 
-  /*
+  /**
    * Ajax callback to mark notifications as read.
    */
   public function readNotificationCallback() {
     $account = \Drupal::currentUser();
 
-    // TODO Add dependency injection
+    // TODO Add dependency injection.
     $activity_notifications = \Drupal::service('activity_creator.activity_notifications');
     $remaining_notifications = $activity_notifications->markAllNotificationsAsSeen($account);
 

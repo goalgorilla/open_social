@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_element_info_alter().
  */
 function social_editor_element_info_alter(array &$types) {
-  // Our process callback must run immediately after TextFormat::processFormat().
+  // Our process callback must run directly after TextFormat::processFormat().
   if (isset($types['text_format']) && isset($types['text_format']['#process'])) {
     $search_value = ['Drupal\filter\Element\TextFormat', 'processFormat'];
     $key = array_search($search_value, $types['text_format']['#process']);
@@ -40,7 +40,7 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
   $forms = array(
     "social_post_entity_form",
     "comment_post_comment_form",
-    "comment_comment_form"
+    "comment_comment_form",
   );
   // Allowed formats.
   $allowed_format = 'simple_text';
@@ -48,7 +48,7 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
   // Check if it needs to be done here.
   if (in_array($complete_form['#form_id'], $forms)) {
     // Remove user formats except simple_text.
-    foreach($element['format']['format']['#options'] as $key => $value) {
+    foreach ($element['format']['format']['#options'] as $key => $value) {
       if ($key !== $allowed_format) {
         unset($element['format']['format']['#options'][$key]);
       }
@@ -58,7 +58,7 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
   }
   else {
     // Remove simple_text.
-    foreach($element['format']['format']['#options'] as $key => $value) {
+    foreach ($element['format']['format']['#options'] as $key => $value) {
       if ($key === $allowed_format) {
         unset($element['format']['format']['#options'][$key]);
       }

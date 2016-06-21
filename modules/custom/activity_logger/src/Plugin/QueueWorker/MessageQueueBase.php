@@ -8,7 +8,6 @@
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides base functionality for the ReportWorkers.
@@ -26,4 +25,5 @@ abstract class MessageQueueBase extends QueueWorkerBase {
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
+
 }

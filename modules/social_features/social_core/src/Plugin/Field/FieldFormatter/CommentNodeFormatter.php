@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_core\Plugin\Field\FieldFormatter\CommentNodeFormatter.
- */
-
 namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
@@ -89,7 +83,8 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         $t_args = array(':num_comments' => $comment_count);
         if ($comment_count == 0) {
           $more_link = $this->t(':num_comments comments', $t_args);
-        } else {
+        }
+        else {
           $more_link = $this->t('Show comments', $t_args);
         }
 
@@ -106,15 +101,13 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       }
 
       $elements[] = $output + array(
-          '#comment_type' => $this->getFieldSetting('comment_type'),
-          '#comment_display_mode' => $this->getFieldSetting('default_mode'),
-          'comments' => array(),
-          'comment_form' => array(),
-          'more_link' => array(),
-        );
+        '#comment_type' => $this->getFieldSetting('comment_type'),
+        '#comment_display_mode' => $this->getFieldSetting('default_mode'),
+        'comments' => array(),
+        'comment_form' => array(),
+        'more_link' => array(),
+      );
     }
-
-
 
     return $elements;
   }
@@ -150,7 +143,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
   /**
    * {@inheritdoc}
    *
-   * @see Drupal\comment\CommentStorage::loadThead().
+   * @see Drupal\comment\CommentStorage::loadThead()
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
     // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.

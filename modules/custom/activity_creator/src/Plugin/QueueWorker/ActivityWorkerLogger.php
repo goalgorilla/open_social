@@ -1,14 +1,10 @@
 <?php
-
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerLogger
+ * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerLogger.
  */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 
 /**
  * A report worker.
@@ -26,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityWorkerLogger extends ActivityWorkerBase {
 
   /**
-   * The ActivityContext manager
+   * The ActivityContext manager.
    *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
@@ -49,10 +45,10 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     // Get 100 Recipients at a time.
     $limit = 0;
     // TODO: Move all this logic to a service.
-    // TODO: Change this to use dependency injection (see construct code below)
+    // TODO: Change this to use dependency injection.
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
-    /** @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+    /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
     // @TODO Do we need multiple context plugins? If so should we call Manager?
     $plugin = $context_plugin_manager->createInstance($data['context']);
     $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
@@ -65,7 +61,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
           'mid' => $data['mid'],
           'message_type' => $data['message_type'],
           'actor' => $data['actor'],
-          'context' => $data['context'], // Not necessary?
+          'context' => $data['context'],
           'destination' => $data['destination'],
           'related_object' => $data['related_object'],
           'recipient' => $recipient,
@@ -89,7 +85,8 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         'mid' => $data['mid'],
         'message_type' => $data['message_type'],
         'actor' => $data['actor'],
-        'context' => $data['context'], // Not necessary?
+      // Not necessary?
+        'context' => $data['context'],
         'destination' => $data['destination'],
         'related_object' => $data['related_object'],
       ];
@@ -97,25 +94,5 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     }
 
   }
-
-
-//  public function __construct(array $configuration, $plugin_id, $plugin_definition, StateInterfacee $state, LoggerChannelFactoryInterface $logger, $context_plugin_manager) {
-//    parent::__construct($configuration, $plugin_id, $plugin_definition, $state, $logger);
-//    $this->context_plugin_manager = $context_plugin_manager;
-//  }
-//
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-//    return new static(
-//      $configuration,
-//      $plugin_id,
-//      $plugin_definition,
-//      $container->get('state'),
-//      $container->get('logger.factory'),
-//      $container->get('plugin.manager.activity_context.processor')
-//    );
-//  }
 
 }
