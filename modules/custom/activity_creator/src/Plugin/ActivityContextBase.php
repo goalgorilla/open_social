@@ -19,16 +19,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class ActivityContextBase extends PluginBase implements ActivityContextInterface, ContainerFactoryPluginInterface {
 
   /**
+   * Entity query.
+   *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
    */
   private $entity_query;
+
   /**
+   * Entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $entity_type_manager;
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, QueryFactory $entity_query, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -37,6 +42,9 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     $this->entity_type_manager = $entity_type_manager;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
@@ -51,7 +59,7 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
-    //TODO: Add basic implementation for the recipients based on the data given in the queue worker.
+    // TODO: Add basic implementation for the recipients based on the data.
     $recipients = [];
 
     return $recipients;

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Contains \Drupal\activity_creator\Entity\Activity.
@@ -198,6 +197,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * Get related entity url.
    *
    * @return \Drupal\Core\Url|string
+   *   Returns empty string or URL object of related entity canonical url.
    */
   public function getRelatedEntityUrl() {
     $link = "";

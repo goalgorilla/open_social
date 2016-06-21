@@ -49,4 +49,5 @@ class ActivityDestinationManager extends DefaultPluginManager {
     }
     return $options;
   }
+
 }

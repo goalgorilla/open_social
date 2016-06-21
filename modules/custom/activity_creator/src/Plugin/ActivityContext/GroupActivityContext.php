@@ -8,11 +8,7 @@
 namespace Drupal\activity_creator\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\Entity;
-use Drupal\group\Entity\GroupContent;
 use Drupal\social_group\SocialGroupHelperService;
-use Drupal\social_post\Entity\Post;
-use \Drupal\node\Entity\Node;
 
 /**
  * Provides a 'GroupActivityContext' activity context.
@@ -46,4 +42,5 @@ class GroupActivityContext extends ActivityContextBase {
 
     return $recipients;
   }
+
 }
