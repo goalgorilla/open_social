@@ -1,14 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_comment\Controller\SocialCommentController.
- */
-
 namespace Drupal\social_comment\Controller;
 
+use Drupal\Core\Entity\Entity;
+use Drupal\Core\Url;
 use Drupal\comment\CommentInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,7 +40,7 @@ class SocialCommentController extends CommentController {
    * @param $entity
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function redirectToOriginalEntity(\Drupal\Core\Url $url, CommentInterface $comment = NULL, \Drupal\Core\Entity\Entity $entity = NULL) {
+  public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, Entity $entity = NULL) {
     $options = array();
     if (isset($comment)) {
       $options = array('fragment' => 'comment-' . $comment->id());

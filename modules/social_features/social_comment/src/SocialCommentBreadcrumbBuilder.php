@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\comment\SocialCommentBreadcrumbBuilder.
- */
-
 namespace Drupal\social_comment;
 
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
@@ -65,20 +60,23 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         $pid = $route_match->getParameter('pid');
         $comment = $this->storage->load($pid);
         break;
+
       case 'entity.comment.edit_form':
         $page_title = $this->t('Edit Comment');
         $comment = $route_match->getParameter('comment');
         break;
+
       case 'entity.comment.delete_form':
         $page_title = $this->t('Delete Comment');
         $comment = $route_match->getParameter('comment');
         break;
+
       default:
         $page_title = $this->t('Comment');
     }
 
     // Add Entity path to Breadcrumb for Reply.
-    if($route_match->getParameter('entity')){
+    if ($route_match->getParameter('entity')) {
       $entity = $route_match->getParameter('entity');
       $breadcrumb->addLink(new Link($entity->label(), $entity->urlInfo()));
       $breadcrumb->addCacheableDependency($entity);
@@ -94,4 +92,5 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
     return $breadcrumb;
   }
+
 }
