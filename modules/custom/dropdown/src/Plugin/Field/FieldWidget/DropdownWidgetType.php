@@ -24,8 +24,7 @@ use Drupal\Core\Form\FormStateInterface;
 class DropdownWidgetType extends WidgetBase {
 
   /**
-   * Abstract over the actual field columns, to allow different field types to
-   * reuse those widgets.
+   * Allow different field types to re-use those widgets.
    *
    * @var string
    */

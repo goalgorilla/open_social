@@ -214,9 +214,6 @@ class Dropdown extends FieldItemBase {
    *
    * @param string $option
    *   The option value entered by the user.
-   *
-   * @return string
-   *   The error message if the specified value is invalid, NULL otherwise.
    */
   protected static function validateAllowedValue($option) {}
 
