@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Form\SocialUserLoginForm.
- */
-
 namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -90,7 +85,7 @@ class SocialUserLoginForm extends UserLoginForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = $this->userStorage->load($form_state->get('uid'));
-    // A destination was set, probably on an exception controller,
+    // A destination was set, probably on an exception controller,.
     // @TODO: Add validation if route exists.
     if (!$this->getRequest()->request->has('destination')) {
       $form_state->setRedirect('<front>');
@@ -118,8 +113,6 @@ class SocialUserLoginForm extends UserLoginForm {
     }
   }
 
-
-
   /**
    * Checks supplied username/password against local users table.
    *
@@ -133,7 +126,7 @@ class SocialUserLoginForm extends UserLoginForm {
       // reached. Default is 50 failed attempts allowed in one hour. This is
       // independent of the per-user limit to catch attempts from one IP to log
       // in to many different user accounts.  We have a reasonably high limit
-      // since there may be only one apparent IP for all users at an institution.
+      // since there may be only one IP for all users at an institution.
       if (!$this->flood->isAllowed('user.failed_login_ip', $flood_config->get('ip_limit'), $flood_config->get('ip_window'))) {
         $form_state->set('flood_control_triggered', 'ip');
         return;
@@ -219,6 +212,9 @@ class SocialUserLoginForm extends UserLoginForm {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state) {
     $form_state->setErrorByName('name_or_mail', $this->t('
         There was an error :( This could happen for one of for the following reasons: <br>
@@ -228,4 +224,5 @@ class SocialUserLoginForm extends UserLoginForm {
         To solve the issue try other credentials, try again later or <a href=":url">request a new password</a>',
       array('%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass'))));
   }
+
 }

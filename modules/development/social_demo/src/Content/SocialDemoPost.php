@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoPost.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -18,6 +13,9 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_post\Entity\Post;
 
+/**
+ * Implements Demo content for Posts.
+ */
 class SocialDemoPost implements ContainerInjectionInterface {
 
   private $posts;
@@ -36,7 +34,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
    */
   protected $postStorage;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct(UserStorageInterface $user_storage, EntityStorageInterface $entity_storage) {
@@ -47,6 +45,9 @@ class SocialDemoPost implements ContainerInjectionInterface {
     $this->posts = $yml_data->parseFile('entity/post.yml');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
@@ -54,21 +55,21 @@ class SocialDemoPost implements ContainerInjectionInterface {
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
 
     $content_counter = 0;
     // Loop through the content and try to create new entries.
-    foreach($this->posts as $uuid => $post) {
+    foreach ($this->posts as $uuid => $post) {
       // Must have uuid and same key value.
       if ($uuid !== $post['uuid']) {
         echo "Post with uuid: " . $uuid . " has a different uuid in content.\r\n";
         continue;
       }
 
-      // Check if the post does not exist yet
+      // Check if the post does not exist yet.
       $existing_posts = $this->postStorage->loadByProperties(array('uuid' => $uuid));
       $existing_post = reset($existing_posts);
 
@@ -121,12 +122,12 @@ class SocialDemoPost implements ContainerInjectionInterface {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->posts as $uuid => $post) {
+    foreach ($this->posts as $uuid => $post) {
 
       // Must have uuid and same key value.
       if ($uuid !== $post['uuid']) {
@@ -137,7 +138,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
       $posts = $this->postStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the posts.
-      foreach($posts as $key => $post) {
+      foreach ($posts as $key => $post) {
         // And delete them.
         $post->delete();
       }
@@ -149,11 +150,12 @@ class SocialDemoPost implements ContainerInjectionInterface {
    */
   public function createDate($date_string) {
     // Split from delimiter.
-    $timestamp = explode('|',$date_string);
+    $timestamp = explode('|', $date_string);
 
     $date = strtotime($timestamp[0]);
     $date = date("Y-m-d", $date) . "T" . $timestamp[1] . ":00";
 
     return strtotime($date);
   }
+
 }

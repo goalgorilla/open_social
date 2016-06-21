@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Form\SocialUserPasswordForm.
- */
-
 namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -23,7 +18,6 @@ class SocialUserPasswordForm extends UserPasswordForm {
   public function getFormId() {
     return 'social_user_password_form';
   }
-
 
   /**
    * {@inheritdoc}
@@ -53,7 +47,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
         $this->logger('user')
           ->notice('Password reset instructions mailed to %name at %email.', array(
             '%name' => $account->getUsername(),
-            '%email' => $account->getEmail()
+            '%email' => $account->getEmail(),
           ));
       }
     }

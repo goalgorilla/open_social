@@ -5,24 +5,27 @@
  * The Social topic module.
  */
 
+use \Drupal\Core\Block\BlockPluginInterface;
+use \Drupal\Core\Form\FormStateInterface;
+
 /**
-* Prepares variables for node templates.
-*
-* Default template: node.html.twig.
-*
-* Most themes use their own copy of node.html.twig. The default is located
-* inside "/core/modules/node/templates/node.html.twig". Look in there for the
-* full list of variables.
-*
-* @param array $variables
-*   An associative array containing:
-*   - elements: An array of elements to display in view mode.
-*   - node: The node object.
-*   - view_mode: View mode; e.g., 'full', 'teaser', etc.
-*/
+ * Prepares variables for node templates.
+ *
+ * Default template: node.html.twig.
+ *
+ * Most themes use their own copy of node.html.twig. The default is located
+ * inside "/core/modules/node/templates/node.html.twig". Look in there for the
+ * full list of variables.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - node: The node object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
 function social_topic_preprocess_node(&$variables) {
   if ($variables['view_mode'] === 'teaser') {
-    /** @var \Drupal\node\NodeInterface $node */
+    /* @var \Drupal\node\NodeInterface $node */
     $node = $variables['node'];
     if ($node->getType() === 'topic') {
       $topic_type = $node->get('field_topic_type');
@@ -44,7 +47,7 @@ function social_topic_preprocess_node(&$variables) {
  *
  * Enhance the exposed filter form of the topic overview.
  */
-function social_topic_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form['#id'] === 'views-exposed-form-topics-page-1') {
     $form['type']['#options']['All'] = t('All types');
 
@@ -69,7 +72,7 @@ function social_topic_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\Fo
  *
  * Add a title to the exposed filter block on the topics overview.
  */
-function social_topic_block_view_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+function social_topic_block_view_alter(array &$build, BlockPluginInterface $block) {
   // @todo check out why this happens, is this is a views bug?
   if ($build['#plugin_id'] === 'views_exposed_filter_block:topics-page_1') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];

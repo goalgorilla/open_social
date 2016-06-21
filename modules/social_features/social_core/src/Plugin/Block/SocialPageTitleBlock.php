@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_core\Plugin\Block\SocialPageTitleBlock.
- */
-
 namespace Drupal\social_core\Plugin\Block;
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 
@@ -73,7 +69,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
     else {
       $request = \Drupal::request();
 
-      if ($route = $request->attributes->get(\Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_OBJECT)) {
+      if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = \Drupal::service('title_resolver')->getTitle($request, $route);
       }
       return [
@@ -91,7 +87,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
     $group_content = \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->loadByProperties([
-        'entity_id' => $node->id()
+        'entity_id' => $node->id(),
       ]);
     if (!empty($group_content)) {
       $group = reset($group_content)->getGroup();
