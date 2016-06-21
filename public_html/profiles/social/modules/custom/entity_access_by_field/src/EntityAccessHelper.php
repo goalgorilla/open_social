@@ -14,7 +14,7 @@ class EntityAccessHelper {
   /**
    * NodeAccessCheck for given operation, node and user account.
    */
-  protected static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
     if ($op === 'view') {
       $field_definitions = $node->getFieldDefinitions();
 
@@ -45,7 +45,7 @@ class EntityAccessHelper {
   /**
    * Gets the Entity access for the given node.
    */
-  protected static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
+  public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
     $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {
