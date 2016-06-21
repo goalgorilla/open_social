@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerActivities
+ * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerActivities.
  */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
@@ -18,8 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   title = @Translation("Process activity activities."),
  *   cron = {"time" = 60}
  * )
+ *
  * @TODO Change the weight to make sure it runs after the logger
- * is this possible? See Cron.php::processQueues() and getDefinitions() in manager
+ * is this possible? See Cron.php::processQueues() and getDefinitions().
  *
  * This QueueWorker is responsible for creating Activity entities and will
  * retrieve use information provided by activity_creator_logger.
@@ -27,10 +28,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
+   * Activity Factory.
+   *
    * @var \Drupal\activity_creator\ActivityFactory
    */
   private $activityFactory;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ActivityFactory $activityFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

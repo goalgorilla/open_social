@@ -1,28 +1,35 @@
 <?php
+/**
+ * @file
+ * Activity Logger Factory to create message entities.
+ */
 
 namespace Drupal\activity_logger\Service;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\message\Entity\Message;
 
 /**
- * Class ActivityLoggerFactory
+ * Class ActivityLoggerFactory.
+ *
  * @package Drupal\activity_logger\Service
  * Service that determines which actions need to be performed.
  */
 class ActivityLoggerFactory {
 
   /**
-   * @param Entity $entity
+   * Create message entities.
+   *
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Entity object to create a message for.
    * @param string $action
-   * @return void
+   *    Action string. Defaults to 'create'.
    */
-  public function createMessages($entity, $action = 'create') {
+  public function createMessages(\Drupal\Core\Entity\Entity $entity, $action = 'create') {
     // Context service.
-    $contextGetter = \Drupal::service('activity_logger.context_getter');
+    $context_getter = \Drupal::service('activity_logger.context_getter');
 
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes('create', $entity);
@@ -41,8 +48,8 @@ class ActivityLoggerFactory {
           }
         }
 
-        // Get context
-        $context = $contextGetter->getContext($entity);
+        // Get context.
+        $context = $context_getter->getContext($entity);
 
         // Set the values.
         $new_message['type'] = $message_type;
@@ -54,7 +61,7 @@ class ActivityLoggerFactory {
           'target_id' => $entity->id(),
         ];
 
-        // Create the message
+        // Create the message.
         $message = Message::create($new_message);
 
         // Try to get the group.
@@ -71,11 +78,13 @@ class ActivityLoggerFactory {
         }
         // If it's a group.. add it in the arguments.
         if ($group instanceof Group) {
-          $gurl = Url::fromRoute('entity.group.canonical',array('group' => $group->id(), array()));
-          $message->setArguments(array('groups' => [
-            'gtitle' => $group->label(),
-            'gurl' => $gurl->toString()
-          ]));
+          $gurl = Url::fromRoute('entity.group.canonical', array('group' => $group->id(), array()));
+          $message->setArguments(array(
+            'groups' => [
+              'gtitle' => $group->label(),
+              'gurl' => $gurl->toString(),
+            ],
+          ));
         }
 
         $message->save();
@@ -84,15 +93,21 @@ class ActivityLoggerFactory {
   }
 
   /**
-   * @param $action
-   * @param $entity
+   * Get message types for action and entity.
+   *
+   * @param string $action
+   *    Action string, e.g. 'create'.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Entity object.
+   *
    * @return array
+   *    Array of message types.
    */
-  public function getMessageTypes($action, $entity) {
+  public function getMessageTypes($action, \Drupal\Core\Entity\Entity $entity) {
     // Init.
     $messagetypes = array();
 
-    // Get the context of the entity
+    // Get the context of the entity.
     $context = $this->getEntityContext($entity);
 
     // We need the entitytype manager.
@@ -101,7 +116,7 @@ class ActivityLoggerFactory {
     $message_storage = $entity_type_manager->getStorage('message_type');
 
     // Check all enabled messages.
-    foreach($message_storage->loadByProperties(array('status' => '1')) as $key => $messagetype) {
+    foreach ($message_storage->loadByProperties(array('status' => '1')) as $key => $messagetype) {
       // Messagetype must be a part of the context the items is in.
       if ($messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL) === $context) {
         // @TODO: Make this configurable.
@@ -121,13 +136,24 @@ class ActivityLoggerFactory {
     return $messagetypes;
   }
 
-  public function getEntityContext($entity) {
+  /**
+   * Get entity context for given entity.
+   *
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Entity object.
+   *
+   * @return string $context
+   *    Returns a string of context.
+   */
+  public function getEntityContext(\Drupal\Core\Entity\Entity $entity) {
 
     // Fetch entity context.
-    $contextGetter = \Drupal::service('activity_logger.context_getter');
-    $context = $contextGetter->getContext($entity);
+    $context_getter = \Drupal::service('activity_logger.context_getter');
+    $context = $context_getter->getContext($entity);
+
     // Return the entity context.
     return $context;
 
   }
+
 }

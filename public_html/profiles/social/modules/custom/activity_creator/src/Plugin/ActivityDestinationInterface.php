@@ -15,7 +15,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface ActivityDestinationInterface extends PluginInspectionInterface {
 
   /**
-   * Returns a view mode for the entity
+   * Returns a view mode for the entity.
    */
   public function getViewMode($original_view_mode, $entity);
 

@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Activity Group Argument for Views.
+ */
 
 namespace Drupal\activity_creator\Plugin\views\argument;
 
@@ -21,8 +25,7 @@ class ActivityGroupArgument extends ArgumentPluginBase {
   public function query($group_by = FALSE) {
     $this->ensureMyTable();
 
-    // \Drupal\views\Plugin\views\query\QueryPluginBase
-
+    // \Drupal\views\Plugin\views\query\QueryPluginBase.
     $this->query->addTable('activity__field_activity_recipient_group');
     $this->query->addTable('activity__field_activity_entity');
     $this->query->addTable('activity__field_activity_destinations');
