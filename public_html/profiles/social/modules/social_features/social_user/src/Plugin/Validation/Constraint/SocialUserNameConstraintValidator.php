@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Plugin\Validation\Constraint\UserNameConstraintValidator.
- */
-
 namespace Drupal\social_user\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -18,9 +13,12 @@ use Symfony\Component\Validator\ConstraintValidator;
  * Validates the UserName constraint for Drupal Social
  * No email address are allowed in the username.
  */
-class SocialUserNameConstraintValidator extends ConstraintValidator implements ContainerInjectionInterface{
+class SocialUserNameConstraintValidator extends ConstraintValidator implements ContainerInjectionInterface {
   protected $typed_data_manager;
 
+  /**
+   *
+   */
   public function __construct(TypedDataManagerInterface $typed_data_manager) {
     $this->typed_data_manager = $typed_data_manager;
   }
@@ -34,7 +32,6 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
       $container->get('typed_data_manager')
     );
   }
-
 
   /**
    * {@inheritdoc}
@@ -54,4 +51,5 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
       }
     }
   }
+
 }
