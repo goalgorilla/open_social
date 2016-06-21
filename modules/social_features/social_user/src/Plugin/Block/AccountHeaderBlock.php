@@ -25,15 +25,6 @@ class AccountHeaderBlock extends BlockBase {
       $account_uid = $account->id();
 
       $links = [
-        // 'add' => array(
-        //   'classes' => 'hidden-xs',
-        //   'link_attributes' => '',
-        //   'icon_classes' => '',
-        //   'icon_label' => 'Add',
-        //   'label' => 'Add Content',
-        //   'label_classes' => 'hidden',
-        //   'url' => Url::fromRoute('node.add_page'),
-        // ),.
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
@@ -79,7 +70,6 @@ class AccountHeaderBlock extends BlockBase {
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle',
           'icon_classes' => '',
-          // The following changes based on whether the user has notifications or not.
           'icon_label' => $notifications_icon_label,
           'label' => (string) $num_notifications,
           'label_classes' => $label_classes,

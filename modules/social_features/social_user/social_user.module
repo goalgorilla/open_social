@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * The social user module alterations.
  */
 
 use Drupal\Core\Block\BlockPluginInterface;
@@ -10,9 +11,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
- * Implements hook_form_FORM_ID_alter() on behalf of social_user.module.
+ * Implements hook_form_FORM_ID_alter().
  *
- * @see \Drupal\user\RegisterForm method buildForm at /core/lib/Drupal/Core/Entity/EntityForm.php
+ * @see \Drupal\user\RegisterForm
  */
 function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
   // By default notify the user of the new account.
@@ -24,9 +25,11 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 /**
  * Check if an users with the input field for name or mail field is blocked.
  *
- * @param $name_or_mail string username or email adress.
+ * @param string $name_or_mail
+ *   Username or email address.
  *
- * @return bool TRUE if blocked FALSE if not blocked
+ * @return bool
+ *   TRUE if blocked FALSE if not blocked
  */
 function social_user_is_blocked($name_or_mail) {
   $is_blocked_name = (bool) \Drupal::entityQuery('user')
@@ -88,7 +91,7 @@ function social_user_theme() {
  *
  * @param array $variables
  *   An associative array containing:
- *    - links
+ *    - links.
  */
 function template_preprocess_account_header_links(&$variables) {
   // Add the search content block to account_header_links.
@@ -109,12 +112,13 @@ function social_user_block_view_search_content_block_alter(array &$build, BlockP
 }
 
 /**
- * Pre render for the search content in the header. This will add the
- * necessary javascript.
+ * Pre render for the search content in the header. This will add javascript.
  *
  * @param array $build
+ *   The render build array.
  *
  * @return array
+ *   Attached array with javascript.
  */
 function _social_user_search_content_pre_render(array $build) {
   // Attach the social_search library defined in social_search.libraries.yml.

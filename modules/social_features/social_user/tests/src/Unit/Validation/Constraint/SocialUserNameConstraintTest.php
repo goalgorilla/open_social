@@ -14,6 +14,8 @@ use Egulias\EmailValidator\EmailValidator;
 class SocialUserNameConstraintTest extends UnitTestCase {
 
   /**
+   * Test the SocialUserNameConstraint against the given asserts.
+   *
    * @covers ::validate
    *
    * @dataProvider providerTestValidate
@@ -113,7 +115,12 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     );
 
     foreach ($invalid_names as $name) {
-      $cases[] = [$this->itemsMock($name), TRUE, $this->buildViolationList(0), $name];
+      $cases[] = [
+        $this->itemsMock($name),
+        TRUE,
+        $this->buildViolationList(0),
+        $name,
+      ];
     }
     // These names are valid names, but are validated as incorrect.
     // Because we use the same validation for the Emails it will not
@@ -125,7 +132,12 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     );
     $email_violations = 1;
     foreach ($valid_names_but_valid_emails as $name) {
-      $cases[] = [$this->itemsMock($name), FALSE, $this->buildViolationList($email_violations), $name];
+      $cases[] = [
+        $this->itemsMock($name),
+        FALSE,
+        $this->buildViolationList($email_violations),
+        $name,
+      ];
       $email_violations++;
     }
 
@@ -144,7 +156,12 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     );
     $email_violations = 3;
     foreach ($valid_names as $name) {
-      $cases[] = [$this->itemsMock($name), FALSE, $this->buildViolationList($email_violations), $name];
+      $cases[] = [
+        $this->itemsMock($name),
+        FALSE,
+        $this->buildViolationList($email_violations),
+        $name,
+      ];
       $email_violations++;
     }
 
@@ -152,7 +169,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function itemsMock($name) {
     $name_field = $this->getMock('Drupal\Core\Field\FieldItemInterface');
@@ -174,9 +191,11 @@ class SocialUserNameConstraintTest extends UnitTestCase {
   /**
    * Builds a list interface to return violations.
    *
-   * @param $number_of_items number of items you want to build in the list.
+   * @param int $number_of_items
+   *   Number of items you want to build in the list.
    *
-   * @return ConstraintViolationListInterface of mock constraintViolationItems with the count of $number_of_items.
+   * @return ConstraintViolationListInterface
+   *   Mock constraintViolationItems with the count of $number_of_items.
    */
   protected function buildViolationList($number_of_items) {
     $violationList = array();
