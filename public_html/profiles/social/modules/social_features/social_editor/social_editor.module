@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_element_info_alter().
  */
 function social_editor_element_info_alter(array &$types) {
-  // Our process callback must run immediately after TextFormat::processFormat().
+  // Our process callback must run directly after TextFormat::processFormat().
   if (isset($types['text_format']) && isset($types['text_format']['#process'])) {
     $search_value = ['Drupal\filter\Element\TextFormat', 'processFormat'];
     $key = array_search($search_value, $types['text_format']['#process']);
