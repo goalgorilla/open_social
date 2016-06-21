@@ -66,11 +66,11 @@ class Dropdown extends FormElement {
           '#type' => 'radio',
           '#title' => $label,
           '#description' => $description,
-          // The key is sanitized in Drupal\Core\Template\Attribute during output
-          // from the theme function.
+          // The key is sanitized in Drupal\Core\Template\Attribute during
+          // output from the theme function.
           '#return_value' => $value,
-          // Use default or FALSE. A value of FALSE means that the radio button is
-          // not 'checked'.
+          // Use default or FALSE. A value of FALSE means that the radio button
+          // is not 'checked'.
           '#default_value' => isset($element['#default_value']) ? $element['#default_value'] : FALSE,
           '#attributes' => $element['#attributes'],
           '#parents' => $element['#parents'],
