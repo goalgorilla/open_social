@@ -84,12 +84,12 @@ class Dropdown extends FieldItemBase {
   }
 
   /**
-   * #element_validate callback for options field allowed values.
+   * Element_validate callback for options field allowed values.
    *
-   * @param $element
+   * @param array $element
    *   An associative array containing the properties and children of the
    *   generic form element.
-   * @param $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form for the form this element belongs to.
    *
    * @see \Drupal\Core\Render\Element\FormElement::processPattern()
