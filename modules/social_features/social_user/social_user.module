@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\block\Entity\Block;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter() on behalf of social_user.module.
+ *
  * @see \Drupal\user\RegisterForm method buildForm at /core/lib/Drupal/Core/Entity/EntityForm.php
  */
 function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
@@ -18,6 +25,7 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
  * Check if an users with the input field for name or mail field is blocked.
  *
  * @param $name_or_mail string username or email adress.
+ *
  * @return bool TRUE if blocked FALSE if not blocked
  */
 function social_user_is_blocked($name_or_mail) {
@@ -50,7 +58,7 @@ function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface 
 /**
  * Implements hook_form_alter().
  */
-function social_user_form_user_cancel_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Fetch the current user.
   $account = \Drupal::currentUser();
   // Check if the user has permissions.
@@ -84,7 +92,7 @@ function social_user_theme() {
  */
 function template_preprocess_account_header_links(&$variables) {
   // Add the search content block to account_header_links.
-  $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+  $block = Block::load('search_content_block_header');
   $block_output = \Drupal::entityManager()
     ->getViewBuilder('block')
     ->view($block);
@@ -95,7 +103,7 @@ function template_preprocess_account_header_links(&$variables) {
 /**
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
  */
-function social_user_block_view_search_content_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+function social_user_block_view_search_content_block_alter(array &$build, BlockPluginInterface $block) {
   // Add pre render to search content block in the header.
   $build['#pre_render'][] = '_social_user_search_content_pre_render';
 }
@@ -105,13 +113,14 @@ function social_user_block_view_search_content_block_alter(array &$build, \Drupa
  * necessary javascript.
  *
  * @param array $build
+ *
  * @return array
  */
 function _social_user_search_content_pre_render(array $build) {
   // Attach the social_search library defined in social_search.libraries.yml.
   $build['#attached'] = array(
     'library' => array(
-      'social_search/navbar-search'
+      'social_search/navbar-search',
     ),
   );
 
@@ -127,10 +136,10 @@ function social_user_user_format_name_alter(&$name, $account) {
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   if (!empty($storage)) {
-    // Returns false
+    // Returns false.
     $user_profile = $storage->loadByUser($account, 'profile', TRUE);
     if ($user_profile) {
-      if (!empty($user_profile->get('field_profile_first_name')->value) && !empty($user_profile->get('field_profile_last_name')->value) ) {
+      if (!empty($user_profile->get('field_profile_first_name')->value) && !empty($user_profile->get('field_profile_last_name')->value)) {
         $name = t('@first @last', array('@first' => $user_profile->get('field_profile_first_name')->value, '@last' => $user_profile->get('field_profile_last_name')->value));
       }
     }

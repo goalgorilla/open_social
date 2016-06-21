@@ -1,18 +1,10 @@
 <?php
-/**
- * @file
- * Contains \Drupal\social_user\test\src\Tests\Validation\Constraint\SocialUserNameConstraintTest.
- */
 namespace Drupal\social_user\Tests;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraint;
 use Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator;
 use Egulias\EmailValidator\EmailValidator;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-
 
 /**
  * @coversDefaultClass \Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator
@@ -159,6 +151,9 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     return $cases;
   }
 
+  /**
+   *
+   */
   protected function itemsMock($name) {
     $name_field = $this->getMock('Drupal\Core\Field\FieldItemInterface');
     $name_field->expects($this->once())
@@ -180,6 +175,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    * Builds a list interface to return violations.
    *
    * @param $number_of_items number of items you want to build in the list.
+   *
    * @return ConstraintViolationListInterface of mock constraintViolationItems with the count of $number_of_items.
    */
   protected function buildViolationList($number_of_items) {
@@ -190,4 +186,5 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     }
     return $violationList;
   }
+
 }

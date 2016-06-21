@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Plugin\Menu\SignupMenuLink.
- */
-
 namespace Drupal\social_user\Plugin\Menu;
 
 use Drupal\Core\Menu\MenuLinkDefault;
@@ -63,7 +58,8 @@ class SignupMenuLink extends MenuLinkDefault {
   public function isEnabled() {
     if ($this->currentUser->isAuthenticated()) {
       return FALSE;
-    } else {
+    }
+    else {
       return parent::isEnabled();
     }
   }
