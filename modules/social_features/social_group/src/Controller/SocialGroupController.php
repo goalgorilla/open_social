@@ -11,9 +11,10 @@ class SocialGroupController extends ControllerBase {
 
   /**
    * The _title_callback for the view.group_members.page_group_members route.
-   * and for the entity.group_content.group_membership.collection route.
    *
-   * @param $group
+   * Also for the entity.group_content.group_membership.collection route.
+   *
+   * @param object $group
    *   The group ID.
    *
    * @return string
@@ -34,7 +35,7 @@ class SocialGroupController extends ControllerBase {
   /**
    * The _title_callback for the view.posts.block_stream_group route.
    *
-   * @param $group
+   * @param object $group
    *   The group ID.
    *
    * @return string
@@ -46,7 +47,7 @@ class SocialGroupController extends ControllerBase {
   }
 
   /**
-   * The _title_callback for the entity.group_content.group_membership.add_form route.
+   * The title callback for the entity.group_content.group_membership.add_form.
    *
    * @return string
    *   The page title.

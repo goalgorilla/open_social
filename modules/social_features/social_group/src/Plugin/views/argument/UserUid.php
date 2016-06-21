@@ -8,8 +8,9 @@ use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Argument handler to accept a user id to check for groups that user created
- * or is a member off.
+ * Argument handler to accept a user id.
+ *
+ * This checks for groups that user created or is a member off.
  *
  * @ingroup views_argument_handlers
  *
@@ -50,7 +51,7 @@ class UserUid extends ArgumentPluginBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function query($group_by = FALSE) {
     $this->ensureMyTable();

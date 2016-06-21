@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * The Social group module.
  */
 
 use Drupal\group\GroupMembership;
@@ -37,10 +38,12 @@ function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInt
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form submit for group_open_group_add_form and group_open_group_edit_form.
  *
- *   Form submit for group_open_group_add_form and group_open_group_edit_form.
+ * @param array $form
+ *   Group add or group edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
@@ -196,10 +199,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form submit for group join / leave form.
  *
- *   Form submit for group join / leave form.
+ * @param array $form
+ *   Action form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_action_form_submit($form, FormStateInterface $form_state) {
   $group = \Drupal::routeMatch()->getParameter('group');
@@ -239,10 +244,12 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form submit for membership edit form.
  *
- *   Form submit for membership edit form.
+ * @param array $form
+ *   Membership edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_membership_edit_form_submit($form, FormStateInterface $form_state) {
   $group = \Drupal::routeMatch()->getParameter('group');
@@ -261,10 +268,12 @@ function _social_group_membership_edit_form_submit($form, FormStateInterface $fo
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form cancel for join and leave form.
  *
- *   Form cancel for join and leave form.
+ * @param array $form
+ *   Join and leave form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_cancel_join_leave_form($form, FormStateInterface $form_state) {
   // Get form that was submitted.
@@ -284,10 +293,12 @@ function _social_group_cancel_join_leave_form($form, FormStateInterface $form_st
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Form submit for group content create form.
  *
- *   Form submit for group content create form.
+ * @param array $form
+ *   Group node form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
  */
 function _social_group_node_form_submit($form, FormStateInterface $form_state) {
   // Set redirect after group content creation to the default node '/node/%nid'
@@ -421,7 +432,7 @@ function social_group_local_tasks_alter(&$local_tasks) {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
 }
 
@@ -429,8 +440,10 @@ function social_group_entity_type_alter(array &$entity_types) {
  * Return user profile by given group membership content.
  *
  * @param \Drupal\group\Entity\GroupContent $group_content
+ *   Group content entity.
  *
  * @return \Drupal\profile\Entity\Profile
+ *   Returns the Profile entity for the member.
  */
 function _social_group_get_member_profile(GroupContent $group_content) {
   $user_profile = NULL;

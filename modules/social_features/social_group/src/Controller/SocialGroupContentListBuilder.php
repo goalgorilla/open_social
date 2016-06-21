@@ -11,8 +11,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a list controller for group content entities.
- * Fork from \Drupal\group\Controller\GroupContentListBuilder.
+ * Provides a list controller for group content from GroupContentListBuilder.
  *
  * @ingroup group
  */
