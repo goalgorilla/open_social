@@ -1,8 +1,11 @@
 <?php
 
+/**
+ * @file
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\NodeType;
-use Drupal\Core\Url;
 
 /**
  * @file
@@ -14,7 +17,7 @@ use Drupal\Core\Url;
  *
  * Enhance the Views exposed filter blocks forms.
  */
-function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_search_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $filter_forms = array(
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-users-page',
@@ -27,9 +30,9 @@ function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\F
     $form['actions']['reset']['#access'] = TRUE;
 
     if ('views-exposed-form-search-content-page' === $form['#id']) {
-      //@TODO: remove this class when theme will be ready.
+      // @TODO: remove this class when theme will be ready.
       $form['type']['#attributes'] = array(
-        'class' => array('browser-default')
+        'class' => array('browser-default'),
       );
     }
   }
@@ -40,7 +43,7 @@ function social_search_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\F
  *
  * Enhance the Views exposed filter blocks.
  */
-function social_search_block_view_views_exposed_filter_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+function social_search_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
   $filter_blocks = array(
     'exposed_form_search_content_page_sidebar',
     'exposed_form_search_users_page_sidebar',
