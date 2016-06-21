@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Plugin\Block\AccountHeaderBlock.
- */
-
 namespace Drupal\social_user\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -30,15 +25,6 @@ class AccountHeaderBlock extends BlockBase {
       $account_uid = $account->id();
 
       $links = [
-        // 'add' => array(
-        //   'classes' => 'hidden-xs',
-        //   'link_attributes' => '',
-        //   'icon_classes' => '',
-        //   'icon_label' => 'Add',
-        //   'label' => 'Add Content',
-        //   'label_classes' => 'hidden',
-        //   'url' => Url::fromRoute('node.add_page'),
-        // ),
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
@@ -84,7 +70,6 @@ class AccountHeaderBlock extends BlockBase {
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle',
           'icon_classes' => '',
-          // the following changes based on whether the user has notifications or not
           'icon_label' => $notifications_icon_label,
           'label' => (string) $num_notifications,
           'label_classes' => $label_classes,
@@ -164,7 +149,7 @@ class AccountHeaderBlock extends BlockBase {
       '#theme' => 'account_header_links',
       '#links' => $links,
       '#cache' => array(
-         'contexts' => array('user'),
+        'contexts' => array('user'),
       ),
       '#attached' => array(
         'library' => array(

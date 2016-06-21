@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Controller\SocialEventController.
- */
-
 namespace Drupal\social_event\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -24,4 +19,5 @@ class SocialEventController extends ControllerBase {
   public function redirectMyEvents() {
     return $this->redirect('view.events.events_overview', array('user' => $this->currentUser()->id()));
   }
+
 }

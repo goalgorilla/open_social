@@ -1,3 +1,7 @@
+/**
+ * @file
+ */
+
 (function ($) {
 
     /**
@@ -15,6 +19,6 @@
                 return false;
             });
         }
-    };
+  };
 
 })(jQuery);

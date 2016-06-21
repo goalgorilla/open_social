@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Controller\PostCommentController.
- */
-
 namespace Drupal\social_post\Controller;
 
 use Drupal\social_comment\Controller\SocialCommentController;
 use Drupal\Core\Entity\EntityInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PostCommentController extends SocialCommentController {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getReplyForm(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
     $account = $this->currentUser();
@@ -34,7 +28,7 @@ class PostCommentController extends SocialCommentController {
 
     if ($entity->getEntityTypeId() === 'post') {
       // Check if the post has been posted in a group.
-      /** @var @var \Drupal\social_post\Entity\Post $entity */
+      /* @var \Drupal\social_post\Entity\Post $entity */
       $group_id = $entity->field_recipient_group->target_id;
       if ($group_id) {
         /** @var \Drupal\group\Entity\Group $group */
@@ -43,7 +37,7 @@ class PostCommentController extends SocialCommentController {
           if (!isset($comment)) {
             $comment = NULL;
           }
-          /** @var \Drupal\Core\Url $url*/
+          /* @var \Drupal\Core\Url $url*/
           if ($url = $entity->urlInfo('canonical')) {
             // Redirect the user to the correct entity.
             return $this->redirectToOriginalEntity($url, $comment, $entity);
