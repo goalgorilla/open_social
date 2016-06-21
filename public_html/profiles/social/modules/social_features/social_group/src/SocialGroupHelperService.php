@@ -26,7 +26,7 @@ class SocialGroupHelperService {
     $gid = NULL;
 
     if ($entity['target_type'] === 'post') {
-      /** @var /Drupal/social_post/Entity/Post $post */
+      /* @var /Drupal/social_post/Entity/Post $post */
       $post = Post::load($entity['target_id']);
       $recipient_group = $post->get('field_recipient_group')->getValue();
       if (!empty($recipient_group)) {
