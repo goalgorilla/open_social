@@ -16,6 +16,28 @@ Source-code and installation instructions are currently only available on [Githu
 
 # Installation #
 
+## Make file ##
+
+Installing with our make file? Please use the following commands to make sure you get all the composer dependencies
+from the contributed modules untill composer is supported for distributions on drupal.org. 
+See https://www.drupal.org/node/2718229.
+
+    drush make build-social.make [target folder]
+    cd [target folder]
+    php modules/contrib/composer_manager/scripts/init.php
+    composer drupal-rebuild
+    composer update -n --lock --verbose
+    
+## Drush ##
+
+Installing with drush? Make sure to run the following commands in your document root to get all the composer dependencies 
+untill composer is supported for distributions on drupal.org. 
+See https://www.drupal.org/node/2718229.
+
+    php modules/contrib/composer_manager/scripts/init.php
+    composer drupal-rebuild
+    composer update -n --lock --verbose    
+
 ## Docker toolbox ##
 Download and install the [toolbox](https://www.docker.com/docker-toolbox).
 
