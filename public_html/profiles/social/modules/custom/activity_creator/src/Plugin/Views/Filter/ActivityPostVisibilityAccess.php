@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Contains \Drupal\activity_creator\Plugin\views\filter\ActivityPostVisibilityAccess.
@@ -7,7 +6,6 @@
 
 namespace Drupal\activity_creator\Plugin\Views\Filter;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 
@@ -20,12 +18,9 @@ use Drupal\views\Views;
  */
 class ActivityPostVisibilityAccess extends FilterPluginBase {
 
-  public function adminSummary() {
-  }
-
-  protected function operatorForm(&$form, FormStateInterface $form_state) {
-  }
-
+  /**
+   * Not exposable.
+   */
   public function canExpose() {
     return FALSE;
   }
@@ -39,8 +34,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    */
   public function query() {
     $account = $this->view->getUser();
-    /** @var \Drupal\views\Plugin\views\query\Sql $this->query */
-
+    /* @var \Drupal\views\Plugin\views\query\Sql $this->query */
 
     // Add tables and joins.
     $this->query->addTable('activity__field_activity_entity');

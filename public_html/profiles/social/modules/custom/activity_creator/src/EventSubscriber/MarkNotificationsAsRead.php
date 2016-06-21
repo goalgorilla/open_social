@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * MarkNotificationsAsRead event subscriber.
  */
 
@@ -20,14 +21,13 @@ class MarkNotificationsAsRead implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
+  public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = array('markNotificationsAsRead');
     return $events;
   }
 
   /**
-   * This method is called whenever the KernelEvents::REQUEST event is
-   * dispatched.
+   * This method is called whenever request event is dispatched.
    *
    * @param GetResponseEvent $event
    */
@@ -36,4 +36,5 @@ class MarkNotificationsAsRead implements EventSubscriberInterface {
     // $request = $event->getRequest();
     // $account = \Drupal::currentUser();
   }
+
 }

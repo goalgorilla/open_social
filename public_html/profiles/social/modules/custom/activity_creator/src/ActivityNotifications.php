@@ -1,6 +1,7 @@
 <?php
 /**
- * ActivityNotifications
+ * @file
+ * ActivityNotifications.
  */
 
 namespace Drupal\activity_creator;
@@ -19,12 +20,15 @@ use Drupal\Core\Session\AccountInterface;
 class ActivityNotifications extends ControllerBase {
 
   /**
-   * Returns the Activity ids with destination 'notification' for account.
+   * Returns the Notifications for a given account.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
+   *    Account object to get notifications for.
    * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
+   *   Filter by status.
+   *
    * @return array
+   *   Return array of notification ids.
    */
   public function getNotifications(AccountInterface $account, $status = array(ACTIVITY_STATUS_RECEIVED)) {
     $ids = $this->getNotificationIds($account, $status);
@@ -36,9 +40,12 @@ class ActivityNotifications extends ControllerBase {
    * Returns the Activity objects with destination 'notification' for account.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
+   *   Account object.
    * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
+   *   Status string: activity_creator_field_activity_status_allowed_values().
+   *
    * @return array
+   *   Return array of notifications as activity objects.
    */
   public function getNotificationsActivities(AccountInterface $account, $status = array(ACTIVITY_STATUS_RECEIVED)) {
     $ids = $this->getNotificationIds($account, $status);
@@ -47,25 +54,13 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * Mark all notifications as Seen for account.
    *
-   * @param \Drupal\activity_creator\Entity\Activity $activity
-   * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
-   * @return array
-   */
-  public function getNotificationsForEntity(AccountInterface $account, $status = ACTIVITY_STATUS_RECEIVED) {
-    $activity->set('field_activity_status', $status);
-
-    return $activity->save();
-  }
-
-  /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * @param AccountInterface $account
+   *    Account object.
    *
-   * @param \Drupal\activity_creator\Entity\Activity $activity
    * @return int
-   *   Number of remaining notifications.
+   *    Number of remaining notifications.
    */
   public function markAllNotificationsAsSeen(AccountInterface $account) {
 
@@ -82,11 +77,12 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * Mark Notifications as Read for given account and entity..
    *
-   * @param \Drupal\activity_creator\Entity\Activity $activity
-   * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
+   * @param AccountInterface $account
+   *    Account object.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Entity object.
    */
   public function markEntityNotificationsAsRead(AccountInterface $account, Entity $entity) {
 
@@ -99,13 +95,14 @@ class ActivityNotifications extends ControllerBase {
     }
 
   }
-  
+
   /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * Mark an entity as read for a given account.
    *
-   * @param \Drupal\activity_creator\Entity\Activity $activity
-   * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
+   * @param AccountInterface $account
+   *    Account object.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Entity object.
    */
   public function markEntityAsRead(AccountInterface $account, Entity $entity) {
 
@@ -120,12 +117,15 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * Change the status of an activity.
    *
    * @param \Drupal\activity_creator\Entity\Activity $activity
+   *    Activity object.
    * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
-   * @return array
+   *    See: activity_creator_field_activity_status_allowed_values().
+   *
+   * @return Activity
+   *    Returns activity object.
    */
   public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);
@@ -134,14 +134,19 @@ class ActivityNotifications extends ControllerBase {
   }
 
   /**
-   * Returns the Activity objects with destination 'notification' for account.
+   * Returns the Activity ids for an account with destination 'notification'.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
+   *    Account object.
    * @param array $status
-   *   see: activity_creator_field_activity_status_allowed_values()
+   *    Array of statuses.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *    Optionally provide a related entity to get the activities for.
+   *
    * @return array
+   *    Returns an array of notification ids.
    */
-  private function getNotificationIds(AccountInterface $account, $status = array(ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN, ACTIVITY_STATUS_READ), Entity $entity = NULL) {
+  private function getNotificationIds(AccountInterface $account, $status = array(), Entity $entity = NULL) {
     $destinations = array('notifications');
 
     $uid = $account->id();
@@ -158,7 +163,9 @@ class ActivityNotifications extends ControllerBase {
       $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
 
     }
-    $entity_query->condition('field_activity_status', $status, 'IN');
+    if (!empty($status)) {
+      $entity_query->condition('field_activity_status', $status, 'IN');
+    }
 
     $ids = $entity_query->execute();
 
