@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\Block\PostProfileBlock.
- */
-
 namespace Drupal\social_post\Plugin\Block;
 
 /**
@@ -39,4 +34,5 @@ class PostProfileBlock extends PostBlock {
     }
 
   }
+
 }

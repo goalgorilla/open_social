@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\Block\PostGroupBlock.
- */
-
 namespace Drupal\social_post\Plugin\Block;
 
 /**
@@ -30,4 +25,5 @@ class PostGroupBlock extends PostBlock {
     $this->bundle = 'post';
     $this->form_display = 'group';
   }
+
 }
