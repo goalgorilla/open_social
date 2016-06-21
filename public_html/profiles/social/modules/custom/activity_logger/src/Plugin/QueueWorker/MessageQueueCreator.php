@@ -2,14 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\activity_logger\Plugin\QueueWorker\MessageQueueCreator
+ * Contains \Drupal\activity_logger\Plugin\QueueWorker\MessageQueueCreator.
  */
 
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\node\Entity\Node;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
@@ -48,10 +46,11 @@ class MessageQueueCreator extends MessageQueueBase {
       }
       else {
         // Get the services we need here.
-        $activityLoggerFactory = \Drupal::service('activity_logger.activity_factory');
+        $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
         // Create messages for nodes.
-        $activityLoggerFactory->createMessages($entity, 'create');
+        $activity_logger_factory->createMessages($entity, 'create');
       }
     }
   }
+
 }
