@@ -49,6 +49,9 @@ class UserUid extends ArgumentPluginBase {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('database'));
   }
 
+  /**
+   *
+   */
   public function query($group_by = FALSE) {
     $this->ensureMyTable();
 
@@ -68,4 +71,5 @@ class UserUid extends ArgumentPluginBase {
       }
     }
   }
+
 }

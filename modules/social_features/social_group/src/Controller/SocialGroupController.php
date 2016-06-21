@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Entity\Controller\SocialGroupController.
- */
-
 namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

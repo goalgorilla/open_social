@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Plugin\Block\GroupHeroBlock.
- */
-
 namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -77,7 +72,7 @@ class GroupHeroBlock extends BlockBase {
 
     // @TODO remove this and make sure above cache tags work well!!!
     $build['#cache'] = array(
-      'max-age' => 0
+      'max-age' => 0,
     );
 
     return $build;
