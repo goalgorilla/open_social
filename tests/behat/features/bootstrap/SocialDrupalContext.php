@@ -92,4 +92,33 @@ class SocialDrupalContext extends DrupalContext {
     }
   }
 
+  /**
+   * @When I wait for the queue to be empty
+   */
+  public function iWaitForTheQueueToBeEmpty()
+  {
+    $workerManager = \Drupal::service('plugin.manager.queue_worker');
+    /** @var Drupal\Core\Queue\QueueFactory; $queue */
+    $queue = \Drupal::service('queue');
+
+    for ($i = 0; $i < 20; $i++) {
+      foreach ($workerManager->getDefinitions() as $name => $info) {
+        /** @var Drupal\Core\Queue\QueueInterface $worker */
+        $worker = $queue->get($name);
+
+        /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
+        $queue_worker = $workerManager->createInstance($name);
+
+        if ($worker->numberOfItems() > 0) {
+          while ($item = $worker->claimItem()) {
+            $queue_worker->processItem($item->data);
+            $worker->deleteItem($item);
+          }
+        }
+      }
+    }
+
+
+  }
+
 }

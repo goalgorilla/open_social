@@ -4,7 +4,7 @@ Feature: Overview
   Role: As a User
   Goal/desire: I want to see an Event overview
 
-  @LU @perfect @critical @wip
+  @LU @perfect @critical
   Scenario: Successfully see the event overview
     Given I am logged in as an "authenticated user"
     And I am on "user"
