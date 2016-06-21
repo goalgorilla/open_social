@@ -17,5 +17,6 @@ api: 2
 projects:
   drupal:
     version: 8.1.3
+    type: core
     patch:
       - 'https://www.drupal.org/files/issues/2724283-block-22.patch'
