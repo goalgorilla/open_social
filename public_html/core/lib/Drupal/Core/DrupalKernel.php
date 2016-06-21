@@ -2,6 +2,7 @@
 
 namespace Drupal\Core;
 
+use Drupal\Component\Assertion\Handle;
 use Drupal\Component\FileCache\FileCacheFactory;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
@@ -18,6 +19,7 @@ use Drupal\Core\Http\TrustedHostsRequestFactory;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Site\Settings;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -750,11 +752,20 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
   /**
    * Returns the container cache key based on the environment.
    *
+   * The 'environment' consists of:
+   * - The kernel environment string.
+   * - The Drupal version constant.
+   * - The deployment identifier from settings.php. This allows custom
+   *   deployments to force a container rebuild.
+   * - The operating system running PHP. This allows compiler passes to optimize
+   *   services for different operating systems.
+   * - The paths to any additional container YAMLs from settings.php.
+   *
    * @return string
    *   The cache key used for the service container.
    */
   protected function getContainerCacheKey() {
-    $parts = array('service_container', $this->environment, \Drupal::VERSION, Settings::get('deployment_identifier'), serialize(Settings::get('container_yamls')));
+    $parts = array('service_container', $this->environment, \Drupal::VERSION, Settings::get('deployment_identifier'), PHP_OS, serialize(Settings::get('container_yamls')));
     return implode(':', $parts);
   }
 
@@ -914,11 +925,15 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
         assert_options(ASSERT_ACTIVE, TRUE);
         // Now synchronize PHP 5 and 7's handling of assertions as much as
         // possible.
-        \Drupal\Component\Assertion\Handle::register();
+        Handle::register();
 
         // Log fatal errors to the test site directory.
         ini_set('log_errors', 1);
         ini_set('error_log', DRUPAL_ROOT . '/sites/simpletest/' . substr($test_prefix, 10) . '/error.log');
+
+        // Ensure that a rewritten settings.php is used if opcache is on.
+        ini_set('opcache.validate_timestamps', 'on');
+        ini_set('opcache.revalidate_freq', 0);
       }
       else {
         // Ensure that no other code defines this.
@@ -959,13 +974,11 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
 
     // If the class loader is still the same, possibly upgrade to the APC class
     // loader.
-    // ApcClassLoader does not support APCu without backwards compatibility
-    // enabled.
     if ($class_loader_class == get_class($this->classLoader)
         && Settings::get('class_loader_auto_detect', TRUE)
-        && extension_loaded('apc')) {
+        && function_exists('apcu_fetch')) {
       $prefix = Settings::getApcuPrefix('class_loader', $this->root);
-      $apc_loader = new \Symfony\Component\ClassLoader\ApcClassLoader($prefix, $this->classLoader);
+      $apc_loader = new ApcClassLoader($prefix, $this->classLoader);
       $this->classLoader->unregister();
       $apc_loader->register();
       $this->classLoader = $apc_loader;
@@ -1204,7 +1217,7 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
     foreach ($this->serviceProviderClasses as $origin => $classes) {
       foreach ($classes as $name => $class) {
         if (!is_object($class)) {
-          $this->serviceProviders[$origin][$name] = new $class;
+          $this->serviceProviders[$origin][$name] = new $class();
         }
         else {
           $this->serviceProviders[$origin][$name] = $class;
@@ -1459,4 +1472,5 @@ class DrupalKernel implements DrupalKernelInterface, TerminableInterface {
   protected function addServiceFiles(array $service_yamls) {
     $this->serviceYamls['site'] = array_filter($service_yamls, 'file_exists');
   }
+
 }

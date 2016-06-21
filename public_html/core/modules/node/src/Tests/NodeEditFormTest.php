@@ -73,10 +73,8 @@ class NodeEditFormTest extends NodeTestBase {
     $this->assertUrl($node->url('edit-form', ['absolute' => TRUE]));
 
     // Check that the title and body fields are displayed with the correct values.
-    // As you see the expected link text has no HTML, but we are using
-    $link_text = 'Edit<span class="visually-hidden">(active tab)</span>';
     // @todo Ideally assertLink would support HTML, but it doesn't.
-    $this->assertRaw($link_text, 'Edit tab found and marked active.');
+    $this->assertRaw('Edit<span class="visually-hidden">(active tab)</span>', 'Edit tab found and marked active.');
     $this->assertFieldByName($title_key, $edit[$title_key], 'Title field displayed.');
     $this->assertFieldByName($body_key, $edit[$body_key], 'Body field displayed.');
 
@@ -91,7 +89,7 @@ class NodeEditFormTest extends NodeTestBase {
     $this->assertText($edit[$title_key], 'Title displayed.');
     $this->assertText($edit[$body_key], 'Body displayed.');
 
-    // Login as a second administrator user.
+    // Log in as a second administrator user.
     $second_web_user = $this->drupalCreateUser(array('administer nodes', 'edit any page content'));
     $this->drupalLogin($second_web_user);
     // Edit the same node, creating a new revision.

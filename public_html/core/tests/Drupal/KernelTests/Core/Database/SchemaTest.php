@@ -230,7 +230,8 @@ class SchemaTest extends KernelTestBase {
     try {
       db_create_table('test_timestamp', $table_specification);
     }
-    catch (\Exception $e) {}
+    catch (\Exception $e) {
+    }
     $this->assertTrue(db_table_exists('test_timestamp'), 'Table with database specific datatype was created.');
   }
 
@@ -427,7 +428,7 @@ class SchemaTest extends KernelTestBase {
     // Now set up columns for the other types.
     $types = array('int', 'float', 'numeric');
     foreach ($types as $type) {
-      $column_spec = array('type' => $type, 'unsigned'=> TRUE);
+      $column_spec = array('type' => $type, 'unsigned' => TRUE);
       if ($type == 'numeric') {
         $column_spec += array('precision' => 10, 'scale' => 0);
       }

@@ -295,6 +295,12 @@ function views_field_default_views_data(FieldStorageConfigInterface $field_stora
   if (!$field_storage->getBundles()) {
     return $data;
   }
+
+  // Ignore custom storage too.
+  if ($field_storage->hasCustomStorage()) {
+    return $data;
+  }
+
   // Check whether the entity type storage is supported.
   $storage = _views_field_get_entity_type_storage($field_storage);
   if (!$storage) {
@@ -426,7 +432,7 @@ function views_field_default_views_data(FieldStorageConfigInterface $field_stora
       'group' => $group,
       'title' => $label,
       'title short' => $label,
-      'help' =>  t('Appears in: @bundles.', array('@bundles' => implode(', ', $bundles_names))),
+      'help' => t('Appears in: @bundles.', array('@bundles' => implode(', ', $bundles_names))),
     );
 
     // Go through and create a list of aliases for all possible combinations of
@@ -545,7 +551,7 @@ function views_field_default_views_data(FieldStorageConfigInterface $field_stora
         'group' => $group,
         'title' => $title,
         'title short' => $title_short,
-        'help' =>  t('Appears in: @bundles.', array('@bundles' => implode(', ', $bundles_names))),
+        'help' => t('Appears in: @bundles.', array('@bundles' => implode(', ', $bundles_names))),
       );
 
       // Go through and create a list of aliases for all possible combinations of
@@ -702,7 +708,7 @@ function core_field_views_data(FieldStorageConfigInterface $field_storage) {
       'title' => t('@label referenced from @field_name', $args),
       'label' => t('@field_name: @label', $args),
       'group' => $entity_type->getLabel(),
-      'help' =>  t('Appears in: @bundles.', array('@bundles' => implode(', ', $field_storage->getBundles()))),
+      'help' => t('Appears in: @bundles.', array('@bundles' => implode(', ', $field_storage->getBundles()))),
       'id' => 'standard',
       'base' => $target_base_table,
       'entity type' => $target_entity_type_id,

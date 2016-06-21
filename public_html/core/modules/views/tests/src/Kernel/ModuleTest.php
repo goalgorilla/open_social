@@ -115,6 +115,8 @@ class ModuleTest extends ViewsKernelTestBase {
   /**
    * Defines an error handler which is used in the test.
    *
+   * Because this is registered in set_error_handler(), it has to be public.
+   *
    * @param int $error_level
    *   The level of the error raised.
    * @param string $message
@@ -127,7 +129,6 @@ class ModuleTest extends ViewsKernelTestBase {
    *   An array that points to the active symbol table at the point the error
    *   occurred.
    *
-   * Because this is registered in set_error_handler(), it has to be public.
    * @see set_error_handler()
    */
   public function customErrorHandler($error_level, $message, $filename, $line, $context) {
@@ -229,7 +230,7 @@ class ModuleTest extends ViewsKernelTestBase {
     $plugins = Views::fetchPluginNames('style');
     $definitions = $this->container->get('plugin.manager.views.style')->getDefinitions();
     $expected = array();
-    foreach ($definitions as $id =>$definition) {
+    foreach ($definitions as $id => $definition) {
       $expected[$id] = $definition['title'];
     }
     asort($expected);

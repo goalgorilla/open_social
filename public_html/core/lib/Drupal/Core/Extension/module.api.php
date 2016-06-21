@@ -81,7 +81,7 @@ use Drupal\Core\Utility\UpdateException;
  *
  * See system_hook_info() for all hook groups defined by Drupal core.
  *
- * @see hook_hook_info_alter().
+ * @see hook_hook_info_alter()
  */
 function hook_hook_info() {
   $hooks['token_info'] = array(
@@ -893,6 +893,9 @@ function hook_updater_info_alter(&$updaters) {
  * Other severity levels have no effect on the installation.
  * Module dependencies do not belong to these installation requirements,
  * but should be defined in the module's .info.yml file.
+ *
+ * During installation (when $phase == 'install'), if you need to load a class
+ * from your module, you'll need to include the class file directly.
  *
  * The 'runtime' phase is not limited to pure installation requirements
  * but can also be used for more general status information like maintenance

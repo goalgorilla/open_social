@@ -116,5 +116,5 @@ class ConfigLanguageOverrideTest extends KernelTestBase {
     $this->assertTrue($override->isNew());
     $this->assertEqual($override->get('value'), NULL);
   }
-}
 
+}

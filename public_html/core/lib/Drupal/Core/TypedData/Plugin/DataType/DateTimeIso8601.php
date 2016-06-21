@@ -42,5 +42,5 @@ class DateTimeIso8601 extends StringData implements DateTimeInterface {
       $this->parent->onChange($this->name);
     }
   }
-}
 
+}

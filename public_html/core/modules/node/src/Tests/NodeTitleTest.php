@@ -41,7 +41,7 @@ class NodeTitleTest extends NodeTestBase {
   }
 
   /**
-   *  Creates one node and tests if the node title has the correct value.
+   * Creates one node and tests if the node title has the correct value.
    */
   function testNodeTitle() {
     // Create "Basic page" content with title.
@@ -56,7 +56,7 @@ class NodeTitleTest extends NodeTestBase {
     // Test <title> tag.
     $this->drupalGet('node/' . $node->id());
     $xpath = '//title';
-    $this->assertEqual(current($this->xpath($xpath)), $node->label() .' | Drupal', 'Page title is equal to node title.', 'Node');
+    $this->assertEqual(current($this->xpath($xpath)), $node->label() . ' | Drupal', 'Page title is equal to node title.', 'Node');
 
     // Test breadcrumb in comment preview.
     $this->drupalGet('comment/reply/node/' . $node->id() . '/comment');
@@ -99,4 +99,5 @@ class NodeTitleTest extends NodeTestBase {
     $this->assertTitle($edge_case_title_escaped . ' | Drupal', 'Page title is equal to article\'s "title".', 'Node');
 
   }
+
 }

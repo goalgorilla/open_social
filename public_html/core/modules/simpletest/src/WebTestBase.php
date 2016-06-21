@@ -27,6 +27,7 @@ use Drupal\Core\Test\AssertMailTrait;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 use Zend\Diactoros\Uri;
 
 /**
@@ -624,7 +625,7 @@ abstract class WebTestBase extends TestBase {
       copy($settings_testing_file, $directory . '/settings.testing.php');
       // Add the name of the testing class to settings.php and include the
       // testing specific overrides
-      file_put_contents($directory . '/settings.php', "\n\$test_class = '" . get_class($this) ."';\n" . 'include DRUPAL_ROOT . \'/\' . $site_path . \'/settings.testing.php\';' ."\n", FILE_APPEND);
+      file_put_contents($directory . '/settings.php', "\n\$test_class = '" . get_class($this) . "';\n" . 'include DRUPAL_ROOT . \'/\' . $site_path . \'/settings.testing.php\';' . "\n", FILE_APPEND);
     }
     $settings_services_file = DRUPAL_ROOT . '/' . $this->originalSite . '/testing.services.yml';
     if (!file_exists($settings_services_file)) {
@@ -635,7 +636,7 @@ abstract class WebTestBase extends TestBase {
     copy($settings_services_file, $directory . '/services.yml');
     if ($this->strictConfigSchema) {
       // Add a listener to validate configuration schema on save.
-      $yaml = new \Symfony\Component\Yaml\Yaml();
+      $yaml = new SymfonyYaml();
       $content = file_get_contents($directory . '/services.yml');
       $services = $yaml->parse($content);
       $services['services']['simpletest.config_schema_checker'] = [
@@ -875,7 +876,7 @@ abstract class WebTestBase extends TestBase {
    * To install test modules outside of the testing environment, add
    * @code
    * $settings['extension_discovery_scan_tests'] = TRUE;
-   * @encode
+   * @endcode
    * to your settings.php.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
@@ -1301,7 +1302,7 @@ abstract class WebTestBase extends TestBase {
    * @param $header
    *   An header.
    *
-   * @see _drupal_log_error().
+   * @see _drupal_log_error()
    */
   protected function curlHeaderCallback($curlHandler, $header) {
     // Header fields can be extended over multiple lines by preceding each
@@ -1507,7 +1508,7 @@ abstract class WebTestBase extends TestBase {
    *   $edit = array(...);
    *   $this->drupalPostForm(NULL, $edit, t('Save'));
    *   @endcode
-   * @param  $edit
+   * @param $edit
    *   Field data in an associative array. Changes the current input fields
    *   (where possible) to the values indicated.
    *
@@ -2310,7 +2311,6 @@ abstract class WebTestBase extends TestBase {
   /**
    * Follows a link by partial name.
    *
-   *
    * If the link is discovered and clicked, the test passes. Fail otherwise.
    *
    * @param string|\Drupal\Component\Render\MarkupInterface $label
@@ -2539,7 +2539,7 @@ abstract class WebTestBase extends TestBase {
    *   TRUE on pass, FALSE on fail.
    */
   protected function assertUrl($path, array $options = array(), $message = '', $group = 'Other') {
-    if ($path instanceof Url)  {
+    if ($path instanceof Url) {
       $url_obj = $path;
     }
     elseif (UrlHelper::isExternal($path)) {
@@ -2631,7 +2631,7 @@ abstract class WebTestBase extends TestBase {
    * @param $override_server_vars
    *   An array of server variables to override.
    *
-   * @return $request
+   * @return \Symfony\Component\HttpFoundation\Request
    *   The mocked request object.
    */
   protected function prepareRequestForGenerator($clean_urls = TRUE, $override_server_vars = array()) {

@@ -3,7 +3,6 @@
 namespace Drupal\FunctionalJavascriptTests;
 
 use Drupal\Tests\BrowserTestBase;
-use Symfony\Component\CssSelector\CssSelector;
 use Zumba\Mink\Driver\PhantomJSDriver;
 
 /**
@@ -41,9 +40,12 @@ abstract class JavascriptTestBase extends BrowserTestBase {
    *   The CSS selector identifying the element to check.
    * @param string $message
    *   Optional message to show alongside the assertion.
+   *
+   * @deprecated in Drupal 8.1.x, will be removed before Drupal 8.3.x. Use
+   *   \Behat\Mink\Element\NodeElement::isVisible() instead.
    */
   protected function assertElementVisible($css_selector, $message = '') {
-    $this->assertTrue($this->getSession()->getDriver()->isVisible(CssSelector::toXPath($css_selector)), $message);
+    $this->assertTrue($this->getSession()->getDriver()->isVisible($this->cssSelectToXpath($css_selector)), $message);
   }
 
   /**
@@ -53,9 +55,12 @@ abstract class JavascriptTestBase extends BrowserTestBase {
    *   The CSS selector identifying the element to check.
    * @param string $message
    *   Optional message to show alongside the assertion.
+   *
+   * @deprecated in Drupal 8.1.x, will be removed before Drupal 8.3.x. Use
+   *   \Behat\Mink\Element\NodeElement::isVisible() instead.
    */
   protected function assertElementNotVisible($css_selector, $message = '') {
-    $this->assertFalse($this->getSession()->getDriver()->isVisible(CssSelector::toXPath($css_selector)), $message);
+    $this->assertFalse($this->getSession()->getDriver()->isVisible($this->cssSelectToXpath($css_selector)), $message);
   }
 
   /**

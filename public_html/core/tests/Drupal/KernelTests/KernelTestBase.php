@@ -16,10 +16,11 @@ use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
+use Drupal\Core\Language\Language;
 use Drupal\Core\Site\Settings;
 use Drupal\simpletest\AssertContentTrait;
 use Drupal\simpletest\AssertHelperTrait;
-use Drupal\simpletest\RandomGeneratorTrait;
+use Drupal\Tests\RandomGeneratorTrait;
 use Drupal\simpletest\TestServiceProvider;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,10 +137,9 @@ abstract class KernelTestBase extends \PHPUnit_Framework_TestCase implements Ser
   /**
    * Modules to enable.
    *
-   * Test classes extending this class, and any classes in the hierarchy up to
-   * this class, may specify individual lists of modules to enable by setting
-   * this property. The values of all properties in all classes in the class
-   * hierarchy are merged.
+   * The test runner will merge the $modules lists from this class, the class
+   * it extends, and so on up the class hierarchy. It is not necessary to
+   * include modules in your list that a parent class has already declared.
    *
    * @see \Drupal\Tests\KernelTestBase::enableModules()
    * @see \Drupal\Tests\KernelTestBase::bootKernel()
@@ -604,6 +604,9 @@ abstract class KernelTestBase extends \PHPUnit_Framework_TestCase implements Ser
     $container
       ->setAlias('keyvalue', 'keyvalue.memory');
 
+    // Set the default language on the minimal container.
+    $container->setParameter('language.default_values', Language::$defaultValues);
+
     if ($this->strictConfigSchema) {
       $container
         ->register('simpletest.config_schema_checker', 'Drupal\Core\Config\Testing\ConfigSchemaChecker')
@@ -847,7 +850,7 @@ abstract class KernelTestBase extends \PHPUnit_Framework_TestCase implements Ser
    * To install test modules outside of the testing environment, add
    * @code
    * $settings['extension_discovery_scan_tests'] = TRUE;
-   * @encode
+   * @endcode
    * to your settings.php.
    *
    * @param string[] $modules
@@ -1205,7 +1208,7 @@ abstract class KernelTestBase extends \PHPUnit_Framework_TestCase implements Ser
   /**
    * {@inheritdoc}
    */
-  public static function assertEquals($expected, $actual, $message = '', $delta = 0.0, $maxDepth = 10, $canonicalize = false, $ignoreCase = false) {
+  public static function assertEquals($expected, $actual, $message = '', $delta = 0.0, $maxDepth = 10, $canonicalize = FALSE, $ignoreCase = FALSE) {
     $expected = static::castSafeStrings($expected);
     $actual = static::castSafeStrings($actual);
     parent::assertEquals($expected, $actual, $message, $delta, $maxDepth, $canonicalize, $ignoreCase);

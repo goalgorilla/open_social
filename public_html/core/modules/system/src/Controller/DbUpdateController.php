@@ -324,7 +324,7 @@ class DbUpdateController extends ControllerBase {
             $text = $this->t('This update will been skipped due to the following missing dependencies:') . '<em>' . implode(', ', $data['missing_dependencies']) . '</em>';
           }
           else {
-            $text =  $this->t("This update will be skipped due to an error in the module's code.");
+            $text = $this->t("This update will be skipped due to an error in the module's code.");
           }
           $build['start'][$module_update_key]['#items'][$data['number']] .= '<div class="warning">' . $text . '</div>';
         }
@@ -374,6 +374,7 @@ class DbUpdateController extends ControllerBase {
         '#attributes' => array('class' => array('button', 'button--primary')),
         '#weight' => 5,
         '#url' => $url,
+        '#access' => $url->access($this->currentUser()),
       );
     }
 
@@ -421,7 +422,7 @@ class DbUpdateController extends ControllerBase {
     }
 
     if (Settings::get('update_free_access')) {
-      $message .= '<p>' . $this->t("<strong>Reminder: don't forget to set the <code>\$settings['update_free_access']</code> value in your <code>settings.php</code> file back to <code>FALSE</code>.</strong>")  . '</p>';
+      $message .= '<p>' . $this->t("<strong>Reminder: don't forget to set the <code>\$settings['update_free_access']</code> value in your <code>settings.php</code> file back to <code>FALSE</code>.</strong>") . '</p>';
     }
 
     $build['message'] = array(

@@ -121,7 +121,7 @@ class ConfigTranslationListUiTest extends WebTestBase {
     $edit = array(
       'id' => $menu_name,
       'description' => '',
-      'label' =>  $label,
+      'label' => $label,
     );
     // Create the menu by posting the form.
     $this->drupalPostForm('admin/structure/menu/add', $edit, t('Save'));
@@ -147,7 +147,7 @@ class ConfigTranslationListUiTest extends WebTestBase {
     // Test if the link to translate the menu is NOT on the page.
     $this->assertNoLinkByHref($translate_link);
 
-    // Login as Admin again otherwise the rest will fail.
+    // Log in as Admin again otherwise the rest will fail.
     $this->drupalLogin($this->adminUser);
 
     // Test if the link to translate actually goes to the translate page.

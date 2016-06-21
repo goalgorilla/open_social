@@ -75,9 +75,9 @@ class FilePrivateTest extends FileFieldTestBase {
     $this->drupalPostForm('node/add/' . $type_name, $edit, t('Save and publish'));
     $new_node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
     $edit[$field_name . '[0][fids]'] = $node_file->id();
-    $this->drupalPostForm('node/' . $new_node->id() .'/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $new_node->id() . '/edit', $edit, t('Save and keep published'));
     // Make sure the form submit failed - we stayed on the edit form.
-    $this->assertUrl('node/' . $new_node->id() .'/edit');
+    $this->assertUrl('node/' . $new_node->id() . '/edit');
     // Check that we got the expected constraint form error.
     $constraint = new ReferenceAccessConstraint();
     $this->assertRaw(SafeMarkup::format($constraint->message, array('%type' => 'file', '%id' => $node_file->id())));
@@ -111,4 +111,5 @@ class FilePrivateTest extends FileFieldTestBase {
     $this->drupalGet($file_url);
     $this->assertResponse(403, 'Confirmed that access is denied for another user to the temporary file.');
   }
+
 }

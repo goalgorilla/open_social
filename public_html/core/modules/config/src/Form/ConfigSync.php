@@ -330,7 +330,7 @@ class ConfigSync extends FormBase {
     if ($config_importer->alreadyImporting()) {
       drupal_set_message($this->t('Another request may be synchronizing configuration already.'));
     }
-    else{
+    else {
       try {
         $sync_steps = $config_importer->initialize();
         $batch = array(
@@ -410,6 +410,5 @@ class ConfigSync extends FormBase {
       drupal_set_message($message, 'error');
     }
   }
-
 
 }

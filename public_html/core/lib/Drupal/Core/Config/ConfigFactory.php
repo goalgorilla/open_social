@@ -271,8 +271,8 @@ class ConfigFactory implements ConfigFactoryInterface, EventSubscriberInterface 
     // Because get() adds overrides both from $GLOBALS and from
     // $this->configFactoryOverrides, add cache keys for each.
     $keys[] = 'global_overrides';
-    foreach($this->configFactoryOverrides as $override) {
-      $keys[] =  $override->getCacheSuffix();
+    foreach ($this->configFactoryOverrides as $override) {
+      $keys[] = $override->getCacheSuffix();
     }
     return $keys;
   }

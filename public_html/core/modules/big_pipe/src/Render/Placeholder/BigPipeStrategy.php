@@ -105,12 +105,19 @@ class BigPipeStrategy implements PlaceholderStrategyInterface {
    * {@inheritdoc}
    */
   public function processPlaceholders(array $placeholders) {
+    $request = $this->requestStack->getCurrentRequest();
+
+    // @todo remove this check when https://www.drupal.org/node/2367555 lands.
+    if (!$request->isMethodSafe()) {
+      return [];
+    }
+
     // Routes can opt out from using the BigPipe HTML delivery technique.
     if ($this->routeMatch->getRouteObject()->getOption('_no_big_pipe')) {
       return [];
     }
 
-    if (!$this->sessionConfiguration->hasSession($this->requestStack->getCurrentRequest())) {
+    if (!$this->sessionConfiguration->hasSession($request)) {
       return [];
     }
 
@@ -214,7 +221,7 @@ class BigPipeStrategy implements PlaceholderStrategyInterface {
    */
   protected static function createBigPipeNoJsPlaceholder($original_placeholder, array $placeholder_render_array, $placeholder_must_be_attribute_safe = FALSE) {
     if (!$placeholder_must_be_attribute_safe) {
-      $big_pipe_placeholder = '<div data-big-pipe-nojs-placeholder-id="' . Html::escape(static::generateBigPipePlaceholderId($original_placeholder, $placeholder_render_array))  . '"></div>';
+      $big_pipe_placeholder = '<div data-big-pipe-nojs-placeholder-id="' . Html::escape(static::generateBigPipePlaceholderId($original_placeholder, $placeholder_render_array)) . '"></div>';
     }
     else {
       $big_pipe_placeholder = 'big_pipe_nojs_placeholder_attribute_safe:' . Html::escape($original_placeholder);

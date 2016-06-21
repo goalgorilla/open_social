@@ -60,12 +60,12 @@ abstract class StorableConfigBase extends ConfigBase {
   /**
    * Saves the configuration object.
    *
+   * Must invalidate the cache tags associated with the configuration object.
+   *
    * @param bool $has_trusted_data
    *   Set to TRUE if the configuration data has already been checked to ensure
    *   it conforms to schema. Generally this is only used during module and
    *   theme installation.
-   *
-   * Must invalidate the cache tags associated with the configuration object.
    *
    * @return $this
    *
@@ -191,7 +191,7 @@ abstract class StorableConfigBase extends ConfigBase {
         // we have to special case the meaning of an empty string for numeric
         // types. In PHP this would be casted to a 0 but for the purposes of
         // configuration we need to treat this as a NULL.
-        $empty_value =  $value === '' && ($element instanceof IntegerInterface || $element instanceof FloatInterface);
+        $empty_value = $value === '' && ($element instanceof IntegerInterface || $element instanceof FloatInterface);
 
         if ($value === NULL || $empty_value) {
           $value = NULL;

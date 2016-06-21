@@ -7,7 +7,6 @@
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\DrupalKernel;
-use Drupal\Core\Config\BootstrapConfigStorageFactory;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\Core\Form\FormState;
@@ -489,8 +488,7 @@ function install_begin_request($class_loader, &$install_state) {
 
   // Ensure that the active configuration is empty before installation starts.
   if ($install_state['config_verified'] && empty($task)) {
-    $config = BootstrapConfigStorageFactory::get()->listAll();
-    if (!empty($config)) {
+    if (count($kernel->getConfigStorage()->listAll())) {
       $task = NULL;
       throw new AlreadyInstalledException($container->get('string_translation'));
     }
@@ -1374,7 +1372,7 @@ function install_retrieve_file($uri, $destination) {
 }
 
 /**
- *  Checks if the localization server can be contacted.
+ * Checks if the localization server can be contacted.
  *
  * @param string $uri
  *   The URI to contact.
@@ -1597,7 +1595,7 @@ function install_download_additional_translations_operations(&$install_state) {
   // should download/import translations.
   $languages = \Drupal::languageManager()->getLanguages();
   $operations = array();
-  foreach($languages as $langcode => $language) {
+  foreach ($languages as $langcode => $language) {
     // The installer language was already downloaded. Check downloads for the
     // other languages if any. Ignore any download errors here, since we
     // are in the middle of an install process and there is no way back. We
@@ -1799,7 +1797,7 @@ function install_check_translations($langcode, $server_pattern) {
   $writable = FALSE;
   // @todo: Make this configurable.
   $site_path = \Drupal::service('site.path');
-  $files_directory =  $site_path . '/files';
+  $files_directory = $site_path . '/files';
   $translations_directory = $site_path . '/files/translations';
   $translations_directory_exists = FALSE;
   $online = FALSE;

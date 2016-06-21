@@ -267,7 +267,7 @@ class ToolbarAdminMenuTest extends WebTestBase {
     t($name, array(), array('langcode' => $langcode));
     // Reset locale cache.
     $this->container->get('string_translation')->reset();
-    $this->assertRaw('"edit-languages-' . $langcode .'-weight"', 'Language code found.');
+    $this->assertRaw('"edit-languages-' . $langcode . '-weight"', 'Language code found.');
     $this->assertText(t($name), 'Test language added.');
 
     // Have the adminUser request a page in the new language.
@@ -337,7 +337,7 @@ class ToolbarAdminMenuTest extends WebTestBase {
   }
 
   /**
-   *  Test that subtrees hashes vary by the language of the page.
+   * Test that subtrees hashes vary by the language of the page.
    */
   function testLanguageSwitching() {
     // Create a new language with the langcode 'xx'.

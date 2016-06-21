@@ -17,7 +17,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @code
  * $form['text'] = array(
  *   '#type' => 'textarea',
- *   '#title' => t('Text'),
+ *   '#title' => $this->t('Text'),
  * );
  * @endcode
  *
@@ -61,4 +61,5 @@ class Textarea extends FormElement {
     }
     return NULL;
   }
+
 }

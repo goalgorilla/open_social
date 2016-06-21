@@ -22,7 +22,7 @@ class DedupeEntityTest extends MigrateProcessTestCase {
   /**
    * The mock entity query factory.
    *
-   * @var  \Drupal\Core\Entity\Query\QueryFactory|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\Query\QueryFactory|\PHPUnit_Framework_MockObject_MockObject
    */
   protected $entityQueryFactory;
 
@@ -160,4 +160,5 @@ class DedupeEntityTest extends MigrateProcessTestCase {
       ->method('execute')
       ->will($this->returnCallback(function () use (&$count) { return $count--;}));
   }
+
 }

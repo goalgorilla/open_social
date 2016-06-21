@@ -68,8 +68,8 @@ abstract class FieldPluginBase extends HandlerBase implements FieldHandlerInterf
    */
   const RENDER_TEXT_PHASE_EMPTY = 2;
 
-  var $field_alias = 'unknown';
-  var $aliases = array();
+  public $field_alias = 'unknown';
+  public $aliases = array();
 
   /**
    * The field value prior to any rewriting.
@@ -85,7 +85,7 @@ abstract class FieldPluginBase extends HandlerBase implements FieldHandlerInterf
    *
    * @var array
    */
-  var $additional_fields = array();
+  public $additional_fields = array();
 
   /**
    * The link generator.
@@ -1717,13 +1717,13 @@ abstract class FieldPluginBase extends HandlerBase implements FieldHandlerInterf
     $display = $this->view->display_handler->display;
 
     if (!empty($display)) {
-      $themes[] = $hook . '__' . $this->view->storage->id()  . '__' . $display['id'] . '__' . $this->options['id'];
-      $themes[] = $hook . '__' . $this->view->storage->id()  . '__' . $display['id'];
+      $themes[] = $hook . '__' . $this->view->storage->id() . '__' . $display['id'] . '__' . $this->options['id'];
+      $themes[] = $hook . '__' . $this->view->storage->id() . '__' . $display['id'];
       $themes[] = $hook . '__' . $display['id'] . '__' . $this->options['id'];
       $themes[] = $hook . '__' . $display['id'];
       if ($display['id'] != $display['display_plugin']) {
-        $themes[] = $hook . '__' . $this->view->storage->id()  . '__' . $display['display_plugin'] . '__' . $this->options['id'];
-        $themes[] = $hook . '__' . $this->view->storage->id()  . '__' . $display['display_plugin'];
+        $themes[] = $hook . '__' . $this->view->storage->id() . '__' . $display['display_plugin'] . '__' . $this->options['id'];
+        $themes[] = $hook . '__' . $this->view->storage->id() . '__' . $display['display_plugin'];
         $themes[] = $hook . '__' . $display['display_plugin'] . '__' . $this->options['id'];
         $themes[] = $hook . '__' . $display['display_plugin'];
       }

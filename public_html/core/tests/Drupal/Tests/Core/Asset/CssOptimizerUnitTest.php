@@ -77,7 +77,7 @@ class CssOptimizerUnitTest extends UnitTestCase {
    */
   function providerTestOptimize() {
     $path = 'core/tests/Drupal/Tests/Core/Asset/css_test_files/';
-    $absolute_path = dirname(__FILE__)  . '/css_test_files/';
+    $absolute_path = dirname(__FILE__) . '/css_test_files/';
     return array(
       // File. Tests:
       // - Stripped comments and white-space.
@@ -188,7 +188,7 @@ class CssOptimizerUnitTest extends UnitTestCase {
           'browsers' => array('IE' => TRUE, '!IE' => TRUE),
           'basename' => 'css_input_with_bom.css',
         ),
-        '.byte-order-mark-test{content:"☃";}'. "\n",
+        '.byte-order-mark-test{content:"☃";}' . "\n",
       ),
       array(
         array(
@@ -276,7 +276,7 @@ class CssOptimizerUnitTest extends UnitTestCase {
    * Tests a CSS asset with 'type' => 'external'.
    */
   function testTypeExternal() {
-    $this->setExpectedException('Exception', 'Only file or inline CSS assets can be optimized.');
+    $this->setExpectedException('Exception', 'Only file CSS assets can be optimized.');
 
     $css_asset = array(
       'group' => -100,

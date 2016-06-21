@@ -861,17 +861,15 @@ www.example.com with a newline in comments -->
    *   An associative array, whereas each key is an arbitrary input string and
    *   each value is again an associative array whose keys are filter output
    *   strings and whose values are Booleans indicating whether the output is
-   *   expected or not.
-   *
-   * For example:
-   * @code
-   * $tests = array(
-   *   'Input string' => array(
-   *     '<p>Input string</p>' => TRUE,
-   *     'Input string<br' => FALSE,
-   *   ),
-   * );
-   * @endcode
+   *   expected or not. For example:
+   *   @code
+   *   $tests = array(
+   *     'Input string' => array(
+   *       '<p>Input string</p>' => TRUE,
+   *       'Input string<br' => FALSE,
+   *     ),
+   *   );
+   *   @endcode
    */
   function assertFilteredString($filter, $tests) {
     foreach ($tests as $source => $tasks) {
@@ -1176,4 +1174,5 @@ body {color:red}
   function assertNoNormalized($haystack, $needle, $message = '', $group = 'Other') {
     return $this->assertTrue(strpos(strtolower(Html::decodeEntities($haystack)), $needle) === FALSE, $message, $group);
   }
+
 }

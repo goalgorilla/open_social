@@ -112,7 +112,7 @@ class LocaleContentTest extends WebTestBase {
     // Edit the content and ensure correct language is selected.
     $path = 'node/' . $node->id() . '/edit';
     $this->drupalGet($path);
-    $this->assertRaw('<option value="' . $langcode . '" selected="selected">' .  $name . '</option>', 'Correct language selected.');
+    $this->assertRaw('<option value="' . $langcode . '" selected="selected">' . $name . '</option>', 'Correct language selected.');
     // Ensure we can change the node language.
     $edit = array(
       'langcode[0][value]' => 'en',
@@ -134,7 +134,7 @@ class LocaleContentTest extends WebTestBase {
     // User to create a node.
     $web_user = $this->drupalCreateUser(array("create {$type->id()} content", "edit own {$type->id()} content"));
 
-    // Login as admin.
+    // Log in as admin.
     $this->drupalLogin($admin_user);
 
     // Install Arabic language.
@@ -157,7 +157,7 @@ class LocaleContentTest extends WebTestBase {
     $this->assertRaw(t('The content type %type has been updated.', array('%type' => $type->label())));
     $this->drupalLogout();
 
-    // Login as web user to add new node.
+    // Log in as web user to add new node.
     $this->drupalLogin($web_user);
 
     // Create three nodes: English, Arabic and Spanish.
