@@ -138,7 +138,7 @@ gulp.task('script-components', function() {
       folder.js_comp + "/jquery.hammer.js",
       folder.js_comp + "/global.js",
       //folder.js_comp + "/collapsible.js",
-      folder.js_comp + "/scrollspy.js",
+      //folder.js_comp + "/scrollspy.js",
       folder.js_comp + "/pushpin.js",
       //folder.js_comp + "/sideNav.js",
       folder.js_comp + "/waves.js",
@@ -154,7 +154,7 @@ gulp.task('script-components', function() {
 // get project scripts and make available for dist in one file
 gulp.task('script-materialize', function() {
   return gulp.src([
-    folder.js_materialize + "/navbar-search.js",
+      folder.js_materialize + "/navbar-search.js",
     ])
     .pipe( concat('materialize.js') )
     .pipe( gulp.dest(folder.js) )
@@ -197,9 +197,9 @@ gulp.task('script-drupal', function() {
 gulp.task('script-init', function() {
   return gulp.src([
     folder.js + "/init.js",
-    //folder.js + "/init-styleguide.js"
+    folder.js + "/init-styleguide.js"
   ])
-  //.pipe( concat('init.js') )
+  .pipe( concat('init.js') )
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
