@@ -1,4 +1,4 @@
-@api @event @stability @javascript @DS-406 @maikel
+@api @event @stability @javascript @DS-406
 Feature: Create Event
   Benefit: In order to connect with other people offline
   Role: As a LU
