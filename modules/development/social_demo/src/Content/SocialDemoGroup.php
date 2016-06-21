@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\group\Entity\Group;
 
 /**
- *
+ * Implements Demo content for Groups.
  */
 class SocialDemoGroup implements ContainerInjectionInterface {
 
@@ -46,7 +46,7 @@ class SocialDemoGroup implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -147,8 +147,10 @@ class SocialDemoGroup implements ContainerInjectionInterface {
    * Load a Group from UUID.
    *
    * @param string $uuid
+   *   The uuid of the group.
    *
    * @return int group id
+   *   The group id.
    */
   public function loadGroupFromUuid($uuid) {
     $groups = $this->groupStorage->loadByProperties(array('uuid' => $uuid));

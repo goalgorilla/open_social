@@ -10,7 +10,7 @@ use Drupal\file\Entity\File;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 
 /**
- *
+ * Implements Demo content for Files.
  */
 class SocialDemoFile {
 
@@ -25,7 +25,7 @@ class SocialDemoFile {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create() {
     return new static();
@@ -92,10 +92,11 @@ class SocialDemoFile {
   /**
    * Load a file object by uuid.
    *
-   * @param $uuid
-   *   the uuid of the file.
+   * @param string $uuid
+   *   The uuid of the file.
    *
    * @return int $fid
+   *   The file id for the given uuid.
    */
   public function loadByUuid($uuid) {
     $query = \Drupal::entityQuery('file');

@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_post\Entity\Post;
 
 /**
- *
+ * Implements Demo content for Posts.
  */
 class SocialDemoPost implements ContainerInjectionInterface {
 
@@ -46,7 +46,7 @@ class SocialDemoPost implements ContainerInjectionInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
