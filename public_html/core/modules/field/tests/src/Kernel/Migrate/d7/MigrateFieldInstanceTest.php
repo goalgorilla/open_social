@@ -20,7 +20,7 @@ class MigrateFieldInstanceTest extends MigrateDrupal7TestBase {
    *
    * @var array
    */
-  static $modules = array(
+  public static $modules = array(
     'comment',
     'datetime',
     'file',
@@ -76,7 +76,7 @@ class MigrateFieldInstanceTest extends MigrateDrupal7TestBase {
    *   The expected field label.
    * @param string $expected_field_type
    *   The expected field type.
-   * @param boolean $is_required
+   * @param bool $is_required
    *   Whether or not the field is required.
    */
   protected function assertEntity($id, $expected_label, $expected_field_type, $is_required) {

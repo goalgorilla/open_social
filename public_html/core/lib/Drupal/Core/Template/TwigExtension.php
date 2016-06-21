@@ -4,7 +4,10 @@ namespace Drupal\Core\Template;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Render\AttachmentsInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
@@ -150,12 +153,12 @@ class TwigExtension extends \Twig_Extension {
       new \Twig_SimpleFilter('placeholder', [$this, 'escapePlaceholder'], array('is_safe' => array('html'), 'needs_environment' => TRUE)),
 
       // Replace twig's escape filter with our own.
-      new \Twig_SimpleFilter('drupal_escape', [$this, 'escapeFilter'], array('needs_environment' => true, 'is_safe_callback' => 'twig_escape_filter_is_safe')),
+      new \Twig_SimpleFilter('drupal_escape', [$this, 'escapeFilter'], array('needs_environment' => TRUE, 'is_safe_callback' => 'twig_escape_filter_is_safe')),
 
       // Implements safe joining.
       // @todo Make that the default for |join? Upstream issue:
       //   https://github.com/fabpot/Twig/issues/1420
-      new \Twig_SimpleFilter('safe_join', [$this, 'safeJoin'], ['needs_environment' => true, 'is_safe' => ['html']]),
+      new \Twig_SimpleFilter('safe_join', [$this, 'safeJoin'], ['needs_environment' => TRUE, 'is_safe' => ['html']]),
 
       // Array filters.
       new \Twig_SimpleFilter('without', 'twig_without'),
@@ -206,10 +209,11 @@ class TwigExtension extends \Twig_Extension {
    * @param array $options
    *   (optional) An associative array of additional options. The 'absolute'
    *   option is forced to be FALSE.
-   *   @see \Drupal\Core\Routing\UrlGeneratorInterface::generateFromRoute().
    *
    * @return string
    *   The generated URL path (relative URL) for the given route.
+   *
+   * @see \Drupal\Core\Routing\UrlGeneratorInterface::generateFromRoute()
    */
   public function getPath($name, $parameters = array(), $options = array()) {
     $options['absolute'] = FALSE;
@@ -410,6 +414,8 @@ class TwigExtension extends \Twig_Extension {
       return NULL;
     }
 
+    $this->bubbleArgMetadata($arg);
+
     // Keep Twig_Markup objects intact to support autoescaping.
     if ($autoescape && ($arg instanceof \Twig_Markup || $arg instanceof MarkupInterface)) {
       return $arg;
@@ -463,6 +469,37 @@ class TwigExtension extends \Twig_Extension {
   }
 
   /**
+   * Bubbles Twig template argument's cacheability & attachment metadata.
+   *
+   * For example: a generated link or generated URL object is passed as a Twig
+   * template argument, and its bubbleable metadata must be bubbled.
+   *
+   * @see \Drupal\Core\GeneratedLink
+   * @see \Drupal\Core\GeneratedUrl
+   *
+   * @param mixed $arg
+   *   A Twig template argument that is about to be printed.
+   *
+   * @see \Drupal\Core\Theme\ThemeManager::render()
+   * @see \Drupal\Core\Render\RendererInterface::render()
+   */
+  protected function bubbleArgMetadata($arg) {
+    // If it's a renderable, then it'll be up to the generated render array it
+    // returns to contain the necessary cacheability & attachment metadata. If
+    // it doesn't implement CacheableDependencyInterface or AttachmentsInterface
+    // then there is nothing to do here.
+    if ($arg instanceof RenderableInterface || !($arg instanceof CacheableDependencyInterface || $arg instanceof AttachmentsInterface)) {
+      return;
+    }
+
+    $arg_bubbleable = [];
+    BubbleableMetadata::createFromObject($arg)
+      ->applyTo($arg_bubbleable);
+
+    $this->renderer->render($arg_bubbleable);
+  }
+
+  /**
    * Wrapper around render() for twig printed output.
    *
    * If an object is passed which does not implement __toString(),
@@ -504,6 +541,7 @@ class TwigExtension extends \Twig_Extension {
     }
 
     if (is_object($arg)) {
+      $this->bubbleArgMetadata($arg);
       if ($arg instanceof RenderableInterface) {
         $arg = $arg->toRenderable();
       }
@@ -547,7 +585,7 @@ class TwigExtension extends \Twig_Extension {
    */
   public function safeJoin(\Twig_Environment $env, $value, $glue = '') {
     if ($value instanceof \Traversable) {
-      $value = iterator_to_array($value, false);
+      $value = iterator_to_array($value, FALSE);
     }
 
     return implode($glue, array_map(function($item) use ($env) {

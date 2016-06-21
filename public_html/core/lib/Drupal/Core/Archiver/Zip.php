@@ -70,7 +70,7 @@ class Zip implements ArchiverInterface {
    */
   public function listContents() {
     $files = array();
-    for ($i=0; $i < $this->zip->numFiles; $i++) {
+    for ($i = 0; $i < $this->zip->numFiles; $i++) {
       $files[] = $this->zip->getNameIndex($i);
     }
     return $files;
@@ -89,4 +89,5 @@ class Zip implements ArchiverInterface {
   public function getArchive() {
     return $this->zip;
   }
+
 }

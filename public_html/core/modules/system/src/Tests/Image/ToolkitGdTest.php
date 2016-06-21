@@ -248,7 +248,7 @@ class ToolkitGdTest extends KernelTestBase {
     }
 
     // Prepare a directory for test file results.
-    $directory = $this->publicFilesDirectory .'/imagetest';
+    $directory = $this->publicFilesDirectory . '/imagetest';
     file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
 
     foreach ($files as $file) {
@@ -378,7 +378,7 @@ class ToolkitGdTest extends KernelTestBase {
       if ($image_reloaded->getToolkit()->getType() == IMAGETYPE_GIF) {
         $this->assertEqual('#ffff00', $image_reloaded->getToolkit()->getTransparentColor(), SafeMarkup::format('Image file %file has the correct transparent color channel set.', array('%file' => $file)));
       }
-      else  {
+      else {
         $this->assertEqual(NULL, $image_reloaded->getToolkit()->getTransparentColor(), SafeMarkup::format('Image file %file has no color channel set.', array('%file' => $file)));
       }
     }
@@ -424,7 +424,7 @@ class ToolkitGdTest extends KernelTestBase {
    */
   function testGifTransparentImages() {
     // Prepare a directory for test file results.
-    $directory = $this->publicFilesDirectory .'/imagetest';
+    $directory = $this->publicFilesDirectory . '/imagetest';
     file_prepare_directory($directory, FILE_CREATE_DIRECTORY);
 
     // Test loading an indexed GIF image with transparent color set.

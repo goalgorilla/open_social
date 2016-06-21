@@ -104,7 +104,7 @@ class ConfigTranslationUiTest extends WebTestBase {
         'translate interface',
       ]
     );
-    // Create and login user.
+    // Create and log in user.
     $this->translatorUser = $this->drupalCreateUser($translator_permissions);
     $this->adminUser = $this->drupalCreateUser($admin_permissions);
 
@@ -456,7 +456,7 @@ class ConfigTranslationUiTest extends WebTestBase {
       'medium' => 'Default medium date',
       'custom_medium' => 'Custom medium date',
     );
-    foreach($formats as $id => $label) {
+    foreach ($formats as $id => $label) {
       $translation_base_url = 'admin/config/regional/date-time/formats/manage/' . $id . '/translate';
 
       $this->drupalGet($translation_base_url);
@@ -526,7 +526,7 @@ class ConfigTranslationUiTest extends WebTestBase {
     $this->drupalGet('admin/config/people/accounts/translate/fr/edit');
     foreach ($edit as $key => $value) {
       // Check the translations appear in the right field type as well.
-      $xpath = '//' . (strpos($key, '[body]') ? 'textarea' : 'input') . '[@name="'. $key . '"]';
+      $xpath = '//' . (strpos($key, '[body]') ? 'textarea' : 'input') . '[@name="' . $key . '"]';
       $this->assertFieldByXPath($xpath, $value);
     }
     // Check that labels for email settings appear.

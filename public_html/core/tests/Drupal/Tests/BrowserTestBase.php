@@ -10,7 +10,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Database\ConnectionNotDefinedException;
 use Drupal\Core\Database\Database;
 use Drupal\Core\DrupalKernel;
 use Drupal\Core\Session\AccountInterface;
@@ -20,13 +19,11 @@ use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\Core\Test\TestRunnerKernel;
 use Drupal\Core\Url;
-use Drupal\simpletest\RandomGeneratorTrait;
-use Drupal\simpletest\SessionTestTrait;
-use Drupal\simpletest\WebAssert;
+use Drupal\Core\Test\TestDatabase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
-use Symfony\Component\CssSelector\CssSelector;
+use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -39,11 +36,6 @@ use Symfony\Component\HttpFoundation\Request;
  * @ingroup testing
  */
 abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
-
-  /**
-   * @todo Move these into Drupal\Tests namespace and leave deprecated stubs
-   *   in simpletest module. See https://www.drupal.org/node/2702281
-   */
   use RandomGeneratorTrait;
   use SessionTestTrait;
 
@@ -342,7 +334,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
       $driver = $reflector->newInstanceArgs($this->minkDefaultDriverArgs);
     }
     else {
-      $driver =  new $this->minkDefaultDriverClass();
+      $driver = new $this->minkDefaultDriverClass();
     }
     return $driver;
   }
@@ -534,7 +526,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    * @param string $name
    *   (optional) Name of the session. Defaults to the active session.
    *
-   * @return \Drupal\simpletest\WebAssert
+   * @return \Drupal\Tests\WebAssert
    *   A new web-assert option for asserting the presence of elements with.
    */
   public function assertSession($name = NULL) {
@@ -557,7 +549,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
   /**
    * Retrieves a Drupal path or an absolute path.
    *
-   * @param string $path
+   * @param string|\Drupal\Core\Url $path
    *   Drupal path or URL to load into Mink controlled browser.
    * @param array $options
    *   (optional) Options to be forwarded to the url generator.
@@ -568,9 +560,15 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
   protected function drupalGet($path, array $options = array()) {
     $options['absolute'] = TRUE;
 
+    if ($path instanceof Url) {
+      $url_options = $path->getOptions();
+      $options = $url_options + $options;
+      $path->setOptions($options);
+      $url = $path->setAbsolute()->toString();
+    }
     // The URL generator service is not necessarily available yet; e.g., in
     // interactive installer tests.
-    if ($this->container->has('url_generator')) {
+    elseif ($this->container->has('url_generator')) {
       if (UrlHelper::isExternal($path)) {
         $url = Url::fromUri($path, $options)->toString();
       }
@@ -1252,26 +1250,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    *   The database connection to use for inserting assertions.
    */
   public static function getDatabaseConnection() {
-    // Check whether there is a test runner connection.
-    // @see run-tests.sh
-    try {
-      $connection = Database::getConnection('default', 'test-runner');
-    }
-    catch (ConnectionNotDefinedException $e) {
-      // Check whether there is a backup of the original default connection.
-      // @see BrowserTestBase::prepareEnvironment()
-      try {
-        $connection = Database::getConnection('default', 'simpletest_original_default');
-      }
-      catch (ConnectionNotDefinedException $e) {
-        // If BrowserTestBase::prepareEnvironment() or
-        // BrowserTestBase::restoreEnvironment() failed, the test-specific
-        // database connection does not exist yet/anymore, so fall back to the
-        // default of the (UI) test runner.
-        $connection = Database::getConnection('default', 'default');
-      }
-    }
-    return $connection;
+    return TestDatabase::getConnection();
   }
 
   /**
@@ -1449,7 +1428,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    *   Optional message to show alongside the assertion.
    */
   protected function assertElementPresent($css_selector, $message = '') {
-    $this->assertNotEmpty($this->getSession()->getDriver()->find(CssSelector::toXPath($css_selector)), $message);
+    $this->assertNotEmpty($this->getSession()->getDriver()->find($this->cssSelectToXpath($css_selector)), $message);
   }
 
   /**
@@ -1461,7 +1440,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    *   Optional message to show alongside the assertion.
    */
   protected function assertElementNotPresent($css_selector, $message = '') {
-    $this->assertEmpty($this->getSession()->getDriver()->find(CssSelector::toXPath($css_selector)), $message);
+    $this->assertEmpty($this->getSession()->getDriver()->find($this->cssSelectToXpath($css_selector)), $message);
   }
 
   /**
@@ -1471,7 +1450,7 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
    *   The CSS selector identifying the element to click.
    */
   protected function click($css_selector) {
-    $this->getSession()->getDriver()->click(CssSelector::toXPath($css_selector));
+    $this->getSession()->getDriver()->click($this->cssSelectToXpath($css_selector));
   }
 
   /**
@@ -1529,6 +1508,25 @@ abstract class BrowserTestBase extends \PHPUnit_Framework_TestCase {
       }
     }, $this->getSession()->getResponseHeaders());
     return '<hr />Headers: <pre>' . Html::escape(var_export($headers, TRUE)) . '</pre>';
+  }
+
+  /**
+   * Translates a CSS expression to its XPath equivalent.
+   *
+   * The search is relative to the root element (HTML tag normally) of the page.
+   *
+   * @param string $selector
+   *   CSS selector to use in the search.
+   * @param bool $html
+   *   (optional) Enables HTML support. Disable it for XML documents.
+   * @param string $prefix
+   *   (optional) The prefix for the XPath expression.
+   *
+   * @return string
+   *   The equivalent XPath of a CSS expression.
+   */
+  protected function cssSelectToXpath($selector, $html = TRUE, $prefix = 'descendant-or-self::') {
+    return (new CssSelectorConverter($html))->toXPath($selector, $prefix);
   }
 
 }

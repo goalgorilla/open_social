@@ -78,7 +78,7 @@ if (!function_exists('simpletest_test_stub_settings_function')) {
 }
 EOD;
 
-      file_put_contents($this->siteDirectory. '/' . 'settings.testing.php', $php);
+      file_put_contents($this->siteDirectory . '/' . 'settings.testing.php', $php);
       // @see \Drupal\system\Tests\DrupalKernel\DrupalKernelSiteTest
       $class = __CLASS__;
       $yaml = <<<EOD
@@ -284,11 +284,16 @@ EOD;
   /**
    * Asserts that an assertion with specified values is displayed in results.
    *
-   * @param string $message Assertion message.
-   * @param string $type Assertion type.
-   * @param string $status Assertion status.
-   * @param string $file File where the assertion originated.
-   * @param string $function Function where the assertion originated.
+   * @param string $message
+   *   Assertion message.
+   * @param string $type
+   *   Assertion type.
+   * @param string $status
+   *   Assertion status.
+   * @param string $file
+   *   File where the assertion originated.
+   * @param string $function
+   *   Function where the assertion originated.
    *
    * @return Assertion result.
    */

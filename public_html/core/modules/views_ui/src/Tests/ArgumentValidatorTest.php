@@ -43,7 +43,7 @@ class ArgumentValidatorTest extends UITestBase {
    * Saves the test_argument view with changes made to the argument handler
    * both with and without specify_validation turned on.
    *
-   * @param boolean $specify_validation
+   * @param bool $specify_validation
    */
   protected function saveArgumentHandlerWithValidationOptions($specify_validation) {
     $options = array(
@@ -53,4 +53,5 @@ class ArgumentValidatorTest extends UITestBase {
     $this->drupalPostForm('admin/structure/views/nojs/handler/test_argument/default/argument/id', $options, t('Apply'));
     $this->drupalPostForm('admin/structure/views/view/test_argument', array(), t('Save'));
   }
+
 }

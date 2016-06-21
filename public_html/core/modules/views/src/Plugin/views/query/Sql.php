@@ -35,26 +35,26 @@ class Sql extends QueryPluginBase {
   /**
    * Holds an array of tables and counts added so that we can create aliases
    */
-  var $tables = array();
+  public $tables = array();
 
   /**
    * Holds an array of relationships, which are aliases of the primary
    * table that represent different ways to join the same table in.
    */
-  var $relationships = array();
+  public $relationships = array();
 
   /**
    * An array of sections of the WHERE query. Each section is in itself
    * an array of pieces and a flag as to whether or not it should be AND
    * or OR.
    */
-  var $where = array();
+  public $where = array();
   /**
    * An array of sections of the HAVING query. Each section is in itself
    * an array of pieces and a flag as to whether or not it should be AND
    * or OR.
    */
-  var $having = array();
+  public $having = array();
   /**
    * The default operator to use when connecting the WHERE groups. May be
    * AND or OR.
@@ -64,23 +64,23 @@ class Sql extends QueryPluginBase {
   /**
    * A simple array of order by clauses.
    */
-  var $orderby = array();
+  public $orderby = array();
 
   /**
    * A simple array of group by clauses.
    */
-  var $groupby = array();
+  public $groupby = array();
 
 
   /**
    * An array of fields.
    */
-  var $fields = array();
+  public $fields = array();
 
   /**
    * A flag as to whether or not to make the primary field distinct.
    */
-  var $distinct = FALSE;
+  public $distinct = FALSE;
 
   protected $hasAggregate = FALSE;
 
@@ -97,7 +97,7 @@ class Sql extends QueryPluginBase {
   /**
    * Query tags which will be passed over to the dbtng query object.
    */
-  var $tags = array();
+  public $tags = array();
 
   /**
    * Is the view marked as not distinct.
@@ -337,7 +337,7 @@ class Sql extends QueryPluginBase {
    * @param $alias
    *   A specific alias to use, rather than the default alias.
    *
-   * @return $alias
+   * @return string
    *   The alias of the table; this alias can be used to access information
    *   about the table and should always be used to refer to the table when
    *   adding parts to the query. Or FALSE if the table was not able to be
@@ -376,7 +376,7 @@ class Sql extends QueryPluginBase {
    * @param $alias
    *   A specific alias to use, rather than the default alias.
    *
-   * @return $alias
+   * @return string
    *   The alias of the table; this alias can be used to access information
    *   about the table and should always be used to refer to the table when
    *   adding parts to the query. Or FALSE if the table was not able to be
@@ -723,7 +723,7 @@ class Sql extends QueryPluginBase {
    *   - aggregate: Set to TRUE to indicate that this value should be
    *     aggregated in a GROUP BY.
    *
-   * @return $name
+   * @return string
    *   The name that this field can be referred to as. Usually this is the alias.
    */
   public function addField($table, $field, $alias = '', $params = array()) {
@@ -789,6 +789,17 @@ class Sql extends QueryPluginBase {
    * ensuring that all fields are fully qualified (TABLE.FIELD) and that
    * the table already exists in the query.
    *
+   * The $field, $value and $operator arguments can also be passed in with a
+   * single DatabaseCondition object, like this:
+   * @code
+   * $this->query->addWhere(
+   *   $this->options['group'],
+   *   db_or()
+   *     ->condition($field, $value, 'NOT IN')
+   *     ->condition($field, $value, 'IS NULL')
+   * );
+   * @endcode
+   *
    * @param $group
    *   The WHERE group to add these to; groups are used to create AND/OR
    *   sections. Groups cannot be nested. Use 0 as the default group.
@@ -803,17 +814,6 @@ class Sql extends QueryPluginBase {
    *   The comparison operator, such as =, <, or >=. It also accepts more
    *   complex options such as IN, LIKE, LIKE BINARY, or BETWEEN. Defaults to =.
    *   If $field is a string you have to use 'formula' here.
-   *
-   * The $field, $value and $operator arguments can also be passed in with a
-   * single DatabaseCondition object, like this:
-   * @code
-   *   $this->query->addWhere(
-   *     $this->options['group'],
-   *     db_or()
-   *       ->condition($field, $value, 'NOT IN')
-   *       ->condition($field, $value, 'IS NULL')
-   *   );
-   * @endcode
    *
    * @see \Drupal\Core\Database\Query\ConditionInterface::condition()
    * @see \Drupal\Core\Database\Query\Condition
@@ -993,7 +993,7 @@ class Sql extends QueryPluginBase {
   /**
    * Generates a unique placeholder used in the db query.
    */
-  function placeholder($base = 'views') {
+  public function placeholder($base = 'views') {
     static $placeholders = array();
     if (!isset($placeholders[$base])) {
       $placeholders[$base] = 0;
@@ -1332,14 +1332,14 @@ class Sql extends QueryPluginBase {
   /**
    * Let modules modify the query just prior to finalizing it.
    */
-  function alter(ViewExecutable $view) {
+  public function alter(ViewExecutable $view) {
     \Drupal::moduleHandler()->invokeAll('views_query_alter', array($view, $this));
   }
 
   /**
    * Builds the necessary info to execute the query.
    */
-  function build(ViewExecutable $view) {
+  public function build(ViewExecutable $view) {
     // Make the query distinct if the option was set.
     if (!empty($this->options['distinct'])) {
       $this->setDistinct(TRUE);
@@ -1364,7 +1364,7 @@ class Sql extends QueryPluginBase {
    * Values to set: $view->result, $view->total_rows, $view->execute_time,
    * $view->current_page.
    */
-  function execute(ViewExecutable $view) {
+  public function execute(ViewExecutable $view) {
     $query = $view->build_info['query'];
     $count_query = $view->build_info['count_query'];
 

@@ -196,7 +196,6 @@ abstract class PluginBase extends ComponentPluginBase implements ContainerFactor
    *
    * @param array $storage
    *   The stored options.
-   *
    * @param array $options
    *   The defined options.
    */
@@ -373,7 +372,7 @@ abstract class PluginBase extends ComponentPluginBase implements ContainerFactor
         $top = array_shift($parts);
         assert('preg_match(\'/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/\', $top) === 1', 'Tokens need to be valid Twig variables.');
         $token_array = array(array_pop($parts) => $replacement);
-        foreach(array_reverse($parts) as $key) {
+        foreach (array_reverse($parts) as $key) {
           assert('preg_match(\'/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/\', $key) === 1', 'Tokens need to be valid Twig variables.');
           $token_array = array($key => $token_array);
         }

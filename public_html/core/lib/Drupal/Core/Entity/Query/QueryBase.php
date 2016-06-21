@@ -305,7 +305,7 @@ abstract class QueryBase implements QueryInterface {
    */
   public function tableSort(&$headers) {
     // If 'field' is not initialized, the header columns aren't clickable.
-    foreach ($headers as $key =>$header) {
+    foreach ($headers as $key => $header) {
       if (is_array($header) && isset($header['specifier'])) {
         $headers[$key]['field'] = '';
       }
@@ -442,7 +442,7 @@ abstract class QueryBase implements QueryInterface {
    *   The alias for the field.
    */
   protected function getAggregationAlias($field, $function) {
-    return strtolower($field . '_'. $function);
+    return strtolower($field . '_' . $function);
   }
 
   /**

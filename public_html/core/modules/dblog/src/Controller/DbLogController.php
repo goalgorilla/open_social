@@ -4,6 +4,7 @@ namespace Drupal\dblog\Controller;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -234,7 +235,6 @@ class DbLogController extends ControllerBase {
    * @return array
    *   If the ID is located in the Database Logging table, a build array in the
    *   format expected by drupal_render();
-   *
    */
   public function eventDetails($event_id) {
     $build = array();
@@ -338,7 +338,7 @@ class DbLogController extends ControllerBase {
    *   The record from the watchdog table. The object properties are: wid, uid,
    *   severity, type, timestamp, message, variables, link, name.
    *
-   * @return string|false
+   * @return string|\Drupal\Core\StringTranslation\TranslatableMarkup|false
    *   The formatted log message or FALSE if the message or variables properties
    *   are not set.
    */
@@ -347,11 +347,11 @@ class DbLogController extends ControllerBase {
     if (isset($row->message) && isset($row->variables)) {
       // Messages without variables or user specified text.
       if ($row->variables === 'N;') {
-        $message = $row->message;
+        $message = Xss::filterAdmin($row->message);
       }
       // Message to translate with injected variables.
       else {
-        $message = $this->t($row->message, unserialize($row->variables));
+        $message = $this->t(Xss::filterAdmin($row->message), unserialize($row->variables));
       }
     }
     else {

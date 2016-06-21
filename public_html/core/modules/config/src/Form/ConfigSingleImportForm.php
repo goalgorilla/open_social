@@ -2,6 +2,7 @@
 
 namespace Drupal\config\Form;
 
+use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
 use Drupal\Component\Serialization\Yaml;
 use Drupal\config\StorageReplaceDataWrapper;
 use Drupal\Core\Config\ConfigImporter;
@@ -281,8 +282,13 @@ class ConfigSingleImportForm extends ConfirmFormBase {
       return;
     }
 
-    // Decode the submitted import.
-    $data = Yaml::decode($form_state->getValue('import'));
+    try {
+      // Decode the submitted import.
+      $data = Yaml::decode($form_state->getValue('import'));
+    }
+    catch (InvalidDataTypeException $e) {
+      $form_state->setErrorByName('import', $this->t('The import failed with the following message: %message', ['%message' => $e->getMessage()]));
+    }
 
     // Validate for config entities.
     if ($form_state->getValue('config_type') !== 'system.simple') {
@@ -388,7 +394,7 @@ class ConfigSingleImportForm extends ConfirmFormBase {
     if ($config_importer->alreadyImporting()) {
       drupal_set_message($this->t('Another request may be importing configuration already.'), 'error');
     }
-    else{
+    else {
       try {
         $sync_steps = $config_importer->initialize();
         $batch = [

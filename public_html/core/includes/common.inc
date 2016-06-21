@@ -14,6 +14,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\PhpStorage\PhpStorageFactory;
@@ -219,7 +220,6 @@ function valid_email_address($mail) {
  *   UrlHelper::filterBadProtocol() is functionality equivalent to check_url()
  *   apart from the fact it is protected from double escaping bugs. Note that
  *   this method no longer marks its output as safe.
- *
  */
 function check_url($uri) {
   return Html::escape(UrlHelper::stripDangerousProtocols($uri));
@@ -748,7 +748,7 @@ function drupal_clear_js_cache() {
  *   Use \Drupal\Core\Render\Element\Link::preRenderLink().
  */
 function drupal_pre_render_link($element) {
-  return Element\Link::preRenderLink($element);
+  return Link::preRenderLink($element);
 }
 
 /**

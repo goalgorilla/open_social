@@ -756,7 +756,7 @@ function system_form_alter(&$form, FormStateInterface $form_state) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter() for \Drupal\user\AccountForm.
  */
 function system_form_user_form_alter(&$form, FormStateInterface $form_state) {
   if (\Drupal::config('system.date')->get('timezone.user.configurable')) {
@@ -765,7 +765,7 @@ function system_form_user_form_alter(&$form, FormStateInterface $form_state) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter() for \Drupal\user\RegisterForm.
  */
 function system_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
   $config = \Drupal::config('system.date');
@@ -1138,7 +1138,7 @@ function system_sort_modules_by_info_name($a, $b) {
  * Callback for uasort() within
  * \Drupal\system\Controller\SystemController::themesPage().
  *
- * @see system_sort_modules_by_info_name().
+ * @see system_sort_modules_by_info_name()
  */
 function system_sort_themes($a, $b) {
   if ($a->is_default) {
@@ -1254,7 +1254,7 @@ function system_get_module_admin_tasks($module, array $info) {
     $access_manager = \Drupal::service('access_manager');
     if ($access_manager->checkNamedRoute('user.admin_permissions', array(), \Drupal::currentUser())) {
       /** @var \Drupal\Core\Url $url */
-      $url = new \Drupal\Core\Url('user.admin_permissions');
+      $url = new Url('user.admin_permissions');
       $url->setOption('fragment', 'module-' . $module);
       $admin_tasks["user.admin_permissions.$module"] = array(
         'title' => t('Configure @module permissions', array('@module' => $info['name'])),

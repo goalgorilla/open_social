@@ -7,6 +7,7 @@
 use Drupal\Core\Config\ConfigImporter;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\DynamicallyFieldableEntityStorageInterface;
+use Drupal\field\ConfigImporterFieldPurger;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
@@ -68,7 +69,7 @@ function field_help($route_name, RouteMatchInterface $route_match) {
       $field_ui_url = \Drupal::moduleHandler()->moduleExists('field_ui') ? \Drupal::url('help.page', array('name' => 'field_ui')) : '#';
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Field module allows custom data fields to be defined for <em>entity</em> types (see below). The Field module takes care of storing, loading, editing, and rendering field data. Most users will not interact with the Field module directly, but will instead use the <a href=":field-ui-help">Field UI module</a> user interface. Module developers can use the Field API to make new entity types "fieldable" and thus allow fields to be attached to them. For more information, see the <a href=":field">online documentation for the Field module</a>.', array(':field-ui-help' => $field_ui_url, ':field' => 'https://www.drupal.org/documentation/modules/field')). '</p>';
+      $output .= '<p>' . t('The Field module allows custom data fields to be defined for <em>entity</em> types (see below). The Field module takes care of storing, loading, editing, and rendering field data. Most users will not interact with the Field module directly, but will instead use the <a href=":field-ui-help">Field UI module</a> user interface. Module developers can use the Field API to make new entity types "fieldable" and thus allow fields to be attached to them. For more information, see the <a href=":field">online documentation for the Field module</a>.', array(':field-ui-help' => $field_ui_url, ':field' => 'https://www.drupal.org/documentation/modules/field')) . '</p>';
       $output .= '<h3>' . t('Terminology') . '</h3>';
       $output .= '<dl>';
       $output .= '<dt>' . t('Entities and entity types') . '</dt>';
@@ -168,7 +169,7 @@ function field_cron() {
 /**
  * Implements hook_entity_field_storage_info().
  */
-function field_entity_field_storage_info(\Drupal\Core\Entity\EntityTypeInterface $entity_type) {
+function field_entity_field_storage_info(EntityTypeInterface $entity_type) {
   if (\Drupal::entityManager()->getStorage($entity_type->id()) instanceof DynamicallyFieldableEntityStorageInterface) {
     // Query by filtering on the ID as this is more efficient than filtering
     // on the entity_type property directly.
@@ -213,7 +214,7 @@ function field_entity_bundle_field_info(EntityTypeInterface $entity_type, $bundl
 function field_entity_bundle_delete($entity_type_id, $bundle) {
   $storage = \Drupal::entityManager()->getStorage('field_config');
   // Get the fields on the bundle.
-  $fields =  $storage->loadByProperties(['entity_type' => $entity_type_id, 'bundle' => $bundle]);
+  $fields = $storage->loadByProperties(['entity_type' => $entity_type_id, 'bundle' => $bundle]);
   // This deletes the data for the field as well as the field themselves. This
   // function actually just marks the data and fields as deleted, leaving the
   // garbage collection for a separate process, because it is not always
@@ -301,7 +302,7 @@ function _field_create_entity_from_ids($ids) {
  * Implements hook_config_import_steps_alter().
  */
 function field_config_import_steps_alter(&$sync_steps, ConfigImporter $config_importer) {
-  $field_storages = \Drupal\field\ConfigImporterFieldPurger::getFieldStoragesToPurge(
+  $field_storages = ConfigImporterFieldPurger::getFieldStoragesToPurge(
     $config_importer->getStorageComparer()->getSourceStorage()->read('core.extension'),
     $config_importer->getStorageComparer()->getChangelist('delete')
   );
@@ -327,7 +328,7 @@ function field_form_config_admin_import_form_alter(&$form, FormStateInterface $f
   $user_input = $form_state->getUserInput();
   $storage_comparer = $form_state->get('storage_comparer');
   if ($storage_comparer && empty($user_input)) {
-    $field_storages = \Drupal\field\ConfigImporterFieldPurger::getFieldStoragesToPurge(
+    $field_storages = ConfigImporterFieldPurger::getFieldStoragesToPurge(
       $storage_comparer->getSourceStorage()->read('core.extension'),
       $storage_comparer->getChangelist('delete')
     );

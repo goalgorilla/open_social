@@ -211,5 +211,5 @@ class NegotiationBrowserForm extends ConfigFormBase {
     }
     return $config->get('map');
   }
-}
 
+}

@@ -74,5 +74,5 @@ class LinkTypeConstraint extends Constraint implements ConstraintValidatorInterf
       }
     }
   }
-}
 
+}

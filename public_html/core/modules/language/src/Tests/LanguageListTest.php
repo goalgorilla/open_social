@@ -61,7 +61,7 @@ class LanguageListTest extends WebTestBase {
     );
     $this->drupalPostForm('admin/config/regional/language/add', $edit, t('Add custom language'));
     $this->assertUrl(\Drupal::url('entity.configurable_language.collection', [], ['absolute' => TRUE]));
-    $this->assertRaw('"edit-languages-' . $langcode .'-weight"', 'Language code found.');
+    $this->assertRaw('"edit-languages-' . $langcode . '-weight"', 'Language code found.');
     $this->assertText(t($name), 'Test language added.');
 
     $language = \Drupal::service('language_manager')->getLanguage($langcode);
@@ -205,4 +205,5 @@ class LanguageListTest extends WebTestBase {
     $conf_languages = $this->container->get('language_manager')->getLanguages();
     $this->assertEqual(array_diff_key($expected_conf_languages, $conf_languages), array(), 'Configurable languages loaded correctly.');
   }
+
 }

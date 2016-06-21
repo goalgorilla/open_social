@@ -1,3 +1,7 @@
+Drupal 8.1.3, 2016-06-15
+------------------------
+- Fixed security issue. SA-CORE-2016-002.
+
 Drupal 8.1.0, 2016-04-20
 ------------------------
 - Removed Composer-managed vendor from the git repository:
@@ -11,7 +15,7 @@ Drupal 8.1.0, 2016-04-20
     * Added Symfony Polyfill Iconv 1.1.0.
     * Added paragonie/random_compat 1.4.1.
 - Updated vendor libraries:
-    * Updated to Symfony 2.8.4.
+    * Updated to the last 2.x minor version of Symfony: 2.8 (2.8.4).
     * Updated to CKEditor 4.5.8.
     * Updated to Modernizr 3.3.1.
 - Added modules:
@@ -34,12 +38,13 @@ Drupal 8.1.0, 2016-04-20
       reducing the code needed to extend them.
     * Simplified Migrate API by replacing migration configuration entities with
       migration plugins.
-    * Added support for entity types to specify translatable plural labels.
-    * Added a revision log interface and trait for revisionable entity types.
-    * Added key field definitions to ContentEntityBase, reducing code from
-      child classes.
-    * Added generic route providers for add-page and add-form entity routes,
-      reducing the code needed to define an entity type.
+    * Various improvements for defining entity types:
+      * Added support for entity types to specify translatable plural labels.
+      * Added a revision log interface and trait for revisionable entity types.
+      * Added key field definitions to ContentEntityBase, reducing code from
+        child classes.
+      * Added generic route providers for add-page and add-form entity routes,
+        reducing the code needed to define an entity type.
 - Testing improvements:
     * Added support for automated JavaScript testing.
     * Added verbose output for BrowserTestBase.
@@ -414,8 +419,8 @@ Drupal 7.0, 2011-01-05
       are available.
 - OpenID:
     * Added support for Gmail and Google Apps for Domain identifiers. Users can
-      now login with their user@example.com identifier when example.com is powered
-      by Google.
+      now log in with their user@example.com identifier when example.com is
+      powered by Google.
     * Made the OpenID module more pluggable.
 - Added code registry:
     * Using the registry, modules declare their includable files via their .info file,

@@ -36,7 +36,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup entity_api
  */
-class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEntityStorageInterface, DynamicallyFieldableEntityStorageSchemaInterface, EntityBundleListenerInterface  {
+class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEntityStorageInterface, DynamicallyFieldableEntityStorageSchemaInterface, EntityBundleListenerInterface {
 
   /**
    * The mapping of field columns to SQL tables.
@@ -1174,7 +1174,7 @@ class SqlContentEntityStorage extends ContentEntityStorageBase implements SqlEnt
       $vid = $id;
     }
 
-    $original = !empty($entity->original) ? $entity->original: NULL;
+    $original = !empty($entity->original) ? $entity->original : NULL;
 
     // Determine which fields should be actually stored.
     $definitions = $this->entityManager->getFieldDefinitions($entity_type, $bundle);

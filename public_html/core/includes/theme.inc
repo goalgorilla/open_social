@@ -13,8 +13,11 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\StorageException;
+use Drupal\Core\Render\AttachmentsInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ThemeSettings;
@@ -399,6 +402,17 @@ function theme_get_setting($setting_name, $theme = NULL) {
  *   https://www.drupal.org/node/2575065
  */
 function theme_render_and_autoescape($arg) {
+  // If it's a renderable, then it'll be up to the generated render array it
+  // returns to contain the necessary cacheability & attachment metadata. If
+  // it doesn't implement CacheableDependencyInterface or AttachmentsInterface
+  // then there is nothing to do here.
+  if (!($arg instanceof RenderableInterface) && ($arg instanceof CacheableDependencyInterface || $arg instanceof AttachmentsInterface)) {
+    $arg_bubbleable = [];
+    BubbleableMetadata::createFromObject($arg)
+      ->applyTo($arg_bubbleable);
+    \Drupal::service('renderer')->render($arg_bubbleable);
+  }
+
   if ($arg instanceof MarkupInterface) {
     return (string) $arg;
   }
@@ -580,20 +594,29 @@ function template_preprocess_datetime_wrapper(&$variables) {
  *
  * Default template: links.html.twig.
  *
+ * Unfortunately links templates duplicate the "active" class handling of l()
+ * and LinkGenerator::generate() because it needs to be able to set the "active"
+ * class not on the links themselves (<a> tags), but on the list items (<li>
+ * tags) that contain the links. This is necessary for CSS to be able to style
+ * list items differently when the link is active, since CSS does not yet allow
+ * one to style list items only if it contains a certain element with a certain
+ * class. I.e. we cannot yet convert this jQuery selector to a CSS selector:
+ * jQuery('li:has("a.is-active")')
+ *
  * @param array $variables
  *   An associative array containing:
  *   - links: An array of links to be themed. Each link should be itself an
  *     array, with the following elements:
  *     - title: The link text.
- *     - url: (optional) The url object to link to. If omitted, no a tag is
- *       printed out.
+ *     - url: (optional) The \Drupal\Core\Url object to link to. If omitted, no
+ *       anchor tag is printed out.
  *     - attributes: (optional) Attributes for the anchor, or for the <span>
  *       tag used in its place if no 'href' is supplied. If element 'class' is
  *       included, it must be an array of one or more class names.
  *     If the 'href' element is supplied, the entire link array is passed to
  *     l() as its $options parameter.
- *   - attributes: A keyed array of attributes for the UL containing the
- *     list of links.
+ *   - attributes: A keyed array of attributes for the <ul> containing the list
+ *     of links.
  *   - set_active_class: (optional) Whether each link should compare the
  *     route_name + route_parameters or href (path), language and query options
  *     to the current URL, to determine whether the link is "active". If so, an
@@ -622,15 +645,6 @@ function template_preprocess_datetime_wrapper(&$variables) {
  *     http://juicystudio.com/article/screen-readers-display-none.php and
  *     http://www.w3.org/TR/WCAG-TECHS/H42.html for more information.
  *
- * Unfortunately links templates duplicate the "active" class handling of l()
- * and LinkGenerator::generate() because it needs to be able to set the "active"
- * class not on the links themselves ("a" tags), but on the list items ("li"
- * tags) that contain the links. This is necessary for CSS to be able to style
- * list items differently when the link is active, since CSS does not yet allow
- * one to style list items only if it contains a certain element with a certain
- * class. I.e. we cannot yet convert this jQuery selector to a CSS selector:
- *   jQuery('li:has("a.is-active")')
- *
  * @see \Drupal\Core\Utility\LinkGenerator
  * @see \Drupal\Core\Utility\LinkGenerator::generate()
  * @see system_page_attachments()
@@ -642,7 +656,7 @@ function template_preprocess_links(&$variables) {
   if (!empty($links)) {
     // Prepend the heading to the list, if any.
     if (!empty($heading)) {
-      // Convert a string heading into an array, using a H2 tag by default.
+      // Convert a string heading into an array, using a <h2> tag by default.
       if (is_string($heading)) {
         $heading = array('text' => $heading);
       }
@@ -844,28 +858,28 @@ function template_preprocess_image(&$variables) {
  *   - colgroups: An array of column groups. Each element of the array can be
  *     either:
  *     - An array of columns, each of which is an associative array of HTML
- *       attributes applied to the COL element.
- *     - An array of attributes applied to the COLGROUP element, which must
- *       include a "data" attribute. To add attributes to COL elements, set the
- *       "data" attribute with an array of columns, each of which is an
+ *       attributes applied to the <col> element.
+ *     - An array of attributes applied to the <colgroup> element, which must
+ *       include a "data" attribute. To add attributes to <col> elements,
+ *       set the "data" attribute with an array of columns, each of which is an
  *       associative array of HTML attributes.
  *     Here's an example for $colgroup:
  *     @code
  *     $colgroup = array(
- *       // COLGROUP with one COL element.
+ *       // <colgroup> with one <col> element.
  *       array(
  *         array(
- *           'class' => array('funky'), // Attribute for the COL element.
+ *           'class' => array('funky'), // Attribute for the <col> element.
  *         ),
  *       ),
- *       // Colgroup with attributes and inner COL elements.
+ *       // <colgroup> with attributes and inner <col> elements.
  *       array(
  *         'data' => array(
  *           array(
- *             'class' => array('funky'), // Attribute for the COL element.
+ *             'class' => array('funky'), // Attribute for the <col> element.
  *           ),
  *         ),
- *         'class' => array('jazzy'), // Attribute for the COLGROUP element.
+ *         'class' => array('jazzy'), // Attribute for the <colgroup> element.
  *       ),
  *     );
  *     @endcode
@@ -1052,6 +1066,7 @@ function template_preprocess_table(&$variables) {
  *     render properties for all nested child lists.
  *   - title: A title to be prepended to the list.
  *   - list_type: The type of list to return (e.g. "ul", "ol").
+ *   - wrapper_attributes: HTML attributes to be applied to the list wrapper.
  *
  * @see https://www.drupal.org/node/1842756
  */
@@ -1142,7 +1157,7 @@ function template_preprocess_container(&$variables) {
  *   An associative array containing:
  *   - items: An associative array of maintenance tasks.
  *     It's the caller's responsibility to ensure this array's items contain no
- *     dangerous HTML such as SCRIPT tags.
+ *     dangerous HTML such as <script> tags.
  *   - active: The key for the currently active maintenance task.
  */
 function template_preprocess_maintenance_task_list(&$variables) {
@@ -1252,7 +1267,7 @@ function template_preprocess_html(&$variables) {
 
   $variables['html_attributes'] = new Attribute();
 
-  // HTML element attributes.
+  // <html> element attributes.
   $language_interface = \Drupal::languageManager()->getCurrentLanguage();
   $variables['html_attributes']['lang'] = $language_interface->getId();
   $variables['html_attributes']['dir'] = $language_interface->getDirection();
@@ -1264,7 +1279,7 @@ function template_preprocess_html(&$variables) {
   // Add a variable for the root path. This can be used to create a class and
   // theme the page depending on the current path (e.g. node, admin, user) as
   // well as more specific data like path-frontpage.
-  $is_front_page =  \Drupal::service('path.matcher')->isFrontPage();
+  $is_front_page = \Drupal::service('path.matcher')->isFrontPage();
 
   if ($is_front_page) {
     $variables['root_path'] = FALSE;
@@ -1527,7 +1542,7 @@ function template_preprocess_field(&$variables, $hook) {
 
   static $default_attributes;
   if (!isset($default_attributes)) {
-    $default_attributes = new Attribute;
+    $default_attributes = new Attribute();
   }
 
   // Merge attributes when a single-value field has a hidden label.

@@ -67,7 +67,7 @@ function user_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<dt>' . t('Managing account settings') . '</dt>';
       $output .= '<dd>' . t('The <a href=":accounts">Account settings page</a> allows you to manage settings for the displayed name of the Anonymous user role, personal contact forms, user registration settings, and account cancellation settings. On this page you can also manage settings for account personalization, and adapt the text for the email messages that users receive when they register or request a password recovery. You may also set which role is automatically assigned new permissions whenever a module is enabled (the Administrator role).', array(':accounts'  => \Drupal::url('entity.user.admin_form'))) . '</dd>';
       $output .= '<dt>' . t('Managing user account fields') . '</dt>';
-      $output .= '<dd>' . t('Because User accounts are an entity type, you can extend them by adding fields through the Manage fields tab on the <a href=":accounts">Account settings page</a>. By adding fields for e.g., a picture, a biography, or address, you can a create a custom profile for the users of the website. For background information on entities and fields, see the <a href=":field_help">Field module help page</a>.', array(':field_help'=>(\Drupal::moduleHandler()->moduleExists('field')) ? \Drupal::url('help.page', array('name' => 'field')) : '#', ':accounts' => \Drupal::url('entity.user.admin_form'))) . '</dd>';
+      $output .= '<dd>' . t('Because User accounts are an entity type, you can extend them by adding fields through the Manage fields tab on the <a href=":accounts">Account settings page</a>. By adding fields for e.g., a picture, a biography, or address, you can a create a custom profile for the users of the website. For background information on entities and fields, see the <a href=":field_help">Field module help page</a>.', array(':field_help' => (\Drupal::moduleHandler()->moduleExists('field')) ? \Drupal::url('help.page', array('name' => 'field')) : '#', ':accounts' => \Drupal::url('entity.user.admin_form'))) . '</dd>';
       $output .= '</dl>';
       return $output;
 
@@ -261,7 +261,6 @@ function user_load_by_name($name) {
  * @return string|null
  *   A translated violation message if the name is invalid or NULL if the name
  *   is valid.
- *
  */
 function user_validate_name($name) {
   $definition = BaseFieldDefinition::create('string')
@@ -447,12 +446,12 @@ function user_template_preprocess_default_variables_alter(&$variables) {
  *
  * Default template: username.html.twig.
  *
+ * Modules that make any changes to variables like 'name' or 'extra' must ensure
+ * that the final string is safe.
+ *
  * @param array $variables
  *   An associative array containing:
  *   - account: The user account (\Drupal\Core\Session\AccountInterface).
- *
- * Modules that make any changes to variables like 'name' or 'extra' must ensure
- * that the final string is safe.
  */
 function template_preprocess_username(&$variables) {
   $account = $variables['account'] ?: new AnonymousUserSession();
@@ -564,7 +563,7 @@ function user_user_logout($account) {
 }
 
 /**
- * Generates a unique URL for a user to login and reset their password.
+ * Generates a unique URL for a user to log in and reset their password.
  *
  * @param \Drupal\user\UserInterface $account
  *   An object containing the user account.

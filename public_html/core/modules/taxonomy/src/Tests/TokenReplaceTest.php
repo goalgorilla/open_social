@@ -143,5 +143,5 @@ class TokenReplaceTest extends TaxonomyTestBase {
       $this->assertEqual($output, $expected, format_string('Sanitized taxonomy vocabulary token %token replaced.', array('%token' => $input)));
     }
   }
-}
 
+}

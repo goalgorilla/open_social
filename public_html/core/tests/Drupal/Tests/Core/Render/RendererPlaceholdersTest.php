@@ -10,9 +10,12 @@ namespace Drupal\Tests\Core\Render;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Render\RenderContext;
 
 /**
  * @coversDefaultClass \Drupal\Core\Render\Renderer
+ * @covers \Drupal\Core\Render\RenderCache
+ * @covers \Drupal\Core\Render\PlaceholderingRenderCache
  * @group Render
  */
 class RendererPlaceholdersTest extends RendererTestBase {
@@ -782,6 +785,40 @@ class RendererPlaceholdersTest extends RendererTestBase {
   }
 
   /**
+   * @covers ::render
+   * @covers ::doRender
+   * @covers \Drupal\Core\Render\RenderCache::get
+   * @covers \Drupal\Core\Render\PlaceholderingRenderCache::get
+   * @covers \Drupal\Core\Render\PlaceholderingRenderCache::set
+   * @covers ::replacePlaceholders
+   *
+   * @dataProvider providerPlaceholders
+   */
+  public function testPlaceholderingDisabledForPostRequests($test_element, $args) {
+    $this->setUpUnusedCache();
+    $this->setUpRequest('POST');
+
+    $element = $test_element;
+
+    // Render without replacing placeholders, to allow this test to see which
+    // #attached[placeholders] there are, if any.
+    $this->renderer->executeInRenderContext(new RenderContext(), function () use (&$element) {
+      return $this->renderer->render($element);
+    });
+    // Only test cases where the placeholders have been specified manually are
+    // allowed to have placeholders. This means that of the different situations
+    // listed in providerPlaceholders(), only type B can have attached
+    // placeholders. Everything else, whether:
+    // 1. manual placeholdering
+    // 2. automatic placeholdering via already-present cacheability metadata
+    // 3. automatic placeholdering via bubbled cacheability metadata
+    // All three of those should NOT result in placeholders.
+    if (!isset($test_element['#attached']['placeholders'])) {
+      $this->assertFalse(isset($element['#attached']['placeholders']), 'No placeholders created.');
+    }
+  }
+
+  /**
    * Tests a placeholder that adds another placeholder.
    *
    * E.g. when rendering a node in a placeholder the rendering of that node
@@ -998,7 +1035,7 @@ HTML;
     $dom = Html::load($cached_element['#markup']);
     $xpath = new \DOMXPath($dom);
     $parent = $xpath->query('//details/summary[text()="Parent"]')->length;
-    $child =  $xpath->query('//details/div[@class="details-wrapper"]/details/summary[text()="Child"]')->length;
+    $child = $xpath->query('//details/div[@class="details-wrapper"]/details/summary[text()="Child"]')->length;
     $subchild = $xpath->query('//details/div[@class="details-wrapper"]/details/div[@class="details-wrapper" and text()="Subchild"]')->length;
     $this->assertTrue($parent && $child && $subchild, 'The correct data is cached: the stored #markup is not affected by placeholder #lazy_builder callbacks.');
 

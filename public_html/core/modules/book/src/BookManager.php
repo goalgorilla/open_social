@@ -720,7 +720,7 @@ class BookManager implements BookManagerInterface {
    * @param array $flat
    *   A flat array of the menu links from $tree, passed by reference.
    *
-   * @see static::bookTreeGetFlat().
+   * @see static::bookTreeGetFlat()
    */
   protected function flatBookTree(array $tree, array &$flat) {
     foreach ($tree as $data) {
@@ -1045,7 +1045,6 @@ class BookManager implements BookManagerInterface {
    *
    * @return array
    *   Book tree.
-   *
    */
   protected function buildBookOutlineRecursive(&$links, $parents, $depth) {
     $tree = array();

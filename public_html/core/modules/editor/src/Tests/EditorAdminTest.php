@@ -103,7 +103,7 @@ class EditorAdminTest extends WebTestBase {
    * Tests format disabling.
    */
   public function testDisableFormatWithEditor() {
-    $formats = ['monocerus' => 'Monocerus', 'tattoo' =>  'Tattoo'];
+    $formats = ['monocerus' => 'Monocerus', 'tattoo' => 'Tattoo'];
 
     // Install the node module.
     $this->container->get('module_installer')->install(['node']);
@@ -130,7 +130,7 @@ class EditorAdminTest extends WebTestBase {
     $node->body->format = 'monocerus';
     $node->save();
 
-    // Login as an user able to use both formats and edit nodes of created type.
+    // Log in as an user able to use both formats and edit nodes of created type.
     $account = $this->drupalCreateUser($permissions);
     $this->drupalLogin($account);
 
@@ -223,7 +223,7 @@ class EditorAdminTest extends WebTestBase {
     $settings = $editor->getSettings();
     $this->assertIdentical($editor->getEditor(), 'unicorn', 'The text editor is configured correctly.');
     $this->assertIdentical($settings['ponies_too'], $ponies_too, 'The text editor settings are stored correctly.');
-    $this->drupalGet('admin/config/content/formats/manage/'. $format_id);
+    $this->drupalGet('admin/config/content/formats/manage/' . $format_id);
     $select = $this->xpath('//select[@name="editor[editor]"]');
     $select_is_disabled = $this->xpath('//select[@name="editor[editor]" and @disabled="disabled"]');
     $options = $this->xpath('//select[@name="editor[editor]"]/option');

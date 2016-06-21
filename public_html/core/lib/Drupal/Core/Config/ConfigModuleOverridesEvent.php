@@ -99,5 +99,5 @@ class ConfigModuleOverridesEvent extends Event {
     }
     return $this;
   }
-}
 
+}

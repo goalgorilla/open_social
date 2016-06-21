@@ -42,7 +42,7 @@ class ContactSitewideTest extends WebTestBase {
    * Tests configuration options and the site-wide contact form.
    */
   function testSiteWideContact() {
-    // Create and login administrative user.
+    // Create and log in administrative user.
     $admin_user = $this->drupalCreateUser(array(
       'access site-wide contact form',
       'administer contact forms',
@@ -256,7 +256,7 @@ class ContactSitewideTest extends WebTestBase {
 
     // Find out in which row the form we want to add a field to is.
     $i = 0;
-    foreach($this->xpath('//table/tbody/tr') as $row) {
+    foreach ($this->xpath('//table/tbody/tr') as $row) {
       if (((string) $row->td[0]->a) == $label) {
         break;
       }
@@ -296,7 +296,7 @@ class ContactSitewideTest extends WebTestBase {
    * Tests auto-reply on the site-wide contact form.
    */
   function testAutoReply() {
-    // Create and login administrative user.
+    // Create and log in administrative user.
     $admin_user = $this->drupalCreateUser(array('access site-wide contact form', 'administer contact forms', 'administer permissions', 'administer users'));
     $this->drupalLogin($admin_user);
 

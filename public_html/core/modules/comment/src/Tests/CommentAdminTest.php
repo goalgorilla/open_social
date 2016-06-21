@@ -184,7 +184,7 @@ class CommentAdminTest extends CommentTestBase {
       'skip comment approval',
     ));
 
-    // Login as a web user.
+    // Log in as a web user.
     $this->drupalLogin($this->webUser);
     // Post a comment.
     $comment = $this->postComment($this->node, $this->randomMachineName());
@@ -201,7 +201,7 @@ class CommentAdminTest extends CommentTestBase {
     $author_mail = $this->randomMachineName() . '@example.com';
     $anonymous_comment = $this->postComment($this->node, $this->randomMachineName(), $this->randomMachineName(), array('name' => $author_name, 'mail' => $author_mail));
 
-    // Login as an admin user.
+    // Log in as an admin user.
     $this->drupalLogin($this->adminUser);
 
     // Make sure the comment field is not visible when
@@ -214,4 +214,5 @@ class CommentAdminTest extends CommentTestBase {
     $this->drupalGet('comment/' . $anonymous_comment->id() . '/edit');
     $this->assertFieldById('edit-mail', $anonymous_comment->getAuthorEmail());
   }
+
 }

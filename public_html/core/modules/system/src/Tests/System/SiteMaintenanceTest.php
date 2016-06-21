@@ -114,7 +114,7 @@ class SiteMaintenanceTest extends WebTestBase {
     );
     $this->drupalPostForm('user/password', $edit, t('Submit'));
     $mails = $this->drupalGetMails();
-    $start = strpos($mails[0]['body'], 'user/reset/'. $this->user->id());
+    $start = strpos($mails[0]['body'], 'user/reset/' . $this->user->id());
     $path = substr($mails[0]['body'], $start, 66 + strlen($this->user->id()));
 
     // Log in with temporary login link.
@@ -130,4 +130,5 @@ class SiteMaintenanceTest extends WebTestBase {
     $this->drupalGet('');
     $this->assertEqual('Site under maintenance', $this->cssSelect('main h1')[0]);
   }
+
 }

@@ -61,7 +61,12 @@ class Datelist extends DateElementBase {
           unset($input['ampm']);
         }
         $timezone = !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL;
-        $date = DrupalDateTime::createFromArray($input, $timezone);
+        try {
+          $date = DrupalDateTime::createFromArray($input, $timezone);
+        }
+        catch (\Exception $e) {
+          $form_state->setError($element, t('Selected combination of day and month is not valid.'));
+        }
         if ($date instanceof DrupalDateTime && !$date->hasErrors()) {
           static::incrementRound($date, $increment);
         }
@@ -88,7 +93,7 @@ class Datelist extends DateElementBase {
                 break;
 
               case 'hour':
-                $format = in_array('ampm', $element['#date_part_order']) ? 'g': 'G';
+                $format = in_array('ampm', $element['#date_part_order']) ? 'g' : 'G';
                 break;
 
               case 'minute':
@@ -218,7 +223,7 @@ class Datelist extends DateElementBase {
           break;
 
         case 'hour':
-          $format = in_array('ampm', $element['#date_part_order']) ? 'g': 'G';
+          $format = in_array('ampm', $element['#date_part_order']) ? 'g' : 'G';
           $options = $date_helper->hours($format, $element['#required']);
           $title = t('Hour');
           break;
@@ -308,7 +313,7 @@ class Datelist extends DateElementBase {
         $form_state->setError($element, t('The %field date is required.'));
       }
       elseif (!empty($all_empty)) {
-        foreach ($all_empty as $value){
+        foreach ($all_empty as $value) {
           $form_state->setError($element[$value], t('A value must be selected for %part.', array('%part' => $value)));
         }
       }
@@ -318,8 +323,8 @@ class Datelist extends DateElementBase {
         if ($date instanceof DrupalDateTime && !$date->hasErrors()) {
           $form_state->setValueForElement($element, $date);
         }
-        // If the input is invalid, set an error.
-        else {
+        // If the input is invalid and an error doesn't exist, set one.
+        elseif ($form_state->getError($element) === NULL) {
           $form_state->setError($element, t('The %field date is invalid.', array('%field' => !empty($element['#title']) ? $element['#title'] : '')));
         }
       }
@@ -352,7 +357,6 @@ class Datelist extends DateElementBase {
    * Rounds minutes and seconds to nearest requested value.
    *
    * @param $date
-   *
    * @param $increment
    *
    * @return

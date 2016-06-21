@@ -77,7 +77,7 @@ class MenuTest extends MenuWebTestBase {
    * Tests menu functionality using the admin and user interfaces.
    */
   function testMenu() {
-    // Login the user.
+    // Log in the user.
     $this->drupalLogin($this->adminUser);
     $this->items = array();
 
@@ -96,7 +96,7 @@ class MenuTest extends MenuWebTestBase {
     $after_count = $menu_link_manager->countMenuLinks(NULL);
     $this->assertIdentical($before_count, $after_count, 'MenuLinkManager::rebuild() does not add more links');
     // Do standard user tests.
-    // Login the user.
+    // Log in the user.
     $this->drupalLogin($this->authenticatedUser);
     $this->verifyAccess(403);
 
@@ -106,7 +106,7 @@ class MenuTest extends MenuWebTestBase {
       $this->verifyMenuLink($item, $node);
     }
 
-    // Login the administrator.
+    // Log in the administrator.
     $this->drupalLogin($this->adminUser);
 
     // Verify delete link exists and reset link does not exist.
@@ -185,7 +185,7 @@ class MenuTest extends MenuWebTestBase {
     $edit = array(
       'id' => $menu_name,
       'description' => '',
-      'label' =>  $label,
+      'label' => $label,
     );
     $this->drupalPostForm('admin/structure/menu/add', $edit, t('Save'));
 
@@ -571,12 +571,12 @@ class MenuTest extends MenuWebTestBase {
 
     $id = 'block:block=' . $block->id() . ':langcode=en|menu:menu=' . $custom_menu->id() . ':langcode=en';
     // @see \Drupal\contextual\Tests\ContextualDynamicContextTest:assertContextualLinkPlaceHolder()
-    $this->assertRaw('<div data-contextual-id="'. $id . '"></div>', format_string('Contextual link placeholder with id @id exists.', array('@id' => $id)));
+    $this->assertRaw('<div data-contextual-id="' . $id . '"></div>', format_string('Contextual link placeholder with id @id exists.', array('@id' => $id)));
 
     // Get server-rendered contextual links.
     // @see \Drupal\contextual\Tests\ContextualDynamicContextTest:renderContextualLinks()
     $post = array('ids[0]' => $id);
-    $response =  $this->drupalPost('contextual/render', 'application/json', $post, array('query' => array('destination' => 'test-page')));
+    $response = $this->drupalPost('contextual/render', 'application/json', $post, array('query' => array('destination' => 'test-page')));
     $this->assertResponse(200);
     $json = Json::decode($response);
     $this->assertIdentical($json[$id], '<ul class="contextual-links"><li class="block-configure"><a href="' . base_path() . 'admin/structure/block/manage/' . $block->id() . '">Configure block</a></li><li class="entitymenuedit-form"><a href="' . base_path() . 'admin/structure/menu/manage/' . $custom_menu->id() . '">Edit menu</a></li></ul>');
@@ -613,7 +613,7 @@ class MenuTest extends MenuWebTestBase {
       'description[0][value]' => '',
       'enabled[value]' => 1,
       'expanded[value]' => $expanded,
-      'menu_parent' =>  $menu_name . ':' . $parent,
+      'menu_parent' => $menu_name . ':' . $parent,
       'weight[0][value]' => $weight,
     );
 
@@ -649,7 +649,7 @@ class MenuTest extends MenuWebTestBase {
    * Tests that parent options are limited by depth when adding menu links.
    */
   function checkInvalidParentMenuLinks() {
-    $last_link = null;
+    $last_link = NULL;
     $created_links = array();
 
     // Get the max depth of the tree.
@@ -870,7 +870,7 @@ class MenuTest extends MenuWebTestBase {
     $this->assertResponse(200);
 
     // Do standard user tests.
-    // Login the user.
+    // Log in the user.
     $this->drupalLogin($this->authenticatedUser);
     $this->drupalGetAjax('admin/structure/menu/parents');
     $this->assertResponse(403);

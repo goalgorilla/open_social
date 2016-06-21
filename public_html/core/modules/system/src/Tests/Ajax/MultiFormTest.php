@@ -43,7 +43,7 @@ class MultiFormTest extends AjaxTestBase {
       ->setComponent($field_name, array('type' => 'text_textfield'))
       ->save();
 
-    // Login a user who can create 'page' nodes.
+    // Log in a user who can create 'page' nodes.
     $this->drupalLogin ($this->drupalCreateUser(array('create page content')));
   }
 
@@ -88,10 +88,11 @@ class MultiFormTest extends AjaxTestBase {
         $form = $this->xpath($form_xpath)[$offset];
         $field = $form->xpath('.' . $field_xpath);
 
-        $this->assertEqual(count($field[0]->xpath('.' . $field_items_xpath_suffix)), $i+2, 'Found the correct number of field items after an AJAX submission.');
+        $this->assertEqual(count($field[0]->xpath('.' . $field_items_xpath_suffix)), $i + 2, 'Found the correct number of field items after an AJAX submission.');
         $this->assertFieldsByValue($field[0]->xpath('.' . $button_xpath_suffix), NULL, 'Found the "add more" button after an AJAX submission.');
         $this->assertNoDuplicateIds(t('Updated page contains unique IDs'), 'Other');
       }
     }
   }
+
 }

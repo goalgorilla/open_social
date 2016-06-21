@@ -39,7 +39,7 @@ interface ContentLanguageSettingsInterface extends ConfigEntityInterface {
    * @param string $default_langcode
    *   The default language code.
    *
-   * @return $this;
+   * @return $this
    */
   public function setDefaultLangcode($default_langcode);
 
@@ -76,4 +76,3 @@ interface ContentLanguageSettingsInterface extends ConfigEntityInterface {
   public function isDefaultConfiguration();
 
 }
-

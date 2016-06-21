@@ -15,7 +15,7 @@ use Drupal\Core\Render\Element;
  * @code
  * $form['expiration'] = array(
  *   '#type' => 'date',
- *   '#title' => t('Content expiration'),
+ *   '#title' => $this->t('Content expiration'),
  *   '#default_value' => array('year' => 2020, 'month' => 2, 'day' => 15,)
  * );
  * @endcode
@@ -76,11 +76,9 @@ class Date extends FormElement {
    * @param array $element
    *   An associative array containing the properties of the element.
    *   Properties used: #title, #value, #options, #description, #required,
-   *   #attributes, #id, #name, #type, #min, #max, #step, #value, #size.
-   *
-   * Note: The input "name" attribute needs to be sanitized before output, which
-   *       is currently done by initializing Drupal\Core\Template\Attribute with
-   *       all the attributes.
+   *   #attributes, #id, #name, #type, #min, #max, #step, #value, #size. The
+   *   #name property will be sanitized before output. This is currently done by
+   *   initializing Drupal\Core\Template\Attribute with all the attributes.
    *
    * @return array
    *   The $element with prepared variables ready for #theme 'input__date'.

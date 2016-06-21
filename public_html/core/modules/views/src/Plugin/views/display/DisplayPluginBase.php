@@ -30,7 +30,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
    *
    * @var \Drupal\views\ViewExecutable
    */
-  var $view = NULL;
+  public $view = NULL;
 
   /**
    * An array of instantiated handlers used in this display.
@@ -1524,7 +1524,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
         );
 
         $access = $this->getOption('access');
-        $form['access']['type'] =  array(
+        $form['access']['type'] = array(
           '#title' => $this->t('Access'),
           '#title_display' => 'invisible',
           '#type' => 'radios',
@@ -1561,7 +1561,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
         );
 
         $cache = $this->getOption('cache');
-        $form['cache']['type'] =  array(
+        $form['cache']['type'] = array(
           '#title' => $this->t('Caching'),
           '#title_display' => 'invisible',
           '#type' => 'radios',
@@ -1782,7 +1782,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
         );
 
         $exposed_form = $this->getOption('exposed_form');
-        $form['exposed_form']['type'] =  array(
+        $form['exposed_form']['type'] = array(
           '#title' => $this->t('Exposed form'),
           '#title_display' => 'invisible',
           '#type' => 'radios',
@@ -1818,7 +1818,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
         );
 
         $pager = $this->getOption('pager');
-        $form['pager']['type'] =  array(
+        $form['pager']['type'] = array(
           '#title' => $this->t('Pager'),
           '#title_display' => 'invisible',
           '#type' => 'radios',
@@ -2216,6 +2216,10 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
     $return = array();
     foreach ($this->getHandlers($area) as $key => $area_handler) {
       if ($area_render = $area_handler->render($empty)) {
+        if (isset($area_handler->position)) {
+          // Fix weight of area.
+          $area_render['#weight'] = $area_handler->position;
+        }
         $return[$key] = $area_render;
       }
     }
@@ -2372,7 +2376,7 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
       $build['#cache']['keys'][] = implode(',', $args);
     }
 
-    $build['#cache_properties'] =  ['#view_id', '#view_display_show_admin_links', '#view_display_plugin_id'];
+    $build['#cache_properties'] = ['#view_id', '#view_display_show_admin_links', '#view_display_plugin_id'];
 
     return $build;
 
@@ -2666,14 +2670,12 @@ abstract class DisplayPluginBase extends PluginBase implements DisplayPluginInte
    *   TRUE if the base table is of a translatable entity type, FALSE otherwise.
    */
   protected function isBaseTableTranslatable() {
-    $view_base_table = $this->view->storage->get('base_table');
-    $views_data = Views::viewsData()->get($view_base_table);
-    if (!empty($views_data['table']['entity type'])) {
-      $entity_type_id = $views_data['table']['entity type'];
-      return \Drupal::entityManager()->getDefinition($entity_type_id)->isTranslatable();
+    if ($entity_type = $this->view->getBaseEntityType()) {
+      return $entity_type->isTranslatable();
     }
     return FALSE;
   }
+
 }
 
 /**

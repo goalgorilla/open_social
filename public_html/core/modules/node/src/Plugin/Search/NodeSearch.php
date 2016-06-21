@@ -151,6 +151,8 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
    *   A config object for 'search.settings'.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The $account object to use for checking for access to advanced search.
    */
@@ -525,7 +527,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
     $used_advanced = !empty($parameters[self::ADVANCED_FORM]);
     if ($used_advanced) {
       $f = isset($parameters['f']) ? (array) $parameters['f'] : array();
-      $defaults =  $this->parseAdvancedDefaults($f, $keys);
+      $defaults = $this->parseAdvancedDefaults($f, $keys);
     }
     else {
       $defaults = array('keys' => $keys);
@@ -621,7 +623,7 @@ class NodeSearch extends ConfigurableSearchPluginBase implements AccessibleInter
     }
   }
 
-  /*
+  /**
    * {@inheritdoc}
    */
   public function buildSearchUrlQuery(FormStateInterface $form_state) {
