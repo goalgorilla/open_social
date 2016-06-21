@@ -17,19 +17,19 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
 class PostGroupStream extends FilterPluginBase {
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function adminSummary() {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function operatorForm(&$form, FormStateInterface $form_state) {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function canExpose() {
     return FALSE;

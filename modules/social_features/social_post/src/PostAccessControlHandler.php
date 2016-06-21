@@ -46,8 +46,6 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
             }
             return AccessResult::forbidden();
 
-          break;
-
           // Public.
           case "1":
             if (AccessResult::allowedIfHasPermission($account, 'view public posts')->isAllowed()) {
@@ -89,7 +87,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
