@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Form\PostSettingsForm.
- */
-
 namespace Drupal\social_post\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -18,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup social_post
  */
 class PostSettingsForm extends FormBase {
+
   /**
    * Returns a unique string identifying the form.
    *
@@ -39,7 +35,6 @@ class PostSettingsForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Empty implementation of the abstract submit class.
   }
-
 
   /**
    * Defines the settings form for Post entities.

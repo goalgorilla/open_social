@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_search\Form\SearchUsersForm.
- */
-
 namespace Drupal\social_search\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -51,10 +46,11 @@ class SearchUsersForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if(empty($form_state->getValue('search_input_users'))){
+    if (empty($form_state->getValue('search_input_users'))) {
       // Redirect to the search users page with empty search values.
       $search_content_page = Url::fromRoute('view.search_users.page_no_value');
-    } else {
+    }
+    else {
       // Redirect to the search content page with filters in the GET parameters.
       $search_input = $form_state->getValue('search_input_users');
       $search_content_page = Url::fromRoute('view.search_users.page', array('keys' => $search_input));

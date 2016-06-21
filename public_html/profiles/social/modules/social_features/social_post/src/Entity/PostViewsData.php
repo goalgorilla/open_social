@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Entity\Post.
- */
-
 namespace Drupal\social_post\Entity;
 
 use Drupal\views\EntityViewsData;
@@ -14,6 +9,7 @@ use Drupal\views\EntityViewsDataInterface;
  * Provides Views data for Post entities.
  */
 class PostViewsData extends EntityViewsData implements EntityViewsDataInterface {
+
   /**
    * {@inheritdoc}
    */

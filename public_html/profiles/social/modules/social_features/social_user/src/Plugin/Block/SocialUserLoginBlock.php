@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Plugin\Block\SocialUserLoginBlock.
- */
-
 namespace Drupal\social_user\Plugin\Block;
 
 use Drupal\user\Plugin\Block\UserLoginBlock;
@@ -19,7 +14,6 @@ use Drupal\Core\Url;
  * )
  */
 class SocialUserLoginBlock extends UserLoginBlock {
-
 
   /**
    * {@inheritdoc}
