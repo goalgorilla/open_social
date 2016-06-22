@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_user\Controller\SocialUserController.
- */
-
 namespace Drupal\social_user\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class SocialUserController.
@@ -19,7 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class SocialUserController extends ControllerBase {
 
   /**
-   * otherUserPage.
+   * OtherUserPage.
    *
    * @return RedirectResponse
    *   Return Redirect to the user account.

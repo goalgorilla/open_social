@@ -1,16 +1,16 @@
 <?php
 
-use Drupal\Core\Url;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\profile\Entity\Profile;
-use Drupal\profile\Entity\ProfileType;
-use Drupal\user\UserInterface;
-
 /**
  * @file
  * The Social profile module.
  */
+
+use Drupal\user\Entity\User;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -24,6 +24,7 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       // @TODO: remove this when rule for .form-tel elements will be added.
       $element['value']['#attributes']['class'][] = 'form-text';
       break;
+
     case 'field_profile_address':
       // @TODO: remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
@@ -34,7 +35,7 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Remove the save and set default submit button on profile creation.
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
@@ -48,7 +49,7 @@ function social_profile_form_profile_profile_add_form_alter(&$form, \Drupal\Core
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_form_profile_profile_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Remove the save and set default submit button on profile edit.
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
@@ -60,17 +61,18 @@ function social_profile_form_profile_profile_edit_form_alter(&$form, \Drupal\Cor
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *
  * Form submit for profile_profile_edit_form and profile_profile_add_form.
  *
+ * @param array $form
+ *   The profile edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state interface.
  */
 function _social_profile_profile_edit_form_submit($form, FormStateInterface $form_state) {
   // Set redirect to the profile overview page when a user saves their profile.
   $form_state->setRedirect(
     'view.user_information.user_information',
-    array('user' =>\Drupal::currentUser()->id(), array())
+    array('user' => \Drupal::currentUser()->id(), array())
   );
 }
 
@@ -120,7 +122,7 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
  */
 function social_profile_preprocess_profile(&$variables) {
   $profile = $variables['profile'];
-  $user = \Drupal\user\Entity\User::load($profile->getOwnerId());
+  $user = User::load($profile->getOwnerId());
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
@@ -129,7 +131,7 @@ function social_profile_preprocess_profile(&$variables) {
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
   $variables['user_mail'] = $user->getEmail();
 
-  // Edit profile URL
+  // Edit profile URL.
   $account = \Drupal::currentUser();
   if ($profile->access('edit', $account)) {
     $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');

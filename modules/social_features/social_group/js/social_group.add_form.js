@@ -1,3 +1,7 @@
+/**
+ * @file
+ */
+
 (function ($) {
 
   /**
@@ -11,7 +15,7 @@
 
           var itHasLengthAttribute = $(this).attr('length') !== undefined;
 
-          if(itHasLengthAttribute){
+          if (itHasLengthAttribute) {
             $(this).on('input', updateCounter);
             $(this).on('focus', updateCounter);
             $(this).on('blur', removeCounterElement);
@@ -28,7 +32,7 @@
         isValidLength     = actualLength <= maxLength;
 
         $(this).parent().find('span[class="character-counter"]')
-                        .html( actualLength + '/' + maxLength);
+                        .html(actualLength + '/' + maxLength);
 
         addInputStyle(isValidLength, $(this));
       }
@@ -54,7 +58,7 @@
           $input.parent().removeClass('has-error');
           $input.closest('form').find('.btn-primary').prop('disabled', false);
         }
-        else if(!isValidLength && !inputHasInvalidClass){
+        else if (!isValidLength && !inputHasInvalidClass) {
           $input.parent().removeClass('has-success');
           $input.parent().addClass('has-error');
           $input.closest('form').find('.btn-primary').attr('disabled', true);

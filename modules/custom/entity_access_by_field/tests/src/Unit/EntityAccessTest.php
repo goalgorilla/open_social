@@ -2,13 +2,10 @@
 
 namespace Drupal\entity_access_by_field\Tests;
 
-use Drupal\Core\Cache\Context\CacheContextsManager;
-use Drupal\Core\DependencyInjection\Container;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\entity_access_by_field\EntityAccessHelper;
-
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
@@ -70,8 +67,8 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId  . ':' . $this->fieldValue . ' content', $account)
-    ->willReturn(FALSE);
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+      ->willReturn(FALSE);
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
@@ -112,7 +109,7 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId  . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
       ->willReturn(TRUE);
     $account = $account->reveal();
 

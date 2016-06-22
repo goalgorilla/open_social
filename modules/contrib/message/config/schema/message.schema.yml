@@ -1,0 +1,96 @@
+# Schema for the configuration files of the message module.
+
+message.settings:
+  type: config_object
+  label: 'Field settings'
+  mapping:
+    delete_cron_limit:
+      type: integer
+      label: 'Number of entities we should iterate each cron task'
+    delete_on_entity_delete:
+      type: sequence
+      sequence:
+        - type: string
+    purge_enable:
+      type: boolean
+    purge_days:
+      type: integer
+    purge_quota:
+      type: integer
+
+message.type.*:
+  type: config_entity
+  label: 'Message type'
+  mapping:
+    type:
+      type: string
+      label: 'Machine-readable name'
+    label:
+      type: label
+      label: 'Label'
+    description:
+      type: text
+      label: 'Description'
+    text:
+      type: sequence
+      label: 'Message Text'
+      sequence:
+        - type: text
+          label: 'Text'
+    settings:
+      type: mapping
+      label: 'Settings'
+      mapping:
+        'token options':
+          type: mapping
+          label: 'Token options'
+          mapping:
+            clear:
+              type: boolean
+              label: 'Clear empty tokens'
+            token replace:
+              type: boolean
+              label: 'Replace tokens'
+        purge:
+          type: mapping
+          label: 'Purge'
+          mapping:
+            override:
+              type: boolean
+              label: 'Override global purge setting'
+            enabled:
+              type: boolean
+              label: 'Purge messages'
+            quota:
+              type: integer
+              label: 'Messages quota'
+            days:
+              type: integer
+              label: 'Purge messages older than'
+
+action.configuration.message_delete_action:
+  type: action_configuration_default
+  label: 'Delete message configuration'
+
+message.message:
+  type: mapping
+  label: 'Message settings'
+  mapping:
+    purge_enable:
+      type: boolean
+      label: 'Purge messages'
+    purge_quota:
+      type: integer
+      label: 'Messages quota'
+    purge_days:
+      type: integer
+      label: 'Purge messages older than'
+    delete_on_entity_delete:
+      type: sequence
+      label: 'Auto delete messages referencing the following entities'
+      sequence:
+        - type: string
+          label: 'Entity type'
+    delete_cron_limit:
+      type: integer
+      label: 'The maximal amount of messages to purge per cron run.'

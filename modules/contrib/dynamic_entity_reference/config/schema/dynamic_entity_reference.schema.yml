@@ -1,0 +1,86 @@
+# Schema for the configuration files of the Dynamic Entity Reference module.
+
+field.storage_settings.dynamic_entity_reference:
+  type: mapping
+  label: 'Dynamic entity reference field storage settings'
+  mapping:
+    target_type:
+      type: string
+      label: 'Type of item to reference'
+    exclude_entity_types:
+      type: boolean
+      label: 'Exclude the selected items'
+    entity_type_ids:
+      type: sequence
+      label: 'Entity Type IDs'
+      sequence:
+        type: string
+        label: 'Entity Type ID'
+
+field.field_settings.dynamic_entity_reference:
+  type: sequence
+  label: 'Dynamic entity reference field settings'
+  sequence:
+    type: mapping
+    label: 'Entity Type ID'
+    mapping:
+      handler:
+        type: string
+        label: 'Reference method'
+      handler_settings:
+        type: entity_reference_selection.[%parent.handler]
+        label: 'Dynamic entity reference selection plugin settings'
+
+field.value.dynamic_entity_reference:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    target_id:
+      type: string
+      label: 'Entity ID'
+    target_uuid:
+      type: string
+      label: 'Target UUID'
+    target_type:
+      type: string
+      label: 'Type of item to reference'
+
+field.formatter.settings.dynamic_entity_reference_entity_view:
+  type: mapping
+  label: 'Dynamic entity reference rendered entity display format settings'
+  mapping:
+    view_mode:
+      type: string
+      label: 'View mode'
+    link:
+      type: boolean
+      label: 'Show links'
+
+field.formatter.settings.dynamic_entity_reference_entity_id:
+  type: mapping
+  label: 'Dynamic entity reference entity ID display format settings'
+
+field.formatter.settings.dynamic_entity_reference_label:
+  type: mapping
+  label: 'Dynamic entity reference label display format settings'
+  mapping:
+    link:
+      type: boolean
+      label: 'Link label to the referenced entity'
+
+field.widget.settings.dynamic_entity_reference_default:
+  type: mapping
+  label: 'Dynamic entity reference autocomplete display format settings'
+  mapping:
+    match_operator:
+      type: string
+      label: 'Autocomplete matching'
+    size:
+      type: integer
+      label: 'Size of textfield'
+    autocomplete_type:
+      type: string
+      label: 'Autocomplete type'
+    placeholder:
+      type: label
+      label: 'Placeholder'
