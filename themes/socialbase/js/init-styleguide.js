@@ -2,6 +2,8 @@
 (function($){
   $(function(){
 
+    var window_width = $(window).width();
+
     // Github Latest Commit
     if ($('.repo-link').length) { // Checks if widget div exists (Index only)
       $.ajax({
