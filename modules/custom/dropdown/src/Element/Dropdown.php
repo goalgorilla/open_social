@@ -1,9 +1,5 @@
 <?php
-/**
- * @file
- * Contains \Drupal\dropdown\Element\Dropdown.
- */
- 
+
 namespace Drupal\dropdown\Element;
 
 use Drupal\Core\Render\Element\FormElement;
@@ -50,7 +46,6 @@ class Dropdown extends FormElement {
    * Expands a radios element into individual radio elements.
    */
   public static function processDropdown(&$element, FormStateInterface $form_state, &$complete_form) {
-
     if (count($element['#options']) > 0) {
       $weight = 0;
       foreach ($element['#options'] as $key => $option) {
@@ -71,11 +66,11 @@ class Dropdown extends FormElement {
           '#type' => 'radio',
           '#title' => $label,
           '#description' => $description,
-          // The key is sanitized in Drupal\Core\Template\Attribute during output
-          // from the theme function.
+          // The key is sanitized in Drupal\Core\Template\Attribute during
+          // output from the theme function.
           '#return_value' => $value,
-          // Use default or FALSE. A value of FALSE means that the radio button is
-          // not 'checked'.
+          // Use default or FALSE. A value of FALSE means that the radio button
+          // is not 'checked'.
           '#default_value' => isset($element['#default_value']) ? $element['#default_value'] : FALSE,
           '#attributes' => $element['#attributes'],
           '#parents' => $element['#parents'],

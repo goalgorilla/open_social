@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Plugin\Block\GroupAddTopicBlock.
- */
-
 namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -21,7 +16,6 @@ use Drupal\Core\Link;
  */
 class GroupAddTopicBlock extends BlockBase {
 
-
   /**
    * {@inheritdoc}
    */
@@ -30,7 +24,7 @@ class GroupAddTopicBlock extends BlockBase {
 
     $group_id = \Drupal::routeMatch()->getParameter('group');
 
-    if(!empty($group_id)){
+    if (!empty($group_id)) {
       $url = Url::fromUserInput("/group/$group_id/node/create/topic");
 
       $link_options = array(

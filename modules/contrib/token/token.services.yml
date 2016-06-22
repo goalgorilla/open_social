@@ -1,0 +1,12 @@
+services:
+  token.entity_mapper:
+    class: Drupal\token\TokenEntityMapper
+    arguments: ['@entity_type.manager', '@module_handler']
+  token.tree_builder:
+    class: Drupal\token\TreeBuilder
+    arguments: ['@token', '@token.entity_mapper', '@cache.data', '@language_manager']
+  token.route_subscriber:
+    class: Drupal\token\Routing\RouteSubscriber
+    arguments: ['@entity_type.manager', '@module_handler']
+    tags:
+      - { name: event_subscriber }

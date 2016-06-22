@@ -1,4 +1,4 @@
-@wip @api @post @stability @perfect @critical @DS-677 @DS-642
+@api @post @stability @perfect @critical @DS-677 @DS-642
 Feature: Create Post on Group
   Benefit: In order to share knowledge with people in group
   Role: As a LU
@@ -21,4 +21,4 @@ Feature: Create Post on Group
 
           # Scenario: See post on profile stream
      When I am on "/user"
-      And I should not see "This is a community post in a group."
+      And I should see "This is a community post in a group."

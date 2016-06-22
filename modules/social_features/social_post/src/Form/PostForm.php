@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Form\PostForm.
- */
-
 namespace Drupal\social_post\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -18,6 +13,9 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class PostForm extends ContentEntityForm {
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId() {
     return 'social_post_entity_form';
   }
@@ -29,6 +27,10 @@ class PostForm extends ContentEntityForm {
     // Retrieve the form display before it is overwritten in the parent.
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
+    $form['#attached']['library'][] = 'social_post/visibility-settings';
+    // Default is create/add mode.
+    $form['field_visibility']['widget'][0]['#edit_mode'] = FALSE;
+
     if (isset($display)) {
       $this->setFormDisplay($display, $form_state);
     }
@@ -44,7 +46,7 @@ class PostForm extends ContentEntityForm {
       if ($display_id === 'post.post.default') {
         // Set default value to community.
         // Remove recipient option.
-        // Only needed for 'private' permissions which we currently do not support.
+        // Only needed for 'private' permissions which we do not support yet.
         unset($form['field_visibility']['widget'][0]['#options'][0]);
         $form['field_visibility']['widget'][0]['#default_value'] = "2";
       }
@@ -54,6 +56,31 @@ class PostForm extends ContentEntityForm {
         unset($form['field_visibility']['widget'][0]['#options'][1]);
         unset($form['field_visibility']['widget'][0]['#options'][2]);
       }
+    }
+
+    // Do some alterations on this form.
+    if ($this->operation == 'edit') {
+      /** @var \Drupal\social_post\Entity\Post $post */
+      $post = $this->entity;
+      $form['#post_id'] = $post->id();
+
+      // In edit mode we don't want people to actually change visibility setting
+      // of the post.
+      if ($current_value = $this->entity->get('field_visibility')->value) {
+        // We set the default value.
+        $form['field_visibility']['widget'][0]['#default_value'] = $current_value;
+      }
+
+      // Unset the other options, because we do not want to be able to change
+      // it but we do want to use the button for informing the user.
+      foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
+        if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value']) {
+          unset($form['field_visibility']['widget'][0]['#options'][$key]);
+        }
+      }
+
+      // Set button to disabled in our template, users have no option anyway.
+      $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
     }
 
     return $form;

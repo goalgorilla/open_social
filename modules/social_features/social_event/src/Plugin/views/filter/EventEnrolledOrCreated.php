@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Plugin\views\filter\EventEnrolledOrCreated.
- */
-
 namespace Drupal\social_event\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -20,12 +15,21 @@ use Drupal\views\Views;
  */
 class EventEnrolledOrCreated extends FilterPluginBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function adminSummary() {
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function operatorForm(&$form, FormStateInterface $form_state) {
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function canExpose() {
     return FALSE;
   }
@@ -61,7 +65,6 @@ class EventEnrolledOrCreated extends FilterPluginBase {
     );
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('event_enrollment', $join, 'node_field_data');
-
 
     $configuration = array(
       'table' => 'event_enrollment__field_enrollment_status',

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Plugin\Block\GroupAddBlock.
- */
-
 namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
@@ -20,7 +15,6 @@ use Drupal\Core\Link;
  * )
  */
 class GroupAddBlock extends BlockBase {
-
 
   /**
    * {@inheritdoc}

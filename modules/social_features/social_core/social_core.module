@@ -4,7 +4,11 @@
  * @file
  * The Social core module.
  */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_theme().
@@ -24,6 +28,7 @@ function social_core_theme() {
         'event_enrollment' => NULL,
         'visibility_icon' => NULL,
         'visibility_label' => NULL,
+        'hero_styled_image_url' => NULL,
       ),
     ),
   );
@@ -41,7 +46,7 @@ function social_core_theme() {
  *   - created_date: Timestamp
  *   - created_date_formatted: Formatted date as a string
  *   - topic_type: List of topic types as an array or NULL
- *   - hero_node: Rendered hero display of the current active node or NULL
+ *   - hero_node: Rendered hero display of the current active node or NULL.
  */
 function template_preprocess_page_hero_data(&$variables) {
   // @todo create $variables['author_formatted']?
@@ -65,7 +70,7 @@ function template_preprocess_page_hero_data(&$variables) {
           ->getForm('Drupal\social_event\Form\EnrollActionForm');
 
         $render_array = array(
-          'enroll_action_form' => $form
+          'enroll_action_form' => $form,
         );
 
         $variables['event_enrollment'] = $render_array;
@@ -73,26 +78,36 @@ function template_preprocess_page_hero_data(&$variables) {
     }
 
     // Add node edit url for management.
-    if ($node instanceof Drupal\node\Entity\Node) {
+    if ($node instanceof Node) {
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
       }
     }
 
-    // Content visibility
-    if((isset($node->field_content_visibility)) && !$account->isAnonymous()){
-      $content_visibility = reset($node->field_content_visibility->getValue());
+    // Content visibility.
+    if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+      $node_visibility_value = $node->field_content_visibility->getValue();
+      $content_visibility = reset($node_visibility_value);
       switch ($content_visibility['value']) {
         case 'community':
           $variables['visibility_icon'] = 'group';
           $variables['visibility_label'] = t('community');
           break;
+
         case 'public':
           $variables['visibility_icon'] = 'public';
           $variables['visibility_label'] = t('public');
           break;
       }
     }
+
+    // Add the hero styled image.
+    $image_field = "field_{$node->getType()}_image";
+    if (!empty($node->{$image_field}->entity)) {
+      $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+        ->buildUrl($node->{$image_field}->entity->getFileUri());
+    }
+
   }
 
   if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
@@ -102,7 +117,7 @@ function template_preprocess_page_hero_data(&$variables) {
   if (isset($variables['topic_type'])) {
     $topic_type_entities = $variables['topic_type']->referencedEntities();
     if (count($topic_type_entities) === 1) {
-      foreach($topic_type_entities as $topic) {
+      foreach ($topic_type_entities as $topic) {
         $variables['topic_type'] = $topic->link();
       }
     }
@@ -117,7 +132,7 @@ function template_preprocess_page_hero_data(&$variables) {
  *
  * For Site information Site details form.
  */
-function social_core_form_system_site_information_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Hide site slogan field and make it disabled as well whenever the user
   // is able to fill out the textfield.
   if (!empty($form['site_information']['site_slogan'])) {
@@ -133,4 +148,38 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   // Remove the comment links.
   unset($links['comment__field_topic_comments']);
   unset($links['comment__field_event_comments']);
+
+  if (isset($context['view_mode']) && $context['view_mode'] === 'activity') {
+    // Add a readmore link.
+    $node_title_stripped = strip_tags($entity->label());
+    $links['node']['#links']['node-readmore'] = array(
+      'title' => t('Read more<span class="visually-hidden"> about @title</span>', array(
+        '@title' => $node_title_stripped,
+      )),
+      'url' => $entity->urlInfo(),
+      'language' => $entity->language(),
+      'attributes' => array(
+        'rel' => 'tag',
+        'title' => $node_title_stripped,
+      ),
+    );
+  }
+}
+
+/**
+ * Prepares variables for comment field templates.
+ *
+ * Default template: field--comment.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing render arrays for the list of
+ *     comments, and the comment form. Array keys: comments, comment_form.
+ */
+function social_core_preprocess_field(&$variables) {
+  $element = $variables['element'];
+  if ($element['#formatter'] == 'comment_node') {
+    // Create separate variables for the more_link.
+    $variables['more_link'] = $element[0]['more_link'];
+  }
 }

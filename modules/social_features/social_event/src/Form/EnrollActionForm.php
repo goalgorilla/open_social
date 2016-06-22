@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Form\EnrollActionForm.
- */
-
 namespace Drupal\social_event\Form;
 
 use Drupal\Core\Cache\Cache;
@@ -55,12 +50,18 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     return 'enroll_action_form';
   }
 
-  function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage) {
+  /**
+   * Constructs an Enroll Action Form.
+   */
+  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_storage;
     $this->userStorage = $user_storage;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
@@ -114,7 +115,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
-      if ($current_enrollment_status ==='1') {
+      if ($current_enrollment_status === '1') {
         $submit_text = $this->t('Enrolled');
 
         $to_enroll_status = '0';
@@ -125,7 +126,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#type' => 'hidden',
       '#value' => $to_enroll_status,
     );
-
 
     $form['enroll_for_this_event'] = array(
       '#type' => 'submit',
@@ -138,7 +138,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_for_this_event']['#attributes'] = array(
-        'class' => array('btn', 'btn-accent', 'btn-lg btn-raised', 'dropdown-toggle'),
+        'class' => array(
+          'btn',
+          'btn-accent',
+          'btn-lg btn-raised',
+          'dropdown-toggle',
+        ),
         'autocomplete' => 'off',
         'data-toggle' => 'dropdown',
         'aria-haspopup' => 'true',
@@ -150,7 +155,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Add markup for the button so it will be a dropdown.
       $form['feedback_user_has_enrolled'] = array(
-        '#markup' => '<ul class="dropdown-menu"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text .  ' </a></li></ul>',
+        '#markup' => '<ul class="dropdown-menu"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
       );
 
       $form['#attached']['library'][] = 'social_event/form_submit';
@@ -168,15 +173,16 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     $nid = $form_state->getValue('event');
 
-
     // Redirect anonymous use to login page before enrolling to an event.
     if ($uid === 0) {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->getInternalPath();
       $form_state->setRedirect('user.login',
         array(),
-        array('query' => array(
-          'destination' => $node_url,
-          ))
+        array(
+          'query' => array(
+            'destination' => $node_url,
+          ),
+        )
         );
       drupal_set_message('Please log in or create a new account so that you can enroll to the event');
       return;
@@ -198,11 +204,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
-      if ($to_enroll_status === '0' && $current_enrollment_status ==='1') {
+      if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
         $enrollment->field_enrollment_status->value = '0';
         $enrollment->save();
       }
-      elseif ($to_enroll_status === '1' && $current_enrollment_status ==='0') {
+      elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->save();
       }
@@ -213,7 +219,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         'user_id' => $uid,
         'field_event' => $nid,
         'field_enrollment_status' => '1',
-        'field_account' => $uid
+        'field_account' => $uid,
       ]);
       $enrollment->save();
     }
@@ -224,7 +230,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * Returns an array of Group Objects.
    *
-   * @return array $groups
+   * @return array
+   *   Array of group entities.
    */
   public function getGroups($node) {
 
@@ -234,9 +241,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /** @var \Drupal\group\Entity\Group $group*/
+        /* @var \Drupal\group\Entity\Group $group*/
         $groups[] = $group;
       }
     }

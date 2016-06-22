@@ -1,0 +1,91 @@
+<?php
+/**
+ * @file
+ * Holds hook implementation for the Message example module.
+ */
+
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\node\Entity\Node;
+use Drupal\comment\Entity\Comment;
+use Drupal\user\Entity\User;
+use Drupal\message\Entity\Message;
+
+/**
+ * Implements hook_node_insert().
+ */
+function message_example_node_insert(Node $node) {
+  $message = Message::create(['type' => 'example_create_node', 'uid' => $node->get('uid')]);
+  $message->set('field_node_reference', $node);
+  $message->set('field_published', $node->isPublished());
+  $message->save();
+}
+
+/**
+ * Implements hook_comment_insert().
+ */
+function message_example_comment_insert(Comment $comment) {
+  $message = Message::create(['type' => 'example_create_comment', 'uid' => $comment->getOwnerId()]);
+  $message->set('field_comment_reference', $comment);
+  $message->set('field_published', $comment->isPublished());
+  $message->save();
+}
+
+/**
+ * Implements hook_user_insert()
+ */
+function message_example_user_insert(User $account) {
+  Message::create(['type' => 'example_user_register', 'uid' => $account->id()])->save();
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function message_example_node_update(Node $node) {
+  if (empty($node->original)) {
+    return;
+  }
+
+  message_example_update_message_status($node);
+}
+
+/**
+ * Implements hook_comment_update().
+ */
+function message_example_comment_update(Comment $comment) {
+  if (empty($comment->original)) {
+    return;
+  }
+
+  message_example_update_message_status($comment);
+}
+
+/**
+ * Update the "published" field in the message entity, when it changes in the
+ * related entity.
+ *
+ * @param ContentEntityBase $entity
+ *  The entity object.
+ */
+function message_example_update_message_status(ContentEntityBase $entity) {
+  if ($entity->isPublished() == $entity->original->isPublished()) {
+    return;
+  }
+
+  $query = \Drupal::entityQuery('message');
+
+  $field = 'field_' . $entity->getEntityType()->id() . '_reference';
+  $query->condition($field . '.target_id', $entity->id());
+
+  $results = $query->execute();
+
+  if (empty($results)) {
+    return;
+  }
+
+  $messages = Message::loadMultiple($results);
+
+  foreach ($messages as $message) {
+    $message->set('field_published', $entity->isPublished());
+    $message->save();
+  }
+}

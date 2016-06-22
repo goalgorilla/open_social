@@ -3,3 +3,7 @@ services:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_group.helper_service:
+    class: Drupal\social_group\SocialGroupHelperService
+    arguments: []
+
