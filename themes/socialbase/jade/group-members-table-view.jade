@@ -1,0 +1,62 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Happy Campers
+
+block pagetitle
+  
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-group-hero.jade
+    
+  .container  
+    .visible-xs-block.section
+      a.btn.btn-flat(href="group-stream.html")
+        i.material-icons.pull-left keyboard_arrow_left
+        | Back to group stream
+
+  .container.hero-container  
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href='group-stream.html') Stream
+          li
+            a(href='group-topics.html') Topics
+          li
+            a(href='group-events.html') Events
+          li.active
+            a(href="group-members.html") Members
+              span.visually-hidden (active tab)
+      
+block content
+      
+  .row.margin-top-l
+    .col-xs-12.col-sm-12
+      h4.section-title Members of Happy Campers
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+
+
+    .col-xs-12.col-sm-8
+      .card.table-swipe
+        .card-body
+          table.table.tablesaw.tablesaw-swipe(data-tablesaw-mode="swipe", data-tablesaw-minimap)
+            thead
+              tr
+                th(data-tablesaw-priority="persist") Member
+                th Organisation
+                th Role
+                th Action
+
+            tbody
+              include molecules/_member1-table-view.jade
+              include molecules/_member2-table-view.jade
+              include molecules/_member3-table-view.jade
+              include molecules/_member4-table-view.jade
+              include molecules/_member5-table-view.jade
+              include molecules/_member1-table-view.jade
+              include molecules/_member2-table-view.jade
+              include molecules/_member3-table-view.jade
+              include molecules/_member4-table-view.jade
+              include molecules/_member5-table-view.jade

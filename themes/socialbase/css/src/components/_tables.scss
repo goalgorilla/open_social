@@ -1,0 +1,132 @@
+.tablesaw {
+  font-size: 14px;
+  empty-cells: show;
+  border: 0;
+  padding: 0;
+  > tbody > tr > td {
+    vertical-align: middle;
+  }
+}
+
+
+
+
+.tablesaw-bar {
+  text-align: right;
+  padding-bottom: 1em;
+  @extend .clearfix;
+  .btn {
+    @extend .btn-primary;
+
+    &.tablesaw-nav-btn {
+      display: inline-block;
+      overflow: hidden;
+      width: 1.8em;
+      height: 1.8em;
+      background-position: 50% 50%;
+      margin-left: .5em;
+      position: relative;
+      border-color: white;
+      &:before {
+        content: "\0020";
+        overflow: hidden;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+
+      &.up, &.down {
+        &:before {
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          left: .5em;
+          top: .65em;
+        }
+      }
+      &.down:before {
+        border-top: 5px solid #808080;
+      }
+      &.up:before {
+        border-bottom: 5px solid;
+      }
+
+      &.left, &.right {
+        &:before {
+          top: .45em;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+        }
+      }
+      &.left:before {
+        left: .6em;
+        border-right: 5px solid;
+      }
+      &.right:before {
+        left: .7em;
+        border-left: 5px solid;
+      }
+
+      &.disabled {
+        opacity: .25;
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+    &.btn-small {
+      @extend .btn-sm;
+    }
+    &.btn-micro {
+      @extend .btn-xs;
+    }
+  }
+}
+
+
+.tablesaw-advance {
+  float: right;
+
+  &.minimap {
+    float: none;
+    display: inline-block;
+  }
+}
+
+
+.tablesaw-advance-dots {
+  margin-bottom: 0;
+  padding-right: 15px;
+  li {
+    display: inline-block;
+    margin: 0;
+    padding: 0 .2em;
+  }
+  i {
+    width: .25em;
+    height: .25em;
+    background: #555;
+    border-radius: 100%;
+    display: inline-block;
+  }
+}
+.tablesaw-advance-dots-hide {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+
+
+
+.tablesaw-swipe {
+  .tablesaw-cell-persist {
+    border-right: 1px solid #e4e1de;
+    box-shadow: 3px 0 4px -1px #e4e1de;
+  }
+  th, td {
+    &.tablesaw-cell-hidden {
+      display: none;
+    }
+  }
+}
+
+

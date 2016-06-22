@@ -667,54 +667,65 @@ fieldset[disabled] .btn-default.focus {
   background-color: #4d4d4d;
 }
 
-.btn-primary {
+.btn-primary, .tablesaw-bar .btn {
   color: white;
   background-color: #29abe2;
   border-color: #29abe2;
 }
 
-.btn-primary:focus, .btn-primary.focus {
+.btn-primary:focus, .tablesaw-bar .btn:focus, .btn-primary.focus, .tablesaw-bar .focus.btn {
   color: white;
   background-color: #1a8dbe;
   border-color: #115b7b;
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .tablesaw-bar .btn:hover {
   color: white;
   background-color: #1a8dbe;
   border-color: #1987b5;
 }
 
-.btn-primary:active, .btn-primary.active,
-.open > .btn-primary.dropdown-toggle {
+.btn-primary:active, .tablesaw-bar .btn:active, .btn-primary.active, .tablesaw-bar .active.btn,
+.open > .btn-primary.dropdown-toggle, .tablesaw-bar
+.open > .dropdown-toggle.btn {
   color: white;
   background-color: #1a8dbe;
   border-color: #1987b5;
 }
 
-.btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:active.focus, .btn-primary.active:hover, .btn-primary.active:focus, .btn-primary.active.focus,
-.open > .btn-primary.dropdown-toggle:hover,
-.open > .btn-primary.dropdown-toggle:focus,
-.open > .btn-primary.dropdown-toggle.focus {
+.btn-primary:active:hover, .tablesaw-bar .btn:active:hover, .btn-primary:active:focus, .tablesaw-bar .btn:active:focus, .btn-primary:active.focus, .tablesaw-bar .btn:active.focus, .btn-primary.active:hover, .tablesaw-bar .active.btn:hover, .btn-primary.active:focus, .tablesaw-bar .active.btn:focus, .btn-primary.active.focus, .tablesaw-bar .active.focus.btn,
+.open > .btn-primary.dropdown-toggle:hover, .tablesaw-bar
+.open > .dropdown-toggle.btn:hover,
+.open > .btn-primary.dropdown-toggle:focus, .tablesaw-bar
+.open > .dropdown-toggle.btn:focus,
+.open > .btn-primary.dropdown-toggle.focus, .tablesaw-bar
+.open > .dropdown-toggle.focus.btn {
   color: white;
   background-color: #16769f;
   border-color: #115b7b;
 }
 
-.btn-primary:active, .btn-primary.active,
-.open > .btn-primary.dropdown-toggle {
+.btn-primary:active, .tablesaw-bar .btn:active, .btn-primary.active, .tablesaw-bar .active.btn,
+.open > .btn-primary.dropdown-toggle, .tablesaw-bar
+.open > .dropdown-toggle.btn {
   background-image: none;
 }
 
-.btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled.focus, .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled].focus,
+.btn-primary.disabled:hover, .tablesaw-bar .disabled.btn:hover, .btn-primary.disabled:focus, .tablesaw-bar .disabled.btn:focus, .btn-primary.disabled.focus, .tablesaw-bar .disabled.focus.btn, .btn-primary[disabled]:hover, .tablesaw-bar [disabled].btn:hover, .btn-primary[disabled]:focus, .tablesaw-bar [disabled].btn:focus, .btn-primary[disabled].focus, .tablesaw-bar [disabled].focus.btn,
 fieldset[disabled] .btn-primary:hover,
+fieldset[disabled] .tablesaw-bar .btn:hover, .tablesaw-bar
+fieldset[disabled] .btn:hover,
 fieldset[disabled] .btn-primary:focus,
-fieldset[disabled] .btn-primary.focus {
+fieldset[disabled] .tablesaw-bar .btn:focus, .tablesaw-bar
+fieldset[disabled] .btn:focus,
+fieldset[disabled] .btn-primary.focus,
+fieldset[disabled] .tablesaw-bar .focus.btn, .tablesaw-bar
+fieldset[disabled] .focus.btn {
   background-color: #29abe2;
   border-color: #29abe2;
 }
 
-.btn-primary .badge {
+.btn-primary .badge, .tablesaw-bar .btn .badge {
   color: #29abe2;
   background-color: white;
 }
@@ -963,14 +974,14 @@ fieldset[disabled] .btn-link:focus {
   border-radius: 12px;
 }
 
-.btn-sm, .btn-group-sm > .btn {
+.btn-sm, .btn-group-sm > .btn, .tablesaw-bar .btn.btn-small {
   padding: 5px 10px;
   font-size: 14px;
   line-height: 1.5;
   border-radius: 8px;
 }
 
-.btn-xs, .btn-group-xs > .btn {
+.btn-xs, .btn-group-xs > .btn, .tablesaw-bar .btn.btn-micro {
   padding: 1px 5px;
   font-size: 14px;
   line-height: 1.5;
@@ -2720,12 +2731,12 @@ tbody.collapse.in {
   margin-bottom: 6px;
 }
 
-.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn {
+.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn, .tablesaw-bar .navbar-btn.btn.btn-small {
   margin-top: 8.5px;
   margin-bottom: 8.5px;
 }
 
-.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn {
+.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn, .tablesaw-bar .navbar-btn.btn.btn-micro {
   margin-top: 14px;
   margin-bottom: 14px;
 }
@@ -3225,7 +3236,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   top: -1px;
 }
 
-.btn-xs .badge, .btn-group-xs > .btn .badge,
+.btn-xs .badge, .btn-group-xs > .btn .badge, .tablesaw-bar .btn.btn-micro .badge,
 .btn-group-xs > .btn .badge {
   top: 0;
   padding: 1px 5px;
@@ -4490,11 +4501,11 @@ pre code {
   outline: 0;
 }
 
-.btn-xs, .btn-group-xs > .btn {
+.btn-xs, .btn-group-xs > .btn, .tablesaw-bar .btn.btn-micro {
   font-size: 0.75rem;
 }
 
-.btn-sm, .btn-group-sm > .btn {
+.btn-sm, .btn-group-sm > .btn, .tablesaw-bar .btn.btn-small {
   font-size: 0.75rem;
 }
 
@@ -7884,6 +7895,121 @@ input[type=range]:focus::-ms-fill-upper {
   background: #ccc;
 }
 
+.tablesaw {
+  font-size: 14px;
+  empty-cells: show;
+  border: 0;
+  padding: 0;
+}
+
+.tablesaw > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.tablesaw-bar {
+  text-align: right;
+  padding-bottom: 1em;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn {
+  display: inline-block;
+  overflow: hidden;
+  width: 1.8em;
+  height: 1.8em;
+  background-position: 50% 50%;
+  margin-left: .5em;
+  position: relative;
+  border-color: white;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn:before {
+  content: "\0020";
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.up:before, .tablesaw-bar .btn.tablesaw-nav-btn.down:before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  left: .5em;
+  top: .65em;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.down:before {
+  border-top: 5px solid #808080;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.up:before {
+  border-bottom: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.left:before, .tablesaw-bar .btn.tablesaw-nav-btn.right:before {
+  top: .45em;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.left:before {
+  left: .6em;
+  border-right: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.right:before {
+  left: .7em;
+  border-left: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.disabled {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tablesaw-advance {
+  float: right;
+}
+
+.tablesaw-advance.minimap {
+  float: none;
+  display: inline-block;
+}
+
+.tablesaw-advance-dots {
+  margin-bottom: 0;
+  padding-right: 15px;
+}
+
+.tablesaw-advance-dots li {
+  display: inline-block;
+  margin: 0;
+  padding: 0 .2em;
+}
+
+.tablesaw-advance-dots i {
+  width: .25em;
+  height: .25em;
+  background: #555;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+.tablesaw-advance-dots-hide {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tablesaw-swipe .tablesaw-cell-persist {
+  border-right: 1px solid #e4e1de;
+  box-shadow: 3px 0 4px -1px #e4e1de;
+}
+
+.tablesaw-swipe th.tablesaw-cell-hidden, .tablesaw-swipe td.tablesaw-cell-hidden {
+  display: none;
+}
+
 .main-container {
   overflow: hidden;
   min-height: 100%;
@@ -7936,12 +8062,12 @@ input[type=range]:focus::-ms-fill-upper {
   padding-top: 0;
 }
 
-.clearfix:before, .autocomplete-content li:before, .clearfix:after, .autocomplete-content li:after {
+.clearfix:before, .autocomplete-content li:before, .tablesaw-bar:before, .clearfix:after, .autocomplete-content li:after, .tablesaw-bar:after {
   content: " ";
   display: table;
 }
 
-.clearfix:after, .autocomplete-content li:after {
+.clearfix:after, .autocomplete-content li:after, .tablesaw-bar:after {
   clear: both;
 }
 
