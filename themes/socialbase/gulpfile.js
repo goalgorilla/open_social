@@ -34,6 +34,7 @@ var folder = {
   bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts',
   js: 'js',
   js_comp: 'js/components',
+  js_sg: 'js/styleguide',
   js_materialize: 'js/materialize',
   js_vendor: '../../../../core/assets/vendor',
   js_drupal: '../../../../core',
@@ -115,39 +116,37 @@ gulp.task('jade', function() {
 // Scripts
 // ===================================================
 
+// get component scripts used for styleguide only
+gulp.task('styleguide-components', function() {
+  return gulp.src([
+    folder.js_sg + "/collapsible.js",
+    folder.js_sg + "/sideNav.js",
+    folder.js_sg + "/jquery.timeago.min.js",
+    folder.js_sg + "/jquery.easing.1.3.js",
+    folder.js_sg + "js/vendor/jquery.touch-swipe.js"
+  ])
+  .pipe( concat('styleguide.js') )
+  .pipe( gulp.dest(folder.js) );
+});
+
 // get component scripts and make available for dist in one file
 gulp.task('script-components', function() {
   return gulp.src([
-    folder.js_comp + "/initial.js",
-    folder.js_comp + "/jquery.easing.1.3.js",
-    folder.js_comp + "/animation.js",
-    folder.js_comp + "/velocity.min.js",
-    folder.js_comp + "/hammer.min.js",
-    folder.js_comp + "/jquery.hammer.js",
-    folder.js_comp + "/global.js",
-    folder.js_comp + "/collapsible.js",
-    folder.js_comp + "/scrollspy.js",
-    folder.js_comp + "/pushpin.js",
-    folder.js_comp + "/sideNav.js",
-    folder.js_comp + "/waves.js",
-    folder.js_comp + "/offcanvas.js",
-    folder.js_comp + "/forms.js"
+      folder.js_comp + "/waves.js",
+      folder.js_comp + "/offcanvas.js",
+      folder.js_comp + "/forms.js"
     ])
     .pipe( concat('components.js') )
-    .pipe( gulp.dest(folder.js) )
-    //.pipe( uglify() )
-    .pipe( gulp.dest(folder.dist + '/js') );
+    .pipe( gulp.dest(folder.js) );
 });
 
 // get project scripts and make available for dist in one file
 gulp.task('script-materialize', function() {
   return gulp.src([
-    folder.js_materialize + "/navbar-search.js",
+      folder.js_materialize + "/navbar-search.js",
     ])
     .pipe( concat('materialize.js') )
-    .pipe( gulp.dest(folder.js) )
-    //.pipe( uglify() )
-    .pipe( gulp.dest(folder.dist + '/js') );
+    .pipe( gulp.dest(folder.js) );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
@@ -155,8 +154,7 @@ gulp.task('script-vendor', function() {
   return gulp.src([
     folder.js_vendor + '/domready/ready.min.js',
     folder.js_vendor + '/jquery/jquery.min.js',
-    folder.js_vendor + '/jquery-once/jquery.once.min.js',
-    'js/vendor/jquery.touch-swipe.js'
+    folder.js_vendor + '/jquery-once/jquery.once.min.js'
   ])
   .pipe( concat('vendor.js') )
   .pipe( gulp.dest(folder.dist + '/js') );
@@ -181,9 +179,9 @@ gulp.task('script-drupal', function() {
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
-//copy init script to the styleguide
-gulp.task('script-init', function() {
-  return gulp.src([folder.js + "/init.js"])
+//copy scripts to dist
+gulp.task('copy-scripts', ['script-materialize', 'script-components', 'styleguide-components'], function() {
+  return gulp.src(folder.js + "/*.js")
   .pipe( gulp.dest(folder.dist + '/js') );
 });
 
@@ -239,8 +237,7 @@ gulp.task('bootstrap-sass', function() {
 
 gulp.task('bootstrap-js', function() {
   stream = gulp.src(folder.bootstrap_js + '/bootstrap.min.js')
-    .pipe( gulp.dest(folder.js) )
-    .pipe( gulp.dest(folder.dist + "/js") )
+    .pipe( gulp.dest(folder.js) );
   return stream;
 });
 
@@ -313,7 +310,7 @@ gulp.task('deploy', ['build'], function() {
 gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js']);
 
 
-gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
+gulp.task('scripts', ['copy-scripts', 'script-vendor', 'script-drupal']);
 
 gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);
 

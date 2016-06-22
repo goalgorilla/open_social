@@ -6931,28 +6931,28 @@ a.default-light:focus {
   position: fixed;
 }
 
-.table-of-contents li {
+.table-of-contents li, .table-of-contents.nav > li {
   padding: 2px 0;
 }
 
-.table-of-contents a {
-  display: block;
-  font-weight: 300;
-  color: #757575;
-  padding-left: 14px;
-  line-height: 1.5em;
-}
-
-.table-of-contents a:hover {
-  color: #a8a8a8;
-  padding-left: 13px;
-  border-left: 1px solid #56bde8;
-}
-
-.table-of-contents a.active {
+.table-of-contents li.active a, .table-of-contents.nav > li.active a {
   font-weight: 500;
   padding-left: 13px;
   border-left: 2px solid #56bde8;
+}
+
+.table-of-contents a, .table-of-contents.nav > li > a {
+  display: block;
+  font-weight: 300;
+  color: #757575;
+  padding: 0 0 0 14px;
+  line-height: 1.5em;
+}
+
+.table-of-contents a:hover, .table-of-contents.nav > li > a:hover {
+  color: #a8a8a8;
+  padding-left: 13px;
+  border-left: 1px solid #56bde8;
 }
 
 .toc-wrapper {
@@ -7985,6 +7985,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 .affix {
   position: fixed;
+  top: 50px;
 }
 
 @-ms-viewport {
