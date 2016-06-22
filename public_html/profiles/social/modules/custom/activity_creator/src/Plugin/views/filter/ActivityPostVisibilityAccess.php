@@ -4,7 +4,7 @@
  * Contains \Drupal\activity_creator\Plugin\views\filter\ActivityPostVisibilityAccess.
  */
 
-namespace Drupal\activity_creator\Plugin\Views\Filter;
+namespace Drupal\activity_creator\Plugin\views\filter;
 
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
