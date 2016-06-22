@@ -32,6 +32,8 @@ html(lang="en")
     meta(name='theme-color', content='#ffffff')
 
     //CSS
+    link(href='css/buttons.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='css/layout.css', type='text/css', rel='stylesheet', media='screen,projection')
     link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen')
   
   body(class='#{pagetype}')
@@ -67,22 +69,7 @@ html(lang="en")
         .container
           block content
       
-    footer.main-footer
-      .container.clearfix
-        .navbar.navbar-footer
-          .nav.navbar-nav.navbar-right
-            li 
-              a(href="#") About
-            li 
-              a(href="#") Terms
-            li 
-              a(href="#") Privacy
-            li 
-              a(href="#") Cookies
-            li 
-              a(href="#") Contact
-          .navbar-brand
-            a(href='home-an.html') Open Social
+    include _footer.jade
       
   block scriptinline
   
