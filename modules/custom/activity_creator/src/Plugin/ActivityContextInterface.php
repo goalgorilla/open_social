@@ -14,7 +14,6 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface ActivityContextInterface extends PluginInspectionInterface {
 
-
   /**
    * Returns a batched list of recipients for this context.
    *

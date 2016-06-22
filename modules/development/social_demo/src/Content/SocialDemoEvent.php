@@ -115,7 +115,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
         'body' => [
           'summary' => '',
           'value' => $event['body'],
-          'format' => 'full_html',
+          'format' => 'basic_html',
         ],
         'uid' => $uid,
         'created' => REQUEST_TIME,
