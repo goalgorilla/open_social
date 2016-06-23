@@ -140,36 +140,32 @@ Feature: See and get notified when content is created
       | Time  | 11:00:00    |
       | Location name       | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-  # TODO: Change title of this button when we will have one step
+    # TODO: Change title of this button when we will have one step
     And I press "Continue to final step"
     And I press "Create node in group"
     Then I should see "Test group event"
     When I click "Test open group"
 
-    When I wait for the queue to be empty
+    When I wait for "180" seconds
     And I go to "user"
-    And I break
-    Then I should see "CreateUser created an event in the group"
+    Then I should see "CreateUser created an event in group Test open group"
     And I should see "Test group event"
 
     Given I am logged in as "SeeUser"
     And I click "CreateUser"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event in group Test open group"
     And I should see "Test group event"
     When I am on the homepage
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event in group Test open group"
     And I should see "Test group event"
     When I go to "explore"
-    Then I should see "CreateUser created an event in the community"
-    And I should see "Test group event"
+    Then I should not see "CreateUser created an event in the community"
+    And I should not see "Test group event"
 
     Given I am an anonymous user
     When I am on the homepage
-    Then I should not see "CreateUser created an event in the community"
+    Then I should not see "CreateUser created an event in group Test open group"
     And I should not see "Test group event"
     When I go to "explore"
-    Then I should not see "CreateUser created an event in the community"
+    Then I should not see "CreateUser created an event in group Test open group"
     And I should not see "Test group event"
-
-
-

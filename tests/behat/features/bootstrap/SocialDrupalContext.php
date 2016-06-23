@@ -1,7 +1,6 @@
 <?php
 
 use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
@@ -117,8 +116,15 @@ class SocialDrupalContext extends DrupalContext {
         }
       }
     }
-
-
   }
 
+  /**
+   * I wait for (seconds) seconds.
+   *
+   * @When /^(?:|I )wait for "([^"]*)" seconds$/
+   */
+  public function iWaitForSeconds($seconds, $condition = "") {
+    $milliseconds = (int) ($seconds * 1000);
+    $this->getSession()->wait($milliseconds, $condition);
+  }
 }
