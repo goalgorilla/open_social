@@ -50,7 +50,8 @@ options.theme = {
   styleguide : options.rootPath.theme + 'jade/',
   images     : options.rootPath.theme + 'images/',
   content    : options.rootPath.theme + 'content/',
-  font       : options.rootPath.theme + 'font/'
+  font       : options.rootPath.theme + 'font/',
+  bootstrap  : options.rootPath.theme + 'node_modules/bootstrap-sass/assets/'
 };
 
 // Set the URL used to access the Drupal website under development. This will
@@ -277,14 +278,13 @@ gulp.task('libs', function() {
 // ===================================================
 
 gulp.task('bootstrap-sass', function() {
-  return gulp.src(glob.bootstrap_scss)
-    .pipe( gulp.dest(folder.scss + '/bootstrap') );
+  return gulp.src(options.theme.bootstrap + 'stylesheets/bootstrap/' + '**/*.scss' )
+    .pipe( gulp.dest(options.theme.components + '/contrib/bootstrap') );
 });
 
 gulp.task('bootstrap-js', function() {
-  return gulp.src(folder.bootstrap_js + '/bootstrap.min.js')
-    .pipe( gulp.dest(options.theme.js) )
-    .pipe( gulp.dest(options.rootPath.dist + "/js") );
+  return gulp.src(options.theme.bootstrap + 'javascripts/bootstrap.min.js')
+    .pipe( gulp.dest(options.theme.js) );
 });
 
 
@@ -383,7 +383,7 @@ gulp.task('deploy', ['build'], function() {
 // ===================================================
 // Run this one time when you install the project so you have all files in the dist folder
 // ===================================================
-gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js']);
+gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js', 'bootstrap-sass']);
 
 gulp.task('scripts', ['script-components', 'script-materialize', 'script-vendor', 'script-drupal', 'script-init']);
 
