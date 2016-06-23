@@ -1,5 +1,8 @@
+.table {
+  font-size: 0.875rem;
+}
+
 .tablesaw {
-  font-size: 14px;
   empty-cells: show;
   border: 0;
   padding: 0;
@@ -12,6 +15,7 @@
 
 
 .tablesaw-bar {
+  width: 100%;
   text-align: right;
   padding-bottom: 1em;
   @extend .clearfix;
@@ -26,8 +30,8 @@
       background-position: 50% 50%;
       margin-left: .5em;
       position: relative;
-      border-color: white;
       &:before {
+        border-color: white;
         content: "\0020";
         overflow: hidden;
         width: 0;
@@ -52,17 +56,17 @@
 
       &.left, &.right {
         &:before {
-          top: .45em;
+          top: .44em;
           border-top: 5px solid transparent;
           border-bottom: 5px solid transparent;
         }
       }
       &.left:before {
-        left: .6em;
+        left: .5em;
         border-right: 5px solid;
       }
       &.right:before {
-        left: .7em;
+        left: .64em;
         border-left: 5px solid;
       }
 
@@ -117,7 +121,7 @@
 
 
 
-.tablesaw-swipe {
+[data-tablesaw-mode="swipe"] {
   .tablesaw-cell-persist {
     border-right: 1px solid #e4e1de;
     box-shadow: 3px 0 4px -1px #e4e1de;

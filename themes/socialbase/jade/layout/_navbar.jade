@@ -30,11 +30,13 @@ ul#nav-mobile.side-nav.fixed
     a.waves-effect.waves-teal(href='getting-started.html') Overview
 
   li.no-padding
-    ul.collapsible.collapsible-accordion
-      li.bold
-        a.collapsible-header(class=(page == "Sass" || page == "Typography" || page == "Color" || page == "Elevation" || page == "Table" ? "active" : "")+" waves-effect waves-teal")
+
+    ul#accordion.collapsible.collapsible-accordion(aria-multiselectable="true", role="tablist")
+
+      li.bold.panel.panel-default
+        a.collapsible-header(href="#collapse-style", data-parent="#accordion", data-toggle="collapse", class=(page == "Sass" || page == "Typography" || page == "Color" || page == "Elevation" || page == "Table" ? "active" : "")+" waves-effect waves-teal")
           | Style
-        .collapsible-body
+        #collapse-style.collapsible-body.collapse.panel-collapse(class=(page == "Sass" || page == "Typography" || page == "Color" || page == "Elevation" || page == "Table" ? "in" : ""))
           ul
             li(class=(page == "Color" ? "active" : ""))
               a(href='color.html') Color
@@ -42,10 +44,10 @@ ul#nav-mobile.side-nav.fixed
               a(href='typography.html') Typography
             li(class=(page == "Elevation" ? "active" : ""))
               a(href='elevation.html') Elevation
-      li.bold
-        a.collapsible-header(class=(page == "Forms" || page == "Buttons" || page == "Tabs" || page == "Cards" || page == "Chips" || page == "Preloader" || page == "Pagination" || page == "Collections" || page == "Badges" || page == "Breadcrumbs" || page == "Footer" ? "active" : "" || page == "Icons" ? "active" : "")+" waves-effect waves-teal")
+      li.bold.panel.panel-default
+        a.collapsible-header(href="#collapse-components", data-parent="#accordion", data-toggle="collapse", class=(page == "Grid" || page == "Navigation" || page == "Tables" || page == "Forms" || page == "Buttons" || page == "Tabs" || page == "Cards" || page == "Chips" || page == "Preloader" || page == "Pagination" || page == "Collections" || page == "Badges" || page == "Breadcrumbs" || page == "Footer" || page == "Icons" ? "active" : "")+" waves-effect waves-teal")
           | Components
-        .collapsible-body
+        #collapse-components.collapsible-body.collapse.panel-collapse(class=(page == "Grid" || page == "Navigation" || page == "Tables" || page == "Forms" || page == "Buttons" || page == "Tabs" || page == "Cards" || page == "Chips" || page == "Preloader" || page == "Pagination" || page == "Collections" || page == "Badges" || page == "Breadcrumbs" || page == "Footer" || page == "Icons" ? "in" : ""))
           ul
             li(class=(page == "Buttons" ? "active" : ""))
               a(href='buttons.html') Buttons
@@ -59,6 +61,8 @@ ul#nav-mobile.side-nav.fixed
               a(href='cards.html') Cards  
             li(class=(page == "Forms" ? "active" : ""))
               a(href='forms.html') Forms
+            li(class=(page == "Tables" ? "active" : ""))
+              a(href='tables.html') Tables
             li(class=(page == "Tabs" ? "active" : ""))
               a(href='tabs.html') Tabs
             li(class=(page == "Pagination" ? "active" : ""))

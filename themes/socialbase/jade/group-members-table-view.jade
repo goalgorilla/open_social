@@ -36,6 +36,33 @@ block content
       h4.section-title Members of Happy Campers
 
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+      a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='#') Add a member
+      br
+      br
+      button.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+        i.material-icons.pull-left tune
+        | Filters
+
+      .off-canvas.off-canvas-right.off-canvas-xs-only
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            button.js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
+              i.material-icons close
+
+        .offcanvas-body
+          form
+            .form-group.radios
+              label Event status
+              .radio
+                input#radio1(name='event', type='radio', checked)
+                label(for='radio1') Upcoming
+              .radio
+                input#radio2(name='event', type='radio')
+                label(for='radio2') Past
+              .radio
+                input#radio3(name='event', type='radio')
+                label(for='radio3') Unpublished
 
 
     .col-xs-12.col-sm-8
