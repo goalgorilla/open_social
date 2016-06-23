@@ -21,7 +21,6 @@ var gulp          = require('gulp'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
     connect       = require('gulp-connect'),
-    browserSync   = require('browser-sync').create(),
     plumber       = require('gulp-plumber'),
     deploy        = require('gulp-gh-pages');
 
@@ -38,6 +37,7 @@ var gulp          = require('gulp'),
 options.rootPath = {
   theme       : __dirname + '/',
   dist        : __dirname + '/dist/',
+  drupalcore  : '../../../../core/'
 };
 
 options.theme = {
@@ -69,11 +69,6 @@ options.sass = {
 };
 
 
-// If your files are on a network share, you may want to turn on polling for
-// Gulp watch. Since polling is less efficient, we disable polling by default.
-options.gulpWatchOptions = {};
-// options.gulpWatchOptions = {interval: 1000, mode: 'poll'};
-
 // Define the paths to the JS files to lint.
 options.eslint = {
   files  : [
@@ -90,24 +85,6 @@ options.styleguide = {
     options.theme.styleguide + '**/*.jade',
     '!' + options.theme.styleguide + '**/_*.jade'
   ]
-};
-
-var folder = {
-  css: 'css',
-  scss: 'css/src',
-  js: 'js',
-  js_comp: 'js/components',
-  js_sg: 'js/styleguide',
-  js_materialize: 'js/materialize',
-  js_vendor: '../../../../core/assets/vendor',
-  js_drupal: '../../../../core'
-}
-
-var glob = {
-  css: folder.css + '/*.css',
-  scss: folder.css + '/src/**/*.scss',
-  bootstrap_scss: folder.bootstrap_scss + '/**/*.scss',
-  js: folder.js + '/**/*.js'
 };
 
 var onError = function(err) {
@@ -145,7 +122,7 @@ gulp.task('styles', function () {
     .pipe($.sourcemaps.write('.') )
     .pipe( gulp.dest(options.theme.css) )
     .pipe( gulp.dest(options.rootPath.dist + '/css') )
-    .pipe($.if(browserSync.active, browserSync.stream({match: '**/*.css'})));
+    .pipe($.connect.reload() );
 });
 
 // ===================================================
@@ -173,61 +150,60 @@ gulp.task('styleguide', function() {
 // get component scripts used for styleguide only
 gulp.task('styleguide-components', function() {
   return gulp.src([
-    folder.js_sg + "/collapsible.js",
-    folder.js_sg + "/sideNav.js",
-    folder.js_sg + "/jquery.timeago.min.js",
-    folder.js_sg + "/jquery.easing.1.3.js",
-    folder.js_sg + "js/vendor/jquery.touch-swipe.js"
+    options.theme.js + "styleguide/sideNav.js",
+    options.theme.js + "styleguide/jquery.timeago.min.js",
+    options.theme.js + "styleguide/jquery.easing.1.3.js",
+    options.theme.js + "styleguide/jquery.touch-swipe.js"
   ])
   .pipe( concat('styleguide.js') )
-  .pipe( gulp.dest(folder.js) );
+  .pipe( gulp.dest(options.theme.js) );
 });
 
 // get component scripts and make available for dist in one file
 gulp.task('script-components', function() {
   return gulp.src([
-      folder.js_comp + "/waves.js",
-      folder.js_comp + "/offcanvas.js",
-      folder.js_comp + "/forms.js"
+      options.theme.js + "components/waves.js",
+      options.theme.js + "components/offcanvas.js",
+      options.theme.js + "components/forms.js"
     ])
     .pipe( concat('components.js') )
-    .pipe( gulp.dest(folder.js) );
+    .pipe( gulp.dest(options.theme.js) );
 });
 
 // get project scripts and make available for dist in one file
 gulp.task('script-materialize', function() {
   return gulp.src([
-      folder.js_materialize + "/navbar-search.js",
+      options.theme.js + "materialize/navbar-search.js",
     ])
     .pipe( concat('materialize.js') )
-    .pipe( gulp.dest(folder.js) );
+    .pipe( gulp.dest(options.theme.js) );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-vendor', function() {
   return gulp.src([
-    folder.js_vendor + '/domready/ready.min.js',
-    folder.js_vendor + '/jquery/jquery.min.js',
-    folder.js_vendor + '/jquery-once/jquery.once.min.js'
+    options.rootPath.drupalcore + 'assets/vendor/domready/ready.min.js',
+    options.rootPath.drupalcore + 'assets/vendor/jquery/jquery.min.js',
+    options.rootPath.drupalcore + 'assets/vendor/jquery-once/jquery.once.min.js'
   ])
   .pipe( concat('vendor.js') )
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 gulp.task('jqueryminmap', function() {
-  return gulp.src(folder.js_vendor + '/jquery/jquery.min.map')
+  return gulp.src(options.rootPath.drupalcore + 'assets/vendor/jquery/jquery.min.map')
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-drupal', function() {
   return gulp.src([
-    folder.js_drupal + '/misc/drupalSettingsLoader.js',
-    folder.js_drupal + '/misc/drupal.js',
-    folder.js_drupal + '/misc/debounce.js',
-    folder.js_drupal + '/misc/forms.js',
-    folder.js_drupal + '/modules/user/user.js',
-    folder.js_drupal + '/modules/file/file.js'
+    options.rootPath.drupalcore + '/misc/drupalSettingsLoader.js',
+    options.rootPath.drupalcore + '/misc/drupal.js',
+    options.rootPath.drupalcore + '/misc/debounce.js',
+    options.rootPath.drupalcore + '/misc/forms.js',
+    options.rootPath.drupalcore + '/modules/user/user.js',
+    options.rootPath.drupalcore + '/modules/file/file.js'
   ])
   .pipe( concat('drupal-core.js') )
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
@@ -235,7 +211,7 @@ gulp.task('script-drupal', function() {
 
 //copy scripts to dist
 gulp.task('copy-scripts', ['script-materialize', 'script-components', 'styleguide-components'], function() {
-  return gulp.src(folder.js + "/*.js")
+  return gulp.src(options.theme.js + "/*.js")
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
@@ -321,7 +297,7 @@ gulp.task('connect', function() {
 // Watch and rebuild tasks
 // ===================================================
 
-gulp.task('watch', ['watch:css', 'watch:styleguide', 'watch:images', 'watch:content', 'watch:font', 'watch:js', 'connect']);
+gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:images', 'watch:content', 'watch:font', 'watch:js', 'connect']);
 
 gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
