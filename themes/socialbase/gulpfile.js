@@ -239,7 +239,6 @@ gulp.task('copy-scripts', ['script-materialize', 'script-components', 'styleguid
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
-
 // ===================================================
 // Copy assets to dist folder
 // ===================================================
