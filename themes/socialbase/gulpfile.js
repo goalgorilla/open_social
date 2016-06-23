@@ -1,57 +1,90 @@
+'use strict';
+
 // ===================================================
 // Required packages
 // ===================================================
 
 var gulp          = require('gulp'),
+    $             = require('gulp-load-plugins')(),
     postcss       = require('gulp-postcss'),
     sass          = require('gulp-sass'),
     sourcemaps    = require('gulp-sourcemaps'),
     autoprefixer  = require('autoprefixer'),
     mqpacker      = require('css-mqpacker'),
     precss        = require('precss'),
-    lost          = require('lost'),
     rucksack      = require('gulp-rucksack'),
     jade          = require('gulp-jade'),
+    importOnce    = require('node-sass-import-once'),
     path          = require('path'),
     fs            = require('fs'),
     concat        = require('gulp-concat'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
-    uglify        = require('gulp-uglify'),
-    nano          = require('gulp-cssnano'),
     connect       = require('gulp-connect'),
     plumber       = require('gulp-plumber'),
     deploy        = require('gulp-gh-pages');
 
+    var options = {};
+
 // ===================================================
-// Config
+// CONFIG
+// Edit these paths and options
 // ===================================================
 
-var folder = {
-  css: 'css',
-  scss: 'css/src',
-  bootstrap_scss: 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap',
-  bootstrap_js: 'node_modules/bootstrap-sass/assets/javascripts',
-  js: 'js',
-  js_comp: 'js/components',
-  js_sg: 'js/styleguide',
-  js_materialize: 'js/materialize',
-  js_vendor: '../../../../core/assets/vendor',
-  js_drupal: '../../../../core',
-  jade: 'jade',
-  dist: 'dist'
-}
+// The root paths are used to construct all the other paths in this
+// configuration. The "theme" root path is where this gulpfile.js is located.
 
-var glob = {
-  css: folder.css + '/*.css',
-  scss: folder.css + '/src/**/*.scss',
-  bootstrap_scss: folder.bootstrap_scss + '/**/*.scss',
-  js: folder.js + '/**/*.js',
-  jade: folder.jade + '/*.jade',
-  font: 'font/**/*',
-  images: 'images/**/*',
-  content: 'content/**/*',
-  libs: 'libs/**/*'
+options.rootPath = {
+  theme       : __dirname + '/',
+  dist        : __dirname + '/dist/',
+  drupalcore  : '../../../../core/'
+};
+
+options.theme = {
+  name       : 'socialbase',
+  root       : options.rootPath.theme,
+  components : options.rootPath.theme + 'components/',
+  build      : options.rootPath.theme + 'components/asset-builds/',
+  css        : options.rootPath.theme + 'components/asset-builds/css/',
+  js         : options.rootPath.theme + 'js/',
+  styleguide : options.rootPath.theme + 'jade/',
+  images     : options.rootPath.theme + 'images/',
+  content    : options.rootPath.theme + 'content/',
+  font       : options.rootPath.theme + 'font/',
+  bootstrap  : options.rootPath.theme + 'node_modules/bootstrap-sass/assets/'
+};
+
+// Set the URL used to access the Drupal website under development. This will
+// allow Browser Sync to serve the website and update CSS changes on the fly.
+options.drupalURL = '';
+// options.drupalURL = 'http://localhost';
+
+// Define the node-sass configuration. The includePaths is critical!
+options.sass = {
+  importer: importOnce,
+  includePaths: [
+    options.theme.components
+  ],
+  outputStyle: 'expanded'
+};
+
+
+// Define the paths to the JS files to lint.
+options.eslint = {
+  files  : [
+    options.rootPath.project + 'gulpfile.js',
+    options.theme.js + '**/*.js',
+    '!' + options.theme.js + '**/*.min.js',
+    options.theme.components + '**/*.js',
+    '!' + options.theme.build + '**/*.js'
+  ]
+};
+
+options.styleguide = {
+  files  : [
+    options.theme.styleguide + '**/*.jade',
+    '!' + options.theme.styleguide + '**/_*.jade'
+  ]
 };
 
 var onError = function(err) {
@@ -64,50 +97,48 @@ var onError = function(err) {
 };
 
 // ===================================================
-// Styles
+// Build CSS.
 // ===================================================
 
-gulp.task('css', function () {
+var sassFiles = [
+  options.theme.components + '**/*.scss',
+  // Do not open Sass partials as they will be included as needed.
+  '!' + options.theme.components + '**/_*.scss'
+];
 
-  var processors = [
-    autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
-    mqpacker({sort: true}),
-    lost()
-  ];
+var sassProcessors = [
+  autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
+  mqpacker({sort: true})
+];
 
-  var stream = gulp.src(folder.scss + '/*.scss')
-    .pipe(plumber({
-      errorHandler: onError
-    }))
-    .pipe( sourcemaps.init() )
-    .pipe( sass({outputStyle: 'expanded'}) )
-    //.pipe( nano( {
-    //  mergeRules: true
-    //}) )
-    .pipe( postcss(processors) )
+gulp.task('styles', function () {
+  return gulp.src(sassFiles)
+    .pipe($.sourcemaps.init() )
+    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe( sass(options.sass) )
+    .pipe($.postcss(sassProcessors) )
     .pipe( rucksack() )
-    .pipe( sourcemaps.write('.') )
-    .pipe( gulp.dest(folder.css) )
-    .pipe( gulp.dest(folder.dist + '/css') )
-    .pipe( connect.reload() );
-  return stream;
-
+    .pipe($.rename({dirname: ''}))
+    .pipe($.sourcemaps.write('.') )
+    .pipe( gulp.dest(options.theme.css) )
+    .pipe( gulp.dest(options.rootPath.dist + '/css') )
+    .pipe($.connect.reload() );
 });
 
 // ===================================================
 // Template file (Jade)
 // ===================================================
 
-gulp.task('jade', function() {
+gulp.task('styleguide', function() {
 
-  return gulp.src(glob.jade)
+  return gulp.src(options.styleguide.files)
     .pipe(plumber({
       handleError: onError
     }))
     .pipe(jade({
       pretty: true
-    })) // pip to jade plugin
-    .pipe(gulp.dest(folder.dist)); // tell gulp our output folder
+    })) // pipe to jade plugin
+    .pipe(gulp.dest(options.rootPath.dist)); // tell gulp our output folder
 });
 
 
@@ -119,130 +150,135 @@ gulp.task('jade', function() {
 // get component scripts used for styleguide only
 gulp.task('styleguide-components', function() {
   return gulp.src([
-    folder.js_sg + "/collapsible.js",
-    folder.js_sg + "/sideNav.js",
-    folder.js_sg + "/jquery.timeago.min.js",
-    folder.js_sg + "/jquery.easing.1.3.js",
-    folder.js_sg + "js/vendor/jquery.touch-swipe.js"
+    options.theme.js + "styleguide/sideNav.js",
+    options.theme.js + "styleguide/jquery.timeago.min.js",
+    options.theme.js + "styleguide/jquery.easing.1.3.js",
+    options.theme.js + "styleguide/jquery.touch-swipe.js"
   ])
   .pipe( concat('styleguide.js') )
-  .pipe( gulp.dest(folder.js) );
+  .pipe( gulp.dest(options.theme.js) );
 });
 
 // get component scripts and make available for dist in one file
 gulp.task('script-components', function() {
   return gulp.src([
-      folder.js_comp + "/waves.js",
-      folder.js_comp + "/offcanvas.js",
-      folder.js_comp + "/forms.js",
-      folder.js_comp + "/tablesaw.js",
-      folder.js_comp + "/tablesaw-init.js"
+      options.theme.js + "components/waves.js",
+      options.theme.js + "components/offcanvas.js",
+      options.theme.js + "components/forms.js"
     ])
     .pipe( concat('components.js') )
-    .pipe( gulp.dest(folder.js) );
+    .pipe( gulp.dest(options.theme.js) );
 });
 
 // get project scripts and make available for dist in one file
 gulp.task('script-materialize', function() {
   return gulp.src([
-      folder.js_materialize + "/navbar-search.js",
+      options.theme.js + "materialize/navbar-search.js",
     ])
     .pipe( concat('materialize.js') )
-    .pipe( gulp.dest(folder.js) );
+    .pipe( gulp.dest(options.theme.js) );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-vendor', function() {
   return gulp.src([
-    folder.js_vendor + '/domready/ready.min.js',
-    folder.js_vendor + '/jquery/jquery.min.js',
-    folder.js_vendor + '/jquery-once/jquery.once.min.js'
+    options.rootPath.drupalcore + 'assets/vendor/domready/ready.min.js',
+    options.rootPath.drupalcore + 'assets/vendor/jquery/jquery.min.js',
+    options.rootPath.drupalcore + 'assets/vendor/jquery-once/jquery.once.min.js'
   ])
   .pipe( concat('vendor.js') )
-  .pipe( gulp.dest(folder.dist + '/js') );
+  .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 gulp.task('jqueryminmap', function() {
-  return gulp.src(folder.js_vendor + '/jquery/jquery.min.map')
-  .pipe( gulp.dest(folder.dist + '/js') );
+  return gulp.src(options.rootPath.drupalcore + 'assets/vendor/jquery/jquery.min.map')
+  .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 //copy vendor scripts from drupal to make them available for the styleguide
 gulp.task('script-drupal', function() {
   return gulp.src([
-    folder.js_drupal + '/misc/drupalSettingsLoader.js',
-    folder.js_drupal + '/misc/drupal.js',
-    folder.js_drupal + '/misc/debounce.js',
-    folder.js_drupal + '/misc/forms.js',
-    folder.js_drupal + '/modules/user/user.js',
-    folder.js_drupal + '/modules/file/file.js'
+    options.rootPath.drupalcore + '/misc/drupalSettingsLoader.js',
+    options.rootPath.drupalcore + '/misc/drupal.js',
+    options.rootPath.drupalcore + '/misc/debounce.js',
+    options.rootPath.drupalcore + '/misc/forms.js',
+    options.rootPath.drupalcore + '/modules/user/user.js',
+    options.rootPath.drupalcore + '/modules/file/file.js'
   ])
   .pipe( concat('drupal-core.js') )
-  .pipe( gulp.dest(folder.dist + '/js') );
+  .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 //copy scripts to dist
 gulp.task('copy-scripts', ['script-materialize', 'script-components', 'styleguide-components'], function() {
-  return gulp.src(folder.js + "/*.js")
-  .pipe( gulp.dest(folder.dist + '/js') );
+  return gulp.src(options.theme.js + "/*.js")
+  .pipe( gulp.dest(options.rootPath.dist + '/js') );
 });
 
 // ===================================================
-// Fonts
-// ===================================================
-
-gulp.task('font', function() {
-  stream = gulp.src(glob.font)
-    .pipe( gulp.dest(folder.dist + '/font') )
-    .pipe( connect.reload() );
-  return stream;
-});
-
-// ===================================================
-// Images
+// Copy assets to dist folder
 // ===================================================
 
 gulp.task('images', function() {
-  stream = gulp.src(glob.images)
-    .pipe( gulp.dest(folder.dist + '/images') )
-    .pipe( connect.reload() );
-  return stream;
+  return gulp.src(options.theme.images + '**/*')
+  .pipe( gulp.dest(options.rootPath.dist + 'images') );
 });
 
 gulp.task('content', function() {
-  stream = gulp.src(glob.content)
-    .pipe( gulp.dest(folder.dist + '/content') )
-    .pipe( connect.reload() );
-  return stream;
+  return gulp.src(options.theme.content + '**/*')
+  .pipe( gulp.dest(options.rootPath.dist + 'content') );
 });
 
-// ===================================================
-// Extras
-// ===================================================
+gulp.task('font', function() {
+  return gulp.src(options.theme.font + '**/*')
+  .pipe( gulp.dest(options.rootPath.dist + 'font') );
+});
 
 gulp.task('libs', function() {
-  stream = gulp.src(glob.libs)
-    .pipe( gulp.dest(folder.dist + '/libs') )
-  return stream;
+  return gulp.src(options.theme.libs + '**/*')
+  .pipe( gulp.dest(options.rootPath.dist + 'libs') );
 });
-
 
 // ===================================================
 // Import Bootstrap assets
 // ===================================================
 
 gulp.task('bootstrap-sass', function() {
-  stream = gulp.src(glob.bootstrap_scss)
-    .pipe( gulp.dest(folder.scss + '/bootstrap') )
-  return stream;
+  return gulp.src(options.theme.bootstrap + 'stylesheets/bootstrap/' + '**/*.scss' )
+    .pipe( gulp.dest(options.theme.components + '/contrib/bootstrap') );
 });
 
 gulp.task('bootstrap-js', function() {
-  stream = gulp.src(folder.bootstrap_js + '/bootstrap.min.js')
-    .pipe( gulp.dest(folder.js) );
-  return stream;
+  return gulp.src(options.theme.bootstrap + 'javascripts/bootstrap.min.js')
+    .pipe( gulp.dest(options.theme.js) );
 });
 
+
+// ===================================================
+// Lint Sass and JavaScript
+// ===================================================
+var sassFilesToLint = [
+  options.theme.components + '**/*.scss',
+  // Do not open Sass partials as they will be included as needed.
+  '!' + options.theme.components + 'contrib/**/*.scss'
+];
+
+
+gulp.task('lint', ['lint:sass', 'lint:js']);
+
+// Lint JavaScript.
+gulp.task('lint:js', function () {
+  return gulp.src(options.eslint.files)
+    .pipe($.eslint())
+    .pipe($.eslint.format());
+});
+
+// Lint Sass.
+gulp.task('lint:sass', function () {
+  return gulp.src(sassFilesToLint + '**/*.scss')
+    .pipe($.sassLint())
+    .pipe($.sassLint.format());
+});
 
 // ===================================================
 // Set up a server
@@ -250,7 +286,7 @@ gulp.task('bootstrap-js', function() {
 
 gulp.task('connect', function() {
   connect.server({
-    root: [folder.dist],
+    root: [options.rootPath.dist],
     livereload: true,
     port: 5000
   });
@@ -258,50 +294,47 @@ gulp.task('connect', function() {
 
 
 // ===================================================
-// Watch dev tasks
+// Watch and rebuild tasks
 // ===================================================
 
-gulp.task('watch', function() {
-  gulp.watch([
-    glob.scss
-  ], ['css']);
+gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:images', 'watch:content', 'watch:font', 'watch:js', 'connect']);
 
-  gulp.watch([
-    folder.jade + '/**/*'
-  ], ['jade']);
+gulp.task('watch:css', ['styles'], function () {
+  return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
+});
 
-  gulp.watch([
-    folder.js_comp + '/**/*.js'
-  ], ['scripts']);
+gulp.task('watch:styleguide', ['styleguide', 'lint:sass'], function () {
+  return gulp.watch([
+    options.theme.components + '**/*.scss',
+    options.theme.root + '**/*.jade',
+  ], ['styleguide']);
+});
 
-  gulp.watch([
-    folder.js_materialize + '/**/*.js'
-  ], ['script-materialize']);
+gulp.task('scripts', ['copy-scripts', 'script-vendor', 'script-drupal']);
 
-  gulp.watch([
-    folder.js + "/init.js"
-  ], ['script-init']);
+gulp.task('watch:js', function () {
+  return gulp.watch(options.eslint.files, ['scripts'] );
+});
 
-  gulp.watch([
-    glob.font
-  ], ['font']);
+gulp.task('watch:images', ['images'], function () {
+  return gulp.watch(options.theme.images + '**/*', ['images']);
+});
 
-  gulp.watch([
-    glob.images
-  ], ['images']);
+gulp.task('watch:font', ['font'], function () {
+  return gulp.watch(options.theme.font + '**/*', ['font']);
+});
 
-  gulp.watch([
-    glob.content
-  ], ['content']);
-
+gulp.task('watch:content', ['content'], function () {
+  return gulp.watch(options.theme.content + '**/*', ['content']);
 });
 
 // ===================================================
 // Deploy to github pages branch
 // ===================================================
+gulp.task('build', ['styles', 'styleguide' , 'scripts', 'font', 'images', 'content']);
 
 gulp.task('deploy', ['build'], function() {
-  return gulp.src([folder.dist + '/**/*'])
+  return gulp.src([options.rootPath.dist + '/**/*'])
     .pipe( deploy() );
 });
 
@@ -309,11 +342,4 @@ gulp.task('deploy', ['build'], function() {
 // ===================================================
 // Run this one time when you install the project so you have all files in the dist folder
 // ===================================================
-gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js']);
-
-
-gulp.task('scripts', ['copy-scripts', 'script-vendor', 'script-drupal']);
-
-gulp.task('build', ['css', 'jade' , 'scripts', 'font', 'images']);
-
-gulp.task('default', ['css', 'jade' , 'scripts', 'connect', 'watch']);
+gulp.task('init', ['images', 'content', 'libs', 'font', 'jqueryminmap', 'bootstrap-js', 'bootstrap-sass']);
