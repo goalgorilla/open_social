@@ -30,66 +30,65 @@ class ActivityLoggerFactory {
   public function createMessages(\Drupal\Core\Entity\Entity $entity, $action) {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
+    var_dump($message_types);
     // Loop through those message types and create messages.
     foreach ($message_types as $message_type => $message_values) {
       // Create the ones applicable for this bundle.
-      if ($message_values['bundle'] === $entity->bundle()) {
-
-        // Determine destinations.
-        $destinations = [];
-        $group = [];
-        $groupcontent = [];
-        if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
-          foreach ($message_values['destinations'] as $destination) {
-            $destinations[] = array('value' => $destination);
-          }
+      // Determine destinations.
+      $destinations = [];
+      $group = [];
+      $groupcontent = [];
+      if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
+        foreach ($message_values['destinations'] as $destination) {
+          $destinations[] = array('value' => $destination);
         }
-
-        $mt_context = $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL);
-
-        // Set the values.
-        $new_message['type'] = $message_type;
-        $new_message['uid'] = $entity->getOwner()->id();
-        $new_message['field_message_context'] = $mt_context;
-        $new_message['field_message_destination'] = $destinations;
-        $new_message['field_message_related_object'] = [
-          'target_type' => $entity->getEntityTypeId(),
-          'target_id' => $entity->id(),
-        ];
-
-        // Create the message.
-        $message = Message::create($new_message);
-
-        // Try to get the group.
-        $groupcontent = GroupContent::loadByEntity($entity);
-        if (!empty($groupcontent)) {
-          $groupcontent = reset($groupcontent);
-          $group = $groupcontent->getGroup();
-        }
-        // Or special handling for post entities.
-        if ($entity->getEntityTypeId() === 'post') {
-          if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')
-              ->getValue())
-          ) {
-            $group = Group::load($group_id = $entity->field_recipient_group->target_id);
-          }
-        }
-        // If it's a group.. add it in the arguments.
-        if ($group instanceof Group) {
-          $gurl = Url::fromRoute('entity.group.canonical', array(
-            'group' => $group->id(),
-            array()
-          ));
-          $message->setArguments(array(
-            'groups' => [
-              'gtitle' => $group->label(),
-              'gurl' => $gurl->toString(),
-            ],
-          ));
-        }
-
-        $message->save();
       }
+
+      $mt_context = $message_values['context'];
+
+      // Set the values.
+      $new_message['type'] = $message_type;
+      $new_message['uid'] = $entity->getOwner()->id();
+      $new_message['field_message_context'] = $mt_context;
+      $new_message['field_message_destination'] = $destinations;
+      $new_message['field_message_related_object'] = [
+        'target_type' => $entity->getEntityTypeId(),
+        'target_id' => $entity->id(),
+      ];
+
+      // Create the message.
+      $message = Message::create($new_message);
+
+      // Try to get the group.
+      $groupcontent = GroupContent::loadByEntity($entity);
+      if (!empty($groupcontent)) {
+        $groupcontent = reset($groupcontent);
+        $group = $groupcontent->getGroup();
+      }
+      // Or special handling for post entities.
+      if ($entity->getEntityTypeId() === 'post') {
+        if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')
+            ->getValue())
+        ) {
+          $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+        }
+      }
+      // If it's a group.. add it in the arguments.
+      if ($group instanceof Group) {
+        $gurl = Url::fromRoute('entity.group.canonical', array(
+          'group' => $group->id(),
+          array()
+        ));
+        $message->setArguments(array(
+          'groups' => [
+            'gtitle' => $group->label(),
+            'gurl' => $gurl->toString(),
+          ],
+        ));
+      }
+
+      $message->save();
+
     }
   }
 
@@ -124,13 +123,15 @@ class ActivityLoggerFactory {
       $activity_context_factory = \Drupal::service('plugin.manager.activity_context.processor');
       $context_plugin = $activity_context_factory->createInstance($mt_context);
 
-      if ($entity->bundle() === $mt_entity_bundle
+      $entity_bundle_name = $entity->getEntityTypeId() . '.' .$entity->bundle();
+      if ($entity_bundle_name === $mt_entity_bundle
       && $context_plugin->isValidEntity($entity)
       && $action === $mt_action) {
         $messagetypes[$key] = array(
           'messagetype' => $messagetype,
           'bundle' => $mt_entity_bundle,
           'destinations' => $mt_destinations,
+          'context' => $mt_context,
         );
       }
     }

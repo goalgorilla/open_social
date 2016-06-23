@@ -31,7 +31,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
     // Use the queue logg
     $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
     // Create messages for all other types of content.
-    $activity_logger_factory->createMessages($entity, $this->label);
+    $activity_logger_factory->createMessages($entity, $this->pluginId);
   }
 
   /**
