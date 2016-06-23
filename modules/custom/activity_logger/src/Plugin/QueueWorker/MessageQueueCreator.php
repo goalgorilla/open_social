@@ -45,10 +45,10 @@ class MessageQueueCreator extends MessageQueueBase {
         $queue->createItem($data);
       }
       else {
-        // Get the services we need here.
-        $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
-        // Create messages for nodes.
-        $activity_logger_factory->createMessages($entity, 'create');
+        $activity_logger_factory = \Drupal::service('plugin.manager.activity_action.processor');
+        // Trigger the create action for enttites.
+        $create_action = $activity_logger_factory->createInstance('create_entitiy_action');
+        $create_action->createMessage($entity);
       }
     }
   }

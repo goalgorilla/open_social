@@ -63,4 +63,8 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     return $recipients;
   }
 
+  public function isValidEntity($entity) {
+    return TRUE;
+  }
+
 }
