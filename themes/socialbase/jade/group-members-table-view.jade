@@ -87,3 +87,25 @@ block content
               include molecules/_member3-table-view.jade
               include molecules/_member4-table-view.jade
               include molecules/_member5-table-view.jade
+
+          nav.pager-nav.text-center(role="navigation", aria-labelledby="pagination-heading")
+            h4#pagination-heading.visually-hidden Pagination
+            ul.pagination
+              li.pager__item.pager__item--previous
+                a(href='#', aria-label='Previous')
+                  span(aria-hidden="true")
+                    i.material-icons chevron_left
+              li.pager__item.active
+                a(href='#') 1
+              li.pager__item
+                a(href='#') 2
+              li.pager__item
+                a(href='#') 3
+              li.pager__item
+                a(href='#') 4
+              li.pager__item
+                a(href='#') 5
+              li.pager__item.pager__item--next
+                a(href='#', aria-label='Next')
+                  span(aria-hidden="true")
+                    i.material-icons chevron_right
