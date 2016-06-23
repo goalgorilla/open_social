@@ -30,7 +30,6 @@ class ActivityLoggerFactory {
   public function createMessages(\Drupal\Core\Entity\Entity $entity, $action) {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
-    var_dump($message_types);
     // Loop through those message types and create messages.
     foreach ($message_types as $message_type => $message_values) {
       // Create the ones applicable for this bundle.
