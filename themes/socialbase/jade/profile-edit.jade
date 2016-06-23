@@ -154,13 +154,16 @@ block content
             header E-mail notifications
 
           .card-body
-            form(action='#')
+            .form-group
               .switch
-                label
-                  | Off
-                  input(type='checkbox')
-                  span.lever
-                  | On
+                label.block
+                  .row
+                    .col-xs-6 E-mail notifications
+                    .col-xs-6
+                      | off
+                      input(type='checkbox', checked)
+                      span.lever
+                      | on
 
               
         .form-actions.clearfix
