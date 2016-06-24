@@ -4,7 +4,6 @@ api: 2
 # Include the definition for how to build Drupal core directly, including patches:
 includes:
   - drupal-org-core.make
-  - drupal-org.make
 
 # Download the Social install profile and recursively build all its dependencies:
 projects:
@@ -13,4 +12,4 @@ projects:
     download:
       type: git
       branch: '8.x-1.x'
-      tag: '8.x-1.x-dev'
+      tag: '8.x-1.0-alpha3'
