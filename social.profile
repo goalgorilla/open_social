@@ -94,6 +94,7 @@ function social_install_profile_modules(&$install_state) {
  * Performs batch installation of modules.
  */
 function _social_install_module_batch($module, $module_name, &$context) {
+  set_time_limit(0);
   \Drupal::service('module_installer')->install($module, $dependencies = TRUE);
   $context['results'][] = $module;
   $context['message'] = t('Installed %module_name modules.', array('%module_name' => $module_name));
