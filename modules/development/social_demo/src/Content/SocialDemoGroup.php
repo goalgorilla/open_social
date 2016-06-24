@@ -101,6 +101,11 @@ class SocialDemoGroup implements ContainerInjectionInterface {
 
       $group_object->save();
 
+      // If it succeeded, also add some teammembers.
+      if ($group_object instanceof Group) {
+        
+      }
+
       $content_counter++;
     }
 

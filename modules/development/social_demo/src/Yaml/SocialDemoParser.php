@@ -21,9 +21,10 @@ class SocialDemoParser extends Yaml {
    * @return string
    *   String with the full pathname including the file.
    */
-  private function getPath($file) {
+  public function getPath($file) {
     // @todo Fix this for other file paths?!.
-    return '/root/dev-scripts/content/' . $file;
+
+    return drupal_get_path('module', 'social_demo') . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . $file;
   }
 
   /**
