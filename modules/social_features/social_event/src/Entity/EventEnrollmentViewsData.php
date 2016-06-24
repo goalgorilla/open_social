@@ -16,7 +16,7 @@ class EventEnrollmentViewsData extends EntityViewsData implements EntityViewsDat
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['event_enrollment']['table']['base'] = array(
+    $data['event_enrollment_field_data']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Event enrollment'),
       'help' => $this->t('The Event enrollment ID.'),
