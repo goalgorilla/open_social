@@ -31,7 +31,9 @@ function social_core_install() {
 function _social_core_create_an_homepage_block() {
   // TODO: use a better image from the theme.
   // Block image.
-  $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/06.jpg', 'public://06.jpg', FILE_EXISTS_REPLACE);
+  $path = drupal_get_path('module', 'social_core');
+  $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
+  $uri  = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
 
   $media = File::create(array(
     'langcode' => 'en',
