@@ -1,0 +1,235 @@
+body {
+  font-size: $font-size-small;
+
+  @include MQ($small) {
+    font-size: $font-size-base;
+  }
+}
+
+a {
+	font-weight: 500;
+	color: inherit;
+
+  // Gets rid of tap active state
+  -webkit-tap-highlight-color: transparent;
+
+	&:hover {
+		color: inherit;
+	}
+}
+
+
+html{
+  font-size: 16px;
+}
+
+body {
+	font-family: $font-family-webfont;
+	font-weight: 300;
+	-webkit-font-smoothing: antialiased;
+	word-wrap: break-word;
+}
+
+p {
+  margin-bottom: 0.75rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 500;
+	line-height: 1.1;
+	transition: 0.3s;
+	margin: 1em 0 0.5em;
+
+	a {
+		font-weight: inherit;
+	}
+
+}
+
+// Header Styles
+
+h1, .h1 {
+	font-size: 2rem;
+	font-weight: 700;
+
+	@include MQ($medium) {
+		font-size: 3rem;
+	}
+
+}
+
+h2, .h2 {
+	font-size: 1.5rem;
+
+	@include MQ($medium) {
+		font-size: 2rem;
+	}
+}
+
+h3, .h3 {
+	font-size: 1.25rem;
+
+	@include MQ($medium) {
+		font-size: 1.5rem;
+	}
+}
+
+h4, .h4 {
+	font-size: 1.2rem;
+
+	@include MQ($medium) {
+		font-size: 1.25rem;
+	}
+
+}
+
+h5, .h5{
+	font-size: 1rem;
+
+	@include MQ($medium) {
+		font-size: 1rem;
+	}
+}
+
+h6, .h6 {
+	font-size: 0.875rem;;
+
+	@include MQ($medium) {
+		font-size: 0.875rem;
+	}
+}
+
+.header {
+	color: $brand-primary;
+	font-weight: 300;
+}
+
+.subtitle {
+	font-size: 0.75rem;
+	line-height: 1;
+}
+
+// Blockquote
+blockquote {
+  margin: 20px 0;
+  padding-left: 1.5em;
+  border-left: 3px solid $brand-primary;
+	font-weight: 500;
+}
+
+
+// Text Styles
+em {
+	font-style: normal;
+	font-weight: 500;
+}
+
+strong {
+	font-weight: 700;
+}
+
+.light {
+	font-weight: 300;
+}
+
+.flow-text{
+  font-size: responsive;
+}
+
+.caption {
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+ol, ul {
+  padding-left: 1.5em;
+
+  .popover &:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+ol {
+  list-style-position: outside;
+}
+
+// override bootstrap default
+code {
+  border-radius: 2px;
+}
+
+.section-title {
+  padding: 1.25rem;
+  margin: 0;
+
+  @include MQ($small) {
+    padding-left: 20px;
+
+		// the title cannot wrap because we want to align sidebar cards vertical top with the content
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		&.section-title-stream {
+			padding-left: 40px;
+		}
+
+		&.section-title-node {
+			padding-left: 48px;
+		}
+  }
+
+}
+
+.complementary-title {
+	font-size: 1.25rem;
+}
+
+
+.text-caption {
+  display: block;
+  margin-bottom: 24px;
+  font-size: 12px;
+}
+
+.text-truncate {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+// Sizes
+// -------------------------
+
+.text-xs {		font-size: 0.4em; }
+.text-s {			font-size: 0.75rem; }
+.text-m {			font-size: 0.875rem; }
+.text-l {			font-size: 1.125rem; }
+.text-xl {		font-size: 1.25rem; }
+.text-xxl {		font-size: 1.5rem; }
+.text-xxxl {	font-size: 2rem; }
+.text-xxxxl {	font-size: 3rem; }
+
+@include text-emphasis-variant('.text-gray', $gray);
+@include text-emphasis-variant('.text-gray-light', $gray-light);
+@include text-emphasis-variant('.text-gray-lighter', $grey-light-1);
+@include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
+@include text-emphasis-variant('.text-gray-dark', $grey-dark-2);
+@include text-emphasis-variant('.text-accent', $brand-accent);
+
+//
+@include bg-variant('.bg-gray', $gray);
+@include bg-variant('.bg-gray-light', $gray-light);
+@include bg-variant('.bg-gray-lighter', $gray-lighter);
+@include bg-variant('.bg-gray-lightest', $gray-lightest);
+@include bg-variant('.bg-white', white);
+
+@include style-variant('.brand-primary', $brand-primary, white);
+@include style-variant('.brand-secondary', $brand-secondary, white);
+@include style-variant('.brand-accent', $brand-accent, $default-color);
+@include style-variant('.brand-user', $gray-darker, white);
+
+@include style-variant('.default-light', $gray-lighter, $default-color);
