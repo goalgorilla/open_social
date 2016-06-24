@@ -28,7 +28,7 @@ function social_profile_install() {
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
 
-  $uri  = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images/default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
+  $uri  = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
 
   $media = File::create([
     'uri' => $uri,
