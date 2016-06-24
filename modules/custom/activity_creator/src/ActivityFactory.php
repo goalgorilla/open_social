@@ -106,7 +106,6 @@ class ActivityFactory extends ControllerBase {
   private function getFieldOutputText(Message $message) {
     $value = NULL;
     if (isset($message)) {
-      // @TODO setArguments here? Replace tokens here? Or let message do work?
       $value = $message->getText(NULL);
       $text = reset($value);
       // Add format.
@@ -136,7 +135,6 @@ class ActivityFactory extends ControllerBase {
    * Get field value for 'recipient_group' field from data array.
    */
   private function getFieldRecipientGroup($data) {
-    // @TODO create logic here, based on recipients in data array.
     $value = NULL;
     if (isset($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'group') {

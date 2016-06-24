@@ -9,6 +9,7 @@ namespace Drupal\activity_creator\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembership;
 use Drupal\social_group\SocialGroupHelperService;
 
@@ -50,6 +51,20 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     }
 
     return $recipients;
+  }
+
+
+  public function isValidEntity($entity) {
+    // Check if it's placed in a group (regardless off content type).
+    if ($group_entity = GroupContent::loadByEntity($entity)) {
+      return TRUE;
+    }
+    if ($entity->getEntityTypeId() === 'post') {
+      if (!empty($entity->get('field_recipient_group')->getValue())) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }
