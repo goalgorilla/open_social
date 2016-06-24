@@ -202,6 +202,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
     $query = \Drupal::entityQuery('node');
     $query->condition('type', 'event');
     $query->condition('uuid', $uuid);
+    $query->addMetaData('account', user_load(1)); // Run the query as user 1.
     $fids = $query->execute();
     // Get a single item.
     $fid = reset($fids);
