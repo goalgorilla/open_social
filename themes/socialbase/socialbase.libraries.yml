@@ -1,8 +1,15 @@
 global-styling:
   version: 1.x
   css:
-    theme:
-      css/materialize.css: {}
+    # The SMACSS category, "base", is loaded before other categories. Drupal 8
+    # loads stylesheets based on the SMACSS ordering of:
+    # base, layout, component, state, theme
+    base:
+      # The {} brackets allow you to specify the additional options, weight and
+      # media. For example, you can specify this is a print media stylesheet by
+      # specifying: { media: print } Note: this isn't recommended since
+      # separate print stylesheets is bad for front-end performance.
+      components/asset-builds/css/materialize.css: {}
   js:
     js/vendor/jquery.touch-swipe.js: {}
     js/components.js: {}
@@ -15,26 +22,26 @@ global-styling:
     - core/forms
     - core/drupalSettings
 
-admin:
-  version: 1.x
+layout:
   css:
-    theme:
-      css/admin.css: {}
+    # The SMACSS category, "layout", is loaded after "base" styles.
+    layout:
+      components/asset-builds/css/layout.css: {}
 
-materialize:
-  version: 1.x
+buttons:
   css:
-      theme:
-        css/materialize.css: {}
-  js:
-    js/materialize.js: {}
-  dependencies:
-    - core/jquery
-    - core/jquery.once
-    - core/forms
+    component:
+      components/asset-builds/css/buttons.css: {}
+
+admin:
+  css:
+    component:
+      css/admin-toolbar.css: {}
 
 pickadate:
-  version: 1.x
+  css:
+    component:
+      components/asset-builds/css/datepicker.css: {}
   js:
     libs/date_picker/picker.js: {}
     libs/date_picker/picker.date.js: {}

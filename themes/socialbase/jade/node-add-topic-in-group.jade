@@ -11,9 +11,9 @@ block content
     .col-xs-12
       h1.h4.section-title Create Topic
       
-    .col-xs-12.col-sm-4.col-sm-last
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last
       .toc-wrapper
-        ul.table-of-contents
+        ul.table-of-contents.nav
           li
             a(href='#content') Content
           li
@@ -54,7 +54,7 @@ block content
               label Image
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
-                button.btn.form-submit.style-default.js-hide(type='submit', value='remove')
+                button.btn.form-submit.btn-default.js-hide(type='submit', value='remove')
                   i.material-icons.pull-left file_upload
                   | Upload
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg

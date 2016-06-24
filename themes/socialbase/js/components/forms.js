@@ -1,7 +1,6 @@
 (function ($) {
   $(document).ready(function() {
 
-
     // Text based inputs
     var input_selector = 'input[type=text], input[type=password], input[type=email], input[type=url], input[type=tel], input[type=number], input[type=search], textarea';
 
