@@ -20,6 +20,8 @@ block content
           li
             a(href='#description') Description
           li
+            a(href='#attachments') Attachments
+          li
             a(href='#comment-settings') Comment settings
       
     .col-xs-12.col-sm-8
@@ -89,6 +91,25 @@ block content
               .textarea--cke
                 textarea#ckeditor.form-control.form-textarea
                   p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cupit enim dícere nihil posse ad beatam vitam deesse sapienti. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Summae mihi videtur inscitiae. Non enim iam stirpis bonum quaeret, sed animalis. Tu vero, inquam, ducas licet, si sequetur; In qua quid est boni praeter summam voluptatem, et eam sempiternam? Duo Reges: constructio interrete. Verba tu fingas et ea dicas, quae non sentias?
+
+        #attachments.card.card-underline.scrollspy
+
+          .card-head
+            header Attachments
+
+          .card-body
+            .form-group
+              label Files
+              .file-widget.form-managed-file.clearfix
+                .pull-left.padding-xs
+                  a.file(href='#', type="image/jpeg; length=158378")
+                    i.file-icon.material-icons insert_drive_file
+                    div.file-title Very-important-document.pdf
+                    div.file-size (154.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-default(value='remove', style='pointer-events: none;')
+                    i.material-icons.pull-left delete
+                    | Remove
 
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")
