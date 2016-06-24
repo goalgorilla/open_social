@@ -4,7 +4,7 @@ Feature: Create Event
   Role: As a LU
   Goal/desire: I want to create Events
 
-  @LU @perfect @critical @wip
+  @LU @perfect @critical
   Scenario: Successfully create event
     Given I am logged in as an "authenticated user"
     And I am on "user"

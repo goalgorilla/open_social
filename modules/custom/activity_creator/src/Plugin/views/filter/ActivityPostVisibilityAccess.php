@@ -42,7 +42,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $configuration = array(
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
-      'table' => 'post',
+      'table' => 'post_field_data',
       'field' => 'id',
       'operator' => '=',
     );

@@ -1,5 +1,21 @@
-api = 2
-core = 8.x
-projects[drupal][type] = core
-projects[drupal][version] = 8.1.3
-projects[drupal][patch][] = "https://www.drupal.org/files/issues/2724283-block-22.patch"
+# A separate core make file for patches and other config we need for core like revisions, branches etc.
+
+# Core version
+# ------------
+# Each makefile should begin by declaring the core version of Drupal that all
+# projects should be compatible with.
+
+core: 8.x
+
+# API version
+# ------------
+# Every makefile needs to declare it's Drush Make API version. This version of
+# drush make uses API version `2`.
+api: 2
+
+# Patches for core and it's modules.
+projects:
+  drupal:
+    version: 8.1.3
+    patch:
+      - 'https://www.drupal.org/files/issues/2724283-block-22.patch'

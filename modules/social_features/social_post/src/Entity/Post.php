@@ -35,6 +35,8 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "post",
+ *   data_table = "post_field_data",
+ *   translatable = TRUE,
  *   admin_permission = "administer post entities",
  *   entity_keys = {
  *     "id" = "id",

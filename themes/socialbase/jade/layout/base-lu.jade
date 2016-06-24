@@ -31,11 +31,13 @@ html(lang="en")
     meta(name='msapplication-TileImage', content='images/favicon/mstile-144x144.png')
     meta(name='theme-color', content='#ffffff')
 
-    //CSS
+    //- CSS
+    link(href='css/layout.css', type='text/css', rel='stylesheet', media='screen,projection')
+    link(href='css/buttons.css', type='text/css', rel='stylesheet', media='screen,projection')
     link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
   
   body(class='#{pagetype}')
-    // Google Tag Manager
+    //- Google Tag Manager
     noscript
       iframe(src='//www.googletagmanager.com/ns.html?id=GTM-5BGZV3', height='0', width='0', style='display:none;visibility:hidden')
     script.
@@ -67,23 +69,7 @@ html(lang="en")
         .container
           block content
       
-    footer.main-footer
-      .container.clearfix
-        .navbar.navbar-footer
-          .nav.navbar-nav.navbar-right
-            li 
-              a(href="#") About
-            li 
-              a(href="#") Terms
-            li 
-              a(href="#") Privacy
-            li 
-              a(href="#") Cookies
-            li 
-              a(href="#") Contact
-          .navbar-brand
-            a(href='home-lu.html') Open Social
-          
+    include _footer.jade
   block scriptinline_before
 
   script(src='js/vendor.js')
