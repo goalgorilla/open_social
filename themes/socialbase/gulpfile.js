@@ -297,15 +297,14 @@ gulp.task('connect', function() {
 // Watch and rebuild tasks
 // ===================================================
 
-gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:images', 'watch:content', 'watch:font', 'watch:js', 'connect']);
+gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:content', 'watch:js', 'connect']);
 
 gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:styleguide', ['styleguide', 'lint:sass'], function () {
+gulp.task('watch:styleguide', ['styleguide'], function () {
   return gulp.watch([
-    options.theme.components + '**/*.scss',
     options.theme.root + '**/*.jade',
   ], ['styleguide']);
 });
@@ -314,14 +313,6 @@ gulp.task('scripts', ['copy-scripts', 'script-vendor', 'script-drupal']);
 
 gulp.task('watch:js', function () {
   return gulp.watch(options.eslint.files, ['scripts'] );
-});
-
-gulp.task('watch:images', ['images'], function () {
-  return gulp.watch(options.theme.images + '**/*', ['images']);
-});
-
-gulp.task('watch:font', ['font'], function () {
-  return gulp.watch(options.theme.font + '**/*', ['font']);
 });
 
 gulp.task('watch:content', ['content'], function () {
