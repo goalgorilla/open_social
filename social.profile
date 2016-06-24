@@ -7,54 +7,114 @@
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Implements hook_install_tasks().
+ */
+function social_install_tasks(&$install_state) {
+  $tasks = array(
+    'social_install_profile_modules' => array(
+      'display_name' => t('Install social features'),
+      'type' => 'batch',
+    ),
+    'social_final_site_setup' => array(
+    ),
+  );
+  return $tasks;
+}
+
+/**
+ * Installs required modules via a batch process.
+ *
+ * @param $install_state
+ *   An array of information about the current installation state.
+ *
+ * @return
+ *   The batch definition.
+ */
+function social_install_profile_modules(&$install_state) {
+
+  $files = system_rebuild_module_data();
+
+  $modules = array(
+    'social_core' => 'social_core',
+    'social_user' => 'social_user',
+    'social_group' => 'social_group',
+    'social_event' => 'social_event',
+    'social_topic' => 'social_topic',
+    'social_profile' => 'social_profile',
+    'social_editor' => 'social_editor',
+    'social_comment' => 'social_comment',
+    'social_search' => 'social_search',
+    'social_post' => 'social_post',
+    'social_activity' => 'social_activity',
+  );
+  $social_modules = $modules;
+  // Always install required modules first. Respect the dependencies between
+  // the modules.
+  $required = array();
+  $non_required = array();
+
+  // Add modules that other modules depend on.
+  foreach ($modules as $module) {
+    if ($files[$module]->requires) {
+      $module_requires = array_keys($files[$module]->requires);
+      // Remove the social modules from required modules.
+      $module_requires = array_diff_key($module_requires, $social_modules);
+      $modules = array_merge($modules, $module_requires);
+    }
+  }
+  $modules = array_unique($modules);
+  // Remove the social modules from to install modules.
+  $modules = array_diff_key($modules, $social_modules);
+  foreach ($modules as $module) {
+    if (!empty($files[$module]->info['required'])) {
+      $required[$module] = $files[$module]->sort;
+    }
+    else {
+      $non_required[$module] = $files[$module]->sort;
+    }
+  }
+  arsort($required);
+
+  $operations = array();
+  foreach ($required + $non_required + $social_modules as $module => $weight) {
+    $operations[] = array('_social_install_module_batch', array(array($module), $module));
+  }
+
+  $batch = array(
+    'operations' => $operations,
+    'title' => t('Installing Social features'),
+    'error_message' => t('The installation has encountered an error.'),
+  );
+  return $batch;
+}
+
+/**
+ * Implements callback_batch_operation().
+ *
+ * Performs batch installation of modules.
+ */
+function _social_install_module_batch($module, $module_name, &$context) {
+  \Drupal::service('module_installer')->install($module, $dependencies = TRUE);
+  $context['results'][] = $module;
+  $context['message'] = t('Installed %module_name modules.', array('%module_name' => $module_name));
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for install_configure_form().
  *
  * Allows the profile to alter the site configuration form.
  */
 function social_form_install_configure_form_alter(&$form, FormStateInterface $form_state) {
   // Add a placeholder as example that one can choose an arbitrary site name.
-  $form['site_information']['site_name']['#attributes']['placeholder'] = t('Drupal Social');
-
-  // Add 'Social' fieldset and options.
-  $form['social'] = [
-    '#type' => 'details',
-    '#title' => t('Social Features'),
-    '#weight' => -5,
-    '#open' => TRUE,
-  ];
-
-  // Checkboxes to enable Social Features.
-  $form['social']['features'] = [
-    '#type' => 'checkboxes',
-    '#title' => t('Enable Features'),
-    '#description' => 'You can choose to disable some of Social\'s features above. However, it is not recommended.',
-    '#options' => [
-      'social_core' => 'Social Core',
-      'social_devel' => 'Social Devel',
-      'social_editor' => 'Social Editor',
-      'social_event' => 'Social Event',
-      'social_topic' => 'Social Topic',
-      'social_group' => 'Social Group',
-      'social_user' => 'Social User',
-      'social_comment' => 'Social Comment',
-      'social_search' => 'Social Search',
-      'social_post' => 'Social Post',
-      'social_profile' => 'Social Profile',
-      'social_activity' => 'Social Activity',
-    ],
-    '#default_value' => ['social_core', 'social_devel', 'social_editor', 'social_event', 'social_topic', 'social_group', 'social_user', 'social_comment', 'social_search', 'social_post', 'social_profile', 'social_activity'],
-  ];
-
-  // Submit handler to enable features.
-  $form['#submit'][] = 'social_features_submit';
+  $form['site_information']['site_name']['#attributes']['placeholder'] = t('Open Social');
 }
 
 /**
- * Enable requested Social features.
+ * @param $install_state
  */
-function social_features_submit($form_id, &$form_state) {
-  $features = array_filter($form_state->getValue('features'));
-  if (isset($features)) {
-    \Drupal::service('module_installer')->install($features, TRUE);
-  }
+function social_final_site_setup(&$install_state) {
+  // Rebuild permissions.
+  node_access_rebuild(); // TODO Do not set message?
+  // TODO node_access_needs_rebuild(FALSE) is also good because no content yet?
+  // TODO Enable demo and devel, generate demo content via batch?
 }
