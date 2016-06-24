@@ -4,7 +4,6 @@
 
     var screen_sm_min = 767;
     var window_width = $(window).width();
-
     if (window_width > screen_sm_min ) {
       var tableOfContents = $('.table-of-contents'),
           indexBanner = $('#index-banner');
