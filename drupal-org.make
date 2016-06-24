@@ -11,7 +11,6 @@ projects[composer_manager][type] = module
 projects[composer_manager][version] = 1.0-rc1
 projects[devel][type] = module
 projects[devel][version] = 1.x-dev
-projects[devel][patch][] = "https://www.drupal.org/files/issues/fix_entity_manager_wrapper_2749249_5.patch"
 projects[dynamic_entity_reference][type] = module
 projects[dynamic_entity_reference][version] = 1.0-rc4
 projects[entity][type] = module
