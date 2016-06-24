@@ -107,35 +107,6 @@ function _social_install_module_batch($module, $module_name, &$context) {
 function social_form_install_configure_form_alter(&$form, FormStateInterface $form_state) {
   // Add a placeholder as example that one can choose an arbitrary site name.
   $form['site_information']['site_name']['#attributes']['placeholder'] = t('Open Social');
-
-  // Add 'Social' fieldset and options.
-  $form['social'] = [
-    '#type' => 'details',
-    '#title' => t('Social Features'),
-    '#weight' => -5,
-    '#open' => TRUE,
-  ];
-  // Checkboxes to enable Social Features.
-  $form['social']['features'] = [
-    '#type' => 'checkboxes',
-    '#title' => t('Enable Features'),
-    '#description' => 'You can choose to disable some of Social\'s features above. However, it is not recommended.',
-    '#options' => [
-      'social_devel' => 'Social Devel',
-      'social_demo' => 'Social Demo',
-    ],
-    '#default_value' => ['social_devel', 'social_demo'],
-  ];
-
-  // Submit handler to enable features.
-  $form['#submit'][] = 'social_features_submit';
-}
-
-/**
- * Submit handler.
- */
-function social_features_submit($form_id, &$form_state) {
-  // TODO Install the features of demo and devel as well.
 }
 
 /**
@@ -143,7 +114,7 @@ function social_features_submit($form_id, &$form_state) {
  */
 function social_final_site_setup(&$install_state) {
   // Rebuild permissions.
-  node_access_rebuild();
-
+  node_access_rebuild(); // TODO Do not set message?
+  // TODO node_access_needs_rebuild(FALSE) is also good because no content yet?
   // TODO Enable demo and devel, generate demo content via batch?
 }
