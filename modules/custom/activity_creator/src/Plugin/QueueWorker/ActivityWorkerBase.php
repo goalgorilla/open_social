@@ -26,7 +26,6 @@ abstract class ActivityWorkerBase extends QueueWorkerBase {
    *   The $data which should be stored in the queue item.
    */
   protected function createQueueItem($queue_name, $data) {
-    // @TODO Use dependency injection here
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
