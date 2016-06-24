@@ -47,7 +47,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'operator' => '=',
     );
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('post_field_data', $join, 'activity__field_activity_entity');
+    $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = array(
       'left_table' => 'post',
