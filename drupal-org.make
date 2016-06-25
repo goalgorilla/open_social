@@ -44,4 +44,4 @@ projects[token][version] = 1.0-alpha2
 projects[bootstrap][type] = theme
 projects[bootstrap][download][type] = git
 projects[bootstrap][download][revision] = c4e032af753c65d44afe40250cd8b000baf23f79
-projects[bootstrap][download][branch] = 8.x-1.x
+projects[bootstrap][download][branch] = 8.x-3.x
