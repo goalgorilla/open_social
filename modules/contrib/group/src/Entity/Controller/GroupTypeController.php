@@ -9,9 +9,8 @@ namespace Drupal\group\Entity\Controller;
 
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\group\Entity\GroupContentType;
-use Drupal\group\Entity\GroupContentTypeInterface;
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\group\Plugin\GroupContentEnablerInterface;
+use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -40,7 +39,7 @@ class GroupTypeController extends ControllerBase {
   /**
    * The group content plugin manager.
    *
-   * @var \Drupal\Component\Plugin\PluginManagerInterface
+   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    */
   protected $pluginManager;
 
@@ -59,16 +58,19 @@ class GroupTypeController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
-   * Constructs a new GroupSettingsForm.
+   * Constructs a new GroupTypeController.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
+   *   The group content plugin manager.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager, GroupContentEnablerManagerInterface $plugin_manager) {
     $this->moduleHandler = $module_handler;
     $this->entityTypeManager = $entity_type_manager;
+    $this->pluginManager = $plugin_manager;
   }
 
   /**
@@ -77,7 +79,8 @@ class GroupTypeController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('module_handler'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.group_content_enabler')
     );
   }
   
@@ -86,6 +89,9 @@ class GroupTypeController extends ControllerBase {
    *
    * @param \Drupal\group\Entity\GroupTypeInterface $group_type
    *   The group type to build an interface for.
+   * 
+   * @return array
+   *   The render array for the page.
    */
   public function content(GroupTypeInterface $group_type) {
     $this->groupType = $group_type;
@@ -111,7 +117,7 @@ class GroupTypeController extends ControllerBase {
       '#suffix' =>  $this->t('<em>* These plugins are set to be always on by their providing module.</em>'),
     ];
 
-    foreach (GroupContentEnablerHelper::getAllContentEnablers() as $plugin_id => $plugin) {
+    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
       // If the plugin is installed on the group type, use that one instead of
       // an 'empty' version so that we may use methods on it which expect to
       // have a group type configured.

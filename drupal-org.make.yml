@@ -36,7 +36,11 @@ projects:
   composer_manager:
     version: 1.0-rc1
   devel:
-    version: 1.x-dev
+    type: module
+    download:
+      type: git
+      revision: 728a40681856fccc9d7b782d116352c3743ddeec
+      branch: 8.x-1.x
   dynamic_entity_reference:
     version: 1.0-rc4
   entity:
@@ -46,9 +50,13 @@ projects:
   field_group:
     version: 1.0-rc4
   group:
-    version: 1.x-dev
+    version: 1.0-alpha4
   message:
-    version: 1.x-dev
+    type: module
+    download:
+      type: git
+      revision: 4b3ba57e24b5f1b4a8b44ba06c368d16e0b9ee67
+      branch: 8.x-1.x
   override_node_options:
     version: '2.0'
   profile:
@@ -57,7 +65,11 @@ projects:
       - 'https://www.drupal.org/files/issues/profile-accesscontrol-2703825-2.patch'
       - 'https://www.drupal.org/files/issues/profile-page-title-missing-2704763-3.patch'
   r4032login:
-    version: 1.x-dev
+    type: module
+    download:
+      type: git
+      revision: 4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9
+      branch: 8.x-1.x
   search_api:
     version: 1.0-alpha14
   token:
@@ -66,4 +78,7 @@ projects:
 # Themes, get bootstrap out of our contrib I guess?!
   bootstrap:
     type: theme
-    version: 3.x-dev
+    download:
+      type: git
+      revision: c4e032af753c65d44afe40250cd8b000baf23f79
+      branch: 8.x-3.x
