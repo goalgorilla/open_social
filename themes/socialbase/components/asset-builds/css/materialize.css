@@ -366,6 +366,7 @@ th {
 
 .affix {
   position: fixed;
+  top: 50px;
 }
 
 @-ms-viewport {
@@ -5707,7 +5708,7 @@ a.default-light:focus {
   padding: 2px 0;
 }
 
-.table-of-contents li.active a, .table-of-contents.nav > li.active a {
+.table-of-contents li a.active, .table-of-contents.nav > li a.active {
   font-weight: 500;
   padding-left: 13px;
   border-left: 2px solid #56bde8;
@@ -5729,6 +5730,10 @@ a.default-light:focus {
 
 .toc-wrapper {
   position: relative;
+}
+
+.toc-wrapper.affix {
+  position: fixed;
 }
 
 .media-wrapper {
