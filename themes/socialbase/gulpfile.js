@@ -20,7 +20,12 @@ var gulp          = require('gulp'),
     concat        = require('gulp-concat'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
+    jadeInheritance = require('gulp-jade-inheritance'),
     connect       = require('gulp-connect'),
+    changed       = require('gulp-changed'),
+    cached        = require('gulp-cached'),
+    gulpif        = require('gulp-if'),
+    filter        = require('gulp-filter'),
     plumber       = require('gulp-plumber'),
     deploy        = require('gulp-gh-pages');
 
@@ -135,13 +140,33 @@ gulp.task('styleguide', function() {
     .pipe(plumber({
       handleError: onError
     }))
+
+    //only pass changed *main* files and *all* the partials
+    .pipe(changed(options.rootPath.dist, {extension: '.html'}))
+
+    //filter out unchanged partials, but it only works when watching
+    .pipe(gulpif(global.isWatching, cached('jade')))
+
+    //find files that depend on the files that have changed
+    .pipe(jadeInheritance({basedir: options.rootPath.dist}))
+
+    //filter out partials (folders and files starting with "_" )
+    .pipe(filter(function (file) {
+      return !/\/_/.test(file.path) || !/^_/.test(file.relative);
+    }))
+
     .pipe(jade({
       pretty: true
     })) // pipe to jade plugin
-    .pipe(gulp.dest(options.rootPath.dist)); // tell gulp our output folder
+
+    .pipe(gulp.dest(options.rootPath.dist)) // tell gulp our output folder
+
+    .pipe( connect.reload() );
 });
 
-
+gulp.task('setWatch', function() {
+    global.isWatching = true;
+});
 
 // ===================================================
 // Scripts
@@ -303,7 +328,7 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:styleguide', ['styleguide'], function () {
+gulp.task('watch:styleguide', ['setWatch', 'styleguide'], function () {
   return gulp.watch([
     options.theme.root + '**/*.jade',
   ], ['styleguide']);

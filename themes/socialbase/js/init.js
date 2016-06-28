@@ -11,7 +11,7 @@
       if (tableOfContents.length) {
         $('.toc-wrapper').affix({
             offset: {
-              top: tableOfContents.offset().top - 50
+              top: tableOfContents.offset().top - 74
             }
           })
       }
