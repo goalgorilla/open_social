@@ -13,7 +13,29 @@ html(lang="en")
 
       .container
         .row
-          .col-xs-12.col-sm-8.col-md-10
+          #scrollspy.col-md-3.col-md-last(role='complementary')
+            .toc-wrapper.hidden-print.hidden-xs.hidden-sm
+              ul.table-of-contents.nav
+                li
+                  a(href='#input') Input Fields
+                li
+                  a(href='#textarea') Textareas
+                li
+                  a(href='#select') Select
+                li
+                  a(href='#radio') Radio Buttons
+                li
+                  a(href='#checkbox') Checkboxes
+                li
+                  a(href='#switches') Switches
+                li
+                  a(href='#file') File Input Button
+                li
+                  a(href='#range') Range
+                li
+                  a(href='#date-picker') Date picker
+        
+          .col-xs-12.col-md-9
             #input.section.scrollspy
               p.caption Forms are the standard way to receive user inputted data. The transitions and smoothness of these elements are very important because of the inherent user interaction associated with forms.
               
@@ -302,27 +324,6 @@ html(lang="en")
                     selectYears: 15 // Creates a dropdown of 15 years to control year
                   });
                 
-          .col-md-3(role='complementary')
-            .os-docs-sidebar.hidden-print.hidden-xs.hidden-sm.affix
-              ul.os-docs-sidenav.nav
-                li
-                  a(href='#input') Input Fields
-                li
-                  a(href='#textarea') Textareas
-                li
-                  a(href='#select') Select
-                li
-                  a(href='#radio') Radio Buttons
-                li
-                  a(href='#checkbox') Checkboxes
-                li
-                  a(href='#switches') Switches
-                li
-                  a(href='#file') File Input Button
-                li
-                  a(href='#range') Range
-                li
-                  a(href='#date-picker') Date picker
                 
     include ./layout/_scripts.jade
     script(src="libs/date_picker/picker.js")
