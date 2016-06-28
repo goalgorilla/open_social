@@ -1,0 +1,74 @@
+@import "init";
+
+/*
+ * Side navigation
+ *
+ * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+ * sections of docs content.
+ */
+
+/* By default it's not affixed in mobile views, so undo that */
+.os-docs-sidebar.affix {
+  position: static;
+}
+
+@media (min-width: 768px) {
+  .os-docs-sidebar {
+    padding-left: 20px;
+  }
+}
+
+/* First level of nav */
+.os-docs-sidenav {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* All levels of nav */
+.os-docs-sidebar .nav > li > a {
+  display: block;
+  padding: 4px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #767676;
+}
+.os-docs-sidebar .nav > li > a:hover,
+.os-docs-sidebar .nav > li > a:focus {
+  padding-left: 19px;
+  color: $brand-primary;
+  text-decoration: none;
+  background-color: transparent;
+  border-left: 1px solid $brand-primary;
+}
+.os-docs-sidebar .nav > .active > a,
+.os-docs-sidebar .nav > .active:hover > a,
+.os-docs-sidebar .nav > .active:focus > a {
+  padding-left: 18px;
+  font-weight: bold;
+  color: $brand-primary;
+  background-color: transparent;
+  border-left: 2px solid $brand-primary;
+}
+
+/* Nav: second level (shown on .active) */
+.os-docs-sidebar .nav .nav {
+  display: none; /* Hide by default, but at >768px, show it */
+  padding-bottom: 10px;
+}
+.os-docs-sidebar .nav .nav > li > a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 12px;
+  font-weight: normal;
+}
+.os-docs-sidebar .nav .nav > li > a:hover,
+.os-docs-sidebar .nav .nav > li > a:focus {
+  padding-left: 29px;
+}
+.os-docs-sidebar .nav .nav > .active > a,
+.os-docs-sidebar .nav .nav > .active:hover > a,
+.os-docs-sidebar .nav .nav > .active:focus > a {
+  padding-left: 28px;
+  font-weight: 500;
+}

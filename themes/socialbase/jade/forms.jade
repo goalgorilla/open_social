@@ -90,11 +90,12 @@ html(lang="en")
                 .col-sm-6
                   .form-group
                     label Select
-                    select.form-control
-                      option(value='', disabled='', selected='') Choose your option
-                      option(value='1') Option 1
-                      option(value='2') Option 2
-                      option(value='3') Option 3
+                    .select-wrapper
+                      select.form-control
+                        option(value='', disabled='', selected='') Choose your option
+                        option(value='1') Option 1
+                        option(value='2') Option 2
+                        option(value='3') Option 3
                   
                       
                       
@@ -277,10 +278,16 @@ html(lang="en")
                   </form>
                   
             #date-picker.section.scrollspy
+              
               h2.header Date Picker
               p We use a modified version of pickadate.js to create a materialized date picker. Test it out below!
-              label(for='birthdate') Birthdate
-              input#birthdate.datepicker.form-control(type='text')
+              .row
+                .col-xs-12.col-sm-6
+                  label(for='birthdate') Pick a date
+                  input.datepicker.form-control(type='text')
+                .col-xs-12.col-sm-6
+                  label(for='birthdate') Pick a time
+                  input.timepicker.form-control(type='text')
               pre
                 code.language-markup.
                   <input type="date" class="form-control datepicker">
@@ -294,11 +301,10 @@ html(lang="en")
                     selectMonths: true, // Creates a dropdown to control month
                     selectYears: 15 // Creates a dropdown of 15 years to control year
                   });
-        
                 
-          #scrollspy.col-sm-4.col-md-2.hidden-xs
-            .toc-wrapper
-              ul.section.table-of-contents.nav
+          .col-md-3(role='complementary')
+            .os-docs-sidebar.hidden-print.hidden-xs.hidden-sm.affix
+              ul.os-docs-sidenav.nav
                 li
                   a(href='#input') Input Fields
                 li
@@ -318,11 +324,12 @@ html(lang="en")
                 li
                   a(href='#date-picker') Date picker
                 
-
-  
     include ./layout/_scripts.jade
     script(src="libs/date_picker/picker.js")
     script(src="libs/date_picker/picker.date.js")
+    script(src="libs/date_picker/picker.time.js")
+    script(src="libs/date_picker/picker.init.js")
+    link(href='css/datepicker.css', rel='stylesheet')
     link(href='libs/noUiSlider/nouislider.css', rel='stylesheet')
     script(src="libs/noUiSlider/nouislider.js")
     script(type='text/javascript').
@@ -339,6 +346,3 @@ html(lang="en")
          decimals: 0
        })
       });
-      (function($){
-        $('.datepicker').pickadate({selectYears: 20});
-      })(jQuery); // end of jQuery name space
