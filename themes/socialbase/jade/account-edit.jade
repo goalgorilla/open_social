@@ -25,7 +25,7 @@ block content
     
       form(method='get', action='my-profile-about.html')
       
-        #name.card.card-underline
+        #name.card.card-underline.scrollspy
         
           .card-head
             header Account information
@@ -63,15 +63,16 @@ block content
             header E-mail notifications
 
           .card-body
-            form(action='#')
-              .form-group
-                label E-mail notifications
-                .switch
-                  label
-                    | Off
-                    input(type='checkbox')
-                    span.lever
-                    | On
+            .form-group
+              .switch
+                label.block
+                  .row
+                    .col-xs-6 E-mail notifications
+                    .col-xs-6
+                      | Off
+                      input(type='checkbox', checked)
+                      span.lever
+                      | On
 
         .form-actions.clearfix
           a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
