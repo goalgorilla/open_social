@@ -51,7 +51,9 @@ class SocialDemoFile {
       $accountClass = SocialDemoUser::create($container);
       $uid = $accountClass->loadUserFromUuid($file['uid']);
 
-      $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/' . $file['filename'], 'public://' . $file['filename'], FILE_EXISTS_REPLACE);
+      // Get the path from the demo parser.
+      $demoParser = new SocialDemoParser();
+      $uri  = file_unmanaged_copy($demoParser->getPath('files' . DIRECTORY_SEPARATOR . $file['filename']), 'public://' . $file['filename'], FILE_EXISTS_REPLACE);
 
       $media = File::create([
         'uuid' => $file['uuid'],

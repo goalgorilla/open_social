@@ -168,18 +168,20 @@ class SocialDemoComment implements ContainerInjectionInterface {
   }
 
   /**
-   * Load a file object by uuid.
+   * Load a node object by uuid.
    *
    * @param string $uuid
-   *   The uuid of the file.
+   *   The uuid of the node.
    *
    * @return int $fid
-   *   Returns the fid for the related nodes.
+   *   Returns the nid for the related nodes.
    */
   public function fetchRelatedNode($uuid) {
     $query = \Drupal::entityQuery('node');
     $query->condition('uuid', $uuid);
+    $query->addMetaData('account', user_load(1)); // Run the query as user 1.
     $nids = $query->execute();
+
     // Get a single item.
     $nid = reset($nids);
     // And return it.

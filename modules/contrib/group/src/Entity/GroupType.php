@@ -7,7 +7,6 @@
 
 namespace Drupal\group\Entity;
 
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\group\Plugin\GroupContentEnablerCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Config\Entity\Exception\ConfigEntityIdLengthException;
@@ -171,14 +170,14 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
       ])->save();
 
       // Enable enforced content plugins for new group types.
-      GroupContentEnablerHelper::installEnforcedPlugins($this);
+      $this->getContentEnablerManager()->installEnforced($this);
     }
   }
 
   /**
    * Returns the content enabler plugin manager.
    *
-   * @return \Drupal\Component\Plugin\PluginManagerInterface
+   * @return \Drupal\group\Plugin\GroupContentEnablerManagerInterface
    *   The group content plugin manager.
    */
   protected function getContentEnablerManager() {

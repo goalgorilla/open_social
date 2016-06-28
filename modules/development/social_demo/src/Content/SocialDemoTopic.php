@@ -125,7 +125,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         'body' => [
           'summary' => '',
           'value' => $topic['body'],
-          'format' => 'full_html',
+          'format' => 'basic_html',
         ],
         'field_topic_type' => [
           [

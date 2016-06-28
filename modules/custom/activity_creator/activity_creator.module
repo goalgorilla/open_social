@@ -61,16 +61,12 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
     $related_object = $entity->get('field_message_related_object')->getValue();
 
     $data = [
-    // Message id, or maybe full ActivityLog obj? Better not!
       'mid' => $mid,
-    // This is needed for the activityfactory.
       'message_type' => $message_type_id,
       'actor' => $actor,
-    // Either group, profile, community.
       'context' => $context[0]['value'],
       'destination' => $destinations,
       'related_object' => $related_object,
-    // Last processed_uid.
       'last_uid' => 0,
       'status' => NULL,
     ];
@@ -95,7 +91,6 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
             'mid' => $data['mid'],
             'message_type' => $data['message_type'],
             'actor' => $data['actor'],
-          // Not necessary?
             'context' => $data['context'],
             'destination' => $data['destination'],
             'related_object' => $data['related_object'],
@@ -109,7 +104,6 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
           'mid' => $data['mid'],
           'message_type' => $data['message_type'],
           'actor' => $data['actor'],
-        // Not necessary?
           'context' => $data['context'],
           'destination' => $data['destination'],
           'related_object' => $data['related_object'],
@@ -202,7 +196,6 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  * TODO: Maybe this should be an event subscriber service
  */
 function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
-  // TODO WIll this work with caching?
   if ($view_mode === 'full') {
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
@@ -232,7 +225,7 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
  */
 function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
 
-  // TODO Move this into a service?
+  // TODO Move this into a service
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();

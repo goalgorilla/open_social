@@ -2,15 +2,16 @@ langcode: en
 status: true
 dependencies:
   module:
-    - activity_creator
     - activity_logger
 third_party_settings:
   activity_logger:
     activity_context: profile_activity_context
     activity_destinations:
-      stream_profile: stream_profile
       notifications: notifications
+      stream_profile: stream_profile
     activity_create_direct: 1
+    activity_bundle_entity: post.post
+    activity_action: create_entitiy_action
 type: create_post_profile
 label: 'Create post on profile'
 description: 'A user created a post on a profile'

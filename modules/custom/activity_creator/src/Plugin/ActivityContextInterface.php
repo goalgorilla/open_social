@@ -14,7 +14,6 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface ActivityContextInterface extends PluginInspectionInterface {
 
-
   /**
    * Returns a batched list of recipients for this context.
    *
@@ -28,4 +27,9 @@ interface ActivityContextInterface extends PluginInspectionInterface {
    */
   public function getRecipients(array $data, $last_id, $limit);
 
+
+  /**
+   * Determines if the entity is valid for this context.
+   */
+  public function isValidEntity($entity);
 }

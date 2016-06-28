@@ -20,7 +20,7 @@ class ActivityViewsData extends EntityViewsData implements EntityViewsDataInterf
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['activity']['table']['base'] = array(
+    $data['activity_field_data']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Activity'),
       'help' => $this->t('The Activity ID.'),
