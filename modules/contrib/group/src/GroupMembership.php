@@ -10,7 +10,6 @@ namespace Drupal\group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\Core\Session\AccountInterface;
 
 /**
