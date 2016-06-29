@@ -4744,6 +4744,7 @@ hr.ruler-l {
 .badge {
   padding: 4px 8px;
   font-size: 12px;
+  font-weight: 500;
 }
 
 .badge-accent {
@@ -4769,13 +4770,7 @@ hr.ruler-l {
 }
 
 .badge-gray-dark {
-  background-color: transparent;
-}
-
-.badge-dark {
   background-color: #333333;
-  color: white;
-  line-height: 1.5;
 }
 
 .badge label {
@@ -4793,6 +4788,7 @@ hr.ruler-l {
 
 .badge--toggle {
   padding: 0;
+  background-color: transparent;
   -webkit-transition: width 0.3s ease;
   transition: width 0.3s ease;
 }
@@ -4819,17 +4815,14 @@ hr.ruler-l {
   transition: opacity 0.3s ease;
 }
 
-.js .badge--toggle.badge-gray-dark input[type=checkbox]:checked ~ .material-icons,
-.js .badge--toggle.badge-gray-dark input[type=checkbox]:checked ~ .badge--toggle__label {
+.js .badge--toggle input[type=checkbox]:checked ~ .material-icons,
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
   background-color: #333333;
+  color: white;
 }
 
-.js .badge--toggle.badge-gray-dark .badge--toggle__label {
+.js .badge--toggle .badge--toggle__label {
   border-radius: 0 8px 8px 0;
-}
-
-.js .badge--toggle input[type=checkbox]:checked ~ .material-icons {
-  background-color: transparent;
 }
 
 .js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {

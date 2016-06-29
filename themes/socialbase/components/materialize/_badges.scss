@@ -1,6 +1,7 @@
 .badge {
   padding: ($badge-font-size/3) ($badge-font-size/1.5);
   font-size: $badge-font-size;
+  font-weight: 500;
 }
 
 .badge-accent {
@@ -26,14 +27,9 @@
 }
 
 .badge-gray-dark {
-  background-color: transparent;
+  background-color: $gray-dark;
 }
 
-.badge-dark {
-  background-color: $gray-dark;
-  color: white;
-  line-height: $line-height-small;
-}
 
 .badge label {
   margin-bottom: 0;
@@ -46,6 +42,7 @@
 
 .badge--toggle {
   padding: 0;
+  background-color: transparent;
   transition: width 0.3s ease;
 
   .material-icons {
@@ -71,18 +68,14 @@
     transition: opacity 0.3s ease;
   }
 
-  &.badge-gray-dark {
-    input[type=checkbox]:checked ~ .material-icons,
-    input[type=checkbox]:checked ~ .badge--toggle__label {
-      background-color: $gray-dark;
-    }
-    .badge--toggle__label {
-      border-radius: 0 8px 8px 0;
-    }
+  input[type=checkbox]:checked ~ .material-icons,
+  input[type=checkbox]:checked ~ .badge--toggle__label {
+    background-color: $gray-dark;
+    color: white;
   }
 
-  input[type=checkbox]:checked ~ .material-icons {
-    background-color: transparent;
+  .badge--toggle__label {
+    border-radius: 0 8px 8px 0;
   }
 
   input[type=checkbox]:checked ~ .badge--toggle__label {
