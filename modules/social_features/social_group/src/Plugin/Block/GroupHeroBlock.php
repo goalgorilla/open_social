@@ -23,13 +23,7 @@ class GroupHeroBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    $group = \Drupal::routeMatch()->getParameter('group');
-
-    if (!is_object($group) && !is_null($group)) {
-      $group = \Drupal::service('entity_type.manager')
-        ->getStorage('group')
-        ->load($group);
-    }
+    $group = _social_group_get_current_group();
 
     if (!empty($group)) {
       // Content
@@ -39,6 +33,8 @@ class GroupHeroBlock extends BlockBase {
 
       $build['content'] = $content;
     }
+    // Cache contexts
+    $build['#cache']['contexts'][] = 'url.path';
 
     return $build;
   }
