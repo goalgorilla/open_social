@@ -5,7 +5,6 @@
 // ===================================================
 
 var gulp          = require('gulp'),
-    $             = require('gulp-load-plugins')(),
     postcss       = require('gulp-postcss'),
     sass          = require('gulp-sass'),
     sourcemaps    = require('gulp-sourcemaps'),
@@ -16,6 +15,7 @@ var gulp          = require('gulp'),
     jade          = require('gulp-jade'),
     importOnce    = require('node-sass-import-once'),
     path          = require('path'),
+    rename        = require('gulp-rename'),
     fs            = require('fs'),
     concat        = require('gulp-concat'),
     notify        = require('gulp-notify'),
@@ -113,16 +113,16 @@ var sassProcessors = [
 
 gulp.task('styles', function () {
   return gulp.src(sassFiles)
-    .pipe($.sourcemaps.init() )
-    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe( sourcemaps.init() )
+    .pipe( plumber({ errorHandler: onError }) )
     .pipe( sass(options.sass) )
-    .pipe($.postcss(sassProcessors) )
+    .pipe( postcss(sassProcessors) )
     .pipe( rucksack() )
-    .pipe($.rename({dirname: ''}))
-    .pipe($.sourcemaps.write('.') )
+    .pipe( rename({dirname: ''}))
+    .pipe( sourcemaps.write('.') )
     .pipe( gulp.dest(options.theme.css) )
     .pipe( gulp.dest(options.rootPath.dist + '/css') )
-    .pipe($.connect.reload() );
+    .pipe( connect.reload() );
 });
 
 // ===================================================

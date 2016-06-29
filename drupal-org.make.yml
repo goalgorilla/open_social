@@ -1,0 +1,84 @@
+# Examples:
+# https://raw.githubusercontent.com/drush-ops/drush/master/examples/example.make.yml
+
+# Core version
+# ------------
+# Each makefile should begin by declaring the core version of Drupal that all
+# projects should be compatible with.
+
+core: 8.x
+
+# API version
+# ------------
+# Every makefile needs to declare it's Drush Make API version. This version of
+# drush make uses API version `2`.
+api: 2
+
+# Defaults
+# ------------
+# Set defaults for the make file.
+
+defaults:
+  projects:
+    subdir: 'contrib'
+
+# Modules
+# ------------
+# All dependencies with latest versions we use. If we do not add the versions we will not have a stable build
+# on all the environments.
+projects:
+  address:
+    version: 1.0-beta2
+  admin_toolbar:
+    version: '1.14'
+  config_update:
+    version: '1.1'
+  composer_manager:
+    version: 1.0-rc1
+  devel:
+    type: module
+    download:
+      type: git
+      revision: 728a40681856fccc9d7b782d116352c3743ddeec
+      branch: 8.x-1.x
+  dynamic_entity_reference:
+    version: 1.0-rc4
+  entity:
+    version: 1.0-alpha2
+  features:
+    version: 3.0-beta3
+  field_group:
+    version: 1.0-rc4
+  group:
+    version: 1.0-alpha4
+  message:
+    type: module
+    download:
+      type: git
+      revision: 4b3ba57e24b5f1b4a8b44ba06c368d16e0b9ee67
+      branch: 8.x-1.x
+  override_node_options:
+    version: '2.0'
+  profile:
+    version: 1.0-alpha4
+    patch:
+      - 'https://www.drupal.org/files/issues/profile-accesscontrol-2703825-2.patch'
+      - 'https://www.drupal.org/files/issues/profile-page-title-missing-2704763-3.patch'
+  r4032login:
+    type: module
+    download:
+      type: git
+      revision: 4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9
+      branch: 8.x-1.x
+  search_api:
+    version: 1.0-alpha14
+  token:
+    version: 1.0-alpha2
+
+# Themes, get bootstrap out of our contrib I guess?!
+  bootstrap:
+    type: theme
+    download:
+      type: git
+      revision: c4e032af753c65d44afe40250cd8b000baf23f79
+      branch: 8.x-3.x
