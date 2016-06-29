@@ -113,8 +113,7 @@ function social_group_group_insert(GroupInterface $group) {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
-    $membership = GroupMembership::load($group, $account);
-    $content = $membership->getGroupContent();
+    $content = $group->getMember($account)->getGroupContent();
     // Delete the initial created membership.
     $content->delete();
 
@@ -150,26 +149,26 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
       $build['#cache']['contexts'][] = 'group.type';
       $build['#cache']['contexts'][] = 'group_membership';
 
-      $tags = $build['#cache']['tags'];
-
-      // Based on GroupOperationsBlock.php we add some more cache tags.
-      $service_1 = \Drupal::service('group.group_route_context');
-      $service_2 = \Drupal::service('current_user');
-      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
-      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
-      // Merge all cache tags together.
-      $merged_tags = Cache::mergeTags(
-        $context_1->getCacheableMetadata()->getCacheTags(),
-        $context_2->getCacheableMetadata()->getCacheTags()
-      );
-      // Get all the tags to merge with the new ones.
-      foreach ($merged_tags as $merged_tag) {
-        $tags[] = $merged_tag;
-      }
-
-      $build['#cache']['tags'] = $tags;
-
-      $renderer->addCacheableDependency($build, $membership);
+//      $tags = $build['#cache']['tags'];
+//
+//      // Based on GroupOperationsBlock.php we add some more cache tags.
+//      $service_1 = \Drupal::service('group.group_route_context');
+//      $service_2 = \Drupal::service('current_user');
+//      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
+//      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
+//      // Merge all cache tags together.
+//      $merged_tags = Cache::mergeTags(
+//        $context_1->getCacheableMetadata()->getCacheTags(),
+//        $context_2->getCacheableMetadata()->getCacheTags()
+//      );
+//      // Get all the tags to merge with the new ones.
+//      foreach ($merged_tags as $merged_tag) {
+//        $tags[] = $merged_tag;
+//      }
+//
+//      $build['#cache']['tags'] = $tags;
+//
+//      $renderer->addCacheableDependency($build, $membership);
     }
   }
 }

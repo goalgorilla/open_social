@@ -44,7 +44,7 @@ class PostGroupBlock extends PostBlock {
           $context = ['group_content' => $group_content];
         }
         return \Drupal::entityTypeManager()
-          ->getAccessControlHandler($this->entity_type)
+          ->getAccessControlHandler($this->entityType)
           ->createAccess($this->bundle, $account, $context, TRUE);
       }
     }

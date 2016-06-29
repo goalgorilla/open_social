@@ -47,30 +47,30 @@ class GroupHeroBlock extends BlockBase {
 
       $build['content'] = $content;
 
-      // Cache
-      $renderer = \Drupal::service('renderer');
-      $current_user = \Drupal::currentUser();
-      $membership = $group->getMember($current_user);
-
-      $tags = empty($build['#cache']['tags']) ? array() : $build['#cache']['tags'];
-
-      // Based on GroupOperationsBlock.php we add some more cache tags.
-      $service_1 = \Drupal::service('group.group_route_context');
-      $service_2 = \Drupal::service('current_user');
-      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
-      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
-      // Merge all cache tags together.
-      $merged_tags = Cache::mergeTags(
-        $context_1->getCacheableMetadata()->getCacheTags(),
-        $context_2->getCacheableMetadata()->getCacheTags()
-      );
-      // Get all the tags to merge with the new ones.
-      foreach ($merged_tags as $merged_tag) {
-        $tags[] = $merged_tag;
-      }
-      $build['#cache']['tags'] = $tags;
-
-      $renderer->addCacheableDependency($build, $membership);
+//      // Cache
+//      $renderer = \Drupal::service('renderer');
+//      $current_user = \Drupal::currentUser();
+//      $membership = $group->getMember($current_user);
+//
+//      $tags = empty($build['#cache']['tags']) ? array() : $build['#cache']['tags'];
+//
+//      // Based on GroupOperationsBlock.php we add some more cache tags.
+//      $service_1 = \Drupal::service('group.group_route_context');
+//      $service_2 = \Drupal::service('current_user');
+//      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
+//      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
+//      // Merge all cache tags together.
+//      $merged_tags = Cache::mergeTags(
+//        $context_1->getCacheableMetadata()->getCacheTags(),
+//        $context_2->getCacheableMetadata()->getCacheTags()
+//      );
+//      // Get all the tags to merge with the new ones.
+//      foreach ($merged_tags as $merged_tag) {
+//        $tags[] = $merged_tag;
+//      }
+//      $build['#cache']['tags'] = $tags;
+//
+//      $renderer->addCacheableDependency($build, $membership);
     }
 
     return $build;
