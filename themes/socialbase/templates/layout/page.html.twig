@@ -59,31 +59,31 @@
 
   {{ page.breadcrumb }}
 
-  <div class="container hero-container">
-    <div class="cover">
-      {{ page.title }}
-      {{ page.hero }}
-    </div>
+  {% if (page.hero or page.secondary_navigation or page.title) %}
+    <div class="container hero-container">
 
-    {% if page.secondary_navigation %}
-      <div class="brand-secondary z-depth-1">
-        {{ page.secondary_navigation }}
-      </div>
-    {% endif %}
-  </div>
+      {{ page.hero }}
+      {{ page.title }}
+
+      {% if page.secondary_navigation %}
+        <div class="brand-secondary z-depth-1">
+          {{ page.secondary_navigation }}
+        </div>
+      {% endif %}
+
+    </div>
+  {% endif %}
 
   <a id="main-content" tabindex="-1"></a>
   <div class="container">
     <div class="row margin-top-l">
 
-      <div role="complementary" class="col-sm-3 col-sm-push-9">
+      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-top-complementary margin-bottom-l">
         {{ page.complementary }}
       </div>
 
-      <div class="col-sm-9 col-sm-pull-3 margin-top-l">
-        {% block card %}
-          {{ page.content }}
-        {% endblock %}
+      <div class="col-xs-12 col-sm-8">
+        {{ page.content }}
       </div>
 
     </div>

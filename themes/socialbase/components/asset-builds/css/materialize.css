@@ -3430,15 +3430,17 @@ span.form-required {
 }
 
 .select-wrapper:after {
-  width: 30px;
-  height: 38px;
-  background: url("../../../images/icon-select.svg") no-repeat center/auto 100%;
-  pointer-events: none;
+  content: '▼';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
   line-height: 1;
-  content: '';
+  margin-top: -.5em;
+  padding-right: 12px;
+  pointer-events: none;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 50%;
   z-index: 10;
 }
 
@@ -5129,6 +5131,10 @@ a.list-group-item {
 
 .list-group-field {
   display: inline-block;
+}
+
+.input-group {
+  max-width: 23rem;
 }
 
 .input-group .input-group-addon {
