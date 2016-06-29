@@ -1,0 +1,218 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Edit Event
+
+block breadcrumbs
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='event.html') Amsterdam Meetup
+  li.active Edit
+      
+block content
+  .row.margin-top-l
+    .col-xs-12
+      h1.h4.section-title Edit Event: Amsterdam Meetup
+  
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last
+      .toc-wrapper
+        ul.table-of-contents.nav
+          li
+            a(href='#content') Title &amp; image
+          li 
+            a(href='#visibility') Visibility
+          li
+            a(href='#description') Description
+          li 
+            a(href='#eventtime') Date &amp; time
+          li 
+            a(href='#location') Location
+          li 
+            a(href='#attachments') Attachments
+          li
+            a(href='#comment-settings') Comment settings
+    
+    .col-xs-12.col-sm-8
+    
+      form(action='event.html', method='get')
+      
+        #content.card.card-underline.scrollspy
+        
+          .card-head
+            header Title and image
+      
+          .card-body
+
+            .form-group
+              label.form-required Title
+              input.form-control.required(type="text", value='Amsterdam Meetup')
+                  
+            .form-group.form__type-managed-file
+              label Image
+              .image-widget.form-managed-file.clearfix
+                img.img-responsive.pull-left(src='content/images/event-hero.jpg', width='150')
+                .pull-left.padding-xs
+                  .file.file--image
+                  a(href='#', type="image/jpeg; length=158378") amasterdam-meetup-121.jpg
+                  .file-size (154.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-default(type='submit', value='remove', style='pointer-events: none;')
+                    i.material-icons.pull-left delete
+                    | Remove
+              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+          
+        #visibility.card.card-underline.scrollspy
+        
+          .card-head
+            header Visibility
+      
+          .card-body
+
+            .form-group.radios
+              label.form-required Visibility
+              .radio
+                input#community(type='radio', name='type', checked)
+                label(for='community') Community
+                .help-block Visible for members only
+              .radio
+                input#public(type='radio', name='type')
+                label(for='public') Public
+                .help-block Visible for everyone, including people who are not a member
+        
+        #description.card.card-underline.scrollspy
+        
+          .card-head
+            header Description
+      
+          .card-body
+            .form-group
+              label.form-required Description
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+                  p 
+                    strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business. Your training can be free, as so many industry experts write and teach and share this information without charging for it. Even the tools you use to build websites can be downloaded free of charge, or purchased for very little.
+                
+                    p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
+
+                    p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
+
+        #eventtime.card.card-underline.scrollspy
+        
+          .card-head
+            header Date and time
+      
+          .card-body
+            .row
+              .col-sm-6
+                .form-group
+                  label.form-required Start date
+                  input.form-control.datepicker(type="text", value='6 june, 2016')
+                  .help-block Please fill in the start date of your event
+              .col-sm-6
+                .form-group
+                  label.form-required Start time
+                  input.form-control.timepicker(type="text", value='12:00')
+            
+            .row
+              .col-sm-6
+                .form-group
+                  label End date
+                  input.form-control.datepicker(type="text", value='6 june, 2016')    
+              .col-sm-6
+                .form-group
+                  label End time
+                  input.form-control.timepicker(type="text", value='17:00')
+
+        #location.card.card-underline.scrollspy
+        
+          .card-head
+            header Location
+      
+          .card-body
+            
+            .form-group
+              label.form-required Venue name
+              input.form-control(type="text", required, value='Goalgorilla')
+
+            .form-group
+              label Country
+              select.form-control
+                option(value='', disabled='') Choose a country
+                option(value='1', selected) Netherlands
+                option(value='2') Option 2
+                option(value='3') Option 3
+            
+            .form-group
+              label Post code
+              input.form-control(type="text", value='1234 AB')  
+              
+            .form-group
+              label City
+              input.form-control(type="text", value='Amsterdam')  
+                
+            .form-group
+              label Address
+              input.form-control(type="text", value='Keizersgracht 376')    
+
+        #attachments.card.card-underline.scrollspy
+        
+          .card-head
+            header Attachments
+      
+          .card-body
+            .form-group
+              label Files
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.btn-default.js-hide(type='submit', value='remove')
+                  i.material-icons.pull-left file_upload
+                  | Upload
+              .help-block 15 MB per file limit - Allowed types: xls xlsx doc 
+            
+        #comment-settings.form-item.card.scrollspy.tabs-left
+          ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")
+            li.active
+              a(href="#comments") Comment settings
+                
+          .card-body.tab-content
+            #comments.tab-pane.active
+              .form-group.radios
+                label.form-required Comments
+                .radio
+                  input#open(type='radio', name='comments')
+                  label(for='open') Open
+                  .help-block Users with the "Post comments" permission can post comments.
+                .radio
+                  input#closed(type='radio', checked, name='comments')
+                  label(for='closed') Closed
+                  .help-block Users cannot post comments.
+              
+        .form-actions.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href="event.html") Discard changes
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Delete
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href="event.html") Preview
+
+        
+block scriptinline  
+  script(src='libs/ckeditor/ckeditor.js')
+  script(src='libs/ckeditor/adapters/jquery.js')
+  
+  link(href='css/datepicker.css', type='text/css', rel='stylesheet', media='screen,projection')
+  script(src="libs/date_picker/picker.js")
+  script(src="libs/date_picker/picker.date.js")
+  script(src="libs/date_picker/picker.time.js")
+  
+  script.
+    jQuery(document).ready(function($){
+      $( '#ckeditor' ).ckeditor();  
+      $('.datepicker').pickadate({selectYears: 20});
+      $('.timepicker').pickatime();
+    });
+    
+    function showMe (it, it2, box) {
+      var visibility = (box.checked) ? "block" : "none";
+      document.getElementById(it).style.display = visibility;
+      document.getElementById(it2).style.display = visibility;
+    }

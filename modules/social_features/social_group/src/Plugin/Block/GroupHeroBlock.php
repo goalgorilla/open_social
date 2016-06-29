@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Plugin\Block\GroupHeroBlock.
- */
-
 namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;

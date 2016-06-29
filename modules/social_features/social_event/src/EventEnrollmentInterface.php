@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\EventEnrollmentInterface.
- */
-
 namespace Drupal\social_event;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -18,7 +12,6 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup social_event
  */
 interface EventEnrollmentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
   /**
    * Gets the Event enrollment name.
@@ -72,7 +65,7 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
    * Sets the published status of a Event enrollment.
    *
    * @param bool $published
-   *   TRUE to set this Event enrollment to published, FALSE to set it to unpublished.
+   *   TRUE to set this Event enrollment to published, FALSE for unpublished.
    *
    * @return \Drupal\social_event\EventEnrollmentInterface
    *   The called Event enrollment entity.

@@ -1,4 +1,4 @@
-@wip @api @topic @stability @perfect @critical @DS-341
+@api @topic @stability @perfect @critical @DS-341
 Feature: Create Topic
   Benefit: In order to share knowledge with people
   Role: As a LU

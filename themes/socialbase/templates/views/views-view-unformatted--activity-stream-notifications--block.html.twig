@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ *
+ * @ingroup themeable
+ */
+#}
+<li>
+  <div class="dropdown-header">
+    {% trans %}Notifications{% endtrans %}
+  </div>
+</li>
+<li>
+  <ul class="scrollable-menu">
+  {% for row in rows %}
+    <li>{{ row.content }}</li>
+  {% endfor %}
+  </ul>
+</li>
+<li>
+  <div class="dropdown-header">
+    <a href="{{ notification_url }}" class="block clearfix">
+      {% trans %}View all{% endtrans %}
+      <i class="material-icons pull-right">chevron_right</i>
+    </a>
+  </div>
+</li>

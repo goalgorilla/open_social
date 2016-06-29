@@ -1,13 +1,16 @@
 <?php
 
+/**
+ * @file
+ * The Social comment module.
+ */
+
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
-
 
 /**
  * @file
@@ -19,15 +22,30 @@ use Drupal\comment\CommentInterface;
  *
  * Enhance the comment form.
  */
-function social_comment_form_comment_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_comment_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Change value of 'Save' button.
   $form['actions']['submit']['#value'] = t('Comment');
   // Hide title of 'Comment' field.
-  if(!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])){
+  if (!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])) {
     $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'none';
   }
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
+
+  // Comment reply form.
+  if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+    $form['#attributes']['class'][] = 'card-nested-section';
+    $form['actions']['submit']['#value'] = t('Reply');
+    $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
+
+    $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
+  }
+  // Comment edit form.
+  if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+    $form['actions']['submit']['#value'] = t('Submit');
+    $form['#title'] = t('Edit comment');
+    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
+  }
 }
 
 /**
@@ -64,7 +82,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
   $bundle = $entity->bundle();
   switch ($bundle) {
     default:
-      if (!empty($entity->getParentComment())) {
+      if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
         unset($links['comment']['#links']['comment-reply']);
       }
       break;
@@ -104,7 +122,7 @@ function social_comment_preprocess_comment(&$variables) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_access() for comment entity.
+ * Implements hook_ENTITY_TYPE_access().
  *
  * Allow users to delete their own comments.
  */
@@ -126,6 +144,6 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
  * Implements hook_entity_type_alter().
  */
 function social_comment_entity_type_alter(array &$entity_types) {
-  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] **/
+  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['comment']->setViewBuilderClass('Drupal\social_comment\SocialCommentViewBuilder');
 }

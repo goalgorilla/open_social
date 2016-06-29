@@ -1,0 +1,49 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Edit Happy Campers (Open group)
+
+block content
+      
+  .row.margin-top-l
+    .col-xs-12.col-md-8
+    
+      h4.section-title Edit Happy Campers (Open group)   
+    
+      form(action='group-stream.html', method='get')
+      
+        .card.card-underline
+        
+          .card-head
+            header Content
+      
+          .card-body 
+
+            .form-group
+              label.form-required Title
+              input.form-control(type="text", required, value='Happy Campers')
+
+            .form-group
+              label.form-required Description
+              textarea.form-control.materialize-textarea(required)
+                | Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+
+            .form-group.form__type-managed-file
+              label Image
+              .image-widget.form-managed-file.clearfix
+                img.img-responsive.pull-left(src='content/images/group1-square.jpg', width='50')
+                .pull-left.padding-xs
+                  .file.file--image
+                  a(href='#', type="image/jpeg; length=158378") group1-square.jpg
+                  .file-size (154.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-user.form-submit(type='submit', value='remove')
+                    i.material-icons.pull-left delete
+                    | Remove
+              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              
+        .form-actions.clearfix 
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href='group-stream.html') Discard changes
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Remove group
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')
+          

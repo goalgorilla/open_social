@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_profile\Plugin\Block\ProfileHeroBlock.
- */
-
 namespace Drupal\social_profile\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;

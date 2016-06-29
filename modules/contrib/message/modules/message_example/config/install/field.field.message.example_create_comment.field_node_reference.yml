@@ -1,0 +1,27 @@
+uuid: 57467ab9-6b89-4d21-9d09-9ce859174223
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_node_reference
+    - message.type.example_create_comment
+id: message.example_create_comment.field_node_reference
+field_name: field_node_reference
+entity_type: message
+bundle: example_create_comment
+label: 'Node reference'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings:
+    target_bundles:
+      article: article
+      page: page
+    sort:
+      field: _none
+third_party_settings: {  }
+field_type: entity_reference

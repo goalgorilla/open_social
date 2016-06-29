@@ -1,0 +1,99 @@
+- var pagetype = "styleguide"
+- var page = "Color"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.jade
+  body(class='#{pagetype}')
+    header.styleguide-header
+      include ./layout/_navbar.jade
+      
+    main.styleguide-container(role='main')
+
+      .container
+          
+        .row
+          .col-xs-12
+            h2 Color palette
+            p You can use your own brand colors for your version of this application. We have defined a few color names based on the material design guidelines.
+        
+        .row
+          .col-xs-12
+            h3 Primary color      
+          .col-md-6
+            p When using a primary color in your palette, this color should be the most widely used across all screens and components.
+          .col-md-6
+            .card
+              .card-body.brand-primary Our default primary color is #29abe2.
+        .row
+          .col-xs-12
+            h3 Secondary color     
+          .col-md-6
+            p Palettes with a secondary color may use this color to indicate a related action or information.
+            p The secondary color can be a darker or lighter variation of the primary color.
+          .col-md-6
+            .card
+              .card-body.brand-secondary  Our default secondary color is #1f80aa.
+        
+        .row
+          .col-xs-12
+            h3 Accent color 
+          .col-md-6
+            p The accent should be used for promoted actions only.
+                            
+          .col-md-6
+            .card
+              .card-body.brand-accent Our default accent color is #ffc142.
+          
+        .row
+          .col-xs-12
+            h3 State color
+            p For states in forms, messages and other feedback we use state colors to indicate whether user actions were performed successfully or failed for example.
+        .row
+          .col-xs-12.col-md-6
+            .card
+              .card-body.bg-success.center Success color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.bg-danger.center Danger color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.bg-warning.center Warning color
+          .col-xs-12.col-md-6
+            .card
+              .card-body.bg-info.center Info color
+      
+        .row
+          .col-xs-12
+            h2.header Usage 
+            br
+            h4 Background color
+            p To apply a background color, just add the color name as a class to the element.
+        .row
+          .col-xs-12.col-sm-4
+            .card
+              .card-body.brand-primary This is a card with a brand-primary class
+          .col-xs-12.col-sm-4
+            .card
+              .card-body.brand-secondary This is a card with a brand-secondary class 
+          .col-xs-12.col-sm-4
+            .card
+              .card-body.brand-accent This is a card with a brand-accent class
+
+        .row
+          .col-xs-12
+            h4 Text color
+            p To apply a text color, just apply text-{color} to the text element.
+        .row
+          .col-xs-12.col-md-6
+            p.text-primary.center This is a paragraph with a text-primary class
+          .col-xs-12.col-md-6
+            p.text-gray.center This is a paragraph with a text-gray class
+          
+        .row
+          .col-xs-12.col-md-8
+            h2.header Customize
+            p This theme is configured in such way you only need to change a few basic colors. These colors can be set in the <code>theme</code> folder. A readme file is provided there. 
+  
+    include ./layout/_scripts.jade

@@ -29,7 +29,6 @@ function template_suggestions_extra_help($route_name, RouteMatchInterface $route
 function template_suggestions_extra_theme_suggestions_page_alter(array &$suggestions, array $variables) {
   $altered_suggestions = array();
   // Add node type to page suggestions.
-
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
     if (!is_object($node)) {
       $node = node_load($node);

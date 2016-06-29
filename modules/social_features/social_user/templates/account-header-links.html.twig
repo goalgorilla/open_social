@@ -13,7 +13,7 @@
  */
 #}
 <a href="/" class="navbar-brand">
-  <object id="front-page-logo" type="image/svg+xml" data="/themes/socialbase/images/social-logo-white.svg">Your browser does not support SVG</object>
+  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" />
 </a>
 
 <div class="navbar-header">
@@ -26,15 +26,21 @@
               <span class="{{item.label_classes}}">{{ item.label }}</span>
           </a>
           {% if item.below %}
-            <ul class="dropdown-menu">
-              {% for item in item.below %}
-                <li class="{{ item.classes }}">
-                  <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-                    <span class="{{item.label_classes}}">{{ item.label }}</span>
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
+              {% if item.below is iterable %}
+                <ul class="dropdown-menu">
+                  {% for item in item.below %}
+                    <li class="{{ item.classes }}">
+                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+                        <span class="{{item.label_classes}}">{{ item.label }}</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                  <ul class="dropdown-menu">
+                      {{ item.below }}
+                  </ul>
+              {% endif %}
           {% endif %}
       </li>
   {% endfor %}

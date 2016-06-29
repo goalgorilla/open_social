@@ -5,7 +5,6 @@ namespace Drupal\social_comment;
 use Drupal\comment\CommentViewBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * View builder handler for social comments.

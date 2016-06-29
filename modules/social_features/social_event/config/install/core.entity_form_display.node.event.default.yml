@@ -1,3 +1,4 @@
+uuid: d5b21819-02a5-4956-89e4-de650d05d280
 langcode: en
 status: true
 dependencies:
@@ -40,7 +41,7 @@ third_party_settings:
         - field_event_date
         - field_event_date_end
       parent_name: ''
-      weight: 1
+      weight: 3
       label: 'Date & time'
       format_type: fieldset
       format_settings:
@@ -53,7 +54,7 @@ third_party_settings:
         - field_event_location
         - field_event_address
       parent_name: ''
-      weight: 2
+      weight: 5
       label: Location
       format_type: fieldset
       format_settings:
@@ -65,7 +66,7 @@ third_party_settings:
       children:
         - body
       parent_name: ''
-      weight: 3
+      weight: 7
       label: Description
       format_type: fieldset
       format_settings:
@@ -73,6 +74,20 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+    group_event_visibility:
+      children:
+        - field_content_visibility
+      parent_name: ''
+      weight: 2
+      label: Visibility
+      format_type: fieldset
+      format_settings:
+        label: Visibility
+        required_fields: true
+        id: visibility
+        classes: 'card card-underline scrollspy'
+_core:
+  default_config_hash: PzknErbLCFpt2izP7BgaDdXj_ObcrnqXkjMwUyJoWFQ
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -88,11 +103,11 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 2
+    weight: 4
     settings: {  }
     third_party_settings: {  }
   field_content_visibility:
-    weight: 9
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -103,7 +118,7 @@ content:
     third_party_settings: {  }
     type: address_default
   field_event_comments:
-    weight: 13
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -118,7 +133,7 @@ content:
     third_party_settings: {  }
     type: datetime_default
   field_event_image:
-    weight: 2
+    weight: 3
     settings:
       progress_indicator: throbber
       preview_image_style: social_x_large
@@ -140,17 +155,17 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 3
+    weight: 6
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 8
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 2
     settings:
       size: 60
       placeholder: ''

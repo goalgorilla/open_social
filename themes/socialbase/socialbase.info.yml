@@ -1,0 +1,53 @@
+name: Social base theme
+type: theme
+base theme: bootstrap
+description: Theme layer for drupal social.
+core: 8.x
+
+# The "libraries:" section will add a library to _all_ pages.
+libraries:
+  - socialbase/global-styling
+  # @TODO Split up global-styling into components
+  - socialbase/buttons
+  - socialbase/layout
+
+# The "libraries-override:" section will allow you to:
+# - Replace an entire library.
+# - Remove an entire library.
+# - Replace an asset in a library with another asset.
+# - Remove an asset from a library.
+libraries-override:
+  core/normalize: false
+  # Remove jQuery UI datepicker
+  core/jquery.ui/ui:
+    js:
+      datepicker-min.js: false
+  system/base:
+    css:
+      component:
+        css/components/align.module.css: false
+        css/components/clearfix.module.css: false
+        css/components/container-inline.module.css: false
+        css/components/fieldgroup.module.css: false
+        css/components/hidden.module.css: false
+        css/components/item-list.module.css: false
+        css/components/js.module.css: false
+        css/components/nowrap.module.css: false
+        css/components/position-container.module.css: false
+        css/components/tree-child.module.css: false
+
+regions:
+  header: Header
+  menu_panel: Main navigation panel
+  notification_panel: Notifications panel
+  user_panel: User navigation panel
+  breadcrumb: Breadcrumb
+  hero: Hero
+  primary_action: Primary action
+  secondary_navigation: Secondary navigation
+  title: Section title
+  content: Content
+  complementary: Complementary
+  footer: Footer
+
+debug: false

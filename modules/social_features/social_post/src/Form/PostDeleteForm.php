@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Form\PostDeleteForm.
- */
-
 namespace Drupal\social_post\Form;
 
 use Drupal\Core\Entity\ContentEntityDeleteForm;

@@ -1,0 +1,51 @@
+//- created an event in a group with no comments
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member3.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member3.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Clive Owen created an event 
+      else 
+        a(href="my-stream.html") Clive Owen 
+        | created an event in group 
+        a(href='group-stream.html') Happy campers        
+      br
+      .text-gray-lighter 30 minutes ago
+.card--teaser.card--teaser-stream.card-with-actionbar
+  a.card-image.blue-overlay(href="event.html")
+    img.img-responsive(src="content/images/people3-square.jpg")
+    .teaser-date 28
+      .text-xs Aug
+    .status unpublished
+  .card-body
+    h4.card-title 
+      a(href="event.html") Team conference East
+    p.text-grey-dark.text-m
+      i.material-icons event
+      | &nbsp;
+      span.inline-center 28 Aug 10:00 - 12:00 
+      | &nbsp; 
+      unless user == "isAnonymous"
+        span.label.label-primary enrolled
+    p.text-grey-dark.text-m
+      i.material-icons place
+      | &nbsp;
+      span.inline-center Old Market, Groningen
+    .card-actionbar
+      if user != "isAnonymous"
+        .badge.badge-gray-lighter.badge--toggle
+          label
+            input(type='checkbox')
+            i.material-icons group        
+            span.badge--toggle__label community
+      a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
+
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='event.html#comment-form') Comment
+  hr.ruler-xs
+  a.btn.btn-block.btn-link.disabled 0 comments

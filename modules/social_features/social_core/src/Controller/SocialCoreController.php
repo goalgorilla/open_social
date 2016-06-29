@@ -1,20 +1,17 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_core\Controller\SocialCoreController.
- */
-
 namespace Drupal\social_core\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-
 
 /**
  * Returns responses for social_core module routes.
  */
 class SocialCoreController extends ControllerBase {
 
+  /**
+   * Custom function for returning markup on the access denied page.
+   */
   public function accessDenied() {
     // Get the front page URL.
     $frontpage = $this->config('system.site')->get('page.front');
@@ -25,4 +22,5 @@ class SocialCoreController extends ControllerBase {
     // Return the message in the render array.
     return array('#markup' => $text);
   }
+
 }

@@ -1,0 +1,66 @@
+.off-canvas {
+  position: fixed;
+  top: 50px;
+  overflow: auto;
+  width: 280px;
+  height: 100%;
+  background-color: $card-bg-color;
+  padding: $card-padding;
+  box-shadow: 0 8px 17px 0 transparent, 0 6px 20px 0 transparent;
+  z-index: 2;
+  backface-visibility: hidden;
+  transition: transform 0.5s, box-shadow 0.3s;
+
+  &.is-open {
+    transform: translateX(0);
+    @include z-depth-2;
+  }
+
+}
+
+.off-canvas-left {
+  transform: translateX(-280px);
+  left: 0;
+}
+
+.off-canvas-right {
+  transform: translateX(280px);
+  right: 0;
+}
+
+.off-canvas-xs-only {
+  @include MQ($small) {
+    position: relative;
+    width: 100%;
+    height: auto;
+    right: auto;
+    transform: none;
+    overflow: visible;
+    top: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+}
+
+.offcanvas-head {
+  position: relative;
+}
+
+.offcanvas-tools {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.offcanvas-body {
+	padding: 10px 0;
+}
+
+// provide an offset that matches the section title element + a paragraph
+.margin-top-exposed-filter {
+  @include MQ($small) {
+    margin-top: ((1.5*1.25rem) + 1.25rem + 1.25rem);
+  }
+}

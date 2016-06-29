@@ -1,0 +1,17 @@
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
+    else 
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member2.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Getrud van Assen
+      else 
+        a(href="other-stream.html") Getrud van Assen
+      br 
+      .text-gray-light 2 hours ago
+
+.margin-top-s Ut fermentum massa justo sit amet risus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.

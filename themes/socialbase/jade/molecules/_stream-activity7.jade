@@ -1,0 +1,59 @@
+//- created a topic on a profile
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Henry Bond created a topic in the community
+      else 
+        a(href="other-stream.html") Henry Bond 
+        | created a topic in the community   
+      br
+      .text-gray-lighter 32 minutes ago
+.card--teaser.card--teaser-stream.card-with-actionbar
+  a.card-image.blue-overlay(href="topic.html")
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+    img.teaser-type(src='images/icon-topic.svg', alt='')
+  .card-body
+    h4.card-title 
+      a(href="topic.html") Technology for the handicapped
+    p.text-grey-dark.text-m
+      if user == "isAnonymous"
+        span Clive Owen 
+      else
+        a(href="other-stream.html") Henry Bond 
+      | &bullet; 15 feb 2016
+    p.clearfix.text-m
+      i.material-icons label
+      | &nbsp;
+      span.inline-center Blog
+    .card-actionbar
+      if user != "isAnonymous"
+        .badge.badge-gray-lighter.badge--toggle
+          label
+            input(type='checkbox')
+            i.material-icons public        
+            span.badge--toggle__label public
+      a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
+
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
+  .visible-xs-block
+    hr.ruler-sm
+    a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
+      i.material-icons chevron_right
+
+  .hidden-xs.card-nested-section
+
+    include ./_activity1-reply1.jade
+    include ./_activity1-reply2.jade
+  
+    .margin-top-l.text-center
+
+        a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+          i.material-icons chevron_right

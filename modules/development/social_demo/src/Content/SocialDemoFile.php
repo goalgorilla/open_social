@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoFile.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -14,11 +9,14 @@ namespace Drupal\social_demo\Content;
 use Drupal\file\Entity\File;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 
+/**
+ * Implements Demo content for Files.
+ */
 class SocialDemoFile {
 
   private $files;
 
-  /*
+  /**
    * Read file contents on construction.
    */
   public function __construct() {
@@ -26,11 +24,14 @@ class SocialDemoFile {
     $this->files = $yml_data->parseFile('entity/file.yml');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create() {
     return new static();
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -38,7 +39,7 @@ class SocialDemoFile {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->files as $uuid => $file) {
+    foreach ($this->files as $uuid => $file) {
       // Must have uuid and same key value.
       if ($uuid !== $file['uuid']) {
         var_dump('File with uuid: ' . $uuid . ' has a different uuid in content.');
@@ -50,14 +51,16 @@ class SocialDemoFile {
       $accountClass = SocialDemoUser::create($container);
       $uid = $accountClass->loadUserFromUuid($file['uid']);
 
-      $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/'.$file['filename'], 'public://' . $file['filename'], FILE_EXISTS_REPLACE);
+      // Get the path from the demo parser.
+      $demoParser = new SocialDemoParser();
+      $uri  = file_unmanaged_copy($demoParser->getPath('files' . DIRECTORY_SEPARATOR . $file['filename']), 'public://' . $file['filename'], FILE_EXISTS_REPLACE);
 
       $media = File::create([
         'uuid' => $file['uuid'],
         'langcode' => $file['langcode'],
         'uid' => $uid,
         'status' => $file['status'],
-        'uri' => $uri
+        'uri' => $uri,
       ]);
       $media->save();
 
@@ -67,12 +70,12 @@ class SocialDemoFile {
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->files as $uuid => $file) {
+    foreach ($this->files as $uuid => $file) {
 
       // Must have uuid and same key value.
       if ($uuid !== $file['uuid']) {
@@ -91,16 +94,17 @@ class SocialDemoFile {
   /**
    * Load a file object by uuid.
    *
-   * @param $uuid
-   *  the uuid of the file.
+   * @param string $uuid
+   *   The uuid of the file.
    *
    * @return int $fid
+   *   The file id for the given uuid.
    */
   public function loadByUuid($uuid) {
     $query = \Drupal::entityQuery('file');
     $query->condition('uuid', $uuid);
     $fids = $query->execute();
-    // Get a single item
+    // Get a single item.
     $fid = reset($fids);
     // And return it.
     return $fid;

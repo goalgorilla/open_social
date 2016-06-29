@@ -1,0 +1,285 @@
+<?php
+
+/**
+ * @file
+ * Module file for dynamic_entity_reference_entity_test.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function dynamic_entity_reference_entity_test_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+  // 'entity_test' with no data table and 'entity_test_mul' is with data table.
+  if ($entity_type->id() == 'entity_test' || $entity_type->id() == 'entity_test_mul') {
+    $fields['dynamic_references'] = BaseFieldDefinition::create('dynamic_entity_reference')
+      ->setLabel((string) new TranslatableMarkup('References'))
+      ->setDescription((string) new TranslatableMarkup('Reference another entity.'))
+      ->setRequired(FALSE)
+      ->setCardinality(\Drupal::state()->get('dynamic_entity_reference_entity_test_cardinality', 1))
+      ->setDisplayOptions('form', [
+        'type' => 'dynamic_entity_reference_default',
+        'weight' => 10,
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'dynamic_entity_reference_label',
+        'weight' => 10,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    if (\Drupal::state()->get('dynamic_entity_reference_entity_test_exclude', '') == 'entity_test') {
+      $fields['dynamic_references']
+        ->setSettings([
+          'exclude_entity_types' => FALSE,
+          'entity_type_ids' => [
+            'entity_test_mul' => 'entity_test_mul',
+          ],
+          'entity_test_mul' => [
+            'handler' => "default:entity_test_mul",
+            'handler_settings' => [],
+          ],
+        ]);
+    }
+    else {
+      $fields['dynamic_references']
+      ->setSettings([
+        'exclude_entity_types' => FALSE,
+        'entity_type_ids' => [
+          'entity_test' => 'entity_test',
+          'entity_test_mul' => 'entity_test_mul',
+        ],
+        'entity_test' => [
+          'handler' => "default:entity_test",
+          'handler_settings' => [],
+        ],
+        'entity_test_mul' => [
+          'handler' => "default:entity_test_mul",
+          'handler_settings' => [],
+        ],
+      ]);
+    }
+
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function dynamic_entity_reference_entity_test_views_data() {
+  // @todo Currently views integration for multivalue basefields is broken this
+  //   function adds a temporary fix for that remove this when is fixed
+  //   https://www.drupal.org/node/2477899.
+  $data = [];
+
+  if (\Drupal::state()->get('dynamic_entity_reference_entity_test_cardinality', 1) != 1) {
+    $data['entity_test__dynamic_references'] = [
+      'table' => [
+        'join' => [
+          'entity_test' => [
+            'left_field' => 'id',
+            'field' => 'entity_id',
+          ],
+        ],
+      ],
+      'dynamic_references' => [
+        'group' => "Test entity",
+        'title' => "Test references",
+        'title short' => "Test references",
+        'help' => "Appears in: entity_test.",
+        'field' => [
+          'table' => "entity_test__dynamic_references",
+          'id' => "field",
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+          'real field' => "dynamic_references_type_id",
+          'additional fields' => [
+            "delta",
+            "langcode",
+            "bundle",
+            "dynamic_references_target_id",
+            "dynamic_references_target_type",
+          ],
+          'element type' => "div",
+          'is revision' => FALSE,
+          'click sortable' => TRUE,
+        ],
+      ],
+      'dynamic_references_target_id' => [
+        'group' => "Test entity",
+        'title' => "Test references (dynamic_references)",
+        'title short' => "Test references",
+        'help' => "Appears in: entity_test.",
+        'argument' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test__dynamic_references",
+          'id' => "numeric",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+          'empty field name' => "- No value -",
+        ],
+        'filter' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test__dynamic_references",
+          'id' => "numeric",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+          'allow empty' => TRUE,
+        ],
+        'sort' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test__dynamic_references",
+          'id' => "standard",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+        ],
+      ],
+      'dynamic_references_target_type' => [
+        'group' => "Test entity",
+        'title' => "Test references (dynamic_references:target_type)",
+        'title short' => "Test references:target_type",
+        'help' => "Appears in: entity_test.",
+        'argument' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test__dynamic_references",
+          'id' => "string",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+          'empty field name' => "- No value -",
+        ],
+        'filter' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test__dynamic_references",
+          'id' => "string",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+          'allow empty' => TRUE,
+        ],
+        'sort' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test__dynamic_references",
+          'id' => "standard",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test",
+        ],
+      ],
+    ];
+    $data['entity_test_mul__dynamic_references'] = [
+      'table' => [
+        'join' => [
+          'entity_test_mul_property_data' => [
+            'left_field' => 'id',
+            'field' => 'entity_id',
+            'extra' => [
+              [
+                'left_field' => 'langcode',
+                'field' => 'langcode'
+              ],
+            ],
+          ],
+        ],
+      ],
+      'dynamic_references' => [
+        'group' => "Test entity - data table",
+        'title' => "Test references",
+        'title short' => "Test references",
+        'help' => "Appears in: entity_test_mul.",
+        'field' => [
+          'table' => "entity_test__dynamic_references",
+          'id' => "field",
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+          'real field' => "dynamic_references_type_id",
+          'additional fields' => [
+            "delta",
+            "langcode",
+            "bundle",
+            "dynamic_references_target_id",
+            "dynamic_references_target_type",
+          ],
+          'element type' => "div",
+          'is revision' => FALSE,
+          'click sortable' => TRUE,
+        ],
+      ],
+      'dynamic_references_target_id' => [
+        'group' => "Test entity - data table",
+        'title' => "Test references (dynamic_references)",
+        'title short' => "Test references",
+        'help' => "Appears in: entity_test_mul.",
+        'argument' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "numeric",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+          'empty field name' => "- No value -",
+        ],
+        'filter' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "numeric",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+          'allow empty' => TRUE,
+        ],
+        'sort' => [
+          'field' => "dynamic_references_target_id",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "standard",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+        ],
+      ],
+      'dynamic_references_target_type' => [
+        'group' => "Test entity - data table",
+        'title' => "Test references (dynamic_references:target_type)",
+        'title short' => "Test references:target_type",
+        'help' => "Appears in: entity_test_mul.",
+        'argument' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "string",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+          'empty field name' => "- No value -",
+        ],
+        'filter' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "string",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+          'allow empty' => TRUE,
+        ],
+        'sort' => [
+          'field' => "dynamic_references_target_type",
+          'table' => "entity_test_mul__dynamic_references",
+          'id' => "standard",
+          'additional fields' => [],
+          'field_name' => "dynamic_references",
+          'entity_type' => "entity_test_mul",
+        ],
+      ],
+    ];
+
+  }
+  return $data;
+}

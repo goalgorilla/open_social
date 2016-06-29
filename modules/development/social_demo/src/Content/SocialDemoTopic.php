@@ -1,10 +1,5 @@
 <?php
 
-/**
-* @file
-* Contains \Drupal\social_demo\SocialDemoTopic.
-*/
-
 namespace Drupal\social_demo\Content;
 
 /*
@@ -12,13 +7,18 @@ namespace Drupal\social_demo\Content;
  */
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\file\Entity\File;
+use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Implements Demo content for Topics.
+ */
 class SocialDemoTopic implements ContainerInjectionInterface {
 
   private $topics;
@@ -37,25 +37,37 @@ class SocialDemoTopic implements ContainerInjectionInterface {
    */
   protected $nodeStorage;
 
-  /*
+  /**
+   * The node storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface;
+   */
+  protected $entityStorage;
+
+  /**
    * Read file contents on construction.
    */
-  public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage) {
+  public function __construct(UserStorageInterface $user_storage, NodeStorageInterface $node_storage, EntityStorageInterface $entity_storage) {
     $this->userStorage = $user_storage;
     $this->nodeStorage = $node_storage;
+    $this->entityStorage = $entity_storage;
 
     $yml_data = new SocialDemoParser();
     $this->topics = $yml_data->parseFile('entity/topic.yml');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('node')
+      $container->get('entity.manager')->getStorage('node'),
+      $container->get('entity.manager')->getStorage('group')
     );
   }
 
-  /*
+  /**
    * Function to create content.
    */
   public function createContent() {
@@ -63,14 +75,14 @@ class SocialDemoTopic implements ContainerInjectionInterface {
     $content_counter = 0;
 
     // Loop through the content and try to create new entries.
-    foreach($this->topics as $uuid => $topic) {
+    foreach ($this->topics as $uuid => $topic) {
       // Must have uuid and same key value.
       if ($uuid !== $topic['uuid']) {
         var_dump('Node with uuid: ' . $uuid . ' has a different uuid in content.');
         continue;
       }
 
-      // Check if the node does not exist yet
+      // Check if the node does not exist yet.
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
       $node = reset($nodes);
 
@@ -113,7 +125,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
         'body' => [
           'summary' => '',
           'value' => $topic['body'],
-          'format' => 'full_html',
+          'format' => 'basic_html',
         ],
         'field_topic_type' => [
           [
@@ -138,18 +150,36 @@ class SocialDemoTopic implements ContainerInjectionInterface {
 
       $node->save();
 
+      // Check if the referenced group exists.
+      if (isset($topic['group'])) {
+        // Load the group.
+        $groups = $this->entityStorage->loadByProperties(array('uuid' => $topic['group']));
+        $group = reset($groups);
+        // Get the group content plugin.
+        $plugin_id = 'group_node:' . $node->bundle();
+        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+        // Create the group content entity.
+        $group_content = GroupContent::create([
+          'type' => $plugin->getContentTypeConfigId(),
+          'gid' => $group->id(),
+          'entity_id' => $node->id(),
+        ]);
+        // Save it.
+        $group_content->save();
+      }
+
       $content_counter++;
     }
 
     return $content_counter;
   }
 
-  /*
+  /**
    * Function to remove content.
    */
   public function removeContent() {
     // Loop through the content and try to create new entries.
-    foreach($this->topics as $uuid => $topic) {
+    foreach ($this->topics as $uuid => $topic) {
 
       // Must have uuid and same key value.
       if ($uuid !== $topic['uuid']) {
@@ -160,7 +190,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       $nodes = $this->nodeStorage->loadByProperties(array('uuid' => $uuid));
 
       // Loop through the nodes.
-      foreach($nodes as $key => $node) {
+      foreach ($nodes as $key => $node) {
         // And delete them.
         $node->delete();
       }

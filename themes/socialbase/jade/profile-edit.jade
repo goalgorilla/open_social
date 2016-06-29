@@ -1,0 +1,164 @@
+extends ./layout/base-lu.jade
+
+block title
+  title Edit profile
+
+
+      
+block content
+      
+  .row.margin-top-l
+    .col-xs-12
+      h4.section-title Edit profile
+  
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last
+      .toc-wrapper
+        ul.table-of-contents.nav
+          li
+            a(href='#name') Name &amp; profile image
+          li
+            a(href='#work') Work 
+          li 
+            a(href='#contact') Contact information
+          li 
+            a(href='#details') Details about you
+  
+    .col-xs-12.col-sm-8
+    
+      form(method='get', action='my-profile-about.html')
+      
+        #name.card.card-underline.scrollspy
+        
+          .card-head
+            header Name & profile image
+      
+          .card-body
+
+            .row
+              .col-xs-12.col-sm-6
+                .form-group
+                  label First name
+                  input.form-control(type="text", value='John')
+              .col-xs-12.col-sm-6
+                .form-group
+                  label Last name
+                  input.form-control(type="text", value='Johnson')
+              
+              .col-xs-12    
+                .form-group.form__type-managed-file
+                  label Profile image
+                  .image-widget.form-managed-file.clearfix
+                    img.img-responsive.pull-left(src='content/images/member5.jpg', width='50')
+                    .pull-left.padding-xs
+                      .file.file--image
+                      a(href='#', type="image/jpeg; length=158378") my-profile-picture.jpg
+                      .file-size (91.78kb)
+                    .pull-left.padding-xs
+                      button.btn.btn-default.form-submit(type='submit', value='remove')
+                        i.material-icons.pull-left delete
+                        | Remove
+                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+                
+                .form-group.form__type-managed-file
+                  label Cover image
+                  .image-widget.form-managed-file.clearfix
+                    img.img-responsive.pull-left(src='content/images/my-cover-big.jpg', width='150')
+                    .pull-left.padding-xs
+                      .file.file--image
+                      a(href='#', type="image/jpeg; length=158378") my-cover.jpg
+                      .file-size (123.89kb)
+                    .pull-left.padding-xs
+                      button.btn.btn-default.form-submit(type='submit', value='remove')
+                        i.material-icons.pull-left delete
+                        | Remove
+                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              
+        #work.card.card-underline.scrollspy
+        
+          .card-head
+            header Work 
+      
+          .card-body 
+
+            .row
+              .col-xs-12.col-sm-6
+                .form-group                
+                  label Function
+                  input.form-control(type="text", value='Receptionist')
+              .col-xs-12.col-sm-6
+                .form-group
+                  label Organisation
+                  input.form-control(type="text", value='Bastion Hotels')
+
+        #contact.card.card-underline.scrollspy
+        
+          .card-head
+            header Contact information
+      
+          .card-body
+            
+            .form-group
+              label Phone 
+              input.form-control(type="tel", value='+31 612345678')
+              
+            .form-group
+              label Location name 
+              input.form-control(type="text", value='')
+            
+            .form-group
+              label Country
+              select.form-control
+                option(value='', disabled='') Choose a country
+                option(value='1', selected) Netherlands
+                option(value='2') United Kingdom
+                option(value='3') France
+            
+            .form-group
+              label.form-required Post code
+              input.form-control(type="text", value='1234 BB')
+              
+            .form-group
+              label.form-required City
+              input.form-control(type="text", value='Amsterdam')
+
+            .form-group
+              label.form-required Address
+              input.form-control(type="text", value='My streetname 123')
+
+        #details.card.card-underline.scrollspy
+        
+          .card-head
+            header Details about you
+      
+          .card-body
+            
+            .form-group
+              label.form-required Write some details about yourself
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+                  p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
+
+            .form-group
+              label Your expertises
+              input.form-control(type="text", value='drupal, sales, barbecues')
+            
+            .form-group
+              label Your interests
+              input.form-control(type="text", value='php, interaction design, cooking')
+
+        .form-actions.clearfix
+          a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+
+    
+
+        
+block scriptinline  
+  script(src='libs/ckeditor/ckeditor.js')
+  script(src='libs/ckeditor/adapters/jquery.js')
+  
+  script.
+    jQuery(document).ready(function($){
+      $( '#ckeditor' ).ckeditor();  
+    });
+    

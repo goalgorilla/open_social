@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Plugin\views\filter\PostAccountStream.
- */
-
 namespace Drupal\social_post\Plugin\views\filter;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -19,12 +14,21 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
  */
 class PostAccountStream extends FilterPluginBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function adminSummary() {
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function operatorForm(&$form, FormStateInterface $form_state) {
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function canExpose() {
     return FALSE;
   }
@@ -48,7 +52,7 @@ class PostAccountStream extends FilterPluginBase {
 
     // Or posted by the user to the community.
     $public_community_condition = db_and();
-    $public_community_condition->condition('post.user_id', $account_profile->id(), '=');
+    $public_community_condition->condition('post_field_data.user_id', $account_profile->id(), '=');
     $public_community_condition->condition('post__field_visibility.field_visibility_value', array('1', '2'), 'IN');
     $or_condition->condition($public_community_condition);
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\PostAccessControlHandler.
- */
-
 namespace Drupal\social_post;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -18,6 +13,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\social_post\Entity\Post.
  */
 class PostAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
@@ -26,7 +22,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
 
     switch ($operation) {
       case 'view':
-        // Public = ALL
+        // Public = ALL.
         $visibility = $entity->field_visibility->value;
 
         switch ($visibility) {
@@ -49,7 +45,6 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
-            break;
 
           // Public.
           case "1":
@@ -91,6 +86,9 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     return AccessResult::neutral();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkDefaultAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
       case 'view':
