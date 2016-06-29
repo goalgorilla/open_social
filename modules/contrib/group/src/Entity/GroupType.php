@@ -125,6 +125,54 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAnonymousRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getAnonymousRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAnonymousRoleId() {
+    return $this->id() . '-anonymous';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutsiderRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getOutsiderRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutsiderRoleId() {
+    return $this->id() . '-outsider';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMemberRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getMemberRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMemberRoleId() {
+    return $this->id() . '-member';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage) {
     // Throw an exception if the group type ID is longer than the limit.
     if (strlen($this->id()) > GroupTypeInterface::ID_MAX_LENGTH) {
@@ -142,32 +190,32 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
 
     if (!$update) {
       // Store the id in a short variable for readability.
-      $id = $this->id();
+      $group_type_id = $this->id();
 
       // @todo Remove this line when https://www.drupal.org/node/2645202 lands.
-      $this->setOriginalId($this->id());
+      $this->setOriginalId($group_type_id);
 
       // Create the three special roles for the group type.
       GroupRole::create([
-        'id' => "$id-anonymous",
+        'id' => $this->getAnonymousRoleId(),
         'label' => t('Anonymous'),
         'weight' => -102,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
       GroupRole::create([
-        'id' => "$id-outsider",
+        'id' => $this->getOutsiderRoleId(),
         'label' => t('Outsider'),
         'weight' => -101,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
       GroupRole::create([
-        'id' => "$id-member",
+        'id' => $this->getMemberRoleId(),
         'label' => t('Member'),
         'weight' => -100,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
 
       // Enable enforced content plugins for new group types.

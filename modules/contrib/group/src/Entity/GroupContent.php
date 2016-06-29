@@ -30,6 +30,7 @@ use Drupal\Core\Entity\Exception\UndefinedLinkTemplateException;
  *   id = "group_content",
  *   label = @Translation("Group content"),
  *   handlers = {
+ *     "storage" = "Drupal\group\Entity\Storage\GroupContentStorage",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "views_data" = "Drupal\group\Entity\Views\GroupContentViewsData",
  *     "list_builder" = "Drupal\group\Entity\Controller\GroupContentListBuilder",

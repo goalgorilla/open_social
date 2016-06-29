@@ -237,27 +237,19 @@ function group_entity_type_alter(array &$entity_types) {
  *
  * @todo As soon as this gets more usage or we have more similar functionality,
  * this should be moved to a service so we can inject it as a dependency.
- * 
+ *
  * @return array
  *   An associative array with form names as keys and class names as values.
- * 
+ *
  * @see group_entity_type_alter()
  */
 function _group_get_additional_entity_forms() {
   /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager */
   $plugin_manager = \Drupal::service('plugin.manager.group_content_enabler');
 
-  // Retrieve all installed content enabler plugins.
-  $installed = $plugin_manager->getInstalledIds();
-
   // Retrieve all possible forms from all installed plugins.
   $forms = [];
-  foreach ($plugin_manager->getAll() as $plugin_id => $plugin) {
-    // Skip plugins that have not been installed anywhere.
-    if (!in_array($plugin_id, $installed)) {
-      continue;
-    }
-
+  foreach ($plugin_manager->getInstalled() as $plugin_id => $plugin) {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $forms = array_merge($forms, $plugin->getEntityForms());
   }
@@ -323,3 +315,35 @@ function group_entity_field_access($operation, FieldDefinitionInterface $field_d
   // Don't show the field if the plugin ID didn't match.
   return AccessResult::forbidden();
 }
+
+/**
+ * @defgroup group_access Group access rights
+ * @{
+ * The group access system determines who can do what in which groups.
+ *
+ * Each group type can specify an unlimited amount of group roles. Just like
+ * user roles in the global scope, a group role can be assigned specific
+ * permissions. Users who are then given such group roles will be able to
+ * perform any action their permissions allow them.
+ *
+ * There are three categories of users who are eligible to receive group roles:
+ * - Anonymous: These users do not have a site account and will only receive the
+ *   'anonymous' group role, which typically grants them a very limited set of
+ *   permissions.
+ * - Outsider: These users have a site account, but are not yet a member of the
+ *   group in question. They will only receive the 'outsider' group role. This
+ *   role is usually more permissive than 'anonymous'.
+ * - Member: These users have a site account and are part of the group. They
+ *   will automatically receive the 'member' role but can be assigned any other
+ *   user defined group role. Common examples are: Editor, Admin, etc.
+ *
+ * Please keep in mind that the 'anonymous', 'outsider' and 'member' role will
+ * always be assigned because they're assumed roles based on the user's account
+ * status.
+ */
+
+// Nothing to see here yet, our own access hook implementations will go here.
+
+/**
+ * @} End of "defgroup group_access".
+ */
