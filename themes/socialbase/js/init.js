@@ -60,5 +60,22 @@
     });
 
 
+
+    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').popover({
+      content: function () {
+        return $(this.getAttribute('href')).html();
+      }
+    });
+
+
+    var tables = document.getElementsByTagName('table');
+    for (var i = 0; i < tables.length; i++) {
+      var table = tables[i];
+      if($(table).hasClass('tabledrag')) {
+        var tbldrag = new Drupal.tableDrag($(table), table.id);
+      }
+    }
+
   }); // end of document ready
 })(jQuery); // end of jQuery name space

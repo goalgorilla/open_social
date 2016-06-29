@@ -41,6 +41,15 @@
   font-feature-settings: 'liga';
 }
 
+.icon-before {
+  &:before {
+    content: attr(data-icon-type);
+    @extend .material-icons;
+    font-size: 1rem;
+    margin-right: 0.3em;
+  }
+}
+
 
 // custom icons
 

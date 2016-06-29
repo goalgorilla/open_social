@@ -163,7 +163,7 @@ block content
           .card-body
             .form-group
               label Files
-              .file-widget.form-managed-file.clearfix
+              .file-widget.clearfix
                 .pull-left.padding-xs
                   a.file(href='#', type="image/jpeg; length=158378")
                     i.file-icon.material-icons insert_drive_file
@@ -173,6 +173,24 @@ block content
                   button.btn.btn-default(value='remove', style='pointer-events: none;')
                     i.material-icons.pull-left delete
                     | Remove
+
+              .file-widget.clearfix
+                .pull-left.padding-xs
+                  a.file(href='#', type="image/jpeg; length=158378")
+                    i.file-icon.material-icons insert_drive_file
+                    div.file-title Very-important-document.pdf
+                    div.file-size (154.78kb)
+                .pull-left.padding-xs
+                  button.btn.btn-default(value='remove', style='pointer-events: none;')
+                    i.material-icons.pull-left delete
+                    | Remove
+
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.btn-default.js-hide(type='submit', value='remove')
+                  i.material-icons.pull-left file_upload
+                  | Upload
+              .help-block 15 MB per file limit - Allowed types: xls xlsx doc
             
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")

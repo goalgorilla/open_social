@@ -164,7 +164,9 @@ gulp.task('script-components', function() {
   return gulp.src([
       options.theme.js + "components/waves.js",
       options.theme.js + "components/offcanvas.js",
-      options.theme.js + "components/forms.js"
+      options.theme.js + "components/forms.js",
+      options.theme.js + "components/tablesaw.js",
+      options.theme.js + "components/tablesaw-init.js"
     ])
     .pipe( concat('components.js') )
     .pipe( gulp.dest(options.theme.js) );
@@ -202,6 +204,7 @@ gulp.task('script-drupal', function() {
     options.rootPath.drupalcore + '/misc/drupal.js',
     options.rootPath.drupalcore + '/misc/debounce.js',
     options.rootPath.drupalcore + '/misc/forms.js',
+    options.rootPath.drupalcore + '/misc/tabledrag.js',
     options.rootPath.drupalcore + '/modules/user/user.js',
     options.rootPath.drupalcore + '/modules/file/file.js'
   ])
