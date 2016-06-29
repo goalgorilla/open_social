@@ -126,4 +126,7 @@ Feature: Create Open Group
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero block"
 
-  # TODO: Add check for latest groups block on LU homepage
+  # Check for latest groups block on LU homepage
+    When I am on "stream"
+  # And I should see "Newest groups" in the "Sidebar second"
+    And I should see the link "Test open group" in the "Sidebar second"

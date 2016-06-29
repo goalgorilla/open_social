@@ -80,44 +80,45 @@ Feature: Edit my group as a group manager
     Then I should see "This action cannot be undone"
     And I should see the button "Delete
     And I should see the link "Cancel"
-  # TODO: Fix unexpected error
-  # And I click "Cancel"
+    And I click "Cancel"
 
-#  # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
-#    And I logout
-#    And I am logged in as "Group Member Two"
-#    And I click "Group Member Two"
-#    And I click "Groups"
-#    And I click "Test open group"
-#    And I click "Topics"
-#    And I click "Create Topic"
-#    When I fill in the following:
-#      | Title | Test group topic |
-#    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-#    And I click radio button "Discussion"
-#  # TODO: Change title of this button when we will have one step
-#    And I press "Continue to final step"
-#    And I press "Create node in group"
-#    And I should see "Test group topic"
-#    And I logout
-#    And I am logged in as "Group Manager One"
-#    And I click "Group Manager One"
-#    And I click "Groups"
-#    And I click "Test open group"
-#    And I click "Topics"
-#    And I click "Test group topic"
-#  # TODO: Replace edit link with "Pencil button" link when it wil be added to the topic hero
-#  # And I should not see the link "Edit"
-#  # And I should see the link "Delete"
+  # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
+    And I logout
+    And I am logged in as "Group Member Two"
+    And I click "Group Member Two"
+    And I click "Groups"
+    And I click "Test open group"
+    And I click "Topics"
+    And I click "Create Topic"
+    When I fill in the following:
+      | Title | Test group topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
+    And I click radio button "Discussion"
+  # TODO: Change title of this button when we will have one step
+    And I press "Continue to final step"
+    And I press "Create node in group"
+    And I should see "Test group topic"
+    And I logout
+    And I am logged in as "Group Manager One"
+    And I click "Group Manager One"
+    And I click "Groups"
+    And I click "Test open group"
+    And I click "Topics"
+    And I click "Test group topic"
+    And I should not see the link "Edit group"
 
   # DS-705 As a Group Manager I want to delete my own group
+    And I logout
+    And I am logged in as "Group Manager One"
+    And I click "Group Manager One"
+    And I click "Groups"
+    And I click "Test open group"
     And I click "Edit group"
     And I click "Delete"
     And I should see "This action cannot be undone."
     And I should see the link "Cancel"
     And I should see the button "Delete"
-  # TODO: Fix unexpected error
-  # And I press "Delete"
+    And I press "Delete"
 
 
 
