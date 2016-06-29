@@ -87,8 +87,7 @@ options.eslint = {
 
 options.styleguide = {
   files  : [
-    options.theme.styleguide + '**/*.jade',
-    '!' + options.theme.styleguide + '**/_*.jade'
+    options.theme.styleguide + '**/*.jade'
   ]
 };
 
@@ -148,7 +147,7 @@ gulp.task('styleguide', function() {
     .pipe(gulpif(global.isWatching, cached('jade')))
 
     //find files that depend on the files that have changed
-    .pipe(jadeInheritance({basedir: options.rootPath.dist}))
+    .pipe(jadeInheritance({basedir: options.theme.styleguide}))
 
     //filter out partials (folders and files starting with "_" )
     .pipe(filter(function (file) {
