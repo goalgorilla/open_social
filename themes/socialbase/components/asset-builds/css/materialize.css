@@ -1751,12 +1751,12 @@ tbody.collapse.in {
   margin-bottom: 6px;
 }
 
-.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn {
+.navbar-btn.btn-sm, .btn-group-sm > .navbar-btn.btn, .tablesaw-bar .navbar-btn.btn.btn-small {
   margin-top: 8.5px;
   margin-bottom: 8.5px;
 }
 
-.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn {
+.navbar-btn.btn-xs, .btn-group-xs > .navbar-btn.btn, .tablesaw-bar .navbar-btn.btn.btn-micro {
   margin-top: 14px;
   margin-bottom: 14px;
 }
@@ -2256,7 +2256,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   top: -1px;
 }
 
-.btn-xs .badge, .btn-group-xs > .btn .badge,
+.btn-xs .badge, .btn-group-xs > .btn .badge, .tablesaw-bar .btn.btn-micro .badge,
 .btn-group-xs > .btn .badge {
   top: 0;
   padding: 1px 5px;
@@ -6094,6 +6094,125 @@ a.list-group-item {
 
 .label {
   font-size: 87.5%;
+}
+
+.table {
+  font-size: 0.875rem;
+}
+
+.tablesaw {
+  empty-cells: show;
+  border: 0;
+  padding: 0;
+}
+
+.tablesaw > tbody > tr > td {
+  vertical-align: middle;
+}
+
+.tablesaw-bar {
+  width: 100%;
+  text-align: right;
+  padding-bottom: 1em;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn {
+  display: inline-block;
+  overflow: hidden;
+  width: 1.8em;
+  height: 1.8em;
+  background-position: 50% 50%;
+  margin-left: .5em;
+  position: relative;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn:before {
+  border-color: white;
+  content: "\0020";
+  overflow: hidden;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.up:before, .tablesaw-bar .btn.tablesaw-nav-btn.down:before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  left: .5em;
+  top: .65em;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.down:before {
+  border-top: 5px solid #808080;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.up:before {
+  border-bottom: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.left:before, .tablesaw-bar .btn.tablesaw-nav-btn.right:before {
+  top: .44em;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.left:before {
+  left: .5em;
+  border-right: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.right:before {
+  left: .64em;
+  border-left: 5px solid;
+}
+
+.tablesaw-bar .btn.tablesaw-nav-btn.disabled {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+.tablesaw-advance {
+  float: right;
+}
+
+.tablesaw-advance.minimap {
+  float: none;
+  display: inline-block;
+}
+
+.tablesaw-advance-dots {
+  margin-bottom: 0;
+  padding-right: 15px;
+}
+
+.tablesaw-advance-dots li {
+  display: inline-block;
+  margin: 0;
+  padding: 0 .2em;
+}
+
+.tablesaw-advance-dots i {
+  width: .25em;
+  height: .25em;
+  background: #555;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+.tablesaw-advance-dots-hide {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+[data-tablesaw-mode="swipe"] .tablesaw-cell-persist {
+  border-right: 1px solid #e4e1de;
+  box-shadow: 3px 0 4px -1px #e4e1de;
+}
+
+[data-tablesaw-mode="swipe"] th.tablesaw-cell-hidden, [data-tablesaw-mode="swipe"] td.tablesaw-cell-hidden {
+  display: none;
 }
 
 .waves-effect {
