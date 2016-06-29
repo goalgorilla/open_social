@@ -5,7 +5,6 @@
  * The Social group module.
  */
 
-use Drupal\group\GroupMembership;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -15,8 +14,6 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
-use Drupal\group\Cache\Context\GroupTypeCacheContext;
-use Drupal\group\Cache\Context\GroupMembershipCacheContext;
 
 /**
  * @file
@@ -128,48 +125,6 @@ function social_group_group_insert(GroupInterface $group) {
     );
     $group_content->save();
 
-  }
-}
-
-/**
- * Implements hook_entity_view_alter().
- */
-function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
-  // For group entities.
-  if ($entity instanceof Drupal\group\Entity\Group) {
-    // We add cache tags for the hero view mode.
-    if ($build['#view_mode'] == 'hero') {
-
-      $renderer = \Drupal::service('renderer');
-      $current_user = \Drupal::currentUser();
-      $membership = $entity->getMember($current_user);
-
-      // Add cache tags for group type & permissions. We need join / leave for
-      // the CTA and also update permissions for the button to edit a group.
-      $build['#cache']['contexts'][] = 'group.type';
-      $build['#cache']['contexts'][] = 'group_membership';
-
-//      $tags = $build['#cache']['tags'];
-//
-//      // Based on GroupOperationsBlock.php we add some more cache tags.
-//      $service_1 = \Drupal::service('group.group_route_context');
-//      $service_2 = \Drupal::service('current_user');
-//      $context_1 = new GroupTypeCacheContext($service_1, $service_2);
-//      $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
-//      // Merge all cache tags together.
-//      $merged_tags = Cache::mergeTags(
-//        $context_1->getCacheableMetadata()->getCacheTags(),
-//        $context_2->getCacheableMetadata()->getCacheTags()
-//      );
-//      // Get all the tags to merge with the new ones.
-//      foreach ($merged_tags as $merged_tag) {
-//        $tags[] = $merged_tag;
-//      }
-//
-//      $build['#cache']['tags'] = $tags;
-//
-//      $renderer->addCacheableDependency($build, $membership);
-    }
   }
 }
 
