@@ -35,7 +35,6 @@
   width: 100%;
   clear: both;
   text-align: right;
-  padding-bottom: 1em;
 
   .btn {
 
@@ -154,7 +153,7 @@
 }
 
 [data-tablesaw-mode="stack"] {
-  tbody tr {
+  tbody tr:not(:last-child) {
     border-bottom: 1px solid #dfdfdf;
   }
 
@@ -171,7 +170,6 @@
     td, th {
       white-space: normal;
       .tablesaw-cell-label {
-        //display: block;
         padding: 0 .6em 0 0;
         width: 35%;
         display: inline-block;

@@ -5452,7 +5452,6 @@ a.list-group-item {
   width: 100%;
   clear: both;
   text-align: right;
-  padding-bottom: 1em;
 }
 
 .tablesaw-bar .btn.tablesaw-nav-btn {
@@ -5563,7 +5562,7 @@ a.list-group-item {
   /* Media query to show as a standard table at 560px (35em x 16px) or wider */
 }
 
-[data-tablesaw-mode="stack"] tbody tr {
+[data-tablesaw-mode="stack"] tbody tr:not(:last-child) {
   border-bottom: 1px solid #dfdfdf;
 }
 
