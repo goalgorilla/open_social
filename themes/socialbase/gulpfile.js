@@ -188,9 +188,7 @@ gulp.task('script-components', function() {
   return gulp.src([
       options.theme.js + "components/waves.js",
       options.theme.js + "components/offcanvas.js",
-      options.theme.js + "components/forms.js",
-      options.theme.js + "components/tablesaw.js",
-      options.theme.js + "components/tablesaw-init.js"
+      options.theme.js + "components/forms.js"
     ])
     .pipe( concat('components.js') )
     .pipe( gulp.dest(options.theme.js) );
