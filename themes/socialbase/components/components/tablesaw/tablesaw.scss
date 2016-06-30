@@ -1,0 +1,114 @@
+@import 'init';
+
+.tablesaw {
+  empty-cells: show;
+  border: 0;
+  padding: 0;
+}
+
+.tablesaw-bar {
+  width: 100%;
+  clear: both;
+  text-align: right;
+
+  .btn {
+
+    &.tablesaw-nav-btn {
+      display: inline-block;
+      overflow: hidden;
+      width: 1.8em;
+      height: 1.8em;
+      background-position: 50% 50%;
+      margin-left: .5em;
+      position: relative;
+      &:before {
+        border-color: white;
+        content: "\0020";
+        overflow: hidden;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+
+      &.up, &.down {
+        &:before {
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          left: .5em;
+          top: .65em;
+        }
+      }
+      &.down:before {
+        border-top: 5px solid #808080;
+      }
+      &.up:before {
+        border-bottom: 5px solid;
+      }
+
+      &.left, &.right {
+        &:before {
+          top: .44em;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+        }
+      }
+      &.left:before {
+        left: .5em;
+        border-right: 5px solid;
+      }
+      &.right:before {
+        left: .64em;
+        border-left: 5px solid;
+      }
+
+      &.disabled {
+        opacity: .25;
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+    &.btn-small {
+      font-size: $button-font-size-small;
+    }
+    &.btn-micro {
+      font-size: $button-font-size-small;
+    }
+  }
+}
+
+
+.tablesaw-advance {
+  float: right;
+
+  &.minimap {
+    float: none;
+    display: inline-block;
+  }
+}
+
+
+.tablesaw-advance-dots {
+  margin-bottom: 0;
+  padding-right: 15px;
+  li {
+    display: inline-block;
+    margin: 0;
+    padding: 0 .2em;
+  }
+  i {
+    width: .25em;
+    height: .25em;
+    background: #555;
+    border-radius: 100%;
+    display: inline-block;
+  }
+}
+.tablesaw-advance-dots-hide {
+  opacity: .25;
+  cursor: default;
+  pointer-events: none;
+}
+
+
+@import "tablesaw_swipe";
+@import "tablesaw_stack";

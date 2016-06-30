@@ -201,6 +201,15 @@ span.form-required {
   opacity: 0;
 }
 
+[type="radio"], [type="checkbox"] {
+  .form-no-label.checkbox & {
+    opacity: 1;
+    left: 0;
+    margin: 0;
+    position: static;
+  }
+}
+
 .checkbox label,
 .radio label {
   font-weight: 300;

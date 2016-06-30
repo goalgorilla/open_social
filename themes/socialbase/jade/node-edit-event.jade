@@ -47,19 +47,25 @@ block content
               label.form-required Title
               input.form-control.required(type="text", value='Amsterdam Meetup')
                   
-            .form-group.form__type-managed-file
+            .form-group
               label Image
-              .image-widget.form-managed-file.clearfix
-                img.img-responsive.pull-left(src='content/images/event-hero.jpg', width='150')
-                .pull-left.padding-xs
-                  .file.file--image
-                  a(href='#', type="image/jpeg; length=158378") amasterdam-meetup-121.jpg
-                  .file-size (154.78kb)
-                .pull-left.padding-xs
-                  button.btn.btn-default(type='submit', value='remove', style='pointer-events: none;')
-                    i.material-icons.pull-left delete
-                    | Remove
-              .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+              .image-widget.form-managed-file.clearfix.row
+                .preview.col-sm-4.col-md-3.margin-bottom-m
+                  img.img-responsive(src="content/images/animals1-square.jpg", width="220")
+
+                .data.col-sm-8.col-md-9
+                  .form-no-label
+                    label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
+                    input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                    #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
+                  span.file.file--mime-image-jpeg.file--image
+                    span.file-icon
+                      span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
+                    span.file-link
+                      a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") animals1-square.jpg
+                    span.file-size 263.85 KB
+
+                  button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
           
         #visibility.card.card-underline.scrollspy
         
@@ -155,19 +161,121 @@ block content
               input.form-control(type="text", value='Keizersgracht 376')    
 
         #attachments.card.card-underline.scrollspy
-        
+
           .card-head
             header Attachments
-      
+
           .card-body
             .form-group
               label Files
-              .image-widget.form-managed-file.clearfix
+              .table-responsive
+                button.tabledrag-toggle-weight.btn-sm.btn.btn-flat.pull-right(type="button", data-toggle="tooltip", data-placement="left", title="Re-order rows by numerical weight instead of dragging.") Show row weights
+                table.responsive-enabled.table.table-hover.table-striped.tablesaw.tabledrag(data-tablesaw-mode="stack")
+                  thead
+                    tr
+                      th File information
+                      th Display
+                      th.tabledrag-hide Weight
+                      th Operations
+                  tbody
+                    tr.draggable.odd
+                      td
+                        a.tabledrag-handle.icon-before(href="#", data-toggle="tooltip", data-icon-type="open_with", data-original-title="Drag to re-order")
+                          span.icon.glyphicon.glyphicon-move(aria-hidden="true")
+                        div.js-form-managed-file.form-managed-file
+                          input(type="hidden")
+                          span.file.file--mime-application-pdf.file--application-pdf
+                            span.file-icon
+                              span.icon.glyphicon.glyphicon-file.text-primary.material-icons insert_drive_file
+                            span.file-link
+                              a.menu-item__link(href="#", type="application/pdf;, length=480544", title="Open file in new window") Very-important-document.pdf
+                            span.file-size 412.28 KB
+                            span.tabledrag-changed.text-warning.icon.glyphicon.glyphicon-warning-sign.icon-before(aria-hidden="true", data-icon-type="warning")
+
+                        .form-group
+                          label(for="edit-field-test-0-description") Description
+                          input#edit-field-test-0-description.form-text.form-control(type="text", size="60", maxlength="128")
+                          div#edit-field-test-0-description--description.help-block The description may be used as the label of the link to the file.
+                      td.checkbox
+                        .checkbox
+                          input#edit-field-test-0-display.file-display.form-checkbox(type="checkbox", checked="checked")
+                          label(for="edit-field-test-0-display")
+                      td.tabledrag-hide
+                        .form-no-label.form-group
+                          label.visually-hidden(for="edit-field-test-0-weight") Weight for new file
+                          .select-wrapper
+                            .material-select
+                              select#edit-field-test-0-weight.edit-field-test-weight.form-select.form-control
+                                option(value="-3") -3
+                                option(value="-2") -2
+                                option(value="-1") -1
+                                option(value="0", selected="selected") 0
+                                option(value="1") 1
+                                option(value="2") 2
+                                option(value="3") 3
+                      td
+                        button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
+
+                    tr.draggable.even
+                      td
+                        a.tabledrag-handle.icon-before(href="#", data-toggle="tooltip", data-icon-type="open_with", data-original-title="Drag to re-order")
+                          span.icon.glyphicon.glyphicon-move(aria-hidden="true")
+                        div.js-form-managed-file.form-managed-file
+                          input(type="hidden")
+                          span.file.file--mime-application-pdf.file--application-pdf
+                            span.file-icon
+                              span.icon.glyphicon.glyphicon-file.text-primary.material-icons insert_drive_file
+                            span.file-link
+                              a.menu-item__link(href="#", type="application/pdf;, length=480544", title="Open file in new window") Very-important-document.pdf
+                            span.file-size 469.28 KB
+
+                        .form-group
+                          label(for="edit-field-test-1-description") Description
+                          input#edit-field-test-1-description.form-text.form-control(type="text", size="60", maxlength="128")
+                          div#edit-field-test-1-description--description.help-block The description may be used as the label of the link to the file.
+                      td.checkbox
+                        .checkbox
+                          input#edit-field-test-1-display.file-display.form-checkbox(type="checkbox", checked="checked")
+                          label(for="edit-field-test-1-display")
+                      td.tabledrag-hide
+                        .form-no-label.form-group
+                          label.visually-hidden(for="edit-field-test-1-weight") Weight for new file
+                          .select-wrapper
+                            .material-select
+                              select#edit-field-test-1-weight.edit-field-test-weight.form-select.form-control
+                                option(value="-3") -3
+                                option(value="-2") -2
+                                option(value="-1") -1
+                                option(value="0", selected="selected") 0
+                                option(value="1") 1
+                                option(value="2") 2
+                                option(value="3") 3
+                      td
+                        button#edit-field-test-1-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
+
+
+              label Add a new file
+              .form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
                 button.btn.form-submit.btn-default.js-hide(type='submit', value='remove')
                   i.material-icons.pull-left file_upload
                   | Upload
-              .help-block 15 MB per file limit - Allowed types: xls xlsx doc 
+                //.help-block 15 MB per file limit - Allowed types: xls xlsx doc
+                div#edit-field-topic-image-1-upload--description.description.help-block
+                  a.icon-before(href="#upload-instructions--3", data-icon-type="help", data-toggle="popover", data-html="true", data-placement="bottom", data-title="Upload requirements", aria-describedby="popover388085")
+                    | Upload requirements
+
+                  div#upload-instructions--3.hidden.help-block.form-group.popover(aria-hidden="true")
+                    ul
+                      li Unlimited number of files can be uploaded to this field.
+                      li 2 MB limit.</li><li>Allowed types:
+                        =" "
+                        code png, gif, jpg, jpeg
+                        |.
+                      li Images larger than
+                        =" "
+                        strong 3600x3600
+                        |  pixels will be resized.
             
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")
