@@ -47,34 +47,25 @@ block content
               label.form-required Title
               input.form-control.required(type="text", value='Amsterdam Meetup')
                   
-            .form-group.form__type-managed-file
+            .form-group
               label Image
-              table.responsive-enabled.table.table-hover.tablesaw.tabledrag(data-tablesaw-mode="stack")
-                thead
-                  tr
-                    th File information
-                    th Operations
-                tbody
-                  tr.draggable
-                    td
-                      div.image-widget.js-form-managed-file.form-managed-file.clearfix.row
-                        div.preview.col-sm-4.col-md-3.margin-bottom-m
-                          img.img-responsive(src="content/images/animals1-square.jpg", width="150")
+              .image-widget.form-managed-file.clearfix.row
+                .preview.col-sm-4.col-md-3.margin-bottom-m
+                  img.img-responsive(src="content/images/animals1-square.jpg", width="220")
 
-                        div.data.col-sm-8.col-md-9
-                          div.form-no-label
-                            label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
-                            input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
-                            div#edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
-                          span.file.file--mime-image-jpeg.file--image
-                            span.file-icon
-                              span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
-                            span.file-link
-                              a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") animals1-square.jpg
-                            span.file-size 263.85 KB
+                .data.col-sm-8.col-md-9
+                  .form-no-label
+                    label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
+                    input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                    #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
+                  span.file.file--mime-image-jpeg.file--image
+                    span.file-icon
+                      span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
+                    span.file-link
+                      a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") animals1-square.jpg
+                    span.file-size 263.85 KB
 
-                    td
-                      button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
+                  button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
           
         #visibility.card.card-underline.scrollspy
         
@@ -179,7 +170,7 @@ block content
               label Files
               .table-responsive
                 button.tabledrag-toggle-weight.btn-sm.btn.btn-flat.pull-right(type="button", data-toggle="tooltip", data-placement="left", title="Re-order rows by numerical weight instead of dragging.") Show row weights
-                table.responsive-enabled.table.table-hover.tablesaw.tabledrag(data-tablesaw-mode="stack")
+                table.responsive-enabled.table.table-hover.table-striped.tablesaw.tabledrag(data-tablesaw-mode="stack")
                   thead
                     tr
                       th File information
@@ -187,7 +178,7 @@ block content
                       th.tabledrag-hide Weight
                       th Operations
                   tbody
-                    tr.draggable
+                    tr.draggable.odd
                       td
                         a.tabledrag-handle.icon-before(href="#", data-toggle="tooltip", data-icon-type="open_with", data-original-title="Drag to re-order")
                           span.icon.glyphicon.glyphicon-move(aria-hidden="true")
@@ -225,8 +216,10 @@ block content
                       td
                         button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
 
-                    tr.draggable
+                    tr.draggable.even
                       td
+                        a.tabledrag-handle.icon-before(href="#", data-toggle="tooltip", data-icon-type="open_with", data-original-title="Drag to re-order")
+                          span.icon.glyphicon.glyphicon-move(aria-hidden="true")
                         div.js-form-managed-file.form-managed-file
                           input(type="hidden")
                           span.file.file--mime-application-pdf.file--application-pdf
