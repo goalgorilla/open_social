@@ -62,20 +62,23 @@
 
 
     $('[data-toggle="tooltip"]').tooltip();
+
     $('[data-toggle="popover"]').popover({
       content: function () {
+        timer = setTimeout(function() { popoverOpen = true; }, 100);
         return $(this.getAttribute('href')).html();
-      }
+      },
+      container: 'body'
     });
 
-
-    var tables = document.getElementsByTagName('table');
-    for (var i = 0; i < tables.length; i++) {
-      var table = tables[i];
-      if($(table).hasClass('tabledrag')) {
-        var tbldrag = new Drupal.tableDrag($(table), table.id);
-      }
-    }
+    $('body').on('click', function (e) {
+      $('[data-toggle=popover]').each(function () {
+        // hide any open popovers when the anywhere else in the body is clicked
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+          $(this).popover('hide');
+        }
+      });
+    });
 
   }); // end of document ready
 })(jQuery); // end of jQuery name space

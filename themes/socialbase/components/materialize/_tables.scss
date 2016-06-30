@@ -2,8 +2,27 @@
   font-size: 0.875rem;
 }
 
+.table-responsive {
+  @media screen and (max-width: $screen-xs-max) {
+    border: 0;
+  }
+}
+
 .tabledrag-hide {
   display: none;
+}
+
+.tabledrag-handle {
+  color: $gray-light;
+  cursor: move;
+  float: left;
+  font-size: 125%;
+  line-height: 1;
+  margin: -10px 0 0 -10px;
+  padding: 10px;
+  &:before {
+    font-size: 1.5rem;
+  }
 }
 
 .tablesaw {
@@ -150,16 +169,20 @@
 
   @media only all {
     td, th {
+      white-space: normal;
       .tablesaw-cell-label {
         //display: block;
         padding: 0 .6em 0 0;
-        width: 40%;
+        width: 35%;
         display: inline-block;
       }
       .tablesaw-cell-label-top {
         display: block;
         padding: .4em 0;
         margin: .4em 0;
+      }
+      .tablesaw-cell-content {
+        white-space: normal;
       }
     }
   }
@@ -189,11 +212,11 @@
       vertical-align: top;
     }
     .tablesaw-cell-content {
-      max-width: 60%;
+      max-width: 65%;
       display: inline-block;
     }
     td, th {
-      &:empty {
+      &:empty, &.tabledrag-hide {
         display: none;
       }
     }
@@ -207,6 +230,9 @@
     td, th, thead td, thead th {
       display: table-cell;
       margin: 0;
+      &.tabledrag-hide {
+        display: none;
+      }
     }
 
     td, th {
