@@ -786,7 +786,7 @@ fieldset[disabled]
   padding: 5px 10px;
   font-size: 14px;
   line-height: 1.5;
-  border-radius: 0;
+  border-radius: 3px;
 }
 
 select.input-sm, .input-group-sm > select.form-control,
@@ -811,7 +811,7 @@ select[multiple].input-sm,
   padding: 5px 10px;
   font-size: 14px;
   line-height: 1.5;
-  border-radius: 0;
+  border-radius: 3px;
 }
 
 .form-group-sm select.form-control {
@@ -839,7 +839,7 @@ select[multiple].input-sm,
   padding: 10px 16px;
   font-size: 20px;
   line-height: 1.33333;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 select.input-lg, .input-group-lg > select.form-control,
@@ -864,7 +864,7 @@ select[multiple].input-lg,
   padding: 10px 16px;
   font-size: 20px;
   line-height: 1.33333;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .form-group-lg select.form-control {
@@ -2193,7 +2193,7 @@ button.list-group-item-danger.active:focus {
 .input-group-sm > .input-group-btn > .input-group-addon.btn {
   padding: 5px 10px;
   font-size: 14px;
-  border-radius: 0;
+  border-radius: 3px;
 }
 
 .input-group-addon.input-lg,
@@ -2201,7 +2201,7 @@ button.list-group-item-danger.active:focus {
 .input-group-lg > .input-group-btn > .input-group-addon.btn {
   padding: 10px 16px;
   font-size: 20px;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .input-group-addon input[type="radio"],
@@ -3513,8 +3513,11 @@ span.form-required {
   overflow-y: hidden;
   padding-bottom: 1.6rem;
   resize: none;
-  min-height: 5rem;
   height: 38px;
+}
+
+.form-control.textarea-large {
+  min-height: 5rem;
 }
 
 .hiddendiv {
@@ -3531,27 +3534,64 @@ span.form-required {
   margin-bottom: 5px;
 }
 
-.material-select {
+.select-wrapper {
+  display: inline-block;
   position: relative;
+  width: 100%;
   max-width: 23rem;
 }
 
-.material-select select {
-  cursor: pointer;
-  display: block;
+.form-inline .select-wrapper {
+  width: auto;
 }
 
-.material-select:after {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 0;
-  display: block;
-  width: 30px;
-  height: 38px;
-  background: url("../images/icon-select.svg") no-repeat center/auto 100%;
+.input-group .select-wrapper {
+  display: table-cell;
+}
+
+.input-group .select-wrapper:first-child .form-control:first-child {
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.input-group .select-wrapper:last-child .form-control:first-child {
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.select-wrapper select {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  line-height: 1;
+  padding-right: 2em;
+}
+
+.select-wrapper:after {
+  content: '▼';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  margin-top: -.5em;
+  padding-right: 12px;
   pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: 10;
+}
+
+.has-error .select-wrapper:after {
+  color: #a94442;
+}
+
+.has-success .select-wrapper:after {
+  color: #3c763d;
+}
+
+.has-warning .select-wrapper:after {
+  color: #8a6d3b;
 }
 
 /* Remove default Radio Buttons */
@@ -5000,47 +5040,6 @@ hr.ruler-l {
   padding-right: 8px;
 }
 
-.table-of-contents {
-  padding: 20px;
-  list-style: none;
-}
-
-.table-of-contents.fixed {
-  position: fixed;
-}
-
-.table-of-contents li, .table-of-contents.nav > li {
-  padding: 2px 0;
-}
-
-.table-of-contents li a.active, .table-of-contents.nav > li a.active {
-  font-weight: 500;
-  padding-left: 13px;
-  border-left: 2px solid #56bde8;
-}
-
-.table-of-contents a, .table-of-contents.nav > li > a {
-  display: block;
-  font-weight: 300;
-  color: #757575;
-  padding: 0 0 0 14px;
-  line-height: 1.5em;
-}
-
-.table-of-contents a:hover, .table-of-contents.nav > li > a:hover {
-  color: #a8a8a8;
-  padding-left: 13px;
-  border-left: 1px solid #56bde8;
-}
-
-.toc-wrapper {
-  position: relative;
-}
-
-.toc-wrapper.affix {
-  position: fixed;
-}
-
 .media-wrapper {
   position: relative;
   margin-top: 15px;
@@ -5277,6 +5276,10 @@ a.list-group-item {
 
 .list-group-field {
   display: inline-block;
+}
+
+.input-group {
+  max-width: 23rem;
 }
 
 .input-group .input-group-addon {
@@ -6907,9 +6910,6 @@ input[type=range]:focus::-ms-fill-upper {
     top: 0;
     padding: 0;
     background: transparent;
-  }
-  .margin-top-exposed-filter{
-    margin-top: 4.375rem;
   }
 }
 

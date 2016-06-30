@@ -103,8 +103,11 @@ span.form-required {
     //padding-top: 1.6rem; // prevents text jump on Enter keypress
     padding-bottom: 1.6rem;
     resize: none;
-    min-height: 5rem;
     height: 38px;
+  }
+
+  &.textarea-large {
+    min-height: 5rem;
   }
 
 }
@@ -127,29 +130,63 @@ span.form-required {
 // Selects
 // ***************
 
-.material-select {
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+// @see http://stackoverflow.com/q/21103542
+.select-wrapper {
+  display: inline-block;
   position: relative;
+  width: 100%;
   max-width: $form-control-max-width;
 
+  .form-inline & {
+    width: auto;
+  }
+
+  .input-group & {
+    display: table-cell;
+    // Reset rounded corners
+    &:first-child .form-control:first-child {
+      @include border-left-radius($border-radius-base);
+    }
+    &:last-child .form-control:first-child {
+      @include border-right-radius($border-radius-base);
+    }
+  }
+
   select {
-    cursor: pointer;
-    display: block;
+    appearance: none;
+    line-height: 1;
+    padding-right: 2em;
   }
 
-  &:after{
-    content: '';
-    position: absolute;
-    z-index: 1;
-    right: 0;
-    top: 0;
-    display: block;
-    width: 30px;
-    height: 38px;
-    background: url("../images/icon-select.svg") no-repeat center / auto 100%;
+  &:after {
+    content: '▼';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1;
+    margin-top: -.5em;
+    padding-right: 12px;
     pointer-events: none;
-  }
-}
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 10;
 
+    .has-error & {
+      color: $state-danger-text;
+    }
+    .has-success & {
+      color: $state-success-text;
+    }
+    .has-warning & {
+      color: $state-warning-text;
+    }
+
+  }
+
+}
 
 // ***************
 // Radio Buttons

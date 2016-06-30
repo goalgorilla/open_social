@@ -12,6 +12,12 @@ libraries:
   - socialbase/layout
   - socialbase/type
   - socialbase/alerts
+  - socialbase/icons
+
+libraries-extend:
+  core/drupal.ajax:
+    - socialbase/drupal.ajax
+
 # The "libraries-override:" section will allow you to:
 # - Replace an entire library.
 # - Remove an entire library.
@@ -39,14 +45,9 @@ libraries-override:
 
 regions:
   header: Header
-  menu_panel: Main navigation panel
-  notification_panel: Notifications panel
-  user_panel: User navigation panel
   breadcrumb: Breadcrumb
   hero: Hero
-  primary_action: Primary action
   secondary_navigation: Secondary navigation
-  title: Section title
   content: Content
   complementary: Complementary
   footer: Footer
