@@ -4,7 +4,6 @@
 
     var screen_sm_min = 767;
     var window_width = $(window).width();
-
     if (window_width > screen_sm_min ) {
       var tableOfContents = $('.table-of-contents'),
           indexBanner = $('#index-banner');
@@ -12,7 +11,7 @@
       if (tableOfContents.length) {
         $('.toc-wrapper').affix({
             offset: {
-              top: tableOfContents.offset().top - 50
+              top: tableOfContents.offset().top - 74
             }
           })
       }

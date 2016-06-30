@@ -151,7 +151,6 @@ class ActivityNotifications extends ControllerBase {
 
     $uid = $account->id();
 
-    // TODO use dependency injection for entity query?
     $entity_query = \Drupal::entityQuery('activity');
     $entity_query->condition('field_activity_recipient_user', $uid, '=');
     $entity_query->condition('field_activity_destinations', $destinations, 'IN');

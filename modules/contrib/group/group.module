@@ -6,7 +6,6 @@
  */
 
 use Drupal\group\Entity\GroupContent;
-use Drupal\group\Plugin\GroupContentEnablerHelper;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -193,7 +192,9 @@ function template_preprocess_group_add_list(&$variables) {
  */
 function group_rebuild() {
   // Checks if there are any new enforced plugins to install.
-  GroupContentEnablerHelper::installEnforcedPlugins();
+  /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager */
+  $plugin_manager = \Drupal::service('plugin.manager.group_content_enabler');
+  $plugin_manager->installEnforced();
 }
 
 /**
@@ -201,7 +202,9 @@ function group_rebuild() {
  */
 function group_modules_installed($modules) {
   // Checks if there are any new enforced plugins to install.
-  GroupContentEnablerHelper::installEnforcedPlugins();
+  /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager */
+  $plugin_manager = \Drupal::service('plugin.manager.group_content_enabler');
+  $plugin_manager->installEnforced();
 }
 
 /**
@@ -220,13 +223,46 @@ function group_entity_type_alter(array &$entity_types) {
     $mute_self = TRUE;
 
     // Enables extra forms for GroupContent entities as defined by plugins.
-    foreach (GroupContentEnablerHelper::getAdditionalEntityForms() as $name => $class) {
+    foreach (_group_get_additional_entity_forms() as $name => $class) {
       /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
       $entity_types['group_content']->setFormClass($name, $class);
     }
 
     $mute_self = FALSE;
   }
+}
+
+/**
+ * Returns a list of additional forms to enable for group content entities.
+ *
+ * @todo As soon as this gets more usage or we have more similar functionality,
+ * this should be moved to a service so we can inject it as a dependency.
+ * 
+ * @return array
+ *   An associative array with form names as keys and class names as values.
+ * 
+ * @see group_entity_type_alter()
+ */
+function _group_get_additional_entity_forms() {
+  /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager */
+  $plugin_manager = \Drupal::service('plugin.manager.group_content_enabler');
+
+  // Retrieve all installed content enabler plugins.
+  $installed = $plugin_manager->getInstalledIds();
+
+  // Retrieve all possible forms from all installed plugins.
+  $forms = [];
+  foreach ($plugin_manager->getAll() as $plugin_id => $plugin) {
+    // Skip plugins that have not been installed anywhere.
+    if (!in_array($plugin_id, $installed)) {
+      continue;
+    }
+
+    /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
+    $forms = array_merge($forms, $plugin->getEntityForms());
+  }
+
+  return $forms;
 }
 
 /**

@@ -8,6 +8,7 @@ namespace Drupal\social_demo\Content;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
+use Drupal\user\Entity\User;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -101,6 +102,18 @@ class SocialDemoGroup implements ContainerInjectionInterface {
 
       $group_object->save();
 
+      // If it succeeded, also add some teammembers.
+      if ($group_object instanceof Group) {
+        foreach ($group['members'] as $uuid) {
+          $user_id = $accountClass->loadUserFromUuid($uuid);
+          if ($member = User::load($user_id)) {
+            if(!$group_object->getMember($member)) {
+              $group_object->addMember($member);
+            }
+          }
+        }
+      }
+
       $content_counter++;
     }
 
@@ -160,5 +173,4 @@ class SocialDemoGroup implements ContainerInjectionInterface {
       return $group->id();
     }
   }
-
 }

@@ -130,6 +130,31 @@ class GroupContentType extends ConfigEntityBundleBase implements GroupContentTyp
       ->getStorage('group_content_type')
       ->loadByProperties(['content_plugin' => $plugin_id]);
   }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public static function loadByEntityTypeId($entity_type_id) {
+    $plugin_ids = [];
+    
+    /** @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager */
+    $plugin_manager = \Drupal::service('plugin.manager.group_content_enabler');
+
+    /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
+    foreach ($plugin_manager->getAll() as $plugin_id => $plugin) {
+      if ($plugin->getEntityTypeId() === $entity_type_id) {
+        $plugin_ids[] = $plugin_id;
+      }
+    }
+
+    // If no responsible group content plugins were found, we return nothing.
+    if (empty($plugin_ids)) {
+      return [];
+    }
+
+    // Otherwise load all group content types being handled by gathered plugins.
+    return self::loadByContentPluginId($plugin_ids);
+  }
 
   /**
    * {@inheritdoc}

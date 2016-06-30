@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - activity_creator
     - activity_logger
 third_party_settings:
   activity_logger:
@@ -13,6 +12,8 @@ third_party_settings:
       stream_home: stream_home
       stream_profile: stream_profile
     activity_create_direct: 0
+    activity_bundle_entity: node.topic
+    activity_action: create_entitiy_action
 type: create_topic_group
 label: 'Create topic in group'
 description: 'A user created a topic in a group'

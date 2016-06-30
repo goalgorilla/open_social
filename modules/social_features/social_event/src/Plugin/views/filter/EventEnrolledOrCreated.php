@@ -57,14 +57,14 @@ class EventEnrolledOrCreated extends FilterPluginBase {
     $this->query->addRelationship('event_enrollment__field_event', $join, 'node_field_data');
 
     $configuration = array(
-      'table' => 'event_enrollment',
+      'table' => 'event_enrollment_field_data',
       'field' => 'id',
       'left_table' => 'event_enrollment__field_event',
       'left_field' => 'entity_id',
       'operator' => '=',
     );
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('event_enrollment', $join, 'node_field_data');
+    $this->query->addRelationship('event_enrollment_field_data', $join, 'node_field_data');
 
     $configuration = array(
       'table' => 'event_enrollment__field_enrollment_status',
@@ -86,7 +86,7 @@ class EventEnrolledOrCreated extends FilterPluginBase {
 
     // Or if he enrolled to the event.
     $enrolled_to_event = db_and();
-    $enrolled_to_event->condition('event_enrollment.user_id', $account_profile, '=');
+    $enrolled_to_event->condition('event_enrollment_field_data.user_id', $account_profile, '=');
     $enrolled_to_event->condition('event_enrollment__field_enrollment_status.field_enrollment_status_value', '1', '=');
     $or_condition->condition($enrolled_to_event);
 

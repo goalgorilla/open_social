@@ -39,6 +39,8 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "activity",
+ *   data_table = "activity_field_data",
+ *   translatable = TRUE,
  *   admin_permission = "administer activity entities",
  *   entity_keys = {
  *     "id" = "id",
