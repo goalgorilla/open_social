@@ -386,6 +386,11 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__bare';
   }
 
+  // List group views.
+  if (!empty($view_id) && ($view_id == 'upcoming_events' || $view_id == 'latest_topics' || $view_id == 'newest_groups' || $view_id == 'newest_users')) {
+    $suggestions[] = $variables['theme_hook_original'] . '__list_group';
+  }
+
 }
 
 /**
@@ -561,6 +566,10 @@ function socialbase_preprocess_image_style(&$variables) {
   }
   if ($variables['style_name'] == 'social_medium') {
     $variables['image']['#attributes']['class'][] = 'img-medium';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
+  }
+  if ($variables['style_name'] == 'social_small') {
+    $variables['image']['#attributes']['class'][] = 'img-small';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
 
