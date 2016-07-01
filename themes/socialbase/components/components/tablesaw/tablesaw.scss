@@ -9,7 +9,9 @@
 .tablesaw-bar {
   width: 100%;
   clear: both;
+  height: 50px;
   text-align: right;
+
   &.tablesaw-all-cols-visible {
     display: none;
   }
@@ -20,7 +22,7 @@
       display: inline-block;
       overflow: hidden;
       width: 1.8em;
-      height: 1.8em;
+      height: 30px;
       background-position: 50% 50%;
       margin-left: .5em;
       position: relative;
@@ -35,33 +37,31 @@
 
       &.up, &.down {
         &:before {
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
+          border-left: 10px solid transparent;
+          border-right: 10px solid transparent;
           left: .5em;
-          top: .65em;
         }
       }
       &.down:before {
-        border-top: 5px solid #808080;
+        border-top: 10px solid #808080;
       }
       &.up:before {
-        border-bottom: 5px solid;
+        border-bottom: 10px solid;
       }
 
       &.left, &.right {
         &:before {
-          top: .44em;
-          border-top: 5px solid transparent;
-          border-bottom: 5px solid transparent;
+          border-top: 10px solid transparent;
+          border-bottom: 10px solid transparent;
         }
       }
       &.left:before {
         left: .5em;
-        border-right: 5px solid;
+        border-right: 10px solid;
       }
       &.right:before {
         left: .64em;
-        border-left: 5px solid;
+        border-left: 10px solid;
       }
 
       &.disabled {
@@ -70,12 +70,7 @@
         pointer-events: none;
       }
     }
-    &.btn-small {
-      font-size: $button-font-size-small;
-    }
-    &.btn-micro {
-      font-size: $button-font-size-small;
-    }
+
   }
 }
 
