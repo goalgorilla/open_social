@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_logger_entity_insert(EntityInterface $entity) {
+function activity_basics_entity_insert(EntityInterface $entity) {
   /* @var $activity_logger_factory Drupal\activity_creator\Plugin\ActivityActionManager */
   $activity_logger_factory = \Drupal::service('plugin.manager.activity_action.processor');
   // Trigger the create action for enttites.
