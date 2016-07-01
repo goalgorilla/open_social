@@ -45,33 +45,46 @@ block content
                   input.form-control(type="text", value='Johnson')
               
               .col-xs-12    
-                .form-group.form__type-managed-file
+                .form-group
                   label Profile image
-                  .image-widget.form-managed-file.clearfix
-                    img.img-responsive.pull-left(src='content/images/member5.jpg', width='50')
-                    .pull-left.padding-xs
-                      .file.file--image
-                      a(href='#', type="image/jpeg; length=158378") my-profile-picture.jpg
-                      .file-size (91.78kb)
-                    .pull-left.padding-xs
-                      button.btn.btn-default.form-submit(type='submit', value='remove')
-                        i.material-icons.pull-left delete
-                        | Remove
-                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+                  .image-widget.form-managed-file.clearfix.row
+                    .preview.col-sm-4.col-md-3.margin-bottom-m
+                      img.img-responsive(src="content/images/member5.jpg", width="220")
+
+                    .data.col-sm-8.col-md-9
+                      .form-no-label
+                        label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
+                        input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                        #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
+                      span.file.file--mime-image-jpeg.file--image
+                        span.file-icon
+                          span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
+                        span.file-link
+                          a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") animals1-square.jpg
+                        span.file-size 263.85 KB
+
+                      button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
                 
-                .form-group.form__type-managed-file
+                .form-group
                   label Cover image
-                  .image-widget.form-managed-file.clearfix
-                    img.img-responsive.pull-left(src='content/images/my-cover-big.jpg', width='150')
-                    .pull-left.padding-xs
-                      .file.file--image
-                      a(href='#', type="image/jpeg; length=158378") my-cover.jpg
-                      .file-size (123.89kb)
-                    .pull-left.padding-xs
-                      button.btn.btn-default.form-submit(type='submit', value='remove')
-                        i.material-icons.pull-left delete
-                        | Remove
-                  .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
+
+                  .image-widget.form-managed-file.clearfix.row
+                    .preview.col-sm-4.col-md-3.margin-bottom-m
+                      img.img-responsive(src="content/images/my-cover-square.jpg", width="220")
+
+                    .data.col-sm-8.col-md-9
+                      .form-no-label
+                        label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
+                        input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                        #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
+                      span.file.file--mime-image-jpeg.file--image
+                        span.file-icon
+                          span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
+                        span.file-link
+                          a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") my-cover-square.jpg
+                        span.file-size 263.85 KB
+
+                      button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
               
         #work.card.card-underline.scrollspy
         

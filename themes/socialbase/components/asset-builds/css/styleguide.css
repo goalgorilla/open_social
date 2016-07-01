@@ -20,7 +20,7 @@
        url("../../../font/custom-icons/custom-icons.svg") format('svg');
 }
 
-.material-icons {
+.material-icons, .icon-before:before {
   font-family: 'Material-Design-Icons';
   font-weight: normal;
   font-style: normal;
@@ -40,6 +40,11 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-feature-settings: 'liga';
           font-feature-settings: 'liga';
+}
+
+.icon-before:before {
+  content: attr(data-icon-type);
+  font-size: 1rem;
 }
 
 .custom-icons {

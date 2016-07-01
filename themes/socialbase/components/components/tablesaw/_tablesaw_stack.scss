@@ -1,0 +1,89 @@
+
+[data-tablesaw-mode="stack"] {
+  tbody tr:not(:last-child) {
+    border-bottom: 1px solid #dfdfdf;
+  }
+
+  td, th {
+    .tablesaw-cell-label {
+      display: none;
+    }
+  }
+
+
+  /* Mobile first styles: Begin with the stacked presentation at narrow widths */
+
+  @media only all {
+    td, th {
+      white-space: normal;
+      .tablesaw-cell-label {
+        padding: 0 .6em 0 0;
+        width: 35%;
+        display: inline-block;
+      }
+      .tablesaw-cell-label-top {
+        display: block;
+        padding: .4em 0;
+        margin: .4em 0;
+      }
+      .tablesaw-cell-content {
+        white-space: normal;
+      }
+    }
+  }
+
+  @media (max-width: 39.9375em) {
+    td, th {
+      text-align: left;
+      display: block;
+    }
+    tr {
+      clear: both;
+      display: table-row;
+    }
+    thead {
+      td, th {
+        display: none;
+      }
+    }
+    tbody {
+      td, th {
+        clear: left;
+        float: left;
+        width: 100%;
+      }
+    }
+    .tablesaw-cell-label {
+      vertical-align: top;
+    }
+    .tablesaw-cell-content {
+      max-width: 65%;
+      display: inline-block;
+    }
+    td, th {
+      &:empty, &.tabledrag-hide {
+        display: none;
+      }
+    }
+  }
+
+  /* Media query to show as a standard table at 560px (35em x 16px) or wider */
+  @media (min-width: 40em) {
+    tr {
+      display: table-row;
+    }
+    td, th, thead td, thead th {
+      display: table-cell;
+      margin: 0;
+      &.tabledrag-hide {
+        display: none;
+      }
+    }
+
+    td, th {
+      .tablesaw-cell-label {
+        display: none !important;
+      }
+    }
+  }
+}

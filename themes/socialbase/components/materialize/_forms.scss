@@ -161,10 +161,9 @@ span.form-required {
   }
 
   &:after {
-    content: '▼';
+    content: '▾';
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
     line-height: 1;
     margin-top: -.5em;
     padding-right: 12px;
@@ -200,6 +199,15 @@ span.form-required {
   position: absolute;
   left: -9999px;
   opacity: 0;
+}
+
+[type="radio"], [type="checkbox"] {
+  .form-no-label.checkbox & {
+    opacity: 1;
+    left: 0;
+    margin: 0;
+    position: static;
+  }
 }
 
 .checkbox label,

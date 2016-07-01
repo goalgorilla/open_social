@@ -226,6 +226,7 @@ gulp.task('script-drupal', function() {
     options.rootPath.drupalcore + '/misc/drupal.js',
     options.rootPath.drupalcore + '/misc/debounce.js',
     options.rootPath.drupalcore + '/misc/forms.js',
+    options.rootPath.drupalcore + '/misc/tabledrag.js',
     options.rootPath.drupalcore + '/modules/user/user.js',
     options.rootPath.drupalcore + '/modules/file/file.js'
   ])
