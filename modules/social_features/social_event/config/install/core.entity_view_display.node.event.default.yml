@@ -10,9 +10,11 @@ dependencies:
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
+    - field.field.node.event.field_files
     - node.type.event
   module:
     - comment
+    - file
     - text
     - user
 id: node.event.default
@@ -33,6 +35,12 @@ content:
       pager_id: 0
     third_party_settings: {  }
     type: comment_default
+  field_files:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
 hidden:
   field_content_visibility: true
   field_event_address: true
