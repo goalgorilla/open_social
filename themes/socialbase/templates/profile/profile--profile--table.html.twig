@@ -21,8 +21,8 @@
 #}
 
 
-<div class="list-group-item media">
-  <div class="media-left media-middle">
+<div class="media media-middle">
+  <div class="media-left">
     {% if content.field_profile_image %}
       <a href="{{ profile_stream_url }}">
         {{ content.field_profile_image }}
@@ -30,7 +30,7 @@
     {% endif %}
   </div>
 
-  <div class="media-body media-middle">
+  <div class="media-body">
     <a href="{{ profile_stream_url }}">
       {{ profile_name|render }}
     </a>
