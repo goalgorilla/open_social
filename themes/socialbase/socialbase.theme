@@ -79,63 +79,7 @@ function socialbase_theme_suggestions_details_alter(array &$suggestions, array $
   $suggestions[] = $hook . '__materialize';
 }
 
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
- *
- * Select the page layout a / b /c template based on the current route.
- */
-function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  // Default page suggestion.
-  $page_suggestion = 'page__layout_a';
 
-  // Add your page mapping here. Please note:
-  // If there are multiple matches layout_c will always have priority.
-  $suggestions_mapping = array(
-    'layout_b' => array(
-      'page__user',
-      'page__node__enrollments',
-    ),
-    'layout_c' => array(
-      'page__node__topic',
-      'page__node_edit',
-      'page__newest_topics',
-      'page__community_events',
-      'page__comment__edit',
-      'page__comment__delete',
-    ),
-  );
-
-  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
-    $page_suggestion = 'page__layout_c';
-  }
-  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
-    $page_suggestion = 'page__layout_b';
-  }
-  // Add as second to last suggestion, so it can be overriden on specific pages.
-  array_unshift($suggestions, $page_suggestion);
-}
-
-/**
- * Helper function to call all the process functions of a hook.
- *
- * @param string $hook
- *   Function to preprocess (e.g. page).
- * @param array $variables
- *   Template variables to handle.
- *
- * @see socialbase_preprocess_page_layout_a();
- */
-function _socialbase_call_preprocess_page($hook, &$variables) {
-  $theme_registry = theme_get_registry();
-  if (isset($theme_registry['page']['preprocess functions'])) {
-    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
-      if (function_exists($preprocessor_function)) {
-        $preprocessor_function($variables, $hook, $theme_registry['page']);
-      }
-    }
-  }
-
-}
 
 /**
  * Implements hook_preprocess_block().
@@ -278,9 +222,18 @@ function socialbase_preprocess_page_title(&$variables) {
   if (strpos($current_path, 'stream') !== FALSE) {
     $variables['stream'] = TRUE;
   }
+
+  // check if we are a node
   if (strpos($current_path, 'node') !== FALSE) {
     $variables['node'] = TRUE;
   }
+
+  // check if we are on the node/edit or node/add
+  if (strpos($current_path, 'edit') !== FALSE || strpos($current_path, 'add') !== FALSE) {
+    $variables['edit'] = TRUE;
+  }
+
+
 }
 
 /**
@@ -433,6 +386,11 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__bare';
   }
 
+  // List group views.
+  if (!empty($view_id) && ($view_id == 'upcoming_events' || $view_id == 'latest_topics' || $view_id == 'newest_groups' || $view_id == 'newest_users')) {
+    $suggestions[] = $variables['theme_hook_original'] . '__list_group';
+  }
+
 }
 
 /**
@@ -535,54 +493,7 @@ function socialbase_preprocess_page(&$variables) {
   }
 }
 
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_a(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
 
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_b(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
-
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_c(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
-
-/**
- * Implements hook_theme().
- *
- * Bit of hacking to be able to call multiple page layout templates based on
- * routes.
- *
- * See @socialbase_theme_suggestions_menu_alter().
- */
-function socialbase_theme() {
-  $items = array();
-  $items['page_layout_a'] = array(
-    'template' => 'page--layout-a',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_b'] = array(
-    'template' => 'page--layout-b',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_c'] = array(
-    'template' => 'page--layout-c',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  return $items;
-}
 
 /**
  * Prepares variables for node templates.
@@ -655,6 +566,10 @@ function socialbase_preprocess_image_style(&$variables) {
   }
   if ($variables['style_name'] == 'social_medium') {
     $variables['image']['#attributes']['class'][] = 'img-medium';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
+  }
+  if ($variables['style_name'] == 'social_small') {
+    $variables['image']['#attributes']['class'][] = 'img-small';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
 
@@ -948,3 +863,118 @@ function socialbase_preprocess_activity(&$variables) {
     }
   }
 }
+
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Select the page layout a / b /c template based on the current route.
+ */
+ /* function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Default page suggestion.
+  $page_suggestion = 'page__layout_a';
+
+  // Add your page mapping here. Please note:
+  // If there are multiple matches layout_c will always have priority.
+  $suggestions_mapping = array(
+    'layout_c' => array(
+      'page__node__topic',
+      'page__node__edit',
+      'page__newest_topics',
+      'page__community_events',
+      'page__comment__edit',
+      'page__comment__delete',
+    ),
+  );
+
+  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
+    $page_suggestion = 'page__layout_c';
+  }
+  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
+    $page_suggestion = 'page__layout_b';
+  }
+  // Add as second to last suggestion, so it can be overriden on specific pages.
+  array_unshift($suggestions, $page_suggestion);
+}
+*/
+
+/**
+ * Helper function to call all the process functions of a hook.
+ *
+ * @param string $hook
+ *   Function to preprocess (e.g. page).
+ * @param array $variables
+ *   Template variables to handle.
+ *
+ * @see socialbase_preprocess_page_layout_a();
+ */
+/* function _socialbase_call_preprocess_page($hook, &$variables) {
+  $theme_registry = theme_get_registry();
+  if (isset($theme_registry['page']['preprocess functions'])) {
+    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
+      if (function_exists($preprocessor_function)) {
+        $preprocessor_function($variables, $hook, $theme_registry['page']);
+      }
+    }
+  }
+
+}
+
+*/
+
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+*/
+/*
+function socialbase_preprocess_page_layout_a(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+ */
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+ /*
+function socialbase_preprocess_page_layout_b(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+ */
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+ /*
+function socialbase_preprocess_page_layout_c(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+ */
+/**
+ * Implements hook_theme().
+ *
+ * Bit of hacking to be able to call multiple page layout templates based on
+ * routes.
+ *
+ * See @socialbase_theme_suggestions_menu_alter().
+ */
+ /*
+function socialbase_theme() {
+  $items = array();
+  $items['page_layout_a'] = array(
+    'template' => 'page--layout-a',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_b'] = array(
+    'template' => 'page--layout-b',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_c'] = array(
+    'template' => 'page--layout-c',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  return $items;
+}
+ */

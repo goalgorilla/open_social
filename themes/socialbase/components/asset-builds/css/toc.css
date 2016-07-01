@@ -1,0 +1,90 @@
+/*
+ * Side navigation
+ *
+ * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+ * sections of docs content.
+ */
+.toc-wrapper.affix {
+  position: static;
+}
+
+.toc-wrapper .nav > li > a {
+  display: block;
+  padding: 4px 20px;
+  font-size: 14px;
+  font-weight: 300;
+  color: #555555;
+}
+
+.toc-wrapper .nav > li > a:hover,
+.toc-wrapper .nav > li > a:focus {
+  padding-left: 19px;
+  color: #777777;
+  text-decoration: none;
+  background-color: transparent;
+  border-left: 1px solid #29abe2;
+}
+
+.toc-wrapper .nav > .active > a,
+.toc-wrapper .nav > .active:hover > a,
+.toc-wrapper .nav > .active:focus > a {
+  padding-left: 18px;
+  font-weight: 500;
+  color: #333333;
+  background-color: transparent;
+  border-left: 2px solid #29abe2;
+}
+
+.toc-wrapper .nav .nav {
+  display: none;
+  padding-bottom: 10px;
+}
+
+.toc-wrapper .nav .nav > li > a {
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 30px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.toc-wrapper .nav .nav > li > a:hover,
+.toc-wrapper .nav .nav > li > a:focus {
+  padding-left: 29px;
+}
+
+.toc-wrapper .nav .nav > .active > a,
+.toc-wrapper .nav .nav > .active:hover > a,
+.toc-wrapper .nav .nav > .active:focus > a {
+  padding-left: 28px;
+  font-weight: 500;
+}
+
+/* Show and affix the side nav when space allows it */
+
+@media screen and (min-width: 960px) {
+  .toc-wrapper {
+    padding-left: 40px;
+  }
+  .toc-wrapper .nav > .active > ul {
+    display: block;
+  }/* Widen the fixed sidebar */
+  .toc-wrapper.affix,
+  .toc-wrapper.affix-bottom {
+    width: 320px;
+  }
+  .toc-wrapper.affix {
+    position: fixed;/* Undo the static from mobile first approach */
+    top: 74px;
+  }
+  .toc-wrapper.affix-bottom {
+    position: absolute;/* Undo the static from mobile first approach */
+  }
+  .toc-wrapper.affix-bottom .table-of-contents,
+  .toc-wrapper.affix .table-of-contents {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+/*# sourceMappingURL=toc.css.map */

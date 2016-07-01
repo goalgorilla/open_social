@@ -9,7 +9,7 @@
 
   li, &.nav > li {
     padding: 2px 0;
-    &.active a {
+    a.active {
       font-weight: 500;
       padding-left: 13px;
       border-left: 2px solid lighten($brand-primary,10%);
@@ -34,4 +34,7 @@
 
 .toc-wrapper {
   position: relative;
+  &.affix {
+    position: fixed;
+  }
 }

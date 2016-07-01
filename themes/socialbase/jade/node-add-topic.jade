@@ -7,12 +7,10 @@ block title
 block content
       
   .row.margin-top-l
-  
-    .col-xs-12
-      h1.h4.section-title Create Topic
       
-    #scrollspy.col-xs-12.col-sm-4.col-sm-last
-      .toc-wrapper
+      
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
+      .toc-wrapper.hidden-print
         ul.table-of-contents.nav
           li
             a(href='#content') Content
@@ -21,9 +19,12 @@ block content
           li
             a(href='#description') Description
           li
+            a(href='#attachments') Attachments
+          li
             a(href='#comment-settings') Comment settings
       
     .col-xs-12.col-sm-8
+      h1.h4.section-title Create Topic
     
       form(action='topic.html', method='get')
       
@@ -86,6 +87,21 @@ block content
               label.form-required Description
               .textarea--cke
                 textarea#ckeditor.form-control(required)
+
+        #attachments.card.card-underline.scrollspy
+
+          .card-head
+            header Attachments
+
+          .card-body
+            .form-group
+              label Files
+              .image-widget.form-managed-file.clearfix
+                input.form-control(type='file', value='upload an image')
+                button.btn.form-submit.btn-default.js-hide(type='submit', value='remove')
+                  i.material-icons.pull-left file_upload
+                  | Upload
+              .help-block 15 MB per file limit - Allowed types: xls xlsx doc
             
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")

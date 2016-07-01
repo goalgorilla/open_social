@@ -19,13 +19,21 @@
 
 {%
   set classes = [
-    'h4',
-    'section-title',
+    'h4 section-title',
     stream ? 'section-title-stream',
-    node ? 'section-title-node',
   ]
 %}
 
+{% if node and not edit %}
+
+  {% set extra_classes = [
+    'section-title-node',
+    ]
+  %}
+
+{% endif %}
+
+
 {% if title %}
-  <h1{{ title_attributes.addClass(classes) }}>{{ title }}</h1>
+  <h1{{ title_attributes.addClass(classes, extra_classes) }}>{{ title }}</h1>
 {% endif %}

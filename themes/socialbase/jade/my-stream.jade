@@ -26,10 +26,16 @@ block pagetitle
 block content
   
   .row.margin-top-l
-    .col-xs-12
-      h1.h4.section-title.section-title-stream My stream
+  
+    .col-sm-4.col-sm-last.margin-top-complementary
+
+      include ./molecules/_my-events.jade
+      include ./molecules/_my-topics.jade
+      include ./molecules/_my-groups.jade
       
     .col-xs-12.col-sm-8
+    
+      h4.section-title.section-title-stream My stream
       
       ul.stream
         li.stream-item
@@ -59,12 +65,6 @@ block content
           .card.stream-card
             .card-body
               include ./molecules/_stream-post1.jade    
-      
-    .col-sm-4.hidden-xs
-
-      include ./molecules/_my-events.jade
-      include ./molecules/_my-topics.jade
-      include ./molecules/_my-groups.jade
       
 block scriptinline  
   

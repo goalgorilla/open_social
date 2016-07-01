@@ -7,15 +7,43 @@
 
 namespace Drupal\group\Entity\Routing;
 
-use Drupal\group\Plugin\GroupContentEnablerHelper;
+use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\EntityRouteProviderInterface;
+use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Provides routes for group content.
  */
-class GroupContentRouteProvider implements EntityRouteProviderInterface {
+class GroupContentRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface {
+  
+  /**
+   * The group content enabler plugin manager.
+   *
+   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   */
+  protected $pluginManager;
+
+  /**
+   * Constructs a new GroupContentRouteProvider.
+   *
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
+   *   The group content enabler plugin manager.
+   */
+  public function __construct(GroupContentEnablerManagerInterface $plugin_manager) {
+    $this->pluginManager = $plugin_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $container->get('plugin.manager.group_content_enabler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -24,10 +52,10 @@ class GroupContentRouteProvider implements EntityRouteProviderInterface {
     $routes = [];
 
     // Retrieve all installed content enabler plugins.
-    $installed = GroupContentEnablerHelper::getInstalledContentEnablerIDs();
+    $installed = $this->pluginManager->getInstalledIds();
 
     // Retrieve all possible routes from all installed plugins.
-    foreach (GroupContentEnablerHelper::getAllContentEnablers() as $plugin_id => $plugin) {
+    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
       // Skip plugins that have not been installed anywhere.
       if (!in_array($plugin_id, $installed)) {
         continue;
