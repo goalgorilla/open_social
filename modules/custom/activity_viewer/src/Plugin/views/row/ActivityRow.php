@@ -4,7 +4,7 @@
  * Row style plugin for Views.
  */
 
-namespace Drupal\activity_creator\Plugin\views\row;
+namespace Drupal\activity_viewer\Plugin\views\row;
 
 use Drupal\views\Plugin\views\row\EntityRow;
 

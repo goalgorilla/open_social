@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityDestination\StreamExploreActivityDestination.
+ * Contains \Drupal\activity_basics\Plugin\ActivityDestination\StreamExploreActivityDestination.
  */
 
-namespace Drupal\activity_creator\Plugin\ActivityDestination;
+namespace Drupal\activity_basics\Plugin\ActivityDestination;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 
 /**
