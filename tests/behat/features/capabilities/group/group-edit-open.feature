@@ -42,6 +42,7 @@ Feature: Edit my group as a group manager
     And I should see "Member"
     And I should see "Organisation"
     And I should see "Role"
+    And I click "Next Column"
     And I should see "Operations"
     And I should see "Group Manager One"
     And I should see "GoalGorilla"
@@ -118,6 +119,3 @@ Feature: Edit my group as a group manager
     And I should see the button "Delete"
   # TODO: Fix unexpected error
   # And I press "Delete"
-
-
-
