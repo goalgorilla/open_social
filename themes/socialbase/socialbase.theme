@@ -978,3 +978,20 @@ function socialbase_theme() {
   return $items;
 }
  */
+
+
+function socialbase_preprocess_menu_local_action (&$variables) {
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.group_content.group_membership.collection') {
+    $linkClasses = $variables['link']['#options']['attributes']['class'];
+    foreach ($linkClasses as $delta => $class_name) {
+      if(in_array($class_name, array('btn-xs', 'btn-default'))){
+        unset($linkClasses[$delta]);
+      }
+    }
+    $variables['link']['#options']['attributes']['class'] = $linkClasses;
+    $variables['link']['#options']['attributes']['class'][] = 'waves-effect waves-light btn-sm btn-primary btn-raised';
+
+    $variables['attributes']['class'][] = 'margin-bottom-l';
+    $variables['attributes']['class'][] = 'margin-left-l';
+ }
+}
