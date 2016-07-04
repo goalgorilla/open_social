@@ -864,6 +864,44 @@ function socialbase_preprocess_activity(&$variables) {
   }
 }
 
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_file_upload_help (&$variables) {
+  if(!empty($variables['popover'])) {
+    unset($variables['popover']['toggle']['#icon']);
+    $variables['popover']['toggle']['#attributes']['data-icon-type'] = 'help';
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_table(&$variables) {
+  $file_fields = ['edit-field-files-table'];
+  if(!empty($variables['attributes']['id']) && in_array($variables['attributes']['id'], $file_fields)){
+    $variables['attributes']['class'][] = 'tablesaw';
+    $variables['attributes']['data-tablesaw-mode'] = 'stack';
+  }
+}
+
+
+function socialbase_preprocess_menu_local_action (&$variables) {
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.group_content.group_membership.collection') {
+    $link_classes = $variables['link']['#options']['attributes']['class'];
+    foreach ($link_classes as $delta => $class_name) {
+      if(in_array($class_name, array('btn-xs', 'btn-default'))){
+        unset($link_classes[$delta]);
+      }
+    }
+    $variables['link']['#options']['attributes']['class'] = $link_classes + array('waves-effect', 'waves-light', 'btn-sm', 'btn-primary', 'btn-raised');
+
+    $variables['attributes']['class'][] = 'margin-bottom-l';
+    $variables['attributes']['class'][] = 'margin-left-l';
+ }
+}
+
+
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
@@ -978,25 +1016,3 @@ function socialbase_theme() {
   return $items;
 }
  */
-
-/**
- * Implements hook_preprocess_hook().
- */
-function socialbase_preprocess_file_upload_help (&$variables) {
-  if(!empty($variables['popover'])) {
-    unset($variables['popover']['toggle']['#icon']);
-    $variables['popover']['toggle']['#attributes']['data-icon-type'] = 'help';
-  }
-}
-
-/**
- * Implements hook_preprocess_hook().
- */
-function socialbase_preprocess_table(&$variables) {
-  $file_fields = ['edit-field-files-table'];
-  if(!empty($variables['attributes']['id']) && in_array($variables['attributes']['id'], $file_fields)){
-    $variables['attributes']['class'][] = 'tablesaw';
-    $variables['attributes']['data-tablesaw-mode'] = 'stack';
-  }
-}
-
