@@ -1,3 +1,4 @@
+uuid: d5b21819-02a5-4956-89e4-de650d05d280
 langcode: en
 status: true
 dependencies:
@@ -10,7 +11,6 @@ dependencies:
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
-    - field.field.node.event.field_files
     - image.style.social_x_large
     - node.type.event
   module:
@@ -18,7 +18,6 @@ dependencies:
     - comment
     - datetime
     - field_group
-    - file
     - image
     - path
     - text
@@ -87,18 +86,8 @@ third_party_settings:
         required_fields: true
         id: visibility
         classes: 'card card-underline scrollspy'
-    group_attachments:
-      children:
-        - field_files
-      parent_name: ''
-      weight: 8
-      label: Attachments
-      format_type: fieldset
-      format_settings:
-        label: Attachments
-        required_fields: true
-        id: attachments
-        classes: 'card card-underline scrollspy'
+_core:
+  default_config_hash: PzknErbLCFpt2izP7BgaDdXj_ObcrnqXkjMwUyJoWFQ
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -157,15 +146,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
-  field_files:
-    weight: 12
-    settings:
-      progress_indicator: throbber
-    third_party_settings: {  }
-    type: file_generic
   path:
     type: path
-    weight: 10
+    weight: 9
     settings: {  }
     third_party_settings: {  }
   promote:
@@ -178,7 +161,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 8
     third_party_settings: {  }
   title:
     type: string_textfield

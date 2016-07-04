@@ -61,7 +61,7 @@
       display: inline-block;
     }
     td, th {
-      &:empty {
+      &:empty, &.tabledrag-hide {
         display: none;
       }
     }
@@ -75,6 +75,9 @@
     td, th, thead td, thead th {
       display: table-cell;
       margin: 0;
+      &.tabledrag-hide {
+        display: none;
+      }
     }
 
     td, th {

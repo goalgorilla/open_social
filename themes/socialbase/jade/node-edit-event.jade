@@ -59,7 +59,8 @@ block content
                     input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
                     #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
                   span.file.file--mime-image-jpeg.file--image
-                    span.file-icon.text-primary.material-icons image
+                    span.file-icon
+                      span.icon.glyphicon.glyphicon-picture.text-primary.material-icons image
                     span.file-link
                       a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") animals1-square.jpg
                     span.file-size 263.85 KB
@@ -174,7 +175,7 @@ block content
                     tr
                       th File information
                       th Display
-                      th.tabledrag-hide(style='display: none') Weight
+                      th.tabledrag-hide Weight
                       th Operations
                   tbody
                     tr.draggable.odd
@@ -184,7 +185,8 @@ block content
                         div.js-form-managed-file.form-managed-file
                           input(type="hidden")
                           span.file.file--mime-application-pdf.file--application-pdf
-                            span.file-icon.text-primary.material-icons insert_drive_file
+                            span.file-icon
+                              span.icon.glyphicon.glyphicon-file.text-primary.material-icons insert_drive_file
                             span.file-link
                               a.menu-item__link(href="#", type="application/pdf;, length=480544", title="Open file in new window") Very-important-document.pdf
                             span.file-size 412.28 KB
@@ -198,7 +200,7 @@ block content
                         .checkbox
                           input#edit-field-test-0-display.file-display.form-checkbox(type="checkbox", checked="checked")
                           label(for="edit-field-test-0-display")
-                      td.tabledrag-hide(style='display: none')
+                      td.tabledrag-hide
                         .form-no-label.form-group
                           label.visually-hidden(for="edit-field-test-0-weight") Weight for new file
                           .select-wrapper
@@ -221,7 +223,8 @@ block content
                         div.js-form-managed-file.form-managed-file
                           input(type="hidden")
                           span.file.file--mime-application-pdf.file--application-pdf
-                            span.file-icon.text-primary.material-icons insert_drive_file
+                            span.file-icon
+                              span.icon.glyphicon.glyphicon-file.text-primary.material-icons insert_drive_file
                             span.file-link
                               a.menu-item__link(href="#", type="application/pdf;, length=480544", title="Open file in new window") Very-important-document.pdf
                             span.file-size 469.28 KB
@@ -234,7 +237,7 @@ block content
                         .checkbox
                           input#edit-field-test-1-display.file-display.form-checkbox(type="checkbox", checked="checked")
                           label(for="edit-field-test-1-display")
-                      td.tabledrag-hide(style='display: none')
+                      td.tabledrag-hide
                         .form-no-label.form-group
                           label.visually-hidden(for="edit-field-test-1-weight") Weight for new file
                           .select-wrapper
@@ -265,8 +268,7 @@ block content
                   div#upload-instructions--3.hidden.help-block.form-group.popover(aria-hidden="true")
                     ul
                       li Unlimited number of files can be uploaded to this field.
-                      li 2 MB limit.
-                      li Allowed types:
+                      li 2 MB limit.</li><li>Allowed types:
                         =" "
                         code png, gif, jpg, jpeg
                         |.

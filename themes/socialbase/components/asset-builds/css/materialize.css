@@ -5340,6 +5340,7 @@ a.list-group-item {
 
 .file > span {
   background: #fff;
+  color: #777777;
   border-bottom: 1px solid #e6e6e6;
   border-top: 1px solid #e6e6e6;
 }
@@ -5350,10 +5351,6 @@ a.list-group-item {
 
 .file > span:last-child {
   border-right: 1px solid #e6e6e6;
-}
-
-.file > span:not(.text-primary) {
-  color: #777777;
 }
 
 .file > .tabledrag-changed {
@@ -5451,9 +5448,14 @@ a.list-group-item {
   overflow: visible;
 }
 
+.tabledrag-hide {
+  display: none;
+}
+
 .tabledrag-handle {
   color: #777777;
   cursor: move;
+  width: 24px;
   position: absolute;
   line-height: 1;
   margin: 0 0 0 -10px;
@@ -6171,6 +6173,9 @@ input[type=range]:focus::-ms-fill-upper {
   [data-tablesaw-mode="stack"] td, [data-tablesaw-mode="stack"] th, [data-tablesaw-mode="stack"] thead td, [data-tablesaw-mode="stack"] thead th{
     display: table-cell;
     margin: 0;
+  }
+  [data-tablesaw-mode="stack"] td.tabledrag-hide, [data-tablesaw-mode="stack"] th.tabledrag-hide, [data-tablesaw-mode="stack"] thead td.tabledrag-hide, [data-tablesaw-mode="stack"] thead th.tabledrag-hide{
+    display: none;
   }
   [data-tablesaw-mode="stack"] td .tablesaw-cell-label, [data-tablesaw-mode="stack"] th .tablesaw-cell-label{
     display: none !important;
@@ -8053,7 +8058,7 @@ input[type=range]:focus::-ms-fill-upper {
     max-width: 65%;
     display: inline-block;
   }
-  [data-tablesaw-mode="stack"] td:empty, [data-tablesaw-mode="stack"] th:empty{
+  [data-tablesaw-mode="stack"] td:empty, [data-tablesaw-mode="stack"] td.tabledrag-hide, [data-tablesaw-mode="stack"] th:empty, [data-tablesaw-mode="stack"] th.tabledrag-hide{
     display: none;
   }
 }
