@@ -126,7 +126,7 @@ gulp.task('styles', function () {
     .pipe( rename({dirname: ''}))
     .pipe( sourcemaps.write('.') )
     .pipe( gulp.dest(options.theme.css) )
-    .pipe( gulp.dest(options.rootPath.dist + '/css') )
+    .pipe( gulp.dest(options.rootPath.dist + '/css/components/asset-builds') )
     .pipe( connect.reload() );
 });
 
