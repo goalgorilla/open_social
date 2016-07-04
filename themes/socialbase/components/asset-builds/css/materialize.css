@@ -3328,34 +3328,20 @@ a.card:hover {
   top: 0;
   height: auto;
   pointer-events: none;
-  width: 30px;
-  padding: 5px 8px;
-  background-color: rgba(0, 0, 0, 0.7);
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  background-color: #adadad;
   border-radius: 0 0 8px 8px;
-  left: 25px;
+  left: 20px;
   position: relative;
   margin-bottom: -10px;
 }
 
-.card--teaser .teaser-date {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  bottom: auto;
-  right: auto;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-          transform: translateX(-50%) translateY(-50%);
-  color: white;
-  font-size: 3em;
-  text-transform: uppercase;
-  font-weight: 500;
-  text-align: center;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.card--teaser .teaser-date div {
-  line-height: 1;
+.card--teaser .teaser-type img {
+  width: 16px;
+  height: 16px;
+  display: table;
 }
 
 .card--teaser .card-title {
@@ -6740,11 +6726,17 @@ input[type=range]:focus::-ms-fill-upper {
   }
   .card--teaser .teaser-type{
     position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
     margin-bottom: 0;
     left: 0;
-    width: 22%;
-    padding: 15px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
     border-radius: 0 0 10px 0;
+  }
+  .card--teaser .teaser-type img{
+    width: 24px;
+    height: 24px;
   }
   .unpublished .card-image.blue-overlay:before{
     background: rgba(77, 77, 77, 0.8);
@@ -6755,20 +6747,28 @@ input[type=range]:focus::-ms-fill-upper {
   .unpublished .status{
     position: absolute;
     width: 100%;
+    height: 100%;
     text-align: center;
     color: white;
-    bottom: 10px;
+    top: 0;
+    padding-top: 185px;
     left: 0;
+    z-index: 2;
     font-weight: 300;
-    background: rgba(77, 77, 77, 0.8);
   }
   .unpublished .status:before{
-    border-top: 1px solid white;
-    margin: 5px auto;
-    width: 40px;
-    height: 0;
-    content: '';
     display: block;
+    position: absolute;
+    content: '';
+    background-image: -webkit-linear-gradient(transparent 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
+    background-image: linear-gradient(transparent 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
+    height: 100%;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
   }
   .card-buttonbar{
     -webkit-box-pack: start;
