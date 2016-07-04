@@ -55,6 +55,7 @@ options.theme = {
   styleguide : options.rootPath.theme + 'jade/',
   images     : options.rootPath.theme + 'images/',
   content    : options.rootPath.theme + 'content/',
+  libs       : options.rootPath.theme + 'libs/',
   font       : options.rootPath.theme + 'font/',
   bootstrap  : options.rootPath.theme + 'node_modules/bootstrap-sass/assets/'
 };
