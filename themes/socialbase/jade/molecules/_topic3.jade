@@ -1,18 +1,19 @@
 .card.card--teaser.card-with-actionbar.unpublished
-  a.card-image.blue-overlay(href="topic.html")
+  a.card-image(href="topic.html")
+    .teaser-type
+      img(src='images/icon-topic.svg', alt='')
     img.img-responsive(src='content/images/people3-square.jpg', alt='')
-    img.teaser-type(src='images/icon-topic.svg', alt='')
     .status unpublished
   .card-body
     h4.card-title 
       a(href="topic.html") 5 new cool features in Office 365
-    p.text-grey-dark
+    p.text-grey-dark.no-margin
       if user == "isAnonymous"
         | Dennis Rodman 
       else
         a(href="other-stream.html") Dennis Rodman 
         | &bullet; 28 mar 2016
-    p 
+    p.no-margin
       i.material-icons label 
       | &nbsp;
       span.inline-center Blog

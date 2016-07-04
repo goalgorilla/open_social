@@ -46,6 +46,10 @@
 
   }
 
+  .material-icons, .custom-icons {
+    font-size: 1rem;
+  }
+
 }
 
 .card-with-actionbar .card-body {
@@ -128,13 +132,17 @@ a.card:hover {
 
 .card--teaser {
   display: flex;
-
+  flex-wrap: wrap;
   @include MQ($small) {
+    flex-wrap: nowrap;
     height: 220px; // matches width of image
   }
 
   .card-image {
-    display: none;
+    width: 100%;
+    > img, .status {
+      display: none;
+    }
 
     @include MQ($small) {
       display: block;
@@ -143,6 +151,12 @@ a.card:hover {
       position: relative;
       border-radius: 10px 0 0 10px;
       overflow: hidden;
+      width: auto;
+      padding-top: 0;
+
+      > img, .status {
+        display: block;
+      }
 
       &.blue-overlay:before {
         position: absolute;
@@ -175,11 +189,25 @@ a.card:hover {
   }
 
   .teaser-type {
-    position: absolute;
-    @include center(xy);
-    width: 30%;
+    top: 0;
     height: auto;
     pointer-events: none;
+    width: 30px;
+    padding: 5px 8px;
+    background-color: rgba(black, .7);
+    border-radius: 0 0 8px 8px;
+    left: 25px;
+    position: relative;
+    margin-bottom: -10px;
+
+    @include MQ($small) {
+      position: absolute;
+      margin-bottom: 0;
+      left: 0;
+      width: 22%;
+      padding: 15px;
+      border-radius: 0 0 10px 0;
+    }
   }
 
   .teaser-date {
@@ -218,8 +246,13 @@ a.card:hover {
 
 @include MQ($small) {
 
-  .unpublished .card-image.blue-overlay:before {
-    background: rgba($grey-dark-1, 0.8);
+  .unpublished .card-image.blue-overlay {
+    &:before {
+      background: rgba($grey-dark-1, 0.8);
+    }
+    .status {
+      background-color: transparent;
+    }
   }
 
   .unpublished .status {
@@ -230,6 +263,7 @@ a.card:hover {
     bottom: 10px;
     left: 0;
     font-weight: 300;
+    background: rgba($grey-dark-1, 0.8);
 
     &:before {
       border-top: 1px solid white;
@@ -253,6 +287,10 @@ a.card:hover {
   z-index: 1;
   background-color: inherit;
   padding: 6px $card-padding;
+  .actionbar {
+    position: absolute;
+    z-index: 1;
+  }
 }
 
 .card-actionbar--with-border {

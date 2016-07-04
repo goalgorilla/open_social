@@ -1,21 +1,25 @@
 .card.card--teaser.card-with-actionbar
-  a.card-image.blue-overlay(href="event.html")
+  a.card-image(href="event.html")
     img.img-responsive(src="content/images/people3-square.jpg")
-    .teaser-date 20-21
-      .text-xs may-may
   .card-body
     h4.card-title 
       a(href="event.html") Security and modern internet
-    p.text-grey-dark
+    p.text-grey-dark.no-margin
       i.material-icons event
       | &nbsp;
       span.inline-center 20 May 09:00 - 21 May 18:00 
-      | &nbsp; 
-      unless user == "isAnonymous"
-        span.label.label-primary enrolled
-    p.text-grey-dark 
+      | &nbsp;
+    p.text-grey-dark.no-margin
       i.material-icons place
       | &nbsp;
       span.inline-center Rembrandtplein, Amsterdam
     .card-actionbar
+      .actionbar
+        .badge.badge-gray-lighter.badge--toggle
+          label
+            input(type='checkbox')
+            i.material-icons group
+            span.badge--toggle__label community
+        unless user == "isAnonymous"
+          span.label.label-default enrolled
       a.btn.btn-flat.pull-right(href="event.html") Read more

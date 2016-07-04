@@ -1,17 +1,18 @@
 .card.card--teaser.card-with-actionbar
-  a.card-image.blue-overlay(href="topic.html")
+  a.card-image(href="topic.html")
+    .teaser-type
+      img(src='images/icon-topic.svg', alt='')
     img.img-responsive(src='content/images/animals1-square.jpg', alt='')
-    img.teaser-type(src='images/icon-topic.svg', alt='')
   .card-body
     h4.card-title 
       a(href="topic.html") Will this be the cinema of the future?
-    p.text-grey-dark
+    p.text-grey-dark.no-margin
       if user == "isAnonymous"
         | Richard Ogylvie 
       else
         a(href="other-stream.html") Richard Ogylvie 
       | &bullet; 22 mar 2016
-    p 
+    p.no-margin
       i.material-icons label 
       | &nbsp;
       span.inline-center Discussion
