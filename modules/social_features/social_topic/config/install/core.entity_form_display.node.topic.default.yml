@@ -1,10 +1,10 @@
-uuid: f2670aaa-4cb0-4573-bdf0-bc52d90c44cb
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.node.topic.body
     - field.field.node.topic.field_content_visibility
+    - field.field.node.topic.field_files
     - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
@@ -13,6 +13,7 @@ dependencies:
   module:
     - comment
     - field_group
+    - file
     - image
     - path
     - text
@@ -36,7 +37,7 @@ third_party_settings:
       children:
         - body
       parent_name: ''
-      weight: 3
+      weight: 2
       label: 'Topic description'
       format_type: fieldset
       format_settings:
@@ -56,8 +57,18 @@ third_party_settings:
         required_fields: true
         id: visibility
         classes: 'card card-underline scrollspy'
-_core:
-  default_config_hash: fKqachrA6TE3ackEC_JwqTY0_vR8w-aGMD1F5v1sFmo
+    group_attachments:
+      children:
+        - field_files
+      parent_name: ''
+      weight: 5
+      label: Attachments
+      format_type: fieldset
+      format_settings:
+        label: Attachments
+        required_fields: true
+        id: attachments
+        classes: 'card card-underline scrollspy'
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -73,7 +84,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     settings: {  }
     third_party_settings: {  }
   field_content_visibility:
@@ -81,6 +92,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
+  field_files:
+    weight: 8
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
   field_topic_comments:
     weight: 6
     settings: {  }
@@ -112,7 +129,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
