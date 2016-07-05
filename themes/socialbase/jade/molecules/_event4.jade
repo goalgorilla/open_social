@@ -1,22 +1,28 @@
 .card.card--teaser.card-with-actionbar.unpublished
-  a.card-image.blue-overlay(href="event.html")
+  a.card-image(href="event.html")
+    .teaser-type
+      img(src='images/icons/icon-event.svg', alt='Event')
     img.img-responsive(src="content/images/people3-square.jpg")
-    .teaser-date 28
-      .text-xs Aug
     .status unpublished
   .card-body
     h4.card-title 
       a(href="event.html") Team conference East
-    p.text-grey-dark
+    .text-gray-dark
       i.material-icons event
       | &nbsp;
       span.inline-center 28 Aug 10:00 - 12:00 
       | &nbsp; 
-      unless user == "isAnonymous"
-        span.label.label-primary enrolled
-    p.text-grey-dark
+    .text-gray-dark
       i.material-icons place
       | &nbsp;
       span.inline-center Old Market, Groningen
     .card-actionbar
+      .actionbar
+        .badge.badge-gray-lighter.badge--toggle
+          label
+            input(type='checkbox')
+            i.material-icons public
+            span.badge--toggle__label public
+        unless user == "isAnonymous"
+          span.label.label-default enrolled
       a.btn.btn-flat.pull-right(href="event.html") Read more

@@ -46,6 +46,10 @@
 
   }
 
+  .material-icons, .custom-icons {
+    font-size: 1rem;
+  }
+
 }
 
 .card-with-actionbar .card-body {
@@ -128,13 +132,17 @@ a.card:hover {
 
 .card--teaser {
   display: flex;
-
+  flex-wrap: wrap;
   @include MQ($small) {
+    flex-wrap: nowrap;
     height: 220px; // matches width of image
   }
 
   .card-image {
-    display: none;
+    width: 100%;
+    > img, .status {
+      display: none;
+    }
 
     @include MQ($small) {
       display: block;
@@ -143,6 +151,12 @@ a.card:hover {
       position: relative;
       border-radius: 10px 0 0 10px;
       overflow: hidden;
+      width: auto;
+      padding-top: 0;
+
+      > img, .status {
+        display: block;
+      }
 
       &.blue-overlay:before {
         position: absolute;
@@ -175,28 +189,42 @@ a.card:hover {
   }
 
   .teaser-type {
-    position: absolute;
-    @include center(xy);
-    width: 30%;
+    top: 0;
     height: auto;
     pointer-events: none;
-  }
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    background-color: $grey-light-1;
+    border-radius: 0 0 8px 8px;
+    left: 20px;
+    position: relative;
+    margin-bottom: -10px;
 
-  .teaser-date {
-    position: absolute;
-    @include center(xy);
-    color: white;
-    font-size: 3em;
-    text-transform: uppercase;
-    font-weight: 500;
-    text-align: center;
-    line-height: 1;
-    white-space: nowrap;
+    img {
+      width: 16px;
+      height: 16px;
+      display: table;
+    }
 
-    div {
-      line-height: 1;
+
+    @include MQ($small) {
+      position: absolute;
+      background-color: rgba(black, .5);
+      margin-bottom: 0;
+      left: 0;
+      width: 44px;
+      height: 44px;
+      padding: 10px;
+      border-radius: 0 0 10px 0;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
+
 
   .card-title {
     margin-top: 0;
@@ -218,28 +246,40 @@ a.card:hover {
 
 @include MQ($small) {
 
-  .unpublished .card-image.blue-overlay:before {
-    background: rgba($grey-dark-1, 0.8);
+  .unpublished .card-image.blue-overlay {
+    &:before {
+      background: rgba($grey-dark-1, 0.8);
+    }
+    .status {
+      background-color: transparent;
+    }
   }
 
   .unpublished .status {
     position: absolute;
     width: 100%;
+    height: 100%;
     text-align: center;
     color: white;
-    bottom: 10px;
+    top: 0;
+    padding-top: 185px;
     left: 0;
+    z-index: 2;
     font-weight: 300;
 
     &:before {
-      border-top: 1px solid white;
-      margin: 5px auto;
-      width: 40px;
-      height: 0;
-      content: '';
       display: block;
+      position: absolute;
+      content: '';
+      background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.5) 100%);
+      height: 100%;
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: -1;
     }
-
   }
 
 }
@@ -253,6 +293,10 @@ a.card:hover {
   z-index: 1;
   background-color: inherit;
   padding: 6px $card-padding;
+  .actionbar {
+    position: absolute;
+    z-index: 1;
+  }
 }
 
 .card-actionbar--with-border {
