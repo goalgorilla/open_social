@@ -5,6 +5,8 @@
  * The Social event module.
  */
 
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -14,7 +16,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
  *
  * Enhance the exposed filter form of the event overview.
  */
-function social_event_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form['#id'] === 'views-exposed-form-events-events-overview') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
@@ -37,7 +39,7 @@ function social_event_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\Fo
  *
  * Add a title to the exposed filter block on the events overview.
  */
-function social_event_block_view_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+function social_event_block_view_alter(array &$build, BlockPluginInterface $block) {
   // @todo check out why this happens, is this is a views bug?
   if ($build['#plugin_id'] === 'views_exposed_filter_block:events-events_overview') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
@@ -100,6 +102,23 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
 }
 
 /**
+ * Prepares variables for node templates.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - node: The node object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_event_preprocess_node(&$variables) {
+  $view_mode = $variables['view_mode'];
+  $node = $variables['node'];
+  if ($node->getType() === 'event') {
+    $variables['event_date'] = _social_event_format_date($node, $view_mode);
+  }
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_event_views_data_alter(array &$data) {
@@ -112,4 +131,52 @@ function social_event_views_data_alter(array &$data) {
       'id' => 'event_enrolled_or_created',
     ),
   );
+}
+
+/**
+ * Formats the event start end date.
+ */
+function _social_event_format_date($event, $view_mode) {
+  $event_date = '';
+  // Get start and end dates
+  if ($start_date_field = $event->field_event_date) {
+    if (!empty($start_date_field->value)) {
+      $start_datetime = strtotime($start_date_field->value);
+    }
+  }
+  if ($end_date_field = $event->field_event_date_end) {
+    if (!empty($end_date_field->value)) {
+      $end_datetime = strtotime($end_date_field->value);
+    }
+  }
+
+  // Get date and time formats.
+  $date_formatter = \Drupal::service('date.formatter');
+  $date_format = ($view_mode === 'hero') ? 'social_long_date' : 'social_short_date';
+  $time_format = 'social_time';
+
+  if (!empty($start_datetime)) {
+    // Date are the same or there are no end date.
+    if (empty($end_datetime) || $start_datetime == $end_datetime) {
+      $date = $date_formatter->format($start_datetime, $date_format);
+      $time = $date_formatter->format($start_datetime, $time_format);
+      $event_date = "$date - $time";
+    }
+    // The date is the same, the time is different.
+    elseif (date('Y-m-d', $start_datetime) == date('Y-m-d', $end_datetime)) {
+      $date = $date_formatter->format($start_datetime, $date_format);
+      $start_time = $date_formatter->format($start_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, $time_format);
+      $event_date = "$date $start_time - $end_time";
+    }
+    // They are not the same day (or empty?).
+    elseif (!empty($end_datetime)) {
+      $start_date = $date_formatter->format($start_datetime, $date_format);
+      $end_date = $date_formatter->format($end_datetime, $date_format);
+      $start_time = $date_formatter->format($start_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, $time_format);
+      $event_date = "$start_date $start_time - $end_date $end_time";
+    }
+  }
+  return $event_date;
 }

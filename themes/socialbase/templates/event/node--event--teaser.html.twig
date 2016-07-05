@@ -81,7 +81,9 @@
         <p class="text-grey-dark">
           <i class="material-icons pull-left">event</i>
           <span class="inline-center">
-            {{ content.field_event_date }}
+              {% if event_date %}
+                {{ event_date }}
+              {% endif %}
           </span>&nbsp;
           {% if content.enrolled %}
             <span class="label label-primary">enrolled</span>
@@ -98,7 +100,7 @@
 
         {#TODO: Use content.links here and fix the theming#}
         <div class="card-actionbar">
-            {% if visibility_icon and  visibility_label %}
+            {% if visibility_icon and visibility_label %}
                 <div class="badge badge-gray-lighter badge--toggle">
                     <label>
                         <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>

@@ -1,7 +1,6 @@
 (function ($) {
   $(document).ready(function() {
 
-
     // Text based inputs
     var input_selector = 'input[type=text], input[type=password], input[type=email], input[type=url], input[type=tel], input[type=number], input[type=search], textarea';
 
@@ -55,9 +54,6 @@
     $('body').on('keyup keydown autoresize', text_area_selector, function () {
       textareaAutoResize($(this));
     });
-
-    $('select.form-control').wrap('<div class="material-select"></div>')
-
 
     /****************
     *  Range Input  *

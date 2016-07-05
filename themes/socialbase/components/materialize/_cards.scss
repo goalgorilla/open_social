@@ -1,0 +1,325 @@
+.card {
+  @include clearfix;
+  @include z-depth-1;
+  position: relative;
+  margin-bottom: $card-spacer-y;
+  background-color: $card-bg;
+  @include border-radius($card-border-radius);
+  transition: box-shadow .25s;
+  background-clip: padding-box;
+}
+
+.card-head {
+  position: relative;
+  vertical-align: middle;
+  border-radius: 10px 10px 0 0;
+  padding: 15px $card-padding 0;
+  color: $gray-light;
+  line-height: 1;
+}
+
+// This style can be used to separate the card title from the card body.
+.card-underline .card-head {
+  border-bottom: 1px solid $grey-light-2;
+  padding-bottom: 15px;
+}
+
+.card-body {
+  position: relative;
+  padding: $card-padding;
+
+  &:first-child {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  &.extra-padding {
+
+    @include MQ($small) {
+      padding: $card-padding-large;
+    }
+
+  }
+
+  .material-icons, .custom-icons {
+    font-size: 1rem;
+  }
+
+}
+
+.card-with-actionbar .card-body {
+  padding-bottom: 48px;
+  overflow: hidden;
+}
+
+.card-head header {
+  vertical-align: middle;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+a.card:hover {
+  @include z-depth-3;
+}
+
+.card__label {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: $grey-dark-1;
+}
+
+.card-nested-section {
+  margin: 10px -20px -20px;
+  padding: $card-padding;
+  background: $gray-lightest;
+
+  .extra-padding & {
+    @include MQ($small) {
+      margin-left: -$card-padding-large;
+      margin-right: -$card-padding-large;
+      padding: $card-padding $card-padding-large;
+    }
+  }
+
+  &.indented {
+    margin: -20px -20px 0;
+    background: transparent;
+  }
+
+  textarea {
+    height: 38px;
+
+    &:focus {
+      height: auto;
+    }
+  }
+
+  &:last-child {
+    margin-bottom: -$card-padding;
+    border-bottom-left-radius: $card-border-radius;
+    border-bottom-right-radius: $card-border-radius;
+    border-bottom: 0;
+
+    .extra-padding & {
+      @include MQ($small) {
+        margin-bottom: -$card-padding-large;
+      }
+    }
+
+  }
+}
+
+
+.card {
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+//
+// Specific Drupal teaser cards
+
+.card--teaser {
+  display: flex;
+  flex-wrap: wrap;
+  @include MQ($small) {
+    flex-wrap: nowrap;
+    height: 220px; // matches width of image
+  }
+
+  .card-image {
+    width: 100%;
+    > img, .status {
+      display: none;
+    }
+
+    @include MQ($small) {
+      display: block;
+      height: 220px;
+      flex: 0 0 220px;
+      position: relative;
+      border-radius: 10px 0 0 10px;
+      overflow: hidden;
+      width: auto;
+      padding-top: 0;
+
+      > img, .status {
+        display: block;
+      }
+
+      &.blue-overlay:before {
+        position: absolute;
+        display: block;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        background: rgba($brand-primary, 0.8);
+      }
+
+      a {
+        display: block;
+      }
+
+    }
+  }
+
+  .card-image-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    img {
+      flex: 0 1 110px;
+      width: 110px;
+    }
+  }
+
+  .teaser-type {
+    top: 0;
+    height: auto;
+    pointer-events: none;
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    background-color: $grey-light-1;
+    border-radius: 0 0 8px 8px;
+    left: 20px;
+    position: relative;
+    margin-bottom: -10px;
+
+    img {
+      width: 16px;
+      height: 16px;
+      display: table;
+    }
+
+
+    @include MQ($small) {
+      position: absolute;
+      background-color: rgba(black, .5);
+      margin-bottom: 0;
+      left: 0;
+      width: 44px;
+      height: 44px;
+      padding: 10px;
+      border-radius: 0 0 10px 0;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+
+  .card-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    max-height: 2.2em;
+    overflow: hidden;
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+  }
+
+}
+
+.card--teaser-desc {
+  max-height: (3 * $line-height-base) * 1em;
+  overflow: hidden;
+}
+
+@include MQ($small) {
+
+  .unpublished .card-image.blue-overlay {
+    &:before {
+      background: rgba($grey-dark-1, 0.8);
+    }
+    .status {
+      background-color: transparent;
+    }
+  }
+
+  .unpublished .status {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: white;
+    top: 0;
+    padding-top: 185px;
+    left: 0;
+    z-index: 2;
+    font-weight: 300;
+
+    &:before {
+      display: block;
+      position: absolute;
+      content: '';
+      background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.5) 100%);
+      height: 100%;
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: -1;
+    }
+  }
+
+}
+
+.card-actionbar {
+  @include clearfix; // buttons inside can float
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background-color: inherit;
+  padding: 6px $card-padding;
+  .actionbar {
+    position: absolute;
+    z-index: 1;
+  }
+}
+
+.card-actionbar--with-border {
+  border-top: 1px solid $grey-light-2;
+}
+
+.card-buttonbar {
+  padding: 6px 0;
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid $grey-light-2;
+
+  @include MQ($small) {
+    justify-content: flex-start;
+  }
+
+  .btn-link {
+    padding: 6px;
+  }
+
+  .justify-end {
+    margin-left: auto;
+    text-align: right;
+    flex: 1;
+  }
+}

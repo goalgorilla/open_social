@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\PostListBuilder.
- */
-
 namespace Drupal\social_post;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Routing\LinkGeneratorTrait;
-use Drupal\Core\Url;
 
 /**
  * Defines a class to build a listing of Post entities.
@@ -19,6 +13,7 @@ use Drupal\Core\Url;
  */
 class PostListBuilder extends EntityListBuilder {
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */

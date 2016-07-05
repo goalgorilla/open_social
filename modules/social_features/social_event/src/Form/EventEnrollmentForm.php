@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Form\EventEnrollmentForm.
- */
-
 namespace Drupal\social_event\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -16,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup social_event
  */
 class EventEnrollmentForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */

@@ -31,8 +31,8 @@ html(lang="en")
     meta(name='msapplication-TileImage', content='images/favicon/mstile-144x144.png')
     meta(name='theme-color', content='#ffffff')
 
-    //CSS
-    link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen')
+    //- CSS
+    include _components.jade
   
   body(class='#{pagetype}')
     // Google Tag Manager
@@ -67,22 +67,7 @@ html(lang="en")
         .container
           block content
       
-    footer.main-footer
-      .container.clearfix
-        .navbar.navbar-footer
-          .nav.navbar-nav.navbar-right
-            li 
-              a(href="#") About
-            li 
-              a(href="#") Terms
-            li 
-              a(href="#") Privacy
-            li 
-              a(href="#") Cookies
-            li 
-              a(href="#") Contact
-          .navbar-brand
-            a(href='home-an.html') Open Social
+    include _footer.jade
       
   block scriptinline
   

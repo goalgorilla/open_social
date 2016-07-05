@@ -4,8 +4,14 @@
  * The primary PHP file for the Social base theme.
  */
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\file\Entity\File;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\block\Entity\Block;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
+use \Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -21,8 +27,12 @@ function socialbase_form_social_user_password_form_alter(&$form, FormStateInterf
 function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_visibility']['#prefix'] = '<div class="form-group media"><div class="media-body">';
   $form['field_visibility']['#suffix'] = '</div>';
-  $form['actions']['#prefix'] = '<div class="media-right">';
-  $form['actions']['#suffix'] = '</div></div>';
+
+  // This needs to be save on post/*/edit pages.
+  $form['actions']['submit']['#prefix'] = '<div class="media-right">';
+  $form['actions']['submit']['#suffix'] = '</div>';
+
+  unset($form['actions']['delete']);
 }
 
 /**
@@ -35,6 +45,10 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
   $form['actions']['submit']['#button_type'] = 'flat';
 
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title'] = '';
   $form['actions']['submit']['#button_type'] = 'primary';
@@ -65,61 +79,7 @@ function socialbase_theme_suggestions_details_alter(array &$suggestions, array $
   $suggestions[] = $hook . '__materialize';
 }
 
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
- *
- * Select the page layout a / b /c template based on the current route.
- */
-function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  // Default page suggestion.
-  $page_suggestion = 'page__layout_a';
 
-  // Add your page mapping here. Please note:
-  // If there are multiple matches layout_c will always have priority.
-  $suggestions_mapping = array(
-    'layout_b' => array(
-      'page__user',
-      'page__node__enrollments',
-    ),
-    'layout_c' => array(
-      'page__node__topic',
-      'page__node_edit',
-      'page__newest_topics',
-      'page__community_events',
-      'page__comment__edit',
-      'page__comment__delete',
-    ),
-  );
-
-  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
-    $page_suggestion = 'page__layout_c';
-  }
-  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
-    $page_suggestion = 'page__layout_b';
-  }
-  // Add as second to last suggestion, so it can be overriden on specific pages.
-  array_unshift($suggestions, $page_suggestion);
-}
-
-/**
- * Helper function to call all the process functions of a hook.
- *
- * @param $hook string function to preprocess (e.g. page).
- * @param $variables array template variables to handle.
- *
- * @see socialbase_preprocess_page_layout_a();
- */
-function _socialbase_call_preprocess_page($hook, &$variables) {
-  $theme_registry = theme_get_registry();
-  if (isset($theme_registry['page']['preprocess functions'])) {
-    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
-      if (function_exists($preprocessor_function)) {
-        $preprocessor_function($variables, $hook, $theme_registry['page']);
-      }
-    }
-  }
-
-}
 
 /**
  * Implements hook_preprocess_block().
@@ -132,14 +92,15 @@ function socialbase_preprocess_block(&$variables) {
     $variables['label'] = $variables['configuration']['views_label'];
   }
 
-  // Check if the block is a views exposed form filter, add condition to add classes in twig file.
+  // Check if the block is a views exposed form filter, add condition to add
+  // classes in twig file.
   if (isset($variables['content']['#form_id']) && $variables['content']['#form_id'] == 'views_exposed_form') {
     $variables['complementary'] = TRUE;
   }
 
   // Add search_block to account menu.
   if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
-    $block = \Drupal\block\Entity\Block::load('search_content_block_header');
+    $block = Block::load('search_content_block_header');
     $block_output = \Drupal::entityManager()
       ->getViewBuilder('block')
       ->view($block);
@@ -147,7 +108,7 @@ function socialbase_preprocess_block(&$variables) {
     $variables['content']['links']['search_block'] = $block_output;
   }
 
-  // Preprocess search block header
+  // Preprocess search block header.
   if (isset($variables['content']['search_content_form'])) {
     if ($variables['elements']['#id'] != 'search_content_block_title') {
       $variables['content']['search_content_form']['#attributes']['role'] = 'search';
@@ -196,20 +157,20 @@ function socialbase_preprocess_block(&$variables) {
   if ($variables['attributes']['id'] === 'block-anhomepageheroblock') {
     $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
     $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
-    $entity = \Drupal\block_content\Entity\BlockContent::load($imageitem->id());
+    $entity = BlockContent::load($imageitem->id());
     $file_id = $entity->get('field_hero_image')->target_id;
 
     // If it's an existing file.
-    if ($file = \Drupal\file\Entity\File::load($file_id)) {
+    if ($file = File::load($file_id)) {
       // Style and set it in the content.
-      $styled_image_url = \Drupal\image\Entity\ImageStyle::load($imagestyle)
+      $styled_image_url = ImageStyle::load($imagestyle)
         ->buildUrl($file->getFileUri());
       $variables['image_url'] = $styled_image_url;
 
       // Add extra class.
       $variables['has_image'] = TRUE;
 
-      // Remove the origingal
+      // Remove the origingal.
       unset($variables['content']['field_hero_image']);
 
     }
@@ -225,7 +186,7 @@ function socialbase_preprocess_container(&$variables) {
 
   // For pages in search we would like to render containers without divs.
   $routename = \Drupal::request()
-    ->get(Symfony\Cmf\Component\Routing\RouteObjectInterface::ROUTE_NAME);
+    ->get(RouteObjectInterface::ROUTE_NAME);
   if (strpos($routename, 'search') !== FALSE) {
     $variables['search_context'] = TRUE;
   }
@@ -237,12 +198,12 @@ function socialbase_preprocess_container(&$variables) {
   }
 
   if (isset($variables['element']['cancel'])) {
-    if ($variables['element']['cancel']['#type'] == 'link' && $variables['element']['#type'] == 'actions' ) {
+    if ($variables['element']['cancel']['#type'] == 'link' && $variables['element']['#type'] == 'actions') {
       $variables['element']['cancel']['#attributes']['class'] = 'btn btn-flat';
     }
   }
 
-  // identify the container used for search in the navbar
+  // Identify the container used for search in the navbar.
   if (isset($variables['element']['submit']['#suffix'])) {
     $icon_is_present = strpos($variables['element']['submit']['#suffix'], 'search-icon');
 
@@ -256,14 +217,23 @@ function socialbase_preprocess_container(&$variables) {
  * Implements hook_preprocess_hook().
  */
 function socialbase_preprocess_page_title(&$variables) {
-  // Get the current path and if is it stream return a variable
+  // Get the current path and if is it stream return a variable.
   $current_path = \Drupal::service('path.current')->getPath();
   if (strpos($current_path, 'stream') !== FALSE) {
     $variables['stream'] = TRUE;
   }
+
+  // check if we are a node
   if (strpos($current_path, 'node') !== FALSE) {
     $variables['node'] = TRUE;
   }
+
+  // check if we are on the node/edit or node/add
+  if (strpos($current_path, 'edit') !== FALSE || strpos($current_path, 'add') !== FALSE) {
+    $variables['edit'] = TRUE;
+  }
+
+
 }
 
 /**
@@ -302,9 +272,14 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
   }
 
-  // Alter comment form
+  // Alter comment form.
   if ($variables['element']['#id'] == 'comment-form') {
-    $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form_edit');
+    }
+    else {
+      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
+    }
   }
 
   // Also for the search hero content form on the /search/content.
@@ -327,9 +302,10 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   }
   // Add templates for post add/edit forms.
   if ($variables['element']['#form_id'] == 'social_post_entity_form') {
-    if(\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form'){
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
       $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
-    } else {
+    }
+    else {
       $suggestions[] = $variables['theme_hook_original'] . '__post_add';
     }
   }
@@ -345,14 +321,17 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
       case 'radios':
         if ($variables['element']['#id'] == 'edit-user-cancel-method') {
           $suggestions[] = 'bootstrap_panel';
-        } else {
+        }
+        else {
           $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
           $suggestions[] = 'fieldset__' . $variables['element']['#type'];
         }
         break;
+
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
         break;
+
       default:
         $suggestions[] = $variables['theme_hook_original'];
     }
@@ -387,10 +366,31 @@ function socialbase_theme_suggestions_form_element_label_alter(array &$suggestio
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+  $view_id = $variables['view']->id();
   $views_display = $variables['view']->getDisplay();
   if (!empty($views_display->display['id']) && $views_display->display['id'] == 'view_enrollments') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'page';
+    $suggestions[] = $variables['theme_hook_original'] . '__page';
   }
+
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
+    $suggestions[] = $variables['theme_hook_original'] . '__stream';
+  }
+
+  // For view notification_archive we need a separate template.
+  if (!empty($views_display->display['id']) && $view_id == 'activity_stream_notifications' && $views_display->display['id'] == 'page_1') {
+    $suggestions[] = $variables['theme_hook_original'] . '__stream_notifications';
+  }
+
+  // Remove extra wrapping divs for these views.
+  if (!empty($view_id) && ($view_id == 'events' || $view_id == 'topics' || $view_id == 'groups')) {
+    $suggestions[] = $variables['theme_hook_original'] . '__bare';
+  }
+
+  // List group views.
+  if (!empty($view_id) && ($view_id == 'upcoming_events' || $view_id == 'latest_topics' || $view_id == 'newest_groups' || $view_id == 'newest_users')) {
+    $suggestions[] = $variables['theme_hook_original'] . '__list_group';
+  }
+
 }
 
 /**
@@ -408,14 +408,13 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-
 function socialbase_theme_suggestions_container_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#type'] == 'view') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'view';
+    $suggestions[] = $variables['theme_hook_original'] . '__view';
   }
   if (isset($variables['element']['#parents'])) {
     if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
-      $suggestions[] = $variables['theme_hook_original'] . '__' . 'post';
+      $suggestions[] = $variables['theme_hook_original'] . '__post';
     }
     if ($variables['element']['#parents'][0] == 'field_comment_body_wrapper') {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment_form';
@@ -432,7 +431,7 @@ function socialbase_theme_suggestions_container_alter(array &$suggestions, array
  * Implements hook_preprocess_field().
  */
 function socialbase_preprocess_field(&$variables) {
-  // for each field that doesn't need a div to wrap the content in.
+  // For each field that doesn't need a div to wrap the content in.
   switch ($variables['element']['#field_name']) {
     case 'field_profile_image':
     case 'field_profile_function':
@@ -440,6 +439,8 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_group_description':
     case 'field_topic_image':
     case 'field_comment_body':
+    case 'field_activity_output_text':
+    case 'field_activity_entity':
       $variables['bare'] = TRUE;
       break;
   }
@@ -450,66 +451,49 @@ function socialbase_preprocess_field(&$variables) {
       $variables['bare'] = TRUE;
       break;
   }
+
+  switch ($variables['element']['#formatter']) {
+    case 'comment_default':
+      $variables['node'] = TRUE;
+      break;
+
+    case 'comment_node':
+      $variables['stream'] = TRUE;
+      break;
+  }
+
+  if ($variables['element']['#formatter'] == 'comment_node') {
+    $node = $variables['element']['#object'];
+    $link_options = array(
+      'fragment' => 'comment-form',
+      'attributes' => array(
+        'class' => array(
+          'btn btn-block btn-link',
+        ),
+      ),
+    );
+
+    $urlwithoptions = $node->toUrl('canonical', $link_options);
+    $variables['nodelink'] = Link::fromTextAndUrl('Comment', $urlwithoptions);
+  }
+
 }
 
 /**
  * Implements hook_preprocess_page().
  */
 function socialbase_preprocess_page(&$variables) {
-  // if we have the admin toolbar on our screen we need overrides for our styles.
+  // If we have the admin toolbar on screen we need overrides for our styles.
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
   }
+  // Add plain title for node preview page templates.
+  if (!empty($variables['page']['#title'])) {
+    $variables['plain_title'] = strip_tags($variables['page']['#title']);
+  }
 }
 
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_a(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
 
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_b(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
-
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
-function socialbase_preprocess_page_layout_c(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
-
-/**
- * Implements hook_theme().
- *
- * Bit of hacking to be able to call multiple page layout templates based on
- * routes.
- *
- * See @socialbase_theme_suggestions_menu_alter().
- */
-function socialbase_theme() {
-  $items = array();
-  $items['page_layout_a'] = array(
-    'template' => 'page--layout-a',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_b'] = array(
-    'template' => 'page--layout-b',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_c'] = array(
-    'template' => 'page--layout-c',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  return $items;
-}
 
 /**
  * Prepares variables for node templates.
@@ -527,6 +511,11 @@ function socialbase_theme() {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
+  // Get current node.
+  $node = $variables['node'];
+  // Get current user.
+  $account = \Drupal::currentUser();
+
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
     $variables['display_submitted'] = TRUE;
@@ -548,6 +537,24 @@ function socialbase_preprocess_node(&$variables) {
     $variables['date'] = \Drupal::service('date.formatter')
       ->format($date, 'day_month');
   }
+
+  // Content visibility.
+  if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+    $node_visibility_value = $node->field_content_visibility->getValue();
+    $content_visibility = reset($node_visibility_value);
+    switch ($content_visibility['value']) {
+      case 'community':
+        $variables['visibility_icon'] = 'group';
+        $variables['visibility_label'] = t('community');
+        break;
+
+      case 'public':
+        $variables['visibility_icon'] = 'public';
+        $variables['visibility_label'] = t('public');
+        break;
+    }
+  }
+
 }
 
 /**
@@ -555,17 +562,21 @@ function socialbase_preprocess_node(&$variables) {
  */
 function socialbase_preprocess_image_style(&$variables) {
   if ($variables['style_name'] == 'social_large') {
-    $variables['image']['#attributes']['class'][] = 'img-bordered';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
   if ($variables['style_name'] == 'social_medium') {
     $variables['image']['#attributes']['class'][] = 'img-medium';
     $variables['image']['#attributes']['class'][] = 'img-circle';
   }
+  if ($variables['style_name'] == 'social_small') {
+    $variables['image']['#attributes']['class'][] = 'img-small';
+    $variables['image']['#attributes']['class'][] = 'img-circle';
+  }
+
 }
 
 /**
- * @param $variables
+ * Implements hook_preprocess_form_element_label().
  */
 function socialbase_preprocess_form_element_label(&$variables) {
   if (isset($variables['element']['#id'])) {
@@ -582,7 +593,7 @@ function socialbase_preprocess_form_element_label(&$variables) {
 }
 
 /**
- * @param $variables
+ * Implements hook_preprocess_input().
  */
 function socialbase_preprocess_input(&$variables) {
   if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
@@ -599,31 +610,28 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
-  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'date') {
-    // $variables['#attached']['library'][] = 'socialbase/pickadate';
-    // if ($variables['element']['#attributes']['type'] == 'time') {
-    //   $variables['attributes']['class'][] = 'timepicker';
-    // }
-    // if ($variables['element']['#attributes']['type'] == 'date') {
-    //   $variables['attributes']['class'][] = 'datepicker';
-    // }
-  }
-
   if (isset($variables['element']['#type']) && isset($variables['element']['#button_type'])) {
     if (!empty($variables['element']['#array_parents']) && in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary') {
       $variables['float_right'] = TRUE;
     }
   }
 
-  if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger' ) {
+  if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
     $variables['element']['#button_type'] = 'flat';
     $variables['button_type'] = 'flat';
+  }
+
+  // Make sure we can use a span class caret in the button.
+  if (!empty($variables['element']['#attributes']['data-caret']) && $variables['element']['#attributes']['data-caret'] === 'true' ) {
+    $variables['element']['caret'] = array(
+      '#markup' => '<span class="caret"></span>',
+    );
   }
 
 }
 
 /**
- * @param $variables
+ * Implements hook_preprocess_dropdown().
  */
 function socialbase_preprocess_dropdown(&$variables) {
   if (isset($variables['active']) && is_numeric($variables['active'])) {
@@ -636,8 +644,11 @@ function socialbase_preprocess_dropdown(&$variables) {
 /**
  * Helper function to retrieve the icon string for a visibility title.
  *
- * @param $title $string
+ * @param string $title
+ *   The title for the icon.
+ *
  * @return string $icon
+ *   The icon connected to the title.
  */
 function _socialbase_get_visibility_icon($title) {
   // Set the materialize icon.
@@ -662,11 +673,22 @@ function _socialbase_get_visibility_icon($title) {
  */
 function socialbase_theme_suggestions_textarea_alter(array &$suggestions, array $variables) {
   if ($variables['element']['#parents'][0] == 'field_comment_body') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'comment';
+    $suggestions[] = $variables['theme_hook_original'] . '__comment';
   }
 
   if ($variables['element']['#parents'][0] == 'field_post') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'autogrow_full';
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_field_alter().
+ */
+function socialbase_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+
+  if (!empty($variables['node']) && $variables['node'] == TRUE) {
+    $suggestions[] = $variables['theme_hook_original'] . '__comment';
   }
 
 }
@@ -709,8 +731,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
 function socialbase_bootstrap_iconize_text_alter(&$texts) {
   $texts = [
     // Text that match these specific strings are checked first.
-    'matches' => [
-    ],
+    'matches' => [],
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
       t('Save')->render() => '',
@@ -723,11 +744,10 @@ function socialbase_bootstrap_iconize_text_alter(&$texts) {
  */
 function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
   $comment = $variables['elements']['#comment'];
-  if($comment->hasParentComment()){
+  if ($comment->hasParentComment()) {
     $suggestions[] = 'comment__child';
   }
 }
-
 
 /**
  * Implements template_preprocess_form().
@@ -735,7 +755,7 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
 function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
-  if ($element['#form_id'] === 'comment_comment_form') {
+  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -749,6 +769,228 @@ function socialbase_preprocess_form(&$variables) {
         }
       }
     }
+
+    // Comment edit form.
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+      $comment = \Drupal::routeMatch()->getParameter('comment');
+
+      if (is_object($comment)) {
+        // Display comment created date in format 'time ago'.
+        $created_time_ago = \Drupal::service('date.formatter')
+          ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 2));
+        $submitted = t('@time ago', array('@time' => $created_time_ago));
+        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+
+        // Display author information.
+        $account = $comment->getOwner();
+        if ($account) {
+          // Author profile picture.
+          $storage = \Drupal::entityTypeManager()->getStorage('profile');
+          if (!empty($storage)) {
+            $user_profile = $storage->loadByUser($account, 'profile');
+            if ($user_profile) {
+              $content = \Drupal::entityTypeManager()
+                ->getViewBuilder('profile')
+                ->view($user_profile, 'compact');
+              $variables['author_picture'] = $content;
+            }
+          }
+
+          // Author name.
+          $username = array(
+            '#theme' => 'username',
+            '#account' => $account,
+          );
+          $variables['author'] = drupal_render($username);
+        }
+      }
+
+    }
+
   }
 
+  if ($element['#form_id'] === 'social_post_entity_form') {
+
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
+      $post_id = $element['#post_id'];
+      /** @var \Drupal\social_post\Entity\Post $post */
+      $post = entity_load('post', $post_id);
+
+      $form['#post_id'] = $post->id();
+      // Display comment created date in format 'time ago'.
+      $created_time_ago = \Drupal::service('date.formatter')
+        ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 2));
+      $date = t('%time ago', array('%time' => $created_time_ago));
+
+      $variables['date']['#markup'] = $date;
+
+      // To change user picture settings (e.g. image style), edit the 'compact'
+      // view mode on the User entity. Note that the 'compact' view mode might
+      // not be configured, so remember to always check the theme setting first.
+      $account = $post->getOwner();
+      if ($account) {
+        $author_name = $account->getDisplayName();
+        $variables['author_name']['#markup'] = $author_name;
+
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          $user_profile = $storage->loadByUser($account, 'profile');
+          if ($user_profile) {
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'compact');
+            $variables['author_picture'] = $content;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_activity().
+ */
+function socialbase_preprocess_activity(&$variables) {
+  // Check if the view mode is one of the notification view modes.
+  if (in_array($variables['content']['field_activity_output_text']['#view_mode'], array('notification', 'notification_archive'))) {
+    // Remove href from date.
+    $variables['date'] = strip_tags($variables['date']->toString()->getGeneratedLink());
+    // Remove href from output text.
+    $variables['content']['field_activity_output_text'][0]['#text'] = strip_tags($variables['content']['field_activity_output_text'][0]['#text']);
+    // Remove href from profile image.
+    if (is_object($variables['actor'])) {
+      $variables['actor'] = $variables['actor']->getText();
+    }
+  }
+}
+
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Select the page layout a / b /c template based on the current route.
+ */
+ /* function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Default page suggestion.
+  $page_suggestion = 'page__layout_a';
+
+  // Add your page mapping here. Please note:
+  // If there are multiple matches layout_c will always have priority.
+  $suggestions_mapping = array(
+    'layout_c' => array(
+      'page__node__topic',
+      'page__node__edit',
+      'page__newest_topics',
+      'page__community_events',
+      'page__comment__edit',
+      'page__comment__delete',
+    ),
+  );
+
+  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
+    $page_suggestion = 'page__layout_c';
+  }
+  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
+    $page_suggestion = 'page__layout_b';
+  }
+  // Add as second to last suggestion, so it can be overriden on specific pages.
+  array_unshift($suggestions, $page_suggestion);
+}
+*/
+
+/**
+ * Helper function to call all the process functions of a hook.
+ *
+ * @param string $hook
+ *   Function to preprocess (e.g. page).
+ * @param array $variables
+ *   Template variables to handle.
+ *
+ * @see socialbase_preprocess_page_layout_a();
+ */
+/* function _socialbase_call_preprocess_page($hook, &$variables) {
+  $theme_registry = theme_get_registry();
+  if (isset($theme_registry['page']['preprocess functions'])) {
+    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
+      if (function_exists($preprocessor_function)) {
+        $preprocessor_function($variables, $hook, $theme_registry['page']);
+      }
+    }
+  }
+
+}
+
+*/
+
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+*/
+/*
+function socialbase_preprocess_page_layout_a(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+
+ */
+
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+ /*
+function socialbase_preprocess_page_layout_b(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+ */
+/**
+ * Implements socialbase_preprocess_page_layout_a().
+ */
+ /*
+function socialbase_preprocess_page_layout_c(&$variables) {
+  _socialbase_call_preprocess_page('page', $variables);
+}
+ */
+/**
+ * Implements hook_theme().
+ *
+ * Bit of hacking to be able to call multiple page layout templates based on
+ * routes.
+ *
+ * See @socialbase_theme_suggestions_menu_alter().
+ */
+ /*
+function socialbase_theme() {
+  $items = array();
+  $items['page_layout_a'] = array(
+    'template' => 'page--layout-a',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_b'] = array(
+    'template' => 'page--layout-b',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  $items['page_layout_c'] = array(
+    'template' => 'page--layout-c',
+    'render element' => 'page',
+    'base hook' => 'page',
+  );
+  return $items;
+}
+ */
+
+
+function socialbase_preprocess_menu_local_action (&$variables) {
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.group_content.group_membership.collection') {
+    $link_classes = $variables['link']['#options']['attributes']['class'];
+    foreach ($link_classes as $delta => $class_name) {
+      if(in_array($class_name, array('btn-xs', 'btn-default'))){
+        unset($link_classes[$delta]);
+      }
+    }
+    $variables['link']['#options']['attributes']['class'] = $link_classes + array('waves-effect', 'waves-light', 'btn-sm', 'btn-primary', 'btn-raised');
+
+    $variables['attributes']['class'][] = 'margin-bottom-l';
+    $variables['attributes']['class'][] = 'margin-left-l';
+ }
 }

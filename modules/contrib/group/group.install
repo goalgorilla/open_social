@@ -6,6 +6,8 @@
  */
 
 use Drupal\group\Entity\GroupContent;
+use Drupal\Core\Entity\EntityTypeListenerInterface;
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 
 /**
  * Resave all GroupContent labels and remove orphaned entities.
@@ -46,4 +48,127 @@ function group_update_8001(&$sandbox) {
 
   // Show a status update for the current progress.
   return t("Updated the label for @progress out of @max group content entities.", ['@progress' => $sandbox['progress'], '@max' => $sandbox['max']]);
+}
+
+/**
+ * Properly make Group and GroupContent translatable.
+ */
+function group_update_8002() {
+  $container = \Drupal::getContainer();
+
+  /** @var \Drupal\Core\Database\Connection $database */
+  $database = $container->get('database');
+
+  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager */
+  $entity_manager = $container->get('entity_type.manager');
+
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = $container->get('entity_field.manager');
+
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $schema_repository */
+  $schema_repository = $container->get('entity.last_installed_schema.repository');
+
+  // Before we start, we need to rebuild the entity type caches so we have the
+  // latest definitions in code available to us.
+  $entity_manager->clearCachedDefinitions();
+
+  foreach (['group', 'group_content'] as $entity_type_id) {
+    // Retrieve the storage handler class name for this entity type.
+    $storage_handler = $entity_manager->getHandler($entity_type_id, 'storage');
+
+    // Get the old entity type's field definitions from the key/value storage.
+    $old_field_def = $schema_repository->getLastInstalledFieldStorageDefinitions($entity_type_id);
+
+    // Get the old entity type definition from the key/value storage.
+    $old_entity_type = $schema_repository->getLastInstalledDefinition($entity_type_id);
+
+    // Get the new entity type definition from code.
+    $new_entity_type = $entity_manager->getDefinition($entity_type_id);
+
+    // Instantiate a storage handler for both entity type definitions. Please
+    // note we're cloning the old entity type definition because we are altering
+    // it further down this update function and don't want those changes to be
+    // reflected in the storage handler.
+    $old_storage = $entity_manager->createHandlerInstance($storage_handler, clone $old_entity_type);
+    $new_storage = $entity_manager->createHandlerInstance($storage_handler, $new_entity_type);
+
+    // We can't update the definition if the storage handler doesn't have the
+    // onEntityTypeCreate() method available to it.
+    if (!($new_storage instanceof EntityTypeListenerInterface)) {
+      // @todo This should probably throw an exception.
+      return;
+    }
+
+    // We check for the SqlContentEntityStorage interface to make sure we do
+    // not run queries against a non-SQL backend. Seeing as our content entity
+    // types did not specify a storage backend, Drupal defaulted to SQL so all
+    // sites should be using that unless they swapped out the storage.
+    if (!($new_storage instanceof SqlContentEntityStorage && $old_storage instanceof SqlContentEntityStorage)) {
+      // @todo This should probably throw an exception.
+      return;
+    }
+
+    // Get the table names for our data migration.
+    $base_table = $new_entity_type->getBaseTable();
+    $data_table = $base_table . '_field_data';
+    $temp_table = $base_table . '_data_to_migrate';
+
+    // First rename the base table to a temporary table.
+    $database->schema()->renameTable($base_table, $temp_table);
+
+    // Then recreate the base table and data table. This will also add the
+    // 'default_langcode' base field because we flagged our content entity types
+    // as translatable.
+    $new_storage->onEntityTypeCreate($new_entity_type);
+
+    // At this point the database structure should match what is defined in
+    // code. However, Drupal still thinks we are running the old definitions
+    // because it cached them in the key/value storage.
+    //
+    // We therefore need to adjust the old definition instead of just writing
+    // the new one to the key/value storage. By doing so, we ensure that other
+    // modules' changes to the definition are kept as well.
+    //
+    // Inform Drupal of the fact that our content entities are now translatable
+    // and have a data table.
+    $old_entity_type->set('translatable', TRUE);
+    $old_entity_type->set('data_table', $base_table . '_field_data');
+
+    // We had an additional property 'fieldable' which is now gone.
+    $additional = $old_entity_type->get('additional');
+    unset($additional['fieldable']);
+    $old_entity_type->set('additional', $additional);
+
+    // Now that we have added only our changes, we write the adjusted old entity
+    // type to the key/value storage as the new entity type.
+    $schema_repository->setLastInstalledDefinition($old_entity_type);
+
+    // As mentioned above, Drupal added a new 'default_langcode' field which we
+    // didn't have before. It's therefore safe to load the field's definition
+    // from code and write it to the key/value storage.
+    $field_definitions = $field_manager->getFieldStorageDefinitions($entity_type_id);
+    $schema_repository->setLastInstalledFieldStorageDefinition($field_definitions['default_langcode']);
+
+    // Now we just need to migrate the old data into the new table structure. We
+    // read the column names from both the old and new tables and select data
+    // from the old one into the new ones.
+    $temp_cols = $old_storage->getTableMapping($old_field_def)->getAllColumns($base_table);
+    $base_cols = $new_storage->getTableMapping()->getAllColumns($base_table);
+    $data_cols = $new_storage->getTableMapping()->getAllColumns($data_table);
+
+    // Get the columns the base and data table share with the old base table.
+    $base_shared = array_intersect($base_cols, $temp_cols);
+    $data_shared = array_intersect($data_cols, $temp_cols);
+
+    // Build subqueries for inserting old data into the new tables.
+    $base_query = $database->select($temp_table, 't')->fields('t', $base_shared);
+    $data_query = $database->select($temp_table, 't')->fields('t', $data_shared);
+
+    // We add a default value of 1 to the 'default_langcode' field.
+    $data_query->addExpression('1', 'default_langcode');
+
+    // Now we select all of the old data into the new tables.
+    $database->insert($base_table)->from($base_query)->execute();
+    $database->insert($data_table)->from($data_query)->execute();
+  }
 }

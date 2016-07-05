@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_group\Controller\SocialGroupContentListBuilder.
- */
-
 namespace Drupal\social_group\Controller;
 
 use Drupal\group\Entity\GroupInterface;
@@ -16,8 +11,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a list controller for group content entities.
- * Fork from \Drupal\group\Controller\GroupContentListBuilder
+ * Provides a list controller for group content from GroupContentListBuilder.
  *
  * @ingroup group
  */
@@ -129,7 +123,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
         // need to add the render array using the 'data' key.
         $row['member']['data'] = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
-          ->view($profile, 'small_teaser');
+          ->view($profile, 'table');
         $row['organization']['data'] = $profile->get('field_profile_organization')
           ->view(array('label' => 'hidden'));
         $row['group_role'] = $roles;
@@ -139,7 +133,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
       $row['member'] = $entity->id();
       $row['organization']['data'] = $entity->toLink()->toRenderable();
     }
-    if(isset($row)){
+    if (isset($row)) {
       return $row + parent::buildRow($entity);
     }
   }

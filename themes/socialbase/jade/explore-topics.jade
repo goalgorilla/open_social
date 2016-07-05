@@ -14,11 +14,9 @@ block breadcrumbs
 block content
               
   .row.margin-top-l  
-  
-    .col-xs-12
-      h4.section-title Community topics   
+    
 
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
     
       button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
         i.material-icons.pull-left tune
@@ -44,9 +42,12 @@ block content
               input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
               
     .col-xs-12.col-sm-8
+      h4.section-title Community topics   
     
       include molecules/_topic2.jade
       include molecules/_topic1.jade
+      include molecules/_topic4.jade
+      
       
       nav
         ul.pagination

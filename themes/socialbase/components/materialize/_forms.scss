@@ -1,0 +1,550 @@
+label {
+  font-weight: 300;
+
+  .material-icons,
+  .custom-icons {
+    font-size: inherit;
+    line-height: inherit;
+  }
+}
+
+form {
+  &.card-nested-section {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  cursor: text;
+}
+
+.form-group-inline {
+
+  .form-control--block {
+    margin-bottom: 5px;
+  }
+
+  @include MQ($small) {
+    display: flex;
+    align-items: flex-start;
+
+    .form-control--block {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .btn:last-child {
+      margin-left: 8px;
+    }
+
+  }
+
+}
+
+.form-no-label label + .form-required {
+  float: right;
+}
+
+// Indication on labels for required fields
+span.form-required {
+  margin: 0 3px;
+  color: $brand-danger;
+}
+
+.help-block {
+  font-size: 0.75rem;
+  color: $help-block;
+
+  .radio & {
+    padding-left: $radio-width;
+    max-width: none;
+    margin-top: 0;
+  }
+}
+
+.form-control {
+  border: 1px solid $input-border;
+  box-shadow: none;
+  max-width: $form-control-max-width;
+  appearance: none;
+  font-size: inherit;
+
+  @include MQ($medium) {
+    font-size: $font-size-base;
+  }
+
+  &:focus {
+    border-bottom: 1px solid $brand-primary;
+    box-shadow: 0 2px 0 0 $brand-primary;
+  }
+
+  &.form-control--block {
+    max-width: none;
+  }
+
+  // ***************
+  // Textarea autogrow
+  // ***************
+
+  &.materialize-textarea {
+    overflow-y: hidden; // prevents scroll bar flash
+    //padding-top: 1.6rem; // prevents text jump on Enter keypress
+    padding-bottom: 1.6rem;
+    resize: none;
+    height: 38px;
+  }
+
+  &.textarea-large {
+    min-height: 5rem;
+  }
+
+}
+
+// For textarea autoresize
+.hiddendiv {
+  display: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
+  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+}
+
+.form-actions .btn {
+  margin-bottom: 5px;
+}
+
+
+// ***************
+// Selects
+// ***************
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+// @see http://stackoverflow.com/q/21103542
+.select-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  max-width: $form-control-max-width;
+
+  .form-inline & {
+    width: auto;
+  }
+
+  .input-group & {
+    display: table-cell;
+    // Reset rounded corners
+    &:first-child .form-control:first-child {
+      @include border-left-radius($input-border-radius);
+    }
+    &:last-child .form-control:first-child {
+      @include border-right-radius($input-border-radius);
+    }
+  }
+
+  select {
+    appearance: none;
+    line-height: 1;
+    padding-right: 2em;
+  }
+
+  &:after {
+    content: '▾';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    margin-top: -.5em;
+    padding-right: 12px;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 10;
+
+    .has-error & {
+      color: $state-danger-text;
+    }
+    .has-success & {
+      color: $state-success-text;
+    }
+    .has-warning & {
+      color: $state-warning-text;
+    }
+
+  }
+
+}
+
+// ***************
+// Radio Buttons
+// ***************
+
+/* Remove default Radio Buttons */
+[type="radio"]:not(:checked),
+[type="radio"]:checked,
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+[type="radio"], [type="checkbox"] {
+  .form-no-label.checkbox & {
+    opacity: 1;
+    left: 0;
+    margin: 0;
+    position: static;
+  }
+}
+
+.checkbox label,
+.radio label {
+  font-weight: 300;
+  position: relative;
+  padding-left: $radio-width;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 21px;
+  font-size: 1em;
+  transition: .28s ease;
+  user-select: none;
+  word-break: break-all;
+}
+
+[type="radio"]:checked + label {
+  color: $radio-fill-color;
+}
+
+.radio label:before,
+.radio label:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 2px;
+  width: 16px;
+  height: 16px;
+  z-index: 0;
+  transition: .28s ease;
+}
+
+/* Unchecked styles */
+[type="radio"]:not(:checked) + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+}
+
+[type="radio"]:not(:checked) + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+  z-index: -1;
+  transform: scale(0);
+}
+
+/* Checked styles */
+[type="radio"]:checked + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+}
+
+[type="radio"]:checked + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+  background-color: $radio-fill-color;
+  z-index: 0;
+  transform: scale(.5);
+}
+
+/* Disabled style */
+
+[type="radio"]:disabled + label:before,
+[type="radio"]:disabled + label:before {
+  background-color: transparent;
+}
+
+[type="radio"]:disabled:checked + label:before {
+  border: 2px solid $input-disabled-color;
+}
+
+[type="radio"]:disabled + label {
+  color: $input-disabled-color;
+}
+
+[type="radio"]:disabled:not(:checked) + label:before {
+  border-color: $input-disabled-color;
+}
+
+[type="radio"]:disabled:checked + label:after {
+  background-color: $input-disabled-color;
+  border: none;
+  background-color: $input-disabled-color;
+}
+
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px lighten($brand-primary, 10%);
+}
+
+[type="checkbox"] {
+  // General
+  + label:after {
+    border-radius: 2px;
+  }
+  + label:before,
+  + label:after {
+    content: '';
+    left: 0;
+    position: absolute;
+    /* .1s delay is for check animation */
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+  }
+
+  // Unchecked style
+  &:not(:checked) + label:before {
+    width: 0;
+     height: 0;
+     border: 3px solid transparent;
+     left: 6px;
+     top: 10px;
+
+     -webkit-transform: rotateZ(37deg);
+             transform: rotateZ(37deg);
+     -webkit-transform-origin: 20% 40%;
+             transform-origin: 100% 100%;
+  }
+
+  &:not(:checked) + label:after {
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 2px solid $radio-empty-color;
+    top: 0px;
+    z-index: 0;
+  }
+
+
+
+  // Checked style
+  &:checked {
+    + label:before {
+      top: 0;
+      left: 1px;
+      width: 8px;
+      height: 13px;
+      border-top: 2px solid transparent;
+      border-left: 2px solid transparent;
+      border-right: 2px solid $input-bg-color;
+      border-bottom: 2px solid $input-bg-color;
+      transform: rotateZ(37deg);
+      margin-top: 2px;
+      transition: .2s;
+      transform-origin: 100% 100%;
+    }
+
+    + label:after {
+      top: 0px;
+      width: 20px;
+      height: 20px;
+      border: 2px solid $brand-primary-dark;
+      background-color: $brand-primary-dark;
+      z-index: 0;
+    }
+  }
+
+  // Focused styles
+  &.tabbed:focus + label:after {
+    border-radius: 2px;
+    border-color: $radio-empty-color;
+    background-color: rgba(0,0,0,.1);
+  }
+  &.tabbed:checked:focus + label:after {
+    border-radius: 2px;
+    background-color: $brand-primary-dark;
+    border-color: $brand-primary-dark;
+  }
+
+  // Disabled style
+  &:disabled:not(:checked) + label:before {
+    background-color: transparent;
+    border: 2px solid transparent;
+  }
+
+  &:disabled:not(:checked) + label:after {
+    border-color: transparent;
+    background-color: $input-disabled-solid-color;
+  }
+
+  &:disabled:checked + label:before {
+    background-color: transparent;
+  }
+
+  &:disabled:checked + label:after {
+    background-color: $input-disabled-solid-color;
+    border-color: $input-disabled-solid-color;
+  }
+}
+
+
+// ***************
+// ckeditor
+// ***************
+
+.textarea--cke .cke {
+  position: relative;
+}
+
+
+// ***************
+// Input autocomplete
+// ***************
+
+.autocomplete-content {
+	margin-top: -1em;
+	@include z-depth-1;
+  background-color: white;
+
+		li {
+			color: $grey-dark-1;
+			cursor: pointer;
+			line-height: 1.5em;
+			width: 100%;
+			text-align: left;
+      @extend .clearfix; // Was %extend but that one is not decla
+
+			> span {
+				font-size: 1em;
+				padding: 0.6em;
+				display: block;
+
+				.highlight {
+					color: $input-border-color;
+				}
+			}
+
+			img {
+				height: 52px;
+				width: 52px;
+				padding: 5px;
+				margin: 0 15px;
+			}
+
+			&:hover {
+				background: #eee;
+				cursor: pointer;
+			}
+		}
+}
+
+// ***************
+// Managed file input
+// ***************
+
+.form-managed-file {
+  font-size: 0.875rem;
+}
+
+
+// ***************
+// Password hints
+// ***************
+
+#edit-pass {
+
+  .password-strength,
+  div.password-confirm {
+    margin-top: 1em;
+    color: lighten($text-color, 25%);
+    font-size: 80%;
+    padding-bottom: 1rem;
+    position: relative;
+    max-width: $form-control-max-width;
+  }
+
+  @include MQ($small) {
+
+    .password-strength,
+    div.password-confirm {
+      position: absolute;
+      left: 100%;
+      bottom: 5px;
+      width: 180px;
+      padding-bottom: 0.5rem;
+    }
+
+  }
+}
+
+.password-strength__meter {
+  height: 3px;
+  width: 100%;
+  position: absolute;
+  margin-top: 2em;
+  background-color: $grey-light-1;
+
+}
+
+.password-strength__indicator {
+  height: 100%;
+  width: 0;
+  background-color: $brand-success;
+  transition: width 0.5s ease-out;
+}
+.password-confirm-match {
+  visibility: hidden;
+}
+
+.password-strength__indicator.is-weak {
+  background-color: $brand-danger;
+}
+.password-strength__indicator.is-fair {
+  background-color: $brand-warning;
+}
+.password-strength__indicator.is-good {
+  background-color: $brand-info;
+}
+.password-strength__indicator.is-strong {
+  background-color: $brand-success;
+}
+
+.password-suggestions {
+  color: $gray-light;
+  padding: 0 ($grid-gutter-width/2);
+  font-size: $font-size-small;
+
+  @include MQ($small) {
+    flex: 100%;
+  }
+}
+
+.password-suggestions ul {
+  margin: 1em 0;
+  padding-left: 30px;
+
+  li {
+    list-style: square outside;
+    line-height: 1.5;
+  }
+}
+
+// Styling for the status indicator of the passwords match test.
+.password-confirm .ok {
+  color: $brand-success;
+  font-weight: 500;
+}
+.password-confirm .error {
+  color: $brand-danger;
+  font-weight: 500;
+}

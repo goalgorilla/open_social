@@ -1,0 +1,26 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<div class="media">
+  <div class="media-left">{{ author_picture }}</div>
+  <div class="media-body">
+    <h5 class="media-heading">{{ author }}&bullet; <small>{{ submitted }}</small></h5>
+    <form{{ attributes|without('class') }}>
+      <div class="form-group">
+        {{ children }}
+      </div>
+    </form>
+  </div>
+</div>

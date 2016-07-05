@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\Entity\EventEnrollment.
- */
-
 namespace Drupal\social_event\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -40,6 +35,8 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "event_enrollment",
+ *   data_table = "event_enrollment_field_data",
+ *   translatable = TRUE,
  *   admin_permission = "administer event enrollment entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -61,6 +58,7 @@ use Drupal\user\UserInterface;
  */
 class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

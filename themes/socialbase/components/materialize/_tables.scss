@@ -1,0 +1,30 @@
+.table {
+  font-size: 0.875rem;
+}
+
+.table-responsive {
+  overflow: visible;
+
+  @media screen and (max-width: $screen-xs-max) {
+    border: 0;
+  }
+}
+
+.tabledrag-hide {
+  display: none;
+}
+
+.tabledrag-handle {
+  color: $gray-light;
+  cursor: move;
+  width: 24px;
+  position: absolute;
+  line-height: 1;
+  margin: 0 0 0 -10px;
+  padding: 10px;
+
+  ~ .form-managed-file {
+    display: inline-block;
+    padding-left: 24px;
+  }
+}

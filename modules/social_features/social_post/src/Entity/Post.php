@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post\Entity\Post.
- */
-
 namespace Drupal\social_post\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -40,6 +35,8 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "post",
+ *   data_table = "post_field_data",
+ *   translatable = TRUE,
  *   admin_permission = "administer post entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -60,6 +57,7 @@ use Drupal\user\UserInterface;
  */
 class Post extends ContentEntityBase implements PostInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */

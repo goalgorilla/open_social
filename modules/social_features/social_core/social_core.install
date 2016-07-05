@@ -4,6 +4,8 @@
  * Install, update and uninstall functions for the social_comment module.
  */
 
+use Drupal\Core\Field\FieldItemList;
+use Drupal\file\Entity\File;
 use Drupal\user\RoleInterface;
 
 /**
@@ -23,12 +25,17 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
 }
 
+/**
+ * Custom function to create the homepage block for AN users.
+ */
 function _social_core_create_an_homepage_block() {
   // TODO: use a better image from the theme.
   // Block image.
-  $uri  = file_unmanaged_copy('/root/dev-scripts/content/files/06.jpg', 'public://06.jpg', FILE_EXISTS_REPLACE);
+  $path = drupal_get_path('module', 'social_core');
+  $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
+  $uri  = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
 
-  $media = \Drupal\file\Entity\File::create(array(
+  $media = File::create(array(
     'langcode' => 'en',
     'uid' => 1,
     'status' => 1,
@@ -67,7 +74,7 @@ function _social_core_create_an_homepage_block() {
       'title' => 'Login',
     ),
   );
-  $itemList = new \Drupal\Core\Field\FieldItemList($block->field_call_to_action_link->getFieldDefinition());
+  $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
   $itemList->setValue($action_links);
   $block->field_call_to_action_link = $itemList;
   $block->save();

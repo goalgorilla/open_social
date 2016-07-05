@@ -22,7 +22,7 @@ use Drupal\Core\Session\AccountInterface;
  *
  * @ContentEntityType(
  *   id = "group",
- *   label = @Translation("Group entity"),
+ *   label = @Translation("Group"),
  *   bundle_label = @Translation("Group type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
@@ -250,6 +250,7 @@ class Group extends ContentEntityBase implements GroupInterface {
         'type' => 'string_textfield',
         'weight' => -5,
       ])
+      ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
@@ -265,12 +266,24 @@ class Group extends ContentEntityBase implements GroupInterface {
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created on'))
       ->setDescription(t('The time that the group was created.'))
-      ->setTranslatable(TRUE);
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed on'))
       ->setDescription(t('The time that the group was last edited.'))
-      ->setTranslatable(TRUE);
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE);
 
     return $fields;
   }

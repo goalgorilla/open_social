@@ -1,0 +1,14 @@
+services:
+  plugin.manager.activity_context.processor:
+    class: Drupal\activity_creator\Plugin\ActivityContextManager
+    parent: default_plugin_manager
+  activity_creator.activity_factory:
+    class: Drupal\activity_creator\ActivityFactory
+  activity_creator.activity_notifications:
+    class: Drupal\activity_creator\ActivityNotifications
+  plugin.manager.activity_destination.processor:
+    class: Drupal\activity_creator\Plugin\ActivityDestinationManager
+    parent: default_plugin_manager
+  plugin.manager.activity_action.processor:
+    class: Drupal\activity_creator\Plugin\ActivityActionManager
+    parent: default_plugin_manager

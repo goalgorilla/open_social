@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event\EventEnrollmentListBuilder.
- */
-
 namespace Drupal\social_event;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -19,6 +14,7 @@ use Drupal\Core\Url;
  */
 class EventEnrollmentListBuilder extends EntityListBuilder {
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */

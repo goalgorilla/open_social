@@ -1,0 +1,134 @@
+.dropdown-menu {
+  font-size: 0.875rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 0;
+  max-width: 500px;
+
+  li > a {
+    padding: 10px 20px;
+    font-weight: 300;
+    display: block;
+    clear: both;
+    line-height: $line-height-base;
+    color: $dropdown-link-color;
+  }
+
+  .media {
+    min-width: 250px;
+  }
+
+  .media-left {
+
+    @include MQ($small) {
+      padding-right: 8px;
+    }
+
+    img {
+      vertical-align: top;
+    }
+
+  }
+
+  .media-body a {
+    white-space: nowrap; // prevent links from randomly breaking onto new lines
+  }
+
+  &.dropdown-md {
+    min-width: 240px;
+    right: -70px;
+
+    @include MQ($small) {
+      right: 0;
+    }
+  }
+}
+
+.dropdown {
+
+  .profile {
+    padding: 0 $padding-base-vertical;
+  }
+
+  .list-group-item:last-child {
+    border-bottom: 0;
+    border-radius: 0;
+  }
+
+  .list-group-item {
+
+    &:hover {
+      background-color: $gray-light;
+      border-color: $gray-light;
+      cursor: pointer;
+      color: white;
+
+      .help-block {
+        color: white;
+      }
+
+    }
+
+    label {
+      cursor: pointer;
+      font-weight: 500;
+
+      .help-block {
+        font-weight: 300;
+      }
+
+    }
+
+    .help-block {
+      margin: 0;
+    }
+
+    &.active {
+      pointer-events: none;
+
+      .help-block {
+        color: white;
+      }
+    }
+
+  }
+
+  .form-group {
+    margin: 0;
+  }
+
+}
+
+
+.dropdown-header {
+  padding: 10px 20px;
+  background: $dropdown-header-bg;
+  color: $dropdown-header-color;
+}
+
+.dropdown-toggle + ul > li > .material-icons {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+
+  // When the screen is taller, the dropdown can be taller
+  @include MQH(500px) {
+    max-height: 450px;
+  }
+
+  li {
+    margin: 2px 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}

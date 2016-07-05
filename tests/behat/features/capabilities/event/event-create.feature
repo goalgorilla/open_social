@@ -4,7 +4,7 @@ Feature: Create Event
   Role: As a LU
   Goal/desire: I want to create Events
 
-  @LU @perfect @critical @wip
+  @LU @perfect @critical
   Scenario: Successfully create event
     Given I am logged in as an "authenticated user"
     And I am on "user"
@@ -27,7 +27,7 @@ Feature: Create Event
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
     And I should see "Body description text" in the "Main content"
-    And I should see "Wed, 01/01/2025 - 11:00" in the "Hero block"
+    And I should see "1 January 2025 - 11:00" in the "Hero block"
     And I should see "Oldenzaalsestraat" in the "Hero block"
     And I should see "7514DR" in the "Hero block"
     And I should see "Enschede" in the "Hero block"

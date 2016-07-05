@@ -4,46 +4,33 @@
 
     var screen_sm_min = 767;
     var window_width = $(window).width();
-
     if (window_width > screen_sm_min ) {
-      // Floating-Fixed table of contents
-      if ($('.table-of-contents').length) {
-        $('.toc-wrapper').pushpin({ top: $('.table-of-contents').offset().top, offset: 50 });
+      var tableOfContents = $('.table-of-contents'),
+          indexBanner = $('#index-banner');
+
+      if (tableOfContents.length) {
+        $('.toc-wrapper').affix({
+            offset: {
+              top: tableOfContents.offset().top - 74
+            }
+          })
       }
-      else if ($('#index-banner').length) {
-        $('.toc-wrapper').pushpin({ top: $('#index-banner').height() });
+      else if (indexBanner.length) {
+        $('.toc-wrapper').affix({
+          offset: {
+            top: indexBanner.height()
+          }
+        })
       }
       else {
-        $('.toc-wrapper').pushpin({ top: 0 });
+        $('.toc-wrapper').affix({
+          offset: {
+            top: 0
+          }
+        })
       }
 
     }
-
-    // Github Latest Commit
-    if ($('.repo-link').length) { // Checks if widget div exists (Index only)
-      $.ajax({
-        url: "https://api.github.com/repos/goalgorilla/drupal_social/commits/gh-pages",
-        dataType: "json",
-        success: function (data) {
-          var sha = data.commit.committer.name,
-              date = jQuery.timeago(data.commit.author.date);
-          if (window_width < 1120) {
-            sha = sha.substring(0,7);
-          }
-          $('.repo-link').find('.date').html(date);
-          $('.repo-link').find('.sha').html(sha).attr('href', data.html_url);
-        }
-      });
-    }
-
-
-    // Toggle Flow Text
-    var toggleFlowTextButton = $('#flow-toggle');
-    toggleFlowTextButton.click( function(){
-      $('#flow-text-demo').children('p').each(function(){
-          $(this).toggleClass('flow-text');
-        });
-    });
 
 		$('[data-toggle="tabs"] a').click(function (e) {
 			e.preventDefault();
@@ -51,9 +38,47 @@
     });
 
     // Plugin initialization
-    $('.scrollspy').scrollSpy();
-    $('.button-collapse').sideNav({'edge': 'left'});
+    //$('.scrollspy').scrollSpy();
+    var scrollSpyItem = '#scrollspy';
+    $('body').scrollspy({
+      target: scrollSpyItem,
+      offset: 200
+    });
 
+    $(scrollSpyItem).find('a').on('click', function(event){
+      if (this.hash !== "") {
+        event.preventDefault();
+
+        var hash = this.hash;
+
+        $('html, body').animate({
+          scrollTop: $(hash).offset().top - 200
+        }, 400, function () {
+          window.location.hash = hash;
+        });
+      }
+    });
+
+
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $('[data-toggle="popover"]').popover({
+      content: function () {
+        timer = setTimeout(function() { popoverOpen = true; }, 100);
+        return $(this.getAttribute('href')).html();
+      },
+      container: 'body'
+    });
+
+    $('body').on('click', function (e) {
+      $('[data-toggle=popover]').each(function () {
+        // hide any open popovers when the anywhere else in the body is clicked
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+          $(this).popover('hide');
+        }
+      });
+    });
 
   }); // end of document ready
 })(jQuery); // end of jQuery name space
