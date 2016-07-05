@@ -6,19 +6,20 @@
   .card-body
     h4.card-title
       a(href="topic.html") Technology for the handicapped
-    p.text-grey-dark.no-margin
-      i.material-icons account_box
+    .text-gray-dark.text-truncate
+      i.material-icons account_circle
       | &nbsp;
-      if user == "isAnonymous"
-        span Clive Owen 
-      else
-        a(href="other-stream.html") Clive Owen 
-      | &bullet; 15 feb 2016
-    p.clearfix.no-margin
-      i.material-icons mode_comment
+      span.inline-center
+        if user == "isAnonymous"
+          span.inline-center Clive Owen 
+        else
+          a(href="other-stream.html") Clive Owen 
+        | &bullet; 15 feb 2016
+    .text-gray-dark.text-truncate
+      i.material-icons label
       | &nbsp;
       span.inline-center Blog
-    p.clearfix.no-margin
+    .text-gray-dark.text-truncate
       i.custom-icons.icon-group
       | &nbsp;
       span.inline-center Open Social Developers

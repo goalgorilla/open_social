@@ -6,13 +6,16 @@
   .card-body
     h4.card-title 
       a(href="topic.html") Will this be the cinema of the future?
-    p.text-grey-dark.no-margin
-      if user == "isAnonymous"
-        | Richard Ogylvie 
-      else
-        a(href="other-stream.html") Richard Ogylvie 
-      | &bullet; 22 mar 2016
-    p.no-margin
+    .text-gray-dark.text-truncate
+      i.material-icons account_circle
+      | &nbsp;
+      span.inline-center
+        if user == "isAnonymous"
+          | Richard Ogylvie 
+        else
+          a(href="other-stream.html") Richard Ogylvie 
+        | &bullet; 22 mar 2016
+    .text-gray-dark.text-truncate
       i.material-icons label 
       | &nbsp;
       span.inline-center Discussion
