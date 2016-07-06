@@ -586,6 +586,15 @@ function socialbase_preprocess_image_style(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_form_element().
+ */
+function socialbase_preprocess_form_element(&$variables) {
+  if ($variables['element']['#type'] === 'vertical_tabs') {
+    $variables['attributes']['class'][] = 'card';
+  }
+}
+
+/**
  * Implements hook_preprocess_form_element_label().
  */
 function socialbase_preprocess_form_element_label(&$variables) {
