@@ -23,6 +23,7 @@
   background-size: cover;
   background-position: 50% 0;
   background-repeat: no-repeat;
+
   .node-unpublished &:before {
     display: block;
     position: absolute;
@@ -71,23 +72,13 @@
 
 }
 
-.node-unpublished .status {
-  position: absolute;
-  width: 100%;
-  text-align: center;
-  color: white;
-  left: 0;
-  font-weight: 300;
-
-  &:before {
-    border-top: 1px solid white;
-    margin: 5px auto;
-    width: 40px;
-    height: 0;
-    content: '';
-    display: block;
-  }
-
+.node-unpublished .status:before {
+  border-top: 1px solid white;
+  margin: 5px auto;
+  width: 40px;
+  height: 0;
+  content: '';
+  display: block;
 }
 
 .page-title {
