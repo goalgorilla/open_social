@@ -77,7 +77,6 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
  */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
-    $form['#attributes']['class'][] = 'clearfix';
     $form['actions']['delete']['#attributes']['class'][] =  'btn';
     $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
   }
@@ -765,6 +764,7 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
  */
 function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
+  $variables['attributes']['class'][] = 'clearfix';
 
   if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
     $current_user = \Drupal::currentUser();
