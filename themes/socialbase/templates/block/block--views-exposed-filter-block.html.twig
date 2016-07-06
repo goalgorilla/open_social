@@ -45,31 +45,29 @@
  * @ingroup templates
  */
 #}
-<div class="margin-top-exposed-filter">
-  <button class="waves-effect waves-light btn btn-default btn-block btn-raised visible-xs-inline-block js-open-canvas">
-    <i class="material-icons pull-left">tune</i>
-    Filter
-  </button>
-  <div class="off-canvas off-canvas-right off-canvas-xs-only">
-    <div class="offcanvas-head">
+<button class="waves-effect waves-light btn btn-default btn-block btn-raised visible-xs-inline-block js-open-canvas">
+  <i class="material-icons pull-left">tune</i>
+  Filter
+</button>
+<div class="off-canvas off-canvas-right off-canvas-xs-only">
+  <div class="offcanvas-head">
 
-    {{ title_prefix }}
-    {% if label %}
-      <header{{ title_attributes.addClass('complementary-title') }}>{{ label }}</header>
-    {% endif %}
-    {{ title_suffix }}
+  {{ title_prefix }}
+  {% if label %}
+    <header{{ title_attributes.addClass('complementary-title') }}>{{ label }}</header>
+  {% endif %}
+  {{ title_suffix }}
 
-      <div class="offcanvas-tools visible-xs-block">
-        <div class="js-close-canvas btn btn-icon-toggle btn-user-light pull-right"><i class="material-icons">close</i></div>
-      </div>
+    <div class="offcanvas-tools visible-xs-block">
+      <div class="js-close-canvas btn btn-icon-toggle btn-user-light pull-right"><i class="material-icons">close</i></div>
     </div>
+  </div>
 
-    <div class="offcanvas-body">
+  <div class="offcanvas-body">
 
-      {% block content %}
-        {{ content }}
-      {% endblock %}
+    {% block content %}
+      {{ content }}
+    {% endblock %}
 
-    </div>
   </div>
 </div>

@@ -32,8 +32,8 @@
             </a>
         </h2>
         {% if content.field_profile_function or content.field_profile_organization %}
-        <p class="text-grey-dark">
-          <i class="material-icons pull-left">business_center</i>
+        <div class="text-gray-dark text-truncate">
+          <i class="material-icons">business_center</i>
           <span class="inline-center">
             {{ content.field_profile_function }}
             {% if content.field_profile_function and content.field_profile_organization %}
@@ -41,7 +41,7 @@
             {% endif %}
             {{ content.field_profile_organization }}
           </span>
-        </p>
+        </div>
         {% endif %}
 
         <div class="card-actionbar">
