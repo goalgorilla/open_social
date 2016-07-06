@@ -22,6 +22,65 @@ function social_install_tasks(&$install_state) {
 }
 
 /**
+ * Implements hook_install_tasks_alter().
+ *
+ * Unfortunately we have to alter the verify requirements.
+ * This is because of https://www.drupal.org/node/1253774. The dependencies of
+ * dependencies are not tested. So adding requirements to our install profile
+ * hook_requirements will not work :(. Also take a look at install.inc function
+ * drupal_check_profile() it just checks for all the dependencies of our
+ * install profile from the info file. And no actually hook_requirements in
+ * there.
+ */
+function social_install_tasks_alter(&$tasks, $install_state) {
+  // Override the core install_verify_requirements task function.
+  $tasks['install_verify_requirements']['function'] = 'social_verify_custom_requirements';
+}
+
+/**
+ * install_verify_requirements callback, make sure we meet custom requirement.
+ *
+ * @param array $install_state
+ *   The current install state.
+
+ * @return array
+ *   All the requirements we need to meet.
+ */
+function social_verify_custom_requirements(&$install_state) {
+  // Copy pasted from install_verify_requirements().
+  // @todo when composer hits remove this.
+  // Check the installation requirements for Drupal and this profile.
+  $requirements = install_check_requirements($install_state);
+
+  // Verify existence of all required modules.
+  $requirements += drupal_verify_profile($install_state);
+
+  // Added a custom check for users to see if the Address libraries are
+  // downloaded.
+  if (!class_exists('\CommerceGuys\Addressing\Repository\AddressFormatRepository')) {
+    $requirements['addressing_library'] = [
+      'title' => t('Address module requirements)'),
+      'value' => t('Not installed'),
+      'description' => t('The Address module requires the commerceguys/addressing library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  // Check to see if bcmath extension is actually available.
+  $bc_math_enabled = (extension_loaded('bcmath'));
+  if (!$bc_math_enabled) {
+    $requirements['bcmatch'] = array(
+      'title' => t('BC Math'),
+      'value' => t('Not installed'),
+      'severity' => REQUIREMENT_ERROR,
+      'description' => t('the PHP BC Math library is not installed (correctly). <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+    );
+  }
+
+  return install_display_requirements($install_state, $requirements);
+}
+
+/**
  * Installs required modules via a batch process.
  *
  * @param $install_state
