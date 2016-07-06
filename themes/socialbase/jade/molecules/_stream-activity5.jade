@@ -17,7 +17,7 @@
       br
       .text-gray-lighter 30 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
-  a.card-image.blue-overlay(href="event.html")
+  a.card-image(href="event.html")
     img.img-responsive(src="content/images/people3-square.jpg")
     .teaser-date 28
       .text-xs Aug
@@ -25,14 +25,14 @@
   .card-body
     h4.card-title 
       a(href="event.html") Team conference East
-    p.text-grey-dark.text-m
+    .text-gray.text-m.text-truncate
       i.material-icons event
       | &nbsp;
       span.inline-center 28 Aug 10:00 - 12:00 
       | &nbsp; 
       unless user == "isAnonymous"
         span.label.label-primary enrolled
-    p.text-grey-dark.text-m
+    .text-gray.text-m.text-truncate
       i.material-icons place
       | &nbsp;
       span.inline-center Old Market, Groningen
