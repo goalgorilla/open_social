@@ -845,6 +845,12 @@ function socialbase_preprocess_form(&$variables) {
       }
     }
   }
+
+  $variables['attributes']['class'][] = 'clearfix';
+  if(isset($element['actions']['delete'])) {
+    $element['actions']['delete']['#attributes']['class'][] = 'btn';
+    dpm($variables);
+  }
 }
 
 /**
@@ -993,4 +999,14 @@ function socialbase_preprocess_menu_local_action (&$variables) {
     $variables['attributes']['class'][] = 'margin-bottom-l';
     $variables['attributes']['class'][] = 'margin-left-l';
  }
+}
+
+/**
+ * Implements hook_preprocess_views_exposed_form().
+ */
+function socialbase_preprocess_views_exposed_form(&$variables) {
+  if(isset($variables['theme_hook_original']) && $variables['theme_hook_original'] === 'views_exposed_form') {
+    $variables['form']['actions']['submit']['#attributes']['class'][] = 'pull-right';
+    $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
+  }
 }
