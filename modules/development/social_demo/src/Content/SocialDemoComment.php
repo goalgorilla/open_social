@@ -135,6 +135,16 @@ class SocialDemoComment implements ContainerInjectionInterface {
         $content['created'] += $entity_created[0]['value'];
       }
 
+      // Check if a parent comment id is set!
+      $pid = NULL;
+      if (isset($content['pid'])) {
+        // Try to load the parent comment.
+        $parent_comments = $this->commentStorage->loadByProperties(array('uuid' => $content['pid']));
+        $parent_comment = reset($parent_comments);
+        // Store the parent comment id.
+        $pid = $parent_comment->id();
+      }
+
       // Let's create some nodes.
       $comment = Comment::create([
         'uuid' => $content['uuid'],
@@ -142,6 +152,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
         'langcode' => 'en',
         'uid' => $uid,
         'entity_id' => $nid,
+        'pid' => $pid,
 
         'created' => $content['created'],
         'changed' => $content['created'],
