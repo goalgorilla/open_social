@@ -73,6 +73,17 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
 }
 
 /**
+ * Implements hook_form_BASE_ID_alter().
+ */
+function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if(isset($form['actions']['delete'])) {
+    $form['#attributes']['class'][] = 'clearfix';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
@@ -844,12 +855,6 @@ function socialbase_preprocess_form(&$variables) {
         }
       }
     }
-  }
-
-  $variables['attributes']['class'][] = 'clearfix';
-  if(isset($element['actions']['delete'])) {
-    $element['actions']['delete']['#attributes']['class'][] = 'btn';
-    dpm($variables);
   }
 }
 
