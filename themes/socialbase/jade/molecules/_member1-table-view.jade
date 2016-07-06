@@ -3,17 +3,19 @@ tr
     .media.media-middle
       .media-left
         a(href="my-stream.html")
-          img(src="content/images/member-table-view-5.jpg")
+          img.img-medium.img-circle(src="content/images/member-table-view-5.jpg")
       .media-body
-        a(href="my-stream.html") John Johnson
+        h6.list-group-item-heading.no-margin
+          a(href="my-stream.html") John Johnson
+
   td Receptionist at Bastion Hotels
   td Member
   td
-    .btn-group.pull-right
-      button.btn.btn-default.btn-sm.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Manage
+    .links.btn-group.pull-right.text-nowrap
+      button.btn-md.button.js-form-submit.btn-raised.form-submit.btn-default.btn(type="submit", value="Edit") Edit
+      button.btn-default.btn-md.btn.btn-raised.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
         span.caret
-      ul.dropdown-menu
+        span.sr-only Toggle Dropdown
+      ul.dropdown-menu(role="menu")
         li
-          a(href="#") Edit
-        li
-          a(href="#") Remove
+          a(href="#") Delete

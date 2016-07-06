@@ -2,8 +2,9 @@
   max-width: 23rem;
 }
 
-.input-group .input-group-addon {
+.input-group-addon {
   @include transition(border-color ease-in-out .15s, box-shadow ease-in-out .15s);
+  @include border-right-radius($input-border-radius);
 }
 
 .input-group .form-control:focus ~ .input-group-addon {
