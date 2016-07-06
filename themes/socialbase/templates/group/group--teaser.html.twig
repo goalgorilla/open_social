@@ -40,7 +40,7 @@
  */
 #}
 <div class="card card--teaser card-with-actionbar">
-    <div class='card-image blue-overlay'>
+    <div class='card-image'>
         {{ content.field_group_image }}
     </div>
     <div class='card-body'>
@@ -51,7 +51,7 @@
           </h4>
         {% endif %}
         {{ title_suffix }}
-        <p class="text-grey-dark">
+        <div class="text-gray-dark text-truncate">
           <i class="custom-icons icon-group"></i>
           <span class="inline-center">
             {% trans %}
@@ -61,15 +61,17 @@
             {% endtrans %}
             &nbsp;
           </span>
-          {% if joined %}
-            <span class="label label-primary">
-              {% trans %}Joined{% endtrans %}
-            </span>
-          {% endif %}
-        </p>
+        </div>
         <div class="card--teaser-desc">{{ content.field_group_description }}</div>
 
         <div class="card-actionbar">
+          <div class="actionbar">
+              {% if joined %}
+                <span class="label label-default">
+                  {% trans %}Joined{% endtrans %}
+                </span>
+              {% endif %}
+          </div>
           <a href="{{ url }}" class="btn btn-flat pull-right" title="{{ label }}">
             {% trans %}Read more{% endtrans %}
           </a>

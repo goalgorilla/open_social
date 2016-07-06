@@ -65,11 +65,23 @@
  * @ingroup themeable
  */
 #}
-<div class="card card--teaser card-with-actionbar">
+
+{%
+  set classes = [
+    view_mode == 'teaser' ? 'card',
+    'card--teaser',
+    'card-with-actionbar',
+    view_mode == 'activity' ? 'card--teaser-stream',
+  ]
+%}
+
+<div {{ attributes.addClass(classes) }}>
   <div class='card-image'>
-    <div class="teaser-type">
-      <img src="/{{ directory }}/images/icon-topic.svg" alt="Teaser">
-    </div>
+    {% if view_mode == 'teaser' %}
+      <div class="teaser-type">
+        <img src="/{{ directory }}/images/icon-topic.svg" alt="Teaser">
+      </div>
+    {% endif %}
     {{ content.field_topic_image }}
   </div>
 
@@ -114,3 +126,7 @@
     </div>
   </div>
 </div>
+
+{% if view_mode == 'activity' and content.field_topic_comments %}
+  {{ content.field_topic_comments }}
+{% endif %}
