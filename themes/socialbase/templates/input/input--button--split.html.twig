@@ -40,17 +40,21 @@
       {% if icon_position == 'after' %}
         <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}</button>{{ children }}
       {% else %}
-        <button{{ attributes.addClass(classes, 'btn-primary') }}>{{ icon }}{{ label }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}</button>{{ children }}
       {% endif %}
     {% endif %}
     {%
       set classes = [
         'btn',
         theme.settings.button_size ? theme.settings.button_size,
-        'btn-primary',
         'dropdown-toggle',
       ]
     %}
+
+    {% if(attributes.hasClass('btn-raised')) %}
+      {% set classes = classes|merge(['btn-raised']) %}
+    {% endif %}
+
     <button{{ split_button_attributes.addClass(classes) }} type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="caret"></span>
       <span class="sr-only">{{ 'Toggle Dropdown'|t }}</span>

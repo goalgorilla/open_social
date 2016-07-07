@@ -70,15 +70,57 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
   if (isset($form['field_profile_address'])) {
     $form['field_profile_address']['widget'][0]['#title'] = '';
   }
+  if(isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#attributes']['class'][] =  'btn';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    $form['actions']['delete']['#button_type'] =  'default';
+  }
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
 }
 
 /**
  * Implements hook_form_BASE_ID_alter().
  */
+function socialbase_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+}
+
+function socialbase_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if(isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#attributes']['class'][] =  'btn';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    $form['actions']['delete']['#button_type'] =  'default';
+  }
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+}
+
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] =  'btn';
     $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['preview'])) {
+    $form['actions']['preview']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['publish'])) {
+    $form['actions']['publish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['publish']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['unpublish'])) {
+    $form['actions']['unpublish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['unpublish']['#attributes']['class'][] =  'btn-raised';
   }
 }
 
