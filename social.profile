@@ -66,6 +66,33 @@ function social_verify_custom_requirements(&$install_state) {
     ];
   }
 
+  if (!class_exists('\CommerceGuys\Enum\AbstractEnum')) {
+    $requirements['addressing_library'] = [
+      'title' => t('Address module requirements)'),
+      'value' => t('Not installed'),
+      'description' => t('The Address module requires the commerceguys/enum library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  if (!class_exists('\CommerceGuys\Intl\Country\CountryRepository')) {
+    $requirements['addressing_library'] = [
+      'title' => t('Address module requirements)'),
+      'value' => t('Not installed'),
+      'description' => t('The Address module requires the commerceguys/intl library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
+  if (!class_exists('\CommerceGuys\Zone\Repository\ZoneRepository')) {
+    $requirements['addressing_library'] = [
+      'title' => t('Address module requirements)'),
+      'value' => t('Not installed'),
+      'description' => t('The Address module requires the commerceguys/zone library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+
   // Check to see if bcmath extension is actually available.
   $bc_math_enabled = (extension_loaded('bcmath'));
   if (!$bc_math_enabled) {
