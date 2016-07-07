@@ -4252,6 +4252,19 @@ span.form-required {
   background-repeat: no-repeat;
 }
 
+.node-unpublished .cover-img:before {
+  display: block;
+  position: absolute;
+  content: '';
+  background-color: rgba(77, 77, 77, 0.8);
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
 .cover-img-gradient:before {
   display: block;
   position: absolute;
@@ -4271,6 +4284,15 @@ span.form-required {
   position: relative;
   z-index: 2;
   text-align: center;
+}
+
+.node-unpublished .status:before {
+  border-top: 1px solid white;
+  margin: 5px auto;
+  width: 40px;
+  height: 0;
+  content: '';
+  display: block;
 }
 
 .page-title {
