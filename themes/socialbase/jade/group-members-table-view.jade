@@ -32,14 +32,15 @@ block pagetitle
 block content
       
   .row.margin-top-l
-    .col-xs-12.col-sm-12
-      h4.section-title Members of Happy Campers
-
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-      a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='#') Add a member
-
-
+    
     .col-xs-12.col-sm-8
+      h4.section-title Members of Happy Campers
+      
+      ul.list-inline.local-actions.margin-bottom-l
+        li
+          a.waves-effect.waves-light.btn.btn-sm.btn-primary.btn-raised(href='#', style="margin-left: 20px;") Add a member
+
+
       .card.table-swipe
         .card-body
           table.table.tablesaw.tablesaw-swipe(data-tablesaw-mode="swipe", data-tablesaw-minimap)
@@ -83,3 +84,7 @@ block content
             a(href='#', aria-label='Next')
               span(aria-hidden="true")
                 i.material-icons chevron_right
+                
+block scriptinline  
+  script(src='libs/tablesaw/tablesaw.js')
+  script(src='libs/tablesaw/tablesaw-init.js')

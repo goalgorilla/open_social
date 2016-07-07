@@ -1,3 +1,5 @@
+{% extends "node--topic--teaser.html.twig" %}
+
 {#
 /**
  * @file
@@ -65,39 +67,3 @@
  * @ingroup themeable
  */
 #}
-<div class="card--teaser card--teaser-stream card-with-actionbar">
-  <div class='card-image blue-overlay'>
-    {{ content.field_topic_image }}
-    <img src="/{{ directory }}/images/icon-topic.svg" alt="" class="teaser-type">
-  </div>
-    <div class="card-body">
-      {{ title_prefix }}
-      {% if not page %}
-          <h4{{ title_attributes }} class="card-title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-          </h4>
-      {% endif %}
-      {{ title_suffix }}
-      <p class="text-grey-dark margin-bottom-s">
-        <span> {{ author_name }} </span>
-        {# Todo: fix date format #}
-        &bullet; {{ date }}
-      </p>
-      <p class="text-grey-dark clearfix margin-bottom-s">
-        <i class="material-icons">label</i>
-        <span class="inline-center">
-          {{ content.field_topic_type }}
-        </span>
-      </p>
-
-
-      {#TODO: Use content.links here and fix the theming#}
-      <div class="card-actionbar">
-          {{ content.links }}
-      </div>
-    </div>
-</div>
-
-  {% if content.field_topic_comments %}
-    {{ content.field_topic_comments }}
-  {% endif %}

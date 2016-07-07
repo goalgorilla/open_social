@@ -123,7 +123,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
         // need to add the render array using the 'data' key.
         $row['member']['data'] = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
-          ->view($profile, 'small_teaser');
+          ->view($profile, 'table');
         $row['organization']['data'] = $profile->get('field_profile_organization')
           ->view(array('label' => 'hidden'));
         $row['group_role'] = $roles;

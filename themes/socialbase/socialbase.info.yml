@@ -44,6 +44,7 @@ libraries-override:
         css/components/tree-child.module.css: false
 
 regions:
+  hidden: Hidden
   header: Header
   breadcrumb: Breadcrumb
   hero: Hero
@@ -51,5 +52,9 @@ regions:
   content: Content
   complementary: Complementary
   footer: Footer
+# Comment (remove) regions_hidden part in your subtheme.
+# Hidden regions should be visible when you enable new theme due to core bug.
+regions_hidden:
+  - hidden
 
 debug: false
