@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\views\filter\ActivityVisibilityAccess.
+ * Contains \Drupal\activity_viewer\Plugin\views\filter\ActivityVisibilityAccess.
  */
 
 namespace Drupal\activity_viewer\Plugin\views\filter;

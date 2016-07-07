@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\views\filter\ActivityPostVisibilityAccess.
+ * Contains \Drupal\activity_viewer\Plugin\views\filter\ActivityPostVisibilityAccess.
  */
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
