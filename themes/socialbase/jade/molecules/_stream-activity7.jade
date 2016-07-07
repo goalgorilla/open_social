@@ -16,19 +16,18 @@
       br
       .text-gray-lighter 32 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
-  a.card-image.blue-overlay(href="topic.html")
+  a.card-image(href="topic.html")
     img.img-responsive(src='content/images/people3-square.jpg', alt='')
-    img.teaser-type(src='images/icon-topic.svg', alt='')
   .card-body
     h4.card-title 
       a(href="topic.html") Technology for the handicapped
-    p.text-grey-dark.text-m
+    .text-gray.text-m.text-truncate
       if user == "isAnonymous"
         span Clive Owen 
       else
         a(href="other-stream.html") Henry Bond 
       | &bullet; 15 feb 2016
-    p.clearfix.text-m
+    .text-gray.text-m.text-truncate
       i.material-icons label
       | &nbsp;
       span.inline-center Blog
