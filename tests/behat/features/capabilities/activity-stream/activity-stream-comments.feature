@@ -1,4 +1,4 @@
-@wip @api @DS-1394 @activity_stream @comment
+@api @stability @activity_stream @comment @DS-1394
 Feature: See comments in activity stream
   Benefit: Participate in discussions on the platform
   Role: As a LU
