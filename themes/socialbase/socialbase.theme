@@ -74,37 +74,32 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
   if (isset($form['field_profile_address'])) {
     $form['field_profile_address']['widget'][0]['#title'] = '';
   }
-  if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] =  'btn';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
-    $form['actions']['delete']['#button_type'] =  'default';
-  }
-  if(isset($form['actions']['submit'])) {
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
-  }
 }
 
 /**
- * Implements hook_form_BASE_ID_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
-function socialbase_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if(isset($form['actions']['submit'])) {
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
-  }
-}
+function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set correct button styles.
+  $forms = array(
+    'user_form',
+    'user_cancel_form',
+    'profile_profile_edit_form',
+    'group_open_group_add_form',
+    'group_open_group_edit_form',
+    'group_content_open_group-group_membership_add_form',
+    'group_content_open_group-group_membership_edit_form',
+  );
 
-/**
- * Implements hook_form_BASE_ID_alter().
- */
-function socialbase_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] =  'btn';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
-  }
-  if(isset($form['actions']['submit'])) {
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  if (in_array($form_id, $forms)) {
+    if(isset($form['actions']['delete'])) {
+      $form['actions']['delete']['#attributes']['class'][] =  'btn';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    }
+    if(isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+    }
   }
 }
 
@@ -114,31 +109,6 @@ function socialbase_form_group_open_group_edit_form_alter(&$form, FormStateInter
 function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
   $form['description']['#suffix'] = '</div>';
-
-  if(isset($form['actions']['submit'])) {
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-primary';
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
-  }
-  if(isset($form['actions']['cancel'])) {
-    $form['actions']['cancel']['#attributes']['class'][] =  'btn';
-    $form['actions']['cancel']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['cancel']['#attributes']['class'][] =  'btn-raised';
-  }
-}
-
-/**
- * Implements hook_form_BASE_ID_alter().
- */
-function socialbase_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] =  'btn';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
-    $form['actions']['delete']['#button_type'] =  'default';
-  }
-  if(isset($form['actions']['submit'])) {
-    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
-  }
 }
 
 /**
@@ -172,8 +142,6 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
   $suggestions[] = $hook . '__materialize';
 }
-
-
 
 /**
  * Implements hook_preprocess_block().
@@ -717,11 +685,11 @@ function socialbase_preprocess_input(&$variables) {
     if (!empty($variables['element']['#array_parents']) && in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary') {
       $variables['float_right'] = TRUE;
     }
-  }
 
-  if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
-    $variables['element']['#button_type'] = 'flat';
-    $variables['button_type'] = 'flat';
+    if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
+      $variables['element']['#button_type'] = 'flat';
+      $variables['button_type'] = 'flat';
+    }
   }
 
   // Make sure we can use a span class caret in the button.
