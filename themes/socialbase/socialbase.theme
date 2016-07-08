@@ -42,7 +42,9 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   $form['field_comment_body']['#prefix'] = '<div class="media-body"><div class="form-group form-group-inline clearfix text-right">';
   $form['actions']['submit']['#suffix'] = '</div></div>';
-  $form['actions']['submit']['#button_type'] = 'flat';
+  if(isset($form['actions']['submit']['#button_type'])) {
+    $form['actions']['submit']['#button_type'] = 'flat';
+  }
 
 }
 
@@ -51,7 +53,9 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
  */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title'] = '';
-  $form['actions']['submit']['#button_type'] = 'primary';
+  if(isset($form['actions']['submit']['#button_type'])) {
+    $form['actions']['submit']['#button_type'] = 'primary';
+  }
 }
 
 /**
@@ -90,6 +94,41 @@ function socialbase_form_group_open_group_add_form_alter(&$form, FormStateInterf
   }
 }
 
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
+function socialbase_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if(isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#attributes']['class'][] =  'btn';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+}
+
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
+function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
+  $form['description']['#suffix'] = '</div>';
+
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['cancel'])) {
+    $form['actions']['cancel']['#attributes']['class'][] =  'btn';
+    $form['actions']['cancel']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['cancel']['#attributes']['class'][] =  'btn-raised';
+  }
+}
+
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
 function socialbase_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] =  'btn';
@@ -102,6 +141,9 @@ function socialbase_form_user_form_alter(&$form, FormStateInterface $form_state,
   }
 }
 
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] =  'btn';
