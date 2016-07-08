@@ -11,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
+use \Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * @file
@@ -146,4 +147,23 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
 function social_comment_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['comment']->setViewBuilderClass('Drupal\social_comment\SocialCommentViewBuilder');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if($view_mode === 'activity'){
+
+    $commented_entity = $entity->getCommentedEntity();
+    if ($commented_entity) {
+      $build['commented_entity'] = \Drupal::entityTypeManager()
+        ->getViewBuilder($commented_entity->getEntityType()->id())
+        ->view($commented_entity, 'activity_comment');
+    }
+
+    $build['comment'] = \Drupal::entityTypeManager()
+      ->getViewBuilder($entity->getEntityType()->id())
+      ->view($entity, 'full');
+  }
 }
