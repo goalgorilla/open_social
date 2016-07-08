@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityDestination\NotificationsActivityDestination.
+ * Contains \Drupal\activity_basics\Plugin\ActivityDestination\NotificationsActivityDestination.
  */
 
-namespace Drupal\activity_creator\Plugin\ActivityDestination;
+namespace Drupal\activity_basics\Plugin\ActivityDestination;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 
 /**

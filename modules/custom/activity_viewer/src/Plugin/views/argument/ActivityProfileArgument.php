@@ -4,7 +4,7 @@
  * Activity Profile Argument for Views.
  */
 
-namespace Drupal\activity_creator\Plugin\views\argument;
+namespace Drupal\activity_viewer\Plugin\views\argument;
 
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 

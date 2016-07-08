@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\Field\FieldFormatter\ActivityEntityReferenceFormatter.
+ * Contains \Drupal\activity_viewer\Plugin\Field\FieldFormatter\ActivityEntityReferenceFormatter.
  */
 
-namespace Drupal\activity_creator\Plugin\Field\FieldFormatter;
+namespace Drupal\activity_viewer\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -15,8 +15,8 @@ use Drupal\dynamic_entity_reference\Plugin\Field\FieldFormatter\DynamicEntityRef
  * Provides a custom dynamic entity reference formatter.
  *
  * @FieldFormatter(
- *   id = "activity_creator_entity_reference_formatter",
- *   module = "activity_creator",
+ *   id = "activity_viewer_entity_reference_formatter",
+ *   module = "activity_viewer",
  *   label = @Translation("Custom dynamic entity reference formatter for activities"),
  *   field_types = {
  *     "dynamic_entity_reference"
