@@ -162,12 +162,23 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         ->getViewBuilder($commented_entity_type)
         ->view($commented_entity, 'activity_comment');
 
-      // Prepare the show all comments link.
+      // Prepare the "Show all comments" link.
       if ($commented_entity_type === 'post') {
         $comment_field_name = 'field_post_comments';
       }
       elseif ($commented_entity_type === 'node') {
         $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
+        // Prepare the "Comments" link.
+        $link_options = array(
+          'fragment' => 'comment-form',
+          'attributes' => array(
+            'class' => array(
+              'btn btn-block btn-link',
+            ),
+          ),
+        );
+        $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
+        $build['comment_link'] = Link::fromTextAndUrl('Comment', $commented_entity_url)->toRenderable();
       }
 
       $comment_count = $commented_entity->{$comment_field_name}->comment_count;
