@@ -154,6 +154,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       ->condition('c.entity_type', $entity->getEntityTypeId())
       ->condition('c.field_name', $field_name)
       ->condition('c.default_langcode', 1)
+      ->isNull('c.pid')
       ->addTag('entity_access')
       ->addTag('comment_filter')
       ->addMetaData('base_table', 'comment')
