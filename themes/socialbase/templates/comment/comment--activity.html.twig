@@ -69,4 +69,11 @@
 {{ content.commented_entity }}
 <div class="card-nested-section">
     {{ content.comment }}
+    <div class="margin-top-l text-center">
+        {% if content.more_link %}
+            <div class="btn btn-block btn-link">
+                {{ content.more_link }}
+            </div>
+        {% endif %}
+    </div>
 </div>

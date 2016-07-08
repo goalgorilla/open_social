@@ -153,15 +153,34 @@ function social_comment_entity_type_alter(array &$entity_types) {
  * Implements hook_ENTITY_TYPE_view().
  */
 function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  if($view_mode === 'activity'){
-
+  if ($view_mode === 'activity') {
     $commented_entity = $entity->getCommentedEntity();
-    if ($commented_entity) {
+    if (is_object($commented_entity)) {
+      $commented_entity_type = $commented_entity->getEntityType()->id();
+      // Teaser of commented entity.
       $build['commented_entity'] = \Drupal::entityTypeManager()
-        ->getViewBuilder($commented_entity->getEntityType()->id())
+        ->getViewBuilder($commented_entity_type)
         ->view($commented_entity, 'activity_comment');
-    }
 
+      // Prepare the show all comments link.
+      if ($commented_entity_type === 'post') {
+        $comment_field_name = 'field_post_comments';
+      }
+      elseif ($commented_entity_type === 'node') {
+        $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
+      }
+
+      $comment_count = $commented_entity->{$comment_field_name}->comment_count;
+      $t_args = array(':num_comments' => $comment_count);
+
+      if ($comment_count) {
+        $more_link = t('Show all :num_comments comments', $t_args);
+        $more_button = Link::fromTextAndUrl($more_link, $commented_entity->urlInfo('canonical'))
+          ->toRenderable();
+        $build['more_link'] = $more_button;
+      }
+    }
+    // Comment.
     $build['comment'] = \Drupal::entityTypeManager()
       ->getViewBuilder($entity->getEntityType()->id())
       ->view($entity, 'full');
