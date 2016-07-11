@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContext\ProfileActivityContext.
+ * Contains \Drupal\activity_basics\Plugin\ActivityContext\ProfileActivityContext.
  */
 
-namespace Drupal\activity_creator\Plugin\ActivityContext;
+namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\GroupContent;

@@ -2,31 +2,30 @@
 
 /**
  * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContext\ContentInMyGroupActivityContext.
+ * Contains \Drupal\activity_basics\Plugin\ActivityContext\GroupActivityContext.
  */
 
-namespace Drupal\activity_creator\Plugin\ActivityContext;
+namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
-use Drupal\group\GroupMembership;
 use Drupal\social_group\SocialGroupHelperService;
 
 /**
- * Provides a 'ContentInMyGroupActivityContext' acitivy context.
+ * Provides a 'GroupActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "content_in_my_group_activity_context",
- *  label = @Translation("Content in my group activity context"),
+ *  id = "group_activity_context",
+ *  label = @Translation("Group activity context"),
  * )
  */
-class ContentInMyGroupActivityContext extends ActivityContextBase {
+class GroupActivityContext extends ActivityContextBase {
 
   /**
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
+
     $recipients = [];
 
     // We only know the context if there is a related object.
@@ -39,20 +38,11 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           'target_type' => 'group',
           'target_id' => $gid,
         ];
-        $group = Group::load($gid);
-        $memberships = GroupMembership::loadByGroup($group);
-        foreach ($memberships as $membership) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $membership->getUser()->id(),
-          ];
-        }
       }
     }
 
     return $recipients;
   }
-
 
   public function isValidEntity($entity) {
     // Check if it's placed in a group (regardless off content type).

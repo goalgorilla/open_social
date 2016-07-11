@@ -17,21 +17,21 @@
       br
       .text-gray-lighter 2 hours ago
 .card--teaser.card--teaser-stream.card-with-actionbar
-  a.card-image.blue-overlay(href="event.html")
+  a.card-image(href="event.html")
     img.img-responsive(src="content/images/people3-square.jpg")
     .teaser-date 19
       .text-xs jul
   .card-body
     h4.card-title 
       a(href="event.html") Security and modern internet
-    p.text-grey-dark
+    .text-gray.text-m.text-truncate
       i.material-icons event
       | &nbsp;
       span.inline-center 19 jul 09:00 - 18:00
       | &nbsp; 
       unless user == "isAnonymous"
         span.label.label-primary enrolled
-    p.text-grey-dark 
+    .text-gray.text-m.text-truncate
       i.material-icons place
       | &nbsp;
       span.inline-center Keizersgracht 376, Amsterdam
