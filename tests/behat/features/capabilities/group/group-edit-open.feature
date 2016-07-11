@@ -1,4 +1,4 @@
-@api @group @stability @DS-956
+@api @group @stability @DS-956 @kaas
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -121,6 +121,5 @@ Feature: Edit my group as a group manager
     And I should see "This action cannot be undone."
     And I should see the link "Cancel"
     And I should see the button "Delete"
-    # TODO: Fix unexpected error
-    # And I press "Delete"
+    And I press "Delete"
   
