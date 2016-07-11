@@ -67,7 +67,7 @@ function social_verify_custom_requirements(&$install_state) {
   }
 
   if (!class_exists('\CommerceGuys\Enum\AbstractEnum')) {
-    $requirements['addressing_library'] = [
+    $requirements['addressing_library_enum'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
       'description' => t('The Address module requires the commerceguys/enum library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
@@ -76,7 +76,7 @@ function social_verify_custom_requirements(&$install_state) {
   }
 
   if (!class_exists('\CommerceGuys\Intl\Country\CountryRepository')) {
-    $requirements['addressing_library'] = [
+    $requirements['addressing_library_country'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
       'description' => t('The Address module requires the commerceguys/intl library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
@@ -85,7 +85,7 @@ function social_verify_custom_requirements(&$install_state) {
   }
 
   if (!class_exists('\CommerceGuys\Zone\Repository\ZoneRepository')) {
-    $requirements['addressing_library'] = [
+    $requirements['addressing_library_zone'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
       'description' => t('The Address module requires the commerceguys/zone library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
