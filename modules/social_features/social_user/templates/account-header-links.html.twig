@@ -19,7 +19,7 @@
 <div class="navbar-header">
   <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
   <ul class="nav navbar-nav navbar-right">
-  {% for item in links %}
+  {% for item in links|without('search_block') %}
       <li class="{{ item.classes }}">
           <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
               <i title="{{ item.label }}" class="material-icons {{ item.icon_classes }}">{{ item.icon_label|lower }}</i>

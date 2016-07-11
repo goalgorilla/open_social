@@ -31,6 +31,7 @@
 // *  24. Close
 // *  25. Popovers
 // *  26. Code
+// *  27. Tooltip
 
 // 0. Options
 // ==========================================================================
@@ -348,9 +349,9 @@ $input-border:                   $grey-light-1 !default;
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
 $input-border-radius:            5px !default;
 //** Large `.form-control` border radius
-$input-border-radius-large:      0 !default;
+$input-border-radius-large:      8px !default;
 //** Small `.form-control` border radius
-$input-border-radius-small:      0 !default;
+$input-border-radius-small:      3px !default;
 
 //** Border color for inputs on focus
 $input-border-focus:             $brand-primary !default;
@@ -722,7 +723,7 @@ $pagination-disabled-border:           transparent !default;
 // ==========================================================================
 
 //** Default label background color
-$label-default-bg:            $gray-light !default;
+$label-default-bg:            $default-color !default;
 //** Primary label background color
 $label-primary-bg:            $brand-secondary !default;
 //** Success label background color
@@ -868,3 +869,14 @@ $pre-bg:                      #f5f5f5 !default;
 $pre-color:                   $gray-dark !default;
 $pre-border-color:            #ccc !default;
 $pre-scrollable-max-height:   340px !default;
+
+// 27. Tooltip
+// ==========================================================================
+
+$tooltip-max-width:           200px !default;
+$tooltip-color:               #fff !default;
+$tooltip-bg:                  #000 !default;
+$tooltip-opacity:             .9 !default;
+
+$tooltip-arrow-width:         5px !default;
+$tooltip-arrow-color:         $tooltip-bg !default;

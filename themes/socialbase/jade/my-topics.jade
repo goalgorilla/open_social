@@ -32,12 +32,9 @@ block pagetitle
       
 block content
   
-  .row.margin-top-l
-  
-    .col-xs-12
-      h1.h4.section-title My topics
+  .row.margin-top-l  
 
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
       a.waves-effect.waves-light.btn.btn-primary.btn-raised.btn-block(href='node-add-topic.html') Create topic
       br 
       br
@@ -70,6 +67,7 @@ block content
               input#reset-button.btn.btn-link.disabled(type="submit", value="Reset")
 
     .col-xs-12.col-sm-8
+      h4.section-title My topics
       include molecules/_topic1.jade
       include molecules/_topic2.jade
       include molecules/_topic3.jade

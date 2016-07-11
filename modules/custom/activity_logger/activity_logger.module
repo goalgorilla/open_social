@@ -125,14 +125,3 @@ function activity_logger_form_message_type_form_builder($entity_type, MessageTyp
   $message_type->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
 }
 
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function activity_logger_entity_insert(EntityInterface $entity) {
-    /* @var $activity_logger_factory Drupal\activity_creator\Plugin\ActivityActionManager */
-  $activity_logger_factory = \Drupal::service('plugin.manager.activity_action.processor');
-  // Trigger the create action for enttites.
-  /* @var $create_action Drupal\activity_creator\Plugin\ActivityAction\CreateActivityAction */
-  $create_action = $activity_logger_factory->createInstance('create_entitiy_action');
-  $create_action->create($entity);
-}

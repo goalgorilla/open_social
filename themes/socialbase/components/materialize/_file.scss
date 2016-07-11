@@ -44,12 +44,16 @@
   padding: .25em .5em;
   text-align: center;
   vertical-align: middle;
+  .material-icons {
+    line-height: 1.2rem;
+  }
 }
 
 .file-link {
   display: table-cell;
   vertical-align: middle;
   width: 100%;
+  white-space: normal;
 
   a, a:hover, a:focus, a:active {
     color: inherit;
@@ -67,4 +71,14 @@
 
 .image-widget.row {
   overflow: hidden;
+}
+.file-widget {
+  .file {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+  }
+
+  + .form-managed-file {
+    margin-top: 1rem;
+  }
 }

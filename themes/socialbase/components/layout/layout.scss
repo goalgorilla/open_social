@@ -9,8 +9,14 @@
 }
 
 @include MQ($small) {
-  .margin-top-sidebar {
+  .margin-top-complementary {
     // line-height * section-title font size + padding top + padding bottom
     margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
   }
+
+  // provide an offset that matches the section title element + a paragraph
+  .margin-top-exposed-filter {
+    margin-top: (0.75rem + 1.375rem); // margin-bottom + line-height
+  }
+
 }

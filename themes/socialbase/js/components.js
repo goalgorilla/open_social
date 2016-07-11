@@ -407,9 +407,6 @@ jQuery(document).ready(function($){
       textareaAutoResize($(this));
     });
 
-    $('select.form-control').wrap('<div class="material-select"></div>')
-
-
     /****************
     *  Range Input  *
     ****************/

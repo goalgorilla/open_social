@@ -63,13 +63,16 @@
  *   in different view modes.
  */
 #}
-{%
-  set classes = [
-    node.bundle|clean_class,
-    view_mode ? view_mode|clean_class,
-    'clearfix',
-  ]
-%}
+
+{% if node.bundle == 'event' %} 
+  <h4 class="section-title">
+    {% trans %}
+      Detail
+    {% endtrans %}
+  </h4>
+
+{% endif %}
+
 <article{{ attributes.addClass('card') }}>
 
   <div{{ content_attributes.addClass('card-body extra-padding') }}>
