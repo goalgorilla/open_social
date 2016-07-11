@@ -25,6 +25,17 @@ class SocialGroupHelperService {
   public static function getGroupFromEntity($entity) {
     $gid = NULL;
 
+    // Special cases for comments.
+    // Returns the entity to which the comment is attached.
+    if ($entity['target_type'] === 'comment') {
+      $comment = \Drupal::entityTypeManager()
+        ->getStorage('comment')
+        ->load($entity['target_id']);
+      $commented_entity = $comment->getCommentedEntity();
+      $entity['target_type'] = $commented_entity->getEntityTypeId();
+      $entity['target_id'] = $commented_entity->id();
+    }
+
     if ($entity['target_type'] === 'post') {
       /* @var /Drupal/social_post/Entity/Post $post */
       $post = Post::load($entity['target_id']);

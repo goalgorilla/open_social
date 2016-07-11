@@ -156,7 +156,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
   if ($view_mode === 'activity') {
     $commented_entity = $entity->getCommentedEntity();
     if (is_object($commented_entity)) {
-      $commented_entity_type = $commented_entity->getEntityType()->id();
+      $commented_entity_type = $commented_entity->getEntityTypeId();
       // Teaser of commented entity.
       $build['commented_entity'] = \Drupal::entityTypeManager()
         ->getViewBuilder($commented_entity_type)
@@ -193,7 +193,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     }
     // Comment.
     $build['comment'] = \Drupal::entityTypeManager()
-      ->getViewBuilder($entity->getEntityType()->id())
+      ->getViewBuilder($entity->getEntityTypeId())
       ->view($entity, 'full');
   }
 }
