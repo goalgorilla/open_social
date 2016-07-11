@@ -10,11 +10,6 @@ Feature: Notification that account is blocked
       | User Case |      0 | UseCase123 |
     And I am on the homepage
     When I click "Log in"
-    And I make a screenshot with the name "debug-travis"
-    When I am at "?q=/user/login"
-    And I make a screenshot with the name "debug-travis2"
-    When I am at "/user/login"
-    And I make a screenshot with the name "debug-travis3"
     And I fill in the following:
       | Username or email address | User Case |
       | Password | UseCase123 |
