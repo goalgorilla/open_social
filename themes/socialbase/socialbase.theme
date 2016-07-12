@@ -42,7 +42,9 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   $form['field_comment_body']['#prefix'] = '<div class="media-body"><div class="form-group form-group-inline clearfix text-right">';
   $form['actions']['submit']['#suffix'] = '</div></div>';
-  $form['actions']['submit']['#button_type'] = 'flat';
+  if(isset($form['actions']['submit']['#button_type'])) {
+    $form['actions']['submit']['#button_type'] = 'flat';
+  }
 
 }
 
@@ -51,7 +53,9 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
  */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title'] = '';
-  $form['actions']['submit']['#button_type'] = 'primary';
+  if(isset($form['actions']['submit']['#button_type'])) {
+    $form['actions']['submit']['#button_type'] = 'primary';
+  }
 }
 
 /**
@@ -73,13 +77,71 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set correct button styles.
+  $forms = array(
+    'user_form',
+    'user_cancel_form',
+    'profile_profile_edit_form',
+    'group_open_group_add_form',
+    'group_open_group_edit_form',
+    'group_content_open_group-group_membership_add_form',
+    'group_content_open_group-group_membership_edit_form',
+  );
+
+  if (in_array($form_id, $forms)) {
+    if(isset($form['actions']['delete'])) {
+      $form['actions']['delete']['#attributes']['class'][] =  'btn';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    }
+    if(isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+    }
+  }
+}
+
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
+function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
+  $form['description']['#suffix'] = '</div>';
+}
+
+/**
+ * Implements hook_form_BASE_ID_alter().
+ */
+function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if(isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#attributes']['class'][] =  'btn';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
+    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['preview'])) {
+    $form['actions']['preview']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['publish'])) {
+    $form['actions']['publish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['publish']['#attributes']['class'][] =  'btn-raised';
+  }
+  if(isset($form['actions']['unpublish'])) {
+    $form['actions']['unpublish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['unpublish']['#attributes']['class'][] =  'btn-raised';
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
   $suggestions[] = $hook . '__materialize';
 }
-
-
 
 /**
  * Implements hook_preprocess_block().
@@ -245,7 +307,7 @@ function socialbase_theme_suggestions_menu_alter(array &$suggestions, array $var
   if (isset($variables['attributes']['block'])) {
     $hook = str_replace(array('block-', '-'), array(
       '',
-      '_',
+      '_'
     ), $variables['attributes']['block']);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
@@ -576,6 +638,15 @@ function socialbase_preprocess_image_style(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_form_element().
+ */
+function socialbase_preprocess_form_element(&$variables) {
+  if ($variables['element']['#type'] === 'vertical_tabs') {
+    $variables['attributes']['class'][] = 'card';
+  }
+}
+
+/**
  * Implements hook_preprocess_form_element_label().
  */
 function socialbase_preprocess_form_element_label(&$variables) {
@@ -614,11 +685,11 @@ function socialbase_preprocess_input(&$variables) {
     if (!empty($variables['element']['#array_parents']) && in_array('actions', $variables['element']['#array_parents']) && $variables['element']['#button_type'] == 'primary') {
       $variables['float_right'] = TRUE;
     }
-  }
 
-  if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
-    $variables['element']['#button_type'] = 'flat';
-    $variables['button_type'] = 'flat';
+    if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
+      $variables['element']['#button_type'] = 'flat';
+      $variables['button_type'] = 'flat';
+    }
   }
 
   // Make sure we can use a span class caret in the button.
@@ -754,6 +825,7 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
  */
 function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
+  $variables['attributes']['class'][] = 'clearfix';
 
   if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
     $current_user = \Drupal::currentUser();
@@ -993,4 +1065,14 @@ function socialbase_preprocess_menu_local_action (&$variables) {
     $variables['attributes']['class'][] = 'margin-bottom-l';
     $variables['attributes']['class'][] = 'margin-left-l';
  }
+}
+
+/**
+ * Implements hook_preprocess_views_exposed_form().
+ */
+function socialbase_preprocess_views_exposed_form(&$variables) {
+  if(isset($variables['theme_hook_original']) && $variables['theme_hook_original'] === 'views_exposed_form') {
+    $variables['form']['actions']['submit']['#attributes']['class'][] = 'pull-right';
+    $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
+  }
 }
