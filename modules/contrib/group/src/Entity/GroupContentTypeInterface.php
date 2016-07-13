@@ -25,7 +25,7 @@ interface GroupContentTypeInterface extends ConfigEntityInterface {
   /**
    * Gets the group type the content type was created for.
    *
-   * @return \Drupal\group\Entity\GroupType
+   * @return \Drupal\group\Entity\GroupTypeInterface
    *   The group type for which the content type was created.
    */
   public function getGroupType();

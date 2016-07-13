@@ -6,7 +6,6 @@
 
 namespace Drupal\group\Entity;
 
-use Drupal\group\GroupMembership;
 use Drupal\user\UserInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -64,6 +63,33 @@ class Group extends ContentEntityBase implements GroupInterface {
   use EntityChangedTrait;
 
   /**
+   * Gets the group membership loader.
+   *
+   * @return \Drupal\group\GroupMembershipLoaderInterface
+   */
+  protected function membershipLoader() {
+    return \Drupal::service('group.membership_loader');
+  }
+
+  /**
+   * Gets the group content storage.
+   *
+   * @return \Drupal\group\Entity\Storage\GroupContentStorageInterface
+   */
+  protected function groupContentStorage() {
+    return $this->entityTypeManager()->getStorage('group_content');
+  }
+
+  /**
+   * Gets the group role storage.
+   *
+   * @return \Drupal\group\Entity\Storage\GroupRoleStorageInterface
+   */
+  protected function groupRoleStorage() {
+    return $this->entityTypeManager()->getStorage('group_role');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getCreatedTime() {
@@ -118,16 +144,7 @@ class Group extends ContentEntityBase implements GroupInterface {
    * {@inheritdoc}
    */
   public function getContent($content_enabler = NULL, $filters = []) {
-    $properties = ['gid' => $this->id()] + $filters;
-
-    // If a plugin ID was provided, set the group content type ID for it.
-    if (isset($content_enabler)) {
-      /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
-      $plugin = $this->getGroupType()->getContentPlugin($content_enabler);
-      $properties['type'] = $plugin->getContentTypeConfigId();
-    }
-
-    return \Drupal::entityTypeManager()->getStorage('group_content')->loadByProperties($properties);
+    return $this->groupContentStorage()->loadByGroup($this, $content_enabler, $filters);
   }
 
   /**
@@ -144,8 +161,7 @@ class Group extends ContentEntityBase implements GroupInterface {
     $entities = [];
 
     foreach ($this->getContent($content_enabler, $filters) as $group_content) {
-      $entity = $group_content->getEntity();
-      $entities[$entity->id()] = $entity;
+      $entities[] = $group_content->getEntity();
     }
 
     return $entities;
@@ -170,14 +186,14 @@ class Group extends ContentEntityBase implements GroupInterface {
    * {@inheritdoc}
    */
   public function getMember(AccountInterface $account) {
-    return GroupMembership::load($this, $account);
+    return $this->membershipLoader()->load($this, $account);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getMembers($roles = NULL) {
-    return GroupMembership::loadByGroup($this, $roles);
+    return $this->membershipLoader()->loadByGroup($this, $roles);
   }
 
   /**
@@ -194,15 +210,18 @@ class Group extends ContentEntityBase implements GroupInterface {
       return TRUE;
     }
 
-    // If the user has a membership, check for the permission there.
-    if ($group_membership = $this->getMember($account)) {
-      return $group_membership->hasPermission($permission);
+    // Retrieve all of the group roles the user may get for the group.
+    $group_roles = $this->groupRoleStorage()->loadByUserAndGroup($account, $this);
+
+    // Check each retrieved role for the requested permission.
+    foreach ($group_roles as $group_role) {
+      if ($group_role->hasPermission($permission)) {
+        return TRUE;
+      }
     }
 
-    // Otherwise, check the outsider or anonymous role.
-    return $account->isAuthenticated()
-      ? GroupRole::load($this->bundle() . '-outsider')->hasPermission($permission)
-      : GroupRole::load($this->bundle() . '-anonymous')->hasPermission($permission);
+    // If no role had the requested permission, we deny access.
+    return FALSE;
   }
 
   /**
@@ -285,6 +304,18 @@ class Group extends ContentEntityBase implements GroupInterface {
       ))
       ->setDisplayConfigurable('view', TRUE);
 
+    if (\Drupal::moduleHandler()->moduleExists('path')) {
+      $fields['path'] = BaseFieldDefinition::create('path')
+        ->setLabel(t('URL alias'))
+        ->setTranslatable(TRUE)
+        ->setDisplayOptions('form', array(
+          'type' => 'path',
+          'weight' => 30,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setCustomStorage(TRUE);
+    }
+
     return $fields;
   }
 
@@ -317,7 +348,7 @@ class Group extends ContentEntityBase implements GroupInterface {
   /**
    * {@inheritdoc}
    */
-  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+  public static function preDelete(EntityStorageInterface $storage, array $entities) {
     // Remove all group content from these groups as well.
     foreach ($entities as $group) {
       foreach ($group->getContent() as $group_content) {

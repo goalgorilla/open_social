@@ -47,16 +47,8 @@ class GroupContentDynamicDeriver extends DeriverBase implements ContainerDeriver
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    // Retrieve all installed content enabler plugins.
-    $installed = $this->pluginManager->getInstalledIds();
-
     // Retrieve all possible collection route names from all installed plugins.
-    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
-      // Skip plugins that have not been installed anywhere.
-      if (!in_array($plugin_id, $installed)) {
-        continue;
-      }
-
+    foreach ($this->pluginManager->getInstalled() as $plugin_id => $plugin) {
       /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
       foreach ($plugin->getLocalActions() as $action_id => $local_action) {
         $this->derivatives[$action_id] = $local_action + $base_plugin_definition;

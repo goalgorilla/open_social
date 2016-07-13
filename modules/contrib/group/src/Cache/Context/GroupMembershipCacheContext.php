@@ -13,6 +13,12 @@ use Drupal\Core\Cache\Context\CacheContextInterface;
 /**
  * Defines a cache context for "per group membership" caching.
  *
+ * Please note: This cache context uses the group from the current route as the
+ * value object to work with. This context is therefore only to be used with
+ * data that was based on the group from the route. You can retrieve it using
+ * the 'entity:group' context provided by the 'group.group_route_context'
+ * service. See an example at: \Drupal\group\Plugin\Block\GroupOperationsBlock.
+ *
  * Cache context ID: 'group_membership'.
  */
 class GroupMembershipCacheContext extends GroupMembershipCacheContextBase implements CacheContextInterface {
@@ -38,22 +44,23 @@ class GroupMembershipCacheContext extends GroupMembershipCacheContextBase implem
       return $group_membership->getGroupContent()->id();
     }
 
-    // Otherwise, return 'outsider' or 'anonymous' depending on the user.
-    return $this->user->id() == 0 ? 'anonymous' : 'outsider';
+    // Otherwise, return the ID of the 'outsider' or 'anonymous' group role,
+    // depending on the user. This is necessary to have a unique identifier to
+    // distinguish between 'outsider' or 'anonymous' users for different group
+    // types.
+    return $this->user->isAnonymous()
+      ? $this->group->getGroupType()->getAnonymousRoleId()
+      : $this->group->getGroupType()->getOutsiderRoleId();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCacheableMetadata() {
-    $cacheable_metadata = new CacheableMetadata();
-
-    // This needs to be invalidated whenever the group membership is updated.
-    if ($this->hasExistingGroup() && $group_membership = $this->group->getMember($this->user)) {
-      $cacheable_metadata->setCacheTags($group_membership->getGroupContent()->getCacheTags());
-    }
-
-    return $cacheable_metadata;
+    // You can't update a group content's ID. So even if somehow this top-level
+    // cache context got optimized away, it does not need to set a cache tag for
+    // a group content entity as the ID is not invalidated by a save.
+    return new CacheableMetadata();
   }
 
 }

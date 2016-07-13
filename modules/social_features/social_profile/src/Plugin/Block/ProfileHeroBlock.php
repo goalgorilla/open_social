@@ -40,6 +40,7 @@ class ProfileHeroBlock extends BlockBase {
       }
     }
 
+    // @TODO cache.
     $build['#cache'] = array(
       'max-age' => 0,
     );

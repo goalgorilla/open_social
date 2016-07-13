@@ -7,13 +7,13 @@
 
 namespace Drupal\group\Access;
 
-use Drupal\group\Entity\GroupRole;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\Core\PrivateKey;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\PrivateKey;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Site\Settings;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Generates and caches the permissions hash for a group membership.
@@ -42,6 +42,13 @@ class GroupPermissionsHashGenerator implements GroupPermissionsHashGeneratorInte
   protected $static;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a GroupPermissionsHashGenerator object.
    *
    * @param \Drupal\Core\PrivateKey $private_key
@@ -50,11 +57,14 @@ class GroupPermissionsHashGenerator implements GroupPermissionsHashGeneratorInte
    *   The cache backend interface to use for the persistent cache.
    * @param \Drupal\Core\Cache\CacheBackendInterface
    *   The cache backend interface to use for the static cache.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(PrivateKey $private_key, CacheBackendInterface $cache, CacheBackendInterface $static) {
+  public function __construct(PrivateKey $private_key, CacheBackendInterface $cache, CacheBackendInterface $static, EntityTypeManagerInterface $entity_type_manager) {
     $this->privateKey = $private_key;
     $this->cache = $cache;
     $this->static = $static;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -68,17 +78,8 @@ class GroupPermissionsHashGenerator implements GroupPermissionsHashGeneratorInte
       return $this->hash('bypass-group-access');
     }
 
-    // Retrieve all of the membership's roles.
-    if ($group_membership = $group->getMember($account)) {
-      $group_roles = $group_membership->getRoles();
-    }
-    // If the user isn't a member, retrieve the outsider or anonymous role.
-    else {
-      $role_name = $account->id() == 0
-        ? $group->bundle() . '.outsider'
-        : $group->bundle() . '.anonymous';
-      $group_roles[$role_name] = GroupRole::load($role_name);
-    }
+    // Retrieve all of the group roles the user may get for the group.
+    $group_roles = $this->groupRoleStorage()->loadByUserAndGroup($account, $group);
 
     // Sort the group roles by ID.
     ksort($group_roles);
@@ -140,6 +141,15 @@ class GroupPermissionsHashGenerator implements GroupPermissionsHashGeneratorInte
    */
   protected function hash($identifier) {
     return hash('sha256', $this->privateKey->get() . Settings::getHashSalt() . $identifier);
+  }
+
+  /**
+   * Gets the group role storage.
+   *
+   * @return \Drupal\group\Entity\Storage\GroupRoleStorageInterface
+   */
+  protected function groupRoleStorage() {
+    return $this->entityTypeManager->getStorage('group_role');
   }
 
 }
