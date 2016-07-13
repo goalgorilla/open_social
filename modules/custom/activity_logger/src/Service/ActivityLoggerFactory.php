@@ -58,6 +58,12 @@ class ActivityLoggerFactory {
       // Create the message.
       $message = Message::create($new_message);
 
+      // Special case for comments.
+      if ($entity->getEntityTypeId() === 'comment') {
+        // Returns the entity to which the comment is attached.
+        $entity = $entity->getCommentedEntity();
+      }
+
       // Try to get the group.
       $groupcontent = GroupContent::loadByEntity($entity);
       if (!empty($groupcontent)) {

@@ -1,0 +1,73 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.message.field_message_related_object
+    - message.type.create_comment_group_post
+  module:
+    - dynamic_entity_reference
+id: message.create_comment_group_post.field_message_related_object
+field_name: field_message_related_object
+entity_type: message
+bundle: create_comment_group_post
+label: 'Related object'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  node:
+    handler: 'default:node'
+    handler_settings:
+      target_bundles:
+        event: event
+        topic: topic
+      sort:
+        field: _none
+      auto_create: false
+      auto_create_bundle: event
+  post:
+    handler: 'default:post'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
+  activity:
+    handler: 'default:activity'
+    handler_settings: {  }
+  comment:
+    handler: 'default:comment'
+    handler_settings: {  }
+  block_content:
+    handler: 'default:block_content'
+    handler_settings: {  }
+  menu_link_content:
+    handler: 'default:menu_link_content'
+    handler_settings: {  }
+  event_enrollment:
+    handler: 'default:event_enrollment'
+    handler_settings: {  }
+  file:
+    handler: 'default:file'
+    handler_settings: {  }
+  group_content:
+    handler: 'default:group_content'
+    handler_settings: {  }
+  group:
+    handler: 'default:group'
+    handler_settings: {  }
+  message:
+    handler: 'default:message'
+    handler_settings: {  }
+  profile:
+    handler: 'default:profile'
+    handler_settings: {  }
+  taxonomy_term:
+    handler: 'default:taxonomy_term'
+    handler_settings: {  }
+  user:
+    handler: 'default:user'
+    handler_settings: {  }
+field_type: dynamic_entity_reference

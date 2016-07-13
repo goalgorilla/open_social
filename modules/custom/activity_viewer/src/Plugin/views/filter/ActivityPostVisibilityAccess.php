@@ -104,6 +104,23 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $or->condition($post_access);
 
+    if ($account->hasPermission('access comments')) {
+      // Join comment table.
+      $configuration = array(
+        'left_table' => 'activity__field_activity_entity',
+        'left_field' => 'field_activity_entity_target_id',
+        'table' => 'comment_field_data',
+        'field' => 'cid',
+        'operator' => '=',
+      );
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+      $this->query->addRelationship('comment_field_data', $join, 'comments');
+
+      $comment_access = db_and();
+      $comment_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
+      $or->condition($comment_access);
+    }
+
     $and_wrapper->condition($or);
 
     $this->query->addWhere('visibility', $and_wrapper);

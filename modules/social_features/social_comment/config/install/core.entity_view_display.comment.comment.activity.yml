@@ -3,17 +3,18 @@ status: true
 dependencies:
   config:
     - comment.type.comment
+    - core.entity_view_mode.comment.activity
     - field.field.comment.comment.field_comment_body
   module:
     - text
-id: comment.comment.default
+id: comment.comment.activity
 targetEntityType: comment
 bundle: comment
-mode: default
+mode: activity
 content:
   field_comment_body:
     weight: 0
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.post.activity_comment
     - field.field.post.post.field_post
     - field.field.post.post.field_post_comments
     - field.field.post.post.field_recipient_group
@@ -11,23 +12,16 @@ dependencies:
     - social_post
     - text
     - user
-id: post.post.default
+id: post.post.activity_comment
 targetEntityType: post
 bundle: post
-mode: default
+mode: activity_comment
 content:
   field_post:
     type: text_default
     weight: 1
     label: hidden
     settings: {  }
-    third_party_settings: {  }
-  field_post_comments:
-    type: comment_post
-    weight: 2
-    label: hidden
-    settings:
-      num_comments: 0
     third_party_settings: {  }
   user_id:
     label: hidden
@@ -36,6 +30,7 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_post_comments: true
   field_recipient_group: true
   field_recipient_user: true
   field_visibility: true
