@@ -38,4 +38,21 @@ class SocialMinkContext extends MinkContext{
 
     throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
+
+
+  /**
+   * @Given /^I make a screenshot$/
+   */
+  public function iMakeAScreenshot() {
+    $this->iMakeAScreenshotWithFileName('screenshot');
+  }
+
+  /**
+   * @Given /^I make a screenshot with the name "([^"]*)"$/
+   */
+  public function iMakeAScreenshotWithFileName($filename) {
+    $screenshot = $this->getSession()->getDriver()->getScreenshot();
+    $file_and_path = '/root/travis_artifacts/' . $filename . '.jpg';
+    file_put_contents($file_and_path, $screenshot);
+  }
 }
