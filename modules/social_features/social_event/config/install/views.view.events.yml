@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - node.type.event
   module:
+    - datetime
     - node
     - social_event
     - user
@@ -205,61 +206,6 @@ display:
           plugin_id: boolean
           entity_type: node
           entity_field: status
-        field_event_date_value:
-          id: field_event_date_value
-          table: node__field_event_date
-          field: field_event_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: offset
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_event_date_value_op
-            label: 'Start date'
-            description: null
-            use_operator: false
-            operator: field_event_date_value_op
-            identifier: field_event_date_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: true
-          group_info:
-            label: 'What events do you want to see?'
-            description: ''
-            identifier: field_event_date_value
-            optional: false
-            widget: radios
-            multiple: false
-            remember: false
-            default_group: '1'
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: 'Upcoming events'
-                operator: '>='
-                value:
-                  type: offset
-                  value: now
-                  min: ''
-                  max: ''
-              2:
-                title: 'Events that have started or are finished'
-                operator: '<'
-                value:
-                  type: offset
-                  value: now
-                  min: ''
-                  max: ''
         event_enrolled_or_created_filter:
           id: event_enrolled_or_created_filter
           table: node
@@ -655,7 +601,7 @@ display:
           plugin_id: boolean
           entity_type: node
           entity_field: status
-        qfield_event_date_value:
+        field_event_date_value:
           id: field_event_date_value
           table: node__field_event_date
           field: field_event_date_value
@@ -667,7 +613,7 @@ display:
             min: ''
             max: ''
             value: ''
-            type: offset
+            type: date
           group: 1
           exposed: true
           expose:
@@ -710,6 +656,7 @@ display:
                   value: now
                   min: ''
                   max: ''
+          plugin_id: datetime
         event_enrolled_or_created_filter:
           id: event_enrolled_or_created_filter
           table: node
