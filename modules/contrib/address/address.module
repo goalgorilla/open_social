@@ -32,3 +32,25 @@ function address_form_field_config_edit_form_alter(&$form, FormStateInterface $f
     $form['default_value']['#access'] = FALSE;
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function address_theme() {
+  return [
+    'address_plain' => [
+      'variables' => [
+        'recipient' => '',
+        'organization' => '',
+        'address_line1' => '',
+        'address_line2' => '',
+        'postal_code' => '',
+        'sorting_code' => '',
+        'dependent_locality' => [],
+        'locality' => [],
+        'administrative_area' => [],
+        'country' => [],
+      ],
+    ]
+  ];
+}

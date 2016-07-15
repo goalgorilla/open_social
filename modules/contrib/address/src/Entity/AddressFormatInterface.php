@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Entity\AddressFormatInterface.
- */
-
 namespace Drupal\address\Entity;
 
 use CommerceGuys\Addressing\Model\AddressFormatInterface as ExternalAddressFormatInterface;

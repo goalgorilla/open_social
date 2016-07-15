@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\ZoneMember\ZoneMemberZone.
- */
-
 namespace Drupal\address\Plugin\ZoneMember;
 
 use CommerceGuys\Addressing\Model\AddressInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -39,13 +34,13 @@ class ZoneMemberZone extends ZoneMemberBase implements ContainerFactoryPluginInt
    *   The pluginId for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->zoneStorage = $entity_manager->getStorage('zone');
+    $this->zoneStorage = $entity_type_manager->getStorage('zone');
   }
 
   /**
@@ -81,6 +76,13 @@ class ZoneMemberZone extends ZoneMemberBase implements ContainerFactoryPluginInt
       '#target_type' => 'zone',
       '#tags' => FALSE,
       '#required' => TRUE,
+      '#selection_settings' => [
+        'skip_id' => $this->parentZone->id(),
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+      ],
     ];
 
     return $form;

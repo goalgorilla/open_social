@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Event\InitialValuesEvent.
- */
-
 namespace Drupal\address\Event;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -59,7 +54,7 @@ class InitialValuesEvent extends Event {
    * Sets the initial values.
    *
    * @param array $initial_values
-   *   The inital values to set.
+   *   The initial values to set.
    *
    * @return $this
    */

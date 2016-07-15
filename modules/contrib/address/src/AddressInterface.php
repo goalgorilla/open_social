@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressInterface.
- */
-
 namespace Drupal\address;
 
 use CommerceGuys\Addressing\Model\AddressInterface as ExternalAddressInterface;

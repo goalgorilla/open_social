@@ -239,21 +239,32 @@ class TermDevelGenerate extends DevelGenerateBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function validateDrushParams($args) {
-    $vname = array_shift($args);
-    $values = array(
-      'num' => array_shift($args),
-      'kill' => drush_get_option('kill'),
-      'title_length' => 12,
-    );
-    // Try to convert machine name to a vocab ID
-    if (!$vocab = $this->vocabularyStorage->load($vname)) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid vocabulary name: @name', array('@name' => $vname)));
-    }
-    if ($this->isNumber($values['num']) == FALSE) {
-      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of terms: @num', array('@num' => $values['num'])));
+    $vocabulary_name = array_shift($args);
+    $number = array_shift($args);
+
+    if ($number === NULL) {
+      $number = 10;
     }
 
-    $values['vids'] = array($vocab->id());
+    if (!$vocabulary_name) {
+      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Please provide a vocabulary machine name.'));
+    }
+
+    if (!$this->isNumber($number)) {
+      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid number of terms: @num', array('@num' => $number)));
+    }
+
+    // Try to convert machine name to a vocabulary id.
+    if (!$vocabulary = $this->vocabularyStorage->load($vocabulary_name)) {
+      return drush_set_error('DEVEL_GENERATE_INVALID_INPUT', dt('Invalid vocabulary name: @name', array('@name' => $vocabulary_name)));
+    }
+
+    $values = [
+      'num' => $number,
+      'kill' => drush_get_option('kill'),
+      'title_length' => 12,
+      'vids' => [$vocabulary->id()],
+    ];
 
     return $values;
   }

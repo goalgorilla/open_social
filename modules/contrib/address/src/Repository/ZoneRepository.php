@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Repository\ZoneRepository.
- */
-
 namespace Drupal\address\Repository;
 
 use CommerceGuys\Zone\Repository\ZoneRepositoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Defines the zone repository.
@@ -27,11 +22,11 @@ class ZoneRepository implements ZoneRepositoryInterface {
   /**
    * Creates an ZoneRepository instance.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->zoneStorage = $entity_manager->getStorage('zone');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->zoneStorage = $entity_type_manager->getStorage('zone');
   }
 
   /**

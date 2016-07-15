@@ -9,11 +9,13 @@ namespace Drupal\devel\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for devel module routes.
@@ -29,9 +31,39 @@ class DevelController extends ControllerBase {
     return $this->redirect('<front>');
   }
 
-  public function menuItem() {
-    $item = menu_get_item(current_path());
-    return kdevel_print_object($item);
+  /**
+   * Returns a dump of a route object.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Page request object.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The route match.
+   *
+   * @return array
+   *   A render array containing the route object.
+   */
+  public function menuItem(Request $request, RouteMatchInterface $route_match) {
+    $output = [];
+
+    // Get the route object from the path query string if available.
+    if ($path = $request->query->get('path')) {
+      try {
+        /* @var \Symfony\Cmf\Component\Routing\ChainRouter $router */
+        $router = \Drupal::service('router');
+        $route = $router->match($path);
+        $output['route'] = ['#markup' => kpr($route, TRUE)];
+      }
+      catch (\Exception $e) {
+        drupal_set_message($this->t("Unable to load route for url '%url'", ['%url' => $path]), 'warning');
+      }
+    }
+    // No path specified, get the current route.
+    else {
+      $route = $route_match->getRouteObject();
+      $output['route'] = ['#markup' => kpr($route, TRUE)];
+    }
+
+    return $output;
   }
 
   public function themeRegistry() {
@@ -235,6 +267,15 @@ class DevelController extends ControllerBase {
     $entity = $route_match->getParameter($parameter_name);
 
     if ($entity && $entity instanceof EntityInterface) {
+
+      // Field definitions are lazy loaded and are populated only when needed.
+      // By calling ::getFieldDefinitions() we are sure that field definitions
+      // are populated and available in the dump output.
+      // @see https://www.drupal.org/node/2311557
+      if($entity instanceof FieldableEntityInterface) {
+        $entity->getFieldDefinitions();
+      }
+
       $output = array('#markup' => kdevel_print_object($entity));
     }
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\ZoneMember\ZoneMemberCountry.
- */
-
 namespace Drupal\address\Plugin\ZoneMember;
 
 use CommerceGuys\Addressing\Enum\AddressField;

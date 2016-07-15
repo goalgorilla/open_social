@@ -75,6 +75,9 @@ address.zone_member:
       type: string
       label: 'Plugin'
 
+address.zone_member.*:
+  type: ignore
+
 address.zone_member.country:
   type: address.zone_member
   label: 'Zone member (Country)'
@@ -173,3 +176,7 @@ field.widget.settings.address_default:
     default_country:
       type: string
       label: 'Default country'
+
+views.filter.country_code:
+  type: views.filter.in_operator
+  label: 'Country'

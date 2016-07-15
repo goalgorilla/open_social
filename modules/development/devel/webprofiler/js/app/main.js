@@ -35,8 +35,8 @@
                         if (filter[key].length > 0 && filter[key] != ' ') {
                             select = filter[key].split(' ').filter(Boolean);
                             for (sel in select) {
-                                selector.push('[data-wp-' + key + ' *= ' + select[sel] + ']');
-                                unselected.push('[data-wp-' + key + ']:not([data-wp-' + key + ' *= ' + select[sel] + '])');
+                                selector.push('[data-wp-' + key + ' *= ' + select[sel].toLowerCase() + ']');
+                                unselected.push('[data-wp-' + key + ']:not([data-wp-' + key + ' *= ' + select[sel].toLowerCase() + '])');
                             }
                         }
                         else {

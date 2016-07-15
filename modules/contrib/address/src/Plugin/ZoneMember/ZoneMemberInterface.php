@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface.
- */
-
 namespace Drupal\address\Plugin\ZoneMember;
 
 use CommerceGuys\Zone\Model\ZoneMemberInterface as ExternalZoneMemberInterface;

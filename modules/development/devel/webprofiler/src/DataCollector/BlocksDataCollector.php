@@ -8,8 +8,8 @@
 namespace Drupal\webprofiler\DataCollector;
 
 use Drupal\block\Entity\Block;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webprofiler\DrupalDataCollectorInterface;
 use Drupal\webprofiler\Entity\EntityDecorator;
@@ -30,9 +30,9 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
   private $entityManager;
 
   /**
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityManager
    */
-  public function __construct(EntityManagerInterface $entityManager) {
+  public function __construct(EntityTypeManagerInterface $entityManager) {
     $this->entityManager = $entityManager;
 
     $this->data['blocks']['loaded'] = [];
@@ -45,7 +45,7 @@ class BlocksDataCollector extends DataCollector implements DrupalDataCollectorIn
   public function collect(Request $request, Response $response, \Exception $exception = NULL) {
     $storage = $this->entityManager->getStorage('block');
 
-    $loaded = $this->entityManager->getLoaded('block');
+    $loaded = $this->entityManager->getLoaded('config', 'block');
     $rendered = $this->entityManager->getRendered('block');
 
     if ($loaded) {

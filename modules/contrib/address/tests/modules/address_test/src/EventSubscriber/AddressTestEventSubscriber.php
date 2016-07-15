@@ -26,7 +26,7 @@ class AddressTestEventSubscriber implements EventSubscriberInterface {
   /**
    * Generate a set of available countries.
    *
-   * @return array Array of counries.
+   * @return array Array of countries.
    */
   public function getAvailableCountries() {
     return ['AU' => 'AU', 'BR' => 'BR', 'CA' => 'CA', 'FR' => 'FR', 'JP' => 'JP'];

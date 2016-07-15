@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Repository\CountryRepository.
- */
-
 namespace Drupal\address\Repository;
 
 use CommerceGuys\Intl\Country\CountryRepository as ExternalCountryRepository;

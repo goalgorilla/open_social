@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\field\formatter\AddressDefaultFormatter.
- */
-
 namespace Drupal\address\Plugin\Field\FieldFormatter;
 
 use CommerceGuys\Addressing\Enum\AddressField;
@@ -28,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @FieldFormatter(
  *   id = "address_default",
- *   label = @Translation("Address"),
+ *   label = @Translation("Default"),
  *   field_types = {
  *     "address",
  *   },
@@ -194,6 +189,7 @@ class AddressDefaultFormatter extends FormatterBase implements ContainerFactoryP
    *   The new rendered element.
    */
   public static function postRender($content, array $element) {
+    /** @var \Drupal\address\Entity\AddressFormatInterface $address_format */
     $address_format = $element['address_format']['#value'];
     $format_string = $address_format->getFormat();
     // Add the country to the bottom or the top of the format string,

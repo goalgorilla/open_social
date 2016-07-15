@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Tests\AddressDefaultWidgetTest.
- */
-
 namespace Drupal\address\Tests;
 
 use Drupal\field\Entity\FieldConfig;
@@ -44,7 +39,7 @@ class AddressDefaultWidgetTest extends WebTestBase {
   /**
    * Address field instance.
    *
-   * @var Drupal\Field\FieldConfigInterface
+   * @var \Drupal\field\FieldConfigInterface
    */
   protected $field;
 
@@ -212,7 +207,7 @@ class AddressDefaultWidgetTest extends WebTestBase {
     }, $countries);
     $this->drupalPostForm($this->fieldConfigUrl, $edit, t('Save settings'));
 
-    // Acccess article's edit form and confirm the values are unchanged.
+    // Access the article's edit form and confirm the values are unchanged.
     // 'US' should be in the list along with the available countries and should
     // be selected.
     $this->drupalGet('node/' . $node->id() . '/edit');
@@ -306,7 +301,7 @@ class AddressDefaultWidgetTest extends WebTestBase {
       $edit[$field_name . '[0][country_code]'] = $country;
       $this->drupalPostAjaxForm($this->nodeAddUrl, $edit, $field_name . '[0][country_code]');
       // Compare the found fields to the address format.
-      // Make one assert instead of many asserts for each field's existance.
+      // Make one assert instead of many asserts for each field's existence.
       $elements = $this->xpath('//input[starts-with(@name,"' . $field_name . '")]/@name | //select[starts-with(@name,"' . $field_name . '")]/@name');
       $formFields = [];
       foreach ($elements as $key => $element) {

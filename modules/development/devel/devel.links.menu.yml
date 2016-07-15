@@ -17,10 +17,17 @@ devel.reinstall:
   title: 'Reinstall Modules'
   route_name: devel.reinstall
   menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\DestinationMenuLink
 devel.menu_rebuild:
   title: 'Rebuild Menu'
   route_name: devel.menu_rebuild
   menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\DestinationMenuLink
+devel.menu_item:
+  title: 'Menu Item'
+  route_name: devel.menu_item
+  menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\MenuItemMenuLink
 devel.state_system_page:
   title: 'State editor'
   description: 'Edit state system values.'
@@ -60,7 +67,9 @@ devel.cache_clear:
   title: 'Cache clear'
   route_name: devel.cache_clear
   menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\DestinationMenuLink
 devel.run_cron:
   title: 'Run cron'
   route_name: devel.run_cron
   menu_name: devel
+  class: \Drupal\devel\Plugin\Menu\DestinationMenuLink

@@ -43,7 +43,7 @@ class RevisionOverviewIntegrationTest extends KernelTestBase {
     $this->assertArrayNotHasKey('entity.revisions_overview:node', $tasks, 'Node should have been excluded because it provides their own');
 
     $this->assertEquals('entity.entity_test_enhanced.version_history', $tasks['entity.revisions_overview:entity_test_enhanced']['route_name']);
-    $this->assertEquals('entity.entity_test_enhanced.edit_form', $tasks['entity.revisions_overview:entity_test_enhanced']['base_route']);
+    $this->assertEquals('entity.entity_test_enhanced.canonical', $tasks['entity.revisions_overview:entity_test_enhanced']['base_route']);
 
     /** @var \Drupal\Core\Routing\RouteProviderInterface $route_provider */
     $route_provider = \Drupal::service('router.route_provider');

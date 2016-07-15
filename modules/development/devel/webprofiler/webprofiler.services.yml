@@ -74,6 +74,12 @@ services:
     tags:
       - { name: data_collector, template: '@webprofiler/Collector/drupal.html.twig', id: 'drupal', title: 'Drupal', priority: 10 }
 
+  webprofiler.devel:
+    class: Drupal\webprofiler\DataCollector\DevelDataCollector
+    arguments: ['@menu.link_tree']
+    tags:
+      - { name: data_collector, template: '@webprofiler/Collector/devel.html.twig', id: 'devel', title: 'Devel', priority: 15 }
+
   webprofiler.php_config:
     class: Drupal\webprofiler\DataCollector\PhpConfigDataCollector
     tags:
@@ -217,13 +223,13 @@ services:
     properties:
       _serviceId: 'asset.js.collection_renderer'
 
-  webprofiler.debug.entity.manager:
+  webprofiler.debug.entity_type.manager:
     class: Drupal\webprofiler\Entity\EntityManagerWrapper
     public: false
-    decorates: entity.manager
-    arguments: ['@webprofiler.debug.entity.manager.inner']
+    decorates: entity_type.manager
+    arguments: ['@webprofiler.debug.entity_type.manager.inner']
     properties:
-      _serviceId: 'entity.manager'
+      _serviceId: 'entity_type.manager'
 
   webprofiler.debug.state:
     class: Drupal\webprofiler\State\StateWrapper

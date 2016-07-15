@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Form\ZoneForm.
- */
-
 namespace Drupal\address\Form;
 
 use Drupal\address\ZoneMemberManager;
@@ -47,6 +42,7 @@ class ZoneForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\address\Entity\ZoneInterface $zone */
     $zone = $this->entity;
     $user_input = $form_state->getUserInput();
 
@@ -106,10 +102,11 @@ class ZoneForm extends EntityForm {
     ];
 
     $index = 0;
-    foreach ($this->entity->getMembers() as $key => $member) {
+    /** @var \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface $member */
+    foreach ($zone->getMembers() as $key => $member) {
       $member_form = &$form['members'][$index];
       $member_form['#attributes']['class'][] = 'draggable';
-      $member_form['#weight'] = isset($user_input['members'][$index]) ? $user_input['members'][$index]['weight'] : NULL;
+      $member_form['#weight'] = isset($user_input['members'][$index]) ? $user_input['members'][$index]['weight'] : $member->getWeight();
 
       $member_form['type'] = [
         '#type' => 'markup',
@@ -208,7 +205,9 @@ class ZoneForm extends EntityForm {
    */
   public function addMemberSubmit(array $form, FormStateInterface $form_state) {
     $plugin_id = $form_state->getValue('plugin');
-    $member = $this->memberManager->createInstance($plugin_id);
+    $weight = count($this->entity->getMembers());
+    /** @var \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface $member */
+    $member = $this->memberManager->createInstance($plugin_id, ['weight' => $weight], $this->entity);
     $this->entity->addMember($member);
     $form_state->setRebuild();
   }
@@ -218,6 +217,7 @@ class ZoneForm extends EntityForm {
    */
   public function removeMemberSubmit(array $form, FormStateInterface $form_state) {
     $member_index = $form_state->getTriggeringElement()['#member_index'];
+    /** @var \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface $member */
     $member = $form['members'][$member_index]['form']['#member'];
     $this->entity->removeMember($member);
     $form_state->setRebuild();
@@ -227,6 +227,7 @@ class ZoneForm extends EntityForm {
    * Validation callback for the embedded zone member form.
    */
   public function memberFormValidate($member_form, FormStateInterface $form_state) {
+    /** @var \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface $member */
     $member = $member_form['#member'];
     $member_form_state = $this->buildMemberFormState($member_form['#parents'], $form_state);
     $member->validateConfigurationForm($member_form, $member_form_state);
@@ -240,19 +241,23 @@ class ZoneForm extends EntityForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    foreach ($form_state->getValue(['members']) as $member_index => $values) {
-      $member_form = $form['members'][$member_index]['form'];
-      $member = $member_form['#member'];
-      $member_form_state = $this->buildMemberFormState($member_form['#parents'], $form_state);
-      $member->submitConfigurationForm($member_form, $member_form_state);
-      // Update form state with values that might have been changed by the plugin.
-      $form_state->setValue($member_form['#parents'], $member_form_state->getValues());
-      // Update the member weight.
-      $configuration = $member->getConfiguration();
-      $configuration['weight'] = $values['weight'];
-      $member->setConfiguration($configuration);
-      // Update the member on the entity.
-      $this->entity->getMembers()->addInstanceId($member->getId(), $configuration);
+    if (!empty($form_state->getValue(['members']))) {
+      foreach ($form_state->getValue(['members']) as $member_index => $values) {
+        $member_form = $form['members'][$member_index]['form'];
+        /** @var \Drupal\address\Plugin\ZoneMember\ZoneMemberInterface $member */
+        $member = $member_form['#member'];
+        $member_form_state = $this->buildMemberFormState($member_form['#parents'], $form_state);
+        $member->submitConfigurationForm($member_form, $member_form_state);
+        // Update form state with values that might have been changed by the plugin.
+        $form_state->setValue($member_form['#parents'], $member_form_state->getValues());
+        // Update the member weight.
+        $configuration = $member->getConfiguration();
+        $configuration['weight'] = $values['weight'];
+        $member->setConfiguration($configuration);
+        // Update the member on the entity.
+        $this->entity->getMembers()
+          ->addInstanceId($member->getId(), $configuration);
+      }
     }
   }
 

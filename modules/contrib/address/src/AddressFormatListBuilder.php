@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressFormatListBuilder.
- */
-
 namespace Drupal\address;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

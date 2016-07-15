@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Event\AddressEvents.
- */
-
 namespace Drupal\address\Event;
 
 /**

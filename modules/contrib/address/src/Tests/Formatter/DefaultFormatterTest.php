@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Tests\Formatter\DefaultFormatterTest.
- */
-
 namespace Drupal\address\Tests\Formatter;
 
 use Drupal\Component\Utility\Unicode;
@@ -87,7 +82,13 @@ class DefaultFormatterTest extends KernelTestBase {
     ]);
     $field->save();
 
-    $this->display = entity_get_display($this->entityType, $this->bundle, 'default');
+    $values = [
+      'targetEntityType' => $this->entityType,
+      'bundle' => $this->bundle,
+      'mode' => 'default',
+      'status' => TRUE,
+    ];
+    $this->display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->create($values);
     $this->display->setComponent($this->fieldName, [
       'type' => 'address_default',
       'settings' => [],

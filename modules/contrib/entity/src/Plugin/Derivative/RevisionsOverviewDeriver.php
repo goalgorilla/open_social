@@ -61,7 +61,7 @@ class RevisionsOverviewDeriver extends DeriverBase implements ContainerDeriverIn
       $this->derivatives[$entity_type_id] = [
         'route_name' => "entity.$entity_type_id.version_history",
         'title' => 'Revisions',
-        'base_route' => "entity.$entity_type_id.edit_form",
+        'base_route' => "entity.$entity_type_id.canonical",
         'weight' => 20,
       ] + $base_plugin_definition;
     }

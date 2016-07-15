@@ -9,7 +9,7 @@ drupal_ti_ensure_drupal
 # Add custom modules to drupal build.
 cd "$DRUPAL_TI_DRUPAL_DIR"
 
-# Download custom branches of address and composer_manager.
+# Download composer_manager.
 (
 	# These variables come from environments/drupal-*.sh
 	mkdir -p "$DRUPAL_TI_MODULES_PATH"
@@ -23,7 +23,7 @@ drupal_ti_ensure_module_linked
 # Initialize composer_manager.
 php modules/composer_manager/scripts/init.php
 composer drupal-rebuild
-composer update --prefer-source -n --verbose
+composer update -n --lock --verbose
 
 # Enable main module and submodules.
 drush en -y address

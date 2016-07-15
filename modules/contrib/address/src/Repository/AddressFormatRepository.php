@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Repository\AddressFormatRepository.
- */
-
 namespace Drupal\address\Repository;
 
 use CommerceGuys\Addressing\Repository\AddressFormatRepositoryInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Language\Language;
 
@@ -36,13 +31,13 @@ class AddressFormatRepository implements AddressFormatRepositoryInterface {
   /**
    * Creates an AddressFormatRepository instance.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager) {
-    $this->formatStorage = $entity_manager->getStorage('address_format');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
+    $this->formatStorage = $entity_type_manager->getStorage('address_format');
     $this->languageManager = $language_manager;
   }
 

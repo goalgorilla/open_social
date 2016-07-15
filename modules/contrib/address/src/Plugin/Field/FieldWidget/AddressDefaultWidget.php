@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\Field\FieldWidget\AddressDefaultWidget.
- */
-
 namespace Drupal\address\Plugin\Field\FieldWidget;
 
 use CommerceGuys\Addressing\Enum\AddressField;
@@ -170,6 +165,27 @@ class AddressDefaultWidget extends WidgetBase implements ContainerFactoryPluginI
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+    $default_country = $this->getSetting('default_country');
+    if (empty($default_country)) {
+      $default_country = t('None');
+    }
+    elseif ($default_country == 'site_default') {
+      $default_country = t('Site default');
+    }
+    else {
+      $country_list = $this->countryRepository->getList();
+      $default_country = $country_list[$default_country];
+    }
+    $summary = [];
+    $summary['default_country'] = $this->t('Default country: @country', ['@country' => $default_country]);
+
+    return $summary;
+  }
+
+  /**
    * Gets the initial values for the widget.
    *
    * This is a replacement for the disabled default values functionality.
@@ -294,7 +310,6 @@ class AddressDefaultWidget extends WidgetBase implements ContainerFactoryPluginI
         '#options' => $country_list,
         '#default_value' => $country_code,
         '#required' => $element['#required'],
-        '#empty_value' => '',
         '#limit_validation_errors' => [],
         '#ajax' => [
           'callback' => [get_class($this), 'ajaxRefresh'],
@@ -306,6 +321,9 @@ class AddressDefaultWidget extends WidgetBase implements ContainerFactoryPluginI
         ],
         '#weight' => -100,
       ];
+      if (!$element['#required']) {
+        $element['country_code']['#empty_value'] = '';
+      }
     }
     if (!empty($country_code)) {
       $element = $this->addressElements($element, $values);

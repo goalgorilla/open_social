@@ -1,9 +1,10 @@
 <?php
+
 class Kint_Parsers_ClassStatics extends kintParser
 {
 	protected function _parse( & $variable )
 	{
-		if ( !is_object( $variable ) ) return false;
+		if ( !KINT_PHP53 || !is_object( $variable ) ) return false;
 
 		$extendedValue = array();
 
@@ -21,12 +22,6 @@ class Kint_Parsers_ClassStatics extends kintParser
 				$access = "protected";
 			} else {
 				$access = 'public';
-			}
-
-			if ( Kint::$keyFilterCallback
-				&& call_user_func( Kint::$keyFilterCallback, $property->getName(), $property->getValue() ) === false
-			) {
-				continue;
 			}
 
 			$_      = $property->getValue();

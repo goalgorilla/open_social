@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Event\AvailableCountriesEvent.
- */
-
 namespace Drupal\address\Event;
 
 use Drupal\Core\Field\FieldDefinitionInterface;

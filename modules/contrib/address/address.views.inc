@@ -39,6 +39,8 @@ function address_field_views_data(FieldStorageConfigInterface $field) {
         'property' => $column,
       ];
     }
+    // Add the custom country_code filter.
+    $data[$table_name][$field_name . '_country_code']['filter']['id'] = 'country_code';
   }
 
   return $data;

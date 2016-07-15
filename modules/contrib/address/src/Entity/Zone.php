@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\address\Entity\Zone.
- */
 
 namespace Drupal\address\Entity;
 
