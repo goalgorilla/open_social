@@ -12,6 +12,12 @@ function address_requirements($phase) {
         'severity' => REQUIREMENT_ERROR,
       ];
     }
+    if (!class_exists('\CommerceGuys\Zone\Repository\ZoneRepository')) {
+      $requirements['zone_library'] = [
+        'description' => t('Address requires the commerceguys/zone library.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
   }
 
   return $requirements;

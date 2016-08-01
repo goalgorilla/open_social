@@ -26,13 +26,14 @@ block pagetitle
 block content
   
   .row.margin-top-l
-  
-    .col-xs-12
-      h1.h4.section-title.section-title-stream Jenny Baker`s stream
-      
-  .row
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+      include ./molecules/_other-events.jade
+      include ./molecules/_other-topics.jade
+      include ./molecules/_other-groups.jade
 
     .col-xs-12.col-sm-8
+      h4.section-title.section-title-stream Jenny Baker`s stream
     
       ul.stream
         li.stream-item
@@ -62,20 +63,15 @@ block content
           .card.stream-card
             .card-body
               include ./molecules/_stream-post2.jade    
-      
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
-      include ./molecules/_other-events.jade
-      include ./molecules/_other-topics.jade
-      include ./molecules/_other-groups.jade
 
 block scriptinline  
   
   script.  
     function showMe (it, radio) {
       var visibility = radio.value;
-      var icon = jQuery(radio).prevAll('.material-icons').text();
+      var icon = jQuery(radio).prevAll('svg').html();
       jQuery('#' + it).find('.text').html(visibility);
-      jQuery('#' + it).find('.material-icons').html(icon);
+      jQuery('#' + it).find('svg').html(icon);
       jQuery('#' + it).next('.dropdown-menu').find('.list-group-item').removeClass('active');
       jQuery(radio).closest('.list-group-item').addClass('active');
     }

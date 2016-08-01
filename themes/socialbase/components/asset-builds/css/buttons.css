@@ -469,10 +469,15 @@ input[type="button"].btn-block {
   font-size: 1rem;
 }
 
+.btn-default {
+  fill: #4d4d4d;
+}
+
 .btn-accent {
   color: #333333;
   background-color: #ffc142;
   border-color: #ffc142;
+  fill: #333333;
 }
 
 .btn-accent:focus, .btn-accent.focus {
@@ -521,10 +526,19 @@ fieldset[disabled] .btn-accent.focus {
   background-color: #333333;
 }
 
+.btn-link {
+  fill: #29abe2;
+}
+
+.btn-link:hover {
+  fill: #1a8dbe;
+}
+
 .btn-flat {
   color: #29abe2;
   background-color: transparent;
   border-color: transparent;
+  fill: #29abe2;
 }
 
 .btn-flat:focus, .btn-flat.focus {
@@ -592,8 +606,7 @@ fieldset[disabled] .btn-flat.focus {
   box-shadow: none;
 }
 
-.btn-flat,
-.btn-icon-toggle {
+.btn-flat {
   box-shadow: none;
   background-color: transparent;
   border-color: transparent;
@@ -601,36 +614,40 @@ fieldset[disabled] .btn-flat.focus {
 }
 
 .btn-flat:hover, .btn-flat:focus,
-.open .dropdown-toggle .btn-flat,
-.btn-icon-toggle:hover,
-.btn-icon-toggle:focus,
-.open .dropdown-toggle
-.btn-icon-toggle {
+.open .dropdown-toggle .btn-flat {
   background-color: rgba(0, 0, 0, 0.07);
   border-color: transparent;
   box-shadow: none;
   color: inherit;
 }
 
-.btn-flat:active, .btn-flat.active,
-.btn-icon-toggle:active,
-.btn-icon-toggle.active {
+.btn-flat:active, .btn-flat.active {
   background-color: rgba(12, 12, 12, 0.25);
   border-color: transparent;
   color: white;
 }
 
 .btn-icon-toggle {
+  background-color: transparent;
   border-radius: 50% !important;
-  padding: 0;
-  width: 30px;
+  padding: 4px;
+}
+
+.btn-icon-toggle:hover, .btn-icon-toggle:focus {
+  background-color: rgba(0, 0, 0, 0.07);
+  border-color: transparent;
+}
+
+.btn-icon-toggle:active, .btn-icon-toggle.active {
+  background-color: rgba(12, 12, 12, 0.25);
+  border-color: transparent;
 }
 
 .btn-floating {
   width: 38px;
   height: 38px;
-  padding: 0;
-  font-size: 1.25rem;
+  line-height: 36px;
+  padding: 4px;
   border-radius: 50%;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
@@ -649,86 +666,20 @@ fieldset[disabled] .btn-flat.focus {
   height: 52px;
 }
 
-.btn .material-icons {
+.btn-icon {
   font-size: 1.00012rem;
   line-height: 21px;
   height: 21px;
+  width: 21px;
   vertical-align: bottom;
-}
-
-.btn .custom-icons {
-  font-size: 0.7rem;
-  line-height: 21px;
-  height: 21px;
-  vertical-align: bottom;
-}
-
-.btn-floating .material-icons {
-  line-height: 36px;
-  height: 36px;
-  font-size: 1.3rem;
-}
-
-.btn-floating.btn-lg .material-icons {
-  font-size: 2rem;
-  line-height: 50px;
-  height: 50px;
-}
-
-.fixed-action-btn {
-  position: fixed;
-  right: 23px;
-  bottom: 23px;
-  padding-top: 15px;
-  margin-bottom: 0;
-  z-index: 998;
-}
-
-.fixed-action-btn.active ul {
-  visibility: visible;
-}
-
-.fixed-action-btn.horizontal {
-  padding: 0 0 0 15px;
-}
-
-.fixed-action-btn.horizontal ul {
-  text-align: right;
-  right: 64px;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  height: 100%;
-  left: initial;
-  width: 500px;
-  /*width 100% only goes to width of button container */
-}
-
-.fixed-action-btn.horizontal ul li {
-  display: inline-block;
-  margin: 15px 15px 0 0;
-}
-
-.fixed-action-btn ul {
-  left: 0;
-  right: 0;
-  text-align: center;
-  position: absolute;
-  bottom: 64px;
-  margin: 0;
-  visibility: hidden;
-}
-
-.fixed-action-btn ul li {
-  margin-bottom: 15px;
-}
-
-.fixed-action-btn ul a.btn-floating {
-  opacity: 0;
 }
 
 .btn-group.open .dropdown-toggle {
   box-shadow: none;
+}
+
+.btn-non-clickable {
+  pointer-events: none;
 }
 
 /*# sourceMappingURL=buttons.css.map */

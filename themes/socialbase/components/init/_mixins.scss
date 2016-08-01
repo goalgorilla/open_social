@@ -21,11 +21,12 @@
 
 }
 
-@mixin MQH($height) {
-  @media screen and (min-height: $height) {
+@mixin MQH($height, $width) {
+  @media screen and (min-width: $width), screen and (min-height: $height) {
     @content;
   }
 }
+
 
 %inline-clear {
   clear: both;

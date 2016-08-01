@@ -31,6 +31,23 @@ class GroupContentForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function form(array $form, FormStateInterface $form_state) {
+    $form = parent::form($form, $form_state);
+
+    $config = $this->getContentPlugin()->getConfiguration();
+    if (!empty($config['data']['info_text']['value'])) {
+      $form['info_text'] = [
+        '#markup' => $config['data']['info_text']['value'],
+        '#weight' => -99,
+      ];
+    }
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state) {
     $return = parent::save($form, $form_state);
 

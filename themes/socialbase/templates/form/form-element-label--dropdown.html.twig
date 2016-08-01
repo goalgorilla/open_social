@@ -17,8 +17,9 @@
  */
 #}
 <label{{ attributes.removeAttribute('data-original-title', 'data-toggle')}} class="block">
-  <i class="material-icons pull-left">{{ material_icon }}</i>
+  <svg class="icon-small">
+    <use xlink:href="#icon-{{ material_icon }}"></use>
+  </svg>
   <span>{{ title }}</span>
   <span>{{ element }}</span>
 </label>
-

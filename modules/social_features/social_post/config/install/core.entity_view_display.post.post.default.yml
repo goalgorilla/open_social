@@ -9,6 +9,7 @@ dependencies:
     - field.field.post.post.field_visibility
   module:
     - social_post
+    - text
     - user
 id: post.post.default
 targetEntityType: post
@@ -16,7 +17,7 @@ bundle: post
 mode: default
 content:
   field_post:
-    type: basic_string
+    type: text_default
     weight: 1
     label: hidden
     settings: {  }

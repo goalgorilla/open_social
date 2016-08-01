@@ -10,6 +10,7 @@ namespace Drupal\group\Entity;
 use Drupal\group\Plugin\GroupContentEnablerCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Config\Entity\Exception\ConfigEntityIdLengthException;
+use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
@@ -124,6 +125,54 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAnonymousRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getAnonymousRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAnonymousRoleId() {
+    return $this->id() . '-anonymous';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutsiderRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getOutsiderRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOutsiderRoleId() {
+    return $this->id() . '-outsider';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMemberRole() {
+    return $this->entityTypeManager()
+      ->getStorage('group_role')
+      ->load($this->getMemberRoleId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMemberRoleId() {
+    return $this->id() . '-member';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage) {
     // Throw an exception if the group type ID is longer than the limit.
     if (strlen($this->id()) > GroupTypeInterface::ID_MAX_LENGTH) {
@@ -141,32 +190,32 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
 
     if (!$update) {
       // Store the id in a short variable for readability.
-      $id = $this->id();
+      $group_type_id = $this->id();
 
       // @todo Remove this line when https://www.drupal.org/node/2645202 lands.
-      $this->setOriginalId($this->id());
+      $this->setOriginalId($group_type_id);
 
       // Create the three special roles for the group type.
       GroupRole::create([
-        'id' => "$id-anonymous",
+        'id' => $this->getAnonymousRoleId(),
         'label' => t('Anonymous'),
         'weight' => -102,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
       GroupRole::create([
-        'id' => "$id-outsider",
+        'id' => $this->getOutsiderRoleId(),
         'label' => t('Outsider'),
         'weight' => -101,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
       GroupRole::create([
-        'id' => "$id-member",
+        'id' => $this->getMemberRoleId(),
         'label' => t('Member'),
         'weight' => -100,
         'internal' => TRUE,
-        'group_type' => $id,
+        'group_type' => $group_type_id,
       ])->save();
 
       // Enable enforced content plugins for new group types.
@@ -292,6 +341,33 @@ class GroupType extends ConfigEntityBundleBase implements GroupTypeInterface {
 
     // Delete the group content type config entity.
     GroupContentType::load($content_type_id)->delete();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    // All dependencies should be recalculated on every save apart from enforced
+    // dependencies. This ensures stale dependencies are never saved.
+    $this->dependencies = array_intersect_key($this->dependencies, ['enforced' => '']);
+
+    // The parent calculateDependencies() would merge in the installed plugin
+    // dependencies at this point. However, because we have an uninstall
+    // validator preventing you from removing any module that provides a plugin
+    // which has content for it, we don't want the plugin's dependencies added
+    // to the group type as it would get deleted when the module which provides
+    // that plugin is uninstalled.
+
+    // Taken from the parent function 1:1.
+    if ($this instanceof ThirdPartySettingsInterface) {
+      // Configuration entities need to depend on the providers of any third
+      // parties that they store the configuration for.
+      foreach ($this->getThirdPartyProviders() as $provider) {
+        $this->addDependency('module', $provider);
+      }
+    }
 
     return $this;
   }

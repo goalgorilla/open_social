@@ -7,6 +7,7 @@ include layout/_head.jade
 body
   include layout/_gtm.jade
   include layout/_header-an.jade
+  include ../images/icons.svg
   
   main.main-container(role='main')
   
@@ -23,10 +24,11 @@ body
           .hero-footer
             .row.row-md-center
               .col-xs-12.col-md-6.col-md-offset-3
-                .badge.badge-gray-dark.badge--toggle
+                .badge.badge--toggle
                   label
                     input(type='checkbox')
-                    i.material-icons public        
+                    svg.icon-white.icon-badge-toggle
+                      use(xlink:href='#icon-public')          
                     span.badge--toggle__label public
     
     .main-content

@@ -6,14 +6,14 @@ block title
 block content
       
   .row.margin-top-l
-    .col-xs-12.col-md-8
+    .col-xs-12.col-sm-8
     
       h4.section-title Edit Happy Campers (Open group)   
     
       form(action='group-stream.html', method='get')
       
         .card.card-underline
-        
+         
           .card-head
             header Content
       
@@ -37,8 +37,9 @@ block content
                   a(href='#', type="image/jpeg; length=158378") group1-square.jpg
                   .file-size (154.78kb)
                 .pull-left.padding-xs
-                  button.btn.btn-user.form-submit(type='submit', value='remove')
-                    i.material-icons.pull-left delete
+                  button.btn.btn-default.icon-before(type='submit', value='remove')
+                    svg.btn-icon
+                      use(xlink:href='#icon-delete')   
                     | Remove
               .help-block(style='display:none') One file only - 2 MB limit - Allowed types: png gif jpg jpeg
               

@@ -10,6 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_form_form_ID_alter().
@@ -18,6 +20,10 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
  */
 function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form['#id'] === 'views-exposed-form-events-events-overview') {
+
+    $form['status']['#options'][0] = t('Unpublished');
+    $form['status']['#options'][1] = t('Published');
+
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
 
@@ -31,6 +37,23 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     // @todo make sure exposed form filtering redirects to the proper view
     // page, when views is updated.
     $form['#action'] = '/user/' . $account_uid . '/events';
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
+    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $current_uid = \Drupal::currentUser()->id();
+    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+      $query->where[1]['conditions'][] = array(
+        'field' => 'node_field_data.status',
+        'value' => NODE_PUBLISHED,
+        'operator' => '=',
+      );
+    }
   }
 }
 

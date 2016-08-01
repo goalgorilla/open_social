@@ -7,9 +7,12 @@
                 
       .navbar-header
       
+    
         button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
-          span.sr-only Toggle navigation
-          i.material-icons(title='menu') menu     
+          svg.icon-white.icon-medium
+            title Toggle navigation
+            use(xlink:href='#icon-menu')
+          span.sr-only Toggle navigation      
   
         ul.nav.navbar-nav.navbar-right
           li
@@ -25,4 +28,6 @@
                 input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
                 input.form-submit(type='submit', value='')
                 span.search-icon
-                  i.material-icons search
+                  svg
+                    title Search
+                    use(xlink:href='#icon-search')

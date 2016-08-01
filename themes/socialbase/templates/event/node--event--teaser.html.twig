@@ -65,10 +65,33 @@
  * @ingroup themeable
  */
 #}
-<div class="card card--teaser card-with-actionbar">
-    <div class='card-image blue-overlay'>
+
+{%
+  set classes = [
+    view_mode == 'teaser' ? 'card',
+    'card--teaser',
+    'card-with-actionbar',
+    view_mode == 'activity' ? 'card--teaser-stream',
+    view_mode == 'activity_comment' ? 'card--teaser-stream',
+  ]
+%}
+
+<div {{ attributes.addClass(classes) }}>
+    <div class='card-image'>
+      {% if view_mode == 'teaser' %}
+        <div class="teaser-type">
+          <svg class="icon-white icon-responsive">
+            <use xlink:href="#icon-event"></use>
+          </svg>
+        </div>
+      {% endif %}
       {{ content.field_event_image }}
-      {# TODO: insert shorthand date format according to prototype #}
+
+        {% if status_label %}
+            <div class="status">
+                {{ status_label }}
+            </div>
+        {% endif %}
     </div>
     <div class='card-body'>
         {{ title_prefix }}
@@ -78,36 +101,62 @@
             </h4>
         {% endif %}
         {{ title_suffix }}
-        <p class="text-grey-dark">
-          <i class="material-icons pull-left">event</i>
+        <div class="text-gray-dark text-truncate text-m">
+          <svg class="icon-gray icon-small">
+            <use xlink:href="#icon-event"></use>
+          </svg>
           <span class="inline-center">
               {% if event_date %}
                 {{ event_date }}
               {% endif %}
-          </span>&nbsp;
-          {% if content.enrolled %}
-            <span class="label label-primary">enrolled</span>
-          {% endif %}
-        </p>
+          </span>
+        </div>
         {% if content.field_event_location %}
-          <p class="text-grey-dark">
-            <i class="material-icons pull-left">place</i>
+          <div class="text-gray-dark text-truncate text-m">
+            <svg class="icon-gray icon-small">
+              <use xlink:href="#icon-location"></use>
+            </svg>
             <span class="inline-center">
               {{ content.field_event_location }}
             </span>
-          </p>
+          </div>
         {% endif %}
+
+        {# TODO: insert group name
+          <div class="text-gray-dark text-truncate">
+            <svg class="icon-gray icon-small">
+              <use xlink:href="#icon-group"></use>
+            </svg>
+            <span class="inline-center"> @dev insert group name here </span>
+          </div>
+        #}
 
         {#TODO: Use content.links here and fix the theming#}
         <div class="card-actionbar">
-            {% if visibility_icon and  visibility_label %}
-                <div class="badge badge-gray-lighter badge--toggle">
-                    <label>
-                        <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
-                    </label>
-                </div>
-            {% endif %}
+            <div class="actionbar">
+                {% if visibility_icon and visibility_label %}
+                    <div class="badge badge-gray-lighter badge--toggle">
+                        <label>
+                            <input type="checkbox">
+                            <svg class="icon-gray icon-small icon-badge-toggle">
+                                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                            </svg>
+                            <span class="badge--toggle__label">{{ visibility_label }}</span>
+                        </label>
+                    </div>
+                {% endif %}
+
+                {% if content.enrolled %}
+                    <span class="label label-default">
+                      {% trans %}Enrolled{% endtrans %}
+                    </span>
+                {% endif %}
+            </div>
             {{ content.links }}
         </div>
     </div>
 </div>
+
+{% if view_mode == 'activity' and content.field_event_comments %}
+  {{ content.field_event_comments }}
+{% endif %}

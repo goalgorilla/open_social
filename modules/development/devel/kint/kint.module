@@ -11,7 +11,12 @@ function kint() {
   kint_require();
   if (\Drupal::currentUser()->hasPermission('access kint')) {
     $args = func_get_args();
-    call_user_func_array((PHP_SAPI === 'cli') ? 's' : array('Kint', 'dump'), $args);
+    if (PHP_SAPI === 'cli') {
+      s($args);
+    }
+    else {
+      \Kint::dump($args);
+    }
   }
 }
 
@@ -56,5 +61,5 @@ function ksm() {
  * Load the Kint class.
  */
 function kint_require() {
-  require_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'kint') . '/kint/Kint.class.php';
+  return require_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'kint') . '/kint/Kint.class.php';
 }

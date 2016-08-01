@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressServiceProvider.
- */
-
 namespace Drupal\address;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;

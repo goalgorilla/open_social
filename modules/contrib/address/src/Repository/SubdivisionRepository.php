@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Repository\SubdivisionRepository.
- */
-
 namespace Drupal\address\Repository;
 
 use CommerceGuys\Addressing\Repository\SubdivisionRepository as ExternalSubdivisionRepository;

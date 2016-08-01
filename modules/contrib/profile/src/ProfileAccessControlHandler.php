@@ -52,6 +52,7 @@ class ProfileAccessControlHandler extends EntityAccessControlHandler {
     }
     else if (is_string($user_page)) {
       $user_page_id = $user_page;
+      $user_page = User::load($user_page_id);
     }
 
     // Some times, operation edit is called update.
@@ -71,7 +72,9 @@ class ProfileAccessControlHandler extends EntityAccessControlHandler {
     }
     elseif ($entity->getEntityTypeId() == 'profile_type') {
       $profile_roles = $entity->getRoles();
-      $user_roles = User::load($user_page_id)->getRoles(TRUE);
+      if ($user_page instanceof \Drupal\user\Entity\User) {
+        $user_roles = $user_page->getRoles(TRUE);
+      }
 
       if (!empty(array_filter($profile_roles)) && !array_intersect($user_roles, $profile_roles)) {
         return AccessResult::forbidden();

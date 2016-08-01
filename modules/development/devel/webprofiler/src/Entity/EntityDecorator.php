@@ -25,4 +25,5 @@ class EntityDecorator extends Decorator {
   public function getEntities() {
     return $this->entities;
   }
+  
 }

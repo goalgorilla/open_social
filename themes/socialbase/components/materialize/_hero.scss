@@ -23,6 +23,19 @@
   background-size: cover;
   background-position: 50% 0;
   background-repeat: no-repeat;
+
+  .node-unpublished &:before {
+    display: block;
+    position: absolute;
+    content: '';
+    background-color: rgba($gray, 0.8);
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+  }
 }
 
 .cover-with-canvas {
@@ -59,6 +72,15 @@
 
 }
 
+.node-unpublished .status:before {
+  border-top: 1px solid white;
+  margin: 5px auto;
+  width: 40px;
+  height: 0;
+  content: '';
+  display: block;
+}
+
 .page-title {
 	color: white;
   font-weight: 700;
@@ -90,11 +112,6 @@
     bottom: 0;
   }
 
-  .material-icons,
-  .custom-icons {
-    font-size: inherit;
-  }
-
 }
 
 .hero-canvas {
@@ -123,6 +140,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
+  z-index: 3;
 }
 
 
@@ -177,16 +195,16 @@
 
   .search-icon {
     line-height: 38px;
-    color: $brand-primary;
+    fill: $brand-primary;
     background: white;
     speak: none;
     pointer-events: none;
     transition: 0.3s;
 
-    i {
-      line-height: 38px;
-      width: 38px;
-      height: 38px;
+    svg {
+      margin-top: 7px;
+      width: 24px;
+      height: 24px;
     }
 
   }

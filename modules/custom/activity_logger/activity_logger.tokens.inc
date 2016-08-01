@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * Implements hook_token_info().
@@ -43,41 +46,61 @@ function activity_logger_token_info() {
  * Implements hook_tokens().
  */
 function activity_logger_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
-  $token_service = \Drupal::token();
-
-  $url_options = ['absolute' => TRUE];
-  if (isset($options['langcode'])) {
-    $url_options['language'] = \Drupal::languageManager()->getLanguage($options['langcode']);
-    $langcode = $options['langcode'];
-  }
-  else {
-    $langcode = NULL;
-  }
-  $sanitize = !empty($options['sanitize']);
-
   $replacements = [];
 
   if ($type == 'message' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
-    // Fetch arguments from group.
-    $arguments = $message->getArguments();
-    if (isset($arguments['groups'])) {
-      $group = $arguments['groups'];
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
 
-      foreach ($tokens as $name => $original) {
-        switch ($name) {
-          case 'gtitle':
-            // Set the group title.
-            $replacements[$original] = $group['gtitle'];
-            break;
+        case 'gtitle':
+        case 'gurl':
 
-          case 'gurl':
-            // Set the group title.
-            $replacements[$original] = $group['gurl'];
-            break;
-        }
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            $entity = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
+
+            // If comment get the entity to which the comment is attached.
+            if ($entity->getEntityTypeId() === 'comment') {
+              $entity = $entity->getCommentedEntity();
+            }
+
+            // Try to get the group.
+            $group_content = GroupContent::loadByEntity($entity);
+            if (!empty($group_content)) {
+              $group_content = reset($group_content);
+              $group = $group_content->getGroup();
+            }
+            // Or special handling for post entities.
+            if ($entity->getEntityTypeId() === 'post') {
+              if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')
+                  ->getValue())
+              ) {
+                $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+              }
+            }
+
+            // If it's a group.. add it in the arguments.
+            if ($group instanceof Group) {
+              if ($name === 'gtitle') {
+                $replacements[$original] = $group->label();
+              }
+              if ($name === 'gurl') {
+                $gurl = Url::fromRoute('entity.group.canonical', array(
+                  'group' => $group->id(),
+                  array()
+                ));
+                $replacements[$original] = $gurl->toString();
+              }
+            }
+
+          }
+
       }
     }
   }

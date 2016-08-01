@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\views\field\Subdivision.
- */
-
 namespace Drupal\address\Plugin\views\field;
 
 use CommerceGuys\Addressing\Repository\SubdivisionRepositoryInterface;

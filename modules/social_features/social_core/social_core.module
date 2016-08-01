@@ -9,6 +9,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_theme().
@@ -57,6 +59,7 @@ function template_preprocess_page_hero_data(&$variables) {
 
   // Get current node object or node id.
   $node = \Drupal::routeMatch()->getParameter('node');
+
   if (!is_object($node) && !is_null($node)) {
     $node = \Drupal::service('entity_type.manager')
       ->getStorage('node')
@@ -111,14 +114,18 @@ function template_preprocess_page_hero_data(&$variables) {
   }
 
   if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
-    $variables['created_date_formatted'] = \Drupal::service('date.formatter')->format($variables['created_date']);
+    $variables['created_date_formatted'] = \Drupal::service('date.formatter')
+      ->format($variables['created_date'], 'social_long_date');
   }
 
   if (isset($variables['topic_type'])) {
     $topic_type_entities = $variables['topic_type']->referencedEntities();
     if (count($topic_type_entities) === 1) {
       foreach ($topic_type_entities as $topic) {
-        $variables['topic_type'] = $topic->link();
+        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', array('field_topic_type_target_id' => $topic->id()));
+        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
+          ->toString();
+        $variables['topic_type'] = $topic_type_link;
       }
     }
     else {
@@ -182,4 +189,32 @@ function social_core_preprocess_field(&$variables) {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_core_menu_local_tasks_alter(&$data, $route_name) {
+  $node = \Drupal::service('current_route_match')->getParameter('node');
+
+  if (!is_null($node) && !is_object($node)) {
+    $node = Node::load($node);
+  }
+
+  if ($node instanceof Node && ($node->getType() === 'event' || $node->getType() === 'topic')) {
+    // Remove Edit tab. Edit will always go through Floating Edit Button.
+    if (isset($data['tabs'][0]['entity.node.edit_form'])) {
+      unset($data['tabs'][0]['entity.node.edit_form']);
+    }
+  }
+  // Change the default 'View' tab title.
+  if (isset($data['tabs'][0]['entity.node.canonical']['#link'])) {
+    $data['tabs'][0]['entity.node.canonical']['#link']['title'] = t('Details');
+  }
+
+  // Remove Delete tab. Delete will always go through Edit.
+  if (isset($data['tabs'][0]['entity.node.delete_form'])) {
+    unset($data['tabs'][0]['entity.node.delete_form']);
+  }
+
 }

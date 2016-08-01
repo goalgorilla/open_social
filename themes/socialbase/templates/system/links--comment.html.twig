@@ -44,7 +44,11 @@
 
   {% if links['comment-edit'] %}
     <div class="btn-group pull-right">
-      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">expand_more</i></button>
+      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
+        <svg class="btn-icon icon-gray">
+          <use xlink:href="#icon-expand_more"></use>
+        </svg>
+      </button>
       <ul{{ attributes.addClass('dropdown-menu') }}>
         {%- for key, item in links|reverse if key != "comment-reply" -%}
           <li{{ item.attributes.addClass(key|clean_class) }}>
@@ -80,7 +84,7 @@
 {% if links['comment-reply'] %}
 
   <div class="clearfix reply-placeholder">
-    <div class="btn btn-link btn-sm pull-right">
+    <div class="btn btn-link btn-sm pull-right margin-top-s">
       {%- for key, item in links|reverse if key == "comment-reply" -%}
         {{ item.link }}
       {%- endfor -%}

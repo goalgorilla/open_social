@@ -103,24 +103,22 @@
 .dropdown-header {
   padding: 10px 20px;
   background: $dropdown-header-bg;
-  color: $dropdown-header-color;
 }
 
-.dropdown-toggle + ul > li > .material-icons {
+.dropdown-toggle + ul > li > svg {
   margin-right: 10px;
-  font-size: 16px;
 }
 
 .scrollable-menu {
-  height: auto;
-  max-height: 200px;
+  height: calc(100vh - 114px);
   overflow-x: hidden;
   list-style-type: none;
   padding: 0;
   margin: 0;
 
   // When the screen is taller, the dropdown can be taller
-  @include MQH(500px) {
+  @include MQH($small, $small) {
+    height: auto;
     max-height: 450px;
   }
 

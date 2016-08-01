@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Form\AddressFormatFormDeleteForm.
- */
-
 namespace Drupal\address\Form;
 
 use Drupal\Core\Entity\EntityDeleteForm;

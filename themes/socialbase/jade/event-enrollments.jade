@@ -15,17 +15,19 @@ block pagetitle
   .container.hero-container
     .cover.cover-img.cover-img-gradient.hidden-xs(style="background-image: url('content/images/event-hero.jpg')")  
       .hero-action-button
-        a.waves-effect.waves-dark.btn.btn-default.btn-floating(href='node-edit-event.html')
-          i.material-icons mode_edit     
+        a.waves-effect.waves-circle.btn.btn-default.btn-floating(href='node-edit-event.html')
+          svg.icon-gray.icon-medium
+            use(xlink:href='#icon-edit')     
       .cover-wrap
         h1.page-title Amsterdam Meetup
         .hero-footer
           .row.row-md-center
             .col-xs-12.col-md-6.col-md-offset-3
-              .badge.badge-gray-dark.badge--toggle
+              .badge.badge--toggle
                 label
                   input(type='checkbox')
-                  i.material-icons group        
+                  svg.icon-white.icon-badge-toggle
+                    use(xlink:href='#icon-community')
                   span.badge--toggle__label community
               div
                 time.eventdate.updated June 6 2016 - 12:00 
@@ -47,7 +49,8 @@ block pagetitle
   .container  
     .visible-xs-block.section
       a.btn.btn-raised.btn-user(href="event.html")
-        i.material-icons.pull-left keyboard_arrow_left
+        svg.btn-icon
+          use(xlink:href='#icon-navigate_before')  
         | Back to event
 
   .container.hero-container  

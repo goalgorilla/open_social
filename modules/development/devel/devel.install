@@ -17,3 +17,16 @@ function devel_uninstall() {
   }
 }
 
+/**
+ * Set the default devel dumper plugin.
+ */
+function devel_update_8001() {
+  $kint_enabled = \Drupal::moduleHandler()->moduleExists('kint');
+
+  $default_dumper = $kint_enabled ? 'kint' : 'default';
+
+  // Set the default dumper plugin to kint if kint module is available.
+  \Drupal::configFactory()->getEditable('devel.settings')
+    ->set('devel_dumper', $default_dumper)
+    ->save(TRUE);
+}

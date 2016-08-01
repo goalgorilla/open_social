@@ -42,7 +42,11 @@
   {%- endif -%}
   {%- if links.edit -%}
     <div class="btn-group pull-right">
-      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle"><i class="material-icons">expand_more</i></button>
+      <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
+        <svg class="btn-icon icon-gray">
+          <use xlink:href="#icon-expand_more"></use>
+        </svg>
+      </button>
       <ul{{ attributes.addClass('dropdown-menu') }}>
       {%- elseif attributes.hasClass('inline') -%}
       <ul{{ attributes.addClass('list-inline') }}>

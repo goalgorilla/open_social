@@ -10,8 +10,7 @@ Feature: Overview
     And I am on "user"
     When I click "Events"
     Then I should see "Events" in the "Page title block"
-    And I should see "Events filter" in the "Sidebar second"
-    And I should see "What events do you want to see?"
+    And I should see "Filter" in the "Sidebar second"
     And I should see "Upcoming events"
     And I should see "Events that have started or are finished"
     And I should see text matching "Publish status"
@@ -20,7 +19,7 @@ Feature: Overview
     Given I am on "user/1"
     When I click "Events"
     Then I should see "Events" in the "Page title block"
-    And I should see "Events filter" in the "Sidebar second"
+    And I should see "Filter" in the "Sidebar second"
     And I should not see text matching "Publish status"
 
     #@TODO make a scenario for filters to work.

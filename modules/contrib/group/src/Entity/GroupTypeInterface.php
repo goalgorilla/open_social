@@ -47,6 +47,54 @@ interface GroupTypeInterface extends ConfigEntityInterface, EntityWithPluginColl
    *   The ids of the group roles this group type uses.
    */
   public function getRoleIds();
+  
+  /**
+   * Gets the anonymous group role for this group type.
+   *
+   * @return \Drupal\group\Entity\GroupRoleInterface
+   *   The anonymous group role this group type uses.
+   */
+  public function getAnonymousRole();
+
+  /**
+   * Gets the anonymous role ID.
+   *
+   * @return string
+   *   The ID of the anonymous group role this group type uses.
+   */
+  public function getAnonymousRoleId();
+
+  /**
+   * Gets the outsider group role for this group type.
+   *
+   * @return \Drupal\group\Entity\GroupRoleInterface
+   *   The outsider group role this group type uses.
+   */
+  public function getOutsiderRole();
+
+  /**
+   * Gets the outsider role ID.
+   *
+   * @return string
+   *   The ID of the outsider group role this group type uses.
+   */
+  public function getOutsiderRoleId();
+
+  /**
+   * Gets the generic member group role for this group type.
+   *
+   * @return \Drupal\group\Entity\GroupRoleInterface
+   *   The generic member group role this group type uses.
+   */
+  public function getMemberRole();
+
+  /**
+   * Gets the generic member role ID.
+   *
+   * @return string
+   *   The ID of the generic member group role this group type uses.
+   */
+  public function getMemberRoleId();
 
   /**
    * Returns the installed content enabler plugins for this group type.

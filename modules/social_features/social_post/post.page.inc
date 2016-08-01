@@ -29,11 +29,13 @@ function template_preprocess_post(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 
-  // Display comment created date in format 'time ago'.
+  // Display Post created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 2));
-  $date = t('%time ago', array('%time' => $created_time_ago));
+    ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
+  $date = t('%time ago', array('%time' => $created_time_ago->getString()));
   $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));
+  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
+
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might

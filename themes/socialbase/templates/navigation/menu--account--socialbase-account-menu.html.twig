@@ -42,7 +42,14 @@
   {% import _self as menus %}
   {% if items %}
 
-    <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed"><span class="sr-only">Toggle navigation</span><i title="menu" class="material-icons">menu</i></button>
+    <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
+      <span class="sr-only">
+        {% trans %} Toggle navigation {% endtrans %}
+      </span>
+      <svg class="icon-white icon-medium">
+        <use xlink:href="#icon-menu"></use>
+      </svg>
+    </button>
     <ul{{ attributes.addClass('header-menu list-unstyled nav navbar-nav navbar-right') }}>
 
     {% for item in items %}

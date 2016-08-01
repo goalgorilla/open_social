@@ -192,7 +192,7 @@ function devel_node_access_user_ajax($data_type, $cell) {
   );
   // JSON output for Ajax callbacks.
   if ($data_type == 'json') {
-    drupal_json_output(drupal_render($output));
+    drupal_json_output(\Drupal::service('renderer')->render($output));
     exit;
   }
   // HTML output for error message click-throughs.

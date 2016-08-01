@@ -42,6 +42,9 @@ class WebprofilerRequestMatcher implements RequestMatcherInterface {
     // never add Webprofiler to phpinfo page.
     $patterns .= "\r\n/admin/reports/status/php";
 
+    // never add Webprofiler to uninstall confirm page.
+    $patterns .= "\r\n/admin/modules/uninstall/*";
+
     return !$this->pathMatcher->matchPath($path, $patterns);
   }
 }

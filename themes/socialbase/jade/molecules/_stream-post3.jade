@@ -21,7 +21,8 @@
     unless user == "isAnonymous"    
       .btn-group.pull-right
         button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
-          i.material-icons expand_more
+          svg.btn-icon.icon-gray
+            use(xlink:href='#icon-expand_more')
         ul.dropdown-menu(role='menu')
           li 
             a(href='post-edit.html') Edit
@@ -49,7 +50,9 @@ img.img-responsive(src="content/images/os_image.jpg", alt="")
   .margin-top-l.text-center
     if user == "isAnonymous"
       a.btn.btn-link(href='single-post-an.html') show all 5 comments
-        i.material-icons chevron_right
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')
     else
       a.btn.btn-link(href='single-post.html') show all 5 comments
-        i.material-icons chevron_right
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')

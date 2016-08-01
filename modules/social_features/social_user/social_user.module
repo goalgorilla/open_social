@@ -149,3 +149,27 @@ function social_user_user_format_name_alter(&$name, $account) {
     }
   }
 }
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_user_menu_local_tasks_alter(&$data, $route_name) {
+  // Change the default 'View' tab title.
+  if (isset($data['tabs'][0]['entity.user.canonical']['#link'])) {
+    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = t('Stream');
+  }
+
+  // Remove Edit tab. Edit will always go through Floating Edit Button.
+  if (isset($data['tabs'][0]['entity.user.edit_form'])) {
+    unset($data['tabs'][0]['entity.user.edit_form']);
+  }
+
+  // Keep consistent sorting of 2nd navbar items.
+  if (isset($data['tabs'][0]['social_user.events'])) {
+    $data['tabs'][0]['social_user.events']['#weight'] = -2;
+  }
+  if (isset($data['tabs'][0]['social_user.topics'])) {
+    $data['tabs'][0]['social_user.topics']['#weight'] = -1;
+  }
+
+}

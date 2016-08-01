@@ -62,31 +62,31 @@
           {{ comment_form }}
       {% endif %}
 
-      <div class="visible-xs-block">
+      {% if not comments|render %}
         {% if more_link %}
-          <hr class="ruler-sm">
+          <hr class="ruler-xs">
           <div class="btn btn-block btn-link">
             {{ more_link }}
           </div>
         {% endif %}
-      </div>
+      {% endif %}
 
+      {% if comments|render %}
+        <div class="hidden-xs card-nested-section">
 
-      <div class="hidden-xs card-nested-section">
+          {{ comments }}
 
-        {{ comments }}
+          <div class="margin-top-l text-center">
+            {% if more_link %}
+              <div class="btn btn-block btn-link">
+                {{ more_link }}
+              </div>
+            {% endif %}
+          </div>
 
-        <div class="margin-top-l text-center">
-          {% if more_link %}
-            <div class="btn btn-block btn-link">
-              {{ more_link }}
-            </div>
-          {% endif %}
         </div>
-
-      </div>
+      {% endif %}
 
     {% endif %}
-
 
 {% endif %}

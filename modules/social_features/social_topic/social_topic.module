@@ -7,6 +7,10 @@
 
 use \Drupal\Core\Block\BlockPluginInterface;
 use \Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Prepares variables for node templates.
@@ -24,20 +28,24 @@ use \Drupal\Core\Form\FormStateInterface;
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_topic_preprocess_node(&$variables) {
-  if ($variables['view_mode'] === 'teaser') {
-    /* @var \Drupal\node\NodeInterface $node */
-    $node = $variables['node'];
-    if ($node->getType() === 'topic') {
-      $topic_type = $node->get('field_topic_type');
-      $topic_type_entities = $topic_type->referencedEntities();
-      if (count($topic_type_entities) === 1) {
-        foreach ($topic_type_entities as $topic) {
-          $variables['metadata'] = t('in @topic', array('@topic' => $topic->link()));
-        }
+  /* @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  if ($node->getType() === 'topic') {
+    $topic_type = $node->get('field_topic_type');
+    $topic_type_entities = $topic_type->referencedEntities();
+    if (count($topic_type_entities) === 1) {
+      foreach ($topic_type_entities as $topic) {
+        $variables['metadata'] = t('in @topic', array('@topic' => $topic->link()));
+        // Set topic type link
+        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', array('field_topic_type_target_id' => $topic->id()));
+        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
+          ->toString();
+        $variables['topic_type'] = $topic_type_link;
       }
-      else {
-        $variables['metadata'] = NULL;
-      }
+    }
+    else {
+      $variables['metadata'] = NULL;
+      $variables['topic_type'] = NULL;
     }
   }
 }
@@ -48,8 +56,11 @@ function social_topic_preprocess_node(&$variables) {
  * Enhance the exposed filter form of the topic overview.
  */
 function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form['#id'] === 'views-exposed-form-topics-page-1') {
+  if ($form['#id'] === 'views-exposed-form-topics-page-profile') {
     $form['type']['#options']['All'] = t('All types');
+
+    $form['status']['#options'][0] = t('Unpublished');
+    $form['status']['#options'][1] = t('Published');
 
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
@@ -74,8 +85,25 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
  */
 function social_topic_block_view_alter(array &$build, BlockPluginInterface $block) {
   // @todo check out why this happens, is this is a views bug?
-  if ($build['#plugin_id'] === 'views_exposed_filter_block:topics-page_1') {
+  if ($build['#plugin_id'] === 'views_exposed_filter_block:topics-page_profile') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
   }
 
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'topics' && $view->getDisplay()->display['id'] == 'page_profile') {
+    $account_uid = \Drupal::routeMatch()->getParameter('user');
+    $current_uid = \Drupal::currentUser()->id();
+    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+      $query->where[1]['conditions'][] = array(
+        'field' => 'node_field_data.status',
+        'value' => NODE_PUBLISHED,
+        'operator' => '=',
+      );
+    }
+  }
 }

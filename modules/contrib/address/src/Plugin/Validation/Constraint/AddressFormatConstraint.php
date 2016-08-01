@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\Validation\Constraint\AddressFormatConstraint.
- */
-
 namespace Drupal\address\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;

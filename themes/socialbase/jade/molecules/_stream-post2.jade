@@ -23,7 +23,7 @@
 
 .card-nested-section
   unless user == "isAnonymous"
-    .media 
+    .media.margin-bottom-xl
       .media-left.hidden-xs
         img.img-medium.img-circle(src='content/images/member5.jpg')
 
@@ -39,7 +39,9 @@
   .margin-top-l.text-center
     if user == "isAnonymous"
       a.btn.btn-link(href='single-post-an.html') show all 5 comments
-        i.material-icons chevron_right
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')
     else
       a.btn.btn-link(href='single-post.html') show all 5 comments
-        i.material-icons chevron_right
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')

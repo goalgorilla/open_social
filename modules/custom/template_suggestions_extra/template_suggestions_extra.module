@@ -53,3 +53,21 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
   }
   $suggestions = $altered_suggestions;
 }
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function template_suggestions_extra_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
+  $original = $variables['theme_hook_original'];
+  $entity = $variables['elements']['#comment'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions = array();
+  $suggestions[] = $original;
+  $suggestions[] = $original . '__' . $sanitized_view_mode;
+  $suggestions[] = $original . '__' . $entity->bundle();
+  $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'comment' . '__' . $sanitized_view_mode;
+
+  return $suggestions;
+}

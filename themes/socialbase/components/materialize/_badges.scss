@@ -1,6 +1,7 @@
 .badge {
   padding: ($badge-font-size/3) ($badge-font-size/1.5);
   font-size: $badge-font-size;
+  font-weight: 500;
 }
 
 .badge-accent {
@@ -20,14 +21,15 @@
   background-color: $gray-lighter;
   color: $gray-light;
 
-  .material-icons {
+  .icon-badge-toggle {
     background-color: white;
   }
 }
 
 .badge-gray-dark {
-  background-color: transparent;
+  background-color: $gray-dark;
 }
+
 
 .badge label {
   margin-bottom: 0;
@@ -40,14 +42,8 @@
 
 .badge--toggle {
   padding: 0;
+  background-color: transparent;
   transition: width 0.3s ease;
-
-  .material-icons {
-    font-size: 18px;
-    width: auto;
-    padding-left: ($badge-font-size/3);
-  }
-
 }
 
 .badge--toggle,
@@ -65,23 +61,44 @@
     transition: opacity 0.3s ease;
   }
 
-  &.badge-gray-dark {
-    input[type=checkbox]:checked ~ .material-icons,
-    input[type=checkbox]:checked ~ .badge--toggle__label {
-      background-color: $gray-dark;
-    }
-    .badge--toggle__label {
-      border-radius: 0 8px 8px 0;
-    }
+  input[type=checkbox]:checked ~ .icon-badge-toggle,
+  input[type=checkbox]:checked ~ .badge--toggle__label {
+    background-color: $gray-dark;
+    color: white;
   }
 
-  input[type=checkbox]:checked ~ .material-icons {
-    background-color: transparent;
+  .badge--toggle__label {
+    border-radius: 0 8px 8px 0;
   }
 
   input[type=checkbox]:checked ~ .badge--toggle__label {
     width: auto;
     padding: 3px $badge-font-size 3px ($badge-font-size/2);
     opacity: 1;
+  }
+
+
+  &.badge-gray-lighter {
+    input[type=checkbox]:checked ~ .icon-badge-toggle,
+    input[type=checkbox]:checked ~ .badge--toggle__label {
+      background-color: $gray-lighter;
+      color: $default-color;
+    }
+  }
+}
+
+.js .card--teaser-stream .badge--toggle {
+  &.badge-gray-lighter {
+    input[type=checkbox] {
+      ~ .icon-badge-toggle, ~ .badge--toggle__label {
+        background: $gray-lighter;
+      }
+
+      &:checked {
+        ~ .icon-badge-toggle, ~ .badge--toggle__label {
+          background-color: white;
+        }
+      }
+    }
   }
 }

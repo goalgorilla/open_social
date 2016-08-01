@@ -15,7 +15,7 @@ html(lang="en")
         .row
 
           #scrollspy.col-xs-12.col-sm-4.col-md-3.col-sm-last
-            .toc-wrapper
+            .toc-wrapper.hidden-print
               ul.table-of-contents.nav
                 li
                   a(href='#regions') Regions
@@ -49,10 +49,6 @@ html(lang="en")
                   span.circle(style='background-color: #80cbc4')
                   h6.list-group-item-heading Secondary navigation
                   p.list-group-item-text Navigation options to the sub contents of a main content.
-                .list-group-item.avatar
-                  span.circle(style='background-color: #dce775')
-                  h6.list-group-item-heading Title 
-                  p.list-group-item-text Explains what this page or section is about
                 .list-group-item.avatar
                   span.circle(style='background-color: #a5d6a7')
                   h6.list-group-item-heading Main content 
@@ -97,8 +93,6 @@ html(lang="en")
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12(style='background-color:#dce775; min-height: 60px;')
-                      p Title 
                     .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
                       p Complementary
                       p.flat-text.small
@@ -148,8 +142,6 @@ html(lang="en")
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12(style='background-color:#dce775; min-height: 60px;')
-                      p Title 
                     .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
                       p Complementary
                       p.flat-text.small
@@ -180,10 +172,8 @@ html(lang="en")
                   .row
                     .col-xs-12(style='background-color:#e1bee7; min-height: 80px;')
                       p Header
-                  .row.visible-md-block.visible-lg-block
-                    .col-xs-12(style='background-color:#80deea; min-height: 30px;')
+                    .visible-md-block.visible-lg-block.col-xs-12(style='background-color:#80deea; min-height: 30px;')
                       p Breadcrumbs
-                  .row
                     .col-xs-12(style='background-color:#ef9a9a; min-height: 120px;')
                       p Hero
                       p.flat-text.inline25

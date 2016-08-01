@@ -28,7 +28,9 @@
 {% if node_edit_url %}
   <div class="hero-action-button">
     <a href="{{ node_edit_url }}" title="Edit content" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
-      <i class="material-icons">mode_edit</i>
+      <svg class="icon-gray icon-medium">
+        <use xlink:href="#icon-edit"></use>
+      </svg>
     </a>
   </div>
 {% endif %}
@@ -52,7 +54,11 @@
         {% if visibility_icon and  visibility_label %}
           <div class="badge badge-gray-dark badge--toggle">
             <label>
-              <input type="checkbox"><i class="material-icons">{{ visibility_icon }}</i><span class="badge--toggle__label">{{ visibility_label }}</span>
+              <input type="checkbox">
+              <svg class="icon-white icon-small icon-badge-toggle">
+                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+              </svg>
+              <span class="badge--toggle__label">{{ visibility_label }}</span>
             </label>
           </div>
         {% endif %}
@@ -66,7 +72,9 @@
               By {{ author_name }} on {{ created_date_formatted }}
             {% endtrans %}
             <div>
-              <i class="material-icons">label</i>
+              <svg class="icon-white icon-medium">
+                <use xlink:href="#icon-label"></use>
+              </svg>
               {{ topic_type }}
               {% if group_link %}
                   in group {{ group_link }}

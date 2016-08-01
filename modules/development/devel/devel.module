@@ -14,9 +14,6 @@ define('DEVEL_ERROR_HANDLER_BACKTRACE_DPM', 4);
 define('DEVEL_MIN_TEXTAREA', 50);
 
 use Drupal\comment\CommentInterface;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Query\AlterableInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -37,6 +34,10 @@ function devel_help($route_name) {
 
     case 'devel/session':
       return '<p>' . t('Here are the contents of your <code>$_SESSION</code> variable.') . '</p>';
+
+    case 'devel.state_system_page':
+      return '<p>' . t('This is a list of state variables and their values. For more information read online documentation of <a href=":documentation">State API in Drupal 8</a>.', array(':documentation' => "https://www.drupal.org/developing/api/8/state")) . '</p>';
+
   }
 }
 
@@ -80,41 +81,6 @@ function devel_entity_operation(EntityInterface $entity) {
 }
 
 /**
- * Returns destinations.
- */
-function devel_menu_need_destination() {
-  return array('devel/cache/clear', 'devel/reinstall', 'devel/menu/reset',
-    'admin/reports/status/run-cron');
-}
-
-/**
- * Implements hook_menu_link_alter().
- *
- * Flag this link as needing alter at display time.
- * This is more robust than setting alter in hook_menu().
- * @see devel_translated_menu_link_alter()
- */
-function devel_menu_link_alter(&$item) {
-  if (in_array($item['link_path'], devel_menu_need_destination()) || $item['link_path'] == 'devel/menu/item') {
-    $item['options']['alter'] = TRUE;
-  }
-}
-
-/**
- * Implements hook_translated_menu_item_alter().
- *
- * Append dynamic querystring 'destination' to several of our own menu items.
- */
-function devel_translated_menu_link_alter(&$item) {
-  if (in_array($item['href'], devel_menu_need_destination())) {
-    $item['localized_options']['query'] = \Drupal::destination()->getAsArray();
-  }
-  elseif ($item['href'] == 'devel/menu/item') {
-    $item['localized_options']['query'] = array('path' => current_path());
-  }
-}
-
-/**
  * Sets message.
  */
 function devel_set_message($msg, $type = NULL) {
@@ -123,56 +89,6 @@ function devel_set_message($msg, $type = NULL) {
   }
   else {
     drupal_set_message($msg, $type, TRUE);
-  }
-}
-
-/**
- * @return bool. No need for cache here.
- */
-function has_kint() {
-  if (\Drupal::moduleHandler()->moduleExists('kint') && function_exists('kint_require')) {
-    kint_require();
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**
- * Decides whether or not to print a debug variable using Kint.
- *
- * @param mixed $input
- *   The value to check.
- *
- * @return boolean
- */
-function merits_kint($input) {
-  return !is_scalar($input) && has_kint();
-}
-
-/**
- * Calls the http://www.firephp.org/ fb() function if it is found.
- */
-function dfb() {
-  if (function_exists('fb') && \Drupal::currentUser()->hasPermission('access devel information') && !headers_sent()) {
-    $args = func_get_args();
-    call_user_func_array('fb', $args);
-  }
-}
-
-/**
- * Calls dfb() to output a backtrace.
- */
-function dfbt($label) {
-  dfb($label, FirePHP::TRACE);
-}
-
-/**
- * Wrapper for ChromePHP Class log method.
- */
-function dcp() {
-  if (class_exists('ChromePhp', FALSE) && \Drupal::currentUser()->hasPermission('access devel information')) {
-    $args = func_get_args();
-    call_user_func_array(array('ChromePhp', 'log'), $args);
   }
 }
 
@@ -198,9 +114,7 @@ function devel_set_handler($handlers) {
     // Do nothing.
   }
   else {
-    if (has_kint()) {
-      set_error_handler('backtrace_error_handler');
-    }
+    set_error_handler('backtrace_error_handler');
   }
 }
 
@@ -303,41 +217,11 @@ function backtrace_error_handler($error_level, $message, $filename, $line, $cont
 }
 
 /**
- * Returns the core version.
- */
-function devel_get_core_version($version) {
-  $version_parts = explode('.', $version);
-  // Map from 4.7.10 -> 4.7
-  if ($version_parts[0] < 5) {
-    return $version_parts[0] . '.' . $version_parts[1];
-  }
-  // Map from 5.5 -> 5 or 6.0-beta2 -> 6
-  else {
-    return $version_parts[0];
-  }
-}
-
-/**
  * Implements hook_page_attachments_alter().
  */
 function devel_page_attachments_alter(&$page) {
   if (\Drupal::currentUser()->hasPermission('access devel information') && \Drupal::config('devel.settings')->get('page_alter')) {
     dpm($page, 'page');
-  }
-}
-
-/**
- * Devel's t_safe() function.
- */
-function t_safe($string, $args) {
-  // get_t() caused problems here with the theme registry after changing on
-  // admin/build/modules. The theme_get_registry() call is needed!
-  if (function_exists('t') && function_exists('theme_get_registry')) {
-    theme_get_registry();
-    return t($string, $args);
-  }
-  else {
-    strtr($string, $args);
   }
 }
 
@@ -349,190 +233,158 @@ function t_safe($string, $args) {
  * @param string $prefix
  * @todo: this parameter is not needed with Kint.
  *   Prefix for output items.
+ *
+ * @deprecated in Devel 8.x-dev, will be removed before Devel 8.0.
+ *   Use kpr() or devel.dumper service instead.
+ *
+ * @TODO remove in https://www.drupal.org/node/2703343
  */
 function kdevel_print_object($object, $prefix = NULL) {
-  // @todo: quick fix to avoid Kint output floating. Remove when fixed upstream.
-  $dump = has_kint() ? '<div style="clear:both">' . @Kint::dump($object) . '</div>' : devel_print_object($object, $prefix);
-  return Markup::create($dump);
+  return kpr($object, TRUE, $prefix);
 }
 
 /**
- * Displays an object or array.
+ * Wrapper for DevelDumperManager::dump().
  *
- * @param array|object $object
- *   The object or array to display.
- * @param string $prefix
- *   Prefix for the output items (example "$node->", "$user->", "$").
- * @param boolean $header
- *   Set to FALSE to suppress the output of the h3 tag.
+ * Calls the http://www.firephp.org/ fb() function if it is found.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dump()
  */
-function devel_print_object($object, $prefix = NULL, $header = TRUE) {
-  $output = '<div class="devel-obj-output">';
-  if ($header) {
-    $output .= '<h3>' . t('Display of @type @obj', array(
-      '@type' => str_replace(array('$', '->'), '', $prefix),
-      '@obj' => gettype($object),
-    )
-    ) . '</h3>';
-  }
-  $output .= _devel_print_object($object, $prefix);
-  $output .= '</div>';
-  return $output;
+function dfb() {
+  $args = func_get_args();
+  \Drupal::service('devel.dumper')->dump($args, NULL, 'firephp');
 }
 
 /**
- * Returns formatted listing for an array or object.
+ * Wrapper for DevelDumperManager::dump().
  *
- * Recursive (and therefore magical) function goes through an array or object
- * and returns a nicely formatted listing of its contents.
+ * Calls dfb() to output a backtrace.
  *
- * @param array|object $obj
- *   Array or object to recurse through.
- * @param string $prefix
- *   Prefix for the output items (example "$node->", "$user->", "$").
- * @param string $parents
- *   Used by recursion.
- * @param boolean $object
- *   Used by recursion.
- *
- * @return string
- *   Formatted html.
- *
- * @todo
- *   currently there are problems sending an array with a varname
+ * @see \Drupal\devel\DevelDumperManager::dump()
  */
-function _devel_print_object($obj, $prefix = NULL, $parents = NULL, $object = FALSE) {
-  static $root_type, $out_format;
-
-  // TODO: support objects with references. See http://drupal.org/node/234581.
-  if (isset($obj->view)) {
-    return;
-  }
-
-  if (!isset($root_type)) {
-    $root_type = gettype($obj);
-    if ($root_type == 'object') {
-      $object = TRUE;
-    }
-  }
-
-  if (is_object($obj)) {
-    $obj = (array) $obj;
-  }
-  if (is_array($obj)) {
-    $output = "<dl>\n";
-    foreach ($obj as $field => $value) {
-      if ($field === 'devel_flag_reference') {
-        continue;
-      }
-      if (!is_null($parents)) {
-        if ($object) {
-          $field = $parents . '->' . $field;
-        }
-        else {
-          if (is_int($field)) {
-            $field = $parents . '[' . $field . ']';
-          }
-          else {
-            $field = $parents . '[\'' . $field . '\']';
-          }
-        }
-      }
-
-      $type = gettype($value);
-
-      $show_summary = TRUE;
-      $summary = NULL;
-      if ($show_summary) {
-        switch ($type) {
-          case 'string':
-          case 'float':
-          case 'integer':
-            if (strlen($value) == 0) {
-              $summary = t("{empty}");
-            }
-            elseif (strlen($value) < 40) {
-              $summary = htmlspecialchars($value);
-            }
-            else {
-              $summary = \Drupal::translation()->formatPlural(Unicode::strlen($value), '1 character', '@count characters');
-            }
-            break;
-
-          case 'array':
-          case 'object':
-            $summary = \Drupal::translation()->formatPlural(count((array) $value), '1 element', '@count elements');
-            break;
-
-          case 'boolean':
-            $summary = $value ? t('TRUE') : t('FALSE');
-            break;
-        }
-      }
-      if (!is_null($summary)) {
-        $typesum = '(' . $type . ', <em>' . $summary . '</em>)';
-      }
-      else {
-        $typesum = '(' . $type . ')';
-      }
-
-      $output .= '<span class="devel-attr">';
-      $output .= "<dt><span class=\"field\">{$prefix}{$field}</span> $typesum</dt>\n";
-      $output .= "<dd>\n";
-      // Check for references.
-      if (is_array($value) && isset($value['devel_flag_reference'])) {
-        $value['devel_flag_reference'] = TRUE;
-      }
-      // Check for references to prevent errors from recursions.
-      if (is_array($value) && isset($value['devel_flag_reference']) && !$value['devel_flag_reference']) {
-        $value['devel_flag_reference'] = FALSE;
-        $output .= _devel_print_object($value, $prefix, $field);
-      }
-      elseif (is_object($value)) {
-        $value->devel_flag_reference = FALSE;
-        $output .= _devel_print_object((array) $value, $prefix, $field, TRUE);
-      }
-      else {
-        $value = is_bool($value) ? ($value ? 'TRUE' : 'FALSE') : $value;
-        $output .= htmlspecialchars(print_r($value, TRUE)) . "\n";
-      }
-      $output .= "</dd></span>\n";
-    }
-    $output .= "</dl>\n";
-  }
-  return $output;
+function dfbt($label) {
+  \Drupal::service('devel.dumper')->dump(FirePHP::TRACE, $label, 'firephp');
 }
 
 /**
- * An alias for drupal_debug().
+ * Wrapper for DevelDumperManager::dump().
+ *
+ * Wrapper for ChromePHP Class log method.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dump()
  */
-function dd($data, $label = NULL) {
-  return drupal_debug($data, $label);
+function dcp() {
+  $args = func_get_args();
+  \Drupal::service('devel.dumper')->dump($args, NULL, 'chromephp');
+}
+
+if (!function_exists('dd')) {
+  /**
+   * Wrapper for DevelDumperManager::debug().
+   *
+   * @see \Drupal\devel\DevelDumperManager::debug()
+   */
+  function dd($data, $label = NULL) {
+    return \Drupal::service('devel.dumper')->debug($data, $label, 'default');
+  }
 }
 
 /**
- * Logs a variable to a drupal_debug.txt in the site's temp directory.
+ * Wrapper for DevelDumperManager::message().
  *
- * @param mixed $data
- *   The variable to log to the drupal_debug.txt log file.
- * @param string $label
- *   (optional) If set, a label to output before $data in the log file.
+ * Prints a variable to the 'message' area of the page.
  *
- * @return void|false
- *   Empty if successful, FALSE if the log file could not be written.
+ * Uses drupal_set_message().
  *
- * @see dd()
- * @see http://drupal.org/node/314112
+ * @param $input
+ *   An arbitrary value to output.
+ * @param string $name
+ *   Optional name for identifying the output.
+ * @param string $type
+ *   Optional message type for drupal_set_message(), defaults to 'status'.
+ *
+ * @return input
+ *   The unaltered input value.
+ *
+ * @see \Drupal\devel\DevelDumperManager::message()
  */
-function drupal_debug($data, $label = NULL) {
-  $out = ($label ? $label . ': ' : '') . print_r($data, TRUE) . "\n";
+function dpm($input, $name = NULL, $type = 'status') {
+  \Drupal::service('devel.dumper')->message($input, $name, $type);
+  return $input;
+}
 
-  // The temp directory does vary across multiple simpletest instances.
-  $file = file_directory_temp() . '/drupal_debug.txt';
-  if (file_put_contents($file, $out, FILE_APPEND) === FALSE) {
-    drupal_set_message(t('Devel was unable to write to %file.', array('%file' => $file)), 'error');
-    return FALSE;
-  }
+/**
+ * Wrapper for DevelDumperManager::message().
+ *
+ * Displays a Variable::export() variable to the 'message' area of the page.
+ *
+ * Uses drupal_set_message().
+ *
+ * @param $input
+ *   An arbitrary value to output.
+ * @param string $name
+ *   Optional name for identifying the output.
+ *
+ * @return input
+ *   The unaltered input value.
+ *
+ * @see \Drupal\devel\DevelDumperManager::message()
+ */
+function dvm($input, $name = NULL) {
+  \Drupal::service('devel.dumper')->message($input, $name, 'status', 'drupal_variable');
+  return $input;
+}
+
+/**
+ * An alias for dpm(), for historic reasons.
+ */
+function dsm($input, $name = NULL) {
+  return dpm($input, $name);
+}
+
+/**
+ * Wrapper for DevelDumperManager::dumpOrExport().
+ *
+ * An alias for the devel.dumper service. Saves carpal tunnel syndrome.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dumpOrExport()
+ */
+function dpr($input, $export = FALSE, $name = NULL) {
+  return \Drupal::service('devel.dumper')->dumpOrExport($input, $name, $export, 'default');
+}
+
+/**
+ * Wrapper for DevelDumperManager::dumpOrExport().
+ *
+ * An alias for devel_dump(). Saves carpal tunnel syndrome.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dumpOrExport()
+ */
+function kpr($input, $export = FALSE, $name = NULL) {
+  return \Drupal::service('devel.dumper')->dumpOrExport($input, $name, $export);
+}
+
+/**
+ * Kint print.
+ *
+ * @deprecated in Devel 8.x-dev, will be removed before Devel 8.0.
+ *   Use kpr() or devel.dumper service instead.
+ *
+ * @TODO remove in https://www.drupal.org/node/2703343
+ */
+function kprint_r($input, $export = FALSE, $name = NULL, $function = 'print_r') {
+  return kpr($input, $export, $name);
+}
+
+/**
+ * Wrapper for DevelDumperManager::dumpOrExport().
+ *
+ * Like dpr(), but uses Variable::export() instead.
+ *
+ * @see \Drupal\devel\DevelDumperManager::dumpOrExport()
+ */
+function dvr($input, $export = FALSE, $name = NULL) {
+  return \Drupal::service('devel.dumper')->dumpOrExport($input, $name, $export, 'drupal_variable');
 }
 
 /**
@@ -552,7 +404,7 @@ function dargs($always = TRUE) {
  *
  * @param object $query
  *   An object that implements the SelectInterface interface.
- * @param string $return
+ * @param boolean $return
  *   Whether to return the string. Default is FALSE, meaning to print it
  *   and return $query instead.
  * @param string $name
@@ -579,132 +431,6 @@ function dpq($query, $return = FALSE, $name = NULL) {
     dpm($sql, $name);
   }
   return ($return ? NULL : $query);
-}
-
-/**
- * Prints a variable to the 'message' area of the page.
- *
- * Uses drupal_set_message().
- *
- * @param $input
- *   An arbitrary value to output.
- * @param string $name
- *   Optional name for identifying the output.
- * @param string $type
- *   Optional message type for drupal_set_message(), defaults to 'status'.
- *
- * @return input
- *   The unaltered input value.
- */
-function dpm($input, $name = NULL, $type = 'status') {
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    $export = kprint_r($input, TRUE, $name);
-    drupal_set_message($export, $type, TRUE);
-  }
-  return $input;
-}
-
-/**
- * Displays a drupal_var_export() variable to the 'message' area of the page.
- *
- * Uses drupal_set_message().
- *
- * @param $input
- *   An arbitrary value to output.
- * @param string $name
- *   Optional name for identifying the output.
- *
- * @return input
- *   The unaltered input value.
- */
-function dvm($input, $name = NULL) {
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    $export = dprint_r($input, TRUE, $name, ['\Drupal\Component\Utility\Variable', 'export'], FALSE);
-    drupal_set_message($export, 'status', TRUE);
-  }
-  return $input;
-}
-
-/**
- * An alias for dpm(), for historic reasons.
- */
-function dsm($input, $name = NULL) {
-  return dpm($input, $name);
-}
-
-/**
- * An alias for dprint_r(). Saves carpal tunnel syndrome.
- */
-function dpr($input, $return = FALSE, $name = NULL) {
-  return dprint_r($input, $return, $name);
-}
-
-/**
- * An alias for kprint_r(). Saves carpal tunnel syndrome.
- */
-function kpr($input, $return = FALSE, $name = NULL) {
-  return kprint_r($input, $return, $name);
-}
-
-/**
- * Like dpr(), but uses drupal_var_export() instead.
- */
-function dvr($input, $return = FALSE, $name = NULL) {
-  return dprint_r($input, $return, $name, 'drupal_var_export', FALSE);
-}
-
-/**
- * Kint print.
- */
-function kprint_r($input, $return = FALSE, $name = NULL, $function = 'print_r') {
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    // Kint is too heavy to bother with for scalars like strings and integers.
-    if (merits_kint($input)) {
-      // Had to use @d() instead of @Kint::dump() as the latter is ignoring @ modifier.
-      $output = $return ? (isset($name) ? $name . ' => ' : '') . @d($input) : Kint::dump($input);
-    }
-    else {
-      $output = dprint_r($input, $return, $name, $function);
-    }
-
-    return Markup::create($output);
-  }
-}
-
-/**
- * Pretty-print a variable to the browser (no kint).
- *
- * Displays only for users with proper permissions. If
- * you want a string returned instead of a print, use the 2nd param.
- */
-function dprint_r($input, $return = FALSE, $name = NULL, $function = 'print_r', $check= TRUE) {
-  if (\Drupal::currentUser()->hasPermission('access devel information')) {
-    if ($name) {
-      $name .= ' => ';
-    }
-
-    ob_start();
-    $function($input);
-    $output = ob_get_clean();
-
-    if ($check) {
-      $output = Html::escape($output);
-    }
-    if (count($input, COUNT_RECURSIVE) > DEVEL_MIN_TEXTAREA) {
-      // Don't use fapi here because sometimes fapi will not be loaded.
-      $printed_value = "<textarea rows=30 style=\"width: 100%;\">\n" . $name . $output . '</textarea>';
-    }
-    else {
-      $printed_value = '<pre>' . $name . $output . '</pre>';
-    }
-
-    if ($return) {
-      return $printed_value;
-    }
-    else {
-      print $printed_value;
-    }
-  }
 }
 
 /**
@@ -796,17 +522,6 @@ function ddebug_backtrace($return = FALSE, $pop = 0, $options = DEBUG_BACKTRACE_
   }
 }
 
-/**
- * Deletes all files in a dir.
- */
-function devel_empty_dir($dir) {
-  foreach (new DirectoryIterator($dir) as $file_info) {
-    if ($file_info->isFile()) {
-      unlink($file_info->getPathname());
-    }
-  }
-}
-
 /*
  * Migration-related functions.
  */
@@ -891,29 +606,17 @@ function devel_form_system_modules_alter(&$form, FormStateInterface $form_state)
 }
 
 /**
- * Processes variables for block.tpl.php.
- *
- * Adding a module block class.
- *
- * @todo remove when http://drupal.org/node/1896098 gets in core.
- */
-function devel_preprocess_block(&$variables) {
-  if (isset($variables['block']) && $variables['block']->module == 'devel') {
-    $variables['attributes']['class'][] = drupal_html_class('block-' . $variables['elements']['#block']->get('plugin'));
-  }
-}
-
-/**
  * Implements hook_query_TAG_alter().
  *
  * Makes debugging entity query much easier.
  *
  * Example usage:
- *   $query = \Drupal::entityQuery('node');
- *   $query->condition('status', 1);
- *   $query->addTag('debug');
- *   $query->execute();
- *
+ * @code
+ * $query = \Drupal::entityQuery('node');
+ * $query->condition('status', NODE_PUBLISHED);
+ * $query->addTag('debug');
+ * $query->execute();
+ * @endcode
  */
 function devel_query_debug_alter(AlterableInterface $query) {
   if (!$query->hasTag('debug-semaphore')) {

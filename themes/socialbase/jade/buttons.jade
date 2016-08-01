@@ -8,6 +8,7 @@ html(lang="en")
   body(class='#{pagetype}')
     header.styleguide-header
       include ./layout/_navbar.jade
+      include ../images/icons.svg
       
     main.styleguide-container(role='main')
 
@@ -53,7 +54,8 @@ html(lang="en")
             .card
               .card-body
                 button.btn.btn-default.btn-floating.waves-effect.waves-circle(type='button')
-                  i.material-icons edit
+                  svg.icon-gray.icon-medium
+                    use(xlink:href='#icon-edit') 
             .text-caption Floating button
             
         .row.margin-top-l
@@ -152,10 +154,12 @@ html(lang="en")
                 p &nbsp;
                 p
                   button.btn.btn-default.btn-floating.waves-effect.waves-light.waves-circle(type='button')
-                    i.material-icons edit
+                    svg.icon-gray.icon-medium
+                      use(xlink:href='#icon-edit') 
                 p
                   button.btn.btn-default.btn-floating.waves-effect.waves-light.waves-circle.btn-lg(type='button') 
-                    i.material-icons edit
+                    svg.icon-gray.icon-medium
+                      use(xlink:href='#icon-edit') 
             .text-caption Floating action button sizes
                     
                     
@@ -202,13 +206,16 @@ html(lang="en")
               .card-body.text-center
                 p
                   button.btn.btn-default.btn-floating.waves-effect.waves-light.waves-circle(type='button')
-                    i.material-icons edit
+                    svg.icon-gray.icon-medium
+                      use(xlink:href='#icon-edit') 
                 p
                   button.btn.btn-default.btn-floating.waves-effect.waves-light.waves-circle.active(type='button') 
-                    i.material-icons edit
+                    svg.icon-gray.icon-medium
+                      use(xlink:href='#icon-edit') 
                 p
                   button.btn.btn-default.btn-floating.waves-effect.waves-light.waves-circle.disabled(type='button') 
-                    i.material-icons edit
+                    svg.icon-gray.icon-medium
+                      use(xlink:href='#icon-edit') 
             .text-caption Floating action button states   
 
             

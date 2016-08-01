@@ -4,6 +4,8 @@ dependencies:
   config:
     - comment.type.comment
     - field.field.comment.comment.field_comment_body
+  module:
+    - text
 id: comment.comment.default
 targetEntityType: comment
 bundle: comment
@@ -14,7 +16,9 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    type: text_default
   links:
     weight: 1
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

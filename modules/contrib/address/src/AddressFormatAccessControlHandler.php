@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressFormatAccessControlHandler.
- */
-
 namespace Drupal\address;
 
 use Drupal\Core\Access\AccessResult;

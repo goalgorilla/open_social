@@ -16,20 +16,23 @@
       br
       .text-gray-lighter 32 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
-  a.card-image.blue-overlay(href="topic.html")
+  a.card-image(href="topic.html")
     img.img-responsive(src='content/images/people3-square.jpg', alt='')
-    img.teaser-type(src='images/icon-topic.svg', alt='')
   .card-body
     h4.card-title 
       a(href="topic.html") Technology for the handicapped
-    p.text-grey-dark.text-m
+    .text-gray.text-m.text-truncate
+      svg.icon-gray.icon-small
+        use(xlink:href='#icon-account_circle')
+      | &nbsp;
       if user == "isAnonymous"
         span Clive Owen 
       else
         a(href="other-stream.html") Henry Bond 
       | &bullet; 15 feb 2016
-    p.clearfix.text-m
-      i.material-icons label
+    .text-gray.text-m.text-truncate
+      svg.icon-gray.icon-small
+        use(xlink:href='#icon-label')
       | &nbsp;
       span.inline-center Blog
     .card-actionbar
@@ -37,7 +40,8 @@
         .badge.badge-gray-lighter.badge--toggle
           label
             input(type='checkbox')
-            i.material-icons public        
+            svg.icon-badge-toggle
+              use(xlink:href='#icon-public')          
             span.badge--toggle__label public
       a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
 
@@ -46,7 +50,8 @@ if user != "isAnonymous"
   .visible-xs-block
     hr.ruler-sm
     a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
-      i.material-icons chevron_right
+      svg.icon-small
+        use(xlink:href='#icon-navigate_next')
 
   .hidden-xs.card-nested-section
 
@@ -55,5 +60,6 @@ if user != "isAnonymous"
   
     .margin-top-l.text-center
 
-        a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
-          i.material-icons chevron_right
+      a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')

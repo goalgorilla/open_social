@@ -28,19 +28,17 @@ class AccountHeaderBlock extends BlockBase {
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-sm hidden-md hidden-lg ',
-          'icon_label' => 'Home',
-          'label' => 'Home',
-          'label_classes' => '',
+          'icon_classes' => '',
+          'title' => 'Home',
+          'title_classes' => '',
           'url' => Url::fromRoute('<front>'),
         ),
         'groups' => array(
           'classes' => '',
           'link_attributes' => '',
-          'icon_classes' => 'custom-icons icon-group',
-          'icon_label' => '',
-          'label' => '',
-          'label_classes' => '',
+          'icon_classes' => 'icon-group',
+          'title' => 'My groups',
+          'title_classes' => 'sr-only',
           'url' => '/user/' . $account_uid . '/groups',
         ),
       ];
@@ -52,13 +50,15 @@ class AccountHeaderBlock extends BlockBase {
         $account_notifications = \Drupal::service('activity_creator.activity_notifications');
         $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
 
-        $label_classes = 'badge';
+
         if ($num_notifications === 0) {
-          $notifications_icon_label = 'notifications_none';
-          $label_classes .= ' invisible';
+          $notifications_icon = 'icon-notifications_none';
+          $title_classes = ' sr-only';
+          $label_classes = 'hidden';
         }
         else {
-          $notifications_icon_label = 'notifications';
+          $notifications_icon = 'icon-notifications';
+          $label_classes = 'badge';
 
           if ($num_notifications > 99) {
             $num_notifications = '99+';
@@ -68,24 +68,22 @@ class AccountHeaderBlock extends BlockBase {
         $links['notifications'] = array(
           'classes' => 'dropdown notification-bell',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-          'link_classes' => 'dropdown-toggle',
-          'icon_classes' => '',
-          'icon_label' => $notifications_icon_label,
-          'label' => (string) $num_notifications,
-          'label_classes' => $label_classes,
+          'link_classes' => 'dropdown-toggle clearfix',
+          'icon_classes' => $notifications_icon,
+          'title' => (string) $num_notifications,
+          'title_classes' => $label_classes,
           'url' => '#',
           'below' => $notifications,
         );
       }
 
       $links['account_box'] = array(
-        'classes' => '',
+        'classes' => 'dropdown',
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-        'link_classes' => 'dropdown-toggle',
-        'icon_classes' => '',
-        'icon_label' => 'account_box',
-        'label' => $account_name,
-        'label_classes' => 'hidden-xs',
+        'link_classes' => 'dropdown-toggle clearfix',
+        'icon_classes' => 'icon-account_circle',
+        'title' => $account_name,
+        'title_classes' => 'hidden-xs profile',
         'url' => '#',
         'below' => array(
           'my_profile' => array(
@@ -94,8 +92,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'label' => 'View profile',
-            'label_classes' => '',
+            'title' => 'View profile',
+            'title_classes' => '',
             'url' => '/user',
           ),
           'my_account' => array(
@@ -104,8 +102,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'label' => 'Edit account',
-            'label_classes' => '',
+            'title' => 'Edit account',
+            'title_classes' => '',
             'url' => '/user/' . $account_uid . '/edit',
           ),
           'edit_profile' => array(
@@ -114,8 +112,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'label' => 'Edit profile',
-            'label_classes' => '',
+            'title' => 'Edit profile',
+            'title_classes' => '',
             'url' => '/user/' . $account_uid . '/profile',
           ),
           'logout' => array(
@@ -124,8 +122,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'label' => 'Logout',
-            'label_classes' => '',
+            'title' => 'Logout',
+            'title_classes' => '',
             'url' => '/user/logout',
           ),
         ),
@@ -136,10 +134,10 @@ class AccountHeaderBlock extends BlockBase {
         'home' => array(
           'classes' => 'hidden-xs',
           'link_attributes' => '',
-          'icon_classes' => 'hidden-sm hidden-md hidden-lg',
+          'icon_classes' => '',
           'icon_label' => 'Home',
-          'label' => 'Home',
-          'label_classes' => '',
+          'title' => 'Home',
+          'title_classes' => '',
           'url' => Url::fromRoute('<front>'),
         ),
       ];

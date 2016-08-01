@@ -9,7 +9,8 @@
     unless user == "isAnonymous"
       .btn-group.pull-right
         button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
-          i.material-icons expand_more
+          svg.icon-small
+            use(xlink:href='#icon-expand_more')
         ul.dropdown-menu(role='menu')
           li 
             a(href='post-edit.html') Edit
@@ -29,7 +30,7 @@ img.img-responsive(src="content/images/os_image.jpg", alt="", width="100%", heig
 .card-nested-section
   
   unless user == "isAnonymous"
-    .media
+    .media.margin-bottom-xl
       .media-left
         img.img-medium.img-circle(src='content/images/member5.jpg')
 

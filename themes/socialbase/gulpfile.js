@@ -5,7 +5,6 @@
 // ===================================================
 
 var gulp          = require('gulp'),
-    $             = require('gulp-load-plugins')(),
     postcss       = require('gulp-postcss'),
     sass          = require('gulp-sass'),
     sourcemaps    = require('gulp-sourcemaps'),
@@ -16,13 +15,23 @@ var gulp          = require('gulp'),
     jade          = require('gulp-jade'),
     importOnce    = require('node-sass-import-once'),
     path          = require('path'),
+    rename        = require('gulp-rename'),
     fs            = require('fs'),
     concat        = require('gulp-concat'),
     notify        = require('gulp-notify'),
     gutil         = require('gulp-util'),
+    jadeInheritance = require('gulp-jade-inheritance'),
     connect       = require('gulp-connect'),
+    changed       = require('gulp-changed'),
+    cached        = require('gulp-cached'),
+    gulpif        = require('gulp-if'),
+    filter        = require('gulp-filter'),
     plumber       = require('gulp-plumber'),
-    deploy        = require('gulp-gh-pages');
+    deploy        = require('gulp-gh-pages'),
+
+    svgmin      = require('gulp-svgmin'),
+    svgstore    = require('gulp-svgstore'),
+    cheerio     = require('gulp-cheerio');
 
     var options = {};
 
@@ -43,15 +52,17 @@ options.rootPath = {
 options.theme = {
   name       : 'socialbase',
   root       : options.rootPath.theme,
-  components : options.rootPath.theme + 'components/',
+  bootstrap  : options.rootPath.theme + 'node_modules/bootstrap-sass/assets/',
   build      : options.rootPath.theme + 'components/asset-builds/',
-  css        : options.rootPath.theme + 'components/asset-builds/css/',
-  js         : options.rootPath.theme + 'js/',
-  styleguide : options.rootPath.theme + 'jade/',
-  images     : options.rootPath.theme + 'images/',
+  components : options.rootPath.theme + 'components/',
   content    : options.rootPath.theme + 'content/',
+  css        : options.rootPath.theme + 'components/asset-builds/css/',
+  libs       : options.rootPath.theme + 'libs/',
   font       : options.rootPath.theme + 'font/',
-  bootstrap  : options.rootPath.theme + 'node_modules/bootstrap-sass/assets/'
+  icons      : options.rootPath.theme + 'images/icons/',
+  images     : options.rootPath.theme + 'images/',
+  js         : options.rootPath.theme + 'js/',
+  styleguide : options.rootPath.theme + 'jade/'
 };
 
 // Set the URL used to access the Drupal website under development. This will
@@ -82,8 +93,7 @@ options.eslint = {
 
 options.styleguide = {
   files  : [
-    options.theme.styleguide + '**/*.jade',
-    '!' + options.theme.styleguide + '**/_*.jade'
+    options.theme.styleguide + '**/*.jade'
   ]
 };
 
@@ -113,16 +123,16 @@ var sassProcessors = [
 
 gulp.task('styles', function () {
   return gulp.src(sassFiles)
-    .pipe($.sourcemaps.init() )
-    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe( sourcemaps.init() )
+    .pipe( plumber({ errorHandler: onError }) )
     .pipe( sass(options.sass) )
-    .pipe($.postcss(sassProcessors) )
+    .pipe( postcss(sassProcessors) )
     .pipe( rucksack() )
-    .pipe($.rename({dirname: ''}))
-    .pipe($.sourcemaps.write('.') )
+    .pipe( rename({dirname: ''}))
+    .pipe( sourcemaps.write('.') )
     .pipe( gulp.dest(options.theme.css) )
-    .pipe( gulp.dest(options.rootPath.dist + '/css') )
-    .pipe($.connect.reload() );
+    .pipe( gulp.dest(options.rootPath.dist + '/css/components/asset-builds') )
+    .pipe( connect.reload() );
 });
 
 // ===================================================
@@ -135,13 +145,33 @@ gulp.task('styleguide', function() {
     .pipe(plumber({
       handleError: onError
     }))
+
+    //only pass changed *main* files and *all* the partials
+    .pipe(changed(options.rootPath.dist, {extension: '.html'}))
+
+    //filter out unchanged partials, but it only works when watching
+    .pipe(gulpif(global.isWatching, cached('jade')))
+
+    //find files that depend on the files that have changed
+    .pipe(jadeInheritance({basedir: options.theme.styleguide}))
+
+    //filter out partials (folders and files starting with "_" )
+    .pipe(filter(function (file) {
+      return !/\/_/.test(file.path) || !/^_/.test(file.relative);
+    }))
+
     .pipe(jade({
       pretty: true
     })) // pipe to jade plugin
-    .pipe(gulp.dest(options.rootPath.dist)); // tell gulp our output folder
+
+    .pipe(gulp.dest(options.rootPath.dist)) // tell gulp our output folder
+
+    .pipe( connect.reload() );
 });
 
-
+gulp.task('setWatch', function() {
+    global.isWatching = true;
+});
 
 // ===================================================
 // Scripts
@@ -202,6 +232,7 @@ gulp.task('script-drupal', function() {
     options.rootPath.drupalcore + '/misc/drupal.js',
     options.rootPath.drupalcore + '/misc/debounce.js',
     options.rootPath.drupalcore + '/misc/forms.js',
+    options.rootPath.drupalcore + '/misc/tabledrag.js',
     options.rootPath.drupalcore + '/modules/user/user.js',
     options.rootPath.drupalcore + '/modules/file/file.js'
   ])
@@ -213,6 +244,25 @@ gulp.task('script-drupal', function() {
 gulp.task('copy-scripts', ['script-materialize', 'script-components', 'styleguide-components'], function() {
   return gulp.src(options.theme.js + "/*.js")
   .pipe( gulp.dest(options.rootPath.dist + '/js') );
+});
+
+// ===================================================
+// Icons
+// svgmin minifies our SVG files and strips out unnecessary code that you might inherit from your graphics editor. svgstore binds them together in one giant SVG container called icons.svg. Then cheerio gives us the ability to interact with the DOM components in this file in a jQuery-like way. cheerio in this case is removing any fill attributes from the SVG elements (you’ll want to use CSS to manipulate them) and adds a class of .hide to our parent SVG. It gets deposited into our inc directory with the rest of the HTML partials.
+// ===================================================
+
+
+gulp.task('icons', function () {
+  return gulp.src(options.theme.icons + '*.svg')
+    .pipe(svgmin())
+    .pipe(svgstore({ fileName: 'icons.svg', inlineSvg: true}))
+    .pipe(cheerio({
+      run: function ($, file) {
+        $('svg').addClass('hide');
+      },
+      parserOptions: { xmlMode: true }
+    }))
+    .pipe(gulp.dest(options.theme.images))
 });
 
 // ===================================================
@@ -297,13 +347,13 @@ gulp.task('connect', function() {
 // Watch and rebuild tasks
 // ===================================================
 
-gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:content', 'watch:js', 'connect']);
+gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:content', 'watch:js', 'watch:icons', 'watch:images', 'connect']);
 
 gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:styleguide', ['styleguide'], function () {
+gulp.task('watch:styleguide', ['setWatch', 'styleguide'], function () {
   return gulp.watch([
     options.theme.root + '**/*.jade',
   ], ['styleguide']);
@@ -313,6 +363,14 @@ gulp.task('scripts', ['copy-scripts', 'script-vendor', 'script-drupal']);
 
 gulp.task('watch:js', function () {
   return gulp.watch(options.eslint.files, ['scripts'] );
+});
+
+gulp.task('watch:icons', function () {
+  return gulp.watch(options.theme.icons + '**/*.svg', ['icons'] );
+});
+
+gulp.task('watch:images', function () {
+  return gulp.watch(options.theme.images + '**/*', ['images'] );
 });
 
 gulp.task('watch:content', ['content'], function () {

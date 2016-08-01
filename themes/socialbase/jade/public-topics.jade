@@ -19,21 +19,23 @@ body
     .main-content
       .container
   
-        .row.margin-top-l
-          .col-xs-12
-            h4.section-title Community topics
+        .row.margin-top-l        
             
-          .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l
+          .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
             btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
-              i.material-icons.pull-left tune
+              svg.pull-left.btn-icon.icon-black
+                title Filter list
+                use(xlink:href='#icon-filter_list')
               | Filters
 
             .off-canvas.off-canvas-right.off-canvas-xs-only
               .offcanvas-head
                 header.complementary-title Filter
                 .offcanvas-tools.visible-xs-block
-                  button.js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
-                    i.material-icons close
+                  button.js-close-canvas.btn.btn-icon-toggle.pull-right
+                    svg.pull-left.btn-icon.icon-black
+                      title Close
+                      use(xlink:href='#icon-close')
           
               .offcanvas-body
                 form
@@ -48,6 +50,8 @@ body
                     input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
           
           .col-xs-12.col-sm-8
+            h4.section-title Community topics
+            
             include molecules/_topic1.jade
             include molecules/_topic2.jade
             include molecules/_topic3.jade

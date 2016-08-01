@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.upcoming_events
+  module:
+    - system
+    - views
+  theme:
+    - socialbase
+id: views_block__upcoming_events_upcoming_events_group
+theme: socialbase
+region: complementary
+weight: -18
+provider: null
+plugin: 'views_block:upcoming_events-upcoming_events_group'
+settings:
+  id: 'views_block:upcoming_events-upcoming_events_group'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/stream'
+    negate: false
+    context_mapping: {  }

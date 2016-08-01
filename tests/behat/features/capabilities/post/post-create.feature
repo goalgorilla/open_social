@@ -15,7 +15,7 @@ Feature: Create Post
   When I fill in "What's on your mind?" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
-   Then I should see the success message "Created the Post."
+   Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
     And I should see "PostCreateUser1" in the "Main content front"
     And I should be on "/stream"
@@ -24,7 +24,7 @@ Feature: Create Post
    When I fill in "What's on your mind?" with "This is a community post."
     And I select post visibility "Community"
     And I press "Post"
-   Then I should see the success message "Created the Post."
+   Then I should see the success message "Your post has been posted."
     And I should see "This is a community post."
     And I should see "PostCreateUser1" in the "Main content front"
     And I should be on "/stream"
@@ -34,7 +34,7 @@ Feature: Create Post
     And I click "Edit"
     And I fill in "What's on your mind?" with "This is a community post edited."
     And I press "Post"
-   Then I should see the success message "Saved the Post."
+   Then I should see the success message "Your post has been saved."
 
         # Scenario: See post on profile stream
    When I am on "/user"
@@ -45,7 +45,7 @@ Feature: Create Post
   Given I am on the profile of "PostCreateUser2"
    When I fill in "What's on your mind?" with "This is a post by PostCreateUser1 for PostCreateUser2."
     And I press "Post"
-   Then I should see the success message "Created the Post."
+   Then I should see the success message "Your post has been posted."
     And I should see "This is a post by PostCreateUser1 for PostCreateUser2."
    When I go to the homepage
    Then I should not see "This is a post by PostCreateUser1 for PostCreateUser2."

@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressFormatImporter.
- */
-
 namespace Drupal\address;
 
 use CommerceGuys\Addressing\Repository\AddressFormatRepository;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 
@@ -41,13 +36,13 @@ class AddressFormatImporter implements AddressFormatImporterInterface {
   /**
    * Constructs a AddressFormatImporter object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager) {
-    $this->storage = $entity_manager->getStorage('address_format');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
+    $this->storage = $entity_type_manager->getStorage('address_format');
     $this->languageManager = $language_manager;
     $this->externalRepository = new AddressFormatRepository();
   }

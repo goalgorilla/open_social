@@ -17,10 +17,10 @@
           $('.text', dropDown).text(setting);
 
           if (setting == 'Community') {
-            $('.material-icons', dropDown).text('group');
+            $('#btnicon', dropDown).attr('xlink:href', '#icon-community');
           }
           if (setting == 'Public') {
-            $('.material-icons', dropDown).text('public');
+            $('#btnicon', dropDown).attr('xlink:href', '#icon-public');
           }
 
           // Find all the inputs and uncheck them.

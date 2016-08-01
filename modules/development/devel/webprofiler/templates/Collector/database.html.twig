@@ -59,6 +59,15 @@
                 </select>
                 <label for="edit-type" class="panel__filter-label">{{ 'Slow queryes'|t }}</label>
             </div>
+            <div class="panel__filter--select">
+                <select id="edit-database" class="js--live-filter">
+                    <option value="">{{ 'Any'|t }}</option>
+                    <% _.each(data.connections, function( item ){ %>
+                        <option value="<%- item %>"><%- item %></option>
+                    <% }) %>
+                </select>
+                <label for="edit-database" class="panel__filter-label">{{ 'Database'|t }}</label>
+            </div>
 
             <div class="button--flat l-right js--code-toggle--global js--placeholder-visible">{{ 'Swap Placeholders'|t }}</div>
 
@@ -66,7 +75,8 @@
 
         <% _.each( data.queries, function( item, key ){ %>
         <div class="panel__container<% if (item.time > data.query_highlight_threshold) { %> is--hightlighted <% } %>"
-             data-wp-caller="<%- item.caller.class %>"
+             data-wp-caller="<%- item.caller.class != null ? item.caller.class.toLowerCase() : '' %>"
+             data-wp-database="<%- item.database %>"
              data-wp-type="<%- item.type %>"
              data-wp-hightlighted="<%- (item.time > data.query_highlight_threshold) ? '1' : '0' %>">
             <div class="panel__expand-header ">
@@ -79,13 +89,13 @@
                             <%- item.query_args %>
                         </code>
                         <% } %>
-
                     </pre>
                 <ul class="list--inline">
                     <li><b>{{ 'Time'|t }}</b>: <%- Drupal.webprofiler.helpers.printTime(item.time) %></li>
                     <li><b>{{ 'Caller'|t }}</b>: <%= Drupal.webprofiler.helpers.classLink({"file" : item.caller.file,
                         "class" : item.caller.class, "line" : item.caller.line, "method" : item.caller.function}) %>
                     </li>
+                    <li><b>{{ 'Database'|t }}</b>: <%- item.database %></li>
                     <li><b>{{ 'Target'|t }}</b>: <%- item.target %></li>
                 </ul>
 

@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
@@ -175,7 +176,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Redirect anonymous use to login page before enrolling to an event.
     if ($uid === 0) {
-      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->getInternalPath();
+      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
+        ->getInternalPath();
       $form_state->setRedirect('user.login',
         array(),
         array(
@@ -183,8 +185,15 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
             'destination' => $node_url,
           ),
         )
-        );
-      drupal_set_message('Please log in or create a new account so that you can enroll to the event');
+      );
+
+      $create_account_url = Url::fromUserInput('/user/register');
+      $create_account_link = Link::fromTextAndUrl(t('create a new account'), $create_account_url)->toString();
+
+      drupal_set_message($this->t('Please log in or !create_account_link so that you can enroll to the event.',
+        [
+          '!create_account_link' => $create_account_link,
+        ]));
       return;
     }
 
@@ -243,7 +252,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       foreach ($groupcontents as $groupcontent) {
         /* @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /* @var \Drupal\group\Entity\Group $group*/
+        /* @var \Drupal\group\Entity\Group $group */
         $groups[] = $group;
       }
     }

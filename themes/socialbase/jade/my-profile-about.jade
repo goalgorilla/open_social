@@ -10,7 +10,8 @@ block pagetitle
   .container
     .visible-xs-block.section
       a.btn.btn-flat(href="my-stream.html")
-        i.material-icons.pull-left keyboard_arrow_left
+        svg.btn-icon
+          use(xlink:href='#icon-navigate_before')     
         | Back to my stream
 
   .container.hero-container 
@@ -33,10 +34,9 @@ block pagetitle
 block content
   
   .row.margin-top-l
-    .col-sm-12
-      h1.h4.section-title About you
     
     .col-xs-12.col-sm-8
+      h4.section-title About you
       
       .card
         .card-body.extra-padding

@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -34,19 +35,33 @@ class EntityRevisionRouteAccessChecker implements AccessInterface {
   protected $accessCache = array();
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
    * Creates a new EntityRevisionRouteAccessChecker instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RequestStack $request_stack) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->requestStack = $request_stack;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function access(Route $route, AccountInterface $account, Request $request) {
+  public function access(Route $route, AccountInterface $account, Request $request = NULL) {
+    if (empty($request)) {
+      $request = $this->requestStack->getCurrentRequest();
+    }
+
     $operation = $route->getRequirement('_entity_access_revision');
     list(, $operation) = explode('.', $operation, 2);
 

@@ -31,12 +31,11 @@ html(lang="en")
     meta(name='msapplication-TileImage', content='images/favicon/mstile-144x144.png')
     meta(name='theme-color', content='#ffffff')
 
-    //CSS
-    link(href='css/buttons.css', type='text/css', rel='stylesheet', media='screen,projection')
-    link(href='css/layout.css', type='text/css', rel='stylesheet', media='screen,projection')
-    link(href='css/materialize.css', type='text/css', rel='stylesheet', media='screen')
+    //- CSS
+    include _components.jade
   
   body(class='#{pagetype}')
+    include ../../images/icons.svg
     // Google Tag Manager
     noscript
       iframe(src='//www.googletagmanager.com/ns.html?id=GTM-5BGZV3', height='0', width='0', style='display:none;visibility:hidden')

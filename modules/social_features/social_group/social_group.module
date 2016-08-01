@@ -5,7 +5,6 @@
  * The Social group module.
  */
 
-use Drupal\group\GroupMembership;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -111,8 +110,7 @@ function social_group_group_insert(GroupInterface $group) {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
-    $membership = GroupMembership::load($group, $account);
-    $content = $membership->getGroupContent();
+    $content = $group->getMember($account)->getGroupContent();
     // Delete the initial created membership.
     $content->delete();
 
@@ -120,13 +118,31 @@ function social_group_group_insert(GroupInterface $group) {
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
     $values = array('group_roles' => array('open_group-group_manager'));
     $group_content = GroupContent::create([
-      'type' => $plugin->getContentTypeConfigId(),
-      'gid' => $group->id(),
-      'entity_id' => $group->getOwnerId(),
-    ] + $values
+        'type' => $plugin->getContentTypeConfigId(),
+        'gid' => $group->id(),
+        'entity_id' => $group->getOwnerId(),
+      ] + $values
     );
     $group_content->save();
 
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
+  // For group entities.
+  if ($entity instanceof Group) {
+    // Add cache contexts for the hero view mode.
+    if ($build['#view_mode'] == 'hero') {
+      // Add cache contexts for group type & permissions. We need join / leave for
+      // the CTA and also update permissions for the button to edit a group.
+      $build['#cache']['contexts'][] = 'group.type';
+      $build['#cache']['contexts'][] = 'group_membership.roles.permissions';
+      $build['#cache']['contexts'][] = 'group_membership.audience';
+
+    }
   }
 }
 
@@ -201,45 +217,34 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 /**
  * Form submit for group join / leave form.
  *
- * @param array $form
- *   Action form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
  */
 function _social_group_action_form_submit($form, FormStateInterface $form_state) {
-  $group = \Drupal::routeMatch()->getParameter('group');
+  $group = _social_group_get_current_group();
 
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::service('entity_type.manager')
-      ->getStorage('group')
-      ->load($group);
-  }
+  if (is_object($group)) {
+    // Invalidate cache tags.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags(array($cache_tag));
+    }
 
-  // Invalidate cache tags.
-  $cache_tags = array(
-    'group_membership:' . $group->id(),
-    'group_view',
-  );
-  foreach ($cache_tags as $cache_tag) {
-    Cache::invalidateTags(array($cache_tag));
-  }
+    // Get form that was submitted.
+    $complete_form = $form_state->getCompleteForm();
 
-  // Get form that was submitted.
-  $complete_form = $form_state->getCompleteForm();
-
-  if ($complete_form['#form_id'] == 'group_content_open_group-group_membership_group-join_form') {
-    // Set redirect to group home page.
-    $form_state->setRedirect(
-      'entity.group.canonical',
-      array('group' => $group->id(), array())
-    );
-  }
-  else {
-    // Set redirect to the Group overview page when a user saves their profile.
-    $form_state->setRedirect(
-      'view.groups.page_user_groups',
-      array('user' => \Drupal::currentUser()->id(), array())
-    );
+    if ($complete_form['#form_id'] == 'group_content_open_group-group_membership_group-join_form') {
+      // Set redirect to group home page.
+      $form_state->setRedirect(
+        'entity.group.canonical',
+        array('group' => $group->id(), array())
+      );
+    }
+    else {
+      // Set redirect to the Group overview page when a user saves their profile.
+      $form_state->setRedirect(
+        'view.groups.page_user_groups',
+        array('user' => \Drupal::currentUser()->id(), array())
+      );
+    }
   }
 }
 
@@ -252,19 +257,15 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
  *   Form state interface.
  */
 function _social_group_membership_edit_form_submit($form, FormStateInterface $form_state) {
-  $group = \Drupal::routeMatch()->getParameter('group');
+  $group = _social_group_get_current_group();
 
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::service('entity_type.manager')
-      ->getStorage('group')
-      ->load($group);
+  if (is_object($group)) {
+    // Set redirect to the Group overview page when a user saves their profile.
+    $form_state->setRedirect(
+      'entity.group_content.group_membership.collection',
+      array('group' => $group->id(), array())
+    );
   }
-
-  // Set redirect to the Group overview page when a user saves their profile.
-  $form_state->setRedirect(
-    'entity.group_content.group_membership.collection',
-    array('group' => $group->id(), array())
-  );
 }
 
 /**
@@ -277,19 +278,15 @@ function _social_group_membership_edit_form_submit($form, FormStateInterface $fo
  */
 function _social_group_cancel_join_leave_form($form, FormStateInterface $form_state) {
   // Get form that was submitted.
-  $group = \Drupal::routeMatch()->getParameter('group');
+  $group = _social_group_get_current_group();
 
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::service('entity_type.manager')
-      ->getStorage('group')
-      ->load($group);
+  if (is_object($group)) {
+    // Set redirect only for cancel buttons. Just go back to the group page.
+    $form_state->setRedirect(
+      'entity.group.canonical',
+      array('group' => $group->id(), array())
+    );
   }
-
-  // Set redirect only for cancel buttons. Just go back to the group page.
-  $form_state->setRedirect(
-    'entity.group.canonical',
-    array('group' => $group->id(), array())
-  );
 }
 
 /**
@@ -392,12 +389,8 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Manage visibility of Group "Members" tab.
   $account = \Drupal::currentUser();
   // Get current Group.
-  $group = \Drupal::routeMatch()->getParameter('group');
-  if (!is_object($group) && !is_null($group)) {
-    $group = \Drupal::service('entity_type.manager')
-      ->getStorage('group')
-      ->load($group);
-  }
+  $group = _social_group_get_current_group();
+
   if (is_object($group)) {
     // Check for the Group permission.
     $permission = 'administer members';
@@ -406,17 +399,19 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
         // For group managers we will show membership management interface.
         unset($data['tabs'][0]['social_group.members']);
       }
-      else {
-        // For members we will show page with profile teasers of other members.
-        unset($data['tabs'][0]['group.members']);
-      }
     }
   }
   // Hide Group "Nodes" tab.
   unset($data['tabs'][0]['gnode.collection']);
 
+  // Change the default 'View' tab title.
   if (isset($data['tabs'][0]['group.view']['#link'])) {
     $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
+  }
+
+  // Remove Edit tab. Edit will always go through Floating Edit Button.
+  if (isset($data['tabs'][0]['group.edit_form'])) {
+    unset($data['tabs'][0]['group.edit_form']);
   }
 }
 
@@ -458,4 +453,49 @@ function _social_group_get_member_profile(GroupContent $group_content) {
     }
   }
   return $user_profile;
+}
+
+/**
+ * Get current Group entity from the route.
+ *
+ * @return \Drupal\group\Entity\GroupInterface
+ */
+function _social_group_get_current_group() {
+  $group = \Drupal::routeMatch()->getParameter('group');
+
+  if (!is_object($group) && !is_null($group)) {
+    $group = \Drupal::entityTypeManager()
+      ->getStorage('group')
+      ->load($group);
+  }
+
+  return $group;
+}
+
+/**
+ * Get group cache tags
+ *
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *
+ * @return array An array of cache tags related to groups.
+ */
+function _social_group_cache_tags(GroupInterface $group) {
+  // Group views.
+  $tags = [
+    'group_list',
+    'group_content_list',
+    'group_view',
+    'group_content_view',
+  ];
+
+  // Add cachetags that are based on id.
+  $tags[] = 'group_hero:' . $group->id();
+
+  $current_user = \Drupal::currentUser();
+  if ($group_membership = $group->getMember($current_user)) {
+    $group_content = $group_membership->getGroupContent();
+    $tags[] = 'group_content:' . $group_content->id();
+  }
+
+  return $tags;
 }

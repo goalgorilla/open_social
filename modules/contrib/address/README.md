@@ -7,19 +7,21 @@ The Drupal 8 heir to the addressfield module, powered by the [commerceguys/addre
 
 Installation
 -------------
+This module needs to be installed via Composer, which will download the required libraries.
 
-1. Download [composer_manager](https://drupal.org/project/composer_manager) into your
-   `modules` directory.
+1. Add the Drupal Packagist repository
 
-2. From the Drupal root directory, initialize composer_manager, and run it for the first time:
+    ```sh
+    composer config repositories.drupal composer https://packagist.drupal-composer.org
+    ```
+This allows Composer to find Address and the other Drupal modules.
+
+2. Download Address
 
    ```sh
-   php modules/composer_manager/scripts/init.php
-   composer drupal-update
+   composer require "drupal/address ~8.1"
    ```
-This will download the required libraries into the root vendor/ directory.
+This will download the latest release of Address.
+Use 8.1.x-dev instead of ~8.1 to get the -dev release instead.
 
-3. Enable the Address module.
-
-Notes:
-- * Find out more about composer_manager usage [here](https://www.drupal.org/node/2405811).
+See https://www.drupal.org/node/2404989 for more information.

@@ -32,33 +32,33 @@ Feature: Create Open Group
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
 
-# @TODO: Uncomment this when Group hero caching will be fixed.
-#  # DS-648 As a LU I want to see the members of a group
-#    And I logout
-#    And I am logged in as "Group User Two"
-#    And I am on "newest-members"
-#    And I click "Group User One"
-#  # And I should see "Recently joined groups" in the "Sidebar second"
-#    And I should see "Test open group" in the "Sidebar second"
-#    And I click "Groups"
-#    And I should see "Test open group" in the "Main content"
-#    And I should not see the link "Add a group" in the "Sidebar second"
-#    And I click "Test open group"
-#  # And I should see "Newest members" in the "Sidebar second"
-#  # And I should see "Group User One" in the "Sidebar second"
-#    And I click "Members"
-#    And I should see "Members of Test open group"
-#    And I should see "Group User One"
-#
-#  # DS-647 As a LU I want to join a group
-#    And I should see the link "Join" in the "Hero block"
-#    And I click "Join"
-#    And I should see "Join group Test open group"
-#    And I should see the button "Cancel"
-#    And I should see the button "Join group"
-#    And I press "Join group"
-#    And I should see "2 member" in the "Hero block"
-#    And I should see the button "Joined"
+  # @TODO: Uncomment this when Group hero caching will be fixed.
+  # DS-648 As a LU I want to see the members of a group
+    And I logout
+    And I am logged in as "Group User Two"
+    And I am on "newest-members"
+    And I click "Group User One"
+  # And I should see "Recently joined groups" in the "Sidebar second"
+    And I should see "Test open group" in the "Sidebar second"
+    And I click "Groups"
+    And I should see "Test open group" in the "Main content"
+    And I should not see the link "Add a group" in the "Sidebar second"
+    And I click "Test open group"
+  # And I should see "Newest members" in the "Sidebar second"
+  # And I should see "Group User One" in the "Sidebar second"
+    And I click "Members"
+    And I should see "Members of Test open group"
+    And I should see "Group User One"
+
+  # DS-647 As a LU I want to join a group
+    And I should see the link "Join" in the "Hero block"
+    And I click "Join"
+    And I should see "Join group Test open group"
+    And I should see the button "Cancel"
+    And I should see the button "Join group"
+    And I press "Join group"
+    And I should see "2 member" in the "Hero block"
+    And I should see the button "Joined"
 
   # DS-643 As a LU I want to see the events of a group
     When I click "Events"
@@ -87,42 +87,46 @@ Feature: Create Open Group
     And I should see "Test group event" in the "Main content"
 
   # DS-644 As a LU I want to see the topics of a group
-#    When I click "Topics"
-#    And I should see the link "Create Topic" in the "Sidebar second"
-#    And I click "Create Topic"
-#    When I fill in the following:
-#      | Title |Test group topic |
-#    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-#    And I click radio button "Discussion"
-#  # TODO: Change title of this button when we will have one step
-#    And I press "Continue to final step"
-#    And I press "Create node in group"
-#    And I should see "Test group topic"
-#    And I should see "Body description text" in the "Main content"
-#    And I should see "Discussion" in the "Hero block"
-#   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-#    And I should see the link "Test open group" in the "Hero block"
-#    And I click "Test open group"
-#  # TODO: And I should see "Latest Topics" in the "Sidebar second"
-#  # And I should see "Test group topic" in the "Sidebar second"
-#    And I click "Topics"
-#    And I should see "Test group topic" in the "Main content"
+    When I click "Topics"
+    And I should see the link "Create Topic" in the "Sidebar second"
+    And I click "Create Topic"
+    When I fill in the following:
+      | Title |Test group topic |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
+    And I click radio button "Discussion"
+  # TODO: Change title of this button when we will have one step
+    And I press "Continue to final step"
+    And I press "Create node in group"
+    And I should see "Test group topic"
+    And I should see "Body description text" in the "Main content"
+    And I should see "Discussion" in the "Hero block"
+   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
+    And I should see the link "Test open group" in the "Hero block"
+    And I click "Test open group"
+  # TODO: And I should see "Latest Topics" in the "Sidebar second"
+  # And I should see "Test group topic" in the "Sidebar second"
+    And I click "Topics"
+    And I should see "Test group topic" in the "Main content"
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "2" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
+    And I should see "Test open group" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
-  # And I should see "Group User Two" in the "Hero block"
-    And I should see "Group User One" in the "Hero block"
+    And I should see "Group User Two" in the "Hero block"
     And I should see "Groups"
+    And I should not see "Test open group"
 
   # DS-722 As an outsider I am not allowed to enrol to an event in group
     When I click "Events"
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero block"
 
-  # TODO: Add check for latest groups block on LU homepage
+  # Check for latest groups block on LU homepage
+    When I am on "stream"
+  # And I should see "Newest groups" in the "Sidebar second"
+    And I should see the link "Test open group" in the "Sidebar second"

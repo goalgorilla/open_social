@@ -17,7 +17,7 @@
       br
       .text-gray-lighter 30 minutes ago
 .card--teaser.card--teaser-stream.card-with-actionbar
-  a.card-image.blue-overlay(href="event.html")
+  a.card-image(href="event.html")
     img.img-responsive(src="content/images/people3-square.jpg")
     .teaser-date 28
       .text-xs Aug
@@ -25,24 +25,27 @@
   .card-body
     h4.card-title 
       a(href="event.html") Team conference East
-    p.text-grey-dark.text-m
-      i.material-icons event
+    .text-gray.text-m.text-truncate
+      svg.icon-gray.icon-small
+        use(xlink:href='#icon-event')
       | &nbsp;
       span.inline-center 28 Aug 10:00 - 12:00 
       | &nbsp; 
-      unless user == "isAnonymous"
-        span.label.label-primary enrolled
-    p.text-grey-dark.text-m
-      i.material-icons place
+    .text-gray.text-m.text-truncate
+      svg.icon-gray.icon-small
+        use(xlink:href='#icon-location')
       | &nbsp;
       span.inline-center Old Market, Groningen
     .card-actionbar
-      if user != "isAnonymous"
-        .badge.badge-gray-lighter.badge--toggle
-          label
-            input(type='checkbox')
-            i.material-icons group        
-            span.badge--toggle__label community
+      unless user == "isAnonymous"
+        .actionbar
+          .badge.badge--toggle
+            label
+              input(type='checkbox')
+              svg.icon-gray-light.icon-badge-toggle
+                use(xlink:href='#icon-community')
+              span.badge--toggle__label community
+          span.label.label-default enrolled
       a.btn.btn-flat.btn-sm.pull-right(href="event.html") Read more
 
 if user != "isAnonymous"

@@ -90,13 +90,13 @@ Feature: Enroll for an event
       | title            | Enrollment test event |
       | field_event_date | 3014-10-17 8:00am     |
       | status           | 1                     |
-    And I click "eventenrollment"
+    And I click "eventenrollment" in the "Hero block"
     And I click "Events"
     Then I should not see "Enrolled"
 
     When I click "Enrollment test event"
     And I press the "Enroll" button
     Then I should see the button "Enrolled"
-    And I click "eventenrollment"
+    And I click "eventenrollment" in the "Hero block"
     And I click "Events"
     Then I should see "Enrolled"

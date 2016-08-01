@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressFormatImporterInterface.
- */
-
 namespace Drupal\address;
 
 /**

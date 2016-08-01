@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\ZoneMember\ZoneMemberBase.
- */
-
 namespace Drupal\address\Plugin\ZoneMember;
 
 use CommerceGuys\Addressing\Model\AddressInterface;

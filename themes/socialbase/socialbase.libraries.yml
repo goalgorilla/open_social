@@ -11,22 +11,26 @@ global-styling:
       # separate print stylesheets is bad for front-end performance.
       components/asset-builds/css/materialize.css: {}
   js:
-    js/vendor/jquery.touch-swipe.js: {}
     js/components.js: {}
     js/materialize.js: {}
     js/bootstrap.min.js: {}
-  dependencies:
-    - core/jquery
-    - core/jquery.once
-    - core/debounce
-    - core/forms
-    - core/drupalSettings
 
 layout:
   css:
     # The SMACSS category, "layout", is loaded after "base" styles.
     layout:
       components/asset-builds/css/layout.css: {}
+
+icons:
+  css:
+    # The SMACSS category, "component", is loaded after "layout" styles.
+    component:
+      components/asset-builds/css/icons.css: {}
+
+alerts:
+  css:
+    component:
+      components/asset-builds/css/alerts.css: {}
 
 buttons:
   css:
@@ -36,7 +40,17 @@ buttons:
 admin:
   css:
     component:
-      css/admin-toolbar.css: {}
+      components/asset-builds/css/admin-toolbar.css: {}
+
+type:
+  css:
+    component:
+      components/asset-builds/css/type.css: {}
+
+drupal.ajax:
+  css:
+    component:
+      components/asset-builds/css/ajax.css: {}
 
 pickadate:
   css:
@@ -47,3 +61,16 @@ pickadate:
     libs/date_picker/picker.date.js: {}
     libs/date_picker/picker.time.js: {}
     libs/date_picker/picker.init.js: {}
+
+tablesaw:
+  css:
+    component:
+      components/asset-builds/css/tablesaw.css: {}
+  js:
+    libs/tablesaw/tablesaw.js: {}
+    libs/tablesaw/tablesaw-init.js: {}
+
+waves:
+  css:
+    component:
+      components/asset-builds/css/waves.css: {}

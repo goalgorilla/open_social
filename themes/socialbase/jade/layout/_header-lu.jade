@@ -8,15 +8,19 @@
       .navbar-header
       
         button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
-          span.sr-only Toggle navigation
-          i.material-icons(title='menu') menu                
+          svg.icon-white.icon-medium
+            title Toggle navigation
+            use(xlink:href='#icon-menu')
+          span.sr-only Toggle navigation            
             
         ul.nav.navbar-nav.navbar-right
           li.hidden-xs
             a(href='home-lu.html') Home
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-              i.custom-icons.icon-group(title='My groups')
+              svg.icon-white.icon-medium
+                title My Groups
+                use(xlink:href='#icon-group')
             ul.dropdown-menu
               li
                 .dropdown-header My groups
@@ -87,11 +91,14 @@
               li
                 .dropdown-header
                   a.block.clearfix(href="my-groups.html") View all
-                    i.material-icons.pull-right chevron_right
+                    svg.btn-icon.icon-black.pull-right
+                      use(xlink:href='#icon-navigate_next')
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-              i.material-icons(title='Notifications') notifications
-              sup.badge 4
+              svg.icon-white.icon-medium
+                title My Notifications
+                use(xlink:href='#icon-notifications')
+              span.badge 4
             ul.dropdown-menu
               li
                 .dropdown-header Notifications
@@ -134,11 +141,12 @@
                           .text-gray-1 2 days ago
               li
                 .dropdown-header
-                  a.block.clearfix(href="#") View all
-                    i.material-icons.pull-right chevron_right
+                  a.block.clearfix(href="notifications-archive.htm") View all
+                    svg.btn-icon.icon-black.pull-right
+                      use(xlink:href='#icon-navigate_next')
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-              img.img-small.img-circle.pull-left(src='content/images/member5.jpg', alt='')
+              img.img-small.img-circle.media-middle(src='content/images/member5.jpg', alt='')
               span.profile.hidden-xs John Johnson
             ul.dropdown-menu
               li
@@ -154,11 +162,13 @@
       #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
         ul.nav.navbar-nav
           li
+            a(href='explore.html') Explore
+          li
             form.navbar-form.navbar-left(role='search', method='get', action='search-content.html')
               #navbar-search.form-group
                 input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
                 input.form-submit(type='submit', value='')
                 span.search-icon
-                  i.material-icons search
-          li
-            a(href='explore.html') Explore
+                  svg
+                    title Search
+                    use(xlink:href='#icon-search')

@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * The sitewide_js module file.
+ */
+
+/**
+ * Implements hook_page_attachments().
+ */
+function sitewide_js_page_attachments(array &$attachments) {
+
+  // Get settings.
+  $config = Drupal::config('sitewide_js.settings');
+
+  // Check if it's enabled.
+  if ($config->get('swjs_enabled') === 1) {
+    // Check if it should be placed in the header.
+    if ($config->get('swjs_location') === '0') {
+      // Attach the JS.
+      $attachments['#attached']['html_head'][] = [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'script',
+          '#value' => $config->get('swjs_javascript'),
+        ],
+        'sitewide_js'
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function sitewide_js_preprocess_html(&$variables) {
+  // Get settings.
+  $config = Drupal::config('sitewide_js.settings');
+
+  // Check if it's enabled.
+  if ($config->get('swjs_enabled') === 1) {
+    // Check if it should be placed in the footer.
+    if ($config->get('swjs_location') === '1' && !empty($config->get('swjs_footer_region'))) {
+      // Attach the JS.
+      $variables[$config->get('swjs_footer_region')][9999] = [
+        '#type' => 'html_tag',
+        '#tag' => 'script',
+        '#value' => $config->get('swjs_javascript'),
+      ];
+    }
+  }
+}

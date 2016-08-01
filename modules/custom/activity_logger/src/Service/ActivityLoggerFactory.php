@@ -6,9 +6,6 @@
 
 namespace Drupal\activity_logger\Service;
 
-use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContent;
 use Drupal\message\Entity\Message;
 
 /**
@@ -35,8 +32,6 @@ class ActivityLoggerFactory {
       // Create the ones applicable for this bundle.
       // Determine destinations.
       $destinations = [];
-      $group = [];
-      $groupcontent = [];
       if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
         foreach ($message_values['destinations'] as $destination) {
           $destinations[] = array('value' => $destination);
@@ -47,6 +42,7 @@ class ActivityLoggerFactory {
 
       // Set the values.
       $new_message['type'] = $message_type;
+      $new_message['created'] = $entity->getCreatedTime();
       $new_message['uid'] = $entity->getOwner()->id();
       $new_message['field_message_context'] = $mt_context;
       $new_message['field_message_destination'] = $destinations;
@@ -57,34 +53,6 @@ class ActivityLoggerFactory {
 
       // Create the message.
       $message = Message::create($new_message);
-
-      // Try to get the group.
-      $groupcontent = GroupContent::loadByEntity($entity);
-      if (!empty($groupcontent)) {
-        $groupcontent = reset($groupcontent);
-        $group = $groupcontent->getGroup();
-      }
-      // Or special handling for post entities.
-      if ($entity->getEntityTypeId() === 'post') {
-        if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')
-            ->getValue())
-        ) {
-          $group = Group::load($group_id = $entity->field_recipient_group->target_id);
-        }
-      }
-      // If it's a group.. add it in the arguments.
-      if ($group instanceof Group) {
-        $gurl = Url::fromRoute('entity.group.canonical', array(
-          'group' => $group->id(),
-          array()
-        ));
-        $message->setArguments(array(
-          'groups' => [
-            'gtitle' => $group->label(),
-            'gurl' => $gurl->toString(),
-          ],
-        ));
-      }
 
       $message->save();
 

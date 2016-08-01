@@ -5,8 +5,10 @@ dependencies:
     - core.entity_view_mode.node.small_teaser
     - core.entity_view_mode.node.teaser
     - node.type.topic
+    - taxonomy.vocabulary.topic_types
   module:
     - node
+    - taxonomy
     - user
 id: topics
 label: 'User Topics'
@@ -238,7 +240,20 @@ display:
       title: Topics
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No topics found for this user'
+            format: basic_html
+          plugin_id: text
       relationships: {  }
       arguments:
         uid:
@@ -279,7 +294,7 @@ display:
           entity_field: uid
           plugin_id: numeric
       display_extenders: {  }
-      use_ajax: true
+      use_ajax: false
       filter_groups:
         operator: AND
         groups:
@@ -293,6 +308,7 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -443,9 +459,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  page_1:
+  page_profile:
     display_plugin: page
-    id: page_1
+    id: page_profile
     display_title: Page
     position: 1
     display_options:
@@ -475,6 +491,7 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

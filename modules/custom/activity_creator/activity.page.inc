@@ -33,16 +33,17 @@ function template_preprocess_activity(array &$variables) {
   // Get the url to the related entity.
   $full_url = $activity->getRelatedEntityUrl();
 
-  // Display comment created date in format 'time ago'.
+  // Display activity created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($activity->getCreatedTime(), array('granularity' => 2));
-  $date = t('%time ago', array('%time' => $created_time_ago));
+    ->formatTimeDiffSince($activity->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
+  $date = t('%time ago', array('%time' => $created_time_ago->getString()));
   if ($full_url == '') {
     $variables['date'] = $date;
   }
   else {
     $variables['date'] = Link::fromTextAndUrl($date, $full_url);
   }
+  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might

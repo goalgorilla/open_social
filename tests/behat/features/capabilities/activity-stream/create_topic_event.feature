@@ -25,38 +25,38 @@ Feature: See and get notified when content is created
 
     When I wait for the queue to be empty
     And I go to "user"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
 
     Given I am logged in as "SeeUser"
     And I click "CreateUser"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
     When I am on the homepage
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
     When I go to "explore"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
 
     Given I am an anonymous user
     When I am on the homepage
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
     When I go to "explore"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
 
   @community
@@ -80,38 +80,38 @@ Feature: See and get notified when content is created
 
     When I wait for the queue to be empty
     And I go to "user"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
 
     Given I am logged in as "SeeUser"
     And I click "CreateUser"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
     When I am on the homepage
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
     When I go to "explore"
-    Then I should see "CreateUser created an event in the community"
+    Then I should see "CreateUser created an event"
     And I should see "My Behat Event created"
-    And I should see "CreateUser created a topic in the community"
+    And I should see "CreateUser created a topic"
     And I should see "My Behat Topic created"
 
     Given I am an anonymous user
     When I am on the homepage
-    Then I should not see "CreateUser created an event in the community"
+    Then I should not see "CreateUser created an event"
     And I should not see "My Behat Event created"
-    And I should not see "CreateUser created a topic in the community"
+    And I should not see "CreateUser created a topic"
     And I should not see "My Behat Topic created"
     When I go to "explore"
-    Then I should not see "CreateUser created an event in the community"
+    Then I should not see "CreateUser created an event"
     And I should not see "My Behat Event created"
-    And I should not see "CreateUser created a topic in the community"
+    And I should not see "CreateUser created a topic"
     And I should not see "My Behat Topic created"
 
     @group
@@ -159,7 +159,7 @@ Feature: See and get notified when content is created
     Then I should see "CreateUser created an event in group Test open group"
     And I should see "Test group event"
     When I go to "explore"
-    Then I should not see "CreateUser created an event in the community"
+    Then I should not see "CreateUser created an event"
     And I should not see "Test group event"
 
     Given I am an anonymous user

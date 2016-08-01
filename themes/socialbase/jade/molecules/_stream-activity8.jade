@@ -21,7 +21,8 @@
     a.btn.btn-block.btn-link(href='single-post.html#comment-form') Comment
     hr.ruler-xs
     a.btn.btn-block.btn-link(href='single-post.html#comment-1') show all 1 comments
-      i.material-icons chevron_right 
+      svg.icon-small
+        use(xlink:href='#icon-navigate_next')
 
 .card-nested-section.hidden-xs
 
@@ -41,4 +42,5 @@
   .margin-top-l.text-center
     if user != "isAnonymous"
       a.btn.btn-link(href='single-post.html') show all 1 comments
-        i.material-icons chevron_right
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next') 

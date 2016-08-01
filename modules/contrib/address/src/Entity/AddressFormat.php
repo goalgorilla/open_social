@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Entity\AddressFormat.
- */
-
 namespace Drupal\address\Entity;
 
 use CommerceGuys\Addressing\Enum\AddressField;

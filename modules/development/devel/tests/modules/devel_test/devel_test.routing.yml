@@ -5,28 +5,3 @@ devel.simple_page:
     _title: 'Simple Page'
   requirements:
     _permission: 'access devel information'
-
-devel.silent_global:
-  path: '/devel-silent/global-shoutdown'
-  defaults:
-    _controller: '\Drupal\devel_test\Controller\DevelSilentTestController::globalShoutdown'
-    _title: 'Devel shoutdown'
-  requirements:
-    _permission: 'access devel information'
-
-devel.silent_route_parameter:
-  path: '/devel-silent/route-requirement'
-  defaults:
-    _controller: '\Drupal\devel_test\Controller\DevelSilentTestController::develSilentRouteRequirement'
-    _title: 'Devel settings'
-  requirements:
-    _permission: 'access devel information'
-    _devel_silent: 'TRUE'
-
-devel.silent_json:
-  path: '/devel-silent/json'
-  defaults:
-    _controller: '\Drupal\devel_test\Controller\DevelSilentTestController::jsonResponse'
-    _title: 'Devel settings'
-  requirements:
-    _permission: 'access devel information'

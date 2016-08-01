@@ -10,7 +10,7 @@ Feature: Topic Overview
     And I am on "user"
     When I click "Topics"
      Then I should see "Topics" in the "Page title block"
-    And I should see "I want to see topics that" in the "Sidebar second"
+    And I should see "Filter" in the "Sidebar second"
     And I should see text matching "is the type of"
     And I should see text matching "has the publish status of"
 
@@ -18,7 +18,7 @@ Feature: Topic Overview
     Given I am on "user/1"
     When I click "Topics"
     Then I should see "Topics" in the "Page title block"
-    And I should see "I want to see topics that" in the "Sidebar second"
+    And I should see "Filter" in the "Sidebar second"
     And I should not see text matching "has the publish status of"
 
 #  Scenario: Successfully filter the topic overview

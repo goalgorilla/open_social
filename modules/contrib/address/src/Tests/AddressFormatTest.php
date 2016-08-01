@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Tests\AddressFormatTest.
- */
-
 namespace Drupal\address\Tests;
 
 use CommerceGuys\Addressing\Repository\AddressFormatRepository;

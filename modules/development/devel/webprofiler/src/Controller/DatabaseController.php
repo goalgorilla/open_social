@@ -9,7 +9,6 @@ namespace Drupal\webprofiler\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Database\Database;
 use Drupal\webprofiler\DataCollector\DatabaseDataCollector;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

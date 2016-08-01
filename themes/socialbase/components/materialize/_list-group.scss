@@ -6,6 +6,23 @@ a.list-group-item {
   font-weight: 300;
 }
 
+.list-group-item,
+.list-group-item:focus {
+  .icon-small {
+    fill: $default-color;
+    margin-right: .25em;
+  }
+}
+
+.list-group-item.active,
+.list-group-item:hover,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+  .icon-small {
+    fill: white;
+  }
+}
+
 .list-group-divider {
 
   .list-group-item {

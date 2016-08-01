@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\AddressFormatStorage.
- */
-
 namespace Drupal\address;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorage;

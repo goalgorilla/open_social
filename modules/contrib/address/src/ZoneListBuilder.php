@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\ZoneListBuilder.
- */
-
 namespace Drupal\address;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;

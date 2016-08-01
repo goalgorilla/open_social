@@ -50,17 +50,9 @@ class GroupContentRouteProvider implements EntityRouteProviderInterface, EntityH
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $routes = [];
-
-    // Retrieve all installed content enabler plugins.
-    $installed = $this->pluginManager->getInstalledIds();
-
+    
     // Retrieve all possible routes from all installed plugins.
-    foreach ($this->pluginManager->getAll() as $plugin_id => $plugin) {
-      // Skip plugins that have not been installed anywhere.
-      if (!in_array($plugin_id, $installed)) {
-        continue;
-      }
-
+    foreach ($this->pluginManager->getInstalled() as $plugin_id => $plugin) {
       /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
       $routes = array_merge($routes, $plugin->getRoutes());
     }

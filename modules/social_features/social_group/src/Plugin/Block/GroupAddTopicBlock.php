@@ -5,6 +5,8 @@ namespace Drupal\social_group\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Provides a 'GroupAddTopicBlock' block.
@@ -18,14 +20,32 @@ class GroupAddTopicBlock extends BlockBase {
 
   /**
    * {@inheritdoc}
+   *
+   * Custom access logic to display the block.
+   */
+  function blockAccess(AccountInterface $account) {
+    $group = _social_group_get_current_group();
+
+    if(is_object($group)){
+      if ($group->hasPermission('create topic node', $account)) {
+        return AccessResult::allowed();
+      }
+    }
+
+    // By default, the block is not visible.
+    return AccessResult::forbidden();
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function build() {
     $build = [];
 
-    $group_id = \Drupal::routeMatch()->getParameter('group');
+    $group = _social_group_get_current_group();
 
-    if (!empty($group_id)) {
-      $url = Url::fromUserInput("/group/$group_id/node/create/topic");
+    if(is_object($group)){
+      $url = Url::fromUserInput("/group/{$group->id()}/node/create/topic");
 
       $link_options = array(
         'attributes' => array(
@@ -43,11 +63,9 @@ class GroupAddTopicBlock extends BlockBase {
 
       $build['content'] = Link::fromTextAndUrl(t('Create Topic'), $url)->toRenderable();
 
-      // @TODO Fix cache tags!
-      // Disable cache for this block to get correct group_id in path
-      $build['#cache'] = array(
-        'max-age' => 0,
-      );
+      // Cache
+      $build['#cache']['contexts'][] = 'url.path';
+      $build['#cache']['tags'][] = 'group:' . $group->id();
     }
 
     return $build;

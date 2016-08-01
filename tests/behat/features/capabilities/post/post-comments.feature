@@ -16,7 +16,7 @@ Feature: Comment on a Post
    When I fill in "What's on your mind?" with "This is a community post."
     And I select post visibility "Community"
     And I press "Post"
-   Then I should see the success message "Created the Post."
+   Then I should see the success message "Your post has been posted."
     And I should see "This is a community post." in the "Main content front"
     And I should see "PostUser1" in the "Main content front"
     And I should be on "/stream"

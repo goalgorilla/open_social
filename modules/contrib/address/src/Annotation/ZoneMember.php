@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Annotation\ZoneMember.
- */
-
 namespace Drupal\address\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

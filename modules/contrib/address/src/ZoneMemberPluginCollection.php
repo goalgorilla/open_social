@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\ZoneMemberPluginCollection.
- */
-
 namespace Drupal\address;
 
 use Drupal\address\Entity\ZoneInterface;

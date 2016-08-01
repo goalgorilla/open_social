@@ -47,6 +47,7 @@ use Drupal\entity\Revision\RevisionableContentEntityBase;
  *   links = {
  *     "add-page" = "/entity_test_enhanced/add",
  *     "add-form" = "/entity_test_enhanced/add/{type}",
+ *     "edit-form" = "/entity_test_enhanced/{entity_test_enhanced}/edit",
  *     "canonical" = "/entity_test_enhanced/{entity_test_enhanced}",
  *     "collection" = "/entity_test_enhanced",
  *     "delete-multiple-form" = "/entity_test_enhanced/delete",

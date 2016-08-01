@@ -16,6 +16,14 @@ class EntityAccessHelper {
    */
   public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
     if ($op === 'view') {
+      // Check published status.
+      if (isset($node->status) && $node->status->value == NODE_NOT_PUBLISHED) {
+        $unpublished_own = $account->hasPermission('view own unpublished content');
+        if(($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)){
+          return 1;
+        }
+      }
+
       $field_definitions = $node->getFieldDefinitions();
 
       /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */

@@ -26,8 +26,10 @@
 {% endif %}
   {% if group_edit_url %}
     <div class="hero-action-button">
-      <a href="{{ group_edit_url }}"  title="Edit group" class="waves-effect waves-light btn btn-default btn-floating">
-        <i class="material-icons">mode_edit</i>
+      <a href="{{ group_edit_url }}"  title="Edit group" class="btn btn-default btn-floating waves-effect waves-circle">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
       </a>
     </div>
   {% endif %}

@@ -14,7 +14,6 @@ use Drupal\webprofiler\Compiler\EventPass;
 use Drupal\webprofiler\Compiler\ProfilerPass;
 use Drupal\webprofiler\Compiler\ServicePass;
 use Drupal\webprofiler\Compiler\StoragePass;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -55,7 +54,7 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
     // Add BlockDataCollector only if Block module is enabled.
     if (isset($modules['block'])) {
       $container->register('webprofiler.blocks', 'Drupal\webprofiler\DataCollector\BlocksDataCollector')
-        ->addArgument(new Reference(('entity.manager')))
+        ->addArgument(new Reference(('entity_type.manager')))
         ->addTag('data_collector', [
           'template' => '@webprofiler/Collector/blocks.html.twig',
           'id' => 'blocks',
@@ -63,7 +62,7 @@ class WebprofilerServiceProvider extends ServiceProviderBase {
           'priority' => 78,
         ]);
     }
-
+    
     // Add TranslationsDataCollector only if Locale module is enabled.
     if (isset($modules['locale'])) {
       $container->register('webprofiler.translations', 'Drupal\webprofiler\DataCollector\TranslationsDataCollector')

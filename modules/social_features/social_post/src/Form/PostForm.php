@@ -28,6 +28,7 @@ class PostForm extends ContentEntityForm {
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
     $form['#attached']['library'][] = 'social_post/visibility-settings';
+    $form['#attached']['library'][] = 'social_post/keycode-submit';
     // Default is create/add mode.
     $form['field_visibility']['widget'][0]['#edit_mode'] = FALSE;
 
@@ -107,13 +108,13 @@ class PostForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Post.', [
+        drupal_set_message($this->t('Your post %label has been posted.', [
           '%label' => $this->entity->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Post.', [
+        drupal_set_message($this->t('Your post %label has been saved.', [
           '%label' => $this->entity->label(),
         ]));
     }

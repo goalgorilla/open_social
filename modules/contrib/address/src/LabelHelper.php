@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\LabelHelper.
- */
-
 namespace Drupal\address;
 
 use CommerceGuys\Addressing\Enum\AddressField;
@@ -44,12 +39,12 @@ class LabelHelper {
       AddressField::DEPENDENT_LOCALITY => self::getDependentLocalityLabel($dependent_locality_type),
       AddressField::POSTAL_CODE => self::getPostalCodeLabel($postal_code_type),
       // Google's library always labels the sorting code field as "Cedex".
-      AddressField::SORTING_CODE => t('Cedex'),
-      AddressField::ADDRESS_LINE1 => t('Street address'),
+      AddressField::SORTING_CODE => t('Cedex', [], ['context' => 'Address label']),
+      AddressField::ADDRESS_LINE1 => t('Street address', [], ['context' => 'Address label']),
       // The address line 2 label is usually shown only to screen-reader users.
-      AddressField::ADDRESS_LINE2 => t('Street address line 2'),
-      AddressField::ORGANIZATION => t('Company'),
-      AddressField::RECIPIENT => t('Contact name'),
+      AddressField::ADDRESS_LINE2 => t('Street address line 2', [], ['context' => 'Address label']),
+      AddressField::ORGANIZATION => t('Company', [], ['context' => 'Address label']),
+      AddressField::RECIPIENT => t('Contact name', [], ['context' => 'Address label']),
     ];
   }
 
@@ -63,15 +58,15 @@ class LabelHelper {
    */
   public static function getGenericFieldLabels() {
     return [
-      AddressField::ADMINISTRATIVE_AREA => t('Administrative area'),
-      AddressField::LOCALITY => t('Locality'),
-      AddressField::DEPENDENT_LOCALITY => t('Dependent locality'),
-      AddressField::POSTAL_CODE => t('Postal code'),
-      AddressField::SORTING_CODE => t('Sorting code'),
-      AddressField::ADDRESS_LINE1 => t('Address line 1'),
-      AddressField::ADDRESS_LINE2 => t('Address line 2'),
-      AddressField::ORGANIZATION => t('Organization'),
-      AddressField::RECIPIENT => t('Recipient'),
+      AddressField::ADMINISTRATIVE_AREA => t('Administrative area', [], ['context' => 'Address label']),
+      AddressField::LOCALITY => t('Locality', [], ['context' => 'Address label']),
+      AddressField::DEPENDENT_LOCALITY => t('Dependent locality', [], ['context' => 'Address label']),
+      AddressField::POSTAL_CODE => t('Postal code', [], ['context' => 'Address label']),
+      AddressField::SORTING_CODE => t('Sorting code', [], ['context' => 'Address label']),
+      AddressField::ADDRESS_LINE1 => t('Address line 1', [], ['context' => 'Address label']),
+      AddressField::ADDRESS_LINE2 => t('Address line 2', [], ['context' => 'Address label']),
+      AddressField::ORGANIZATION => t('Organization', [], ['context' => 'Address label']),
+      AddressField::RECIPIENT => t('Recipient', [], ['context' => 'Address label']),
     ];
   }
 
@@ -102,18 +97,18 @@ class LabelHelper {
    */
   public static function getAdministrativeAreaLabels() {
     return [
-      AdministrativeAreaType::AREA => t('Area'),
-      AdministrativeAreaType::COUNTY => t('County'),
-      AdministrativeAreaType::DEPARTMENT => t('Department'),
-      AdministrativeAreaType::DISTRICT => t('District'),
-      AdministrativeAreaType::DO_SI => t('Do si'),
-      AdministrativeAreaType::EMIRATE => t('Emirate'),
-      AdministrativeAreaType::ISLAND => t('Island'),
-      AdministrativeAreaType::OBLAST => t('Oblast'),
-      AdministrativeAreaType::PARISH => t('Parish'),
-      AdministrativeAreaType::PREFECTURE => t('Prefecture'),
-      AdministrativeAreaType::PROVINCE => t('Province'),
-      AdministrativeAreaType::STATE => t('State'),
+      AdministrativeAreaType::AREA => t('Area', [], ['context' => 'Address label']),
+      AdministrativeAreaType::COUNTY => t('County', [], ['context' => 'Address label']),
+      AdministrativeAreaType::DEPARTMENT => t('Department', [], ['context' => 'Address label']),
+      AdministrativeAreaType::DISTRICT => t('District', [], ['context' => 'Address label']),
+      AdministrativeAreaType::DO_SI => t('Do si', [], ['context' => 'Address label']),
+      AdministrativeAreaType::EMIRATE => t('Emirate', [], ['context' => 'Address label']),
+      AdministrativeAreaType::ISLAND => t('Island', [], ['context' => 'Address label']),
+      AdministrativeAreaType::OBLAST => t('Oblast', [], ['context' => 'Address label']),
+      AdministrativeAreaType::PARISH => t('Parish', [], ['context' => 'Address label']),
+      AdministrativeAreaType::PREFECTURE => t('Prefecture', [], ['context' => 'Address label']),
+      AdministrativeAreaType::PROVINCE => t('Province', [], ['context' => 'Address label']),
+      AdministrativeAreaType::STATE => t('State', [], ['context' => 'Address label']),
     ];
   }
 
@@ -144,9 +139,9 @@ class LabelHelper {
    */
   public static function getLocalityLabels() {
     return [
-      LocalityType::CITY => t('City'),
-      LocalityType::DISTRICT => t('District'),
-      LocalityType::POST_TOWN => t('Post town'),
+      LocalityType::CITY => t('City', [], ['context' => 'Address label']),
+      LocalityType::DISTRICT => t('District', [], ['context' => 'Address label']),
+      LocalityType::POST_TOWN => t('Post town', [], ['context' => 'Address label']),
     ];
   }
 
@@ -177,10 +172,10 @@ class LabelHelper {
    */
   public static function getDependentLocalityLabels() {
     return [
-      DependentLocalityType::DISTRICT => t('District'),
-      DependentLocalityType::NEIGHBORHOOD => t('Neighborhood'),
-      DependentLocalityType::VILLAGE_TOWNSHIP => t('Village township'),
-      DependentLocalityType::SUBURB => t('Suburb'),
+      DependentLocalityType::DISTRICT => t('District', [], ['context' => 'Address label']),
+      DependentLocalityType::NEIGHBORHOOD => t('Neighborhood', [], ['context' => 'Address label']),
+      DependentLocalityType::VILLAGE_TOWNSHIP => t('Village township', [], ['context' => 'Address label']),
+      DependentLocalityType::SUBURB => t('Suburb', [], ['context' => 'Address label']),
     ];
   }
 
@@ -211,9 +206,9 @@ class LabelHelper {
    */
   public static function getPostalCodeLabels() {
     return [
-      PostalCodeType::POSTAL => t('Postal code'),
-      PostalCodeType::ZIP => t('Zip code'),
-      PostalCodeType::PIN => t('Pin code'),
+      PostalCodeType::POSTAL => t('Postal code', [], ['context' => 'Address label']),
+      PostalCodeType::ZIP => t('Zip code', [], ['context' => 'Address label']),
+      PostalCodeType::PIN => t('Pin code', [], ['context' => 'Address label']),
     ];
   }
 

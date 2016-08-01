@@ -19,11 +19,11 @@ body
     .main-content
       .container
   
-        .row.margin-top-l
-          .col-xs-12
-            h4.section-title Notifications
+        .row.margin-top-l          
           
           .col-xs-12.col-sm-8
+            h4.section-title Notifications
+            
             .list-group.z-depth-1
                   
               a.list-group-item.media.bg-gray-lightest(href='single-post.html')
@@ -96,24 +96,7 @@ body
                   br
                   .text-gray-lighter 10 may 2016
                   
-            nav
-              ul.pagination
-                li.pager__item.pager__item--previous.disabled
-                  a(href="#0", aria-label='Previous')    
-                    span(aria-hidden="true") 
-                      i.material-icons chevron_left
-                li.pager__item.active
-                  a(href="#1") 1
-                li.pager__item 
-                  a(href="#1") 2
-                li.pager__item 
-                  a(href="#1") 3          
-                li.pager__item 
-                  a(href="#1") 4
-                li.pager__item.pager__item--next
-                  a(href='#', aria-label='Next')
-                    span(aria-hidden="true")
-                      i.material-icons chevron_right
+            include molecules/_pager.jade
                   
 
   include layout/_footer.jade

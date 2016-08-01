@@ -64,9 +64,6 @@ class DevelControllerTest extends WebTestBase {
   }
 
   function testRouteGeneration() {
-    // @TODO remove after https://www.drupal.org/node/2431263 is solved.
-    $this->container->get('module_installer')->install(array('kint'));
-
     // Test Devel load and render routes for entities with both route
     // definitions.
     $this->drupalGet('entity_test/' . $this->entity->id());

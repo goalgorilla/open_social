@@ -8,6 +8,8 @@
 namespace Drupal\devel\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\devel\DevelDumperPluginManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -16,6 +18,32 @@ use Drupal\Core\Url;
  * Defines a form that configures devel settings.
  */
 class SettingsForm extends ConfigFormBase {
+
+  /**
+   * Devel Dumper Plugin Manager.
+   *
+   * @var \Drupal\devel\DevelDumperPluginManager
+   */
+  protected $dumperManager;
+
+  /**
+   * Constructs a new SettingsForm object.
+   *
+   * @param \Drupal\devel\DevelDumperPluginManagerInterface $devel_dumper_manager
+   *   Devel Dumper Plugin Manager.
+   */
+  public function __construct(DevelDumperPluginManagerInterface $devel_dumper_manager) {
+    $this->dumperManager = $devel_dumper_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('plugin.manager.devel_dumper')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -40,10 +68,6 @@ class SettingsForm extends ConfigFormBase {
     $current_url = Url::createFromRequest($request);
     $devel_config = $this->config('devel.settings');
 
-    $form['api_url'] = array('#type' => 'textfield',
-      '#title' => t('API Site'),
-      '#default_value' => $devel_config->get('api_url'),
-      '#description' => t('The base URL for your developer documentation links. You might change this if you run <a href=":url">api.module</a> locally.', array(':url' => Url::fromUri('http://drupal.org/project/api')->toString())));
     $form['page_alter'] = array('#type' => 'checkbox',
       '#title' => t('Display $page array'),
       '#default_value' => $devel_config->get('page_alter'),
@@ -104,6 +128,33 @@ class SettingsForm extends ConfigFormBase {
      '#default_value' => $devel_config->get('rebuild_theme'),
     );
 
+    $dumper = $devel_config->get('devel_dumper');
+    $default = $this->dumperManager->isPluginSupported($dumper) ? $dumper : $this->dumperManager->getFallbackPluginId(NULL);
+
+    $form['dumper'] = array(
+      '#type' => 'radios',
+      '#title' => $this->t('Variables Dumper'),
+      '#options' => [],
+      '#default_value' => $default,
+      '#description' => $this->t('Select the debugging tool used for formatting and displaying the variables inspected through the debug functions of Devel. You can enable the <a href=":kint_install">Kint module</a> (shipped with Devel) and select the Kint debugging tool for an improved debugging experience. <strong>NOTE</strong>: Some of these plugins require external libraries for to be enabled. Learn how install external libraries with <a href=":url">Composer</a>.', [':url' => 'https://www.drupal.org/node/2404989', ':kint_install' => Url::fromRoute('system.modules_list')->toString()]),
+    );
+
+    foreach ($this->dumperManager->getDefinitions() as $id => $definition) {
+      $form['dumper']['#options'][$id] = $definition['label'];
+
+      $supported = $this->dumperManager->isPluginSupported($id);
+      $form['dumper'][$id]['#disabled'] = !$supported;
+
+      $form['dumper'][$id]['#description'] = [
+        '#type' => 'inline_template',
+        '#template' => '{{ description }}{% if not supported %}<div><small>{% trans %}<strong>Not available</strong>. You may need to install external dependencies for use this plugin.{% endtrans %}</small></div>{% endif %}',
+        '#context' => [
+          'description' => $definition['description'],
+          'supported' => $supported,
+        ]
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -113,12 +164,14 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $this->config('devel.settings')
-      ->set('api_url', $values['api_url'])
       ->set('page_alter', $values['page_alter'])
       ->set('raw_names', $values['raw_names'])
       ->set('error_handlers', $values['error_handlers'])
       ->set('rebuild_theme', $values['rebuild_theme'])
+      ->set('devel_dumper', $values['dumper'])
       ->save();
+
+    parent::submitForm($form, $form_state);
   }
 
   /**

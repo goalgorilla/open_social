@@ -81,13 +81,13 @@ class FeaturesUIController implements ContainerInjectionInterface {
           }
         }
       }
-      $detected = !empty($selected) ? $this->getConfigDependents($selected) : array();
+      $detected = !empty($selected) ? $this->getConfigDependents($selected, $name) : array();
       $detected = array_merge($detected, $selected);
     }
 
     $result = [];
-    foreach ($detected as $name) {
-      $item = $config_collection[$name];
+    foreach ($detected as $config_name) {
+      $item = $config_collection[$config_name];
       $result[$item->getType()][$item->getShortName()] = $item->getName();
     }
     return new JsonResponse($result);
@@ -98,11 +98,13 @@ class FeaturesUIController implements ContainerInjectionInterface {
    *
    * @param array $item_names
    *   An array of item names.
+   * @param string $package_name
+   *   Short machine name of feature to process.
    *
    * @return array
    *   An array of config items.
    */
-  protected function getConfigDependents(array $item_names = NULL) {
+  protected function getConfigDependents(array $item_names, $package_name) {
     $result = [];
     $config_collection = $this->featuresManager->getConfigCollection();
     $packages = $this->featuresManager->getPackages();
@@ -113,6 +115,17 @@ class FeaturesUIController implements ContainerInjectionInterface {
       $item_names = array_keys($config_collection);
     }
 
+    // Add any existing auto-detected items already in the package config
+    $this->package = $packages[$package_name];
+    $package_config = $this->package->getConfig();
+    $package_config = !empty($package_config) ? array_unique(array_merge($package_config, $item_names)) : $item_names;
+    foreach ($package_config as $config_name) {
+      if (!$config_collection[$config_name]->getPackageExcluded()) {
+        $result[] = $config_name;
+      }
+    }
+
+    // Now add dependents of the items selected
     foreach ($item_names as $item_name) {
       if ($config_collection[$item_name]->getPackage()) {
         foreach ($config_collection[$item_name]->getDependents() as $dependent_item_name) {

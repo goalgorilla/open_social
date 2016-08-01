@@ -24,24 +24,7 @@ block content
       include molecules/_group3.jade
       include molecules/_group4.jade
       
-      nav
-        ul.pagination
-          li.pager__item.pager__item--previous.disabled
-            a(href="#0", aria-label='Previous')    
-              span(aria-hidden="true") 
-                i.material-icons chevron_left
-          li.pager__item.active
-            a(href="#1") 1
-          li.pager__item 
-            a(href="#1") 2
-          li.pager__item 
-            a(href="#1") 3          
-          li.pager__item 
-            a(href="#1") 4
-          li.pager__item.pager__item--next
-            a(href='#', aria-label='Next')
-              span(aria-hidden="true")
-                i.material-icons chevron_right
+      include molecules/_pager.jade
 
 block scriptinline  
   

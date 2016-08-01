@@ -117,7 +117,7 @@ function features_drush_command() {
       'force' => "Force import even if config is not overridden.",
     ),
     'examples' => array(
-      'drush feature-import foo.node foo.taxonomy bar' => 'Import node and taxonomy config of feature "foo". Import all config of feature "bar".',
+      'drush features-import foo:node.type.page foo:taxonomy.vocabulary.tags bar' => 'Import node and taxonomy config of feature "foo". Import all config of feature "bar".',
     ),
     'aliases' => array('fim', 'fr'),
   );
@@ -258,27 +258,29 @@ function drush_features_list_packages($package_name = '') {
 /**
  * Drush command callback for features-import-all.
  *
- * @return bool
  */
 function drush_features_import_all() {
   _drush_features_options();
   /** @var \Drupal\features\FeaturesManagerInterface $manager */
   $manager = \Drupal::service('features.manager');
   $packages = $manager->getPackages();
-
   $packages = $manager->filterPackages($packages);
-  $result = array();
+  $overridden = array();
 
   foreach ($packages as $package) {
     $overrides = $manager->detectOverrides($package);
-
-    if ($package->getStatus() == FeaturesManagerInterface::STATUS_INSTALLED) {
-      drush_print(dt('Reverting @module...', array('@module' => $package->getName())));
-      drush_features_import($package->getMachineName());
+    $missing = $manager->detectMissing($package);
+    if ((!empty($missing) || !empty($overrides)) && ($package->getStatus() == FeaturesManagerInterface::STATUS_INSTALLED)) {
+      $overridden[] = $package->getMachineName();
     }
   }
 
-  return TRUE;
+  if (!empty($overridden)) {
+    call_user_func_array('drush_features_import', $overridden);
+  }
+  else {
+    drush_log(dt('Current state already matches active config, aborting.'), 'ok');
+  }
 }
 
 /**
@@ -470,7 +472,7 @@ function drush_features_components() {
  */
 function drush_features_diff() {
   if (!$args = func_get_args()) {
-    drush_features_list_packages();
+    drush_print_table(drush_features_list_packages());
     return;
   }
 
@@ -669,7 +671,7 @@ function drush_features_import() {
     }
   }
   else {
-    drush_features_list();
+    drush_print_table(drush_features_list_packages());
     return;
   }
 }

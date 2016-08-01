@@ -8,9 +8,11 @@ namespace Drupal\social_demo\Content;
 
 use Drupal\comment\Entity\Comment;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\node\NodeStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
+use Drupal\social_post\Entity\Post;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\Entity\Node;
@@ -96,21 +98,58 @@ class SocialDemoComment implements ContainerInjectionInterface {
       $accountClass = SocialDemoUser::create($container);
       $uid = $accountClass->loadUserFromUuid($content['uid']);
 
-      // Try and fetch the related node.
-      $nid = $this->fetchRelatedNode($content['entity_id']);
+      //
+      if ($content['comment_type'] === 'comment') {
+        $entity_type = 'node';
+        // Try and fetch the related node.
+        $nid = $this->fetchRelatedNode($content['entity_id']);
 
-      // Load that node.
-      $node = Node::load($nid);
+        // Load that node.
+        $node = Node::load($nid);
 
-      if (!is_object($node)) {
-        var_dump('Target node with nid ' . $nid . ' could not be loaded.');
-        continue;
+        if (!is_object($node)) {
+          var_dump('Target node with nid ' . $nid . ' could not be loaded.');
+          continue;
+        }
+
+        // Determine the field in which is should be put.
+        $comment_field_type = 'field_' . $node->getType() . '_comments';
+        // Add time.
+        $content['created'] += $node->getCreatedTime();
+      }
+      elseif ($content['comment_type'] === 'post_comment') {
+        $entity_type = 'post';
+        // Try and fetch the related node.
+        $nid = $this->fetchRelatedEntity($content['entity_id'], $entity_type);
+        // Load that node.
+        $entity = Post::load($nid);
+        if (!is_object($entity)) {
+          var_dump('Target entity with nid ' . $nid . ' could not be loaded.');
+          continue;
+        }
+
+        // Determine the field in which is should be put.
+        $comment_field_type = 'field_' . $entity_type . '_comments';
+        // Add time.
+        $entity_created = $entity->get('created')->getValue();
+        $content['created'] += $entity_created[0]['value'];
       }
 
-      // Determine the field in which is should be put.
-      $comment_field_type = 'field_' . $node->getType() . '_comments';
-      // Add time.
-      $content['created'] += $node->getCreatedTime();
+      // Check if a parent comment id is set!
+      $pid = NULL;
+      if (isset($content['pid'])) {
+        // Try to load the parent comment.
+        $parent_comments = $this->commentStorage->loadByProperties(array('uuid' => $content['pid']));
+        $parent_comment = reset($parent_comments);
+        // Store the parent comment id.
+        $pid = $parent_comment->id();
+      }
+
+      if ($content['created'] > time()) {
+        // Make sure comments are not posted in the future.
+        $content['created'] = time();
+      }
+
 
       // Let's create some nodes.
       $comment = Comment::create([
@@ -119,13 +158,14 @@ class SocialDemoComment implements ContainerInjectionInterface {
         'langcode' => 'en',
         'uid' => $uid,
         'entity_id' => $nid,
+        'pid' => $pid,
 
         'created' => $content['created'],
         'changed' => $content['created'],
 
         'field_name' => $comment_field_type,
-        'comment_type' => 'comment',
-        'entity_type' => 'node',
+        'comment_type' => $content['comment_type'],
+        'entity_type' => $entity_type,
         'status' => 1,
       ]);
 
@@ -186,6 +226,27 @@ class SocialDemoComment implements ContainerInjectionInterface {
     $nid = reset($nids);
     // And return it.
     return $nid;
+  }
+
+  /**
+   * Load a node object by uuid.
+   *
+   * @param string $uuid
+   *   The uuid of the node.
+   *
+   * @return int $fid
+   *   Returns the nid for the related nodes.
+   */
+  public function fetchRelatedEntity($uuid, $entity_type) {
+    $query = \Drupal::entityQuery($entity_type);
+    $query->condition('uuid', $uuid);
+    $query->addMetaData('account', user_load(1)); // Run the query as user 1.
+    $entities = $query->execute();
+
+    // Get a single item.
+    $entity_id = reset($entities);
+    // And return it.
+    return $entity_id;
   }
 
 }

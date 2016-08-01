@@ -83,9 +83,10 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         $t_args = array(':num_comments' => $comment_count);
         if ($comment_count == 0) {
           $more_link = $this->t(':num_comments comments', $t_args);
+          $output['more_link'] = $more_link;
         }
         else {
-          $more_link = $this->t('Show comments', $t_args);
+          $more_link = $this->t('Show all :num_comments comments', $t_args);
         }
 
         $more_button = Link::fromTextAndUrl($more_link, $entity->urlInfo('canonical'));
@@ -154,6 +155,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       ->condition('c.entity_type', $entity->getEntityTypeId())
       ->condition('c.field_name', $field_name)
       ->condition('c.default_langcode', 1)
+      ->isNull('c.pid')
       ->addTag('entity_access')
       ->addTag('comment_filter')
       ->addMetaData('base_table', 'comment')

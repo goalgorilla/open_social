@@ -36,14 +36,15 @@ class GroupOperationsBlock extends BlockBase {
     //
     // We do not need to specify the current user or group as cache contexts
     // because, in essence, a group membership is a union of both.
-    $build['#cache']['contexts'] = ['group.type', 'group_membership.permissions'];
+    $build['#cache']['contexts'] = ['group.type', 'group_membership.roles.permissions'];
 
-    // Of special note is the cache context 'group_membership'. Where the above
-    // cache contexts should suffice if everything is ran through the permission
-    // system, group operations are an exception. Some operations such as 'join'
-    // and 'leave' not only check for a permission, but also the existence of a
-    // group membership.
-    $build['#cache']['contexts'][] = 'group_membership';
+    // Of special note is the cache context 'group_membership.audience'. Where
+    // the above cache contexts should suffice if everything is ran through the
+    // permission system, group operations are an exception. Some operations
+    // such as 'join' and 'leave' not only check for a permission, but also the
+    // audience the user belongs to. I.e.: whether they're a 'member', an
+    // 'outsider' or 'anonymous'.
+    $build['#cache']['contexts'][] = 'group_membership.audience';
 
     /** @var \Drupal\group\Entity\GroupInterface $group */
     if (($group = $this->getContextValue('group')) && $group->id()) {
@@ -55,21 +56,9 @@ class GroupOperationsBlock extends BlockBase {
 
       if ($links) {
         uasort($links, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
-
-        // Instead of copying the cache tag logic from the cache contexts, we
-        // run the existing code to generate cache tags for us. Hopefully, core
-        // will fix this. See: https://www.drupal.org/node/2666838.
-        $service_1 = \Drupal::service('group.group_route_context');
-        $service_2 = \Drupal::service('current_user');
-        $context_1 = new GroupTypeCacheContext($service_1, $service_2);
-        $context_2 = new GroupMembershipCacheContext($service_1, $service_2);
-        $tags = Cache::mergeTags(
-          $context_1->getCacheableMetadata()->getCacheTags(),
-          $context_2->getCacheableMetadata()->getCacheTags()
-        );
-
         $build['#type'] = 'operations';
-        $build['#cache']['tags'] = $tags;
+        // @todo We should have operation links provide cacheable metadata that
+        // we could then merge in here.
         $build['#links'] = $links;
       }
     }

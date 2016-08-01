@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\address\Plugin\Validation\Constraint\CountryConstraintValidator.
- */
-
 namespace Drupal\address\Plugin\Validation\Constraint;
 
 use CommerceGuys\Addressing\Repository\CountryRepositoryInterface;
