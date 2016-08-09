@@ -26,8 +26,7 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone https://github.com/goalgorilla/social_docker.git install
   - cd install
-  - composer require goalgorilla/open_social 'dev-master#${TRAVIS_COMMIT}'
-  - cat composer.json
+  - composer require goalgorilla/open_social dev-master#${TRAVIS_COMMIT}
   - composer install # Is this still necessary?
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose
@@ -46,6 +45,5 @@ script:
   # Verify if Selenium server is running accordingly.
   - docker ps
   - docker logs social_selenium
-  - sleep 30 # TODO: Is this still necessary?
   # Run behat tests.
   - docker exec -it social_behat sh /root/travis/behatstability.sh
