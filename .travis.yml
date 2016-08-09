@@ -1,0 +1,49 @@
+sudo: required
+
+addons:
+  artifacts:
+   # ...
+   paths:
+     - $(git ls-files -o | grep travis_artifacts | tr "\n" ":")
+
+language: php
+
+php:
+  - 5.6
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.6.2
+
+services:
+  - docker
+
+before_install:
+  # Lets install Docker first.
+  - sudo apt-get clean
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
+  - docker --version
+  # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
+  - git clone https://github.com/goalgorilla/social_docker.git install
+  - cd install
+  - composer require goalgorilla/open_social dev-master#${TRAVIS_COMMIT}
+  - composer install # Is this still necessary?
+  # Lets install via docker-compose.
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose --version
+  - docker-compose -f docker-compose-travis.yml up -d
+  - docker ps -a
+
+script:
+  # Install site.
+  - docker exec -i social_web bash /root/dev-scripts/install/install_script.sh
+  # Run unit tests.
+  - docker exec -i social_web_scripts sh /root/travis/unit-tests.sh
+  # Verify if Selenium server is running accordingly.
+  - docker ps
+  - docker logs social_selenium
+  # Run behat tests.
+  - docker exec -it social_behat sh /root/travis/behatstability.sh
