@@ -19,17 +19,23 @@
     },
     "extra": {
         "installer-paths": {
-            "public_html/core": [
-                "type:drupal-core"
+            "html/core": [
+                "drupal/core"
             ],
-            "public_html/profiles/contrib": [
-                "type:drupal-profile"
-            ],
-            "public_html/modules/contrib/{$name}": [
+            "html/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "public_html/themes/contrib/{$name}": [
+            "html/profiles/contrib/social": [
+                "goalgorillal/open_social"
+            ],
+            "html/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "html/themes/contrib/{$name}": [
                 "type:drupal-theme"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
             ]
         },
         "patches": {
