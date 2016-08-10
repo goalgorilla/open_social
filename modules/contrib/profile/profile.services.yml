@@ -1,7 +1,0 @@
-services:
-
-  access_check.profile_type.profile_access:
-    class: Drupal\profile\Access\ProfileAccessCheck
-    arguments: ['@entity.manager']
-    tags:
-      - { name: access_check, applies_to: _profile_access_check }
