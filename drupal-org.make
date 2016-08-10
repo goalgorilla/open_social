@@ -9,6 +9,7 @@ projects[config_update][type] = module
 projects[config_update][version] = 1.1
 projects[devel][type] = module
 projects[devel][version] = 1.0-alpha1
+projects[devel][patch][] = "https://www.drupal.org/files/issues/fix_entity_manager_wrapper_2749249_5.patch"
 projects[dynamic_entity_reference][type] = module
 projects[dynamic_entity_reference][version] = 1.0-rc5
 projects[entity][type] = module
