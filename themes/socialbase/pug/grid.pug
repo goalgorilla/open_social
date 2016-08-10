@@ -1,0 +1,31 @@
+- var pagetype = "styleguide"
+- var page = "Grid"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../images/icons.svg
+
+    .docsheader
+      .container
+        h1 Components
+        p.lead Over a dozen reusable components built to provide buttons, dropdowns, navigation, input groups, navigation, alerts, and much more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            include ./layout/_component-nav.pug
+
+          .col-xs-12.col-md-9
+            h2.page-header Grid
+            p The grid system we use is the Bootstrap Grid system (v4.0). The default settings for breakpoints can be found in the variables scss file.
+            a.btn.btn-raised.btn-primary(href='http://v4-alpha.getbootstrap.com/layout/grid/', target="_blank") View Bootstrap documentation
+
+
+    include ./layout/_scripts.pug

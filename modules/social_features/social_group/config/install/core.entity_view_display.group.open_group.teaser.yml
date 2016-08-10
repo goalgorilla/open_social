@@ -3,8 +3,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.group.teaser
+    - field.field.group.open_group.field_group_address
     - field.field.group.open_group.field_group_description
     - field.field.group.open_group.field_group_image
+    - field.field.group.open_group.field_group_location
     - group.type.open_group
     - image.style.social_x_large
   module:
@@ -16,17 +18,34 @@ mode: teaser
 content:
   field_group_description:
     type: basic_string
-    weight: 1
+    weight: 2
     label: hidden
     settings: {  }
     third_party_settings: {  }
   field_group_image:
     type: image
-    weight: 0
+    weight: 1
     label: hidden
     settings:
       image_style: social_x_large
       image_link: content
     third_party_settings: {  }
+  field_group_location:
+    type: string
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  label:
+    label: hidden
+    type: string
+    weight: 0
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
+  changed: true
+  created: true
+  field_group_address: true
   uid: true

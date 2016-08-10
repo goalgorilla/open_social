@@ -53,7 +53,6 @@ class AccountHeaderBlock extends BlockBase {
 
         if ($num_notifications === 0) {
           $notifications_icon = 'icon-notifications_none';
-          $title_classes = ' sr-only';
           $label_classes = 'hidden';
         }
         else {
@@ -92,9 +91,39 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => 'View profile',
+            'title' => 'My profile',
             'title_classes' => '',
             'url' => '/user',
+          ),
+          'my_events' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My events',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/events',
+          ),
+          'my_topics' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My topics',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/topics',
+          ),
+          'my_groups' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My groups',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/groups',
           ),
           'my_account' => array(
             'classes' => '',

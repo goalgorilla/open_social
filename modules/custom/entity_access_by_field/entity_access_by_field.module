@@ -41,9 +41,9 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
         if ($account->hasPermission($permission)) {
           $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
         }
+        $grants[$realm . '_author'] = array($account->id());
       }
     }
-    $grants[$realm . '_author'] = array($account->id());
   }
   return $grants;
 }
@@ -82,8 +82,8 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                 'realm' => $realm . '_author',
                 'gid' => $node->getOwnerId(),
                 'grant_view' => 1,
-                'grant_update' => 0,
-                'grant_delete' => 0,
+                'grant_update' => 1,
+                'grant_delete' => 1,
                 'priority' => 0,
               );
             }

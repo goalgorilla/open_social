@@ -73,7 +73,8 @@ a.card:hover {
 .card-nested-section {
   margin: 10px -20px -20px;
   padding: $card-padding;
-  background: $gray-lightest;
+  background: $gray-lighter-1;
+  border-top: 1px solid $gray-lighter;
 
   .extra-padding & {
     @include MQ($small) {
@@ -188,35 +189,35 @@ a.card:hover {
     top: 0;
     height: auto;
     pointer-events: none;
-    width: 32px;
-    height: 32px;
-    padding: 8px;
-    background-color: $grey-light-1;
+    width: 30px;
+    height: 30px;
+    padding: 9px;
+    background-color: $gray-light-1;
     border-radius: 0 0 8px 8px;
     left: 20px;
     position: relative;
     margin-bottom: -10px;
 
-    img {
-      width: 16px;
-      height: 16px;
+    .teaser-type-icon {
+      width: 12px;
+      height: 12px;
       display: table;
+      fill: white;
     }
-
 
     @include MQ($small) {
       position: absolute;
-      background-color: rgba(black, .5);
+      background-color: rgba(black, 0.5);
       margin-bottom: 0;
       left: 0;
       width: 44px;
       height: 44px;
-      padding: 10px;
+      padding: 12px;
       border-radius: 0 0 10px 0;
 
-      img {
-        width: 24px;
-        height: 24px;
+      .teaser-type-icon {
+        width: 18px;
+        height: 18px;
       }
     }
   }
@@ -233,6 +234,16 @@ a.card:hover {
     flex: 1 1 auto;
   }
 
+}
+
+.teaser-icon {
+  width: 14px;
+  height: 14px;
+  line-height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  fill: $gray;
+  margin-right: 12px;
 }
 
 .card--teaser-desc {
@@ -288,11 +299,13 @@ a.card:hover {
   right: 0;
   z-index: 1;
   background-color: inherit;
-  padding: 6px $card-padding;
+  padding: 6px $card-padding 6px ($card-padding - 4);
+
   .actionbar {
     position: absolute;
     z-index: 1;
   }
+
 }
 
 .card-actionbar--with-border {

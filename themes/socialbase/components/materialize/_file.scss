@@ -13,7 +13,6 @@
 
   > span {
     background: #fff;
-    color: $gray-light;
     border-bottom: 1px solid $gray-lighter;
     border-top: 1px solid $gray-lighter;
     &:first-child {
@@ -21,6 +20,9 @@
     }
     &:last-child {
       border-right: 1px solid $gray-lighter;
+    }
+    &:not(.text-primary) {
+      color: $gray-light;
     }
   }
   > .tabledrag-changed {
@@ -72,6 +74,7 @@
 .image-widget.row {
   overflow: hidden;
 }
+
 .file-widget {
   .file {
     margin-bottom: 0;

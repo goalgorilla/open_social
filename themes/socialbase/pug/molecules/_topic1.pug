@@ -1,0 +1,37 @@
+.card.card--teaser.card-with-actionbar
+  a.card-image(href="topic.html")
+    .teaser-type
+      svg.teaser-type-icon
+        use(xlink:href='#icon-topic')
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+  .card-body
+    h4.card-title
+      a(href="topic.html") Technology for the handicapped
+    .text-gray.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-account_circle')
+      | &nbsp;
+      span.inline-center
+        if user == "isAnonymous"
+          span.inline-center Clive Owen
+        else
+          a(href="other-stream.html") Clive Owen
+        | &nbsp;&bullet; 15 feb 2016
+    .text-gray.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-label')
+      | &nbsp;
+      span.inline-center Blog
+    .text-gray.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-group')
+      | &nbsp;
+      span.inline-center Open Social Developers
+    .card-actionbar
+      .badge.badge-gray-lighter.badge--toggle
+        label
+          input(type='checkbox')
+          svg.icon-gray-light.icon-badge-toggle
+            use(xlink:href='#icon-public')
+          span.badge--toggle__label public
+      a.btn.btn-flat.pull-right(href="topic.html") Read more

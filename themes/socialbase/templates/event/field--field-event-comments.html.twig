@@ -29,23 +29,25 @@
 
 {% if node %}
 
-  {% if comments and not label_hidden %}
-    {{ title_prefix }}
-    <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
-    {{ title_suffix }}
-  {% endif %}
+  {% if comments or comment_form %}
+    {% if not label_hidden %}
+      {{ title_prefix }}
+      <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+      {{ title_suffix }}
+    {% endif %}
 
-  <div class="card">
-    <div class="card-body extra-padding">
+    <div class="card">
+      <div class="card-body extra-padding">
 
-      {{ comments }}
+        {{ comments }}
 
-      {% if comment_form %}
-        {{ comment_form }}
-      {% endif %}
+        {% if comment_form %}
+          {{ comment_form }}
+        {% endif %}
 
+      </div>
     </div>
-  </div>
+  {% endif %}
 
 {% else %}
 

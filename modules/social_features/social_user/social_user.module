@@ -23,6 +23,19 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @see \Drupal\user\AccountForm
+ */
+function social_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  // Add forcing of changing password, message to user
+  // if they logged in via a one-time login link.
+  if ($form_state->get('user_pass_reset')) {
+    $form['#attached']['library'][] = 'social_user/user_form_protection';
+  }
+}
+
+/**
  * Check if an users with the input field for name or mail field is blocked.
  *
  * @param string $name_or_mail
@@ -96,11 +109,13 @@ function social_user_theme() {
 function template_preprocess_account_header_links(&$variables) {
   // Add the search content block to account_header_links.
   $block = Block::load('search_content_block_header');
-  $block_output = \Drupal::entityManager()
-    ->getViewBuilder('block')
-    ->view($block);
+  if(!empty($block)){
+    $block_output = \Drupal::entityManager()
+      ->getViewBuilder('block')
+      ->view($block);
 
-  $variables['links']['search_block'] = $block_output;
+    $variables['links']['search_block'] = $block_output;
+  }
 }
 
 /**
@@ -144,7 +159,10 @@ function social_user_user_format_name_alter(&$name, $account) {
     $user_profile = $storage->loadByUser($account, 'profile', TRUE);
     if ($user_profile) {
       if (!empty($user_profile->get('field_profile_first_name')->value) && !empty($user_profile->get('field_profile_last_name')->value)) {
-        $name = t('@first @last', array('@first' => $user_profile->get('field_profile_first_name')->value, '@last' => $user_profile->get('field_profile_last_name')->value));
+        $name = t('@first @last', array(
+          '@first' => $user_profile->get('field_profile_first_name')->value,
+          '@last' => $user_profile->get('field_profile_last_name')->value
+        ));
       }
     }
   }

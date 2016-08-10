@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @kaas
+@api @group @stability @DS-956
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM

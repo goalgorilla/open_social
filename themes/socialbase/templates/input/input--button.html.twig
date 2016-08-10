@@ -30,6 +30,7 @@
       type == 'submit' ? 'js-form-submit',
       float_right ? 'pull-right',
       button_type == 'flat' ? 'btn-flat',
+      button_type == 'primary' ? 'btn-primary',
       icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
     ]
   %}
@@ -59,6 +60,6 @@
         </svg>
       </span>
     {% endif %}
-    {{ children }}
+    {{ children }}  
   {% endblock %}
 {% endspaceless %}

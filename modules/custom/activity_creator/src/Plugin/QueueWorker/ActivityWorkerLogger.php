@@ -59,7 +59,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         // Create a queue item for activity creation.
         $activity_creator_data = [
           'mid' => $data['mid'],
-          'message_type' => $data['message_type'],
+          'message_template' => $data['message_template'],
           'actor' => $data['actor'],
           'context' => $data['context'],
           'destination' => $data['destination'],
@@ -83,7 +83,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
 
       $activity_creator_data = [
         'mid' => $data['mid'],
-        'message_type' => $data['message_type'],
+        'message_template' => $data['message_template'],
         'actor' => $data['actor'],
       // Not necessary?
         'context' => $data['context'],

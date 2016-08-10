@@ -7,8 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\message\MessageTypeInterface;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\message\MessageTemplateInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 
 /**
@@ -34,7 +33,7 @@ function _activitiy_logger_get_content_entities( ) {
     if ( $entity_type instanceof ContentEntityTypeInterface
       && $entity_id !== 'activity'
       && $entity_id !== 'message'
-      && $entity_id !== 'message_type') {
+      && $entity_id !== 'message_template') {
       $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
       $config_entity_bundles = $entity_type_bundle_info->getBundleInfo($entity_type->id());
       foreach ($config_entity_bundles as $key => $value) {
@@ -46,11 +45,11 @@ function _activitiy_logger_get_content_entities( ) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter() for message_type_form().
+ * Implements hook_form_FORM_ID_alter() for message_template_form().
  */
-function activity_logger_form_message_type_form_alter(&$form, FormStateInterface $form_state) {
+function activity_logger_form_message_template_form_alter(&$form, FormStateInterface $form_state) {
   /** @var \Drupal\contact\ContactFormInterface $contact_form */
-  $message_type = $form_state->getFormObject()->getEntity();
+  $message_template = $form_state->getFormObject()->getEntity();
 
   $config_entity_bundles = _activitiy_logger_get_content_entities();
   $form['activity_bundle_entity'] = array(
@@ -58,7 +57,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => TRUE,
     '#title' => t('The entities that are affected for this message'),
     '#description' => t('Select a entity bundle type to for this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_bundle_entity', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entity', NULL),
     '#options' => $config_entity_bundles,
   );
 
@@ -71,7 +70,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => TRUE,
     '#title' => t('The activity actions for this message'),
     '#description' => t('Select a action for when to display this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_action', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_action', NULL),
     '#options' => $activity_actions,
   );
 
@@ -83,7 +82,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => TRUE,
     '#title' => t('The activity context for this message'),
     '#description' => t('Select a context where to display this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_context', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_context', NULL),
     '#options' => $context_options,
   );
 
@@ -96,7 +95,7 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#multiple' => TRUE,
     '#required' => TRUE,
     '#description' => t('Select destinations where to display this message.'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
     // @TODO activity_creator allowed_values function overlap (should be plugin)
     '#options' => $destination_options,
   );
@@ -106,22 +105,22 @@ function activity_logger_form_message_type_form_alter(&$form, FormStateInterface
     '#required' => FALSE,
     '#title' => t('Create activity items direct instead of in Queue'),
     '#description' => t('Select if items should be created directly instead of in the queue. Warning: performance implications!'),
-    '#default_value' => $message_type->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL),
   );
 
-  $form['#entity_builders'][] = 'activity_logger_form_message_type_form_builder';
+  $form['#entity_builders'][] = 'activity_logger_form_message_template_form_builder';
 }
 
 /**
  * Entity builder for the message type edit form with third party options.
  *
- * @see activity_logger_form_message_type_form_alter()
+ * @see activity_logger_form_message_template_form_alter()
  */
-function activity_logger_form_message_type_form_builder($entity_type, MessageTypeInterface $message_type, &$form, FormStateInterface $form_state) {
-  $message_type->setThirdPartySetting('activity_logger', 'activity_bundle_entity', $form_state->getValue('activity_bundle_entity'));
-  $message_type->setThirdPartySetting('activity_logger', 'activity_action', $form_state->getValue('activity_action'));
-  $message_type->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
-  $message_type->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));
-  $message_type->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
+function activity_logger_form_message_template_form_builder($entity_type, MessageTemplateInterface $message_template, &$form, FormStateInterface $form_state) {
+  $message_template->setThirdPartySetting('activity_logger', 'activity_bundle_entity', $form_state->getValue('activity_bundle_entity'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_action', $form_state->getValue('activity_action'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
 }
 

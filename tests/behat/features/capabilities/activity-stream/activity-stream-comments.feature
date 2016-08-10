@@ -38,11 +38,12 @@ Feature: See comments in activity stream
       | Add a reply | This is a reply event comment |
     And I press "Reply"
     And I should see "This is a reply event comment"
-    When I am on the homepage
+    When I am on "/user"
     Then I should see "My Behat Event created"
     And I should see "This is a first event comment"
     And I should not see "This is a reply event comment"
 
+    When I am on the homepage
     And I click "My Behat Topic created"
     When I fill in the following:
       | Add a comment | This is a first topic comment |
@@ -53,7 +54,7 @@ Feature: See comments in activity stream
       | Add a reply | This is a reply topic comment |
     And I press "Reply"
     And I should see "This is a reply topic comment"
-    When I am on the homepage
+    When I am on "/user"
     Then I should see "My Behat Topic created"
     And I should see "This is a first topic comment"
     And I should not see "This is a reply topic comment"

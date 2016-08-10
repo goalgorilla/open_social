@@ -1,0 +1,33 @@
+#header
+  nav.navbar.navbar-default.navbar-fixed-top.z-depth-2
+    .container
+
+      a.navbar-brand(href='home-an.html')
+        img(src='images/social-logo-white.svg' alt='Brand logo')
+
+      .navbar-header
+
+
+        button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
+          svg.icon-white.icon-medium
+            title Toggle navigation
+            use(xlink:href='#icon-menu')
+          span.sr-only Toggle navigation
+
+        ul.nav.navbar-nav.navbar-right
+          li
+            a(href='login.html') Log in
+          li
+            a(href='sign-up.html') Sign up
+
+      #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
+        ul.nav.navbar-nav
+          li
+            form.navbar-form.navbar-left(role='search', method='get', action='search-content.html')
+              #navbar-search.form-group
+                input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
+                input.form-submit(type='submit', value='')
+                span.search-icon
+                  svg
+                    title Search
+                    use(xlink:href='#icon-search')

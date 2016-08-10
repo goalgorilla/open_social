@@ -1,0 +1,32 @@
+.card.card--teaser.card-with-actionbar
+  a.card-image(href="topic.html")
+    .teaser-type
+      svg.teaser-type-icon
+        use(xlink:href='#icon-topic')
+    img.img-responsive(src='content/images/animals1-square.jpg', alt='')
+  .card-body
+    h4.card-title
+      a(href="topic.html") Will this be the cinema of the future?
+    .text-gray.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-account_circle')
+      | &nbsp;
+      span.inline-center
+        if user == "isAnonymous"
+          | Richard Ogylvie
+        else
+          a(href="other-stream.html") Richard Ogylvie
+        | &nbsp;&bullet; 22 mar 2016
+    .text-gray.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-label')
+      | &nbsp;
+      span.inline-center Discussion
+    .card-actionbar
+      .badge.badge-gray-lighter.badge--toggle
+        label
+          input(type='checkbox')
+          svg.icon-gray-light.icon-badge-toggle
+            use(xlink:href='#icon-community')
+          span.badge--toggle__label community
+      a.btn.btn-flat.pull-right(href="topic.html") Read more

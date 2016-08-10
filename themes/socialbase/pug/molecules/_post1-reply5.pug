@@ -1,0 +1,17 @@
+.media.margin-top-m
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member3.jpg')
+    else
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member3.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Henry Bond
+      else
+        a(href="other-stream.html") Henry Bond
+      br
+      .text-gray-light 44 minutes ago
+
+.margin-top-s Rutrum faucibus dolor auctor.

@@ -32,6 +32,10 @@
 // *  25. Popovers
 // *  26. Code
 // *  27. Tooltip
+// *  28. Modals
+// *  29. Hero
+// *  30. Jumbotron
+
 
 // 0. Options
 // ==========================================================================
@@ -68,9 +72,10 @@ $gray-darker:            lighten($gray-base, 13.5%) !default; // #222
 $gray-dark:              lighten($gray-base, 20%) !default;   // #333
 $gray:                   lighten($gray-base, 33.5%) !default; // #555
 $gray-light:             #777777 !default;
-$gray-light-1:           #aaaaaa !default;
+$gray-light-1:           #adadad !default;
 $gray-lighter:           #e6e6e6 !default;
-$gray-lightest:          #f5f5f5 !default;
+$gray-lighter-1:         #f7f7f7 !default;
+$gray-lightest:          #f3f3f3 !default;
 
 $brand-primary-dark: mix(black, $brand-primary, 30%) !default;
 $brand-primary-light: mix(white, $brand-primary, 30%) !default;
@@ -80,7 +85,7 @@ $brand-primary-bright: mix(white, $brand-primary, 60%) !default;
 // 2. Scaffolding
 // ==========================================================================
 //** Background color for `<body>`.
-$body-bg:               $gray-lighter !default;
+$body-bg:               $gray-lightest !default;
 //** Global text color on `<body>`.
 $text-color:            $default-color !default;
 
@@ -721,6 +726,9 @@ $label-color:                 #fff !default;
 //** Default text color of a linked label
 $label-link-hover-color:      #fff !default;
 
+//** Default border-radius for label
+$label-radius:                .25em !default;
+
 
 // 20. Thumbnails
 // ==========================================================================
@@ -758,7 +766,7 @@ $blockquote-font-size:        ($font-size-base * 1.125) !default;
 //** Blockquote border color
 $blockquote-border-color:     $gray-lighter !default;
 //** Page header border color
-$page-header-border-color:    $gray-lighter !default;
+$page-header-border-color:    rgba($gray-light, 0.2) !default;
 //** Width of horizontal description list titles
 $dl-horizontal-offset:        $component-offset-horizontal !default;
 //** Point at which .dl-horizontal becomes horizontal
@@ -802,7 +810,7 @@ $alert-danger-border:         $state-danger-border !default;
 // 24. Close
 // ==========================================================================
 
-$close-font-weight:           bold !default;
+$close-font-weight:           500 !default;
 $close-color:                 #000 !default;
 $close-text-shadow:           0 1px 0 #fff !default;
 
@@ -861,3 +869,55 @@ $tooltip-opacity:             .9 !default;
 
 $tooltip-arrow-width:         5px !default;
 $tooltip-arrow-color:         $tooltip-bg !default;
+
+
+// 28.  Modals
+// ==========================================================================
+
+//** Padding applied to the modal body
+$modal-inner-padding:         15px !default;
+
+//** Padding applied to the modal title
+$modal-title-padding:         15px !default;
+//** Modal title line-height
+$modal-title-line-height:     $line-height-base !default;
+
+//** Background color of modal content area
+$modal-content-bg:                             #fff !default;
+//** Modal content border color
+$modal-content-border-color:                   rgba(0,0,0,.2) !default;
+//** Modal content border color **for IE8**
+$modal-content-fallback-border-color:          #999 !default;
+
+//** Modal backdrop background color
+$modal-backdrop-bg:           #000 !default;
+//** Modal backdrop opacity
+$modal-backdrop-opacity:      .5 !default;
+//** Modal header border color
+$modal-header-border-color:   #e5e5e5 !default;
+//** Modal footer border color
+$modal-footer-border-color:   $modal-header-border-color !default;
+
+$modal-lg:                    900px !default;
+$modal-md:                    600px !default;
+$modal-sm:                    300px !default;
+
+// 29.  Hero
+// ==========================================================================
+
+// Radius of the profile image
+$hero-avatar-radius:         50% !default;
+
+// Border color of the profile image
+$hero-avatar-border:           white !default;
+
+
+// 30.  Jumbotron
+// ==========================================================================
+
+$jumbotron-padding:              30px !default;
+$jumbotron-color:                inherit !default;
+$jumbotron-bg:                   white !default;
+$jumbotron-heading-color:        inherit !default;
+$jumbotron-font-size:            ceil(($font-size-base * 1.5)) !default;
+$jumbotron-heading-font-size:    ceil(($font-size-base * 4.5)) !default;

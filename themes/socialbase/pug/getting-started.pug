@@ -1,0 +1,59 @@
+- var pagetype = "styleguide"
+- var page = "Getting started"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../images/icons.svg
+
+    .docsheader
+      .container
+        h1 Getting started
+        p.lead An overview of the Open Social theme, how to download and use, basic templates and examples, and more.
+
+    main.main-container.styleguide-container(role='main')
+
+      .container
+
+        h2.page-header Distribution
+        p Open Social is a Drupal distribution.
+        blockquote
+          q Distributions provide site features and functions for a specific type of site as a single download containing Drupal core, contributed modules, themes, and pre-defined configuration. They make it possible to quickly set up a complex, use-specific site in fewer steps than if installing and configuring elements individually.
+
+        h2.page-header Download
+        .row
+          .col-sm-6
+            h3 Drupal
+            p Read about the project and download the latest release package.
+            p
+              a.btn.btn-lg.btn-accent(href='https://www.drupal.org/project/social') Download latest release
+          .col-sm-6
+            h3 Github
+            p
+              :markdown
+                Clone with: `git@github.com:goalgorilla/drupal_social.git`
+            p
+              a.btn.btn-lg.btn-primary(href='https://github.com/goalgorilla/drupal_social') View repository
+
+        h2.page-header Drupal installation
+        ul
+          li Clone the Open Social repository in your developing branch.
+          li Follow the steps described the <a href="https://github.com/goalgorilla/drupal_social/blob/master/readme.md#installation"> Installation guidelines</a> on Github and complete the Drupal installation.
+          li Check that your installation works correctly and Socialbase is your default theme.
+
+        h2.page-header Contributing
+        p To get started you need to have Node, NPM and Gulp installed on your machine. Gulp is the default task runner in the theme.
+
+        h4 NPM plugins
+        p All the plugins we need are listed in the package.json file. To install these plugins go the <code>socialbase</code> folder and run <code>npm install</code>. This will get all the dependencies and put tem in the node_modules folder. This folder is ignored by git.
+
+        h4 Style guide / prototype
+        p  The style guide is read from the dist folder in our theme. There are some assets you need to put there to get started. In the folder <code>socialbase</code> first run <code>gulp init</code> to get the assets in the dist folder.
+        p Now you can run any of the gulp tasks individually or just run <code>gulp</code> (default task).
+
+    include ./layout/_scripts.pug

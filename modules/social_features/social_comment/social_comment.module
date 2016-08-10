@@ -11,7 +11,8 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
-use \Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\group\Entity\GroupContent;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * @file
@@ -82,10 +83,24 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
  */
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $bundle = $entity->bundle();
+  $commented_entity = $entity->getCommentedEntity();
+  $account = \Drupal::currentUser();
   switch ($bundle) {
     default:
       if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
         unset($links['comment']['#links']['comment-reply']);
+      } else{
+        $group_contents = GroupContent::loadByEntity($commented_entity);
+        // Only react if it is actually posted inside a group.
+        if (!empty($group_contents)) {
+          foreach ($group_contents as $group_content) {
+            $group = $group_content->getGroup();
+            // Remove comments from output if user don't have access.
+            if (!$group->hasPermission('post comments', $account)) {
+              unset($links['comment']['#links']['comment-reply']);
+            }
+          }
+        }
       }
       break;
 

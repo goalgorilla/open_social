@@ -14,10 +14,17 @@ libraries:
   - socialbase/alerts
   - socialbase/icons
   - socialbase/waves
+  - socialbase/modals
+
+# Add the type css to be loaded by the ckeditor iframe.
+ckeditor_stylesheets:
+  - components/asset-builds/css/type.css
 
 libraries-extend:
   core/drupal.ajax:
     - socialbase/drupal.ajax
+  core/drupal.tabledrag:
+    - socialbase/drupal.tabledrag
 
 # The "libraries-override:" section will allow you to:
 # - Replace an entire library.
@@ -30,6 +37,7 @@ libraries-override:
   core/jquery.ui/ui:
     js:
       datepicker-min.js: false
+
   system/base:
     css:
       component:

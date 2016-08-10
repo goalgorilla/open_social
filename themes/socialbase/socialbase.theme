@@ -195,11 +195,13 @@ function socialbase_preprocess_block(&$variables) {
   // Add search_block to account menu.
   if ($variables['attributes']['id'] == 'block-socialbase-account-menu') {
     $block = Block::load('search_content_block_header');
-    $block_output = \Drupal::entityManager()
-      ->getViewBuilder('block')
-      ->view($block);
+    if(!empty($block)){
+      $block_output = \Drupal::entityManager()
+        ->getViewBuilder('block')
+        ->view($block);
 
-    $variables['content']['links']['search_block'] = $block_output;
+      $variables['content']['links']['search_block'] = $block_output;
+    }
   }
 
   // Preprocess search block header.
@@ -228,6 +230,14 @@ function socialbase_preprocess_block(&$variables) {
     $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
     // @TODO: Replace with SVG icon.
     $variables['content']['search_users_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
+  }
+  if (isset($variables['content']['search_groups_form'])) {
+    $variables['content']['search_groups_form']['#attributes']['class'][] = 'hero-form';
+    $variables['content']['search_groups_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_groups_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_groups_form']['search_input_groups']['#name'] = 'search_input_groups';
+    // @TODO: Replace with SVG icon.
+    $variables['content']['search_groups_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
   }
 
   // Add Group ID for "See all groups link".
@@ -447,7 +457,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   }
 
   // Also for the search hero content form on the /search/content.
-  if ($variables['element']['#id'] == 'search-content-form-hero' || $variables['element']['#form_id'] == 'search_users_form') {
+  if ($variables['element']['#id'] == 'search-content-form-hero' || $variables['element']['#form_id'] == 'search_users_form' || $variables['element']['#form_id'] == 'search_groups_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
   }
 
@@ -573,8 +583,10 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_container_alter(array &$suggestions, array $variables) {
-  if ($variables['element']['#type'] == 'view') {
-    $suggestions[] = $variables['theme_hook_original'] . '__view';
+  if (isset($variables['element']['#type'])) {
+    if ($variables['element']['#type'] == 'view') {
+      $suggestions[] = $variables['theme_hook_original'] . '__view';
+    }
   }
   if (isset($variables['element']['#parents'])) {
     if ($variables['element']['#parents'][0] == 'field_post_wrapper') {
@@ -601,6 +613,7 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_profile_function':
     case 'field_profile_organization':
     case 'field_group_description':
+    case 'field_group_location':
     case 'field_topic_image':
     case 'field_comment_body':
     case 'field_activity_output_text':
@@ -618,6 +631,7 @@ function socialbase_preprocess_field(&$variables) {
 
   switch ($variables['element']['#formatter']) {
     case 'comment_default':
+    case 'comment_group_content':
       $variables['node'] = TRUE;
       break;
 
@@ -799,6 +813,12 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  if (isset($variables['element']['#array_parents'])) {
+    if (in_array('save_modal', $variables['element']['#array_parents'])) {
+      $variables['button_type'] = 'primary';
+    }
+  }
+
   if (isset($variables['element']['#addsearchicon']) && $variables['element']['#addsearchicon'] == TRUE) {
     $variables['add_search_icon'] = TRUE;
   }
@@ -812,6 +832,7 @@ function socialbase_preprocess_input(&$variables) {
       $variables['element']['#button_type'] = 'flat';
       $variables['button_type'] = 'flat';
     }
+
   }
 
   // Make sure we can use a span class caret in the button.
@@ -1062,124 +1083,29 @@ function socialbase_preprocess_activity(&$variables) {
   }
 }
 
-
 /**
- * Implements hook_theme_suggestions_HOOK_alter().
- *
- * Select the page layout a / b /c template based on the current route.
+ * Implements hook_preprocess_hook().
  */
- /* function socialbase_theme_suggestions_page_alter(array &$suggestions, array $variables) {
-  // Default page suggestion.
-  $page_suggestion = 'page__layout_a';
-
-  // Add your page mapping here. Please note:
-  // If there are multiple matches layout_c will always have priority.
-  $suggestions_mapping = array(
-    'layout_c' => array(
-      'page__node__topic',
-      'page__node__edit',
-      'page__newest_topics',
-      'page__community_events',
-      'page__comment__edit',
-      'page__comment__delete',
-    ),
-  );
-
-  if (!empty(array_intersect($suggestions_mapping['layout_c'], $suggestions))) {
-    $page_suggestion = 'page__layout_c';
+function socialbase_preprocess_file_upload_help (&$variables) {
+  if(!empty($variables['popover'])) {
+    unset($variables['popover']['toggle']['#icon']);
+    $variables['popover']['toggle']['#attributes']['data-icon-type'] = 'help';
   }
-  elseif (!empty(array_intersect($suggestions_mapping['layout_b'], $suggestions))) {
-    $page_suggestion = 'page__layout_b';
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_table(&$variables) {
+  $file_fields = ['edit-field-files-table'];
+  if(!empty($variables['attributes']['id']) && in_array($variables['attributes']['id'], $file_fields)){
+    $variables['attributes']['class'][] = 'tablesaw';
+    $variables['attributes']['data-tablesaw-mode'] = 'stack';
   }
-  // Add as second to last suggestion, so it can be overriden on specific pages.
-  array_unshift($suggestions, $page_suggestion);
 }
-*/
-
-/**
- * Helper function to call all the process functions of a hook.
- *
- * @param string $hook
- *   Function to preprocess (e.g. page).
- * @param array $variables
- *   Template variables to handle.
- *
- * @see socialbase_preprocess_page_layout_a();
- */
-/* function _socialbase_call_preprocess_page($hook, &$variables) {
-  $theme_registry = theme_get_registry();
-  if (isset($theme_registry['page']['preprocess functions'])) {
-    foreach ($theme_registry['page']['preprocess functions'] as $preprocessor_function) {
-      if (function_exists($preprocessor_function)) {
-        $preprocessor_function($variables, $hook, $theme_registry['page']);
-      }
-    }
-  }
-
-}
-
-*/
-
-
-/**
- * Implements socialbase_preprocess_page_layout_a().
-*/
-/*
-function socialbase_preprocess_page_layout_a(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
-
- */
-
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
- /*
-function socialbase_preprocess_page_layout_b(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
- */
-/**
- * Implements socialbase_preprocess_page_layout_a().
- */
- /*
-function socialbase_preprocess_page_layout_c(&$variables) {
-  _socialbase_call_preprocess_page('page', $variables);
-}
- */
-/**
- * Implements hook_theme().
- *
- * Bit of hacking to be able to call multiple page layout templates based on
- * routes.
- *
- * See @socialbase_theme_suggestions_menu_alter().
- */
- /*
-function socialbase_theme() {
-  $items = array();
-  $items['page_layout_a'] = array(
-    'template' => 'page--layout-a',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_b'] = array(
-    'template' => 'page--layout-b',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  $items['page_layout_c'] = array(
-    'template' => 'page--layout-c',
-    'render element' => 'page',
-    'base hook' => 'page',
-  );
-  return $items;
-}
- */
-
 
 function socialbase_preprocess_menu_local_action (&$variables) {
-  if(\Drupal::routeMatch()->getRouteName() === 'entity.group_content.group_membership.collection') {
+  if(\Drupal::routeMatch()->getRouteName() === 'entity.group_content.collection') {
     $link_classes = $variables['link']['#options']['attributes']['class'];
     foreach ($link_classes as $delta => $class_name) {
       if(in_array($class_name, array('btn-xs', 'btn-default'))){

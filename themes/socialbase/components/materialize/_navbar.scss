@@ -22,10 +22,6 @@
 
 .navbar > .container .navbar-brand {
   margin-left: -$navbar-padding-horizontal;
-
-  object {
-    pointer-events: none;
-  }
 }
 
 @media (min-width: $grid-float-breakpoint) {
@@ -53,7 +49,7 @@
     position: absolute;
     margin-top: 0;
     background-color: $dropdown-bg;
-    border: 1px solid $dropdown-border;
+    border: 0;
     @include box-shadow(0 6px 12px rgba(0,0,0,.175));
   }
 
@@ -189,9 +185,18 @@
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:hover {
-  background-color: $brand-primary;
-  padding: 10px 15px;
-  width: 60px;
+  width: auto;
+  padding: 0;
+  max-width: 200px;
+  height: 50px;
+  overflow: hidden;
+
+  img {
+    pointer-events: none;
+    width: auto;
+    height: 50px;
+  }
+
 }
 
 .navbar-default .navbar-nav > li > a:focus,
@@ -249,6 +254,7 @@
   left: 30px;
   background-color: $brand-accent;
   color: $default-color;
+  border-radius: 50%;
 }
 
 
@@ -297,7 +303,6 @@
     pointer-events: none;
 
     svg {
-      margin-top: 7px;
       width: 24px;
       height: 24px;
     }

@@ -17,6 +17,7 @@
  * @see template_preprocess_container()
  */
 #}
+
 {%
   set classes = [
     not attributes.hasClass('toolbar-menu-administration') ? 'form-group',
@@ -26,6 +27,7 @@
     attributes.hasClass('field--name-field-comment-body') ? 'media-body',
   ]
 %}
+
 {% if search_context %}
   {{ children }}
 {% else %}

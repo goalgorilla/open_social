@@ -14,6 +14,7 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\Core\Block\BlockPluginInterface;
 
 /**
  * @file
@@ -26,6 +27,10 @@ use Drupal\image\Entity\ImageStyle;
 function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
   $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  // Hide default title from Address field.
+  if (isset($form['field_group_address'])) {
+    $form['field_group_address']['widget'][0]['#title'] = '';
+  }
 }
 
 /**
@@ -34,6 +39,10 @@ function social_group_form_group_open_group_add_form_alter(&$form, FormStateInte
 function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
   $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  // Hide default title from Address field.
+  if (isset($form['field_group_address'])) {
+    $form['field_group_address']['widget'][0]['#title'] = '';
+  }
 }
 
 /**
@@ -262,7 +271,7 @@ function _social_group_membership_edit_form_submit($form, FormStateInterface $fo
   if (is_object($group)) {
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
-      'entity.group_content.group_membership.collection',
+      'entity.group_content.collection',
       array('group' => $group->id(), array())
     );
   }
@@ -400,9 +409,15 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
         unset($data['tabs'][0]['social_group.members']);
       }
     }
+    // For User 1 we will show membership management interface.
+    if ($account->id() == 1) {
+      unset($data['tabs'][0]['social_group.members']);
+    }
   }
-  // Hide Group "Nodes" tab.
-  unset($data['tabs'][0]['gnode.collection']);
+  // Rename Group "Related Entities" tab.
+  if (isset($data['tabs'][0]['group.content']['#link'])) {
+    $data['tabs'][0]['group.content']['#link']['title'] = t('Members');
+  }
 
   // Change the default 'View' tab title.
   if (isset($data['tabs'][0]['group.view']['#link'])) {
@@ -421,6 +436,16 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
 function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
+}
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_group_menu_local_actions_alter(&$local_actions) {
+  // Remove "Add Relationship" button.
+  if(isset($local_actions['group_content.add_page'])){
+    unset($local_actions['group_content.add_page']);
+  }
 }
 
 /**
@@ -498,4 +523,13 @@ function _social_group_cache_tags(GroupInterface $group) {
   }
 
   return $tags;
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ *
+ * Add Group cache context for system "Tabs" block.
+ */
+function social_group_block_view_local_tasks_block_alter(array &$build, BlockPluginInterface $block) {
+  $build['#cache']['contexts'][] = 'group_membership.roles.permissions';
 }

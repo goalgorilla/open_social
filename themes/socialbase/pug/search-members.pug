@@ -1,0 +1,90 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Search members
+
+block breadcrumbs  
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='search-members.html') Search members
+
+block pagetitle
+
+  .container.hero-container
+    .cover
+      h1.page-title.h2 Search
+      br 
+      form.hero-form(role='search', method='get', action='search-content.html')
+        .form-group
+          input.form-control(type='text', placeholder='Search', value='all members' name='search', autocomplete='off')
+          input.form-submit(type='submit', value='')
+          span.search-icon
+            svg
+              use(xlink:href='#icon-search')
+
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href='search-content.html') Content 
+          li.active
+            a(href="search-members.html") Members 
+            span.visually-hidden (active tab)  
+  
+
+block content
+              
+  .row.margin-top-l    
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+      .margin-top-sidebar
+      
+        button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+          svg.pull-left.btn-icon.icon-black
+            title Filter list
+            use(xlink:href='#icon-filter_list')
+          | Filter
+        .off-canvas.off-canvas-right.off-canvas-xs-only
+          .offcanvas-head
+            header.complementary-title Filter
+            .offcanvas-tools.visible-xs-block
+              .js-close-canvas.btn.btn-icon-toggle.pull-right
+                svg.pull-left.btn-icon.icon-black
+                  title Close
+                  use(xlink:href='#icon-close')
+        
+          .offcanvas-body
+            form
+              .form-group.form-autocomplete
+                label Expertise
+                .input-group
+                  input.form-control(type='text', autocomplete='off', size='30')
+                  span.input-group-addon
+                    svg.icon-black.icon-medium
+                      use(xlink:href='#icon-autorenew')   
+              .form-group.form-autocomplete
+                label Interests
+                .input-group
+                  input.form-control(type='text', autocomplete='off', size='30')
+                  span.input-group-addon
+                    svg.icon-black.icon-medium
+                      use(xlink:href='#icon-autorenew')   
+              
+              .form-actions.clearfix
+                button.btn.btn-link(type='submit', value='Reset') Reset
+                button.btn.btn-default.pull-right(type='submit', value='Filter') Filter
+          
+    .col-xs-12.col-sm-8
+      
+      h4.section-title Member results
+      p If you are searching for content, <a href="search-content.html">click here</a>
+        
+      include molecules/_member1.pug
+      include molecules/_member2.pug
+      include molecules/_member3.pug
+      include molecules/_member4.pug
+      include molecules/_member5.pug
+
+      include molecules/_pager.pug

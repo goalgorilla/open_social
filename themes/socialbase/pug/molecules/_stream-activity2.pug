@@ -1,0 +1,52 @@
+//- created post on own profile
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member4.jpg')
+    else
+      a(href='other-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member4.jpg')
+  .media-body
+    .media-heading.text-m
+      if user != "isAnonymous"
+        a(href="other-stream.html") Jenny Baker
+      else
+        | Jenny Baker
+      | &nbsp;posted
+      br
+      if user == "isAnonymous"
+        a(href="single-post-an.html").text-gray-lighter 54 minutes ago
+      else
+        a(href="single-post.html").text-gray-lighter 54 minutes ago
+
+.margin-top-s.margin-bottom-m We know that not paying speakers and not covering speaker expenses causes events to become less diverse. The ability to give time, energy and professional skills free of charge is a privilege.
+
+.visible-xs-block
+  if user != "isAnonymous"
+    a.btn.btn-block.btn-link(href='single-post.html#comment-form') Comment
+    hr.ruler-xs
+    a.btn.btn-block.btn-link(href='single-post.html#comment-1') show all 5 comments
+      svg.icon-small
+        use(xlink:href='#icon-navigate_next')
+
+.card-nested-section.hidden-xs
+
+  if user != "isAnonymous"
+    .media.margin-bottom-xl
+      .media-left.hidden-xs
+        img.img-medium.img-circle(src='content/images/member5.jpg')
+
+      .media-body
+        form
+          .form-group.form-group-inline.clearfix.text-right
+            textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%')
+            button.btn.btn-link(type='submit') Comment
+
+  include ./_post1-reply2.pug
+  include ./_post1-reply1.pug
+
+  if user != "isAnonymous"
+    .margin-top-l.text-center
+      a.btn.btn-link(href='single-post.html') show all 5 comments
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')

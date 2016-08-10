@@ -2,14 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.group.open_group.field_group_address
     - field.field.group.open_group.field_group_description
     - field.field.group.open_group.field_group_image
+    - field.field.group.open_group.field_group_location
     - group.type.open_group
     - image.style.social_x_large
   module:
+    - address
     - field_group
     - image
-    - text
+    - path
 third_party_settings:
   field_group:
     group_content:
@@ -26,18 +29,37 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+    group_location:
+      children:
+        - field_group_location
+        - field_group_address
+      parent_name: ''
+      weight: 4
+      label: Location
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
 id: group.open_group.default
 targetEntityType: group
 bundle: open_group
 mode: default
 content:
+  field_group_address:
+    weight: 33
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
   field_group_description:
     weight: 2
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
+    type: string_textarea
   field_group_image:
     weight: 3
     settings:
@@ -45,12 +67,24 @@ content:
       preview_image_style: social_x_large
     third_party_settings: {  }
     type: image_image
+  field_group_location:
+    weight: 32
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   label:
     type: string_textfield
     weight: 1
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    settings: {  }
     third_party_settings: {  }
 hidden:
   uid: true

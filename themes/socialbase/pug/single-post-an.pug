@@ -1,0 +1,33 @@
+- var user = "isAnonymous"
+- var pagetype = "template"
+- var page = "Post"
+
+include layout/_head.pug
+
+body
+  include layout/_gtm.pug
+  include layout/_header-an.pug
+  
+  main.main-container(role='main')
+  
+    nav.visible-md-block.visible-lg-block.bg-white
+      ol.breadcrumb.container
+        li
+          a(href='home-an.html') Home
+        li.active Post
+        
+    .main-content
+      .container
+  
+        .row.margin-top-l
+        
+          .col-xs-12.col-sm-8
+          
+            h4.section-title Post
+          
+            .card
+              .card-body
+                include ./molecules/_post1.pug
+
+  include layout/_footer.pug
+  include layout/_scripts.pug

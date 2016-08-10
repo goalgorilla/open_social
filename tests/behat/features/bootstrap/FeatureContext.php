@@ -10,6 +10,7 @@ use PHPUnit_Framework_Assert as PHPUnit;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 
 /**
  * Defines application features from the specific context.
@@ -331,6 +332,25 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         $group = (object) $groupHash;
         $this->groupCreate($group);
       }
+    }
+
+    /**
+     * @AfterScenario @search&&@groups
+     */
+    public function cleanupGroups(AfterScenarioScope $scope) {
+      $query = \Drupal::entityQuery('group')
+        ->condition('label', array(
+          '%Behat test group title%'
+        ), 'LIKE');
+
+      $group_ids = $query->execute();
+
+      $groups = entity_load_multiple('group', $group_ids);
+
+      foreach ($groups as $group) {
+        $group->delete();
+      }
+
     }
 
     /**

@@ -69,17 +69,6 @@
   }
 }
 
-.btn-flat {
-  @include button-variant($brand-primary, transparent, transparent);
-  fill: $brand-primary;
-
-  &:hover,
-  &:focus {
-    background-color: rgba($brand-primary, 0.12);
-  }
-
-}
-
 
 // Button raised
 // --------------------------------------------------
@@ -95,9 +84,8 @@
   }
 
   &.disabled,
-  &[disabled],
-  .disabled & {
-    @include z-depth-0;
+  &[disabled] {
+    @include z-depth-1;
   }
 
 }
@@ -110,11 +98,13 @@
 	background-color: transparent;
 	border-color: transparent;
   -webkit-tap-highlight-color: transparent;
+  @include button-variant($brand-primary, transparent, transparent);
+  fill: $brand-primary;
 
 	&:hover,
   &:focus,
   .open .dropdown-toggle & {
-		background-color: rgba(0, 0, 0, 0.07);
+		background-color: rgba(0, 0, 0, 0.12);
 		border-color: transparent;
 		@include z-depth-0;
 		color: inherit;
@@ -154,8 +144,7 @@
 .btn-floating {
   width: $button-floating-size;
   height: $button-floating-size;
-  line-height: $button-floating-size - 2;
-  padding: 4px;
+  padding: 7px; //assuming the icon is 24px / medium
   border-radius: $button-floating-radius;
   @include z-depth-2;
 
@@ -165,15 +154,14 @@
     @include z-depth-4;
   }
 
-  &.disabled,
-  &[disabled],
-  .disabled & {
-    @include z-depth-0;
-  }
-
   &.btn-lg {
     width: $button-floating-large-size;
     height: $button-floating-large-size;
+  }
+
+  &.disabled,
+  &[disabled] {
+    @include z-depth-2;
   }
 
 }

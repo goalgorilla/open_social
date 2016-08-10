@@ -1,0 +1,34 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Explore groups
+
+block breadcrumbs  
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='explore.html') Explore
+  li
+    a(href='explore-groups.html') Groups
+
+block content
+              
+  .row.margin-top-l              
+              
+    .col-xs-12.col-sm-8
+    
+      h4.section-title Community groups
+    
+      include molecules/_group2.pug
+      include molecules/_group1.pug
+      include molecules/_group3.pug
+      include molecules/_group4.pug
+      
+      include molecules/_pager.pug
+
+block scriptinline  
+  
+  script.
+    function enableMe(id) {
+      jQuery('#' + id).removeClass('disabled');
+    }

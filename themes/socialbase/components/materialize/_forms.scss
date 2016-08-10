@@ -53,6 +53,7 @@ form {
 
 }
 
+
 .form-no-label label + .form-required {
   float: right;
 }
@@ -395,6 +396,26 @@ span.form-required {
     background-color: $input-disabled-solid-color;
     border-color: $input-disabled-solid-color;
   }
+}
+
+
+.form-inline {
+
+  @include MQ($small) {
+
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+      position: absolute;
+    }
+
+    .radio label,
+    .checkbox label {
+      padding-left: ($radio-width - 3);
+      margin-right: $radio-width;
+    }
+
+  }
+
 }
 
 

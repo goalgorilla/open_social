@@ -1,0 +1,47 @@
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member5.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member5.jpg')
+  .media-body
+    unless user == "isAnonymous"
+      .btn-group.pull-right
+        button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
+          svg.icon-small
+            use(xlink:href='#icon-expand_more')
+        ul.dropdown-menu(role='menu')
+          li 
+            a(href='post-edit.html') Edit
+          li
+            a(href='post-delete.html') Delete
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | John Johson 
+      else 
+        a(href="my-stream.html") John Johson 
+      br 
+      .text-gray-lighter 12 hours ago
+    
+.margin-top-s Our software empowers people to effectively collaborate and organize. Replacing traditional intranets, it fuels bottom-up organizational innovation. 
+  a(href="#") www.getopensocial.com
+img.img-responsive(src="content/images/os_image.jpg", alt="", width="100%", height="auto")
+.card-nested-section
+  
+  unless user == "isAnonymous"
+    .media.margin-bottom-xl
+      .media-left
+        img.img-medium.img-circle(src='content/images/member5.jpg')
+
+      .media-body
+        form
+          .form-group.form-group-inline.clearfix
+            textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%', rows="1")
+            button.btn.btn-link(type='submit') Comment
+
+  include ./_post1-reply5.pug
+  include ./_post1-reply4.pug
+  include ./_post1-reply3.pug
+  include ./_post1-reply2.pug
+  include ./_post1-reply1.pug

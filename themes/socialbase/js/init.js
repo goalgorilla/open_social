@@ -5,8 +5,7 @@
     var screen_sm_min = 767;
     var window_width = $(window).width();
     if (window_width > screen_sm_min ) {
-      var tableOfContents = $('.table-of-contents'),
-          indexBanner = $('#index-banner');
+      var tableOfContents = $('.table-of-contents');
 
       if (tableOfContents.length) {
         $('.toc-wrapper').affix({
@@ -14,13 +13,6 @@
               top: tableOfContents.offset().top - 74
             }
           })
-      }
-      else if (indexBanner.length) {
-        $('.toc-wrapper').affix({
-          offset: {
-            top: indexBanner.height()
-          }
-        })
       }
       else {
         $('.toc-wrapper').affix({
