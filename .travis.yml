@@ -26,6 +26,7 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch composer https://github.com/goalgorilla/drupal_social.git install
   - cd install
+  - phpenv config-rm xdebug.ini
   - composer require goalgorilla/open_social #${TRAVIS_COMMIT}
   - composer install # Is this still necessary?
   # Lets install via docker-compose.
