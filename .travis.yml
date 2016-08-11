@@ -39,5 +39,8 @@ before_install:
 
 script:
   - docker exec -i social_web bash /root/dev-scripts/install/install_script.sh
-  - docker exec -i social_web_scripts php -d xdebug.extended_info=0 -d xdebug.remote_autostart=0 -d xdebug.coverage_enable=0 -d xdebug.profiler_enable=0 -d xdebug.remote_enable=0 /var/www/vendor/bin/phpunit -c /var/www/html/profiles/contrib/social/phpunit.xml.dist --testsuite social
-  - docker exec -it social_behat behat /root/behat --config /root/behat/config/behat.yml --tags "stability"
+  - docker exec -i social_web_scripts sh /root/travis/unit-tests.sh
+  - docker ps
+  - docker logs social_selenium
+  - sleep 30
+  - docker exec -it social_behat sh /root/travis/behatstability.sh
