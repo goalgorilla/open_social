@@ -11,11 +11,13 @@ third_party_settings:
     activity_destinations:
       stream_profile: stream_profile
     activity_create_direct: 1
+    activity_aggregate: 1
 template: create_comment_community_post
 label: 'Create comment on post in the community'
 description: 'A user add a comment to post in the community'
 text:
   - "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on post</p>"
+  - "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> and @count others commented on post</p>"
 settings:
   'token options':
     clear: false
