@@ -192,9 +192,6 @@ class ActivityFactory extends ControllerBase {
       $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $count - 1);
       $allowed_destinations = ['stream_group', 'stream_home', 'stream_explore'];
       $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
-      $activity = Activity::create($activity_fields);
-      $activity->save();
-      $activities[] = $activity;
 
       // Create separate activity for activity on user related streams.
       $profile_allowed_destinations = ['stream_profile', 'notifications'];
@@ -203,6 +200,10 @@ class ActivityFactory extends ControllerBase {
       $activity->save();
       $activities[] = $activity;
     }
+
+    $activity = Activity::create($activity_fields);
+    $activity->save();
+    $activities[] = $activity;
 
     return $activities;
   }
