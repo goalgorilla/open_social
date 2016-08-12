@@ -29,6 +29,7 @@ Feature: Edit my group as a group manager
     And I fill in "edit-field-group-description-0-value" with "Description text - edited"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
+    And I click "Test open group" in the "Main content"
     And I should see "Description text - edited"
     And I should see "1 member"
 
