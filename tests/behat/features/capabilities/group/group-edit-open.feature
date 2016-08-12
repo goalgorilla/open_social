@@ -17,7 +17,6 @@ Feature: Edit my group as a group manager
     And I fill in "edit-field-group-description-0-value" with "Description text"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
-    And I should see "Description text"
     And I should see "1 member"
 
     Given I am on "user"
@@ -121,4 +120,3 @@ Feature: Edit my group as a group manager
     And I should see the link "Cancel"
     And I should see the button "Delete"
     And I press "Delete"
-  

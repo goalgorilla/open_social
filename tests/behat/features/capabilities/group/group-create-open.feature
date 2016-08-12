@@ -26,7 +26,6 @@ Feature: Create Open Group
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I should see "GG HQ"
-    And I should see "Description text"
     And I should see "1 member"
     And I should see "Joined"
     And I should see the link "Read more"
