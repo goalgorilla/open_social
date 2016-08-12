@@ -59,6 +59,7 @@ class ActivityFactory extends ControllerBase {
     ];
 
     // Check if aggregation is enabled for this message type.
+    // @TODO: Consider if we should put aggregation to separate service.
     if ($this->getAggregationSettings($message)) {
       $activities = $this->buildAggregatedActivites($data, $activity_fields);
     }
@@ -117,13 +118,13 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'output_text' field from data array.
    */
-  private function getFieldOutputText(Message $message, $count = NULL) {
+  private function getFieldOutputText(Message $message, $arguments = []) {
     $value = NULL;
     if (isset($message)) {
       $value = $message->getText(NULL);
       // Text for aggregated activities.
-      if (is_numeric($count) && $count > 0 && !empty($value[1])) {
-        $text = t($value[1], array('@count' => $count));
+      if (!empty($value[1])) {
+        $text = t($value[1], $arguments);
       }
       // Text for default activities.
       else {
@@ -172,8 +173,9 @@ class ActivityFactory extends ControllerBase {
     if (!empty($related_activities)) {
       // Update related activities.
       foreach ($related_activities as $related_activity) {
-        // If user already have related activity we remove it and crete new.
+        // If user already have related activity we remove it and create new.
         if ($related_activity->getOwnerId() == $this->getActor($data)) {
+          // @TODO: Consider if need to delete or unpublish old activites.
           $related_activity->delete();
         }
         else {
@@ -183,13 +185,17 @@ class ActivityFactory extends ControllerBase {
         }
       }
 
-      // Get number of aggregated items.
-      $count = $this->getAggregationAuthorsCount($data);
       // Clone activity fields for separate profile stream activity.
       $profile_activity_fields = $activity_fields;
+
       // Update output text for activity on not user related streams.
+      $arguments = [];
       $message = Message::load($data['mid']);
-      $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $count - 1);
+      $count = $this->getAggregationAuthorsCount($data);
+      if (is_numeric($count) && $count > 1) {
+        $arguments = ['@count' => $count - 1];
+      }
+      $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $arguments);
       $allowed_destinations = ['stream_group', 'stream_home', 'stream_explore'];
       $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
 
@@ -247,6 +253,7 @@ class ActivityFactory extends ControllerBase {
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+      // @TODO: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
       $commented_entity = $comment->getCommentedEntity();
       $related_object = [
@@ -269,6 +276,7 @@ class ActivityFactory extends ControllerBase {
       if (!empty($related_entity['target_id']) && !empty($related_entity['target_type'])) {
         $query = \Drupal::database()->select('comment_field_data', 'cfd');
         $query->addExpression('COUNT(DISTINCT cfd.uid)');
+        $query->condition('cfd.status', 1);
         $query->condition('cfd.entity_type', $related_entity['target_type']);
         $query->condition('cfd.entity_id', $related_entity['target_id']);
         $count = $query->execute()->fetchField();
