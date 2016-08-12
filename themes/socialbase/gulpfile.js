@@ -43,7 +43,7 @@ var gulp          = require('gulp'),
 options.rootPath = {
   theme       : __dirname + '/',
   dist        : __dirname + '/dist/',
-  drupalcore  : '../../../../core/'
+  drupalcore  : '../../../../../core/'
 };
 
 options.theme = {
