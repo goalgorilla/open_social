@@ -44,7 +44,7 @@ class ActivityFactory extends ControllerBase {
   private function buildActivities(array $data) {
     $activities = [];
     $message = Message::load($data['mid']);
-
+    // Initialize fields for new activity entity.
     $activity_fields = [
       'created' => $this->getCreated($message),
       'field_activity_destinations' => $this->getFieldDestinations($data),
@@ -57,48 +57,16 @@ class ActivityFactory extends ControllerBase {
       'field_activity_status' => ACTIVITY_STATUS_RECEIVED,
       'user_id' => $this->getActor($data),
     ];
+
     // Check if aggregation is enabled for this message type.
     if ($this->getAggregationSettings($message)) {
-      // Get related entity.
-      $related_object = $this->getRelatedObject($data);
-      // Get related activities.
-      $existing_activities = $this->getRelatedActivites($data);
-
-      if (!empty($existing_activities)) {
-        // Update old and new activities.
-        foreach ($existing_activities as $existing_activity) {
-          if ($existing_activity->getOwnerId() == $this->getActor($data)) {
-            $existing_activity->delete();
-          }
-          else {
-            $existing_activity->set('field_activity_destinations', ['stream_profile']);
-            $existing_activity->save();
-          }
-        }
-
-        // Get count.
-        $count = $this->getCommentAuthorsCount($related_object);
-
-        $profile_activity_fields = $activity_fields;
-
-        $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $count - 1);
-        $allowed_destinations = ['stream_group', 'stream_home', 'stream_explore'];
-        $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
-
-        $profile_allowed_destinations = ['stream_profile', 'notifications'];
-        $profile_activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $profile_allowed_destinations);
-
-        $activity = Activity::create($profile_activity_fields);
-        $activity->save();
-        $activities[] = $activity;
-      }
-
+      $activities = $this->buildAggregatedActivites($data, $activity_fields);
     }
-
-    $activity = Activity::create($activity_fields);
-
-    $activity->save();
-    $activities[] = $activity;
+    else {
+      $activity = Activity::create($activity_fields);
+      $activity->save();
+      $activities[] = $activity;
+    }
 
     return $activities;
   }
@@ -153,10 +121,11 @@ class ActivityFactory extends ControllerBase {
     $value = NULL;
     if (isset($message)) {
       $value = $message->getText(NULL);
-
-      if (!empty($count) && !empty($value[1])) {
+      // Text for aggregated activities.
+      if (is_numeric($count) && $count > 0 && !empty($value[1])) {
         $text = t($value[1], array('@count' => $count));
       }
+      // Text for default activities.
       else {
         $text = reset($value);
       }
@@ -185,13 +154,66 @@ class ActivityFactory extends ControllerBase {
   }
 
   /**
-   * Get related activities from data array.
+   * Get aggregation settings from message template.
    */
-  public static function getRelatedActivites($data) {
+  private function getAggregationSettings(Message $message) {
+    $value = NULL;
+    $message_template = $message->getTemplate();
+    return $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL);
+  }
+
+  /**
+   * Build the aggregated activities based on a data array.
+   */
+  private function buildAggregatedActivites($data, $activity_fields) {
+    $activities = [];
+    // Get related activities.
+    $related_activities = $this->getAggregationRelatedActivities($data);
+    if (!empty($related_activities)) {
+      // Update related activities.
+      foreach ($related_activities as $related_activity) {
+        // If user already have related activity we remove it and crete new.
+        if ($related_activity->getOwnerId() == $this->getActor($data)) {
+          $related_activity->delete();
+        }
+        else {
+          // For other users we leave activity only on their profile stream.
+          $related_activity->set('field_activity_destinations', ['stream_profile']);
+          $related_activity->save();
+        }
+      }
+
+      // Get number of aggregated items.
+      $count = $this->getAggregationAuthorsCount($data);
+      // Clone activity fields for separate profile stream activity.
+      $profile_activity_fields = $activity_fields;
+      // Update output text for activity on not user related streams.
+      $message = Message::load($data['mid']);
+      $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $count - 1);
+      $allowed_destinations = ['stream_group', 'stream_home', 'stream_explore'];
+      $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
+      $activity = Activity::create($activity_fields);
+      $activity->save();
+      $activities[] = $activity;
+
+      // Create separate activity for activity on user related streams.
+      $profile_allowed_destinations = ['stream_profile', 'notifications'];
+      $profile_activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $profile_allowed_destinations);
+      $activity = Activity::create($profile_activity_fields);
+      $activity->save();
+      $activities[] = $activity;
+    }
+
+    return $activities;
+  }
+
+  /**
+   * Get related activities for activity aggregation.
+   */
+  public static function getAggregationRelatedActivities($data) {
     $activities = array();
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
-
       if ($related_object['target_type'] === 'comment') {
         // Get commented entity.
         $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
@@ -212,42 +234,17 @@ class ActivityFactory extends ControllerBase {
             $activities = Activity::loadMultiple($activity_ids);
           }
         }
-
       }
     }
     return $activities;
   }
 
   /**
-   * Get aggregation settings from message.
+   * Get related entity for activity aggregation.
    */
-  private function getAggregationSettings(Message $message) {
-    $value = NULL;
-    $message_template = $message->getTemplate();
-    return $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL);
-  }
-
-  /**
-   * Get comment unique authors number from related entity.
-   */
-  private function getCommentAuthorsCount($related_entity) {
-    $count = 0;
-    if (!empty($related_entity['target_id']) && !empty($related_entity['target_type'])) {
-      $query = \Drupal::database()->select('comment_field_data', 'cfd');
-      $query->addExpression('COUNT(DISTINCT cfd.uid)');
-      $query->condition('cfd.entity_type', $related_entity['target_type']);
-      $query->condition('cfd.entity_id', $related_entity['target_id']);
-      $count = $query->execute()->fetchField();
-    }
-    return $count;
-  }
-
-  /**
-   * Get related object from data array.
-   */
-  private function getRelatedObject($data) {
+  private function getAggregationRelatedEntity($data) {
     $related_object = $data['related_object'][0];
-    if ($related_object['target_type'] === 'comment') {
+    if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
       $comment = $comment_storage->load($related_object['target_id']);
       $commented_entity = $comment->getCommentedEntity();
@@ -257,6 +254,26 @@ class ActivityFactory extends ControllerBase {
       ];
     }
     return $related_object;
+  }
+
+  /**
+   * Get unique authors number for activity aggregation.
+   */
+  private function getAggregationAuthorsCount($data) {
+    $count = 0;
+    $related_object = $data['related_object'][0];
+    if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
+      // Get related entity.
+      $related_entity = $this->getAggregationRelatedEntity($data);
+      if (!empty($related_entity['target_id']) && !empty($related_entity['target_type'])) {
+        $query = \Drupal::database()->select('comment_field_data', 'cfd');
+        $query->addExpression('COUNT(DISTINCT cfd.uid)');
+        $query->condition('cfd.entity_type', $related_entity['target_type']);
+        $query->condition('cfd.entity_id', $related_entity['target_id']);
+        $count = $query->execute()->fetchField();
+      }
+    }
+    return $count;
   }
 
   /**
