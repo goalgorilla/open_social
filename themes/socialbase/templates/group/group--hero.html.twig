@@ -55,7 +55,7 @@
             {% endif %}
             <span class="inline-center">
               {% if content.field_group_description|render %}
-                {{- content.field_group_location -}}{% if content.field_group_address|render %} &bullet;{% endif %}{% endif %}
+                {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
               {{ content.field_group_address }} </span>
           </div>
         {% endif %}
