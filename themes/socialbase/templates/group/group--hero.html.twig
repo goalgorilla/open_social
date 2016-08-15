@@ -44,15 +44,20 @@
     </p>
     <div class="hero-footer">
       <div class="row row-md-center">
-        {% if content.field_group_description %}
-          <div class="col-xs-12 col-md-6 col-md-offset-3">{{ content.field_group_description }}</div>
-        {% endif %}
-        {% if content.field_group_location|render %}
-          <div class="col-xs-12 col-md-6 col-md-offset-3">{{ content.field_group_location }}</div>
-        {% endif %}
-        {% if content.field_group_address|render %}
-          <div class="col-xs-12 col-md-6 col-md-offset-3">{{ content.field_group_address }}</div>
-        {% endif %}
+        <div class="col-xs-12 col-md-6 col-md-offset-3">
+          {{ content.field_group_description }}
+          {% if content.field_group_description|render and (content.field_group_location|render or content.field_group_address|render)  %}
+            <br />
+            <svg class="hero-footer-icon">
+              <use xlink:href="#icon-location"></use>
+            </svg>
+          {% endif %}
+          <span class="inline-center">
+            {% if content.field_group_location|render %}
+              {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
+            {{ content.field_group_address }} </span>
+        </div>
+
         <div class="col-xs-12 col-md-3">
           <div class="btn-group">
             {% if joined %}
