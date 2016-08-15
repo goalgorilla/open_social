@@ -210,6 +210,20 @@ class AccountHeaderBlock extends BlockBase {
           ),
         ),
       );
+
+      if ($account) {
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          $user_profile = $storage->loadByUser($account, 'profile');
+          if ($user_profile) {
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'small');
+            $links['account_box']['icon_image'] = $content;
+          }
+        }
+      }
+
     }
     else {
       $links = [
