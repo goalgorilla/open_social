@@ -32,8 +32,7 @@ Feature: See upcoming events in the community
     Then I should see "Behat Event 1"
     And I should see "Behat Event 2"
 
-    When I click the xth "2" link with the text "View all"
+    When I click the link with the text "All Upcoming events"
     Then I should see "Community events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
-

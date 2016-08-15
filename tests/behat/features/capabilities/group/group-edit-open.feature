@@ -77,7 +77,7 @@ Feature: Edit my group as a group manager
     And I press "Save"
 #    Then I should not see "Member"
     And I click "Next Column"
-    And I click the xth "3" element with the css ".dropdown-toggle"
+    And I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Delete"
     Then I should see "This action cannot be undone"
     And I should see the button "Delete
@@ -121,4 +121,3 @@ Feature: Edit my group as a group manager
     And I should see the link "Cancel"
     And I should see the button "Delete"
     And I press "Delete"
-  
