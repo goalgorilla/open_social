@@ -34,7 +34,6 @@ Feature: Edit my group as a group manager
     And I should see "1 member"
 
   # DS-706 As a Group Manager I want to manage group memberships
-    When I click "Test open group" in the "Main content"
     And I click "Members"
     Then I should see "Members of Test open group"
     And I should see the link "Add member"
