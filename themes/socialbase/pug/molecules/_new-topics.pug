@@ -1,9 +1,3 @@
-if user == "isAnonymous"
-  - var link = "public-topics";
-else
-  - var link = "explore-topics";
-
-
 .card.card-with-actionbar.hidden-xs
   .card-head
     header.text-center Newest topics
@@ -16,6 +10,9 @@ else
       a.list-group-item(href="topic.html")
         h6.list-group-item-heading My first week on the job
         small.text-gray-lighter.list-group-item-text 1 may
-    
+
     .card-actionbar.text-center
-      a.btn.btn-flat(href="#{link}.html") View all
+      if user == "isAnonymous"
+        a.btn.btn-flat(href="public-topics.html") All newest topics
+      else
+        a.btn.btn-flat(href="explore-topics.html") All newest topics
