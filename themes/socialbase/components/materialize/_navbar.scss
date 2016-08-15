@@ -72,9 +72,34 @@
     margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
   }
 
-  .navbar-collapse .nav > li > a  {
-    padding: 13px 20px;
+  .navbar-collapse {
+
+    .navbar-nav > li > a {
+      padding: 5px 15px 5px 25px;
+    }
+
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: transparent;
+      float: none;
+
+      li a {
+        color: white;
+        padding: 5px 15px 5px 37px;
+
+        &:hover,
+        &:focus {
+          background: $brand-secondary;
+        }
+
+      }
+
+    }
+
   }
+
 
 }
 
@@ -169,7 +194,8 @@
     border: 0;
     border-radius: 0;
     color: white;
-    padding: 13px 15px 8px;
+    font-weight: 500;
+    padding: 8px 10px;
     height: 50px;
     min-width: 50px;
     margin: 0;
@@ -237,12 +263,19 @@
     float: left;
 
     > a {
-      padding: 13px 15px 8px;
+      padding: 13px 10px 8px;
       height: $navbar-height;
-      min-width: $navbar-height;
     }
   }
 
+}
+
+
+
+@include MQ($small) {
+  .navbar-nav > li.navbar-search {
+    float: right;
+  }
 }
 
 .navbar .dropdown .badge {
@@ -251,7 +284,7 @@
   padding-right: 5px;
   font-size: 0.625em;
   top: 8px;
-  left: 30px;
+  left: 25px;
   background-color: $brand-accent;
   color: $default-color;
   border-radius: 50%;
@@ -260,6 +293,8 @@
 
 .navbar-form[role='search'] {
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 
   .form-group {
     position: relative;
