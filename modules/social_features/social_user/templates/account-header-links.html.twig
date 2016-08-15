@@ -29,7 +29,9 @@
   {% for item in links|without('search_block') %}
       <li class="{{ item.classes }}">
           <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-            {% if item.icon_classes %}
+            {% if item.icon_image %}
+              {{ item.icon_image }}
+            {% elseif item.icon_classes %}
               <svg class="icon-white icon-medium pull-left {{ item.icon_classes }}">
                 <use xlink:href="#{{ item.icon_classes }}" />
               </svg>
