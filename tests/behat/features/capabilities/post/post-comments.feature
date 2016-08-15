@@ -37,7 +37,7 @@ Feature: Comment on a Post
 
         # Scenario: delete comment
    When I am on the homepage
-    And I click the xth "3" element with the css ".dropdown-toggle"
+    And I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Delete"
    Then I should see "This action cannot be undone."
         # Confirm delete

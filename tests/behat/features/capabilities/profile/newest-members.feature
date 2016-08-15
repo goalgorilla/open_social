@@ -25,7 +25,7 @@ Feature: See newest users in the community
     And I should see "Behat User 1"
     And I should see "Behat User 2"
 
-    When I click the link with the text "All newest members"
+    When I click "All Newest members"
     Then I should see "Behat User 1"
     And I should see "Behat User 2"
     And I should see "Newest members"
