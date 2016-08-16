@@ -63,6 +63,7 @@
  *   in different view modes.
  */
 #}
+{{ kint() }}
 {% if details_label %}
     <h4 class="section-title">
         {{ details_label }}
@@ -74,7 +75,7 @@
   <div{{ content_attributes.addClass('card-body extra-padding') }}>
     {{ content.body }}
 
-    {% if content.field_files %}
+    {% if content.field_files|render is not empty %}
       <div class="card-nested-section">
         <h5>
           {% trans %}Attachments{% endtrans %}
