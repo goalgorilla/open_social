@@ -109,7 +109,8 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
  */
 function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
-  $form['description']['#suffix'] = '</div>';
+  $form['description']['#suffix'] = '</div></div></div>';
+  $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
 }
 
 /**
@@ -117,9 +118,7 @@ function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form
  */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] =  'btn';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    $form['actions']['delete']['#attributes']['class'][] = 'btn btn-default btn-raised';
   }
   if(isset($form['actions']['preview'])) {
     $form['actions']['preview']['#attributes']['class'][] =  'btn-raised';
@@ -385,6 +384,7 @@ function socialbase_preprocess_container(&$variables) {
       $variables['search_context'] = TRUE;
     }
   }
+
 }
 
 /**
@@ -1062,9 +1062,6 @@ function socialbase_preprocess_form(&$variables) {
     }
   }
 
-  if ($element['#form_id'] === 'user_cancel_form') {
-    $variables['element']['actions']['#parents'][] = 'user_cancel_form';
-  }
 }
 
 /**
