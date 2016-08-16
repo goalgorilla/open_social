@@ -493,15 +493,9 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-        if ($variables['element']['#id'] == 'edit-user-cancel-method') {
-          $suggestions[] = 'bootstrap_panel';
-        }
-        else {
           $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
           $suggestions[] = 'fieldset__' . $variables['element']['#type'];
-        }
         break;
-
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
         break;
@@ -832,8 +826,8 @@ function socialbase_preprocess_input(&$variables) {
     }
 
     if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
-      $variables['element']['#button_type'] = 'flat';
-      $variables['button_type'] = 'flat';
+      $variables['element']['#button_type'] = 'default';
+      $variables['button_type'] = 'default';
     }
 
   }
@@ -926,7 +920,7 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
-      t('Cancel account')->render()       => 'flat',
+      t('Cancel account')->render()       => 'primary',
     ],
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
@@ -1066,6 +1060,10 @@ function socialbase_preprocess_form(&$variables) {
         }
       }
     }
+  }
+
+  if ($element['#form_id'] === 'user_cancel_form') {
+    $variables['element']['actions']['#parents'][] = 'user_cancel_form';
   }
 }
 
