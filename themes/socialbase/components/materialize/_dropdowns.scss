@@ -1,18 +1,25 @@
 .dropdown-menu {
   font-size: 0.875rem;
-  padding-top: 0;
-  padding-bottom: 0;
   border-radius: 0;
   max-width: 500px;
   border: 0;
 
   li > a {
-    padding: 10px 20px;
+    padding: 8px 10px;
     font-weight: 300;
     display: block;
     clear: both;
     line-height: $line-height-base;
     color: $dropdown-link-color;
+
+    @include MQ($small) {
+      padding: 4px 10px 4px 15px;
+    }
+
+  }
+
+  .divider {
+    margin: 6px 0;
   }
 
   .media {
@@ -47,8 +54,8 @@
 
 .dropdown {
 
-  .profile {
-    padding: 0 $padding-base-vertical;
+  &.profile .header-nav-current-user {
+    padding: 4px 15px 0;
   }
 
   .list-group-item:last-child {
@@ -102,7 +109,7 @@
 
 
 .dropdown-header {
-  padding: 10px 20px;
+  padding: 7px 20px;
   background: $dropdown-header-bg;
 }
 

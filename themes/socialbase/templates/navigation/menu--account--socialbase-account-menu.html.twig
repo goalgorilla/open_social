@@ -32,8 +32,8 @@
 {{ attach_library('social_search/navbar-search') }}
 
 
-<a href="/" class="navbar-brand">
-  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" />
+<a href="{{ path('<front>') }}" class="navbar-brand" title="{{ 'Home'|t }}" rel="home">
+  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" alt="{{ 'Home'|t }}" />
 </a>
 
 <div class="navbar-header">
@@ -43,12 +43,11 @@
   {% if items %}
 
     <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
+      <span>{% trans %} Menu {% endtrans %}</span>
       <span class="sr-only">
         {% trans %} Toggle navigation {% endtrans %}
       </span>
-      <svg class="icon-white icon-medium">
-        <use xlink:href="#icon-menu"></use>
-      </svg>
+
     </button>
     <ul{{ attributes.addClass('header-menu list-unstyled nav navbar-nav navbar-right') }}>
 

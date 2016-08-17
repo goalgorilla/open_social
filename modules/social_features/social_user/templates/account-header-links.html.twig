@@ -12,24 +12,26 @@
  * @ingroup templates
  */
 #}
-<a href="/" class="navbar-brand">
-  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" />
+
+
+<a href="{{ path('<front>') }}" class="navbar-brand" title="{{ 'Home'|t }}" rel="home">
+  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" alt="{{ 'Home'|t }}" />
 </a>
 
 <div class="navbar-header">
   <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
+    <span>{% trans %} Menu {% endtrans %}</span>
     <span class="sr-only">
       {% trans %} Toggle navigation {% endtrans %}
     </span>
-    <svg class="icon-white icon-medium">
-      <use xlink:href="#icon-menu"></use>
-    </svg>
   </button>
   <ul class="nav navbar-nav navbar-right">
   {% for item in links|without('search_block') %}
       <li class="{{ item.classes }}">
           <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-            {% if item.icon_classes %}
+            {% if item.icon_image %}
+              {{ item.icon_image }}
+            {% elseif item.icon_classes %}
               <svg class="icon-white icon-medium pull-left {{ item.icon_classes }}">
                 <use xlink:href="#{{ item.icon_classes }}" />
               </svg>
@@ -40,11 +42,20 @@
               {% if item.below is iterable %}
                 <ul class="dropdown-menu">
                   {% for item in item.below %}
-                    <li class="{{ item.classes }}">
-                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-                        <span class="{{item.title_classes}}">{{ item.title }}</span>
-                      </a>
-                    </li>
+                    {% if item.url %}
+                      <li class="{{ item.classes }}">
+                        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+                          <span class="{{item.title_classes}}">{{ item.title }}</span>
+                        </a>
+                      </li>
+                    {% elseif item.divider %}
+                      <li class="{{ item.classes }}"></li>
+                    {% else %}
+                      <li class="{{ item.classes }}" {{ item.attributes }}>
+                        {{ item.tagline }}
+                        <strong class="text-truncate"> {{ item.object }} </strong>
+                      </li>
+                    {% endif %}
                   {% endfor %}
                 </ul>
               {% else %}
@@ -60,9 +71,19 @@
 
 <div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
   <ul class="nav navbar-nav">
-    <li><a href="/explore">Explore</a></li>
-    <li>
+    <li class="navbar-search">
       {{ links.search_block }}
     </li>
+    <li><a href="{{ path('<front>') }}">{% trans %} Home {% endtrans %}</a></li>
+    <li class="dropdown"><a href="#" class="dropdown-toggle clearfix" data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button>{% trans %} Explore {% endtrans %} <span class="caret"</span> </a>
+      <ul class="dropdown-menu">
+        <li><a href="/explore">{% trans %} Community {% endtrans %}</a></li>
+        <li><a href="/all-groups">{% trans %} All groups {% endtrans %}</a></li>
+        <li><a href="/community-events">{% trans %} All events {% endtrans %}</a></li>
+        <li><a href="/newest-topics">{% trans %} All topics {% endtrans %}</a></li>
+        <li><a href="/newest-members">{% trans %} All members {% endtrans %}</a></li>
+      </ul>
+    </li>
+
   </ul>
 </div>
