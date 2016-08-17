@@ -30,7 +30,7 @@ Feature: Create Post
     And I should be on "/stream"
 
         # Scenario: edit the post
-   When I click the xth "3" element with the css ".dropdown-toggle"
+   When I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Edit"
     And I fill in "What's on your mind?" with "This is a community post edited."
     And I press "Post"

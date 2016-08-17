@@ -1,12 +1,12 @@
 extends ./layout/base-lu.pug
 
 block title
-  title Michael Angarano
+  title My groups
 
 block pagetitle
   .container.hero-container.hidden-xs
     include ./molecules/_my-profile-hero.pug
-  
+
   .container
     .visible-xs-block.section
       a.btn.btn-flat(href="my-stream.html")
@@ -14,27 +14,25 @@ block pagetitle
           use(xlink:href='#icon-navigate_before')
         | Back to my stream
 
-  .container.hero-container    
+  .container.hero-container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li.hidden-xs
-            a(href="my-stream.html") Stream  
+            a(href="my-stream.html") Stream
           li
             a(href="my-profile-about.html") About
           li
             a(href='my-topics.html') Topics
           li
-            a(href='my-events.html') Events 
+            a(href='my-events.html') Events
           li.active
             a(href="my-groups.html") Groups
-              span.visually-hidden (active tab) 
-      
+              span.visually-hidden (active tab)
+
 block content
-  
   .row.margin-top-l
-    
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
       a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='group-add.html') Create group
 
@@ -44,11 +42,11 @@ block content
       include molecules/_group2.pug
       include molecules/_group3.pug
       include molecules/_group4.pug
-        
+
       include molecules/_pager.pug
 
-block scriptinline  
-  
+block scriptinline
+
   script.
     function enableMe() {
       jQuery('#reset-button').removeClass('disabled');

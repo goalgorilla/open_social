@@ -29,7 +29,6 @@
  * @ingroup themeable
  */
 #}
-
 <div class="card card-with-actionbar hidden-xs">
     <div class="card-head">
         <header class="text-center">{{ title_prefix }} {{ label }} {{ title_suffix }}</header>
@@ -46,7 +45,7 @@
         <div class="card-actionbar text-center">
             {% if view_all_path %}
             <a href="{{ view_all_path }}" class="btn btn-flat">
-                {% trans %}View all{% endtrans %}
+              {% trans %} All {% endtrans %} {{ label }}
             </a>
             {% endif %}
         </div>

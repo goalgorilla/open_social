@@ -15,9 +15,9 @@ Feature: Enroll for an event
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
     And I should see "1 people have enrolled"
-    And I should see the link "View all"
+    And I should see the link "All enrollments"
 
-    When I click "View all"
+    When I click "All enrollments"
     Then I should see the button "Enrolled"
     And I should see the link "Enrollments"
     And I should see "View profile"
@@ -54,7 +54,7 @@ Feature: Enroll for an event
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
     And I should see "1 people have enrolled"
-    And I should see the link "View all"
+    And I should see the link "All enrollments"
 
   @LU
   Scenario: Successfully cancel enrollment for an event
@@ -67,7 +67,7 @@ Feature: Enroll for an event
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
     And I should see "1 people have enrolled"
-    And I should see the link "View all"
+    And I should see the link "All enrollments"
 
     When I press the "Enrolled" button
     And I click "Cancel enrollment"
@@ -78,7 +78,7 @@ Feature: Enroll for an event
     # Enroll again, since this is technically something different.
     When I press the "Enroll" button
     Then I should see "1 people have enrolled"
-    And I should see the link "View all"
+    And I should see the link "All enrollments"
 
   @LU @cache
   Scenario: Successfully changed enrollment and see changes in teaser
