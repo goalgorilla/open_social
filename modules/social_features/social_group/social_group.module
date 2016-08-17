@@ -143,7 +143,7 @@ function social_group_group_insert(GroupInterface $group) {
  * Set value to geolocation field based on address input.
  */
 function social_group_group_presave(GroupInterface $group) {
-  if(isset($group->field_group_address) && isset($group->field_group_geolocation)){
+  if (isset($group->field_group_address) && isset($group->field_group_geolocation)) {
     // Get Google Maps API key.
     $config = \Drupal::config('geolocation.settings');
     $apikey = $config->get('google_map_api_key');
@@ -151,19 +151,22 @@ function social_group_group_presave(GroupInterface $group) {
     $location = $group->field_group_address->getString();
     $new_coordinates = NULL;
 
-    if(!empty($location) && !empty($apikey)){
+    if (!empty($location) && !empty($apikey)) {
       // Init geocoder settings.
       $plugins = ['googlemaps'];
       $options = [
         'googlemaps' => ['apikey' => $apikey],
       ];
       // Convert address to geolocation values.
-      $address_collection = \Drupal::service('geocoder')->geocode($location, $plugins, $options);
-      if(!empty($address_collection)){
-        $new_coordinates = [
-          'lat' => $address_collection->first()->getLatitude(),
-          'lng' => $address_collection->first()->getLongitude(),
-        ];
+      if (\Drupal::hasService('geocoder')) {
+        $address_collection = \Drupal::service('geocoder')
+          ->geocode($location, $plugins, $options);
+        if (!empty($address_collection)) {
+          $new_coordinates = [
+            'lat' => $address_collection->first()->getLatitude(),
+            'lng' => $address_collection->first()->getLongitude(),
+          ];
+        }
       }
     }
     // Set values to geolocation field.
@@ -477,7 +480,7 @@ function social_group_local_tasks_alter(&$local_tasks) {
  */
 function social_group_menu_local_actions_alter(&$local_actions) {
   // Remove "Add Relationship" button.
-  if(isset($local_actions['group_content.add_page'])){
+  if (isset($local_actions['group_content.add_page'])) {
     unset($local_actions['group_content.add_page']);
   }
 }
