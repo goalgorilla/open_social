@@ -138,6 +138,40 @@ function social_group_group_insert(GroupInterface $group) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set value to geolocation field based on address input.
+ */
+function social_group_group_presave(GroupInterface $group) {
+  if(isset($group->field_group_address) && isset($group->field_group_geolocation)){
+    // Get Google Maps API key.
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    // Get location string.
+    $location = $group->field_group_address->getString();
+    $new_coordinates = NULL;
+
+    if(!empty($location) && !empty($apikey)){
+      // Init geocoder settings.
+      $plugins = ['googlemaps'];
+      $options = [
+        'googlemaps' => ['apikey' => $apikey],
+      ];
+      // Convert address to geolocation values.
+      $address_collection = \Drupal::service('geocoder')->geocode($location, $plugins, $options);
+      if(!empty($address_collection)){
+        $new_coordinates = [
+          'lat' => $address_collection->first()->getLatitude(),
+          'lng' => $address_collection->first()->getLongitude(),
+        ];
+      }
+    }
+    // Set values to geolocation field.
+    $group->get('field_group_geolocation')->setValue($new_coordinates);
+  }
+}
+
+/**
  * Implements hook_entity_view_alter().
  */
 function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
