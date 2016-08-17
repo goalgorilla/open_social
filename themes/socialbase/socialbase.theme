@@ -90,28 +90,54 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_open_group_edit_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'post_delete_form',
+    'node_event_delete_form',
+    'group_open_group_delete_form',
+    'comment_comment_delete_form',
+    'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_group-leave_form',
+    'group_content_open_group-group_membership_group-join_form'
   );
 
   if (in_array($form_id, $forms)) {
     if(isset($form['actions']['delete'])) {
-      $form['actions']['delete']['#attributes']['class'][] =  'btn';
-      $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-      $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn btn-default btn-raised';
     }
     if(isset($form['actions']['submit'])) {
       $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
     }
+    if(isset($form['actions']['cancel'])) {
+      $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
+    }
+  }
+
+  /**
+  * List all the confirmation forms here. We need to close the card before showing the actions.
+  */
+
+  $confirm_forms = array (
+    'user_cancel_form',
+    'post_delete_form',
+    'node_event_delete_form',
+    'node_topic_delete_form',
+    'group_open_group_delete_form',
+    'comment_comment_delete_form',
+    'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_group-leave_form',
+  );
+
+  if (in_array($form_id, $confirm_forms)) {
+    $form['description']['#prefix'] = '<div class="clearfix">';
+    $form['description']['#suffix'] = '</div></div></div>';
+  }
+
+  if ($form_id == 'group_content_open_group-group_membership_group-join_form') {
+    $form['#attributes']['class'][] = 'card';
+    $form['info_text']['#suffix'] = '</div></div>';
   }
 }
 
-/**
- * Implements hook_form_BASE_ID_alter().
- */
-function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
-  $form['description']['#suffix'] = '</div></div></div>';
-  $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
-}
+
 
 /**
  * Implements hook_form_BASE_ID_alter().

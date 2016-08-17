@@ -12,6 +12,22 @@
  * @ingroup themeable
  */
 #}
+
+{% if attributes.hasClass('card') %}
+  <form{{ attributes.removeClass('card') }}>
+    <div class="card">
+      <div class="card-body">
+        {{ children }}
+    </form>
+
+    {#
+      The card is closed function socialbase_form_alter in the info_text suffix
+    #}
+
+{% else %}
+
 <form{{ attributes }}>
   {{ children }}
 </form>
+
+{% endif %}
