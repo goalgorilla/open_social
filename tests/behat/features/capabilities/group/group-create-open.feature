@@ -36,7 +36,7 @@ Feature: Create Open Group
     And I should see "Description text" in the "Hero block"
     And I should see "1 member" in the "Hero block"
     And I should see the button "Joined"
-    And I click the xth "2" element with the css ".dropdown-toggle"
+    And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "GG HQ" in the "Hero block"
@@ -121,7 +121,7 @@ Feature: Create Open Group
     And I should see "Test group topic" in the "Main content"
 
   # DS-703 As a LU I want to leave a group
-    And I click the xth "2" element with the css ".dropdown-toggle"
+    And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "Test open group" in the "Hero block"

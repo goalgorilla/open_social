@@ -22,6 +22,7 @@
     {% trans %}Notifications{% endtrans %}
   </div>
 </li>
+<li class="divider"></li>
 <li>
   <ul class="scrollable-menu">
   {% for row in rows %}
@@ -29,10 +30,11 @@
   {% endfor %}
   </ul>
 </li>
+<li class="divider"></li>
 <li>
   <div class="dropdown-header">
     <a href="{{ notification_url }}" class="block clearfix">
-      {% trans %}View all{% endtrans %}
+      {% trans %}All notifications{% endtrans %}
       <svg class="btn-icon icon-black pull-right">
         <use xlink:href="#icon-navigate_next"></use>
       </svg>
