@@ -22,7 +22,7 @@ Feature: See newest topics in the community
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click the xth "2" link with the text "View all"
+    When I click "All Newest topics"
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
     And I should see "Newest topics"
@@ -32,8 +32,7 @@ Feature: See newest topics in the community
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click the xth "3" link with the text "View all"
+    When I click "All Newest topics"
     Then I should see "Newest topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
-
