@@ -247,6 +247,7 @@
       .attr('title', Drupal.t('Drag to re-order'))
       .attr('data-toggle', 'tooltip')
       .attr('data-icon-type', 'open_with')
+      .append(Drupal.theme('bootstrapIcon', 'move'))
     ;
 
     handle.on('mousedown touchstart pointerdown', function (event) {
