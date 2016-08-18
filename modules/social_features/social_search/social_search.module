@@ -17,6 +17,7 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
   $filter_forms = array(
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-users-page',
+    'views-exposed-form-search-groups-proximity-page',
   );
 
   if (in_array($form['#id'], $filter_forms)) {
@@ -31,8 +32,54 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         'class' => array('browser-default'),
       );
     }
+
+    if ('views-exposed-form-search-groups-proximity-page' == $form['#id']) {
+      // Hide lat and lng inputs.
+      $form['lat']['#access'] = FALSE;
+      $form['lng']['#access'] = FALSE;
+
+      // Add new address input.
+      $form['address'] = [
+        '#type' => 'textfield',
+        '#title' => t('Address'),
+        '#weight' => $form['lat']['#weight'],
+      ];
+
+      // Add custom submit handler first.
+      array_unshift($form['#submit'], '_social_search_groups_proximity_form_submit');
+    }
   }
 }
+
+/**
+ * Form submit for views-exposed-form-search-groups-proximity-page.
+ *
+ */
+function _social_search_groups_proximity_form_submit($form, FormStateInterface &$form_state) {
+  $address = $form_state->getValue('address');
+
+  // Get Google Maps API key.
+  $config = \Drupal::config('geolocation.settings');
+  $apikey = $config->get('google_map_api_key');
+
+  if (!empty($address) && !empty($apikey)) {
+    // Init geocoder settings.
+    $plugins = ['googlemaps'];
+    $options = [
+      'googlemaps' => ['apikey' => $apikey],
+    ];
+    // Convert address to geolocation values.
+    if (\Drupal::hasService('geocoder')) {
+      $address_collection = \Drupal::service('geocoder')
+        ->geocode($address, $plugins, $options);
+      if (!empty($address_collection)) {
+        $form_state->setValue('lat', $address_collection->first()->getLatitude());
+        $form_state->setValue('lng', $address_collection->first()->getLongitude());
+      }
+    }
+  }
+}
+
 
 /**
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
@@ -43,6 +90,7 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
   $filter_blocks = array(
     'exposed_form_search_content_page_sidebar',
     'exposed_form_search_users_page_sidebar',
+    'exposedformsearch_groups_proximitypage',
   );
 
   if (in_array($build['#id'], $filter_blocks)) {

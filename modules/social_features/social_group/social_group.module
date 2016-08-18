@@ -144,14 +144,14 @@ function social_group_group_insert(GroupInterface $group) {
  */
 function social_group_group_presave(GroupInterface $group) {
   if (isset($group->field_group_address) && isset($group->field_group_geolocation)) {
+    // Get location string.
+    $address = $group->field_group_address->getString();
+    $new_coordinates = NULL;
+
     // Get Google Maps API key.
     $config = \Drupal::config('geolocation.settings');
     $apikey = $config->get('google_map_api_key');
-    // Get location string.
-    $location = $group->field_group_address->getString();
-    $new_coordinates = NULL;
-
-    if (!empty($location) && !empty($apikey)) {
+    if (!empty($address) && !empty($apikey)) {
       // Init geocoder settings.
       $plugins = ['googlemaps'];
       $options = [
@@ -160,11 +160,17 @@ function social_group_group_presave(GroupInterface $group) {
       // Convert address to geolocation values.
       if (\Drupal::hasService('geocoder')) {
         $address_collection = \Drupal::service('geocoder')
-          ->geocode($location, $plugins, $options);
+          ->geocode($address, $plugins, $options);
         if (!empty($address_collection)) {
+          $lat = $address_collection->first()->getLatitude();
+          $lng = $address_collection->first()->getLongitude();
+
           $new_coordinates = [
-            'lat' => $address_collection->first()->getLatitude(),
-            'lng' => $address_collection->first()->getLongitude(),
+            'lat' => $lat,
+            'lng' => $lng,
+            'lat_sin' => sin(deg2rad($lat)),
+            'lat_cos' => cos(deg2rad($lat)),
+            'lng_rad' => deg2rad($lng),
           ];
         }
       }
