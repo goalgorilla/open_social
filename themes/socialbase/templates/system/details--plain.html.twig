@@ -24,25 +24,26 @@
   ]
 %}
 <div{{ attributes.addClass(classes) }}>
-
   {# Heading #}
-  {% if heading %}
-    {% block heading %}
-      <div class="panel-heading">
-        <header>
-          {%
-            set heading_classes = [
-              'panel-title',
-            ]
-          %}
-          {% if collapsible %}
-            <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
-          {% else %}
-            <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
-          {% endif %}
-        </header>
-      </div>
-    {% endblock %}
+  {% if not hide_header %}
+    {% if heading %}
+      {% block heading %}
+        <div class="panel-heading">
+          <header>
+            {%
+              set heading_classes = [
+                'panel-title',
+              ]
+            %}
+            {% if collapsible %}
+              <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
+            {% else %}
+              <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
+            {% endif %}
+          </header>
+        </div>
+      {% endblock %}
+    {% endif %}
   {% endif %}
 
   {# Body #}
@@ -62,12 +63,6 @@
         description and description.position == 'invisible' ? 'sr-only',
       ]
     %}
-
-    {% if errors %}
-      <div class="alert alert-danger" role="alert">
-        <strong>{{ errors }}</strong>
-      </div>
-    {% endif %}
 
     <div{{ body_attributes.addClass(body_classes) }}>
       {% if description and description.position == 'before' %}

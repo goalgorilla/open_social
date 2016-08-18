@@ -74,8 +74,17 @@
 
   <div{{ content_attributes.addClass('card-body extra-padding') }}>
     {{ content.body }}
+
+    {% if content.field_files|render is not empty %}
+      <div class="card-nested-section">
+        <h5>
+          {% trans %}Attachments{% endtrans %}
+        </h5>
+          {{ content.field_files }}
+      </div>
+    {% endif %}
   </div>
 
 </article>
 
-{{ content|without('body') }}
+{{ content|without('body', 'field_files') }}
