@@ -84,6 +84,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   // Set correct button styles.
   $forms = array(
     'user_form',
+    'user_register_form',
+    'social_user_login_form',
+    'social_user_password_form',
     'user_cancel_form',
     'profile_profile_edit_form',
     'group_open_group_add_form',
@@ -92,6 +95,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_edit_form',
     'post_delete_form',
     'node_event_delete_form',
+    'node_topic_delete_form',
     'group_open_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
@@ -109,6 +113,10 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     if(isset($form['actions']['cancel'])) {
       $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
     }
+  }
+
+  if($form['form_id']['#id'] == 'edit-user-form') {
+    $form['actions']['cancel']['#attributes']['class'] = 'btn btn-default btn-raised';
   }
 
   /**
@@ -131,10 +139,11 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['description']['#suffix'] = '</div></div></div>';
   }
 
-  if ($form_id == 'group_content_open_group-group_membership_group-join_form') {
+  if ($form_id == 'group_content_open_group-group_membership_group-join_form' || $form_id == 'user_register_form' || $form_id == 'social_user_login_form' ||  $form_id == 'social_user_password_form' ) {
     $form['#attributes']['class'][] = 'card';
-    $form['info_text']['#suffix'] = '</div></div>';
+    $form['actions']['#prefix'] = '</div></div>';
   }
+
 }
 
 
@@ -393,12 +402,6 @@ function socialbase_preprocess_container(&$variables) {
   if (isset($variables['element']['submit']['#button_type'])) {
     if ($variables['element']['submit']['#button_type'] == 'primary' && $variables['element']['#type'] == 'actions') {
       $variables['has_floats'] = TRUE;
-    }
-  }
-
-  if (isset($variables['element']['cancel'])) {
-    if ($variables['element']['cancel']['#type'] == 'link' && $variables['element']['#type'] == 'actions') {
-      $variables['element']['cancel']['#attributes']['class'] = 'btn btn-flat';
     }
   }
 
@@ -946,7 +949,6 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
-      t('Cancel account')->render()       => 'primary',
     ],
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
