@@ -8,22 +8,29 @@
       .navbar-header
 
         button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
-          svg.icon-white.icon-medium
-            title Toggle navigation
-            use(xlink:href='#icon-menu')
+          span Menu
           span.sr-only Toggle navigation
 
         ul.nav.navbar-nav.navbar-right
-          li.hidden-xs
-            a(href='home-lu.html') Home
           li.dropdown
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
               svg.icon-white.icon-medium
-                title My Groups
+                use(xlink:href='#icon-add_box')
+            ul.dropdown-menu
+              li
+                a(href="node-add-event.html") New event
+              li
+                a(href="node-add-topic.html") New topic
+              li
+                a(href="group-add.html") New group
+          li.dropdown
+            a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+              svg.icon-white.icon-medium
                 use(xlink:href='#icon-group')
             ul.dropdown-menu
               li
                 .dropdown-header My groups
+              li.divider
               li
                 ul.scrollable-menu
                   li
@@ -88,9 +95,10 @@
                         .media-left
                           img.img-small.img-circle.media-object(src='content/images/group1-square.jpg', alt='')
                         .media-body.text-truncate Innovaders
+              li.divider
               li
                 .dropdown-header
-                  a.block.clearfix(href="my-groups.html") View all
+                  a.block.clearfix(href="my-groups.html") All my groups
                     svg.btn-icon.icon-black.pull-right
                       use(xlink:href='#icon-navigate_next')
           li.dropdown
@@ -102,6 +110,7 @@
             ul.dropdown-menu
               li
                 .dropdown-header Notifications
+              li.divider
               li
                 ul.scrollable-menu
                   li
@@ -139,16 +148,19 @@
                           em Technology for the handicapped
                           br
                           .text-gray-1 2 days ago
+              li.divider
               li
                 .dropdown-header
-                  a.block.clearfix(href="notifications-archive.htm") View all
+                  a.block.clearfix(href="notifications-archive.htm") All Notifications
                     svg.btn-icon.icon-black.pull-right
                       use(xlink:href='#icon-navigate_next')
-          li.dropdown
+          li.dropdown.profile
             a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
               img.img-small.img-circle.media-middle(src='content/images/member5.jpg', alt='')
-              span.profile.hidden-xs John Johnson
             ul.dropdown-menu
+              li.dropdown-header.header-nav-current-user Signed in as
+                strong.text-truncate John Johnson
+              li.divider
               li
                 a(href='my-stream.html') My profile
               li
@@ -157,6 +169,7 @@
                 a(href='my-topics.html') My topics
               li
                 a(href='my-groups.html') My groups
+              li.divider
               li
                 a(href='profile-edit.html') Edit profile
               li
@@ -167,9 +180,7 @@
 
       #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
         ul.nav.navbar-nav
-          li
-            a(href='explore.html') Explore
-          li
+          li.navbar-search
             form.navbar-form.navbar-left(role='search', method='get', action='search-content.html')
               #navbar-search.form-group
                 input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
@@ -178,3 +189,18 @@
                   svg
                     title Search
                     use(xlink:href='#icon-search')
+          li
+            a(href='home-lu.html') Home
+          li.dropdown
+            a.dropdown-toggle.clearfix(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Explore
+            ul.dropdown-menu
+              li
+                a(href="explore.html") Community
+              li
+                a(href="explore-events.html") All events
+              li
+                a(href="explore-groups.html") All groups
+              li
+                a(href="explore-topics.html") All topics
+              li
+                a(href="explore-members.html") All members

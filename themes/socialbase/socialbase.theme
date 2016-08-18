@@ -613,7 +613,9 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_profile_function':
     case 'field_profile_organization':
     case 'field_group_description':
+    case 'field_group_address':
     case 'field_group_location':
+    case 'field_group_image':
     case 'field_topic_image':
     case 'field_comment_body':
     case 'field_activity_output_text':
@@ -669,6 +671,9 @@ function socialbase_preprocess_page(&$variables) {
   if (!empty($variables['page']['#title'])) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
+
+  $svg = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
+  $variables['svg_icons'] = t('svg', array('svg' => $svg));
 }
 
 

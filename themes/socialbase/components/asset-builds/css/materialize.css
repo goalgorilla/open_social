@@ -1553,7 +1553,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 0.625em 1em;
+  padding: 0.625em 10px;
 }
 
 .nav > li > a:hover, .nav > li > a:focus {
@@ -3337,11 +3337,6 @@ a.card:hover {
   margin-right: 12px;
 }
 
-.card--teaser-desc {
-  max-height: 3em;
-  overflow: hidden;
-}
-
 .card-actionbar {
   position: absolute;
   bottom: 0;
@@ -3516,7 +3511,6 @@ span.form-required {
 }
 
 .select-wrapper {
-  display: inline-block;
   position: relative;
   width: 100%;
   max-width: 23rem;
@@ -4294,6 +4288,15 @@ span.form-required {
   padding-top: 20px;
 }
 
+.hero-footer-icon {
+  fill: white;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -1px;
+}
+
 .hero-canvas {
   border-radius: 10px;
   background-color: rgba(51, 51, 51, 0.8);
@@ -4416,9 +4419,14 @@ span.form-required {
   display: inline-block;
 }
 
-.pagination .material-icons {
-  vertical-align: middle;
-  font-size: 1em;
+.mini-pager {
+  position: relative;
+  padding-top: 35px;
+  list-style: none;
+  padding-left: 0;
+  text-align: center;
+  background-image: -webkit-linear-gradient(transparent, #f3f3f3);
+  background-image: linear-gradient(transparent, #f3f3f3);
 }
 
 i {
@@ -4479,13 +4487,6 @@ i.large {
 
 .img-bordered {
   border: 3px solid white;
-}
-
-.truncate {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .no-margin {
@@ -4689,7 +4690,8 @@ hr.ruler-l {
   border: 0;
   border-radius: 0;
   color: white;
-  padding: 13px 15px 8px;
+  font-weight: 500;
+  padding: 8px 10px;
   height: 50px;
   min-width: 50px;
   margin: 0;
@@ -4756,9 +4758,8 @@ hr.ruler-l {
 }
 
 .navbar-right > li > a {
-  padding: 13px 15px 8px;
+  padding: 13px 10px 8px;
   height: 50px;
-  min-width: 50px;
 }
 
 .navbar .dropdown .badge {
@@ -4767,7 +4768,7 @@ hr.ruler-l {
   padding-right: 5px;
   font-size: 0.625em;
   top: 8px;
-  left: 30px;
+  left: 25px;
   background-color: #ffc142;
   color: #4d4d4d;
   border-radius: 50%;
@@ -4775,6 +4776,8 @@ hr.ruler-l {
 
 .navbar-form[role='search'] {
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .navbar-form[role='search'] .form-group {
@@ -4845,20 +4848,22 @@ hr.ruler-l {
 
 .dropdown-menu {
   font-size: 0.875rem;
-  padding-top: 0;
-  padding-bottom: 0;
   border-radius: 0;
   max-width: 500px;
   border: 0;
 }
 
 .dropdown-menu li > a {
-  padding: 10px 20px;
+  padding: 8px 10px;
   font-weight: 300;
   display: block;
   clear: both;
   line-height: 1.5;
   color: #4d4d4d;
+}
+
+.dropdown-menu .divider {
+  margin: 6px 0;
 }
 
 .dropdown-menu .media {
@@ -4878,8 +4883,8 @@ hr.ruler-l {
   right: -70px;
 }
 
-.dropdown .profile {
-  padding: 0 6px;
+.dropdown.profile .header-nav-current-user {
+  padding: 4px 15px 0;
 }
 
 .dropdown .list-group-item:last-child {
@@ -4924,8 +4929,8 @@ hr.ruler-l {
 }
 
 .dropdown-header {
-  padding: 10px 20px;
-  background: #ddd;
+  padding: 7px 20px;
+  background: white;
 }
 
 .dropdown-toggle + ul > li > svg {
@@ -6802,6 +6807,12 @@ input[type=range]:focus::-ms-fill-upper {
   .navbar-footer .navbar-right li{
     float: left;
   }
+  .navbar-nav{
+    margin-left: 10px;
+  }
+  .navbar-nav > li.navbar-search{
+    float: right;
+  }
   .navbar-form[role='search'] .form-group{
     border-radius: 5px;
     width: 0%;
@@ -6841,6 +6852,9 @@ input[type=range]:focus::-ms-fill-upper {
     pointer-events: initial;
     -webkit-transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
     transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
+  }
+  .dropdown-menu li > a{
+    padding: 4px 10px 4px 15px;
   }
   .dropdown-menu .media-left{
     padding-right: 8px;
@@ -7944,8 +7958,27 @@ input[type=range]:focus::-ms-fill-upper {
   .navbar-collapse .navbar-nav{
     margin: 6.5px -1rem;
   }
-  .navbar-collapse .nav > li > a{
-    padding: 13px 20px;
+  .navbar-collapse .navbar-nav > li > a{
+    padding: 5px 15px 5px 25px;
+  }
+  .navbar-collapse .navbar-nav > li > a.dropdown-toggle{
+    pointer-events: none;
+  }
+  .navbar-collapse .dropdown-menu{
+    display: block;
+    position: relative;
+    width: 100%;
+    background-color: transparent;
+    float: none;
+    max-width: none;
+    padding-top: 0;
+  }
+  .navbar-collapse .dropdown-menu li a{
+    color: white;
+    padding: 5px 15px 5px 37px;
+  }
+  .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus{
+    background: #1f80aa;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a{
     color: #4d4d4d;
