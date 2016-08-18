@@ -123,12 +123,12 @@ class ActivityFactory extends ControllerBase {
     if (isset($message)) {
       $value = $message->getText(NULL);
       // Text for aggregated activities.
-      if (!empty($value[1])) {
+      if (!empty($value[1]) && !empty($arguments)) {
         $text = t($value[1], $arguments);
       }
       // Text for default activities.
       else {
-        $text = reset($value);
+        $text = $value[0];
       }
 
       // Add format.
