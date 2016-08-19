@@ -88,6 +88,8 @@ class SocialPageTitleBlock extends PageTitleBlock {
       ->getStorage('group_content')
       ->loadByProperties([
         'entity_id' => $node->id(),
+        //@TODO: fix this to work with all group types.
+        'type' => 'open_group-group_node-' . $node->getType(),
       ]);
     if (!empty($group_content)) {
       $group = reset($group_content)->getGroup();
