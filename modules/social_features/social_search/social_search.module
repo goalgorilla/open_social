@@ -7,6 +7,9 @@
 
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\block\Entity\Block;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -45,6 +48,9 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#weight' => $form['lat']['#weight'],
       ];
 
+      // Hide title input, because we use search input in header.
+      $form['title']['#access'] = FALSE;
+
       // Add custom submit handler first.
       array_unshift($form['#submit'], '_social_search_groups_proximity_form_submit');
     }
@@ -73,10 +79,15 @@ function _social_search_groups_proximity_form_submit($form, FormStateInterface &
       $address_collection = \Drupal::service('geocoder')
         ->geocode($address, $plugins, $options);
       if (!empty($address_collection)) {
-        $form_state->setValue('lat', $address_collection->first()->getLatitude());
-        $form_state->setValue('lng', $address_collection->first()->getLongitude());
+        $form_state->setValue('lat', $address_collection->first()
+          ->getLatitude());
+        $form_state->setValue('lng', $address_collection->first()
+          ->getLongitude());
       }
     }
+  }
+  if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
+    $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
   }
 }
 
@@ -90,7 +101,7 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
   $filter_blocks = array(
     'exposed_form_search_content_page_sidebar',
     'exposed_form_search_users_page_sidebar',
-    'exposedformsearch_groups_proximitypage',
+    'exposed_form_search_groups_proximity_page_sidebar',
   );
 
   if (in_array($build['#id'], $filter_blocks)) {
@@ -100,4 +111,20 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
       'max-age' => 0,
     );
   }
+}
+
+/**
+ * Implements hook_block_access().
+ *
+ * Hide proximity filter if Google Maps API key is not set.
+ */
+function social_search_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'views_exposed_filter_block:search_groups_proximity-page') {
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    return AccessResult::forbiddenIf(empty($apikey))->addCacheableDependency($block);
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
 }

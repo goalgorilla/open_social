@@ -2,20 +2,20 @@ langcode: en
 status: true
 dependencies:
   config:
-    - views.view.search_content
+    - views.view.search_groups_proximity
   module:
     - system
     - views
   theme:
     - socialbase
-id: exposed_form_search_content_page_sidebar
+id: exposed_form_search_groups_proximity_page_sidebar
 theme: socialbase
 region: complementary
-weight: -5
+weight: -3
 provider: null
-plugin: 'views_exposed_filter_block:search_content-page'
+plugin: 'views_exposed_filter_block:search_groups_proximity-page'
 settings:
-  id: 'views_exposed_filter_block:search_content-page'
+  id: 'views_exposed_filter_block:search_groups_proximity-page'
   label: ''
   provider: views
   label_display: visible
@@ -23,6 +23,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "/search/content\r\n/search/content/*"
+    pages: "/search/groups\r\n/search/groups/*"
     negate: false
     context_mapping: {  }
