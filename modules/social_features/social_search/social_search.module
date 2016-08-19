@@ -10,6 +10,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\block\Entity\Block;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\geolocation\GeolocationCore;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -69,30 +72,6 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
  *
  */
 function _social_search_groups_proximity_form_submit($form, FormStateInterface &$form_state) {
-  $address = $form_state->getValue('address');
-
-  // Get Google Maps API key.
-  $config = \Drupal::config('geolocation.settings');
-  $apikey = $config->get('google_map_api_key');
-
-  if (!empty($address) && !empty($apikey)) {
-    // Init geocoder settings.
-    $plugins = ['googlemaps'];
-    $options = [
-      'googlemaps' => ['apikey' => $apikey],
-    ];
-    // Convert address to geolocation values.
-    if (\Drupal::hasService('geocoder')) {
-      $address_collection = \Drupal::service('geocoder')
-        ->geocode($address, $plugins, $options);
-      if (!empty($address_collection)) {
-        $form_state->setValue('lat', $address_collection->first()
-          ->getLatitude());
-        $form_state->setValue('lng', $address_collection->first()
-          ->getLongitude());
-      }
-    }
-  }
   if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
     $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
     $form_state->setValue('description', \Drupal::routeMatch()->getParameter('keys'));
@@ -136,4 +115,52 @@ function social_search_block_access(Block $block, $operation, AccountInterface $
 
   // No opinion.
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Hide proximity filter if Google Maps API key is not set.
+ */
+function social_search_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'search_groups_proximity') {
+    // Get exposed input.
+    $exposed_input = $view->getExposedInput();
+    // Get Google Maps API key.
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    if (!empty($exposed_input['address']) && !empty($apikey)) {
+      // Init geocoder settings.
+      $plugins = ['googlemaps'];
+      $options = [
+        'googlemaps' => ['apikey' => $apikey],
+      ];
+      // Convert address to geolocation values.
+      if (\Drupal::hasService('geocoder')) {
+        $address_collection = \Drupal::service('geocoder')
+          ->geocode($exposed_input['address'], $plugins, $options);
+        if (!empty($address_collection)) {
+          // Alter proximity query with correct coordinates.
+          foreach ($query->where as &$condition_group) {
+            foreach ($condition_group['conditions'] as &$condition) {
+              if ((strpos($condition['field'], 'COS( 0') !== FALSE)) {
+                $table_name = 'group__field_group_geolocation';
+                $field_id = 'field_group_geolocation';
+                $filter_lat = $address_collection->first()->getLatitude();
+                $filter_lng = $address_collection->first()->getLongitude();
+                $earth_radius = GeolocationCore::EARTH_RADIUS_KM;
+
+                $query_fragment = \Drupal::service('geolocation.core')->getProximityQueryFragment($table_name, $field_id, $filter_lat, $filter_lng, $earth_radius);
+
+                $filter_field = 'field_group_geolocation_proximity';
+                $operator = $view->filter[$filter_field]->operator;
+                $proximity_field = ":{$table_name}_{$filter_field}";
+                $condition['field'] = "{$query_fragment} {$operator} {$proximity_field}";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
