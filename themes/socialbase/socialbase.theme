@@ -84,42 +84,76 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   // Set correct button styles.
   $forms = array(
     'user_form',
+    'user_register_form',
+    'social_user_login_form',
+    'social_user_password_form',
     'user_cancel_form',
     'profile_profile_edit_form',
     'group_open_group_add_form',
     'group_open_group_edit_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'post_delete_form',
+    'node_event_delete_form',
+    'node_topic_delete_form',
+    'group_open_group_delete_form',
+    'comment_comment_delete_form',
+    'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_group-leave_form',
+    'group_content_open_group-group_membership_group-join_form'
   );
 
   if (in_array($form_id, $forms)) {
     if(isset($form['actions']['delete'])) {
-      $form['actions']['delete']['#attributes']['class'][] =  'btn';
-      $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-      $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn btn-default btn-raised';
     }
     if(isset($form['actions']['submit'])) {
       $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
     }
+    if(isset($form['actions']['cancel'])) {
+      $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
+    }
   }
+
+  if($form['form_id']['#id'] == 'edit-user-form') {
+    $form['actions']['cancel']['#attributes']['class'] = 'btn btn-default btn-raised';
+  }
+
+  /**
+  * List all the confirmation forms here. We need to close the card before showing the actions.
+  */
+
+  $confirm_forms = array (
+    'user_cancel_form',
+    'post_delete_form',
+    'node_event_delete_form',
+    'node_topic_delete_form',
+    'group_open_group_delete_form',
+    'comment_comment_delete_form',
+    'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_group-leave_form',
+  );
+
+  if (in_array($form_id, $confirm_forms)) {
+    $form['description']['#prefix'] = '<div class="clearfix">';
+    $form['description']['#suffix'] = '</div></div></div>';
+  }
+
+  if ($form_id == 'group_content_open_group-group_membership_group-join_form' || $form_id == 'user_register_form' || $form_id == 'social_user_login_form' ||  $form_id == 'social_user_password_form' ) {
+    $form['#attributes']['class'][] = 'card';
+    $form['actions']['#prefix'] = '</div></div>';
+  }
+
 }
 
-/**
- * Implements hook_form_BASE_ID_alter().
- */
-function socialbase_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['description']['#prefix'] = '<div class="clearfix margin-bottom-m">';
-  $form['description']['#suffix'] = '</div>';
-}
+
 
 /**
  * Implements hook_form_BASE_ID_alter().
  */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] =  'btn';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-default';
-    $form['actions']['delete']['#attributes']['class'][] =  'btn-raised';
+    $form['actions']['delete']['#attributes']['class'][] = 'btn btn-default btn-raised';
   }
   if(isset($form['actions']['preview'])) {
     $form['actions']['preview']['#attributes']['class'][] =  'btn-raised';
@@ -141,7 +175,7 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__materialize';
+  $suggestions[] = $hook . '__plain';
 }
 
 /**
@@ -352,7 +386,19 @@ function socialbase_preprocess_block(&$variables) {
 // }
 
 /**
- * Implements hook_preprocess_hook().
+ * Implements hook_preprocess_details().
+ */
+
+function socialbase_preprocess_details(&$variables) {
+  $variables['hide_header'] = FALSE;
+
+  if(isset($variables['element']['#theme']) && $variables['element']['#theme'] == 'file_widget_multiple' ) {
+    $variables['hide_header'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_preprocess_container().
  */
 function socialbase_preprocess_container(&$variables) {
   $variables['search_context'] = FALSE;
@@ -371,12 +417,6 @@ function socialbase_preprocess_container(&$variables) {
     }
   }
 
-  if (isset($variables['element']['cancel'])) {
-    if ($variables['element']['cancel']['#type'] == 'link' && $variables['element']['#type'] == 'actions') {
-      $variables['element']['cancel']['#attributes']['class'] = 'btn btn-flat';
-    }
-  }
-
   // Identify the container used for search in the navbar.
   if (isset($variables['element']['submit']['#suffix'])) {
     $icon_is_present = strpos($variables['element']['submit']['#suffix'], 'search-icon');
@@ -385,6 +425,7 @@ function socialbase_preprocess_container(&$variables) {
       $variables['search_context'] = TRUE;
     }
   }
+
 }
 
 /**
@@ -493,15 +534,9 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-        if ($variables['element']['#id'] == 'edit-user-cancel-method') {
-          $suggestions[] = 'bootstrap_panel';
-        }
-        else {
           $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
           $suggestions[] = 'fieldset__' . $variables['element']['#type'];
-        }
         break;
-
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
         break;
@@ -613,7 +648,9 @@ function socialbase_preprocess_field(&$variables) {
     case 'field_profile_function':
     case 'field_profile_organization':
     case 'field_group_description':
+    case 'field_group_address':
     case 'field_group_location':
+    case 'field_group_image':
     case 'field_topic_image':
     case 'field_comment_body':
     case 'field_activity_output_text':
@@ -832,8 +869,8 @@ function socialbase_preprocess_input(&$variables) {
     }
 
     if ($variables['element']['#type'] == 'submit' && $variables['element']['#button_type'] == 'danger') {
-      $variables['element']['#button_type'] = 'flat';
-      $variables['button_type'] = 'flat';
+      $variables['element']['#button_type'] = 'default';
+      $variables['button_type'] = 'default';
     }
 
   }
@@ -926,7 +963,6 @@ function socialbase_bootstrap_colorize_text_alter(&$texts) {
       // Primary class.
       t('Create new account')->render()   => 'primary',
       t('Log in')->render()               => 'primary',
-      t('Cancel account')->render()       => 'flat',
     ],
     // Text containing these words anywhere in the string are checked last.
     'contains' => [
@@ -1067,6 +1103,7 @@ function socialbase_preprocess_form(&$variables) {
       }
     }
   }
+
 }
 
 /**
@@ -1091,8 +1128,20 @@ function socialbase_preprocess_activity(&$variables) {
  */
 function socialbase_preprocess_file_upload_help (&$variables) {
   if(!empty($variables['popover'])) {
-    unset($variables['popover']['toggle']['#icon']);
-    $variables['popover']['toggle']['#attributes']['data-icon-type'] = 'help';
+    //unset($variables['popover']['toggle']['#icon']);
+    //$variables['popover']['toggle']['#attributes']['data-icon-type'] = 'help';
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function socialbase_preprocess_file_widget_multiple(&$variables) {
+  // Remove duplicated ajax wrapper for topic/events files field,
+  // because one is already rendered in container.html.twig
+  if (!empty($variables['element']['#id']) && (strpos($variables['element']['#id'], 'edit-field-files') !== FALSE)) {
+    unset($variables['element']['#prefix']);
+    unset($variables['element']['#suffix']);
   }
 }
 
@@ -1100,10 +1149,12 @@ function socialbase_preprocess_file_upload_help (&$variables) {
  * Implements hook_preprocess_hook().
  */
 function socialbase_preprocess_table(&$variables) {
-  $file_fields = ['edit-field-files-table'];
-  if(!empty($variables['attributes']['id']) && in_array($variables['attributes']['id'], $file_fields)){
+  $variables['card'] = TRUE;
+  $files_field = 'edit-field-files';
+  if (!empty($variables['attributes']['id']) && (strpos($variables['attributes']['id'], $files_field) !== FALSE)) {
     $variables['attributes']['class'][] = 'tablesaw';
     $variables['attributes']['data-tablesaw-mode'] = 'stack';
+    $variables['card'] = FALSE;
   }
 }
 

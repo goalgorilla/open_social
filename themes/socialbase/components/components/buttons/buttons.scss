@@ -37,6 +37,10 @@
 
 }
 
+.btn.pull-right + .btn {
+  margin-left: 0;
+}
+
 
 // Styles
 .btn-xs {
@@ -146,6 +150,7 @@
   height: $button-floating-size;
   padding: 7px; //assuming the icon is 24px / medium
   border-radius: $button-floating-radius;
+  border: 0;
   @include z-depth-2;
 
   &:active,

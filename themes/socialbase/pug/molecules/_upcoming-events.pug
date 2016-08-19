@@ -15,6 +15,9 @@ else
       a.list-group-item(href="event.html")
         h6.list-group-item-heading Monthly tea party
         small.text-gray-lighter.list-group-item-text 29 nov - 8:00
-    
+
     .card-actionbar.text-center
-      a.btn.btn-flat(href="#{link}.html") View all
+      if user == "isAnonymous"
+        a.btn.btn-flat(href="public-events.html") All upcoming events
+      else
+        a.btn.btn-flat(href="explore-events.html") All upcoming events

@@ -412,24 +412,25 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
  */
 function social_group_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   if ($view->id() == 'group_members') {
-    foreach ($output['#rows'][0]['#rows'] as $key => $row) {
-      // Get Group membership content entity.
-      $group_content = $row['#group_content'];
-      // Get Profile.
-      $user_profile = _social_group_get_member_profile($group_content);
-      if ($user_profile) {
-        // Use teaser for page and small_teaser for block.
-        $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
-        // Replace output with profile teaser.
-        $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
-          ->getViewBuilder('profile')
-          ->view($user_profile, $view_mode);
+    if(!empty($output['#rows'][0]['#rows'])){
+      foreach ($output['#rows'][0]['#rows'] as $key => $row) {
+        // Get Group membership content entity.
+        $group_content = $row['#group_content'];
+        // Get Profile.
+        $user_profile = _social_group_get_member_profile($group_content);
+        if ($user_profile) {
+          // Use teaser for page and small_teaser for block.
+          $view_mode = ($view->current_display === 'block_newest_members') ? 'small_teaser' : 'teaser';
+          // Replace output with profile teaser.
+          $output['#rows'][0]['#rows'][$key] = \Drupal::entityTypeManager()
+            ->getViewBuilder('profile')
+            ->view($user_profile, $view_mode);
+        }
+        else {
+          // Remove output if user don't have profile (admin).
+          unset($output['#rows'][0]['#rows'][$key]);
+        }
       }
-      else {
-        // Remove output if user don't have profile (admin).
-        unset($output['#rows'][0]['#rows'][$key]);
-      }
-
     }
   }
 }

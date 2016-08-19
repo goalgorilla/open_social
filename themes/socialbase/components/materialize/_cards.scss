@@ -85,8 +85,10 @@ a.card:hover {
   }
 
   &.indented {
-    margin: -20px -20px 0;
+    margin: -20px;
     background: transparent;
+    border-top: 0;
+
   }
 
   textarea {
@@ -244,11 +246,6 @@ a.card:hover {
   vertical-align: middle;
   fill: $gray;
   margin-right: 12px;
-}
-
-.card--teaser-desc {
-  max-height: (2 * $line-height-base) * 1em;
-  overflow: hidden;
 }
 
 @include MQ($small) {
