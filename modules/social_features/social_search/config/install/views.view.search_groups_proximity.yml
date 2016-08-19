@@ -181,6 +181,82 @@ display:
           entity_type: group
           entity_field: label
           plugin_id: string
+        field_group_description_value:
+          id: field_group_description_value
+          table: group__field_group_description
+          field: field_group_description_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_group_description_value_op
+            label: Description
+            description: ''
+            use_operator: false
+            operator: field_group_description_value_op
+            identifier: description
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_group_location_value:
+          id: field_group_location_value
+          table: group__field_group_location
+          field: field_group_location_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_group_location_value_op
+            label: 'Location name'
+            description: ''
+            use_operator: false
+            operator: field_group_location_value_op
+            identifier: location_name
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
         field_group_geolocation_proximity:
           id: field_group_geolocation_proximity
           table: group__field_group_geolocation
@@ -196,7 +272,7 @@ display:
             lat: ''
             lng: ''
             units: km
-          group: 1
+          group: 2
           exposed: true
           expose:
             operator_id: ''
@@ -295,9 +371,10 @@ display:
           plugin_id: 'null'
       display_extenders: {  }
       filter_groups:
-        operator: OR
+        operator: AND
         groups:
-          1: AND
+          1: OR
+          2: AND
     cache_metadata:
       max-age: -1
       contexts:

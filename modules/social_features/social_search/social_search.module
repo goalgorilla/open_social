@@ -48,8 +48,10 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#weight' => $form['lat']['#weight'],
       ];
 
-      // Hide title input, because we use search input in header.
+      // Hide text inputs, because we use search input in header.
       $form['title']['#access'] = FALSE;
+      $form['description']['#access'] = FALSE;
+      $form['location_name']['#access'] = FALSE;
 
       // Add custom submit handler first.
       array_unshift($form['#submit'], '_social_search_groups_proximity_form_submit');
@@ -88,6 +90,8 @@ function _social_search_groups_proximity_form_submit($form, FormStateInterface &
   }
   if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
     $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
+    $form_state->setValue('description', \Drupal::routeMatch()->getParameter('keys'));
+    $form_state->setValue('location_name', \Drupal::routeMatch()->getParameter('keys'));
   }
 }
 
