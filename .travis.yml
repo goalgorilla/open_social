@@ -28,7 +28,7 @@ before_install:
   - cd install
   - phpenv config-rm xdebug.ini
   # Change this back to composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT} before merge to 8.x-1.x!!!
-  - composer require goalgorilla/open_social dev-feature/DS-1251-proximity-filter
+  - composer require goalgorilla/open_social:dev-feature/DS-1251-proximity-filter
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
