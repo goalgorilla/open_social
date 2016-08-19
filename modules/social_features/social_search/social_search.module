@@ -48,6 +48,11 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#weight' => $form['lat']['#weight'],
       ];
 
+      // Change type of proximity field from textfield to number.
+      $form['proximity']['#type'] = 'number';
+      $form['proximity']['#min'] = 0;
+      $form['proximity']['#max'] = 10000;
+
       // Hide text inputs, because we use search input in header.
       $form['title']['#access'] = FALSE;
       $form['description']['#access'] = FALSE;
