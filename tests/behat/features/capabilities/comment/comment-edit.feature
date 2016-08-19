@@ -11,7 +11,7 @@ Feature: Edit Comment
       | Add a comment | This is my comment |
     And I press "Comment"
     Then I should see "This is my comment" in the "Main content"
-    When I click the xth "2" element with the css ".dropdown-toggle"
+    When I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Edit"
     When I click "Edit"
     And I should see "This is my comment"

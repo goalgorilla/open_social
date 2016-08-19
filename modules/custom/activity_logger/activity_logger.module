@@ -109,6 +109,14 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
   );
 
   $form['#entity_builders'][] = 'activity_logger_form_message_template_form_builder';
+  $form['activity_aggregate'] = array(
+    '#type' => 'checkbox',
+    '#required' => FALSE,
+    '#title' => t('Aggregate activity'),
+    '#description' => t('Select if items should be aggregated instead of displaying separately.'),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL),
+  );
+
 }
 
 /**
@@ -122,5 +130,6 @@ function activity_logger_form_message_template_form_builder($entity_type, Messag
   $message_template->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_create_direct', $form_state->getValue('activity_create_direct'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_aggregate', $form_state->getValue('activity_aggregate'));
 }
 
