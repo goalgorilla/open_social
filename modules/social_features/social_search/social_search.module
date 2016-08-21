@@ -69,9 +69,9 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
 
 /**
  * Form submit for views-exposed-form-search-groups-proximity-page.
- *
  */
 function _social_search_groups_proximity_form_submit($form, FormStateInterface &$form_state) {
+  // Set values form search input to exposed text filters.
   if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
     $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
     $form_state->setValue('description', \Drupal::routeMatch()->getParameter('keys'));
@@ -120,7 +120,7 @@ function social_search_block_access(Block $block, $operation, AccountInterface $
 /**
  * Implements hook_views_query_alter().
  *
- * Hide proximity filter if Google Maps API key is not set.
+ * Alter search_groups_proximity query and performs geocoding for proximity filter.
  */
 function social_search_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->id() == 'search_groups_proximity') {
@@ -143,15 +143,17 @@ function social_search_views_query_alter(ViewExecutable $view, QueryPluginBase $
           // Alter proximity query with correct coordinates.
           foreach ($query->where as &$condition_group) {
             foreach ($condition_group['conditions'] as &$condition) {
+              // Check if condition contains proximity part.
               if ((strpos($condition['field'], 'COS( 0') !== FALSE)) {
+                // Init values for proximity query fragment.
                 $table_name = 'group__field_group_geolocation';
                 $field_id = 'field_group_geolocation';
                 $filter_lat = $address_collection->first()->getLatitude();
                 $filter_lng = $address_collection->first()->getLongitude();
                 $earth_radius = GeolocationCore::EARTH_RADIUS_KM;
-
+                // Get proximity query fragment from geolocation service.
                 $query_fragment = \Drupal::service('geolocation.core')->getProximityQueryFragment($table_name, $field_id, $filter_lat, $filter_lng, $earth_radius);
-
+                // Change proximity query fragment.
                 $filter_field = 'field_group_geolocation_proximity';
                 $operator = $view->filter[$filter_field]->operator;
                 $proximity_field = ":{$table_name}_{$filter_field}";
