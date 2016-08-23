@@ -5,4 +5,3 @@ projects[drupal][version] = 8.1.8
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2724283-block-22.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/grouped_filters-2369119-73.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/drupal-redirect_to_install-728702-92.patch"
-projects[drupal][patch][] = "https://www.drupal.org/files/issues/2466197-59.patch"
