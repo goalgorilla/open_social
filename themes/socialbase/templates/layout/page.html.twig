@@ -74,20 +74,49 @@
   {% endif %}
 
   <a id="main-content" tabindex="-1"></a>
+
   <div class="container">
+
+    {% if page.content_top %}
+      <div class="row margin-top-l">
+        <div class="col-xs-12">
+          {{ page.content_top }}
+        </div>
+      </div>
+    {% endif %}
+
     <div class="row margin-top-l">
 
-      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-top-complementary margin-bottom-l">
-        {{ page.complementary_top }}
-      </div>
+      {% if page.complementary_top %}
+        <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last complementary-top margin-top-complementary">
+          {{ page.complementary_top }}
+        </div>
+      {% endif %}
 
       <div class="col-xs-12 col-sm-8">
+        {% if page.title %}
+          {{ page.title }}
+        {% endif %}
+
         {{ page.content }}
       </div>
 
-      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-bottom-l">
-        {{ page.complementary_top }}
-      </div>
+      {% if page.complementary_bottom %}
+      {{ attach_library('socialbase/responsive-dom') }}
+        <div role="complementary" class="col-xs-12 hidden-sm hidden-md hidden-lg">
+          <div class="complementary-bottom">
+            {{ page.complementary_bottom }}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if page.content_bottom %}
+        <div class="row margin-top-sm">
+          <div class="col-xs-12">
+            {{ page.content_bottom }}
+          </div>
+        </div>
+      {% endif %}
 
     </div>
   </div>
