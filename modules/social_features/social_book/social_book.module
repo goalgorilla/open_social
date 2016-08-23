@@ -4,3 +4,13 @@
  * @file
  * The Social book module.
  */
+
+use \Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_node_links_alter().
+ */
+function social_book_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+  // Remove the printer-friendly version link.
+  unset($links['book']['#links']['book_printer']);
+}
