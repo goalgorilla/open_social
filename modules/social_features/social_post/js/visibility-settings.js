@@ -11,7 +11,7 @@
       attach: function (context, settings) {
         var dropDown = '#post-visibility';
 
-        $(dropDown + ' + .dropdown-menu > li').click(function() {
+        $(dropDown + ' + .dropdown-menu > .list-group-item').click(function() {
           var setting = $('label > span', this).text();
 
           $('.text', dropDown).text(setting);
