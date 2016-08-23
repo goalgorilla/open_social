@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_page module.
+ */
+
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_page.
+ */
+function social_page_install() {
+
+  // Set some default permissions.
+  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
+    'view node.page.field_content_visibility:public content',
+  ));
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'view node.page.field_content_visibility:public content',
+    'view node.page.field_content_visibility:community content',
+  ));
+
+  // @TODO content manager permissions:
+  //    'create page content',
+  //    'delete own page content',
+  //    'edit own page content',
+
+}
