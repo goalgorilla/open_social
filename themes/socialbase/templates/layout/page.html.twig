@@ -59,11 +59,10 @@
 
   {{ page.breadcrumb }}
 
-  {% if (page.hero or page.secondary_navigation or page.title) %}
+  {% if (page.hero or page.secondary_navigation) %}
     <div class="container hero-container">
 
       {{ page.hero }}
-      {{ page.title }}
 
       {% if page.secondary_navigation %}
         <div class="brand-secondary z-depth-1">
@@ -79,11 +78,15 @@
     <div class="row margin-top-l">
 
       <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-top-complementary margin-bottom-l">
-        {{ page.complementary }}
+        {{ page.complementary_top }}
       </div>
 
       <div class="col-xs-12 col-sm-8">
         {{ page.content }}
+      </div>
+
+      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last margin-bottom-l">
+        {{ page.complementary_top }}
       </div>
 
     </div>
