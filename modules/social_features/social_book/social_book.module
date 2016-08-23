@@ -6,8 +6,6 @@
  */
 
 use \Drupal\node\NodeInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
 /**
  * Implements hook_node_links_alter().
@@ -15,13 +13,6 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 function social_book_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
   // Remove the printer-friendly version link.
   unset($links['book']['#links']['book_printer']);
+  unset($links['book']['#links']['book_add_child']);
 }
 
-/**
- * Implements hook_ENTITY_TYPE_view() for node entities.
- */
-function social_book_node_view(array &$build, EntityInterface $node, EntityViewDisplayInterface $display, $view_mode) {
-  if (isset($build['book_navigation'])) {
-    unset($build['book_navigation']);
-  }
-}
