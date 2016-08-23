@@ -4,6 +4,9 @@
  * Install, update and uninstall functions for the social_book module.
  */
 
+use Drupal\user\RoleInterface;
+use \Drupal\user\Entity\Role;
+
 /**
  * Implements hook_install().
  *
@@ -19,4 +22,18 @@ function social_book_install() {
     'view node.book.field_content_visibility:public content',
     'view node.book.field_content_visibility:community content',
   ));
+
+  // Fetch other roles.
+  $roles = Role::loadMultiple();
+
+  /** @var Role $role */
+  foreach ($roles as $role) {
+    // Check CM / SM
+    if (in_array($role->id(), array('contentmanager', 'sitemanager'))) {
+      user_role_grant_permissions($role->id(), array(
+        'view node.book.field_content_visibility:public content',
+        'view node.book.field_content_visibility:community content',
+      ));
+    }
+  }
 }
