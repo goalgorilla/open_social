@@ -19,47 +19,52 @@ html(lang="en")
     main.main-container.styleguide-container(role='main')
       .container
         .row
-          #scrollspy.col-xs-12.col-sm-3.col-sm-last(role='complementary')
-            nav.docs-sidebar.hidden-print.toc-wrapper
-              h6.text-primary Layout
-              ul.nav.table-of-contents.docs-sidebar
-                li
-                  a(href='#regions') Regions
-
           .col-xs-12.col-sm-9
 
             #regions.scrollspy
               h2.page-header Regions
-              p We have split up the <em>fluid</em> layout of the interface into regions. In Drupal we can assign blocks to these regions. Each region can be displayed differently based on the context of the node or page.
+              p We have split up the <strong>fluid</strong> layout of the interface into regions. In Drupal we can assign blocks to these regions. Each region can be displayed differently based on the context of the node or page.
 
               .list-group
                 .list-group-item.avatar
-                  span.circle(style='background-color: #e1bee7')
+                  span.circle(style='background-color: #E57373')
                   h6.list-group-item-heading Header
                   p.list-group-item-text Blocks: Primary navigation, user navigation, site search
                   p.list-group-item-text The header is always present. It holds a navbar component and the logo.
                 .list-group-item.avatar
-                  span.circle(style='background-color: #80deea')
+                  span.circle(style='background-color: #E6EE9C')
                   h6.list-group-item-heading Breadcrumbs
                   p.list-group-item-text Pathway navigation for large screen and 'go back' navigation for mobile
                 .list-group-item.avatar
-                  span.circle(style='background-color: #ef9a9a')
+                  span.circle(style='background-color: #9575CD')
                   h6.list-group-item-heading Hero
                   p.list-group-item-text Provides a summary of the main content of this page, for example a person, a group or an event.
                 .list-group-item.avatar
-                  span.circle(style='background-color: #80cbc4')
+                  span.circle(style='background-color: #FFE082')
                   h6.list-group-item-heading Secondary navigation
                   p.list-group-item-text Navigation options to the sub contents of a main content.
                 .list-group-item.avatar
-                  span.circle(style='background-color: #a5d6a7')
+                  span.circle(style='background-color: #FF8A65')
+                  h6.list-group-item-heading Content top
+                  p.list-group-item-text Region to place content blocks above the main content. There are no blocks placed here by default.
+                .list-group-item.avatar
+                  span.circle(style='background-color: #4DB6AC')
                   h6.list-group-item-heading Main content
                   p.list-group-item-text Content about this section
                 .list-group-item.avatar
-                  span.circle(style='background-color: #ffe082')
-                  h6.list-group-item-heading Complementary
-                  p.list-group-item-text Complementary content, filters, actions, quick navigations that specific to the section. On mobile this region will be placed on top of the Main content, possibly in a different appearance.
+                  span.circle(style='background-color: #4DD0E1')
+                  h6.list-group-item-heading Complementary top
+                  p.list-group-item-text Complementary content, filters, actions, quick navigations that is specific to the section. On mobile this region will be placed on top of the Main content, possibly in a different appearance such as with an off-canvas component.
                 .list-group-item.avatar
-                  span.circle(style='background-color: #b0bec5')
+                  span.circle(style='background-color: #81C784')
+                  h6.list-group-item-heading Complementary bottom
+                  p.list-group-item-text Complementary content like blocks that is specific to the section. On mobile this region will be placed below the Main content, or it can be hidden. For placing the block we use a script that relocates the this region inside the Complementary top. The script is loaded via the <strong>responsive-dom</strong> library.
+                .list-group-item.avatar
+                  span.circle(style='background-color: #DCE775')
+                  h6.list-group-item-heading Content bottom
+                  p.list-group-item-text Region to place content blocks below the main content. There are no blocks placed here by default.
+                .list-group-item.avatar
+                  span.circle(style='background-color: #64b5f6')
                   h6.list-group-item-heading Footer
                   p.list-group-item-text It is static and contains information about the whole application.
 
@@ -71,39 +76,59 @@ html(lang="en")
                    #maximize-circle.circle
                 .content
                   .row
-                    .col-xs-12(style='background-color:#e1bee7; min-height: 80px;')
+                    .col-xs-12(style='background-color:#E57373; min-height: 80px;')
                       p Header
                   .row.hidden-xs
-                    .col-md-12(style='background-color:#80deea; min-height: 30px;')
+                    .col-md-12(style='background-color:#E6EE9C; min-height: 30px;')
                       p Breadcrumbs
                   .row.hidden-sm.hidden.md.hidden.lg
-                    .col-md-12(style='background-color:#80deea; min-height: 30px;')
+                    .col-md-12(style='background-color:#E6EE9C; min-height: 30px;')
                       p Go back
                   .row
-                    .col-xs-12(style='background-color:#ef9a9a; min-height: 220px;')
+                    .col-xs-12(style='background-color:#9575CD; min-height: 220px;')
                       p Hero
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12(style='background-color:#80cbc4; min-height: 40px;')
+                    .col-xs-12(style='background-color:#FFE082; min-height: 40px;')
                       p Secondary navigation
                       p.flat-text.inline25
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12.col-sm-4.col-sm-last(style='background-color:#ffe082; min-height: 250px;')
-                      p Complementary
+                    .col-xs-12(style='background-color:#FF8A65; min-height: 100px;')
+                      p Content top
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    .col-xs-12.col-sm-4.col-sm-last.complementary-top(style='background-color:#4DD0E1; min-height: 150px;')
+                      p Complementary top
                       p.flat-text.small
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.col-sm-8(style='background-color:#a5d6a7; min-height: 400px;')
+                    .col-xs-12.col-sm-8(style='background-color:#4DB6AC; min-height: 400px;')
+                      p Page title
                       p Main content
                       p.flat-text-header
                       p.flat-text
                       p.flat-text
                       p.flat-text
+                      p.flat-text
+                    .col-xs-12.hidden-sm.hidden-md.hidden-lg(style='background-color:#81C784; min-height: 200px;')
+                      .complementary-bottom
+                        p Complementary bottom
+                        p.flat-text.small
+                        p.flat-text
+                        p.flat-text
                   .row
-                    .col-xs-12(style='background-color:#b0bec5; min-height: 50px;')
+                    .col-xs-12(style='background-color:#DCE775; min-height: 100px;')
+                      p Content bottom
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                      p.flat-text.inline25
+                  .row
+                    .col-xs-12(style='background-color:#64b5f6; min-height: 50px;')
                       p Footer
 
 
