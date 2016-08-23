@@ -5,10 +5,12 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.page.field_content_visibility
     - field.field.node.page.field_files
+    - field.field.node.page.field_page_comments
     - field.field.node.page.field_page_image
     - image.style.social_x_large
     - node.type.page
   module:
+    - comment
     - field_group
     - file
     - image
@@ -65,8 +67,6 @@ third_party_settings:
         required_fields: true
         id: visibility
         classes: 'card card-underline scrollspy'
-_core:
-  default_config_hash: KSvzyFhdLuxniTsunUnUfpfMmod2l57GibtVjL8ymHM
 id: node.page.default
 targetEntityType: node
 bundle: page
@@ -96,6 +96,11 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+  field_page_comments:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
   field_page_image:
     weight: 2
     settings:
@@ -105,7 +110,7 @@ content:
     type: image_image
   path:
     type: path
-    weight: 6
+    weight: 7
     settings: {  }
     third_party_settings: {  }
   title:
