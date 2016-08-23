@@ -20,7 +20,6 @@ services:
 
 before_install:
   # Lets install Docker first.
-  - bash dev-scripts/trigger_dockerhub.sh
   - sudo apt-get clean
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
@@ -29,6 +28,7 @@ before_install:
   - git clone --branch feature/DS-1847 https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - phpenv config-rm xdebug.ini
+  - bash dev-scripts/trigger_dockerhub.sh
   - composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT}
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
