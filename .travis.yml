@@ -13,7 +13,6 @@ php:
 
 env:
   global:
-    DOCKER_COMPOSE_VERSION: 1.6.2
     secure: NrC8klNMEE9fXC8RmgAvUgFYBhSPnH8bYzowgr3A7H4K03aLKQ1GPpzKpmk8jUNcPOh8s4ekdD6iEddAijeRoRs8PKqemShTTnwHocoKRJ3xyHXAw9kx6zoO+kwYshtlhsTiUgZfCUgQ784XMsM6GbqgPB5ghYbZBf3cARseEXr1/h7u60XEHePMRmhqNCFtOkzU+EnfSCldpQthCGPvlS8dmNT9WFetjDmNDU7tdIXcxb1dSKzR2gMxTNhxEQTbkcgKap5jis8EARiV4Kzvklf4YxXtSHyntzKYDkfiA70jcgngBCsf3snxrDPOSKCjCVhe+aezVsWSN5OPn1c9BtcPOBfKvMfdpUOd5+YVqJt3n7N8MBUMO4iMw7+uzeWR8uI1a9WAUyBW61KQ8Bt0HauBz30WwqoNmjLaPZuA3fqAQqPevxoPQPP3dqj4HKZwWBPEpK7fKLMWv9DPV1NaFzTsby3bWU7PmXg4m6AF8urwQasHJ7MmQI9A/cZdsJ0jbhaIzUPSUwpkA7mGNyY+95tk7D7BHjt6Miv3QAiMzopT7g1VDBBSdrQGi5vKj8wS4+NSEeVWOE2m4/43d8iacebEmez59pe2/VDyEMKmNNo3uRCSK0Jj6VdXyQ4K3ewl2dzw5XxhZzDUrYZOiH7P4ZRQjtmmjzKQ9Zl30EmnsN8=
 
 services:
@@ -32,7 +31,7 @@ before_install:
   - composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT}
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - ls -lah
   - sudo mv docker-compose /usr/local/bin
