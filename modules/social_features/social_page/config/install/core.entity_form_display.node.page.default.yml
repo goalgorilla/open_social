@@ -1,0 +1,128 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.page.field_content_visibility
+    - field.field.node.page.field_files
+    - field.field.node.page.field_page_image
+    - image.style.social_x_large
+    - node.type.page
+  module:
+    - field_group
+    - file
+    - image
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_page_content:
+      children:
+        - title
+        - field_page_image
+      parent_name: ''
+      weight: 0
+      label: Content
+      format_type: fieldset
+      format_settings:
+        label: Content
+        required_fields: true
+        id: content
+        classes: 'card card-underline scrollspy'
+    group_page_description:
+      children:
+        - body
+      parent_name: ''
+      weight: 2
+      label: 'Page description'
+      format_type: fieldset
+      format_settings:
+        label: 'Page description'
+        required_fields: true
+        id: description
+        classes: 'card card-underline scrollspy'
+    group_attachments:
+      children:
+        - field_files
+      parent_name: ''
+      weight: 3
+      label: Attachments
+      format_type: fieldset
+      format_settings:
+        label: Attachments
+        required_fields: true
+        id: attachments
+        classes: 'card card-underline scrollspy'
+    group_page_visibility:
+      children:
+        - field_content_visibility
+      parent_name: ''
+      weight: 1
+      label: Visibility
+      format_type: fieldset
+      format_settings:
+        label: Visibility
+        required_fields: true
+        id: visibility
+        classes: 'card card-underline scrollspy'
+_core:
+  default_config_hash: KSvzyFhdLuxniTsunUnUfpfMmod2l57GibtVjL8ymHM
+id: node.page.default
+targetEntityType: node
+bundle: page
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 2
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+  field_content_visibility:
+    weight: 27
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+  field_files:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  field_page_image:
+    weight: 2
+    settings:
+      preview_image_style: social_x_large
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
+  path:
+    type: path
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  promote: true
+  sticky: true
