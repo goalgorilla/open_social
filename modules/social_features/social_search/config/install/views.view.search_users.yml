@@ -26,7 +26,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content search'
+          perm: 'access users search'
       cache:
         type: search_api
         options:
@@ -248,7 +248,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<h4 class="section-title">Member results</h4><p>If you are searching for content, <a href="/search/content/{{ arguments.search_api_fulltext }}">click here</a></p>'
+            value: '<h4 class="section-title">Member results</h4><p>If you are searching for content, <a href="/search/content/{{ arguments.search_api_fulltext }}">click here</a> If you are searching for groups, <a href="/search/groups/{{ arguments.search_api_fulltext }}">click here</a></p>'
             format: full_html
           plugin_id: text
       footer: {  }
@@ -355,7 +355,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<p>If you are searching for content, <a href="/search/content">click here</a></p>'
+            value: '<h4 class="section-title">Member results</h4><p>If you are searching for content, <a href="/search/content/{{ arguments.search_api_fulltext }}">click here</a> If you are searching for groups, <a href="/search/groups/{{ arguments.search_api_fulltext }}">click here</a></p>'
             format: basic_html
           plugin_id: text
       defaults:

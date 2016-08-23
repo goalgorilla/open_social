@@ -1,0 +1,90 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Jenny Baker
+
+block pagetitle
+  .container.hidden-xs
+    include ./molecules/_other-profile-hero.pug
+    
+  .container    
+    .visible-xs-block.section
+      a.btn.btn-flat(href="other-stream.html")
+        svg
+  use(xlink:href='#icon-navigate_before')     .icon-medium
+  use(xlink:href='#icon-navigate_before')     
+        | Back to Jenny`s stream
+      
+  .container
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href="other-stream.html") Stream  
+          li
+            a(href="other-profile-about.html") About
+          li.active
+            a(href='other-topics.html') Topics
+            span.visually-hidden (active tab) 
+          li
+            a(href='other-events.html') Events 
+          li
+            a(href="other-groups.html") Groups
+      
+block content
+  
+  .row.margin-top-l
+  
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+      btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+        svg.pull-left.btn-icon.icon-black
+          title Filter list
+          use(xlink:href='#icon-filter_list')
+        | Filters
+
+      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.pull-right
+              svg.pull-left.btn-icon.icon-black
+                title Close
+                use(xlink:href='#icon-close')
+        
+        .offcanvas-body
+          form
+            .form-group
+              label Topic type
+              .select-wrapper
+                select.form-control(onchange="enableMe('reset-button', this)")
+                  option(value="", selected="") All types
+                  option(value="blog") Blog
+                  option(value="discussion") Discussion
+                  option(value="topic") Topic
+            .form-group
+              label Status
+              .select-wrapper
+                select.form-control(onchange="enableMe('reset-button', this)")
+                  option(value="", selected="") All statusses
+                  option(value="published") Published
+                  option(value="unpublished") Unpublished
+            .form-group.margin-top-l.clearfix
+              input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
+
+    .col-xs-12.col-sm-8
+      h4.section-title Jenny Baker`s topics
+      
+      include molecules/_topic1.pug
+      include molecules/_topic2.pug
+      include molecules/_topic3.pug
+      include molecules/_topic4.pug
+        
+      include molecules/_pager.pug
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

@@ -1,0 +1,217 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+    - search_api
+    - group
+  config:
+    - field.storage.group.field_group_description
+    - search_api.server.social_database
+id: social_groups
+name: 'Social Groups'
+description: 'Default group index created for the Social distribution.'
+read_only: false
+field_settings:
+  type:
+    label: Type
+    datasource_id: 'entity:group'
+    property_path: type
+    type: string
+  label:
+    label: Title
+    datasource_id: 'entity:group'
+    property_path: label
+    type: string
+  name:
+    label: 'Group creator » User » Name'
+    datasource_id: 'entity:group'
+    property_path: 'uid:entity:name'
+    type: string
+    dependencies:
+      module:
+        - user
+  field_group_description:
+    label: Description
+    datasource_id: 'entity:group'
+    property_path: field_group_description
+    type: text
+    dependencies:
+      config:
+        - field.storage.group.field_group_description
+  rendered_item:
+    label: 'Rendered HTML output'
+    datasource_id: null
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:group':
+          open_group: default
+processor_settings:
+  add_url:
+    plugin_id: add_url
+    settings:
+      weights:
+        preprocess_index: -30
+  aggregated_field:
+    plugin_id: aggregated_field
+    settings:
+      weights:
+        add_properties: 20
+  html_filter:
+    plugin_id: html_filter
+    settings:
+      fields:
+        - field_group_description
+        - rendered_item
+      title: true
+      alt: true
+      tags:
+        h1: 5
+        h2: 3
+        h3: 2
+        strong: 2
+        b: 2
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+  ignorecase:
+    plugin_id: ignorecase
+    settings:
+      fields:
+        - type
+        - label
+        - name
+        - field_group_description
+        - rendered_item
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+  ignore_character:
+    plugin_id: ignore_character
+    settings:
+      fields:
+        - type
+        - label
+        - name
+        - field_group_description
+      ignorable: '[''¿¡!?,.:;]'
+      strip:
+        character_sets:
+          Pc: Pc
+          Pd: Pd
+          Pe: Pe
+          Pf: Pf
+          Pi: Pi
+          Po: Po
+          Ps: Ps
+          Cc: 0
+          Cf: 0
+          Co: 0
+          Mc: 0
+          Me: 0
+          Mn: 0
+          Sc: 0
+          Sk: 0
+          Sm: 0
+          So: 0
+          Zl: 0
+          Zp: 0
+          Zs: 0
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+  rendered_item:
+    plugin_id: rendered_item
+    settings:
+      weights:
+        add_properties: 0
+        pre_index_save: -10
+  stopwords:
+    plugin_id: stopwords
+    settings:
+      fields:
+        - field_group_description
+        - rendered_item
+      stopwords:
+        - a
+        - an
+        - and
+        - are
+        - as
+        - at
+        - be
+        - but
+        - by
+        - for
+        - if
+        - in
+        - into
+        - is
+        - it
+        - 'no'
+        - not
+        - of
+        - 'on'
+        - or
+        - s
+        - such
+        - t
+        - that
+        - the
+        - their
+        - then
+        - there
+        - these
+        - they
+        - this
+        - to
+        - was
+        - will
+        - with
+      weights:
+        preprocess_index: -5
+        preprocess_query: -2
+  tokenizer:
+    plugin_id: tokenizer
+    settings:
+      fields:
+        - field_group_description
+        - rendered_item
+      spaces: ''
+      overlap_cjk: 1
+      minimum_word_size: '3'
+      weights:
+        preprocess_index: -6
+        preprocess_query: -6
+  transliteration:
+    plugin_id: transliteration
+    settings:
+      fields:
+        - label
+        - field_group_description
+        - rendered_item
+      weights:
+        preprocess_index: -10
+        preprocess_query: -10
+options:
+  index_directly: true
+  cron_limit: 50
+datasource_settings:
+  'entity:group':
+    plugin_id: 'entity:group'
+    settings:
+      bundles:
+        default: true
+        selected: {  }
+      languages:
+        default: true
+        selected: {  }
+tracker_settings:
+  default:
+    plugin_id: default
+    settings: {  }
+server: social_database

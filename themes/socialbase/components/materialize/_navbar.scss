@@ -22,10 +22,6 @@
 
 .navbar > .container .navbar-brand {
   margin-left: -$navbar-padding-horizontal;
-
-  object {
-    pointer-events: none;
-  }
 }
 
 @media (min-width: $grid-float-breakpoint) {
@@ -53,7 +49,7 @@
     position: absolute;
     margin-top: 0;
     background-color: $dropdown-bg;
-    border: 1px solid $dropdown-border;
+    border: 0;
     @include box-shadow(0 6px 12px rgba(0,0,0,.175));
   }
 
@@ -76,9 +72,40 @@
     margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
   }
 
-  .navbar-collapse .nav > li > a  {
-    padding: 13px 20px;
+  .navbar-collapse {
+
+    .navbar-nav > li > a {
+      padding: 5px 15px 5px 25px;
+
+      &.dropdown-toggle {
+        pointer-events: none;
+      }
+    }
+
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: transparent;
+      float: none;
+      max-width: none;
+      padding-top: 0;
+
+      li a {
+        color: white;
+        padding: 5px 15px 5px 37px;
+
+        &:hover,
+        &:focus {
+          background: $brand-secondary;
+        }
+
+      }
+
+    }
+
   }
+
 
 }
 
@@ -173,7 +200,8 @@
     border: 0;
     border-radius: 0;
     color: white;
-    padding: 13px 15px 8px;
+    font-weight: 500;
+    padding: 8px 10px;
     height: 50px;
     min-width: 50px;
     margin: 0;
@@ -189,9 +217,18 @@
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:focus,
 .navbar-default .navbar-brand:hover {
-  background-color: $brand-primary;
-  padding: 10px 15px;
-  width: 60px;
+  width: auto;
+  padding: 0;
+  max-width: 200px;
+  height: 50px;
+  overflow: hidden;
+
+  img {
+    pointer-events: none;
+    width: auto;
+    height: 50px;
+  }
+
 }
 
 .navbar-default .navbar-nav > li > a:focus,
@@ -232,12 +269,23 @@
     float: left;
 
     > a {
-      padding: 13px 15px 8px;
+      padding: 13px 10px 8px;
       height: $navbar-height;
-      min-width: $navbar-height;
     }
   }
 
+}
+
+
+
+@include MQ($small) {
+  .navbar-nav {
+    margin-left: 10px;
+  }
+
+  .navbar-nav > li.navbar-search {
+    float: right;
+  }
 }
 
 .navbar .dropdown .badge {
@@ -246,14 +294,17 @@
   padding-right: 5px;
   font-size: 0.625em;
   top: 8px;
-  left: 30px;
+  left: 25px;
   background-color: $brand-accent;
   color: $default-color;
+  border-radius: 50%;
 }
 
 
 .navbar-form[role='search'] {
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 
   .form-group {
     position: relative;
@@ -297,7 +348,6 @@
     pointer-events: none;
 
     svg {
-      margin-top: 7px;
       width: 24px;
       height: 24px;
     }

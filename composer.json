@@ -1,0 +1,85 @@
+{
+    "name": "goalgorilla/open_social",
+    "description": "Open Social is a distribution for building social communities and intranets.",
+    "type": "drupal-profile",
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "@composer drupal-scaffold"
+        ],
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+    },
+    "extra": {
+        "installer-paths": {
+            "html/core": [
+                "drupal/core"
+            ],
+            "html/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "html/profiles/contrib/social": [
+                "goalgorilla/open_social"
+            ],
+            "html/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "html/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/contrib/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "patches": {
+            "drupal/profile": {
+                "Fixes access control on entities": "https://www.drupal.org/files/issues/profile-accesscontrol-2703825-2.patch",
+                "Corrects page title on add profile": "https://www.drupal.org/files/issues/profile-page-title-missing-2704763-3.patch"
+            },
+            "drupal/address": {
+                "Fix form errorElement": "https://www.drupal.org/files/issues/address-2619878-29.patch"
+            },
+            "drupal/group": {
+                "Fix group overview for administrator": "https://www.drupal.org/files/issues/group-2788213-2.patch"
+            },
+            "drupal/core": {
+                "Fix region string issue": "https://www.drupal.org/files/issues/2724283-block-22.patch",
+                "Make sure exposed filters work": "https://www.drupal.org/files/issues/grouped_filters-2369119-73.patch",
+                "Redirect to install.php on empty DB": "https://www.drupal.org/files/issues/drupal-redirect_to_install-728702-92.patch",
+                "Staging directory should not have to be writeable": "https://www.drupal.org/files/issues/2466197-59.patch"
+            },
+            "drupal/devel": {
+                "Fix vars in function in entity manager wrapper": "https://www.drupal.org/files/issues/fix_entity_manager_wrapper_2749249_5.patch"
+            }
+        }
+    },
+    "require": {
+        "cweagans/composer-patches": "^1.5.0",
+        "composer/installers": "^1.0",
+        "drupal-composer/drupal-scaffold": "^2.0.0",
+        "drupal/core": "8.1.8",
+        "drupal/address": "1.0.0-beta3",
+        "drupal/admin_toolbar": "1.16",
+        "drupal/config_update": "1.1",
+        "drupal/devel": "1.0-alpha1",
+        "drupal/dynamic_entity_reference": "1.0-rc5",
+        "drupal/entity": "1.0-alpha3",
+        "drupal/features": "3.0-beta7",
+        "drupal/field_group": "1.0-rc4",
+        "drupal/group": "1.0-beta1",
+        "drupal/message": "1.0-alpha1",
+        "drupal/override_node_options": "2.0",
+        "drupal/profile": "1.0-alpha4",
+        "drupal/r4032login": "1.x-dev#4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9",
+        "drupal/search_api": "1.0-alpha16",
+        "drupal/token": "1.0-alpha2",
+        "drupal/bootstrap": "3.0-rc2"
+    }
+}

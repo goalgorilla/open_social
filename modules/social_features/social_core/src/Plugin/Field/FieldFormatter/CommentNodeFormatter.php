@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Link;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * Provides a node comment formatter.
@@ -47,12 +48,31 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
-
     $status = $items->status;
+    $access_comments_in_group = FALSE;
+
+    $group_contents = GroupContent::loadByEntity($entity);
+    if (!empty($group_contents)) {
+      // Add cache contexts.
+      $elements['#cache']['contexts'][] = 'group.type';
+      $elements['#cache']['contexts'][] = 'group_membership';
+
+      $account = \Drupal::currentUser();
+      $renderer = \Drupal::service('renderer');
+
+      foreach ($group_contents as $group_content) {
+        $group = $group_content->getGroup();
+        $membership = $group->getMember($account);
+        $renderer->addCacheableDependency($elements, $membership);
+        if ($group->hasPermission('access comments', $account)) {
+          $access_comments_in_group = TRUE;
+        }
+      }
+    }
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if ($access_comments_in_group && $status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.

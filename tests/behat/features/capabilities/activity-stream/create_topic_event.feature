@@ -145,9 +145,8 @@ Feature: See and get notified when content is created
     And I press "Create node in group"
     Then I should see "Test group event"
     When I click "Test open group"
-
-    When I wait for "180" seconds
-    And I go to "user"
+      When I wait for the queue to be empty
+      When I am on "user"
     Then I should see "CreateUser created an event in group Test open group"
     And I should see "Test group event"
 

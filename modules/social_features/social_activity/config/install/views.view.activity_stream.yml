@@ -1,4 +1,3 @@
-uuid: eff41d68-7b0d-4783-ab80-4c3f1a1b860f
 langcode: en
 status: true
 dependencies:
@@ -6,6 +5,7 @@ dependencies:
     - block.block.postblock
   module:
     - activity_creator
+    - activity_viewer
     - options
 id: activity_stream
 label: 'Activity Stream'
@@ -247,9 +247,9 @@ display:
         - 'languages:language_interface'
         - url.query_args
       tags:
+        - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.notification_archive'
-        - 'config:core.entity_view_display.activity.activity.default'
   page_activity_stream:
     display_plugin: page
     id: page_activity_stream

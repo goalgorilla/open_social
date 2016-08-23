@@ -21,7 +21,6 @@
 }
 
 .btn:focus, .btn.focus, .btn:active:focus, .btn:active.focus, .btn.active:focus, .btn.active.focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -457,6 +456,10 @@ input[type="button"].btn-block {
   outline: 0;
 }
 
+.btn.pull-right + .btn {
+  margin-left: 0;
+}
+
 .btn-xs {
   font-size: 0.75rem;
 }
@@ -534,7 +537,25 @@ fieldset[disabled] .btn-accent.focus {
   fill: #1a8dbe;
 }
 
+.btn-raised {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  -webkit-transition: box-shadow, .15s ease-out;
+  transition: box-shadow, .15s ease-out;
+}
+
+.btn-raised:active, .btn-raised.active, .btn-raised:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.btn-raised.disabled, .btn-raised[disabled] {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
 .btn-flat {
+  box-shadow: none;
+  background-color: transparent;
+  border-color: transparent;
+  -webkit-tap-highlight-color: transparent;
   color: #29abe2;
   background-color: transparent;
   border-color: transparent;
@@ -587,35 +608,9 @@ fieldset[disabled] .btn-flat.focus {
   background-color: #29abe2;
 }
 
-.btn-flat:hover, .btn-flat:focus {
-  background-color: rgba(41, 171, 226, 0.12);
-}
-
-.btn-raised {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  -webkit-transition: box-shadow, .15s ease-out;
-  transition: box-shadow, .15s ease-out;
-}
-
-.btn-raised:active, .btn-raised.active, .btn-raised:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-}
-
-.btn-raised.disabled, .btn-raised[disabled],
-.disabled .btn-raised {
-  box-shadow: none;
-}
-
-.btn-flat {
-  box-shadow: none;
-  background-color: transparent;
-  border-color: transparent;
-  -webkit-tap-highlight-color: transparent;
-}
-
 .btn-flat:hover, .btn-flat:focus,
 .open .dropdown-toggle .btn-flat {
-  background-color: rgba(0, 0, 0, 0.07);
+  background-color: rgba(0, 0, 0, 0.12);
   border-color: transparent;
   box-shadow: none;
   color: inherit;
@@ -646,9 +641,9 @@ fieldset[disabled] .btn-flat.focus {
 .btn-floating {
   width: 38px;
   height: 38px;
-  line-height: 36px;
-  padding: 4px;
+  padding: 7px;
   border-radius: 50%;
+  border: 0;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
@@ -656,14 +651,13 @@ fieldset[disabled] .btn-flat.focus {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
 
-.btn-floating.disabled, .btn-floating[disabled],
-.disabled .btn-floating {
-  box-shadow: none;
-}
-
 .btn-floating.btn-lg {
   width: 52px;
   height: 52px;
+}
+
+.btn-floating.disabled, .btn-floating[disabled] {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .btn-icon {

@@ -53,6 +53,7 @@ form {
 
 }
 
+
 .form-no-label label + .form-required {
   float: right;
 }
@@ -134,7 +135,6 @@ span.form-required {
 // around the select element to style it properly.
 // @see http://stackoverflow.com/q/21103542
 .select-wrapper {
-  display: inline-block;
   position: relative;
   width: 100%;
   max-width: $form-control-max-width;
@@ -157,7 +157,7 @@ span.form-required {
   select {
     appearance: none;
     line-height: 1;
-    padding-right: 2em;
+    padding-right: 20px;
   }
 
   &:after {
@@ -221,7 +221,6 @@ span.form-required {
   font-size: 1em;
   transition: .28s ease;
   user-select: none;
-  word-break: break-all;
 }
 
 [type="radio"]:checked + label {
@@ -395,6 +394,26 @@ span.form-required {
     background-color: $input-disabled-solid-color;
     border-color: $input-disabled-solid-color;
   }
+}
+
+
+.form-inline {
+
+  @include MQ($small) {
+
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+      position: absolute;
+    }
+
+    .radio label,
+    .checkbox label {
+      padding-left: ($radio-width - 3);
+      margin-right: $radio-width;
+    }
+
+  }
+
 }
 
 

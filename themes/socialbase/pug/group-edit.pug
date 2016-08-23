@@ -1,0 +1,77 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Edit Happy Campers (Open group)
+
+block content
+
+  .row.margin-top-l
+    .col-xs-12.col-sm-8
+
+      h4.section-title Edit Happy Campers
+
+      form(action='group-stream.html', method='get')
+
+        .card.card-underline
+
+          .card-head
+            header Content
+
+          .card-body
+
+            .form-group
+              label.form-required Title
+              input.form-control(type="text", required, value='Happy Campers')
+
+            .form-group
+              label.form-required Description
+              textarea.form-control.materialize-textarea(required)
+                | Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+
+            .form-group
+              label Image
+              .image-widget.form-managed-file.clearfix.row
+                .preview.col-sm-4.col-md-3.margin-bottom-m
+                  img.img-responsive(src="content/images/group1-square.jpg", width="220")
+
+                .data.col-sm-8.col-md-9
+                  .form-no-label
+                    label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
+                    input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                    #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
+                  span.file.file--mime-image-jpeg.file--image
+                    span.file-icon
+                      span.icon.glyphicon.glyphicon-picture.text-primary
+                    span.file-link
+                      a.menu-item__link(href="#", type="image/jpeg; length=270186", title="Open image in new window") group1-square.jpg
+                    span.file-size 154.85 KB
+
+                  button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
+
+        .card.card-underline
+
+            .card-head
+              header Location
+
+            .card-body
+
+              .form-group
+                label Location name
+                input.form-control(type="text")
+
+              .form-group
+                label Country
+
+                .input-group
+                  .select-wrapper
+                    select.form-select.form-control
+                      option - None -
+                      option(value='AB') Albania
+                      option(value='DZ') Algeria
+
+                  span.input-group-addon
+                    span.icon.glyphicon.glyphicon-refresh
+
+        .form-actions.clearfix
+          a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Delete group
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')

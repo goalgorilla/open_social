@@ -54,7 +54,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
   if ($entity) {
     // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
-    $message_type_id = $entity->getEntityType()->id();
+    $message_template_id = $entity->getEntityType()->id();
     $actor = $entity->getOwner()->id();
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();
@@ -62,7 +62,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
 
     $data = [
       'mid' => $mid,
-      'message_type' => $message_type_id,
+      'message_template' => $message_template_id,
       'actor' => $actor,
       'context' => $context[0]['value'],
       'destination' => $destinations,
@@ -71,9 +71,9 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
       'status' => NULL,
     ];
 
-    $message_type = $entity->getType();
+    $message_template = $entity->getTemplate();
 
-    $activity_create_direct = $message_type->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
+    $activity_create_direct = $message_template->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL);
 
     if ($activity_create_direct) {
 
@@ -89,7 +89,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
           // Create a queue item for activity creation.
           $activity_creator_data = [
             'mid' => $data['mid'],
-            'message_type' => $data['message_type'],
+            'message_template' => $data['message_template'],
             'actor' => $data['actor'],
             'context' => $data['context'],
             'destination' => $data['destination'],
@@ -102,7 +102,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
       else {
         $activity_creator_data = [
           'mid' => $data['mid'],
-          'message_type' => $data['message_type'],
+          'message_template' => $data['message_template'],
           'actor' => $data['actor'],
           'context' => $data['context'],
           'destination' => $data['destination'],

@@ -1,0 +1,64 @@
+//- created a topic in a group
+.media
+  .media-left
+    if user == "isAnonymous"
+      img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+    else
+      a(href='my-stream.html')
+        img.media-object.img-circle.img-medium(src='content/images/member0.jpg')
+  .media-body
+    .media-heading.text-m
+      if user == "isAnonymous"
+        | Henry Bond
+      else
+        a(href="other-stream.html") Henry Bond
+        | &nbsp;created a topic in group&nbsp;
+        a(href='group-stream.html') Happy campers
+      br
+      .text-gray-lighter 32 minutes ago
+.card--teaser.card--teaser-stream.card-with-actionbar
+  a.card-image(href="topic.html")
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+  .card-body
+    h4.card-title
+      a(href="topic.html") Technology for the handicapped
+    .text-gray.text-m.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-account_circle')
+      | &nbsp;
+      if user == "isAnonymous"
+        span Clive Owen
+      else
+        a(href="other-stream.html") Henry Bond
+      | &bullet; 15 feb 2016
+    .text-gray.text-m.text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-label')
+      | &nbsp;
+      span.inline-center Blog
+    .card-actionbar
+      .badge.badge--toggle
+        label
+          input(type='checkbox')
+          svg.icon-badge-toggle
+            use(xlink:href='#icon-community')
+          span.badge--toggle__label community
+      a.btn.btn-flat.btn-sm.pull-right(href="topic.html") Read more
+
+if user != "isAnonymous"
+  a.btn.btn-block.btn-link(href='topic.html#comment-form') Comment
+  .visible-xs-block
+    hr.ruler-sm
+    a.btn.btn-block.btn-link(href='topic.html#comment-1') show all 2 comments
+      svg.icon-small
+        use(xlink:href='#icon-navigate_next')
+.hidden-xs.card-nested-section
+
+  include ./_activity1-reply1.pug
+  include ./_activity1-reply2.pug
+
+  if user != "isAnonymous"
+    .margin-top-l.text-center
+      a.btn.btn-link(href='topic.html#comment-1') show all 2 comments
+        svg.icon-small
+          use(xlink:href='#icon-navigate_next')

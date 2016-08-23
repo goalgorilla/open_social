@@ -1,0 +1,42 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Happy Campers
+
+block pagetitle
+  
+  .container.hero-container.hidden-xs
+    include ./molecules/_my-group-hero.pug
+    
+  .container  
+    .visible-xs-block.section
+      a.btn.btn-flat(href="group-stream.html")
+        svg
+  use(xlink:href='#icon-navigate_before')     .icon-medium
+  use(xlink:href='#icon-navigate_before')     
+        | Back to group stream
+
+  .container.hero-container  
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href='group-stream.html') Stream
+          li
+            a(href='group-topics.html') Topics
+          li
+            a(href='group-events.html') Events
+          li.active
+            a(href="group-members.html") Members
+              span.visually-hidden (active tab)
+      
+block content
+      
+    .col-xs-12.col-sm-8
+      h4.section-title Members of Happy Campers
+      include molecules/_member1.pug
+      include molecules/_member2.pug
+      include molecules/_member3.pug
+      include molecules/_member4.pug
+      include molecules/_member5.pug

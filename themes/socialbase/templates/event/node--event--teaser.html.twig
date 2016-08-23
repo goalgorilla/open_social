@@ -80,7 +80,7 @@
     <div class='card-image'>
       {% if view_mode == 'teaser' %}
         <div class="teaser-type">
-          <svg class="icon-white icon-responsive">
+          <svg class="teaser-type-icon">
             <use xlink:href="#icon-event"></use>
           </svg>
         </div>
@@ -101,8 +101,8 @@
             </h4>
         {% endif %}
         {{ title_suffix }}
-        <div class="text-gray-dark text-truncate text-m">
-          <svg class="icon-gray icon-small">
+        <div class="text-truncate">
+          <svg class="teaser-icon">
             <use xlink:href="#icon-event"></use>
           </svg>
           <span class="inline-center">
@@ -112,8 +112,8 @@
           </span>
         </div>
         {% if content.field_event_location %}
-          <div class="text-gray-dark text-truncate text-m">
-            <svg class="icon-gray icon-small">
+          <div class="text-truncate text-m">
+            <svg class="teaser-icon">
               <use xlink:href="#icon-location"></use>
             </svg>
             <span class="inline-center">
@@ -123,7 +123,7 @@
         {% endif %}
 
         {# TODO: insert group name
-          <div class="text-gray-dark text-truncate">
+          <div class="text-truncate">
             <svg class="icon-gray icon-small">
               <use xlink:href="#icon-group"></use>
             </svg>

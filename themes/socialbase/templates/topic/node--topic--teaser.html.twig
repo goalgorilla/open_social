@@ -80,7 +80,7 @@
   <div class='card-image'>
     {% if view_mode == 'teaser' %}
       <div class="teaser-type">
-        <svg class="icon-white icon-responsive">
+        <svg class="teaser-type-icon">
           <use xlink:href="#icon-topic"></use>
         </svg>
       </div>
@@ -101,16 +101,16 @@
         </h4>
     {% endif %}
     {{ title_suffix }}
-    <div class="text-gray-dark text-truncate text-m">
-      <svg class="icon-gray icon-small">
+    <div class="text-truncate">
+      <svg class="teaser-icon">
         <use xlink:href="#icon-account_circle"></use>
       </svg>
       <span> {{ author_name }} </span>
       {# Todo: fix date format #}
       &bullet; {{ date }}
     </div>
-    <div class="text-gray-dark text-truncate text-m">
-      <svg class="icon-gray icon-small">
+    <div class="text-truncate">
+      <svg class="teaser-icon">
         <use xlink:href="#icon-label"></use>
       </svg>
       <span class="inline-center">
@@ -119,7 +119,7 @@
     </div>
 
     {# TODO: insert group name
-    <div class="text-gray-dark text-truncate">
+    <div class="text-truncate">
       <svg class="icon-gray icon-small">
         <use xlink:href="#icon-group"></use>
       </svg>

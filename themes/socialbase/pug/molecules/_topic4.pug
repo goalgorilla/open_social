@@ -1,0 +1,37 @@
+.card.card--teaser.card-with-actionbar
+  a.card-image(href="topic.html")
+    .teaser-type
+      svg.teaser-type-icon
+        use(xlink:href='#icon-topic')
+    img.img-responsive(src='content/images/people3-square.jpg', alt='')
+  .card-body
+    h4.card-title
+      a(href="topic.html") Top 10 zoos to visit in 2016
+    .text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-account_circle')
+      | &nbsp;
+      span.inline-center
+        if user == "isAnonymous"
+          | Amanda Boxer
+        else
+          a(href="other-stream.html") Amanda Boxer
+        | &nbsp;&bullet; 12 apr 2016
+    .text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-label')
+      | &nbsp;
+      span.inline-center Topic
+    .text-truncate
+      svg.teaser-icon
+        use(xlink:href='#icon-group')
+      | &nbsp;
+      span.inline-center Happy Campers
+    .card-actionbar
+      .badge.badge-gray-lighter.badge--toggle
+        label
+          input(type='checkbox')
+          svg.icon-gray-light.icon-badge-toggle
+            use(xlink:href='#icon-public')
+          span.badge--toggle__label public
+      a.btn.btn-flat.pull-right(href="topic.html") Read more

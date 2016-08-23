@@ -11,9 +11,8 @@ global-styling:
       # separate print stylesheets is bad for front-end performance.
       components/asset-builds/css/materialize.css: {}
   js:
-    js/components.js: {}
-    js/materialize.js: {}
-    js/bootstrap.min.js: {}
+    js/custom/offcanvas.js: {}
+    js/contrib/bootstrap.min.js: {}
 
 layout:
   css:
@@ -36,11 +35,23 @@ buttons:
   css:
     component:
       components/asset-builds/css/buttons.css: {}
+cards:
+  css:
+    component:
+      components/asset-builds/css/cards.css: {}
+
+waves:
+  js:
+    js/contrib/waves/waves.js: {}
 
 admin:
   css:
     component:
       components/asset-builds/css/admin-toolbar.css: {}
+
+textarea-autogrow:
+  js:
+    js/custom/textarea-autogrow.js: {}
 
 type:
   css:
@@ -52,25 +63,38 @@ drupal.ajax:
     component:
       components/asset-builds/css/ajax.css: {}
 
+navbar-search:
+  js:
+    js/custom/navbar-search.js: {}
+
 pickadate:
   css:
     component:
       components/asset-builds/css/datepicker.css: {}
   js:
-    libs/date_picker/picker.js: {}
-    libs/date_picker/picker.date.js: {}
-    libs/date_picker/picker.time.js: {}
-    libs/date_picker/picker.init.js: {}
+    js/contrib/date_picker/picker.js: {}
+    js/contrib/date_picker/picker.date.js: {}
+    js/contrib/date_picker/picker.time.js: {}
+    js/contrib/date_picker/picker.init.js: {}
+
+drupal.tabledrag:
+  js:
+    js/misc/tabledrag.js: {}
 
 tablesaw:
   css:
     component:
       components/asset-builds/css/tablesaw.css: {}
   js:
-    libs/tablesaw/tablesaw.js: {}
-    libs/tablesaw/tablesaw-init.js: {}
+    js/contrib/tablesaw/tablesaw.js: {}
+    js/contrib/tablesaw/tablesaw-init.js: {}
 
 waves:
   css:
     component:
       components/asset-builds/css/waves.css: {}
+
+modals:
+  css:
+    component:
+      components/asset-builds/css/modals.css: {}

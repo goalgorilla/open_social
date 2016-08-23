@@ -1,0 +1,66 @@
+- var user = "isAnonymous"
+- var pagetype = "template"
+- var page  = "Community Topics"
+
+include layout/_head.pug
+
+body
+  include layout/_gtm.pug
+  include layout/_header-an.pug
+  
+  main.main-container(role='main')
+  
+    nav.visible-md-block.visible-lg-block.bg-white
+      ol.breadcrumb.container
+        li
+          a(href='home-an.html') Home
+        li.active Community topics
+        
+    .main-content
+      .container
+  
+        .row.margin-top-l        
+            
+          .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+            btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+              svg.pull-left.btn-icon.icon-black
+                title Filter list
+                use(xlink:href='#icon-filter_list')
+              | Filters
+
+            .off-canvas.off-canvas-right.off-canvas-xs-only
+              .offcanvas-head
+                header.complementary-title Filter
+                .offcanvas-tools.visible-xs-block
+                  button.js-close-canvas.btn.btn-icon-toggle.pull-right
+                    svg.pull-left.btn-icon.icon-black
+                      title Close
+                      use(xlink:href='#icon-close')
+          
+              .offcanvas-body
+                form
+                  .form-group
+                    label Topic type
+                    select.form-control(onchange="enableMe('reset-button', this)")
+                      option(value="", selected="") All types
+                      option(value="blog") Blog
+                      option(value="discussion") Discussion
+                      option(value="topic") Topic
+                  .form-group
+                    input#reset-button.btn.btn-default.disabled(type="submit", value="Reset")
+          
+          .col-xs-12.col-sm-8
+            h4.section-title Community topics
+            
+            include molecules/_topic1.pug
+            include molecules/_topic2.pug
+            include molecules/_topic3.pug
+            include molecules/_topic4.pug
+
+  include layout/_footer.pug
+  include layout/_scripts.pug
+
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

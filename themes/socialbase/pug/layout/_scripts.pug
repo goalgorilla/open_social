@@ -1,0 +1,64 @@
+script(src='js/drupal-core.js')
+script(src='js/contrib/bootstrap.min.js')
+script(src='js/contrib/waves/waves.js')
+script(src='js/custom/offcanvas.js')
+script(src='js/custom/textarea-autogrow.js')
+script(src='js/custom/navbar-search.js')
+script(src='js/init.js')
+
+if tablesaw
+  script(src='js/contrib/tablesaw/tablesaw.js')
+  script(src='js/contrib/tablesaw/tablesaw-init.js')
+
+if datepicker
+  script(src="js/contrib/date_picker/picker.js")
+  script(src="js/contrib/date_picker/picker.date.js")
+  script(src="js/contrib/date_picker/picker.time.js")
+  script(src="js/contrib/date_picker/picker.init.js")
+  link(href='css/components/asset-builds/datepicker.css', rel='stylesheet')
+
+if pagetype == "template"
+
+  script(src='js/custom/navbar-search.js')
+
+  script.
+    new UISearch( document.getElementById( 'navbar-search' ) );
+
+if pagetype == "styleguide"
+
+  script(src='js/contrib/prism/prism.js')
+  script(src='js/styleguide.js')
+
+  script.
+    // Escape code
+    // ============================================================
+
+    var $lang_markup       = document.querySelectorAll('pre code.language-markup')
+        $lang_js           = document.querySelectorAll('script.atomic-js'),
+        $lang_jscode       = document.querySelectorAll('pre code.language-javascript')
+        lang_markupsnippet = [],
+        lang_jsnippet      = [];
+
+    // Markup
+    // order matters!
+    // ============================================================
+
+    for(var i = 0, l = $lang_markup.length; i < l; i++) {
+      lang_markupsnippet.push(
+        $lang_markup[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      );
+      $lang_markup[i].innerHTML = lang_markupsnippet[i];
+    }
+
+    // JavaScript
+    // order matters!
+    // ============================================================
+    for(var i = 0, l = $lang_jscode.length; i < l; i++) {
+      lang_jsnippet.push(
+        $lang_jscode[i].innerHTML.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      );
+    }
+
+    for(var i = 0, l = $lang_js.length; i < l; i++) {
+      $lang_js[i].innerHTML = lang_jsnippet[i];
+    }

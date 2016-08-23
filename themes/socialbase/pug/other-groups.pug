@@ -1,0 +1,53 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Jenny Baker`s groups
+
+block pagetitle
+  .container.hero-container.hidden-xs
+    include ./molecules/_other-profile-hero.pug
+        
+  .container
+    .visible-xs-block.section
+      a.btn.btn-flat(href="other-stream.html")
+        svg.btn-icon
+          use(xlink:href='#icon-navigate_before')
+        | Back to Jenny`s stream
+
+  .container.hero-container    
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href="other-stream.html") Stream  
+          li
+            a(href="other-profile-about.html") About
+          li
+            a(href='other-topics.html') Topics
+          li
+            a(href='other-events.html') Events 
+          li.active
+            a(href="other-groups.html") Groups
+              span.visually-hidden (active tab) 
+      
+block content
+  
+  .row.margin-top-l
+  
+    .col-xs-12.col-sm-8
+      h4.section-title Jenny Baker`s groups
+      
+      include molecules/_group2.pug
+      include molecules/_group1.pug
+      include molecules/_group4.pug
+      include molecules/_group3.pug
+        
+      include molecules/_pager.pug
+
+block scriptinline  
+  
+  script.
+    function enableMe() {
+      jQuery('#reset-button').removeClass('disabled');
+    }

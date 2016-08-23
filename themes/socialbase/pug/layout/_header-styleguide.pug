@@ -1,0 +1,29 @@
+#header
+  nav.navbar.navbar-default.navbar-fixed-top.z-depth-2
+    .container
+
+      a.navbar-brand(href='index.html')
+        object(type='image/svg+xml', data='images/social-logo-white.svg') Your browser does not support SVG
+
+      .navbar-header
+
+        button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
+          svg.icon-white.icon-medium
+            title Toggle navigation
+            use(xlink:href='#icon-menu')
+          span.sr-only Toggle navigation
+
+      #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
+        ul.nav.navbar-nav
+          li.hidden-xs(class=(page == "Open Social" ? "active" : ""))
+            a(href='index.html') Home
+          li(class=(page == "Prototype" ? "active" : ""))
+            a(href='prototype.html') Prototype
+          li(class=(page == "Getting started" ? "active" : ""))
+            a(href='getting-started.html') Getting started
+          li(class=(page == "Color" || page == "Type" || page == "Tables" || page == "Elevation" || page == "Images" ? "active" : ""))
+            a(href='color.html') Style &amp; content
+          li(class=(page == "Buttons" || page == "Forms" || page == "Grid" || page == "Breadcrumbs" || page == "Cards" || page == "Tabs" || page == "Pagination"  ? "active" : ""))
+            a(href='buttons.html') Components
+          li(class=(page == "Layout" ? "active" : ""))
+            a(href='layout.html') Layout

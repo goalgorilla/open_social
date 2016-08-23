@@ -1,0 +1,61 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Explore events
+
+block breadcrumbs  
+  li
+    a(href='home-lu.html') Home
+  li
+    a(href='explore.html') Explore
+  li
+    a(href='explore-events.html') Events
+
+
+block content
+              
+  .row.margin-top-l    
+  
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+    
+      button.waves-effect.waves-light.btn.btn-default.btn-block.btn-raised.visible-xs-inline-block.js-open-canvas
+        svg.pull-left.btn-icon.icon-black
+          title Filter list
+          use(xlink:href='#icon-filter_list')
+        | Filter
+      .off-canvas.off-canvas-right.off-canvas-xs-only
+        .offcanvas-head
+          header.complementary-title Filter
+          .offcanvas-tools.visible-xs-block
+            .js-close-canvas.btn.btn-icon-toggle.pull-right
+              svg.pull-left.btn-icon.icon-black
+                title Close
+                use(xlink:href='#icon-close')
+      
+        .offcanvas-body
+          form
+            .form-group(onclick="enableMe('reset-button')")
+              .radio
+                input(type="radio", name="group1", id="option1", checked) 
+                label(for="option1") Upcoming events
+              .radio
+                input(type="radio", name="group1", id="option2") 
+                label(for="option2") Past events
+              
+  
+    .col-xs-12.col-sm-8
+      h4.section-title Community events
+    
+      include molecules/_event3.pug
+      include molecules/_event2.pug
+      include molecules/_event1.pug
+      
+      include molecules/_pager.pug
+      
+
+block scriptinline  
+  
+  script.
+    function enableMe(id) {
+      jQuery('#' + id).removeClass('disabled');
+    }

@@ -30,6 +30,7 @@
       type == 'submit' ? 'js-form-submit',
       float_right ? 'pull-right',
       button_type == 'flat' ? 'btn-flat',
+      button_type == 'primary' ? 'btn-primary',
       icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
     ]
   %}
@@ -42,12 +43,12 @@
       </button>
     {% else %}
       {% if icon_position == 'after' %}
-        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
+        <button{{ attributes.addClass(classes).removeClass('btn-danger') }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
       {% else %}
         {% if attributes.hasClass('btn-primary') %}
           <button{{ attributes.addClass(classes).addClass('pull-right') }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
         {% else %}
-          <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
+          <button{{ attributes.addClass(classes).removeClass('btn-danger') }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
         {% endif %}
       {% endif %}
     {% endif %}

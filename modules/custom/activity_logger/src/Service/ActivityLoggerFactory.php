@@ -41,7 +41,7 @@ class ActivityLoggerFactory {
       $mt_context = $message_values['context'];
 
       // Set the values.
-      $new_message['type'] = $message_type;
+      $new_message['template'] = $message_type;
       $new_message['created'] = $entity->getCreatedTime();
       $new_message['uid'] = $entity->getOwner()->id();
       $new_message['field_message_context'] = $mt_context;
@@ -61,7 +61,7 @@ class ActivityLoggerFactory {
 
 
   /**
-   * Get message types for action and entity.
+   * Get message templates for action and entity.
    *
    * @param string $action
    *    Action string, e.g. 'create'.
@@ -78,7 +78,7 @@ class ActivityLoggerFactory {
     // We need the entitytype manager.
     $entity_type_manager = \Drupal::service('entity_type.manager');
     // Message type storage.
-    $message_storage = $entity_type_manager->getStorage('message_type');
+    $message_storage = $entity_type_manager->getStorage('message_template');
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(array('status' => '1')) as $key => $messagetype) {

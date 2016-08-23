@@ -1,0 +1,23 @@
+if user == "isAnonymous"
+  - var link = "public-events";
+else
+  - var link = "explore-events";
+
+.card.card-with-actionbar.hidden-xs
+  .card-head
+    header.text-center Upcoming events
+    .subtitle.text-center in the community
+  .card-body
+    .list-group.list-group-divider
+      a.list-group-item(href="event.html")
+        h6.list-group-item-heading World record rainbow watching
+        small.text-gray-lighter.list-group-item-text 10 sept - 12:30
+      a.list-group-item(href="event.html")
+        h6.list-group-item-heading Monthly tea party
+        small.text-gray-lighter.list-group-item-text 29 nov - 8:00
+
+    .card-actionbar.text-center
+      if user == "isAnonymous"
+        a.btn.btn-flat(href="public-events.html") All upcoming events
+      else
+        a.btn.btn-flat(href="explore-events.html") All upcoming events

@@ -51,8 +51,10 @@
           </h4>
         {% endif %}
         {{ title_suffix }}
-        <div class="text-gray-dark text-truncate">
-          <i class="custom-icons icon-group"></i>
+        <div class="text-truncate">
+          <svg class="teaser-icon">
+            <use xlink:href="#icon-group"></use>
+          </svg>
           <span class="inline-center">
             {% trans %}
               1 member
@@ -62,7 +64,22 @@
             &nbsp;
           </span>
         </div>
-        <div class="card--teaser-desc">{{ content.field_group_description }}</div>
+        {% if content.field_group_location|render or content.field_group_address|render %}
+            <div class="text-truncate">
+                <svg class="teaser-icon">
+                    <use xlink:href="#icon-location"></use>
+                </svg>
+            <span class="inline-center">
+              {% if content.field_group_location|render %}
+                {{- content.field_group_location -}}
+              {% endif %}
+              {% if content.field_group_location|render and content.field_group_address|render %} &bullet;{% endif %}
+              {% if content.field_group_address|render %}
+                {{- content.field_group_address -}}
+              {% endif %}
+            </span>
+            </div>
+        {% endif %}
 
         <div class="card-actionbar">
           <div class="actionbar">

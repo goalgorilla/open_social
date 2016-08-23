@@ -2,11 +2,11 @@
 
 namespace Drupal\social_group\Controller;
 
-use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,36 +25,37 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   protected $group;
 
   /**
-   * The group content types to show in the list.
+   * The entity type manager.
    *
-   * @var string[]
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
-  protected $bundles = [];
+  protected $entityTypeManager;
 
   /**
-   * {@inheritdoc}
+   * The redirect destination.
+   *
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RouteMatchInterface $route_match) {
-    parent::__construct($entity_type, $storage);
-    $parameters = $route_match->getParameters();
+  protected $redirectDestination;
 
-    // Check if the route had a plugin_id parameter.
-    if ($parameters->has('plugin_id') && $plugin_ids = (array) $parameters->get('plugin_id')) {
-      // We are then able to retrieve the group content type from the group.
-      if ($parameters->has('group') && $group = $parameters->get('group')) {
-        if ($group instanceof GroupInterface) {
-          $this->group = $group;
-
-          // Retrieve the bundles by checking which plugins are enabled.
-          $group_type = $group->getGroupType();
-          foreach ($plugin_ids as $plugin_id) {
-            if ($group_type->hasContentPlugin($plugin_id)) {
-              $this->bundles[] = $group_type->getContentPlugin($plugin_id)->getContentTypeConfigId();
-            }
-          }
-        }
-      }
-    }
+  /**
+   * Constructs a new GroupContentListBuilder object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   The redirect destination.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The route match.
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RedirectDestinationInterface $redirect_destination, RouteMatchInterface $route_match, EntityTypeInterface $entity_type) {
+    parent::__construct($entity_type, $entity_type_manager->getStorage($entity_type->id()));
+    $this->entityTypeManager = $entity_type_manager;
+    $this->redirectDestination = $redirect_destination;
+    // There should always be a group on the route for group content lists.
+    $this->group = $route_match->getParameters()->get('group');
   }
 
   /**
@@ -62,9 +63,10 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
-      $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('current_route_match')
+      $container->get('entity_type.manager'),
+      $container->get('redirect.destination'),
+      $container->get('current_route_match'),
+      $entity_type
     );
   }
 
@@ -74,12 +76,10 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   protected function getEntityIds() {
     $query = $this->getStorage()->getQuery();
     $query->sort($this->entityType->getKey('id'));
-    $query->condition('gid', $this->group->id());
 
-    // Filter on bundles if they were specified by the constructor.
-    if (!empty($this->bundles)) {
-      $query->condition('type', $this->bundles, 'IN');
-    }
+    // Only show group content for the group on the route.
+    $query->condition('gid', $this->group->id());
+    $query->condition('type', 'group_membership', 'CONTAINS');
 
     // Only add the pager if a limit is specified.
     if ($this->limit) {
@@ -93,9 +93,11 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['member'] = $this->t('Member');
-    $header['organization'] = $this->t('Organisation');
-    $header['group_role'] = $this->t('Role');
+    $header = [
+      'member' => $this->t('Member'),
+      'organization' => $this->t('Organisation'),
+      'group_role' => $this->t('Role'),
+    ];
     return $header + parent::buildHeader();
   }
 
@@ -145,6 +147,39 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
     $build = parent::render();
     $build['table']['#empty'] = $this->t('There is no members yet.');
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDefaultOperations(EntityInterface $entity) {
+    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    $operations = parent::getDefaultOperations($entity);
+
+    // Improve the edit and delete operation labels.
+    if (isset($operations['edit'])) {
+      $operations['edit']['title'] = $this->t('Edit');
+    }
+    if (isset($operations['delete'])) {
+      $operations['delete']['title'] = $this->t('Delete');
+    }
+
+    // Slap on redirect destinations for the administrative operations.
+    $destination = $this->redirectDestination->getAsArray();
+    foreach ($operations as $key => $operation) {
+      $operations[$key]['query'] = $destination;
+    }
+
+    // Add an operation to view the actual entity.
+    if ($entity->getEntity()->access('view') && $entity->getEntity()->hasLinkTemplate('canonical')) {
+      $operations['view'] = array(
+        'title' => $this->t('View'),
+        'weight' => 101,
+        'url' => $entity->getEntity()->toUrl('canonical'),
+      );
+    }
+
+    return $operations;
   }
 
 }

@@ -1,0 +1,76 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Jenny Baker
+
+block pagetitle
+  .container.hidden-xs
+    include ./molecules/_other-profile-hero.pug
+  
+  .container    
+    .visible-xs-block.section
+      a.btn.btn-flat(href="other-stream.html")
+        svg.btn-icon
+          use(xlink:href='#icon-navigate_before')
+        | Back to Jenny`s stream
+
+    .brand-secondary.z-depth-1.hidden-xs
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li.hidden-xs
+            a(href="other-stream.html") Stream  
+          li
+            a(href="other-profile-about.html") About
+          li
+            a(href='other-topics.html') Topics
+          li.active
+            a(href='other-events.html') Events 
+            span.visually-hidden (active tab) 
+          li
+            a(href="other-groups.html") Groups
+      
+block content
+  
+  .row.margin-top-l
+    
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+      button.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
+        svg.pull-left.btn-icon.icon-black
+          title Filter list
+          use(xlink:href='#icon-filter_list')
+        | Filters
+      
+      .off-canvas.off-canvas-right.off-canvas-xs-only.visible-sm-card
+        .offcanvas-head
+          header.card__label filter
+          .offcanvas-tools.visible-xs-block
+            button.js-close-canvas.btn.btn-icon-toggle.pull-right
+              svg.pull-left.btn-icon.icon-black
+                title Close
+                use(xlink:href='#icon-close')
+    
+        .offcanvas-body
+          form
+            .form-group.radios
+              label Event status 
+              .radio
+                input#radio1(name='event', type='radio', checked)
+                label(for='radio1') Upcoming
+              .radio
+                input#radio2(name='event', type='radio')
+                label(for='radio2') Past
+              .radio
+                input#radio3(name='event', type='radio')
+                label(for='radio3') Unpublished
+              
+
+    .col-xs-12.col-sm-8
+      h4.section-title Jenny Baker`s events
+      
+      include molecules/_event1.pug
+      include molecules/_event2.pug
+      include molecules/_event3.pug
+      include molecules/_event4.pug
+        
+      include molecules/_pager.pug

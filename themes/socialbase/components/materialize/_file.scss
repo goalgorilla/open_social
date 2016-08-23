@@ -13,7 +13,6 @@
 
   > span {
     background: #fff;
-    color: $gray-light;
     border-bottom: 1px solid $gray-lighter;
     border-top: 1px solid $gray-lighter;
     &:first-child {
@@ -21,6 +20,9 @@
     }
     &:last-child {
       border-right: 1px solid $gray-lighter;
+    }
+    &:not(.text-primary) {
+      color: $gray-light;
     }
   }
   > .tabledrag-changed {
@@ -43,7 +45,7 @@
   font-size: 150%;
   padding: .25em .5em;
   text-align: center;
-  vertical-align: middle;
+  vertical-align: top;
   .material-icons {
     line-height: 1.2rem;
   }
@@ -54,6 +56,7 @@
   vertical-align: middle;
   width: 100%;
   white-space: normal;
+  word-break: break-word;
 
   a, a:hover, a:focus, a:active {
     color: inherit;
@@ -72,6 +75,7 @@
 .image-widget.row {
   overflow: hidden;
 }
+
 .file-widget {
   .file {
     margin-bottom: 0;

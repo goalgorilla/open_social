@@ -9,15 +9,24 @@ libraries:
   - socialbase/global-styling
   # @TODO Split up global-styling into components
   - socialbase/buttons
+  - socialbase/cards
   - socialbase/layout
   - socialbase/type
   - socialbase/alerts
   - socialbase/icons
   - socialbase/waves
+  - socialbase/modals
+
+# Add the type css to be loaded by the ckeditor iframe.
+ckeditor_stylesheets:
+  - components/asset-builds/css/type.css
 
 libraries-extend:
   core/drupal.ajax:
     - socialbase/drupal.ajax
+  core/drupal.tabledrag:
+    - socialbase/drupal.tabledrag
+
 
 # The "libraries-override:" section will allow you to:
 # - Replace an entire library.
@@ -30,19 +39,9 @@ libraries-override:
   core/jquery.ui/ui:
     js:
       datepicker-min.js: false
-  system/base:
-    css:
-      component:
-        css/components/align.module.css: false
-        css/components/clearfix.module.css: false
-        css/components/container-inline.module.css: false
-        css/components/fieldgroup.module.css: false
-        css/components/hidden.module.css: false
-        css/components/item-list.module.css: false
-        css/components/js.module.css: false
-        css/components/nowrap.module.css: false
-        css/components/position-container.module.css: false
-        css/components/tree-child.module.css: false
+
+  system/base: false
+  views/views.module: false
 
 regions:
   hidden: Hidden

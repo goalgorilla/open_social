@@ -25,13 +25,46 @@ class AccountHeaderBlock extends BlockBase {
       $account_uid = $account->id();
 
       $links = [
-        'home' => array(
-          'classes' => 'hidden-xs',
-          'link_attributes' => '',
-          'icon_classes' => '',
-          'title' => 'Home',
-          'title_classes' => '',
-          'url' => Url::fromRoute('<front>'),
+        'add' => array(
+          'classes' => 'dropdown',
+          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
+          'link_classes' => 'dropdown-toggle clearfix',
+          'icon_classes' => 'icon-add_box',
+          'title' => 'Add content',
+          'title_classes' => 'sr-only',
+          'url' => '#',
+          'below' => array(
+            'add_event' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'title' => 'New Event',
+              'title_classes' => '',
+              'url' => '/node/add/event',
+            ),
+            'add_topic' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'title' => 'New Topic',
+              'title_classes' => '',
+              'url' => '/node/add/topic',
+            ),
+            'add_group' => array(
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'title' => 'New Group',
+              'title_classes' => '',
+              'url' => '/group/add/open_group',
+            ),
+          ),
         ),
         'groups' => array(
           'classes' => '',
@@ -53,7 +86,6 @@ class AccountHeaderBlock extends BlockBase {
 
         if ($num_notifications === 0) {
           $notifications_icon = 'icon-notifications_none';
-          $title_classes = ' sr-only';
           $label_classes = 'hidden';
         }
         else {
@@ -78,23 +110,68 @@ class AccountHeaderBlock extends BlockBase {
       }
 
       $links['account_box'] = array(
-        'classes' => 'dropdown',
+        'classes' => 'dropdown profile',
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-account_circle',
         'title' => $account_name,
-        'title_classes' => 'hidden-xs profile',
+        'title_classes' => 'sr-only',
         'url' => '#',
         'below' => array(
+          'signed_in_as' => array(
+            'classes' => 'dropdown-header header-nav-current-user',
+            'tagline' => 'Signed in as',
+            'object'  => $account_name,
+          ),
+          'divide_profile' => array(
+            'divider' => 'true',
+            'classes' => 'divider',
+            'attributes' => 'role=separator',
+          ),
           'my_profile' => array(
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => 'View profile',
+            'title' => 'My profile',
             'title_classes' => '',
             'url' => '/user',
+          ),
+          'my_events' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My events',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/events',
+          ),
+          'my_topics' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My topics',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/topics',
+          ),
+          'my_groups' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => 'My groups',
+            'title_classes' => '',
+            'url' => '/user/' . $account_uid . '/groups',
+          ),
+          'divide_account' => array(
+            'divider' => 'true',
+            'classes' => 'divider',
+            'attributes' => 'role=separator',
           ),
           'my_account' => array(
             'classes' => '',
@@ -116,6 +193,11 @@ class AccountHeaderBlock extends BlockBase {
             'title_classes' => '',
             'url' => '/user/' . $account_uid . '/profile',
           ),
+          'divide_logout' => array(
+            'divider' => 'true',
+            'classes' => 'divider',
+            'attributes' => 'role=separator',
+          ),
           'logout' => array(
             'classes' => '',
             'link_attributes' => '',
@@ -128,6 +210,20 @@ class AccountHeaderBlock extends BlockBase {
           ),
         ),
       );
+
+      if ($account) {
+        $storage = \Drupal::entityTypeManager()->getStorage('profile');
+        if (!empty($storage)) {
+          $user_profile = $storage->loadByUser($account, 'profile');
+          if ($user_profile) {
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'small');
+            $links['account_box']['icon_image'] = $content;
+          }
+        }
+      }
+
     }
     else {
       $links = [

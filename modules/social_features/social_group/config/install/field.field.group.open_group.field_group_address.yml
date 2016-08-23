@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_group_address
+    - group.type.open_group
+  module:
+    - address
+id: group.open_group.field_group_address
+field_name: field_group_address
+entity_type: group
+bundle: open_group
+label: Address
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  available_countries: {  }
+  fields:
+    locality: locality
+    postalCode: postalCode
+    addressLine1: addressLine1
+    administrativeArea: '0'
+    dependentLocality: '0'
+    sortingCode: '0'
+    addressLine2: '0'
+    organization: '0'
+    recipient: '0'
+  langcode_override: ''
+field_type: address
