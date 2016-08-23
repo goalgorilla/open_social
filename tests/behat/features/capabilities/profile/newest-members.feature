@@ -9,7 +9,7 @@ Feature: See newest users in the community
     Given I am logged in as an "authenticated user"
     Then I should not see "Behat User 1"
     And I should not see "Behat User 2"
-    When I click the link with the text "All Newest members"
+    When I click "All Newest members"
     Then I should not see "Behat User 1"
     And I should not see "Behat User 2"
 
