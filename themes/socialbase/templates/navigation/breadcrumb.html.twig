@@ -10,17 +10,18 @@
  */
 #}
 {% if breadcrumb %}
-<nav class="visible-md-block visible-lg-block bg-white">
-  <ol class="breadcrumb container">
-    {% for item in breadcrumb %}
-      <li {{ item.attributes }}>
-        {% if item.url %}
-          <a href="{{ item.url }}">{{ item.text }}</a>
-        {% else %}
-          {{ item.text }}
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ol>
-</nav>
+  {{ attach_library('socialbase/breadcrumbs') }}
+  <nav class="visible-md-block visible-lg-block bg-white">
+    <ol class="breadcrumb container">
+      {% for item in breadcrumb %}
+        <li {{ item.attributes }}>
+          {% if item.url %}
+            <a href="{{ item.url }}">{{ item.text }}</a>
+          {% else %}
+            {{ item.text }}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </nav>
 {% endif %}
