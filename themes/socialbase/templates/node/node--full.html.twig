@@ -63,7 +63,6 @@
  *   in different view modes.
  */
 #}
-
 {% if details_label %}
     <h4 class="section-title">
         {{ details_label }}
@@ -87,4 +86,22 @@
 
 </article>
 
-{{ content|without('body', 'field_files') }}
+{% if content.book_navigation|render is not empty %}
+  {{ content.book_navigation }}
+{% endif %}
+
+{% if content.field_book_comments|render is not empty %}
+  {{ content.field_book_comments }}
+{% endif %}
+
+{% if content.field_topic_comments|render is not empty %}
+  {{ content.field_topic_comments }}
+{% endif %}
+
+{% if content.field_event_comments|render is not empty %}
+  {{ content.field_event_comments }}
+{% endif %}
+
+{% if content.field_page_comments|render is not empty %}
+  {{ content.field_page_comments }}
+{% endif %}

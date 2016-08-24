@@ -26,6 +26,7 @@ function social_core_theme() {
         'topic_type' => NULL,
         'group_link' => NULL,
         'hero_node' => NULL,
+        'node' => NULL,
         'section_class' => NULL,
         'event_enrollment' => NULL,
         'visibility_icon' => NULL,
@@ -201,7 +202,7 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
     $node = Node::load($node);
   }
 
-  if ($node instanceof Node && ($node->getType() === 'event' || $node->getType() === 'topic')) {
+  if ($node instanceof Node && ($node->getType() === 'event' || $node->getType() === 'topic' || $node->getType() === 'page')) {
     // Remove Edit tab. Edit will always go through Floating Edit Button.
     if (isset($data['tabs'][0]['entity.node.edit_form'])) {
       unset($data['tabs'][0]['entity.node.edit_form']);

@@ -46,12 +46,33 @@
  */
 #}
 
-{{ title_prefix }}
-{% if label %}
-  <h2{{ title_attributes.addClass('block-title') }}>{{ label }}</h2>
-{% endif %}
-{{ title_suffix }}
+{% if card %}
 
-{% block content %}
+  <div class="card">
+
+    {{ title_prefix }}
+    {% if label %}
+      <div class="card-head">
+        <header {{ title_attributes.addClass('text-center') }}>{{ label }}</header>
+      </div>
+    {% endif %}
+    {{ title_suffix }}
+
+
+    <div class="card-body">
+        {{ content }}
+    </div>
+
+  </div>
+
+{% else %}
+
+  {{ title_prefix }}
+  {% if label %}
+    <h2{{ title_attributes.addClass('block-title') }}>{{ label }}</h2>
+  {% endif %}
+  {{ title_suffix }}
+
   {{ content }}
-{% endblock %}
+
+{% endif %}
