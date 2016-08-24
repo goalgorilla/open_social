@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use \Drupal\node\NodeInterface;
 
 /**
  * Implements hook_help().
@@ -21,4 +22,13 @@ function social_page_help($route_name, RouteMatchInterface $route_match) {
 
     default:
   }
+}
+
+/**
+ * Implements hook_node_links_alter().
+ */
+
+function social_page_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+  // Remove the add new comment link.
+  unset($links['comment__field_page_comments']['#links']['comment-add']);
 }

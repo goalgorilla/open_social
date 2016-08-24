@@ -5000,12 +5000,22 @@ hr.ruler-l {
   display: none;
 }
 
-.card--teaser-stream {
+.card--teaser.card--teaser-stream {
   margin: 10px -15px 10px;
   background: #e6e6e6;
 }
 
-.card--teaser-stream .badge-gray-lighter .material-icons {
+.card--teaser.card--teaser-stream:last-child {
+  margin-bottom: -15px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.card--teaser.card--teaser-stream:last-child .card-image {
+  border-bottom-left-radius: 10px;
+}
+
+.card--teaser.card--teaser-stream .badge-gray-lighter .material-icons {
   background-color: #e6e6e6;
 }
 
@@ -6433,10 +6443,10 @@ input[type=range]:focus::-ms-fill-upper {
     border-width: 8px;
     top: 36px;
   }
-  .card--teaser-stream{
+  .card--teaser.card--teaser-stream{
     height: 200px;
   }
-  .card--teaser-stream .card-image{
+  .card--teaser.card--teaser-stream .card-image{
     height: 200px;
     -webkit-box-flex: 0;
     -ms-flex: 0 0 200px;

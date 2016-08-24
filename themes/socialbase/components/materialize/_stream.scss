@@ -119,12 +119,22 @@
 }
 
 
-.card--teaser-stream {
+.card--teaser.card--teaser-stream {
   margin: 10px -15px 10px;
   background: $gray-lighter;
 
   @include MQ($small) {
     height: 200px; // matches width of image
+  }
+
+  &:last-child {
+    margin-bottom: -15px;
+    border-bottom-left-radius: $card-border-radius;
+    border-bottom-right-radius: $card-border-radius;
+
+    .card-image {
+      border-bottom-left-radius: $card-border-radius;
+    }
   }
 
   .card-image {
