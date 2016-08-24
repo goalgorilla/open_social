@@ -5,6 +5,7 @@
  */
 
 use Drupal\user\RoleInterface;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -26,5 +27,24 @@ function social_page_install() {
   //    'create page content',
   //    'delete own page content',
   //    'edit own page content',
+
+  // Fetch other roles.
+  $roles = Role::loadMultiple();
+
+  /** @var Role $role */
+  foreach ($roles as $role) {
+    // Check CM / SM
+    if (in_array($role->id(), array('contentmanager', 'sitemanager'))) {
+      user_role_grant_permissions($role->id(), array(
+        'create page content',
+        'delete any page content',
+        'delete own page content',
+        'edit any page content',
+        'edit own page content',
+        'delete any page content',
+        'delete own page content',
+      ));
+    }
+  }
 
 }

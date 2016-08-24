@@ -77,7 +77,7 @@ class AccountHeaderBlock extends BlockBase {
       ];
 
       // Check if the current user is allowed to create new books.
-      if ($account->hasPermission('create new books')) {
+      if (\Drupal::moduleHandler()->moduleExists('social_book') && $account->hasPermission('create new books')) {
         $links['add']['below']['add_book'] = array(
           'classes' => '',
           'link_attributes' => '',
@@ -87,6 +87,20 @@ class AccountHeaderBlock extends BlockBase {
           'title' => 'New Book page',
           'title_classes' => '',
           'url' => '/node/add/book',
+        );
+      }
+
+      // Check if the current user is allowed to create new pages.
+      if (\Drupal::moduleHandler()->moduleExists('social_page') && $account->hasPermission('create page content')) {
+        $links['add']['below']['add_page'] = array(
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => 'New Page',
+          'title_classes' => '',
+          'url' => '/node/add/page',
         );
       }
 
