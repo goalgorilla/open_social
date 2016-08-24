@@ -29,21 +29,29 @@
 {{ book_tree.book_links(items, attributes, 0) }}
 
 {% macro book_links(items, attributes, menu_level) %}
-    {% import _self as book_tree %}
-    {% if items %}
-        {% if menu_level == 0 %}
-            <ul{{ attributes.addClass('book-menu') }}>
-        {% else %}
-            <ul>
-        {% endif %}
-        {% for item in items %}
-            <li{{ item.attributes.addClass('') }}>
-                {{ link(item.title, item.url) }}
-                {% if item.below %}
-                    {{ book_tree.book_links(item.below, attributes, menu_level + 1) }}
-                {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
+  {% import _self as book_tree %}
+  {% if items %}
+    {% if menu_level == 0 %}
+      <ul{{ attributes.addClass('book-menu') }}>
+    {% else %}
+      <ul class="menu">
     {% endif %}
+    {% for item in items %}
+      {%
+        set classes = [
+          'list-item',
+          item.is_expanded ? 'list-item--expanded',
+          item.is_collapsed ? 'list-item--collapsed',
+          item.in_active_trail ? 'list-item--active-trail',
+        ]
+      %}
+      <li{{ item.attributes.addClass(classes) }}>
+        {{ link(item.title, item.url) }}
+        {% if item.below %}
+          {{ book_tree.book_links(item.below, attributes, menu_level + 1) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
 {% endmacro %}
