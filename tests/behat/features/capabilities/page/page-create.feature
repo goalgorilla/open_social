@@ -11,7 +11,7 @@ Feature: Create Page
       | Title | This is a static page |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I press "Save"
-    And I should see "Page This is a static page has been created."
+    Then I should see "Page This is a static page has been created."
     And I should see "This is a static page" in the "Hero block"
     And I should see "Body description text" in the "Main content"
     # Authored by should not be visible
