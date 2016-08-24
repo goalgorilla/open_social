@@ -52,6 +52,8 @@ class SocialPageTitleBlock extends PageTitleBlock {
           break;
 
         case 'page':
+          $topic_type = NULL;
+          $hero_node = NULL;
           $author_name = NULL;
           $created_date = NULL;
 
