@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override to display a node.
+ * Default theme implementation to display a node.
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
@@ -61,47 +61,55 @@
  * @todo Remove the id attribute (or make it a class), because if that gets
  *   rendered twice on a page this is invalid CSS for example: two lists
  *   in different view modes.
+ *
+ * @ingroup themeable
  */
 #}
-{% if details_label %}
-    <h4 class="section-title">
-        {{ details_label }}
-    </h4>
-{% endif %}
 
-<article{{ attributes.addClass('card') }}>
+{%
+  set classes = [
+    view_mode == 'teaser' ? 'card',
+    'card--teaser',
+    'card-with-actionbar',
+    view_mode == 'activity' ? 'card--teaser-stream',
+    view_mode == 'activity_comment' ? 'card--teaser-stream',
+  ]
+%}
 
-  <div{{ content_attributes.addClass('card-body extra-padding') }}>
-    {{ content.body }}
-
-    {% if content.field_files|render is not empty %}
-      <div class="card-nested-section">
-        <h5>
-          {% trans %}Attachments{% endtrans %}
-        </h5>
-          {{ content.field_files }}
-      </div>
+<div {{ attributes.addClass(classes) }}>
+  <div class='card-body'>
+    {{ title_prefix }}
+    {% if not page %}
+      <h4{{ title_attributes }} class="card-title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      </h4>
     {% endif %}
+    {{ title_suffix }}
+    <div class="text-truncate">
+      {% if content.body %}
+        {{ content.body }}
+      {% endif %}
+    </div>
+
+    <div class="card-actionbar">
+      <div class="actionbar">
+        {% if visibility_icon and visibility_label %}
+          <div class="badge badge-gray-lighter badge--toggle">
+            <label>
+              <input type="checkbox">
+              <svg class="icon-gray icon-small icon-badge-toggle">
+                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+              </svg>
+              <span class="badge--toggle__label">{{ visibility_label }}</span>
+            </label>
+          </div>
+        {% endif %}
+      </div>
+      {{ content.links }}
+    </div>
   </div>
+</div>
 
-</article>
-
-{% if content.book_navigation|render is not empty %}
-  {{ content.book_navigation }}
-{% endif %}
-
-{% if content.field_book_comments|render is not empty %}
+{% if view_mode == 'activity' and content.field_book_comments %}
   {{ content.field_book_comments }}
-{% endif %}
-
-{% if content.field_topic_comments|render is not empty %}
-  {{ content.field_topic_comments }}
-{% endif %}
-
-{% if content.field_event_comments|render is not empty %}
-  {{ content.field_event_comments }}
-{% endif %}
-
-{% if content.field_page_comments|render is not empty %}
-  {{ content.field_page_comments }}
 {% endif %}
