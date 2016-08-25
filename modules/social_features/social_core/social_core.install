@@ -15,6 +15,14 @@ use Drupal\user\RoleInterface;
  */
 function social_core_install() {
 
+  $data = array('id' => 'contentmanager', 'label' => 'Content manager');
+  $role = \Drupal\user\Entity\Role::create($data);
+  $role->save();
+
+  $data = array('id' => 'sitemanager', 'label' => 'Site manager');
+  $role = \Drupal\user\Entity\Role::create($data);
+  $role->save();
+
   // Set some default permissions.
   user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
     'view own unpublished content',
