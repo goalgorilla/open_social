@@ -4,13 +4,16 @@ dependencies:
   config:
     - field.field.node.book.body
     - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
     - field.field.node.book.field_content_visibility
     - field.field.node.book.field_files
+    - image.style.social_x_large
     - node.type.book
   module:
     - comment
     - field_group
     - file
+    - image
     - path
     - text
 third_party_settings:
@@ -42,9 +45,10 @@ third_party_settings:
     group_title:
       children:
         - title
+        - field_book_image
       parent_name: ''
       weight: 0
-      label: Title
+      label: Content
       format_type: fieldset
       format_settings:
         description: ''
@@ -63,8 +67,6 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
-_core:
-  default_config_hash: Y06qm4kFflcunIwnopbFw8NcSX5nuiUNshNBNLuWJ2g
 id: node.book.default
 targetEntityType: node
 bundle: book
@@ -88,6 +90,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: comment_default
+  field_book_image:
+    weight: 2
+    settings:
+      preview_image_style: social_x_large
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
   field_content_visibility:
     weight: 8
     settings: {  }

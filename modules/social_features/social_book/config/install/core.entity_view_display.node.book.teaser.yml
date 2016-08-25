@@ -5,10 +5,13 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.book.body
     - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
     - field.field.node.book.field_content_visibility
     - field.field.node.book.field_files
+    - image.style.social_x_large
     - node.type.book
   module:
+    - image
     - options
     - text
     - user
@@ -20,18 +23,26 @@ content:
   body:
     label: hidden
     type: text_summary_or_trimmed
-    weight: 0
+    weight: 1
     settings:
       trim_length: 200
     third_party_settings: {  }
+  field_book_image:
+    type: image
+    weight: 0
+    label: above
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
   field_content_visibility:
     type: list_default
-    weight: 2
+    weight: 3
     label: hidden
     settings: {  }
     third_party_settings: {  }
   links:
-    weight: 1
+    weight: 2
     settings: {  }
     third_party_settings: {  }
 hidden:

@@ -77,6 +77,16 @@
 %}
 
 <div {{ attributes.addClass(classes) }}>
+
+  <div class='card-image'>
+    {{ content.field_book_image }}
+    {% if status_label %}
+      <div class="status">
+        {{ status_label }}
+      </div>
+    {% endif %}
+  </div>
+
   <div class='card-body'>
     {{ title_prefix }}
     {% if not page %}
