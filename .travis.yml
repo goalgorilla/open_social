@@ -28,7 +28,8 @@ before_install:
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - phpenv config-rm xdebug.ini
-  - composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT}
+  # Change this back to composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT} before merge to 8.x-1.x!!!
+  - composer require goalgorilla/open_social:dev-8.x-1.x#${TRAVIS_COMMIT}
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
   - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
