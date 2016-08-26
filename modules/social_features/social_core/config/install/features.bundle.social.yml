@@ -18,13 +18,8 @@ assignments:
     types:
       config:
         date_format: date_format
-        field_storage_config: field_storage_config
-        entity_form_mode: entity_form_mode
         image_style: image_style
         menu: menu
-        responsive_image_style: responsive_image_style
-        user_role: user_role
-        entity_view_mode: entity_view_mode
     enabled: true
     weight: '5'
   dependency:
@@ -32,12 +27,14 @@ assignments:
     weight: '15'
   exclude:
     types:
-      config: {  }
+      config:
+        user_role: user_role
     curated: 1
     module:
-      enabled: 1
+      installed: 0
       profile: 1
       namespace: 1
+      namespace_any: 0
     enabled: true
     weight: '-5'
   existing:
