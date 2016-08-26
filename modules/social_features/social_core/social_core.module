@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
@@ -202,7 +203,8 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
     $node = Node::load($node);
   }
 
-  if ($node instanceof Node && ($node->getType() === 'event' || $node->getType() === 'topic' || $node->getType() === 'page')) {
+  // Check for all active node types.
+  if ($node instanceof Node && array_key_exists($node->getType(), NodeType::loadMultiple())) {
     // Remove Edit tab. Edit will always go through Floating Edit Button.
     if (isset($data['tabs'][0]['entity.node.edit_form'])) {
       unset($data['tabs'][0]['entity.node.edit_form']);
