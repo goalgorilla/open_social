@@ -35,6 +35,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
       $author = $node->getOwner();
       $author_name = $author->link();
       $group_link = NULL;
+      $created_date = $node->getCreatedTime();
 
       switch ($node->getType()) {
         case 'topic':
@@ -50,6 +51,15 @@ class SocialPageTitleBlock extends PageTitleBlock {
           $group_link = $this->getGroupLink($node);
           break;
 
+        case 'page':
+        case 'book':
+          $topic_type = NULL;
+          $hero_node = NULL;
+          $author_name = NULL;
+          $created_date = NULL;
+
+          break;
+
         default:
           $topic_type = NULL;
           $hero_node = NULL;
@@ -59,10 +69,11 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#theme' => 'page_hero_data',
         '#title' => $title,
         '#author_name' => $author_name,
-        '#created_date' => $node->getCreatedTime(),
+        '#created_date' => $created_date,
         '#topic_type' => $topic_type,
         '#group_link' => $group_link,
         '#hero_node' => $hero_node,
+        '#node' => $node,
         '#section_class' => 'page-title',
       ];
     }

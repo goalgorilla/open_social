@@ -205,6 +205,16 @@ code {
   max-width: 100%;
 }
 
+
+small {
+  font-size: 80%;
+
+  .label {
+    font-size: 90%;
+  }
+}
+
+
 // Sizes
 // -------------------------
 
@@ -236,3 +246,36 @@ code {
 @include style-variant('.brand-user', $gray-darker, white);
 
 @include style-variant('.default-light', $gray-lighter, $default-color);
+
+
+// Lists
+
+.list-item--collapsed,
+.list-item--expanded {
+  list-style: none;
+  position: relative;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    margin-left: -1em;
+    margin-right: 0.45em;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-top:   $caret-width-base solid transparent;
+    border-top:   $caret-width-base solid \9; // IE8
+    border-left: $caret-width-base dashed;
+    border-bottom:  $caret-width-base solid transparent;
+  }
+
+}
+
+.list-item--expanded::before {
+  margin-left: -1.2em;
+  margin-right: 0.4em;
+  border-top:   $caret-width-base dashed;
+  border-top:   $caret-width-base solid \9; // IE8
+  border-right: $caret-width-base solid transparent;
+  border-left:  $caret-width-base solid transparent;
+}

@@ -12,7 +12,8 @@ php:
   - 5.6
 
 env:
-  DOCKER_COMPOSE_VERSION: 1.6.2
+  global:
+    secure: lzhn0fc9bhgGdWrC+4FdbvK6QpjHsb4UVy0wvghcV7HK4YU0ZpRYm5MD9bSakRviulN+hQMIYddQYVekJKO0gsK4sh5BdL/1tKx5M8DqJcMo1zyK6h0Z12EWKCnRseYc4y1Y0EgwmT3iN4e/fxLJ+qNhB8rm4yiwlgjonHI2146KdZkhUJsXwDfL/cb2hYm5Ky86TC+ii1RfpCOueU5SUU5LuIzrPDt7Gyme4K0NIxr3PjMa0IzufNwOl7qqqWcjlzjTuMeR0mH6N6I1amF5eOuYuwa1Bdg7DUP/Pw0KHJ1SGFHtmoRzSktLO9DNtOYlg0u+Mr2O1lrI3eRFbf7Taokl2fW+4J2Vb38yrg2H6Iq8KuSvRGdmBACZC8n3bpGPc6X9tUx3BU5oK7OnrSvEjo+tBTG3+RKwmh+y+zkXHq8PYD21nsS5iMTEuROVmh59W2mRcAAxjn1j/T+vbjv4csv2Y+PRj0zycs8OgjIlt86EfzdYhyHVDj+7dNQT6FPId81NvJXEyCpa8YUBLIT1lT8O6VTTWs/cEy7q+Zm8dEaxqE9wkgV8shnG7fBvPThcmKMnE0JsbEYlDv/8JR7SfKbBroTsF0Yw8ZX+Vc6jsLrlfrICShNvzs8eiu96TfC09Qv+6GY54ET8nw6/UBWpi/k6gDVtVuzywl3iF1+8M1A=
 
 services:
   - docker
@@ -31,7 +32,7 @@ before_install:
   - composer require goalgorilla/open_social:dev-feature/DS-1251-proximity-filter
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
@@ -45,3 +46,6 @@ script:
   - docker logs social_selenium
   - sleep 30
   - docker exec -it social_behat sh /root/travis/behatstability.sh
+
+after_success:
+  - bash dev-scripts/trigger_dockerhub.sh

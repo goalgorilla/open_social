@@ -1,0 +1,143 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.book.body
+    - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
+    - field.field.node.book.field_content_visibility
+    - field.field.node.book.field_files
+    - image.style.social_x_large
+    - node.type.book
+  module:
+    - comment
+    - field_group
+    - file
+    - image
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_visibility:
+      children:
+        - field_content_visibility
+      parent_name: ''
+      weight: 2
+      label: Visibility
+      format_type: fieldset
+      format_settings:
+        label: Visibility
+        required_fields: true
+        id: visibility
+        classes: 'card card-underline scrollspy'
+    group_description:
+      children:
+        - body
+      parent_name: ''
+      weight: 1
+      label: Description
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_title:
+      children:
+        - title
+        - field_book_image
+      parent_name: ''
+      weight: 0
+      label: Content
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_attachments:
+      children:
+        - field_files
+      parent_name: ''
+      weight: 3
+      label: Attachments
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+id: node.book.default
+targetEntityType: node
+bundle: book
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 6
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+  field_book_comments:
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
+  field_book_image:
+    weight: 2
+    settings:
+      preview_image_style: social_x_large
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
+  field_content_visibility:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+  field_files:
+    weight: 10
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  path:
+    type: path
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 7
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

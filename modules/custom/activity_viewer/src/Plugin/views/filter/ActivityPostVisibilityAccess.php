@@ -45,6 +45,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'table' => 'post_field_data',
       'field' => 'id',
       'operator' => '=',
+      'extra' => array(
+        0 => array(
+          'left_field' => 'field_activity_entity_target_type',
+          'value' => 'post',
+        ),
+      ),
     );
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
@@ -66,9 +72,15 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       'table' => 'node_access',
       'field' => 'nid',
       'operator' => '=',
+      'extra' => array(
+        0 => array(
+          'left_field' => 'field_activity_entity_target_type',
+          'value' => 'node',
+        ),
+      ),
     );
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
-    $this->query->addRelationship('node_access', $join, 'asdfasfd');
+    $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 
     // Add queries.
     $and_wrapper = db_and();
@@ -112,6 +124,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
         'table' => 'comment_field_data',
         'field' => 'cid',
         'operator' => '=',
+        'extra' => array(
+          0 => array(
+            'left_field' => 'field_activity_entity_target_type',
+            'value' => 'comment',
+          ),
+        ),
       );
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('comment_field_data', $join, 'comments');

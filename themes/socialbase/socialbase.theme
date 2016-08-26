@@ -209,6 +209,22 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
 function socialbase_preprocess_block(&$variables) {
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
   $group = \Drupal::routeMatch()->getParameter('group');
+  $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
+
+  $variables['card'] = FALSE;
+  $region = $block->getRegion();
+  $regions_card = ['complementary', 'complementary_top', 'complementary_bottom', 'content_top', 'content_bottom'];
+
+  if (in_array($region, $regions_card)) {
+    $variables['card'] = TRUE;
+
+    $block_buttons = ['event_add_block', 'topic_add_block', 'group_add_block', 'group_add_event_block', 'group_add_topic_block'];
+
+    if (in_array($variables['elements']['#id'], $block_buttons)) {
+      $variables['card'] = FALSE;
+    }
+
+  }
 
   if (!is_null($profile_user_id) && is_object($profile_user_id)) {
     $profile_user_id = $profile_user_id->id();

@@ -1,3 +1,5 @@
+@import 'init';
+
 .card {
   @include clearfix;
   @include z-depth-1;
@@ -7,12 +9,16 @@
   @include border-radius($card-border-radius);
   transition: box-shadow .25s;
   background-clip: padding-box;
+
+  img {
+    max-width: 100%;
+  }
 }
 
 .card-head {
   position: relative;
   vertical-align: middle;
-  border-radius: 10px 10px 0 0;
+  border-radius: $card-border-radius $card-border-radius 0 0;
   padding: 15px $card-padding 0;
   color: $gray-light;
   line-height: 1;
@@ -148,10 +154,11 @@ a.card:hover {
       height: 220px;
       flex: 0 0 220px;
       position: relative;
-      border-radius: 10px 0 0 10px;
+      border-radius: $card-border-radius 0 0 $card-border-radius;
       overflow: hidden;
       width: auto;
       padding-top: 0;
+      background: $gray-lighter;
 
       img, .status {
         display: block;
@@ -195,7 +202,7 @@ a.card:hover {
     height: 30px;
     padding: 9px;
     background-color: $gray-light-1;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 ($card-border-radius -2) ($card-border-radius -2);
     left: 20px;
     position: relative;
     margin-bottom: -10px;
@@ -215,7 +222,7 @@ a.card:hover {
       width: 44px;
       height: 44px;
       padding: 12px;
-      border-radius: 0 0 10px 0;
+      border-radius: 0 0 $card-border-radius 0;
 
       .teaser-type-icon {
         width: 18px;

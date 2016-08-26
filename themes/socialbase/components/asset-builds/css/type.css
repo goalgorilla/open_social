@@ -531,6 +531,14 @@ code {
   max-width: 100%;
 }
 
+small {
+  font-size: 80%;
+}
+
+small .label {
+  font-size: 90%;
+}
+
 .text-xs {
   font-size: 0.4em;
 }
@@ -716,6 +724,36 @@ a.default-light:focus {
   background-color: #cdcdcd;
   border-color: #cdcdcd;
   color: #4d4d4d;
+}
+
+.list-item--collapsed,
+.list-item--expanded {
+  list-style: none;
+  position: relative;
+}
+
+.list-item--collapsed::before,
+.list-item--expanded::before {
+  content: '';
+  display: inline-block;
+  margin-left: -1em;
+  margin-right: 0.45em;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  border-top: 4px solid transparent;
+  border-top: 4px solid \9;
+  border-left: 4px dashed;
+  border-bottom: 4px solid transparent;
+}
+
+.list-item--expanded::before {
+  margin-left: -1.2em;
+  margin-right: 0.4em;
+  border-top: 4px dashed;
+  border-top: 4px solid \9;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
 }
 
 @media (min-width: 768px) {
