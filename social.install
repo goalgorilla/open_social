@@ -25,11 +25,6 @@ function social_install() {
   $user->roles[] = 'administrator';
   $user->save();
 
-  // Create the administrator role.
-  $data = array('id' => 'administrator', 'label' => 'Administrator');
-  $role = Role::create($data);
-  $role->save();
-
   // Create the content manager role.
   $data = array('id' => 'contentmanager', 'label' => 'Content manager');
   $role = Role::create($data);
