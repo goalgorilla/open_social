@@ -13,6 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use \Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -182,21 +184,19 @@ function socialbase_theme_suggestions_details_alter(array &$suggestions, array $
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_block_alter(array &$suggestions, array $variables) {
-  $block_id = $variables['elements']['#id'];
+  $block_id = $variables['elements']['#derivative_plugin_id'];
   $blocks_id = array(
-    'views_block__upcoming_events_block_my_upcoming_events',
-    'views_block__upcoming_events_block_community_events',
-    'views_block__latest_topics_default',
-    'views_block__newest_groups_block_newest_groups',
-    'views_block__newest_users_block_newest_users',
-    'views_block__newest_users_block_newest_users',
-
-    'views_block__events_block_events_on_profile',
-    'views_block__topics_block_user_topics',
-    'views_block__groups_block_user_groups',
-    'views_block__group_members_block_newest_members', // override block--views-block--group_members-block-newest-members.html.twig
-    'views_block__upcoming_events_upcoming_events_group',
-    'views_block__latest_topics_group_topics_block',
+    'upcoming_events-block_my_upcoming_events',
+    'upcoming_events-block_community_events',
+    'latest_topics-block_latest_topics',
+    'newest_groups-block_newest_groups',
+    'newest_users-block_newest_users',
+    'events-block_events_on_profile',
+    'topics-block_user_topics',
+    'groups-block_user_groups',
+    'group_members-block_newest_members',
+    'upcoming_events-upcoming_events_group',
+    'latest_topics-group_topics_block',
   );
   if (in_array($block_id, $blocks_id)) {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'views_block__sidebar');
@@ -209,6 +209,34 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
 function socialbase_preprocess_block(&$variables) {
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
   $group = \Drupal::routeMatch()->getParameter('group');
+  $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
+
+  // Fetch the current active (sub)theme.
+  $theme = \Drupal::theme()->getActiveTheme();
+  $prefix  = '';
+  // If socialbase is one of the basetheme, we need a prefix for block ids.
+  if (array_key_exists('socialbase', $theme->getBaseThemes())) {
+    $prefix = $theme->getName();
+  }
+
+  $variables['card'] = FALSE;
+  $region = $block->getRegion();
+  $regions_card = ['complementary', 'complementary_top', 'complementary_bottom', 'content_top', 'content_bottom'];
+
+  if (in_array($region, $regions_card)) {
+    $variables['card'] = TRUE;
+
+    if (array_key_exists('socialbase', $theme->getBaseThemes())) {
+      $prefix = $theme->getName() . '_';
+    }
+
+    $block_buttons = [$prefix . 'event_add_block', $prefix . 'topic_add_block', $prefix . 'group_add_block', $prefix . 'group_add_event_block', $prefix . 'group_add_topic_block'];
+
+    if (in_array($variables['elements']['#id'], $block_buttons)) {
+      $variables['card'] = FALSE;
+    }
+
+  }
 
   if (!is_null($profile_user_id) && is_object($profile_user_id)) {
     $profile_user_id = $profile_user_id->id();
@@ -240,7 +268,7 @@ function socialbase_preprocess_block(&$variables) {
 
   // Preprocess search block header.
   if (isset($variables['content']['search_content_form'])) {
-    if ($variables['elements']['#id'] != 'search_content_block_title') {
+    if ($variables['elements']['#id'] == 'search_content_block_header') {
       $variables['content']['search_content_form']['#attributes']['role'] = 'search';
       $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
       $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-left';
@@ -292,14 +320,12 @@ function socialbase_preprocess_block(&$variables) {
     }
     $variables['profile_user_id'] = $profile_user_id;
   }
-
   // AN Homepage block.
-  if ($variables['attributes']['id'] === 'block-anhomepageheroblock') {
+  if ($variables['attributes']['id'] === 'block-anhomepageheroblock' || $variables['attributes']['id'] === 'block-' . $prefix . '-anhomepageheroblock') {
     $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
     $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
     $entity = BlockContent::load($imageitem->id());
     $file_id = $entity->get('field_hero_image')->target_id;
-
     // If it's an existing file.
     if ($file = File::load($file_id)) {
       // Style and set it in the content.
@@ -319,48 +345,47 @@ function socialbase_preprocess_block(&$variables) {
 
 
   // Add variables to sidebar blocks
-  switch ($variables['elements']['#id']) {
-    case 'views_block__upcoming_events_block_my_upcoming_events':
+  switch ($variables['elements']['#derivative_plugin_id']) {
+    case 'upcoming_events-block_my_upcoming_events':
       $variables['view_all_path'] = 'my-events';
       break;
-    case 'views_block__upcoming_events_block_community_events':
+    case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'community-events';
       break;
-    case 'views_block__latest_topics_default':
+    case 'latest_topics-block_latest_topics':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'newest-topics';
       break;
-    case 'views_block__newest_groups_block_newest_groups':
+    case 'newest_groups-block_newest_groups':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'all-groups';
       break;
-    case 'views_block__newest_users_block_newest_users':
+    case 'newest_users-block_newest_users':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'newest-members';
       break;
-    case 'views_block__events_block_events_on_profile':
+    case 'events-block_events_on_profile':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $profile_user_id));
       break;
-    case 'views_block__topics_block_user_topics':
+    case 'topics-block_user_topics':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $profile_user_id));
       break;
-    case 'views_block__groups_block_user_groups':
+    case 'groups-block_user_groups':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $profile_user_id));
       break;
-
-    case 'views_block__group_members_block_newest_members':
+    case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = '/group/'.$group->id().'/members';
       break;
-    case 'views_block__upcoming_events_upcoming_events_group':
+    case 'upcoming_events-upcoming_events_group':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = '/group/'.$group->id().'/events';
       break;
-    case 'views_block__latest_topics_group_topics_block':
+    case 'latest_topics-group_topics_block':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = '/group/'.$group->id().'/topics';
       break;
@@ -434,7 +459,7 @@ function socialbase_preprocess_container(&$variables) {
 function socialbase_preprocess_page_title(&$variables) {
   // Get the current path and if is it stream return a variable.
   $current_path = \Drupal::service('path.current')->getPath();
-  if (strpos($current_path, 'stream') !== FALSE) {
+  if (strpos($current_path, 'stream') !== FALSE || strpos($current_path, 'explore') !== FALSE) {
     $variables['stream'] = TRUE;
   }
 
@@ -698,6 +723,8 @@ function socialbase_preprocess_field(&$variables) {
  * Implements hook_preprocess_page().
  */
 function socialbase_preprocess_page(&$variables) {
+  $variables['display_page_title'] = TRUE;
+
   // If we have the admin toolbar on screen we need overrides for our styles.
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
@@ -709,6 +736,33 @@ function socialbase_preprocess_page(&$variables) {
 
   $svg = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
   $variables['svg_icons'] = t('svg', array('svg' => $svg));
+
+  // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
+
+  // Determine if we are looking at a node
+
+  $nid = \Drupal::routeMatch()->getRawParameter('node');
+  $node = FALSE;
+
+  if (!is_null($nid) && !is_object($nid)) {
+    $node = Node::load($nid);
+  }
+
+  if ($node instanceof Node) {
+
+  // list pages where we want to hide the default page title
+    $page_to_exclude = [
+      'event',
+      'topic',
+      'page',
+      'book',
+    ];
+
+    if (in_array($node->bundle(), $page_to_exclude)) {
+      $variables['display_page_title'] = FALSE;
+    }
+  }
+
 }
 
 

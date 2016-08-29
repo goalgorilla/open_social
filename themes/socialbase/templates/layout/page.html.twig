@@ -92,7 +92,7 @@
       </div>
 
       <div class="col-xs-12 col-sm-8">
-        {% if page.title %}
+        {% if page.title and display_page_title %}
           {{ page.title }}
         {% endif %}
 
@@ -121,8 +121,12 @@
 
 </main>
 
-<footer role="contentinfo">
-  {{ page.footer }}
+<footer class="brand-secondary" role="contentinfo">
+  <div class="container clearfix">
+    <div class="navbar navbar-footer margin-top-l">
+      {{ page.footer }}
+    </div>
+  </div>
 </footer>
 
 {{ svg_icons }}

@@ -8,6 +8,10 @@
     margin: 0;
   }
 
+  .card {
+    margin: 0.75rem 0;
+  }
+
 }
 
 // Used on a hero block that can hold a background image.
@@ -36,6 +40,13 @@
     bottom: 0;
     z-index: 1;
   }
+
+  @include MQ($medium) {
+
+    .cover-wrap {
+      min-height: 335px;
+    }
+  }
 }
 
 .cover-with-canvas {
@@ -63,13 +74,10 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  text-align: center;
-
-  @include MQ($medium) {
-    height: 335px;
-  }
-
-
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .node-unpublished .status:before {
@@ -104,14 +112,7 @@
 
 .hero-footer {
   padding-top: 20px;
-
-  @include MQ($medium) {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
+  width: 100%;
 }
 
 .hero-footer-icon {

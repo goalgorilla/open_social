@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains social_page.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use \Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function social_page_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_page module.
+    case 'help.page.social_page':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Use basic pages for your static content, such as an About us page.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_node_links_alter().
+ */
+
+function social_page_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+  // Remove the add new comment link.
+  unset($links['comment__field_page_comments']['#links']['comment-add']);
+}
