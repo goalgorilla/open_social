@@ -26,11 +26,6 @@
 #}
 {{ menus.menu_links(items, attributes, 0) }}
 
-{#
- We attach a library for the search block.
-#}
-{{ attach_library('social_search/navbar-search') }}
-
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
