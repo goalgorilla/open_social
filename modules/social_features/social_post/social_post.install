@@ -1,24 +1,25 @@
 <?php
 /**
  * @file
- * Install, update and uninstall functions for the social_search module.
+ * Install, update and uninstall functions for the social_comment module.
  */
+
 
 /**
  * Implements hook_install().
  *
- * Perform actions related to the installation of social_search.
+ * Perform actions related to the installation of social_post.
  */
-function social_search_install() {
+function social_post_install() {
 
   // Set some default permissions.
-  _social_search_set_permissions();
+  _social_post_set_permissions();
 }
 
 /**
  * Function to set permissions.
  */
-function _social_search_set_permissions() {
+function _social_post_set_permissions() {
   $roles = \Drupal\user\Entity\Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
@@ -27,7 +28,7 @@ function _social_search_set_permissions() {
       continue;
     }
 
-    $permissions = _social_search_get_permissions($role->id());
+    $permissions = _social_post_get_permissions($role->id());
     user_role_grant_permissions($role->id(), $permissions);
   }
 }
@@ -36,16 +37,21 @@ function _social_search_set_permissions() {
  * @param $role
  * @return array
  */
-function _social_search_get_permissions($role) {
+function _social_post_get_permissions($role) {
   // Anonymous.
   $permissions['anonymous'] = array(
-    'access content search',
+    'view public posts',
+    'view published post entities',
   );
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
-    'access users search',
-    'access group search',
+    'add post entities',
+    'delete own post entities',
+    'edit own post entities',
+    'view community posts',
+    'view public posts',
+    'view published post entities',
   ));
 
 

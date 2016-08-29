@@ -5,7 +5,7 @@
  */
 
 use Drupal\taxonomy\Entity\Term;
-use Drupal\user\RoleInterface;
+use \Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
  * Implements hook_install().
@@ -15,16 +15,9 @@ use Drupal\user\RoleInterface;
 function social_topic_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
-    'view node.topic.field_content_visibility:public content',
-  ));
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
-    'create topic content',
-    'delete own topic content',
-    'edit own topic content',
-    'view node.topic.field_content_visibility:public content',
-    'view node.topic.field_content_visibility:community content',
-  ));
+  _social_topic_set_permissions();
+  // Add some links.
+  _social_topic_create_menu_links();
 
   // Create some default taxonomy terms.
   $terms = array(
@@ -40,5 +33,79 @@ function social_topic_install() {
     ]);
     $term->save();
   }
+}
 
+/**
+ * Function to set permissions.
+ */
+function _social_topic_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_topic_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_topic_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+    'view node.topic.field_content_visibility:public content',
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+    'create topic content',
+    'delete own topic content',
+    'edit own topic content',
+    'override topic published option',
+    'view node.topic.field_content_visibility:community content',
+  ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
+}
+
+/**
+ * Function to create some menu items.
+ */
+function _social_topic_create_menu_links() {
+  $menu_links = MenuLinkContent::loadMultiple();
+  $parent = NULL;
+  /** @var MenuLinkContent $menu_link */
+  foreach ($menu_links as $menu_link) {
+    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
+      $parent = 'menu_link_content:' . $menu_link->uuid();
+    }
+  }
+
+  if (!is_null($parent)) {
+    MenuLinkContent::create([
+      'title' => 'All topics',
+      'link' => ['uri' => 'internal:/newest-topics'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 40,
+      'parent' => $parent,
+    ])->save();
+  }
 }

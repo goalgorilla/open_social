@@ -4,7 +4,7 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
-use Drupal\user\RoleInterface;
+use \Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
  * Implements hook_install().
@@ -14,14 +14,82 @@ use Drupal\user\RoleInterface;
 function social_event_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
+  _social_event_set_permissions();
+  // Add menu links.
+  _social_event_create_menu_links();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_event_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_event_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_event_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
     'view node.event.field_content_visibility:public content',
-  ));
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'create event content',
     'delete own event content',
     'edit own event content',
-    'view node.event.field_content_visibility:public content',
+    'override event published option',
     'view node.event.field_content_visibility:community content',
   ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
+}
+
+/**
+ * Function to create some menu items.
+ */
+function _social_event_create_menu_links() {
+  $menu_links = MenuLinkContent::loadMultiple();
+  $parent = NULL;
+  /** @var MenuLinkContent $menu_link */
+  foreach ($menu_links as $menu_link) {
+    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
+      $parent = 'menu_link_content:' . $menu_link->uuid();
+    }
+  }
+
+  if (!is_null($parent)) {
+    MenuLinkContent::create([
+      'title' => 'All events',
+      'link' => ['uri' => 'internal:/community-events'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 30,
+      'parent' => $parent,
+    ])->save();
+  }
 }
