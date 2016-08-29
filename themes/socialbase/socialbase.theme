@@ -13,6 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use \Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -738,21 +740,27 @@ function socialbase_preprocess_page(&$variables) {
   // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
 
   // Determine if we are looking at a node
-  if ($node = \Drupal::routeMatch()->getParameter('node')) {
 
-    $content_type = $node->bundle();
+  $nid = \Drupal::routeMatch()->getRawParameter('node');
+  $node = FALSE;
 
-    // list pages where we want to hide the default page title
-    $page_to_exclude = array(
+  if (!is_null($nid) && !is_object($nid)) {
+    $node = Node::load($nid);
+  }
+
+  if ($node instanceof Node) {
+
+  // list pages where we want to hide the default page title
+    $page_to_exclude = [
       'event',
       'topic',
       'page',
       'book',
-    );
-    if (in_array($content_type, $page_to_exclude)) {
+    ];
+
+    if (in_array($node->bundle(), $page_to_exclude)) {
       $variables['display_page_title'] = FALSE;
     }
-
   }
 
 }

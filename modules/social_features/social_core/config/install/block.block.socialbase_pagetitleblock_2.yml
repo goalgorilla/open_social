@@ -6,29 +6,20 @@ dependencies:
     - system
   theme:
     - socialbase
-id: socialbase_pagetitleblock
+id: socialbase_pagetitleblock_2
 theme: socialbase
 region: hero
-weight: -15
+weight: -20
 provider: null
 plugin: social_page_title_block
 settings:
   id: social_page_title_block
-  label: 'Page title for nodes'
+  label: 'Page title for enrollments'
   provider: social_core
   label_display: '0'
 visibility:
-  node_type:
-    id: node_type
-    bundles:
-      event: event
-      page: page
-      topic: topic
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'
   request_path:
     id: request_path
-    pages: '/node/add/*'
-    negate: true
+    pages: '*/enrollments'
+    negate: false
     context_mapping: {  }
