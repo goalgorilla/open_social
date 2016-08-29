@@ -23,6 +23,10 @@ function _social_event_set_permissions() {
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
     $permissions = _social_event_get_permissions($role->id());
     user_role_grant_permissions($role->id(), $permissions);
   }
