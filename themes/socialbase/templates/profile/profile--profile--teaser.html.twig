@@ -46,6 +46,12 @@
         </div>
         {% endif %}
 
+        {% if content.field_profile_profile_tag['#items'] %}
+            {% for item in content.field_profile_profile_tag['#items'] %}
+                <div class="chip">{{ item.entity.label }}</div>
+            {% endfor %}
+        {% endif %}
+
         <div class="card-actionbar">
             {#@todo: replace contact url#}
             <a href="{{ profile_contact_url }}" class="btn btn-flat hidden-xs btn-primary">
