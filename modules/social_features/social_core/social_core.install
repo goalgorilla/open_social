@@ -6,6 +6,7 @@
 
 use Drupal\Core\Field\FieldItemList;
 use Drupal\file\Entity\File;
+use \Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
  * Implements hook_install().
@@ -18,6 +19,8 @@ function social_core_install() {
   _social_core_set_permissions();
   // Create AN Homepage block.
   _social_core_create_an_homepage_block();
+  // Add menu items
+  _social_core_create_menu_links();
 }
 
 /**
@@ -121,4 +124,30 @@ function _social_core_create_an_homepage_block() {
   $itemList->setValue($action_links);
   $block->field_call_to_action_link = $itemList;
   $block->save();
+}
+
+
+/**
+ * Function to create some menu items.
+ */
+function _social_core_create_menu_links() {
+  // Home.
+  MenuLinkContent::create([
+    'title' => 'Home',
+    'link' => ['uri' => 'internal:/'],
+    'menu_name' => 'main',
+    'expanded' => FALSE,
+    'weight' => 10,
+  ])->save();
+
+  // Explore.
+  MenuLinkContent::create([
+    'title' => 'Explore',
+    // This way we get an empty link.
+    'link' => ['uri' => 'internal:'],
+    'menu_name' => 'main',
+    'expanded' => TRUE,
+    'weight' => 20,
+  ])->save();
+
 }

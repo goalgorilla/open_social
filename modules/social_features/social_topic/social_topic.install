@@ -5,6 +5,7 @@
  */
 
 use Drupal\taxonomy\Entity\Term;
+use \Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
  * Implements hook_install().
@@ -15,6 +16,8 @@ function social_topic_install() {
 
   // Set some default permissions.
   _social_topic_set_permissions();
+  // Add some links.
+  _social_topic_create_menu_links();
 
   // Create some default taxonomy terms.
   $terms = array(
@@ -80,4 +83,29 @@ function _social_topic_get_permissions($role) {
   ));
 
   return $permissions[$role];
+}
+
+/**
+ * Function to create some menu items.
+ */
+function _social_topic_create_menu_links() {
+  $menu_links = MenuLinkContent::loadMultiple();
+  $parent = NULL;
+  /** @var MenuLinkContent $menu_link */
+  foreach ($menu_links as $menu_link) {
+    if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
+      $parent = 'menu_link_content:' . $menu_link->uuid();
+    }
+  }
+
+  if (!is_null($parent)) {
+    MenuLinkContent::create([
+      'title' => 'All topics',
+      'link' => ['uri' => 'internal:/newest-topics'],
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'weight' => 40,
+      'parent' => $parent,
+    ])->save();
+  }
 }
