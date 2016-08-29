@@ -457,7 +457,7 @@ function socialbase_preprocess_container(&$variables) {
 function socialbase_preprocess_page_title(&$variables) {
   // Get the current path and if is it stream return a variable.
   $current_path = \Drupal::service('path.current')->getPath();
-  if (strpos($current_path, 'stream') !== FALSE) {
+  if (strpos($current_path, 'stream') !== FALSE || strpos($current_path, 'explore') !== FALSE) {
     $variables['stream'] = TRUE;
   }
 
