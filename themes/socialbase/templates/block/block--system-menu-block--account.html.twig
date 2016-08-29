@@ -34,36 +34,20 @@
 
 {# Extra wrapper, only when it is a logged in user #}
 {% if logged_in %}
-      <div class="block--user-menu">
-    {% endif %}
+  <div class="block--user-menu">
+{% endif %}
 
-    {# Label. If not displayed, we still provide it for screen readers. #}
-    {% if not configuration.label_display %}
-      {% set title_attributes = title_attributes.addClass('visually-hidden') %}
-    {% endif %}
-    {{ title_prefix }}
-    <h2{{ title_attributes }}>{{ configuration.label }}</h2>
-    {{ title_suffix }}
+{# Label. If not displayed, we still provide it for screen readers. #}
+{% if not configuration.label_display %}
+  {% set title_attributes = title_attributes.addClass('visually-hidden') %}
+{% endif %}
+{{ title_prefix }}
+<h2{{ title_attributes }}>{{ configuration.label }}</h2>
+{{ title_suffix }}
 
-    {# Menu. #}
-    {{ content }}
+{# Menu. #}
+{{ content }}
 
-
-    {% if logged_in %}
-      </div>
-    {% endif %}
-
-    <!-- <div id="menu-dropdown" aria-expanded="false" class="collapse navbar-collapse">
-      <ul class="nav navbar-nav">
-
-        <li><a href="{{ path('<front>') }}">{% trans %} Home {% endtrans %}</a></li>
-        <li class="dropdown"><a href="#" class="dropdown-toggle clearfix" data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button>{% trans %} Explore {% endtrans %} <span class="caret"</span></a>
-          <ul class="dropdown-menu">
-            <li><a href="/explore">{% trans %} Community {% endtrans %}</a></li>
-            <li><a href="/community-events">{% trans %} All Events {% endtrans %}</a></li>
-            <li><a href="/newest-topics">{% trans %} All topics {% endtrans %}</a></li>
-          </ul>
-        </li>
-
-      </ul>
-    </div> -->
+{% if logged_in %}
+  </div>
+{% endif %}
