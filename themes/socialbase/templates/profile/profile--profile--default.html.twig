@@ -109,5 +109,11 @@
                 <div class="chip">{{ item.entity.label }}</div>
             {% endfor %}
         {% endif %}
+        {% if content.field_profile_profile_tag['#items'] %}
+            <h4>{% trans %}Profile tags{% endtrans %}</h4>
+            {% for item in content.field_profile_profile_tag['#items'] %}
+                <div class="chip">{{ item.entity.label }}</div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
