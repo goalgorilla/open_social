@@ -4,9 +4,6 @@
  * Install, update and uninstall functions for the social_book module.
  */
 
-use Drupal\user\RoleInterface;
-use \Drupal\user\Entity\Role;
-
 /**
  * Implements hook_install().
  *
@@ -15,25 +12,48 @@ use \Drupal\user\Entity\Role;
 function social_book_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
-    'view node.book.field_content_visibility:public content',
-  ));
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
-    'view node.book.field_content_visibility:public content',
-    'view node.book.field_content_visibility:community content',
-  ));
+  _social_book_set_permissions();
+}
 
-  // Fetch other roles.
-  $roles = Role::loadMultiple();
+/**
+ * Function to set permissions.
+ */
+function _social_book_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
 
-  /** @var Role $role */
+  /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    // Check CM / SM
-    if (in_array($role->id(), array('contentmanager', 'sitemanager'))) {
-      user_role_grant_permissions($role->id(), array(
-        'view node.book.field_content_visibility:public content',
-        'view node.book.field_content_visibility:community content',
-      ));
-    }
+    $permissions = _social_book_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
   }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_book_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+    'view node.book.field_content_visibility:public content'
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+    'view node.book.field_content_visibility:community content'
+  ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+    'create new books',
+    'add content to books',
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
 }

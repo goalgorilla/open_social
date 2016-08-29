@@ -4,23 +4,17 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
-use Drupal\user\RoleInterface;
-use Drupal\File\Entity\File;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_install().
  *
- * Perform actions related to the installation of social_feature.
+ * Perform actions related to the installation of social_profile.
  */
 function social_profile_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
-    'add own profile profile',
-    'edit own profile profile',
-    'view any profile profile',
-    'view own profile profile',
-  ));
+  _social_profile_set_permissions();
 
   // Add default image.
   $config_factory = \Drupal::configFactory();
@@ -42,4 +36,49 @@ function social_profile_install() {
 
   $field_image_config->set('settings.default_image', $default_image)->save(TRUE);
   drupal_flush_all_caches();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_profile_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    $permissions = _social_profile_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_profile_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+    'add own profile profile',
+    'edit own profile profile',
+    'view any profile profile',
+    'view own profile profile',
+  ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
 }
