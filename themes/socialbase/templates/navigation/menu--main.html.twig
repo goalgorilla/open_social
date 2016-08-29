@@ -30,9 +30,9 @@
   {% import _self as menus %}
   {% if items %}
     {% if menu_level == 0 %}
-      <ul{{ attributes.addClass('menu', 'nav', 'navbar-nav') }}>
+      <ul class="nav navbar-nav">
     {% else %}
-      <ul{{ attributes.addClass('dropdown-menu') }}>
+      <ul class="dropdown-menu">
     {% endif %}
     {% for item in items %}
       {%
@@ -46,7 +46,7 @@
         <li{{ item.attributes.addClass(item_classes) }}>
         <a href="{{ item.url }}" class="dropdown-toggle" data-target="#" data-toggle="dropdown">{{ item.title }} <span class="caret"></span></a>
       {% else %}
-        <li{{ item.attributes.addClass(item_classes) }}>
+        <li>
         {{ link(item.title, item.url) }}
       {% endif %}
       {% if item.below %}

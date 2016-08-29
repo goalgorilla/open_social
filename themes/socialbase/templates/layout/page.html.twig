@@ -50,10 +50,9 @@
  * @see html.html.twig
  */
 #}
-
-<header id="header" role="banner" aria-label="{{ 'Site header'|t}}">
-  {{ page.header }}
-</header>
+<nav class="navbar navbar-default navbar-fixed-top z-depth-2" role="navigation" aria-labelledby="{{ heading_id }}">
+  <div class="container">{{ page.header }}</div>
+</nav>
 
 <main id="content" class="column main-container" role="main">
 
@@ -121,12 +120,14 @@
 
 </main>
 
-<footer class="brand-secondary" role="contentinfo">
-  <div class="container clearfix">
-    <div class="navbar navbar-footer margin-top-l">
-      {{ page.footer }}
+{% if page.footer %}
+  <footer class="brand-secondary" role="contentinfo">
+    <div class="container clearfix">
+      <div class="navbar navbar-footer margin-top-l">
+        {{ page.footer }}
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+{% endif %}
 
 {{ svg_icons }}
