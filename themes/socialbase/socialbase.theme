@@ -721,6 +721,8 @@ function socialbase_preprocess_field(&$variables) {
  * Implements hook_preprocess_page().
  */
 function socialbase_preprocess_page(&$variables) {
+  $variables['display_page_title'] = TRUE;
+
   // If we have the admin toolbar on screen we need overrides for our styles.
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
@@ -732,6 +734,27 @@ function socialbase_preprocess_page(&$variables) {
 
   $svg = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
   $variables['svg_icons'] = t('svg', array('svg' => $svg));
+
+  // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
+
+  // Determine if we are looking at a node
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+
+    $content_type = $node->bundle();
+
+    // list pages where we want to hide the default page title
+    $page_to_exclude = array(
+      'event',
+      'topic',
+      'page',
+      'book',
+    );
+    if (in_array($content_type, $page_to_exclude)) {
+      $variables['display_page_title'] = FALSE;
+    }
+
+  }
+
 }
 
 
