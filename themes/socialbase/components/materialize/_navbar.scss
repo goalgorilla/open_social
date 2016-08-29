@@ -3,13 +3,7 @@
 .navbar-fixed-top {
 
   .navbar-nav {
-  margin: 0;
-  }
-
-  .navbar-header {
-    @include MQ($small) {
-      float: right;
-    }
+    margin: 0;
   }
 
   .navbar-right .dropdown-menu {
@@ -23,12 +17,8 @@
 
   @media (min-width: $grid-float-breakpoint) {
 
-    .navbar > .container .navbar-brand {
+    > .container .navbar-brand {
       margin-left: 0;
-    }
-
-    .container > .navbar-collapse {
-      margin-left: 60px; // make sure navbar-brand is clickable
     }
 
     .navbar-right {
@@ -206,6 +196,8 @@
     box-shadow: none;
     border: 0;
     margin: 6px 0;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
 
@@ -283,9 +275,14 @@
     margin-left: 10px;
   }
 
-  .navbar-fixed-top .navbar-nav > li.navbar-search {
+  .navbar-search {
     float: right;
   }
+
+  .navbar-collapse {
+    float: left;
+  }
+
 }
 
 .navbar .dropdown .badge {
@@ -302,9 +299,6 @@
 
 
 .navbar-form[role='search'] {
-  width: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
 
   .form-group {
     position: relative;

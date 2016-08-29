@@ -33,27 +33,11 @@
  * @ingroup templates
  */
 #}
-{% set heading_id = attributes.id ~ '-menu'|clean_id %}
+<div id="main-navigation" class="collapse navbar-collapse">
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+  <div class='navbar-search'>{{ content.links.search_block }}</div>
+</div>
 
-<header class="navbar navbar-inverse row" id="navbar" role="banner">
-  <div class="container">
-    <div class="navbar-header">
-
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
-        <span class="sr-only">{{ 'Toggle navigation'|t }}</span>
-        <span>Menu</span>
-      </button>
-
-    </div>
-
-    <div id="navbar-collapse" class="navbar-collapse collapse">
-
-      <nav role="navigation" aria-labelledby="{{ heading_id }}"{{ attributes.removeClass('clearfix')|without('role', 'aria-labelledby') }}>
-        {% block content %}
-          {{ content }}
-        {% endblock %}
-      </nav>
-    </div>
-  </div>
-
-</header>
+{{ attach_library('social_search/navbar-search') }}

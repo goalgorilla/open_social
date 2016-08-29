@@ -4036,9 +4036,9 @@ span.form-required {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
 }
 
 .node-unpublished .status:before {
@@ -4479,6 +4479,8 @@ hr.ruler-l {
   box-shadow: none;
   border: 0;
   margin: 6px 0;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .navbar-brand {
@@ -4557,12 +4559,6 @@ hr.ruler-l {
   background-color: #ffc142;
   color: #4d4d4d;
   border-radius: 50%;
-}
-
-.navbar-form[role='search'] {
-  width: 100%;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 .navbar-form[role='search'] .form-group {
@@ -6294,11 +6290,8 @@ input[type=range]:focus::-ms-fill-upper {
     -ms-flex-item-align: end;
     align-self: flex-end;
   }
-  .navbar-fixed-top .navbar > .container .navbar-brand{
+  .navbar-fixed-top > .container .navbar-brand{
     margin-left: 0;
-  }
-  .navbar-fixed-top .container > .navbar-collapse{
-    margin-left: 60px;
   }
   .navbar-fixed-top .navbar-right{
     margin-right: 0;
@@ -6366,9 +6359,6 @@ input[type=range]:focus::-ms-fill-upper {
     width: 128px;
     height: 128px;
   }
-  .navbar-fixed-top .navbar-header{
-    float: right;
-  }
   .navbar-footer .navbar-brand{
     width: auto;
     float: left;
@@ -6383,8 +6373,11 @@ input[type=range]:focus::-ms-fill-upper {
   .navbar-fixed-top .navbar-nav{
     margin-left: 10px;
   }
-  .navbar-fixed-top .navbar-nav > li.navbar-search{
+  .navbar-search{
     float: right;
+  }
+  .navbar-collapse{
+    float: left;
   }
   .navbar-form[role='search'] .form-group{
     border-radius: 5px;
