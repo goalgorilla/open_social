@@ -13,6 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use \Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -456,7 +458,7 @@ function socialbase_preprocess_container(&$variables) {
 function socialbase_preprocess_page_title(&$variables) {
   // Get the current path and if is it stream return a variable.
   $current_path = \Drupal::service('path.current')->getPath();
-  if (strpos($current_path, 'stream') !== FALSE) {
+  if (strpos($current_path, 'stream') !== FALSE || strpos($current_path, 'explore') !== FALSE) {
     $variables['stream'] = TRUE;
   }
 
@@ -720,6 +722,8 @@ function socialbase_preprocess_field(&$variables) {
  * Implements hook_preprocess_page().
  */
 function socialbase_preprocess_page(&$variables) {
+  $variables['display_page_title'] = TRUE;
+
   // If we have the admin toolbar on screen we need overrides for our styles.
   if ($variables['is_admin']) {
     $variables['#attached']['library'][] = 'socialbase/admin';
@@ -731,6 +735,33 @@ function socialbase_preprocess_page(&$variables) {
 
   $svg = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
   $variables['svg_icons'] = t('svg', array('svg' => $svg));
+
+  // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
+
+  // Determine if we are looking at a node
+
+  $nid = \Drupal::routeMatch()->getRawParameter('node');
+  $node = FALSE;
+
+  if (!is_null($nid) && !is_object($nid)) {
+    $node = Node::load($nid);
+  }
+
+  if ($node instanceof Node) {
+
+  // list pages where we want to hide the default page title
+    $page_to_exclude = [
+      'event',
+      'topic',
+      'page',
+      'book',
+    ];
+
+    if (in_array($node->bundle(), $page_to_exclude)) {
+      $variables['display_page_title'] = FALSE;
+    }
+  }
+
 }
 
 
