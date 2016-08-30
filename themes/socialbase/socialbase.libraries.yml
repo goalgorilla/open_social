@@ -1,30 +1,56 @@
-global-styling:
-  version: 1.x
+# The SMACSS category "base" is loaded first.
+normalize:
   css:
-    # The SMACSS category, "base", is loaded before other categories. Drupal 8
-    # loads stylesheets based on the SMACSS ordering of:
-    # base, layout, component, state, theme
     base:
-      # The {} brackets allow you to specify the additional options, weight and
-      # media. For example, you can specify this is a print media stylesheet by
-      # specifying: { media: print } Note: this isn't recommended since
-      # separate print stylesheets is bad for front-end performance.
-      components/asset-builds/css/materialize.css: {}
+      components/asset-builds/css/normalize.css: {}
+buttons:
+  css:
+    base:
+      components/asset-builds/css/buttons.css: {}
+      components/asset-builds/css/waves.css: {}
   js:
-    js/custom/offcanvas.js: {}
-    js/contrib/bootstrap.min.js: {}
+    js/contrib/bootstrap/button.js: {}
+    js/contrib/waves/waves.js: {}
+forms:
+  css:
+    base:
+      components/asset-builds/css/forms.css: {}
+  js:
+    js/custom/textarea-autogrow.js: {}
   dependencies:
     - core/drupal.form
+scaffolding:
+  css:
+    base:
+      components/asset-builds/css/scaffolding.css: {}
+tables:
+  css:
+    base:
+      components/asset-builds/css/tables.css: {}
+type:
+  css:
+    base:
+      components/asset-builds/css/type.css: {}
+utilities:
+  css:
+    base:
+      components/asset-builds/css/utilities.css: {}
+  js:
+    js/contrib/bootstrap/transition.js: {}
+print:
+  css:
+    base:
+      components/asset-builds/css/print.css: { media: print }
 
+# The SMACSS category, "layout", is loaded after "base" styles.
 layout:
   css:
-    # The SMACSS category, "layout", is loaded after "base" styles.
     layout:
       components/asset-builds/css/layout.css: {}
 
+# The SMACSS category, "component", is loaded after "layout" styles.
 icons:
   css:
-    # The SMACSS category, "component", is loaded after "layout" styles.
     component:
       components/asset-builds/css/icons.css: {}
 admin:
@@ -35,6 +61,8 @@ alerts:
   css:
     component:
       components/asset-builds/css/alerts.css: {}
+  js:
+    js/contrib/bootstrap/alert.js: {}
 badges:
   css:
     component:
@@ -43,10 +71,7 @@ book:
   css:
     component:
       components/asset-builds/css/book.css: {}
-buttons:
-  css:
-    component:
-      components/asset-builds/css/buttons.css: {}
+
 breadcrumbs:
   css:
     component:
@@ -63,16 +88,25 @@ dropdowns:
   css:
     component:
       components/asset-builds/css/dropdowns.css: {}
-forms:
+  js:
+    js/contrib/bootstrap/dropdown.js: {}
+file:
   css:
     component:
-      components/asset-builds/css/forms.css: {}
-  js:
-    js/custom/textarea-autogrow.js: {}
+      components/asset-builds/css/file.css: {}
+
 grid:
   css:
     component:
       components/asset-builds/css/grid.css: {}
+hero:
+  css:
+    component:
+      components/asset-builds/css/hero.css: {}
+input-groups:
+  css:
+    component:
+      components/asset-builds/css/input-groups.css: {}
 labels:
   css:
     component:
@@ -81,19 +115,33 @@ list-group:
   css:
     component:
       components/asset-builds/css/list-group.css: {}
+media:
+  css:
+    component:
+      components/asset-builds/css/media.css: {}
 modals:
   css:
     component:
       components/asset-builds/css/modals.css: {}
+  js:
+    js/contrib/bootstrap/modal.js: {}
 navbar:
   css:
     component:
       components/asset-builds/css/navbar.css: {}
   js:
+    js/contrib/bootstrap/collapse.js: {}
     js/custom/navbar-collapse.js: {}
 navbar-search:
   js:
     js/custom/navbar-search.js: {}
+off-canvas:
+  css:
+    component:
+      components/asset-builds/css/off-canvas.css: {}
+  js:
+    js/custom/offcanvas.js: {}
+
 pagination:
   css:
     component:
@@ -102,14 +150,17 @@ popovers:
   css:
     component:
       components/asset-builds/css/popovers.css: {}
-scaffolding:
+  js:
+    js/contrib/bootstrap/tooltip.js: {}
+    js/contrib/bootstrap/popover.js: {}
+preview:
   css:
     component:
-      components/asset-builds/css/scaffolding.css: {}
-type:
+      components/asset-builds/css/preview.css: {}
+stream:
   css:
     component:
-      components/asset-builds/css/type.css: {}
+      components/asset-builds/css/stream.css: {}
 drupal.ajax:
   css:
     component:
@@ -128,10 +179,7 @@ pickadate:
 drupal.tabledrag:
   js:
     js/misc/tabledrag.js: {}
-tables:
-  css:
-    component:
-      components/asset-builds/css/tables.css: {}
+
 tablesaw:
   css:
     component:
@@ -139,19 +187,20 @@ tablesaw:
   js:
     js/contrib/tablesaw/tablesaw.js: {}
     js/contrib/tablesaw/tablesaw-init.js: {}
-utilities:
+tabs:
   css:
     component:
-      components/asset-builds/css/utilities.css: {}
-waves:
-  css:
-    component:
-      components/asset-builds/css/waves.css: {}
+      components/asset-builds/css/tabs.css: {}
   js:
-    js/contrib/waves/waves.js: {}
-
+    js/contrib/bootstrap/tab.js: {}
 
 responsive-dom:
   js:
     js/contrib/responsive-dom/jquery.responsive-dom.js: {}
     js/custom/responsive-dom/responsive-dom-init.js: {}
+
+# The SMACSS category, "theme", is loaded after "components".
+fonts:
+  css:
+    component:
+      components/asset-builds/css/fonts.css: {}

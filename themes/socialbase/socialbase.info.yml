@@ -5,29 +5,31 @@ description: Theme layer for drupal social.
 core: 8.x
 
 # The "libraries:" section will add a library to _all_ pages.
+# The order here is determined first by SMACSS category and after that you can determine the order here.
 libraries:
-  - socialbase/global-styling
-  # @TODO Split up global-styling into components
-  - socialbase/alerts
-  - socialbase/badges
+  - socialbase/print
+  - socialbase/normalize
   - socialbase/buttons
-  - socialbase/cards
-  - socialbase/dropdowns
   - socialbase/forms
-  - socialbase/grid
-  - socialbase/icons
-  - socialbase/layout
-  - socialbase/labels
-  - socialbase/list-group
-  - socialbase/modals
-  - socialbase/navbar
-  - socialbase/pagination
-  - socialbase/popovers
   - socialbase/scaffolding
   - socialbase/tables
   - socialbase/type
   - socialbase/utilities
-  - socialbase/waves
+  - socialbase/alerts
+  - socialbase/badges
+  - socialbase/cards
+  - socialbase/dropdowns
+  - socialbase/hero
+  - socialbase/grid
+  - socialbase/icons
+  - socialbase/input-groups
+  - socialbase/layout
+  - socialbase/labels
+  - socialbase/list-group
+  - socialbase/media
+  - socialbase/modals
+  - socialbase/navbar
+  - socialbase/tabs
 
 # Add the type css to be loaded by the ckeditor iframe.
 ckeditor_stylesheets:
