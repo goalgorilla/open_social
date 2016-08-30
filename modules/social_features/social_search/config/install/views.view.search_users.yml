@@ -7,7 +7,6 @@ dependencies:
     - taxonomy.vocabulary.interests
     - taxonomy.vocabulary.profile_tag
   module:
-    - better_exposed_filters
     - search_api
     - user
 id: search_users
@@ -43,39 +42,15 @@ display:
           skip_access: false
           parse_mode: terms
       exposed_form:
-        type: bef
+        type: basic
         options:
           submit_button: Filter
-          reset_button: 1
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: 1
+          expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
-          bef:
-            general:
-              allow_secondary: 0
-              secondary_label: 'Advanced options'
-            field_profile_expertise:
-              bef_format: default
-              more_options:
-                is_secondary: 0
-                rewrite:
-                  filter_rewrite_values: ''
-            field_profile_interests:
-              bef_format: default
-              more_options:
-                is_secondary: 0
-                rewrite:
-                  filter_rewrite_values: ''
-            field_profile_profile_tag:
-              bef_format: bef
-              more_options:
-                bef_select_all_none: 0
-                bef_collapsible: 0
-                is_secondary: 0
-                rewrite:
-                  filter_rewrite_values: ''
       pager:
         type: mini
         options:
