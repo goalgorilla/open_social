@@ -5,7 +5,9 @@ dependencies:
     - search_api.index.social_users
     - taxonomy.vocabulary.expertise
     - taxonomy.vocabulary.interests
+    - taxonomy.vocabulary.profile_tag
   module:
+    - better_exposed_filters
     - search_api
     - user
 id: search_users
@@ -41,15 +43,39 @@ display:
           skip_access: false
           parse_mode: terms
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Filter
-          reset_button: true
+          reset_button: 1
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: 1
           sort_asc_label: Asc
           sort_desc_label: Desc
+          bef:
+            general:
+              allow_secondary: 0
+              secondary_label: 'Advanced options'
+            field_profile_expertise:
+              bef_format: default
+              more_options:
+                is_secondary: 0
+                rewrite:
+                  filter_rewrite_values: ''
+            field_profile_interests:
+              bef_format: default
+              more_options:
+                is_secondary: 0
+                rewrite:
+                  filter_rewrite_values: ''
+            field_profile_profile_tag:
+              bef_format: bef
+              more_options:
+                bef_select_all_none: 0
+                bef_collapsible: 0
+                is_secondary: 0
+                rewrite:
+                  filter_rewrite_values: ''
       pager:
         type: mini
         options:
@@ -223,6 +249,53 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: search_api_term
+        field_profile_profile_tag:
+          id: field_profile_profile_tag
+          table: search_api_index_social_users
+          field: field_profile_profile_tag
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_profile_profile_tag_op
+            label: 'Profile tag'
+            description: ''
+            use_operator: false
+            operator: field_profile_profile_tag_op
+            identifier: profile_tag
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: profile_tag
+          hierarchy: false
+          error_message: false
+          plugin_id: search_api_term
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -297,7 +370,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           break_phrase: false
-          not: 0
+          not: false
           fields: {  }
           conjunction: AND
           plugin_id: search_api_fulltext
