@@ -58,7 +58,17 @@ function _social_event_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'delete any event content',
+    'edit any event content',
+    'revert event revisions',
+    'delete event revisions',
+    'view event revisions',
+    'override event revision log entry',
+    'override event authored by option',
+    'override event authored on option',
+    'override event promote to front page option',
+    'override event revision option',
+    'override event sticky option',
   ));
 
   // Site manager.
