@@ -38,11 +38,14 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
 function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
 
-  // Check for permission
+  // Check for permission on custom edit profile tags, it's only for CM+ who can
+  // actually edit a users profile and add profile tags there.
   if (!$user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
   }
-  if(empty($form['field_profile_profile_tag']['#options'])) {
+  // We hide the label and form field when there are no options. This is the
+  // case by default. Since we provide an empty vocabulary.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
     unset($form['field_profile_profile_tag']);
   }
 
@@ -62,11 +65,14 @@ function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInt
 function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
 
-  // Check for permission
+  // Check for permission on custom edit profile tags, it's only for CM+ who can
+  // actually edit a users profile and add profile tags there.
   if (!$user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
   }
-  if (empty($form['field_profile_profile_tag']['#options'])) {
+  // We hide the label and form field when there are no options. This is the
+  // case by default. Since we provide an empty vocabulary.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
     unset($form['field_profile_profile_tag']);
   }
 
