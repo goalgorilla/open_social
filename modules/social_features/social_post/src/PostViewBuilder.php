@@ -96,6 +96,7 @@ class PostViewBuilder extends EntityViewBuilder {
         'title' => t('Delete'),
         'weight' => 100,
         'url' => $entity->urlInfo('delete-form'),
+        'query' => array('destination' => \Drupal::destination()->get()),
       );
     }
 
