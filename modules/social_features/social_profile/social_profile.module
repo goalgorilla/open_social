@@ -42,6 +42,9 @@ function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInt
   if (!$user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
   }
+  if(empty($form['field_profile_profile_tag']['#options'])) {
+    unset($form['field_profile_profile_tag']);
+  }
 
   // Remove the save and set default submit button on profile creation.
   if (isset($form['actions']['set_default'])) {
@@ -62,6 +65,9 @@ function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateIn
   // Check for permission
   if (!$user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
+  }
+  if (empty($form['field_profile_profile_tag']['#options'])) {
+    unset($form['field_profile_profile_tag']);
   }
 
   // Remove the save and set default submit button on profile edit.
@@ -110,6 +116,9 @@ function social_profile_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\
   if ($form['#id'] == 'views-exposed-form-search-users-page') {
     if (!empty($form['profile_tag'])) {
       $form['profile_tag']['#type'] = 'checkboxes';
+    }
+    if (empty($form['profile_tag']['#options'])) {
+      unset($form['profile_tag']);
     }
   }
 }
