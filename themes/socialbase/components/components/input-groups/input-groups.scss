@@ -1,0 +1,22 @@
+@import "init";
+
+@import "contrib/bootstrap/input-groups";
+
+.input-group {
+  max-width: 23rem;
+}
+
+.input-group-addon {
+  @include transition(border-color ease-in-out .15s, box-shadow ease-in-out .15s);
+  @include border-right-radius($input-border-radius);
+}
+
+.input-group .form-control:focus ~ .input-group-addon {
+  border-color: $brand-primary;
+  outline: 0;
+  border-bottom: 1px solid $brand-primary;
+  box-shadow: 0 2px 0 0 $brand-primary;
+}
+.input-group-addon, .input-group-btn {
+  width: auto;
+}

@@ -1,0 +1,340 @@
+* {
+  box-sizing: border-box;
+}
+
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #4d4d4d;
+  background-color: #f3f3f3;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+a {
+  color: #29abe2;
+  text-decoration: none;
+}
+
+a:hover, a:focus {
+  color: #177da8;
+  text-decoration: none;
+}
+
+a:focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+figure {
+  margin: 0;
+}
+
+img {
+  vertical-align: middle;
+}
+
+.img-responsive {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-rounded {
+  border-radius: 12px;
+}
+
+.img-thumbnail {
+  padding: 0;
+  line-height: 1.5;
+  background-color: #f3f3f3;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-circle {
+  border-radius: 50%;
+}
+
+hr {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  border: 0;
+  border-top: 1px solid #e6e6e6;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.sr-only-focusable:active, .sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+}
+
+[role="button"] {
+  cursor: pointer;
+}
+
+i {
+  line-height: inherit;
+}
+
+i.pull-left {
+  margin-right: 5px;
+}
+
+i.pull-right {
+  margin-left: 5px;
+}
+
+i.tiny {
+  font-size: 1rem;
+}
+
+i.small {
+  font-size: 2rem;
+}
+
+i.medium {
+  font-size: 4rem;
+}
+
+i.large {
+  font-size: 6rem;
+}
+
+.img-medium {
+  width: 44px;
+  height: 44px;
+}
+
+.img-small {
+  width: 24px;
+  height: 24px;
+}
+
+.img-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  padding-bottom: 10px;
+}
+
+.img-grid img {
+  margin: 3px;
+}
+
+.img-bordered {
+  border: 3px solid white;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.margin-left-s {
+  margin-left: 5px;
+}
+
+.margin-left-m {
+  margin-left: 10px;
+}
+
+.margin-left-l {
+  margin-left: 20px;
+}
+
+.margin-left-xl {
+  margin-left: 30px;
+}
+
+.margin-bottom-s {
+  margin-bottom: 5px;
+}
+
+.margin-bottom-m {
+  margin-bottom: 10px;
+}
+
+.margin-bottom-l {
+  margin-bottom: 20px;
+}
+
+.margin-bottom-xl {
+  margin-bottom: 30px;
+}
+
+.margin-top-s {
+  margin-top: 5px;
+}
+
+.margin-top-m {
+  margin-top: 10px;
+}
+
+.margin-top-l {
+  margin-top: 20px;
+}
+
+.margin-top-xl {
+  margin-top: 30px;
+}
+
+.margin-top-xxl {
+  margin-top: 40px;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.padding-xs {
+  padding: 6px;
+}
+
+.padding-sm {
+  padding: 12px;
+}
+
+.padding-md {
+  padding: 24px;
+}
+
+.padding-lg {
+  padding: 48px;
+}
+
+.no-side-padding {
+  padding: 24px 0;
+}
+
+.no-border {
+  border: 0 !important;
+}
+
+.inline-center {
+  vertical-align: middle;
+  line-height: 1;
+  margin-right: 5px;
+}
+
+.align-center {
+  -ms-flex-item-align: center;
+      align-self: center;
+}
+
+.block {
+  display: block;
+}
+
+.pin-top, .pin-bottom {
+  position: relative;
+}
+
+.pinned {
+  position: fixed !important;
+}
+
+hr.ruler-xs {
+  margin: 2px 0;
+}
+
+hr.ruler-sm {
+  margin: 10px 0;
+}
+
+hr.ruler-md {
+  margin: 15px 0;
+}
+
+hr.ruler-s {
+  margin: 9.6px 0;
+}
+
+hr.ruler-l {
+  margin: 60px 0;
+}
+
+.js .js-hide {
+  display: none;
+}
+
+.js-show {
+  display: none;
+}
+
+.js .js-show {
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  word-wrap: normal;
+}
+
+.z-depth-0 {
+  box-shadow: none;
+}
+
+.z-depth-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.z-depth-2 {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.z-depth-3 {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.z-depth-4 {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.z-depth-5 {
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+}
+
+/*# sourceMappingURL=scaffolding.css.map */
