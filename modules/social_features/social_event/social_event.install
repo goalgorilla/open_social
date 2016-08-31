@@ -73,7 +73,7 @@ function _social_event_get_permissions($role) {
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
+    'administer visibility settings',
   ));
 
   return $permissions[$role];
