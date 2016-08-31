@@ -190,14 +190,13 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
 
   if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
    $menu_name = $variables['elements']['content']['#menu_name'];
-   $suggestions[] = 'block_menu__' . $menu_name;
+   $suggestions[] = 'block__block_menu__' . $menu_name;
   }
 
   $content = $variables['elements']['content'];
 
-  if (isset($content['#block_content'])
-    and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
-    $suggestions[] = 'block_type__' . $content['#block_content']->bundle();
+  if (isset($content['#block_content']) and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
+    $suggestions[] = 'block__block_type__' . $content['#block_content']->bundle();
   }
 
   $block_id = $variables['elements']['#derivative_plugin_id'];

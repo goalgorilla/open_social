@@ -115,9 +115,9 @@ a.list-group-item {
 
 @include MQ($small) {
 
-  .card-body > .list-group {
+  .card-body .list-group {
 
-    > .list-group-item {
+    .list-group-item:not(.media) {
       display: table;
       table-layout: fixed;
       width: 100%;
