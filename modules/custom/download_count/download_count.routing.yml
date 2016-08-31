@@ -13,36 +13,3 @@ download_count.clear:
   _title: 'Clear Cache'
  requirements:
   _permission: 'administer site configuration'
-
-download_count.reports:
- path: 'admin/reports/download-count'
- defaults:
-  _title: 'Download Counts'
-  _controller: '\Drupal\download_count\Controller\DownloadCountController::downloadCountReport'
- requirements:
-  _permission: 'view download counts'
-
-download_count.details:
- path: 'admin/reports/download-count/{download_count_entry}/details'
- defaults:
-  _title: 'Download Count Details'
-  _controller: '\Drupal\download_count\Controller\DownloadCountController::downloadCountDetails'
- requirements:
-  _permission: 'view download counts'
-
-download_count.reset:
- path: 'admin/reports/download-count/{download_count_entry}/reset'
- defaults:
-  _title: 'Download Count Reset'
-  _form:  '\Drupal\download_count\Form\DownloadCountResetForm'
- requirements:
-  _permission: 'view download counts'
-
-download_count.export:
- path: 'admin/reports/download-count/{download_count_entry}/export'
- defaults:
-  _title: 'Download Count Export'
-  _form:  '\Drupal\download_count\Form\DownloadCountExportForm'
- requirements:
-  _permission: 'view download counts'
-

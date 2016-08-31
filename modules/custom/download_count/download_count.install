@@ -135,6 +135,8 @@ function download_count_schema() {
  * Implements hook_uninstall().
  */
 function download_count_uninstall() {
-  \Drupal::service('config.factory')->getEditable('download_count.settings')->delete();
+  \Drupal::service('config.factory')
+    ->getEditable('download_count.settings')
+    ->delete();
   drupal_set_message(t('The download count module has been uninstalled.'));
 }

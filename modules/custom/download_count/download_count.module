@@ -39,7 +39,8 @@ function download_count_file_access($entity, $operation, $account) {
     $flood_limit = $config->get('download_count_flood_limit');
     if ($flood_limit > 0) {
       if (!$flood->isAllowed('download_count-fid_' . $entity->id(), $flood_limit
-        , $flood_window)) {
+        , $flood_window)
+      ) {
         return;
       }
     }
@@ -69,23 +70,30 @@ function download_count_file_access($entity, $operation, $account) {
     }
     $connection = Database::getConnection();
     $connection->insert('download_count')
-            ->fields(array(
-              'fid' => $entity->id(),
-              'uid' => $account->id(),
-              'type' => $entity_type,
-              'id' => $entity_id,
-              'ip_address' => $ip,
-              'referrer' => $referrer,
-              'timestamp' => $time,
-            ))
-            ->execute();
+      ->fields(array(
+        'fid' => $entity->id(),
+        'uid' => $account->id(),
+        'type' => $entity_type,
+        'id' => $entity_id,
+        'ip_address' => $ip,
+        'referrer' => $referrer,
+        'timestamp' => $time,
+      ))
+      ->execute();
 
     $flood->register('download_count-fid_' . $entity->id(), $flood_window);
 
-    \Drupal::logger('download_count')->notice('%file was downloaded by user #%uid from %ip', array('%file' => $entity->getFilename(), '%uid' => $account->id(), '%ip' => $ip));
+    \Drupal::logger('download_count')
+      ->notice('%file was downloaded by user #%uid from %ip', array(
+        '%file' => $entity->getFilename(),
+        '%uid' => $account->id(),
+        '%ip' => $ip
+      ));
 
     if (\Drupal::moduleHandler()->moduleExists('rules')) {
-      $host_entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
+      $host_entity = \Drupal::entityTypeManager()
+        ->getStorage($entity_type)
+        ->load($entity_id);
       rules_invoke_event('download_count_file_download', $entity, $account, $host_entity);
     }
   }
@@ -98,7 +106,8 @@ function download_count_file_access($entity, $operation, $account) {
  */
 function download_count_cron() {
   $count = 0;
-  $last_cron = \Drupal::config('download_count.settings')->get('download_count_last_cron');
+  $last_cron = \Drupal::config('download_count.settings')
+    ->get('download_count_last_cron');
   $connection = Database::getConnection();
   $query = $connection->select('download_count', 'd');
   $query->addExpression('UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(timestamp)))', 'date');
@@ -116,9 +125,13 @@ function download_count_cron() {
     $count++;
   }
   if ($count > 0) {
-    \Drupal::logger('download_count')->notice('Download count queued {$count} new entries for caching.');
+    \Drupal::logger('download_count')
+      ->notice('Download count queued {$count} new entries for caching.');
   }
-  \Drupal::service('config.factory')->getEditable('download_count.settings')->set('download_count_last_cron', REQUEST_TIME)->save();
+  \Drupal::service('config.factory')
+    ->getEditable('download_count.settings')
+    ->set('download_count_last_cron', REQUEST_TIME)
+    ->save();
 }
 
 /**

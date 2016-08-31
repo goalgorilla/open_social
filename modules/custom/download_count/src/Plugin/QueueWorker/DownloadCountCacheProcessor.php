@@ -12,21 +12,24 @@ use Drupal\Core\Database\Database;
  *   cron = {"time" = 60}
  * )
  */
-class DownloadCountCacheProcessor extends QueueWorkerBase
-{
-    /**
+class DownloadCountCacheProcessor extends QueueWorkerBase {
+  /**
    * {@inheritdoc}
    */
-  public function processItem($data)
-  {
-      // Logs a notice.
+  public function processItem($data) {
+    // Logs a notice.
     $connection = Database::getConnection();
-      $connection->merge('download_count_cache')
-            ->key(array('type' => $data->type, 'id' => $data->id, 'fid' => $data->fid, 'date' => $data->date))
-            ->fields(array(
-              'count' => $data->count,
-            ))
-            ->expression('count', 'count + :inc', array(':inc' => $data->count))
-            ->execute();
+    $connection->merge('download_count_cache')
+      ->key(array(
+        'type' => $data->type,
+        'id' => $data->id,
+        'fid' => $data->fid,
+        'date' => $data->date
+      ))
+      ->fields(array(
+        'count' => $data->count,
+      ))
+      ->expression('count', 'count + :inc', array(':inc' => $data->count))
+      ->execute();
   }
 }
