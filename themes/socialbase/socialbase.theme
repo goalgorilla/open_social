@@ -181,9 +181,25 @@ function socialbase_theme_suggestions_details_alter(array &$suggestions, array $
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
+  * Override block theme suggestions.
+  *
+  * @param $suggestions
+  * @param $variables
+*/
 function socialbase_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+
+  if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
+   $menu_name = $variables['elements']['content']['#menu_name'];
+   $suggestions[] = 'block_menu__' . $menu_name;
+  }
+
+  $content = $variables['elements']['content'];
+
+  if (isset($content['#block_content'])
+    and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
+    $suggestions[] = 'block_type__' . $content['#block_content']->bundle();
+  }
+
   $block_id = $variables['elements']['#derivative_plugin_id'];
   $blocks_id = array(
     'upcoming_events-block_my_upcoming_events',
