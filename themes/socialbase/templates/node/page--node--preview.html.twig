@@ -50,10 +50,10 @@
  * @see html.html.twig
  */
 #}
-
-<header id="header" role="banner" aria-label="{{ 'Site header'|t}}">
-  {{ page.header }}
-</header>
+{{ attach_library('socialbase/preview') }}
+<nav class="navbar navbar-default navbar-fixed-top z-depth-2" role="navigation" aria-labelledby="{{ heading_id }}">
+  <div class="container">{{ page.header }}</div>
+</nav>
 
 <main id="content" class="column main-container" role="main">
 

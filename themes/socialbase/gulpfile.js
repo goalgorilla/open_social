@@ -241,8 +241,8 @@ gulp.task('bootstrap-sass', function() {
 });
 
 gulp.task('bootstrap-js', function() {
-  return gulp.src(options.theme.bootstrap + 'javascripts/bootstrap.min.js')
-    .pipe( gulp.dest(options.theme.js + '/contrib') );
+  return gulp.src(options.theme.bootstrap + 'javascripts/bootstrap/*.js')
+    .pipe( gulp.dest(options.theme.js + '/contrib/bootstrap') );
 });
 
 
