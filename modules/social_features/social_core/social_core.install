@@ -60,7 +60,16 @@ function _social_core_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'access content overview',
+    'access toolbar',
+    'administer nodes',
+    'administer menu',
+    'access site reports',
+    'access administration pages',
+    'view all revisions',
+    'revert all revisions',
+    'delete all revisions',
+    'create url aliases',
   ));
 
   // Site manager.

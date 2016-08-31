@@ -50,14 +50,14 @@ function _social_post_get_permissions($role) {
     'delete own post entities',
     'edit own post entities',
     'view community posts',
-    'view public posts',
-    'view published post entities',
   ));
 
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'delete any post entities',
+    'edit any post entities',
+    'view unpublished post entities',
   ));
 
   // Site manager.

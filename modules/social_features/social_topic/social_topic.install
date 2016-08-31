@@ -74,7 +74,17 @@ function _social_topic_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'delete any topic content',
+    'edit any topic content',
+    'revert topic revisions',
+    'delete topic revisions',
+    'view topic revisions',
+    'override topic revision log entry',
+    'override topic authored by option',
+    'override topic authored on option',
+    'override topic promote to front page option',
+    'override topic revision option',
+    'override topic sticky option',
   ));
 
   // Site manager.
