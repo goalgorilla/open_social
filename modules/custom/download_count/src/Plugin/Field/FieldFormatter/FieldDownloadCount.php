@@ -8,6 +8,7 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Template\Attribute;
+use Drupal\Component\Utility\Html;
 
 /**
  * @FieldFormatter(
@@ -41,6 +42,7 @@ class FieldDownloadCount extends GenericFileFormatter {
       }
 
       $url = file_create_url($file->getFileUri());
+      $file_size = $file->getSize();
 
       $options = array(
         'attributes' => array(
@@ -48,6 +50,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         ),
       );
 
+      // Use the description as the link text if available.
       if (empty($item->description)) {
         $link_text = $file->getFilename();
       }
@@ -74,10 +77,10 @@ class FieldDownloadCount extends GenericFileFormatter {
 
       if (isset($file->download) && $file->download > 0) {
         $count = \Drupal::translation()
-          ->formatPlural($file->download, 'Downloaded 1 time', 'Downloaded @count times');
+          ->formatPlural($file->download, '1 download', '@count downloads');
       }
       else {
-        $count = $this->t('Never downloaded');
+        $count = $this->t('0 downloads');
       }
 
       $element[$delta] = array(
@@ -86,6 +89,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         '#url' => $url,
         '#classes' => $attributes['class'],
         '#count' => $count,
+        '#file_size' => format_size($file_size),
         '#attached' => array(
           'library' => array(
             'classy/file',

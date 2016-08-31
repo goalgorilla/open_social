@@ -16,7 +16,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  */
 function download_count_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match) {
   switch ($route_name) {
-    case 'admin/help#download_count':
+    case 'help.page.download_count':
       return '<p>' . t('Counts file downloads for private core file fields and
       logs a message to the watchdog table.') . '</p>';
   }
@@ -32,10 +32,11 @@ function download_count_file_access($entity, $operation, $account) {
     $flood_window = $config->get('download_count_flood_window');
     $time = REQUEST_TIME;
 
-    // If ($account->hasPermission('skip download counts')){
-    // return;
-    // }
-    // check flood control.
+    if ($account->hasPermission('skip download counts')) {
+      return;
+    }
+
+    // Check flood control.
     $flood_limit = $config->get('download_count_flood_limit');
     if ($flood_limit > 0) {
       if (!$flood->isAllowed('download_count-fid_' . $entity->id(), $flood_limit
@@ -55,10 +56,8 @@ function download_count_file_access($entity, $operation, $account) {
     }
 
     // Count the download.
-    global $user;
     $ip = Drupal::request()->getClientIp();
     $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : t('Direct download');
-    // Echo "<pre>";print_R($entity);exit;
     $references = file_get_file_references($entity, NULL, EntityStorageInterface::FIELD_LOAD_REVISION, NULL);
     foreach ($references as $field_name => $entity_map) {
       foreach ($entity_map as $referencing_entity_type => $referencing_entities) {
@@ -82,20 +81,6 @@ function download_count_file_access($entity, $operation, $account) {
       ->execute();
 
     $flood->register('download_count-fid_' . $entity->id(), $flood_window);
-
-    \Drupal::logger('download_count')
-      ->notice('%file was downloaded by user #%uid from %ip', array(
-        '%file' => $entity->getFilename(),
-        '%uid' => $account->id(),
-        '%ip' => $ip
-      ));
-
-    if (\Drupal::moduleHandler()->moduleExists('rules')) {
-      $host_entity = \Drupal::entityTypeManager()
-        ->getStorage($entity_type)
-        ->load($entity_id);
-      rules_invoke_event('download_count_file_download', $entity, $account, $host_entity);
-    }
   }
 }
 
@@ -145,6 +130,7 @@ function download_count_theme() {
         'url' => NULL,
         'classes' => NULL,
         'count' => NULL,
+        'file_size' => NULL,
       ),
     ),
   );
