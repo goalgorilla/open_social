@@ -102,6 +102,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
     // cache when people enrol. See EnrollActionForm->submitForm().
     $enrollmenttag = 'enrollment:' . $nid . '-' . $uid;
     $build['#cache']['tags'][] = $enrollmenttag;
+    $build['#cache']['contexts'][] = 'user';
 
     $conditions = array(
       'field_account' => $uid,

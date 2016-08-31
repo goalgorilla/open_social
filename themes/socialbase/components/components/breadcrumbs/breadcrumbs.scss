@@ -1,0 +1,32 @@
+@import 'init';
+
+@import 'contrib/bootstrap/breadcrumbs';
+
+.breadcrumb {
+  border-radius: 0;
+  font-size: $font-size-base;
+  margin-bottom: 0;
+
+  > li {
+    display: inline-block;
+
+    + li:before {
+      display: none;
+    }
+
+  }
+
+  a {
+    display: inline-block;
+    font-weight: 300;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+  }
+
+  > .active {
+    color: $breadcrumb-active-color;
+  }
+}

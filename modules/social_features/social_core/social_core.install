@@ -6,23 +6,78 @@
 
 use Drupal\Core\Field\FieldItemList;
 use Drupal\file\Entity\File;
-use Drupal\user\RoleInterface;
+use \Drupal\menu_link_content\Entity\MenuLinkContent;
 
 /**
  * Implements hook_install().
  *
- * Perform actions related to the installation of social_comment.
+ * Perform actions related to the installation of social_core.
  */
 function social_core_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+  _social_core_set_permissions();
+  // Create AN Homepage block.
+  _social_core_create_an_homepage_block();
+  // Add menu items
+  _social_core_create_menu_links();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_core_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_core_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_core_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+    'access content',
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'view own unpublished content',
-    'override event published option',
-    'override topic published option',
+    'use text format basic_html',
+    'use text format simple_text',
   ));
 
-  _social_core_create_an_homepage_block();
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+    'access content overview',
+    'access toolbar',
+    'administer nodes',
+    'administer menu',
+    'access site reports',
+    'access administration pages',
+    'view all revisions',
+    'revert all revisions',
+    'delete all revisions',
+    'create url aliases',
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
 }
 
 /**
@@ -78,4 +133,30 @@ function _social_core_create_an_homepage_block() {
   $itemList->setValue($action_links);
   $block->field_call_to_action_link = $itemList;
   $block->save();
+}
+
+
+/**
+ * Function to create some menu items.
+ */
+function _social_core_create_menu_links() {
+  // Home.
+  MenuLinkContent::create([
+    'title' => 'Home',
+    'link' => ['uri' => 'internal:/'],
+    'menu_name' => 'main',
+    'expanded' => FALSE,
+    'weight' => 10,
+  ])->save();
+
+  // Explore.
+  MenuLinkContent::create([
+    'title' => 'Explore',
+    // This way we get an empty link.
+    'link' => ['uri' => 'internal:'],
+    'menu_name' => 'main',
+    'expanded' => TRUE,
+    'weight' => 20,
+  ])->save();
+
 }

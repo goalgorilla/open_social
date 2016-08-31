@@ -32,7 +32,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -247,9 +247,9 @@ display:
         - 'languages:language_interface'
         - url.query_args
       tags:
-        - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.notification_archive'
+        - 'config:core.entity_view_display.activity.activity.default'
   page_activity_stream:
     display_plugin: page
     id: page_activity_stream

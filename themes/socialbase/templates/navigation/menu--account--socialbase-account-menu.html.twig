@@ -26,29 +26,11 @@
 #}
 {{ menus.menu_links(items, attributes, 0) }}
 
-{#
- We attach a library for the search block.
-#}
-{{ attach_library('social_search/navbar-search') }}
-
-
-<a href="{{ path('<front>') }}" class="navbar-brand" title="{{ 'Home'|t }}" rel="home">
-  <img id="front-page-logo" src="/{{ directory }}/images/social-logo-white.svg" alt="{{ 'Home'|t }}" />
-</a>
-
-<div class="navbar-header">
-
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
 
-    <button href="#" data-toggle="collapse" data-target="#menu-dropdown" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
-      <span>{% trans %} Menu {% endtrans %}</span>
-      <span class="sr-only">
-        {% trans %} Toggle navigation {% endtrans %}
-      </span>
 
-    </button>
     <ul{{ attributes.addClass('header-menu list-unstyled nav navbar-nav navbar-right') }}>
 
     {% for item in items %}
@@ -71,5 +53,3 @@
 
   {% endif %}
 {% endmacro %}
-
-</div>
