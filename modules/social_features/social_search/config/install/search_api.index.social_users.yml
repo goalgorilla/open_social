@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_interests
+    - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
   module:
@@ -42,6 +43,14 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_interests
+  field_profile_profile_tag:
+    label: 'Profile tag'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_profile_tag
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_profile_tag
 processor_settings:
   add_url:
     plugin_id: add_url

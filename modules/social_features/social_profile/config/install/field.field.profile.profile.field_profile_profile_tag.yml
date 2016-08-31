@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profile_profile_tag
+    - profile.type.profile
+    - taxonomy.vocabulary.profile_tag
+id: profile.profile.field_profile_profile_tag
+field_name: field_profile_profile_tag
+entity_type: profile
+bundle: profile
+label: 'Profile tag'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      profile_tag: profile_tag
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
