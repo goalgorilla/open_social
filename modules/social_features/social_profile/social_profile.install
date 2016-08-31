@@ -80,11 +80,13 @@ function _social_profile_get_permissions($role) {
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
     'edit any profile profile',
+    'edit profile tags',
   ));
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
+    'delete terms in profile_tag',
+    'edit terms in profile_tag',
   ));
 
   return $permissions[$role];
