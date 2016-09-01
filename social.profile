@@ -129,10 +129,10 @@ function social_install_profile_modules(&$install_state) {
     'social_profile' => 'social_profile',
     'social_editor' => 'social_editor',
     'social_comment' => 'social_comment',
-    'social_search' => 'social_search',
     'social_post' => 'social_post',
-    'social_activity' => 'social_activity',
     'social_page' => 'social_page',
+    'social_search' => 'social_search',
+    'social_activity' => 'social_activity',
   );
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between

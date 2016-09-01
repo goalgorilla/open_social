@@ -11,6 +11,7 @@ dependencies:
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - profile.type.profile
   module:
@@ -22,34 +23,41 @@ bundle: profile
 mode: default
 content:
   field_profile_address:
-    weight: 5
+    weight: 1
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
   field_profile_expertise:
-    weight: 8
+    weight: 4
     label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
   field_profile_interests:
-    weight: 7
+    weight: 3
     label: visually_hidden
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
   field_profile_phone_number:
-    weight: 4
+    weight: 0
     label: visually_hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+  field_profile_profile_tag:
+    type: entity_reference_label
+    weight: 0
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings: {  }
   field_profile_self_introduction:
-    weight: 6
+    weight: 2
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }

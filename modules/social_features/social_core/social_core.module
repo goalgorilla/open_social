@@ -221,3 +221,34 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
   }
 
 }
+
+/**
+ * Implements hook_form_taxonomy_vocabulary_form_alter().
+ */
+function social_core_form_taxonomy_vocabulary_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Fetch current user.
+  $account = \Drupal::currentUser();
+
+  // Check if the current use is the admin.
+  if (!in_array('administrator', $account->getRoles())) {
+    // Remove the option to delete.
+    unset($form['actions']['delete']);
+  }
+}
+
+
+/**
+ * Implements hook_form_taxonomy_vocabulary_confirm_delete_alter().
+ */
+function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+
+  // Fetch current user.
+  $account = \Drupal::currentUser();
+
+  // Check if the current use is the admin.
+  if (!in_array('administrator', $account->getRoles())) {
+    // Remove the option to delete.
+    unset($form['actions']['submit']);
+    $form['description']['#markup'] = t('You have insufficient permissions to delete this vocabulary');
+  }
+}

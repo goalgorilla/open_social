@@ -29,6 +29,7 @@ function social_profile_install() {
   $media = File::create([
     'uri' => $uri,
   ]);
+  $media->uuid = '4eb1d927-28f4-402a-8c87-017e637f434a';
   $media->save();
 
   $default_image['uuid'] = $media->uuid();
@@ -80,11 +81,13 @@ function _social_profile_get_permissions($role) {
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
     'edit any profile profile',
+    'edit profile tags',
   ));
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
+    'delete terms in profile_tag',
+    'edit terms in profile_tag',
   ));
 
   return $permissions[$role];

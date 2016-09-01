@@ -89,3 +89,17 @@ function _social_group_create_menu_links() {
     ])->save();
   }
 }
+
+/**
+ * Install geolocation, geocoder and grolesync module.
+ */
+function social_group_update_8001() {
+
+  $modules = array(
+    'geolocation',
+    'geocoder',
+    'grolesync',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
