@@ -85,41 +85,6 @@ function download_count_file_access($entity, $operation, $account) {
 }
 
 /**
- * Implements hook_cron().
- *
- * Daily file download counts are cached for convenience.
- */
-function download_count_cron() {
-  $count = 0;
-  $last_cron = \Drupal::config('download_count.settings')
-    ->get('download_count_last_cron');
-  $connection = Database::getConnection();
-  $query = $connection->select('download_count', 'd');
-  $query->addExpression('UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(timestamp)))', 'date');
-  $query->addExpression('COUNT(dcid)', 'count');
-  $query->fields('d', array('fid', 'type', 'id'));
-  $query->condition('d.timestamp', $last_cron, '>');
-  $query->groupBy('d.type');
-  $query->groupBy('d.id');
-  $query->groupBy('d.fid');
-  $query->groupBy('date');
-  $result = $query->execute()->fetchAll();
-  $queue = \Drupal::queue('download_count');
-  foreach ($result as $record) {
-    $queue->createItem($record);
-    $count++;
-  }
-  if ($count > 0) {
-    \Drupal::logger('download_count')
-      ->notice('Download count queued {$count} new entries for caching.');
-  }
-  \Drupal::service('config.factory')
-    ->getEditable('download_count.settings')
-    ->set('download_count_last_cron', REQUEST_TIME)
-    ->save();
-}
-
-/**
  * Implements hook_theme().
  */
 function download_count_theme() {

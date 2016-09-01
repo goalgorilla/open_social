@@ -74,60 +74,6 @@ function download_count_schema() {
     ),
   );
 
-  $schema['download_count_cache'] = array(
-    'fields' => array(
-      'dcc_id' => array(
-        'description' => 'Primary Key: Unique download count cache id.',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'fid' => array(
-        'description' => 'The {file_managed}.fid of the file downloaded.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'type' => array(
-        'description' => 'The name of the entity type to which the file was attached when downloaded.',
-        'type' => 'varchar',
-        'length' => 64,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'id' => array(
-        'description' => 'The primary key of the entity to which the file was attached when downloaded.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'date' => array(
-        'description' => 'The date the file was downloaded.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'count' => array(
-        'description' => 'Number of times a file was downloaded in one day.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-    ),
-    'primary key' => array('dcc_id'),
-    'indexes' => array(
-      'dcc_fid' => array('fid'),
-      'dcc_type' => array('type'),
-      'dcc_id' => array('id'),
-      'dcc_timestamp' => array('date'),
-      'dcc_fid_type_id' => array('fid', 'type', 'id', 'date'),
-    ),
-  );
-
   return $schema;
 }
 

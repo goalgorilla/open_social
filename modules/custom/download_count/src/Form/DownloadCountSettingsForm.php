@@ -61,18 +61,6 @@ class DownloadCountSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('download_count_flood_window'),
       '#description' => $this->t('Number of seconds in the time window for counting a file download.'),
     );
-    $form['download_count_cache_clear'] = array(
-      '#type' => 'details',
-      '#title' => $this->t('Clear Download Count Cache'),
-      '#description' => '<p>' . $this->t('This will delete the cached download count data from the database. It
-             will be rebuilt during drupal cron runs.') . '<br /><strong>' . $this->t('Note:') . '</strong>' . $this->t('This will affect the details page until the data has been rebuilt.') . '</p>',
-      '#open' => FALSE,
-    );
-    $form['download_count_cache_clear']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => $this->t('Clear Cache'),
-      '#submit' => ['::downloadCountClearSubmit'],
-    );
 
     return parent::buildForm($form, $form_state);
   }
@@ -89,10 +77,4 @@ class DownloadCountSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
-  /**
-   * Implements submit callback for download count clear.
-   */
-  public function downloadCountClearSubmit(array &$form, FormStateInterface $form_state) {
-    $form_state->setRedirect('download_count.clear');
-  }
 }
