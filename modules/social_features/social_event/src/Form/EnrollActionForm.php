@@ -107,12 +107,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $event_end_timestamp = strtotime($node->field_event_date_end->value);
 
     // Check to see if Event end date is in the future, hence we can still "Enroll".
-    $enrollment_closed = TRUE;
+    $enrollment_open = TRUE;
     if ($event_end_timestamp > time()) {
       $submit_text = $this->t('Enroll');
-      $enrollment_closed = FALSE;
     } else {
       $submit_text = $this->t('Enrollment Closed');
+      $enrollment_open = FALSE;
     }
 
     $conditions = array(
@@ -128,7 +128,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($current_enrollment_status === '1') {
         $submit_text = $this->t('Enrolled');
-        $enrollment_closed = FALSE;
         $to_enroll_status = '0';
       }
     }
@@ -141,7 +140,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $form['enroll_for_this_event'] = array(
       '#type' => 'submit',
       '#value' => $submit_text,
-      '#disabled' => $enrollment_closed,
+      '#disabled' => !$enrollment_open,
     );
 
     $form['#attributes']['name'] = 'enroll_action_form';
