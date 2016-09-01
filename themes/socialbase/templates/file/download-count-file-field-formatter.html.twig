@@ -15,41 +15,14 @@
 #}
 {{ attach_library('socialbase/file') }}
 {% spaceless %}
-    {#{%#}
-    {#set classes = [#}
-    {#icon_only ? 'icon-only',#}
-    {#not icon_only ? 'icon-' ~ icon_position|clean_class#}
-    {#]#}
-    {#%}#}
-
-
     <span class="{{ classes }}">
-    {% if icon_only %}
-        <span class="file-icon">{{ icon }}</span>
-        <span class="sr-only">
+         <span class="file-icon">
+            <svg class="icon-gray icon-small">
+                <use xlink:href="#icon-insert_drive_file"></use>
+            </svg>
+        </span>
         <span class="file-link">{{ url }}</span>
         <span class="file-size">{{ file_size }}</span>
         <span class="file-size">{{ count }}</span>
-      </span>
-    {% else %}
-        {% if icon_position == 'after' %}
-            <span class="file-link">{{ url }}</span><span class="file-size">{{ file_size }}</span><span class="file-icon">{{ icon }}</span>
-      {% else %}
-            <span class="file-icon">
-          {% if attributes.hasClass('file--image') %}
-              <svg class="icon-gray icon-small">
-                  <use xlink:href="#icon-photo"></use>
-              </svg>
-          {% else %}
-              <svg class="icon-gray icon-small">
-                  <use xlink:href="#icon-insert_drive_file"></use>
-              </svg>
-          {% endif %}
-        </span>
-            <span class="file-link">{{ url }}</span>
-            <span class="file-size">{{ file_size }}</span>
-            <span class="file-size">{{ count }}</span>
-        {% endif %}
-    {% endif %}
-  </span>
+    </span>
 {% endspaceless %}
