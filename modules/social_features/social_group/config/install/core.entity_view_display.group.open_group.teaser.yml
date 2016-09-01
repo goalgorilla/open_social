@@ -5,11 +5,13 @@ dependencies:
     - core.entity_view_mode.group.teaser
     - field.field.group.open_group.field_group_address
     - field.field.group.open_group.field_group_description
+    - field.field.group.open_group.field_group_geolocation
     - field.field.group.open_group.field_group_image
     - field.field.group.open_group.field_group_location
     - group.type.open_group
     - image.style.social_x_large
   module:
+    - address
     - image
 id: group.open_group.teaser
 targetEntityType: group
@@ -54,4 +56,5 @@ hidden:
   changed: true
   created: true
   field_group_address: true
+  field_group_geolocation: true
   uid: true
