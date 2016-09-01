@@ -573,8 +573,8 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-          $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-          $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+      case 'checkboxes':
+        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
         break;
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
