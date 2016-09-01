@@ -181,7 +181,7 @@ function entity_access_by_field_form_alter(&$form, \Drupal\Core\Form\FormStateIn
     if (count($roles) == 1 && $roles[0] === \Drupal\user\RoleInterface::AUTHENTICATED_ID) {
 
       // Check if we need to do someting here.
-      if ($data['disable_public_visibility'] === 1) {
+      if (isset($data['disable_public_visibility']) && $data['disable_public_visibility'] === 1) {
         // This is for nodes.
         if (isset($form['field_content_visibility'])) {
           $widget = &$form['field_content_visibility']['widget'];
