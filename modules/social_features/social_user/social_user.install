@@ -4,8 +4,6 @@
  * Install, update and uninstall functions for the social_user module.
  */
 
-use Drupal\user\RoleInterface;
-
 /**
  * Implements hook_install().
  *
@@ -14,10 +12,53 @@ use Drupal\user\RoleInterface;
 function social_user_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
-    'change own username',
+  _social_user_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_user_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_user_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_user_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'access user profiles',
     'cancel account',
+    'change own username',
     'select account cancellation method',
   ));
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
 }

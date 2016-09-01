@@ -36,6 +36,19 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $user = \Drupal::currentUser();
+
+  // Check for permission on custom edit profile tags, it's only for CM+ who can
+  // actually edit a users profile and add profile tags there.
+  if (!$user->hasPermission('edit profile tags')) {
+    $form['field_profile_profile_tag']['#access'] = FALSE;
+  }
+  // We hide the label and form field when there are no options. This is the
+  // case by default. Since we provide an empty vocabulary.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
+    unset($form['field_profile_profile_tag']);
+  }
+
   // Remove the save and set default submit button on profile creation.
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
@@ -50,6 +63,19 @@ function social_profile_form_profile_profile_add_form_alter(&$form, FormStateInt
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $user = \Drupal::currentUser();
+
+  // Check for permission on custom edit profile tags, it's only for CM+ who can
+  // actually edit a users profile and add profile tags there.
+  if (!$user->hasPermission('edit profile tags')) {
+    $form['field_profile_profile_tag']['#access'] = FALSE;
+  }
+  // We hide the label and form field when there are no options. This is the
+  // case by default. Since we provide an empty vocabulary.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
+    unset($form['field_profile_profile_tag']);
+  }
+
   // Remove the save and set default submit button on profile edit.
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
@@ -86,6 +112,20 @@ function social_profile_local_tasks_alter(&$local_tasks) {
   }
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_views_exposed_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form['#id'] == 'views-exposed-form-search-users-page') {
+    if (!empty($form['profile_tag'])) {
+      $form['profile_tag']['#type'] = 'checkboxes';
+    }
+    if (empty($form['profile_tag']['#options'])) {
+      unset($form['profile_tag']);
+    }
   }
 }
 

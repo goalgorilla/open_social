@@ -1,0 +1,486 @@
+@import 'init';
+
+@import "contrib/bootstrap/navs";
+
+// Include mixin for contrib navbar dependency
+// https://github.com/twbs/bootstrap/pull/19432
+// This commit somehow doesn't seem to have made it in version 3.3.7.
+
+@mixin form-inline {
+
+  // Kick in the inline
+  @media (min-width: $screen-sm-min) {
+    // Inline-block all the things for "inline"
+    .form-group {
+      display: inline-block;
+      margin-bottom: 0;
+      vertical-align: middle;
+    }
+
+    // In navbar-form, allow folks to *not* use `.form-group`
+    .form-control {
+      display: inline-block;
+      width: auto; // Prevent labels from stacking above inputs in `.form-group`
+      vertical-align: middle;
+    }
+
+    // Make static controls behave like regular ones
+    .form-control-static {
+      display: inline-block;
+    }
+
+    .input-group {
+      display: inline-table;
+      vertical-align: middle;
+
+      .input-group-addon,
+      .input-group-btn,
+      .form-control {
+        width: auto;
+      }
+    }
+
+    // Input groups need that 100% width though
+    .input-group > .form-control {
+      width: 100%;
+    }
+
+    .control-label {
+      margin-bottom: 0;
+      vertical-align: middle;
+    }
+
+    // Remove default margin on radios/checkboxes that were used for stacking, and
+    // then undo the floating of radios and checkboxes to match.
+    .radio,
+    .checkbox {
+      display: inline-block;
+      margin-top: 0;
+      margin-bottom: 0;
+      vertical-align: middle;
+
+      label {
+        padding-left: 0;
+      }
+    }
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+      position: relative;
+      margin-left: 0;
+    }
+
+    // Re-override the feedback icon.
+    .has-feedback .form-control-feedback {
+      top: 0;
+    }
+  }
+}
+
+//
+
+@import 'contrib/bootstrap/navbar';
+
+// Layout and behaviour overrides
+
+.navbar-fixed-top {
+
+  .navbar-nav {
+    margin: 0;
+  }
+
+  .navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+
+  .navbar > .container .navbar-brand {
+    margin-left: -$navbar-padding-horizontal;
+  }
+
+  @media (min-width: $grid-float-breakpoint) {
+
+    > .container .navbar-brand {
+      margin-left: 0;
+    }
+
+    .navbar-right {
+      margin-right: 0;
+    }
+
+}
+
+//
+
+  @media (max-width: $grid-float-breakpoint-max) {
+    // Dropdowns get same display when collapsed
+    // This is an override of bootstrap navbar line 241
+    .navbar-nav .open .dropdown-menu {
+      background-color: $dropdown-bg;
+      border: 0;
+      @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+      position: fixed;
+      top: auto;
+      margin: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: none;
+      max-height: 100%;
+      height: calc(100% - 50px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      backface-visibility: hidden;
+    }
+
+    .navbar-collapse .navbar-nav {
+      margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+    }
+
+    .navbar-collapse {
+
+      .navbar-nav > li > a {
+        padding: 5px 15px 5px 25px;
+
+        &.dropdown-toggle {
+          pointer-events: none;
+        }
+      }
+
+      .dropdown-menu {
+        display: block;
+        position: relative;
+        width: 100%;
+        background-color: transparent;
+        float: none;
+        max-width: none;
+        padding-top: 0;
+
+        li a {
+          color: white;
+          padding: 5px 15px 5px 37px;
+
+          &:hover,
+          &:focus {
+            background: $brand-secondary;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+}
+
+// Style overrides
+
+@media (max-width: $grid-float-breakpoint-max) {
+
+  .navbar-default .navbar-nav .open .dropdown-menu {
+
+    > li > a {
+      color: $dropdown-link-color;
+      &:hover,
+      &:focus {
+        color: $dropdown-link-hover-color;
+        background-color: $dropdown-link-hover-bg;
+      }
+    }
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-active-color;
+        background-color: $dropdown-link-active-bg;
+      }
+    }
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $dropdown-link-color;
+        background-color: $dropdown-link-disabled-color;
+      }
+    }
+
+  }
+
+}
+
+.navbar-footer {
+
+  .navbar-brand {
+    color: white;
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: left;
+    }
+
+  }
+
+  .navbar-right {
+    width: 100%;
+    text-align: center;
+    float: none;
+
+    @include MQ($small) {
+      width: auto;
+      float: right;
+    }
+  }
+
+  .navbar-right li {
+    float: none;
+
+    @include MQ($small) {
+      float: left;
+    }
+
+  }
+
+  .navbar-right a {
+    color: white;
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: white;
+      background: transparent
+    }
+  }
+
+}
+
+.navbar {
+  border: 0;
+  font-size: $navbar-font-size;
+
+  .navbar-toggle {
+    border: 0;
+    border-radius: 0;
+    color: white;
+    font-weight: 500;
+    padding: 8px 10px;
+    height: 50px;
+    min-width: 50px;
+    margin: 0;
+    float: none;
+  }
+
+  .navbar-form {
+    box-shadow: none;
+    border: 0;
+    margin: 6px 0;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+.navbar-brand {
+  background: $navbar-default-brand-bg;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:focus,
+.navbar-default .navbar-brand:hover {
+  width: auto;
+  padding: 0;
+  max-width: 200px;
+  height: 50px;
+  overflow: hidden;
+
+  img {
+    pointer-events: none;
+    width: auto;
+    height: 50px;
+  }
+
+}
+
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+  transition: color .2s ease, background-color .2s ease;
+}
+
+.navbar-inverse {
+  font-size: $navbar-inverse-size;
+  color: $navbar-inverse-color;
+
+  .navbar-toggle {
+    color: $navbar-inverse-color;
+    border: 1px solid;
+  }
+}
+
+// Hacking into responsive bootstrap behaviour
+.navbar-right {
+  margin-top: 0;
+  float: right;
+
+  > li {
+    float: left;
+
+    > a {
+      padding: 13px 10px 8px;
+      height: $navbar-height;
+    }
+  }
+
+}
+
+@include MQ($small) {
+  .navbar-fixed-top .navbar-nav {
+    margin-left: 10px;
+  }
+
+  .navbar-search {
+    float: right;
+  }
+
+  .navbar-collapse {
+    float: left;
+  }
+
+}
+
+.navbar .dropdown .badge {
+  position: absolute;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 0.625em;
+  top: 8px;
+  left: 25px;
+  background-color: $brand-accent;
+  color: $default-color;
+  border-radius: 50%;
+}
+
+
+.navbar-form[role='search'] {
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-control {
+    padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
+    border-radius: $input-border-radius;
+    max-width: none;
+    border: 0;
+
+    &::-webkit-input-placeholder,
+    &:-moz-placeholder,
+    &::-moz-placeholder,
+    &:-ms-input-placeholder {
+      color: $brand-primary-bright;
+    }
+
+  }
+
+  .form-submit,
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    right: 0;
+    top: 0;
+    line-height: 38px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+	}
+
+  .search-icon {
+    line-height: 38px;
+    fill: $brand-primary;
+    background: white;
+    speak: none;
+    pointer-events: none;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+  }
+
+  @include MQ($small) {
+
+    .form-group {
+  		border-radius: $input-border-radius;
+      width: 0%;
+      min-width: 38px;
+      height: 38px;
+      transition: width 0.3s;
+      -webkit-backface-visibility: hidden;
+    }
+
+		.form-control {
+      position: absolute;
+      right: 0;
+      border: none;
+      outline: none;
+      background: white;
+      width: 100%;
+      height: 38px;
+      margin: 0;
+      z-index: 10;
+      padding-left: 0;
+      transition: padding 0.3s;
+		}
+
+    .form-submit {
+      background: white; // IE needs this
+      opacity: 0;
+    	color: transparent;
+    	border: none;
+    	outline: none;
+    	z-index: -1;
+    }
+
+    .search-icon {
+      z-index: 90;
+      border-radius: 0;
+      background: $navbar-default-bg;
+      fill: white;
+      pointer-events: initial;
+      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
+    }
+
+  }
+
+}
+
+
+// Open state
+#navbar-search.is-open,
+.no-js #navbar-search {
+	width: 180px;
+
+  .form-control {
+    padding-left: $padding-base-horizontal;
+  }
+
+  .search-icon {
+  	background: white;
+  	fill: $brand-primary;
+  	z-index: 11;
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+  }
+
+  .form-submit {
+  	z-index: 90;
+  }
+
+}

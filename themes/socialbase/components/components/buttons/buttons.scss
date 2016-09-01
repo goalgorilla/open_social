@@ -1,6 +1,8 @@
 @import 'init';
 
 @import 'contrib/bootstrap/buttons';
+@import "contrib/bootstrap/button-groups";
+@import "contrib/bootstrap/close";
 
 // Buttons
 // --------------------------------------------------
@@ -187,4 +189,17 @@
 
 .btn-non-clickable {
   pointer-events: none;
+}
+
+//
+// Button groups
+//
+
+// Set .btn-group absolute for media-wrap
+.btn-group {
+  .media-wrapper & {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 }

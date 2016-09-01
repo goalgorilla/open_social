@@ -13,6 +13,7 @@
  * @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
  */
 #}
+{{ attach_library('socialbase/file') }}
 {% spaceless %}
   {%
     set classes = [
@@ -33,11 +34,15 @@
       {% if icon_position == 'after' %}
         <span class="file-link">{{ link }}</span><span class="file-size">{{ file_size }}</span><span class="file-icon">{{ icon }}</span>
       {% else %}
-        <span class="file-icon text-primary material-icons">
+        <span class="file-icon">
           {% if attributes.hasClass('file--image') %}
-            image
+          <svg class="icon-gray icon-small">
+            <use xlink:href="#icon-photo"></use>
+          </svg>
           {% else %}
-            insert_drive_file
+          <svg class="icon-gray icon-small">
+            <use xlink:href="#icon-insert_drive_file"></use>
+          </svg>
           {% endif %}
         </span>
         <span class="file-link">{{ link }}</span>

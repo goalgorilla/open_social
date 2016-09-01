@@ -4,9 +4,6 @@
  * Install, update and uninstall functions for the social_page module.
  */
 
-use Drupal\user\RoleInterface;
-use Drupal\user\Entity\Role;
-
 /**
  * Implements hook_install().
  *
@@ -15,36 +12,66 @@ use Drupal\user\Entity\Role;
 function social_page_install() {
 
   // Set some default permissions.
-  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array(
+  _social_page_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_page_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_page_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_page_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
     'view node.page.field_content_visibility:public content',
-  ));
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
-    'view node.page.field_content_visibility:public content',
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'view node.page.field_content_visibility:community content',
   ));
 
-  // @TODO content manager permissions:
-  //    'create page content',
-  //    'delete own page content',
-  //    'edit own page content',
 
-  // Fetch other roles.
-  $roles = Role::loadMultiple();
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+    'create page content',
+    'delete any page content',
+    'delete own page content',
+    'edit any page content',
+    'edit own page content',
+    'view page revisions',
+    'delete page revisions',
+    'revert page revisions',
+    'override page revision log entry',
+    'override page authored by option',
+    'override page published option',
+    'override page authored on option',
+    'override page promote to front page option',
+    'override page revision option',
+    'override page sticky option',
+  ));
 
-  /** @var Role $role */
-  foreach ($roles as $role) {
-    // Check CM / SM
-    if (in_array($role->id(), array('contentmanager', 'sitemanager'))) {
-      user_role_grant_permissions($role->id(), array(
-        'create page content',
-        'delete any page content',
-        'delete own page content',
-        'edit any page content',
-        'edit own page content',
-        'delete any page content',
-        'delete own page content',
-      ));
-    }
-  }
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+    'administer visibility settings',
+  ));
 
+  return $permissions[$role];
 }
+
