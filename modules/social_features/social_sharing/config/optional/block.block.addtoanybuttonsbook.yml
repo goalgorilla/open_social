@@ -4,26 +4,25 @@ dependencies:
   module:
     - addtoany
     - node
+    - social_book
   theme:
     - socialbase
-id: addtoanybuttons
+id: addtoanybuttonsbook
 theme: socialbase
 region: complementary_bottom
-weight: -25
+weight: -14
 provider: null
 plugin: addtoany_block
 settings:
   id: addtoany_block
-  label: 'Add to any buttons - Event Page and Topic'
+  label: 'AddToAny buttons - Book pages'
   provider: addtoany
   label_display: '0'
 visibility:
   node_type:
     id: node_type
     bundles:
-      event: event
-      page: page
-      topic: topic
+      book: book
     negate: false
     context_mapping:
       node: '@node.node_route_context:node'
