@@ -10,6 +10,7 @@
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Implements hook_help().
@@ -31,6 +32,10 @@ function download_count_file_access($entity, $operation, $account) {
     $config = \Drupal::config('download_count.settings');
     $flood_window = $config->get('download_count_flood_window');
     $time = REQUEST_TIME;
+
+    // Invalidate file field formatter.
+    $cache_tag = 'file:' . $entity->id();
+    Cache::invalidateTags(array($cache_tag));
 
     if ($account->hasPermission('skip download counts')) {
       return;
