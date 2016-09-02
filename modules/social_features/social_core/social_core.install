@@ -24,6 +24,14 @@ function social_core_install() {
 }
 
 /**
+ * Re-set permissions.
+ */
+function social_core_update_8001(&$sandbox) {
+  // Set some default permissions.
+  _social_core_set_permissions();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_core_set_permissions() {
@@ -85,6 +93,7 @@ function _social_core_get_permissions($role) {
     'administer users',
     'administer account settings',
     'administer themes',
+    'administer blocks',
   ));
 
   return $permissions[$role];
