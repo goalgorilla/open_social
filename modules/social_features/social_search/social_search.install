@@ -61,3 +61,17 @@ function _social_search_get_permissions($role) {
 
   return $permissions[$role];
 }
+
+
+/**
+ * Install new submodule from search_api, to fix our exposed filters.
+ * See https://www.drupal.org/node/2777483.
+ */
+function social_search_update_8101(&$sandbox) {
+
+  $modules = array(
+    'search_api_views_taxonomy',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}

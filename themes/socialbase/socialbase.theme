@@ -268,9 +268,9 @@ function socialbase_preprocess_block(&$variables) {
   if (isset($variables['content']['#form_id']) && $variables['content']['#form_id'] == 'views_exposed_form') {
     $variables['complementary'] = TRUE;
   }
-
+  //dpm($variables['elements']['#id']);
   // Add search_block to main menu.
-  if ($variables['elements']['#id'] == 'mainnavigation') {
+  if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
     $block = Block::load('search_content_block_header');
     if(!empty($block)){
       $block_output = \Drupal::entityManager()
@@ -573,8 +573,8 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
     // Override bootstrap base theme suggestions.
     switch ($variables['element']['#type']) {
       case 'radios':
-          $suggestions[] = $variables['theme_hook_original'] . '__' . 'radios';
-          $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+      case 'checkboxes':
+        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
         break;
       case 'fieldset':
         $suggestions[] = 'bootstrap_panel';
