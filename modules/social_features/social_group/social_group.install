@@ -17,6 +17,11 @@ function social_group_install() {
   _social_group_set_permissions();
   // Add menu items
   _social_group_create_menu_links();
+
+  // Make sure the admin theme is not used when managing groups.
+  $group_settings = \Drupal::configFactory()->getEditable('group.settings');
+  $group_settings->set('use_admin_theme', FALSE);
+  $group_settings->save();
 }
 
 /**
