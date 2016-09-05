@@ -18,6 +18,7 @@
  * - hero_node
  */
 #}
+
 {% if hero_styled_image_url %}
 <div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
 {% else %}
@@ -66,30 +67,32 @@
         {{ hero_node }}
 
         <div>
-        {% if author_name and created_date_formatted %}
-          {% if topic_type %}
-            {% trans %}
-              By {{ author_name }} on {{ created_date_formatted }}
-            {% endtrans %}
-            <div>
-              <svg class="icon-white icon-medium">
-                <use xlink:href="#icon-label"></use>
-              </svg>
-              {{ topic_type }}
-              {% if group_link %}
-                  in group {{ group_link }}
-              {% endif %}
-            </div>
-          {% else %}
-            <div>
-              {% trans %}
-                By {{ author_name }}
-              {% endtrans %}
-              {% if group_link %}
-                  <span> in group {{ group_link }} </span>
-              {% endif %}
-            </div>
-          {% endif %}
+
+        {% if node_type == "topic" %}
+          {%- trans -%} By {%- endtrans -%}
+          {{ author_name }}
+          {%- trans -%} on {%- endtrans -%}
+          {{ created_date_formatted }}
+
+          <div>
+            <svg class="icon-white icon-medium">
+              <use xlink:href="#icon-label"></use>
+            </svg>
+            {{ topic_type }}
+            {% if group_link %}
+                in group {{ group_link }}
+            {% endif %}
+          </div>
+        {% elseif node_type == "book" %}
+          {%- trans %} Authored on {%- endtrans %} {{ created_date_formatted }}
+        {% else %}
+          <div>
+            {%- trans -%} By {%- endtrans -%}
+              {{ author_name }}
+            {% if group_link %}
+              <span> in group {{ group_link }} </span>
+            {% endif %}
+          </div>
         {% endif %}
         </div>
 

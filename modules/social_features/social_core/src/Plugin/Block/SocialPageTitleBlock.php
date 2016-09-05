@@ -31,13 +31,14 @@ class SocialPageTitleBlock extends PageTitleBlock {
     }
 
     if ($node) {
+      $node_type = $node->getType();
       $title = $node->getTitle();
       $author = $node->getOwner();
       $author_name = $author->link();
       $group_link = NULL;
       $created_date = $node->getCreatedTime();
 
-      switch ($node->getType()) {
+      switch ($node_type) {
         case 'topic':
           $topic_type = $node->get('field_topic_type');
           $hero_node = NULL;
@@ -56,7 +57,6 @@ class SocialPageTitleBlock extends PageTitleBlock {
           $topic_type = NULL;
           $hero_node = NULL;
           $author_name = NULL;
-          $created_date = NULL;
 
           break;
 
@@ -74,6 +74,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         '#group_link' => $group_link,
         '#hero_node' => $hero_node,
         '#node' => $node,
+        '#node_type' => $node_type,
         '#section_class' => 'page-title',
       ];
     }
