@@ -148,6 +148,25 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
 }
 
+/**
+ * Implements hook_element_info_alter().
+ */
+function socialbase_element_info_alter(array &$types) {
+  $types['datetime']['#process'][] = 'socialbase_datetime_set_format';
+}
+
+/**
+ * Element process callback for datetime fields.
+ */
+function socialbase_datetime_set_format($element) {
+  $element['#attached']['library'][] = 'socialbase/pickadate';
+  // Remove the time seconds function.
+  $element['time']['#attributes']['title'] = t('Enter a valid time - e.g. @format', [
+    '@format' => (new \DateTime())->format('h:i'),
+  ]);
+  $element['time']['#attributes']['step'] = 60;
+  return $element;
+}
 
 
 /**

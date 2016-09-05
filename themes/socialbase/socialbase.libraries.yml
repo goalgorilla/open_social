@@ -166,14 +166,10 @@ drupal.ajax:
       components/asset-builds/css/ajax.css: {}
 
 pickadate:
-  css:
-    component:
-      components/asset-builds/css/datepicker.css: {}
   js:
-    js/contrib/date_picker/picker.js: {}
-    js/contrib/date_picker/picker.date.js: {}
-    js/contrib/date_picker/picker.time.js: {}
-    js/contrib/date_picker/picker.init.js: {}
+    js/custom/date_picker.js: {}
+  dependencies:
+    - core/jquery.ui.datepicker
 
 drupal.tabledrag:
   js:
