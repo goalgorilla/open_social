@@ -316,18 +316,18 @@ a.list-group-item {
 
 @media screen and (min-width: 768px) {
 
-  .card-body > .list-group > .list-group-item {
+  .card-body .list-group .list-group-item:not(.media) {
     display: table;
     table-layout: fixed;
     width: 100%;
   }
 
-  .card-body > .list-group .list-group-label,
-  .card-body > .list-group .list-group-field {
+  .card-body .list-group .list-group-label,
+  .card-body .list-group .list-group-field {
     display: table-cell;
   }
 
-  .card-body > .list-group .list-group-field {
+  .card-body .list-group .list-group-field {
     max-width: 70%;
   }
 }

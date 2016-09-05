@@ -5,8 +5,10 @@ dependencies:
     - search_api.index.social_users
     - taxonomy.vocabulary.expertise
     - taxonomy.vocabulary.interests
+    - taxonomy.vocabulary.profile_tag
   module:
     - search_api
+    - search_api_views_taxonomy
     - user
 id: search_users
 label: 'Search Users'
@@ -223,6 +225,53 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: search_api_term
+        field_profile_profile_tag:
+          id: field_profile_profile_tag
+          table: search_api_index_social_users
+          field: field_profile_profile_tag
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_profile_profile_tag_op
+            label: 'Profile tag'
+            description: ''
+            use_operator: false
+            operator: field_profile_profile_tag_op
+            identifier: profile_tag
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: profile_tag
+          hierarchy: false
+          error_message: false
+          plugin_id: search_api_term
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -297,7 +346,7 @@ display:
             fail: 'not found'
           validate_options: {  }
           break_phrase: false
-          not: 0
+          not: false
           fields: {  }
           conjunction: AND
           plugin_id: search_api_fulltext

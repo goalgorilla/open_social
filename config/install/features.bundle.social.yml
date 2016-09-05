@@ -8,9 +8,10 @@ assignments:
   base:
     types:
       config:
-        comment_type: comment_type
         node_type: node_type
       content:
+        activity: activity
+        post: post
         user: user
     enabled: true
     weight: '-2'
@@ -32,12 +33,30 @@ assignments:
     weight: '15'
   exclude:
     types:
-      config: {  }
+      config:
+        system_simple: system_simple
+        action: action
+        block: block
+        comment_type: comment_type
+        date_format: date_format
+        entity_form_display: entity_form_display
+        entity_view_display: entity_view_display
+        field_config: field_config
+        field_storage_config: field_storage_config
+        entity_form_mode: entity_form_mode
+        group_content_type: group_content_type
+        image_style: image_style
+        menu: menu
+        message_template: message_template
+        user_role: user_role
+        view: view
+        entity_view_mode: entity_view_mode
     curated: 1
     module:
-      enabled: 1
+      installed: 0
       profile: 1
       namespace: 1
+      namespace_any: 0
     enabled: true
     weight: '-5'
   existing:
@@ -68,13 +87,13 @@ assignments:
         migration: migration
         shortcut_set: shortcut_set
         tour: tour
-    enabled: true
+    enabled: false
     weight: '10'
   site:
     types:
       config:
         action: action
-    enabled: true
+    enabled: false
     weight: '7'
 profile_name: social
 is_profile: true

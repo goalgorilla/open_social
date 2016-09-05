@@ -12,6 +12,7 @@ dependencies:
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - image.style.social_x_large
     - profile.type.profile
@@ -58,6 +59,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+  field_profile_profile_tag:
+    type: entity_reference_label
+    weight: 5
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
 hidden:
   field_profile_address: true
   field_profile_expertise: true

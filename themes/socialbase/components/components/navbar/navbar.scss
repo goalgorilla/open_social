@@ -107,63 +107,63 @@
       margin-right: 0;
     }
 
+  }
+
 }
 
 //
 
-  @media (max-width: $grid-float-breakpoint-max) {
-    // Dropdowns get same display when collapsed
-    // This is an override of bootstrap navbar line 241
-    .navbar-nav .open .dropdown-menu {
-      background-color: $dropdown-bg;
-      border: 0;
-      @include box-shadow(0 6px 12px rgba(0,0,0,.175));
-      position: fixed;
-      top: auto;
-      margin: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      max-width: none;
-      max-height: 100%;
-      height: calc(100% - 50px);
-      overflow-x: hidden;
-      overflow-y: auto;
-      backface-visibility: hidden;
-    }
+@media (max-width: $grid-float-breakpoint-max) {
+  // Dropdowns get same display when collapsed
+  // This is an override of bootstrap navbar line 241
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    background-color: $dropdown-bg;
+    border: 0;
+    @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+    position: fixed;
+    top: auto;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 100%;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
+  }
 
-    .navbar-collapse .navbar-nav {
-      margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
-    }
+  .navbar-collapse .navbar-nav {
+    margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+  }
 
-    .navbar-collapse {
+  .navbar-collapse {
 
-      .navbar-nav > li > a {
-        padding: 5px 15px 5px 25px;
+    .navbar-nav > li > a {
+      padding: 5px 15px 5px 25px;
 
-        &.dropdown-toggle {
-          pointer-events: none;
-        }
+      &.dropdown-toggle {
+        pointer-events: none;
       }
+    }
 
-      .dropdown-menu {
-        display: block;
-        position: relative;
-        width: 100%;
-        background-color: transparent;
-        float: none;
-        max-width: none;
-        padding-top: 0;
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: transparent;
+      float: none;
+      max-width: none;
+      padding-top: 0;
 
-        li a {
-          color: white;
-          padding: 5px 15px 5px 37px;
+      li a {
+        color: white;
+        padding: 5px 15px 5px 37px;
 
-          &:hover,
-          &:focus {
-            background: $brand-secondary;
-          }
-
+        &:hover,
+        &:focus {
+          background: $brand-secondary;
         }
 
       }
@@ -171,7 +171,6 @@
     }
 
   }
-
 
 }
 
@@ -304,21 +303,6 @@
 
 }
 
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:focus,
-.navbar-default .navbar-nav > .active > a:hover {
-  &:after {
-    background-color: $brand-primary;
-    display: block;
-    content: '';
-    height: 5px;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-  }
-
-}
 
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:focus,

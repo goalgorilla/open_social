@@ -45,9 +45,10 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
       $form['lng']['#access'] = FALSE;
 
       // Add new address input.
-      $form['address'] = [
+      $form['location'] = [
         '#type' => 'textfield',
-        '#title' => t('Address'),
+        '#title' => t('Location'),
+        '#description' => t('Country, city or postal code'),
         '#weight' => $form['lat']['#weight'],
       ];
 
@@ -129,16 +130,16 @@ function social_search_views_query_alter(ViewExecutable $view, QueryPluginBase $
     // Get Google Maps API key.
     $config = \Drupal::config('geolocation.settings');
     $apikey = $config->get('google_map_api_key');
-    if (!empty($exposed_input['address']) && !empty($apikey)) {
+    if (!empty($exposed_input['location']) && !empty($apikey)) {
       // Init geocoder settings.
       $plugins = ['googlemaps'];
       $options = [
         'googlemaps' => ['apikey' => $apikey],
       ];
-      // Convert address to geolocation values.
+      // Convert location to geolocation values.
       if (\Drupal::hasService('geocoder')) {
         $address_collection = \Drupal::service('geocoder')
-          ->geocode($exposed_input['address'], $plugins, $options);
+          ->geocode($exposed_input['location'], $plugins, $options);
         if (!empty($address_collection)) {
           // Alter proximity query with correct coordinates.
           foreach ($query->where as &$condition_group) {

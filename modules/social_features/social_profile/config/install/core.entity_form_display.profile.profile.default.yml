@@ -11,6 +11,7 @@ dependencies:
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
     - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - image.style.social_x_large
     - profile.type.profile
@@ -54,6 +55,7 @@ third_party_settings:
         - field_profile_self_introduction
         - field_profile_expertise
         - field_profile_interests
+        - field_profile_profile_tag
       parent_name: ''
       weight: 3
       label: 'Details about you'
@@ -144,6 +146,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: telephone_default
+  field_profile_profile_tag:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
   field_profile_self_introduction:
     weight: 5
     settings:
