@@ -828,6 +828,54 @@ img.align-center {
   margin-right: auto;
 }
 
+.body-text a {
+  text-decoration: underline;
+}
+
+.body-text table {
+  border-color: #ddd;
+  border-style: solid;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
+.body-text table > thead > tr > th,
+.body-text table > thead > tr > td,
+.body-text table > tbody > tr > th,
+.body-text table > tbody > tr > td,
+.body-text table > tfoot > tr > th,
+.body-text table > tfoot > tr > td {
+  padding: 8px;
+  line-height: 1.5;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.body-text table > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+
+.body-text table > caption + thead > tr:first-child > th,
+.body-text table > caption + thead > tr:first-child > td,
+.body-text table > colgroup + thead > tr:first-child > th,
+.body-text table > colgroup + thead > tr:first-child > td,
+.body-text table > thead:first-child > tr:first-child > th,
+.body-text table > thead:first-child > tr:first-child > td {
+  border-top: 0;
+}
+
+.body-text table > tbody + tbody {
+  border-top: 2px solid #ddd;
+}
+
+.body-text table table {
+  background-color: #f3f3f3;
+}
+
 @media (min-width: 768px) {
 
   .lead {
