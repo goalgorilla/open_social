@@ -18,26 +18,6 @@
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
     },
     "extra": {
-        "installer-paths": {
-            "html/core": [
-                "drupal/core"
-            ],
-            "html/modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "html/profiles/contrib/social": [
-                "goalgorilla/open_social"
-            ],
-            "html/profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "html/themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ],
-            "drush/contrib/{$name}": [
-                "type:drupal-drush"
-            ]
-        },
         "patches": {
             "drupal/profile": {
                 "Fixes access control on entities": "https://www.drupal.org/files/issues/profile-accesscontrol-2703825-6.patch"
