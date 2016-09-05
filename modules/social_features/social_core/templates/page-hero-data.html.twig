@@ -84,7 +84,11 @@
             {% endif %}
           </div>
         {% elseif node_type == "book" %}
+
           {%- trans %} Authored on {%- endtrans %} {{ created_date_formatted }}
+
+        {% elseif node_type == "page" %}
+          {# Do not display the author, date or group name #}
         {% else %}
           <div>
             {%- trans -%} By {%- endtrans -%}

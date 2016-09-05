@@ -118,6 +118,12 @@
             </label>
           </div>
         {% endif %}
+
+        {% if content.enrolled %}
+          <span class="label label-default">
+            {%- trans -%} Enrolled {%- endtrans -%}
+          </span>
+        {% endif %}
       </div>
       {{ content.links }}
     </div>
