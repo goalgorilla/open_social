@@ -4,7 +4,8 @@
         attach: function (context, settings) {
             // Only for Desktop we switch the jquery datepicker.
             if (!isMobile()) {
-                console.log("kaas");
+
+                // Defaults
                 var $time = $('.form-time');
                 var $date = $('.form-date');
 

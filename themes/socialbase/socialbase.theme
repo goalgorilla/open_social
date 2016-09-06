@@ -160,11 +160,6 @@ function socialbase_element_info_alter(array &$types) {
  */
 function socialbase_datetime_set_format($element) {
   $element['#attached']['library'][] = 'socialbase/pickadate';
-  // Remove the time seconds function.
-  $element['time']['#attributes']['title'] = t('Enter a valid time - e.g. @format', [
-    '@format' => (new \DateTime())->format('h:i'),
-  ]);
-  $element['time']['#attributes']['step'] = 60;
   return $element;
 }
 
