@@ -1,0 +1,5 @@
+services:
+  social_download_count.overrider:
+    class: \Drupal\social_download_count\SocialDownloadCountConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
