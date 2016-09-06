@@ -5,12 +5,7 @@ Feature: Download Topic
   Goal/desire: I want to see number of downloads for files attached to nodes
 
   Scenario: Track downloads of files attached to nodes
-    Given I am logged in as an "administrator"
-    And I am on "admin/modules"
-    And I check the box "Social Download Count"
-    And I press "Install"
-    # Modules "Social Download Count" and "Download Count" should be disabled by default
-    And I press "Continue"
+    Given I enable the module "social_download_count"
     And I am logged in as an "authenticated user"
     And I am on "user"
     And I click "Topics"

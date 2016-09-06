@@ -109,23 +109,10 @@ function _download_count_set_permissions() {
       continue;
     }
 
-    $permissions = _download_count_get_permissions($role->id());
+    $permissions = array(
+      'view download counts',
+    );
+
     user_role_grant_permissions($role->id(), $permissions);
   }
-}
-
-/**
- * @param $role
- * @return array
- */
-function _download_count_get_permissions($role) {
-  // Anonymous.
-  $permissions['anonymous'] = array(
-    'view download counts',
-  );
-
-  // Authenticated.
-  $permissions['authenticated'] = $permissions['anonymous'];
-
-  return $permissions[$role];
 }
