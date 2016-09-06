@@ -20,11 +20,5 @@ Feature: Create Topic
     And I should see "This is a test topic" in the "Hero block"
     And I should see "Discussion" in the "Hero block"
     And I should see "Body description text" in the "Main content"
-    And I should not see "Enrollments"
-    And I click "humans.txt"
-    Given I am logged in as an "administrator"
-    And I am on the homepage
-    And I click "This is a test topic"
     And I should see "humans.txt"
-    And I should see "1 download"
-
+    And I should not see "Enrollments"
