@@ -69,9 +69,9 @@
         <div>
 
         {% if node_type == "topic" %}
-          {%- trans -%} By {%- endtrans -%}
+          {%- trans -%}By&nbsp;{%- endtrans -%}
           {{ author_name }}
-          {%- trans -%} on {%- endtrans -%}
+          {%- trans -%}&nbsp;on&nbsp;{%- endtrans -%}
           {{ created_date_formatted }}
 
           <div>
@@ -91,10 +91,10 @@
           {# Do not display the author, date or group name #}
         {% else %}
           <div>
-            {%- trans -%} By {%- endtrans -%}
+            {%- trans -%}By&nbsp;{%- endtrans -%}
               {{ author_name }}
             {% if group_link %}
-              <span> in group {{ group_link }} </span>
+              <span>in group{{ group_link }} </span>
             {% endif %}
           </div>
         {% endif %}
