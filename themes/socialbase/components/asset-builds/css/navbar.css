@@ -184,8 +184,8 @@
 
 .navbar-collapse {
   overflow-x: visible;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding-right: 0.9375rem;
+  padding-left: 0.9375rem;
   border-top: 1px solid transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   -webkit-overflow-scrolling: touch;
@@ -213,8 +213,8 @@
 .container > .navbar-collapse,
 .container-fluid > .navbar-header,
 .container-fluid > .navbar-collapse {
-  margin-right: -1rem;
-  margin-left: -1rem;
+  margin-right: -0.9375rem;
+  margin-left: -0.9375rem;
 }
 
 .navbar-static-top {
@@ -243,7 +243,7 @@
 
 .navbar-brand {
   float: left;
-  padding: 13px 1rem;
+  padding: 13px 0.9375rem;
   font-size: 20px;
   line-height: 24px;
   height: 50px;
@@ -260,7 +260,7 @@
 .navbar-toggle {
   position: relative;
   float: right;
-  margin-right: 1rem;
+  margin-right: 0.9375rem;
   padding: 9px 10px;
   margin-top: 8px;
   margin-bottom: 8px;
@@ -286,7 +286,7 @@
 }
 
 .navbar-nav {
-  margin: 6.5px -1rem;
+  margin: 6.5px -0.9375rem;
 }
 
 .navbar-nav > li > a {
@@ -296,9 +296,9 @@
 }
 
 .navbar-form {
-  margin-left: -1rem;
-  margin-right: -1rem;
-  padding: 10px 1rem;
+  margin-left: -0.9375rem;
+  margin-right: -0.9375rem;
+  padding: 10px 0.9375rem;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -502,17 +502,13 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   color: #1a8dbe;
 }
 
-.navbar-fixed-top .navbar-nav {
-  margin: 0;
-}
-
 .navbar-fixed-top .navbar-right .dropdown-menu {
   right: 0;
   left: auto;
 }
 
 .navbar-fixed-top .navbar > .container .navbar-brand {
-  margin-left: -1rem;
+  margin-left: -0.9375rem;
 }
 
 .navbar-footer .navbar-brand {
@@ -607,6 +603,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 
 .navbar-right {
   margin-top: 0;
+  margin-bottom: 0;
   float: right;
 }
 
@@ -770,7 +767,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 
   .navbar > .container .navbar-brand,
   .navbar > .container-fluid .navbar-brand {
-    margin-left: -1rem;
+    margin-left: -0.9375rem;
   }
 
   .navbar-toggle {
@@ -862,8 +859,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 
   .navbar-text {
     float: left;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: 0.9375rem;
+    margin-right: 0.9375rem;
   }
 
   .navbar-left {
@@ -872,23 +869,27 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 
   .navbar-right {
     float: right !important;
-    margin-right: -1rem;
+    margin-right: -0.9375rem;
   }
 
   .navbar-right ~ .navbar-right {
     margin-right: 0;
   }
+}
+
+@media screen and (min-width: 768px) {
 
   .navbar-fixed-top > .container .navbar-brand {
     margin-left: 0;
   }
 
+  .navbar-fixed-top .navbar-nav {
+    margin-left: 10px;
+  }
+
   .navbar-fixed-top .navbar-right {
     margin-right: 0;
   }
-}
-
-@media screen and (min-width: 768px) {
 
   .navbar-footer .navbar-brand {
     width: auto;
@@ -902,10 +903,6 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 
   .navbar-footer .navbar-right li {
     float: left;
-  }
-
-  .navbar-fixed-top .navbar-nav {
-    margin-left: 10px;
   }
 
   .navbar-search {
@@ -1068,7 +1065,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   }
 
   .navbar-collapse .navbar-nav {
-    margin: 6.5px -1rem;
+    margin: 6.5px -0.9375rem;
   }
 
   .navbar-collapse .navbar-nav > li > a {
