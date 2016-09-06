@@ -2,13 +2,31 @@
 
 @import "contrib/bootstrap/tables";
 
+input[type='text'].form-date {
+  min-width: 240px;
+  background-repeat: no-repeat;
+  background-size: auto 18px;
+  background-position: 96% 50%;
+  background-image: url(../../../images/icons/icon-today.svg);
+  fill: $brand-primary;
+}
+
+input[type='text'].form-time {
+  min-width: 160px;
+  background-repeat: no-repeat;
+  background-size: auto 18px;
+  background-position: 96% 50%;
+  background-image: url(../../../images/icons/icon-schedule.svg);
+}
+
 .ui-datepicker {
   position: absolute;
+  display: none;
   top: 100%;
   left: 0;
   float: left;
   min-width: 160px;
-  margin: 2px 0 0; // override default ul
+  margin: 4px 0; // override default ul
   text-align: left;
   background-color: $dropdown-bg;
   border: 1px solid $dropdown-fallback-border; // IE8 fallback

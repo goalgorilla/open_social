@@ -221,13 +221,31 @@ table th[class*="col-"] {
   min-height: 0.01%;
 }
 
+input[type='text'].form-date {
+  min-width: 240px;
+  background-repeat: no-repeat;
+  background-size: auto 18px;
+  background-position: 96% 50%;
+  background-image: url(../../../images/icons/icon-today.svg);
+  fill: #29abe2;
+}
+
+input[type='text'].form-time {
+  min-width: 160px;
+  background-repeat: no-repeat;
+  background-size: auto 18px;
+  background-position: 96% 50%;
+  background-image: url(../../../images/icons/icon-schedule.svg);
+}
+
 .ui-datepicker {
   position: absolute;
+  display: none;
   top: 100%;
   left: 0;
   float: left;
   min-width: 160px;
-  margin: 2px 0 0;
+  margin: 4px 0;
   text-align: left;
   background-color: #fff;
   border: 1px solid #ccc;
