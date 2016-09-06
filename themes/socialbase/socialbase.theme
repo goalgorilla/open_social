@@ -159,7 +159,7 @@ function socialbase_element_info_alter(array &$types) {
  * Element process callback for datetime fields.
  */
 function socialbase_datetime_set_format($element) {
-  $element['#attached']['library'][] = 'socialbase/pickadate';
+  $element['#attached']['library'][] = 'core/date';
   return $element;
 }
 

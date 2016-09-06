@@ -165,14 +165,27 @@ drupal.ajax:
     component:
       components/asset-builds/css/ajax.css: {}
 
-pickadate:
+jquery.datepicker:
   css:
     theme:
       components/asset-builds/css/datepicker.css: {}
   js:
     js/custom/date_picker.js: {}
   dependencies:
-    - core/jquery.ui.datepicker
+    - core/modernizr
+
+jquery.timepicker:
+  remote: https://github.com/jonthornton/jquery-timepicker
+  version: "1.11.3"
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/jonthornton/jquery-timepicker/master/README.md
+    gpl-compatible: true
+  js:
+    js/contrib/timepicker/jquery.timepicker.js: { minified: true }
+  css:
+    component:
+      components/asset-builds/css/timepicker.css: {}
 
 drupal.tabledrag:
   js:

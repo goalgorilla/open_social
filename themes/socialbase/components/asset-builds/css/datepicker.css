@@ -221,39 +221,13 @@ table th[class*="col-"] {
   min-height: 0.01%;
 }
 
-.caret {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 2px;
-  vertical-align: middle;
-  border-top: 4px dashed;
-  border-top: 4px solid \9;
-  border-right: 4px solid transparent;
-  border-left: 4px solid transparent;
-}
-
-.dropup,
-.dropdown {
-  position: relative;
-}
-
-.dropdown-toggle:focus {
-  outline: 0;
-}
-
-.dropdown-menu, .ui-datepicker {
+.ui-datepicker {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
-  display: none;
   float: left;
   min-width: 160px;
-  padding: 5px 0;
   margin: 2px 0 0;
-  list-style: none;
-  font-size: 16px;
   text-align: left;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -261,113 +235,6 @@ table th[class*="col-"] {
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
-}
-
-.dropdown-menu.pull-right, .pull-right.ui-datepicker {
-  right: 0;
-  left: auto;
-}
-
-.dropdown-menu .divider, .ui-datepicker .divider {
-  height: 1px;
-  margin: 11px 0;
-  overflow: hidden;
-  background-color: #e5e5e5;
-}
-
-.dropdown-menu > li > a, .ui-datepicker > li > a {
-  display: block;
-  padding: 3px 20px;
-  clear: both;
-  font-weight: normal;
-  line-height: 1.5;
-  color: #4d4d4d;
-  white-space: nowrap;
-}
-
-.dropdown-menu > li > a:hover, .ui-datepicker > li > a:hover, .dropdown-menu > li > a:focus, .ui-datepicker > li > a:focus {
-  text-decoration: none;
-  color: #404040;
-  background-color: #f5f5f5;
-}
-
-.dropdown-menu > .active > a, .ui-datepicker > .active > a, .dropdown-menu > .active > a:hover, .ui-datepicker > .active > a:hover, .dropdown-menu > .active > a:focus, .ui-datepicker > .active > a:focus {
-  color: #fff;
-  text-decoration: none;
-  outline: 0;
-  background-color: #1f80aa;
-}
-
-.dropdown-menu > .disabled > a, .ui-datepicker > .disabled > a, .dropdown-menu > .disabled > a:hover, .ui-datepicker > .disabled > a:hover, .dropdown-menu > .disabled > a:focus, .ui-datepicker > .disabled > a:focus {
-  color: #777777;
-}
-
-.dropdown-menu > .disabled > a:hover, .ui-datepicker > .disabled > a:hover, .dropdown-menu > .disabled > a:focus, .ui-datepicker > .disabled > a:focus {
-  text-decoration: none;
-  background-color: transparent;
-  background-image: none;
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  cursor: not-allowed;
-}
-
-.open > .dropdown-menu, .open > .ui-datepicker {
-  display: block;
-}
-
-.open > a {
-  outline: 0;
-}
-
-.dropdown-menu-right {
-  left: auto;
-  right: 0;
-}
-
-.dropdown-menu-left {
-  left: 0;
-  right: auto;
-}
-
-.dropdown-header {
-  display: block;
-  padding: 3px 20px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #555555;
-  white-space: nowrap;
-}
-
-.dropdown-backdrop {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  z-index: 990;
-}
-
-.pull-right > .dropdown-menu, .pull-right > .ui-datepicker {
-  right: 0;
-  left: auto;
-}
-
-.dropup .caret,
-.navbar-fixed-bottom .dropdown .caret {
-  border-top: 0;
-  border-bottom: 4px dashed;
-  border-bottom: 4px solid \9;
-  content: "";
-}
-
-.dropup .dropdown-menu, .dropup .ui-datepicker,
-.navbar-fixed-bottom .dropdown .dropdown-menu,
-.navbar-fixed-bottom .dropdown .ui-datepicker {
-  top: auto;
-  bottom: 100%;
-  margin-bottom: 2px;
-}
-
-.ui-datepicker {
   font-size: 0.875rem;
   padding: 4px;
   z-index: 1000 !important;
@@ -485,19 +352,6 @@ table th[class*="col-"] {
   color: white;
   background-color: #134f69;
   border-color: #134f69;
-}
-
-@media (min-width: 768px) {
-
-  .navbar-right .dropdown-menu, .navbar-right .ui-datepicker {
-    right: 0;
-    left: auto;
-  }
-
-  .navbar-right .dropdown-menu-left {
-    left: 0;
-    right: auto;
-  }
 }
 
 @media screen and (max-width: 767px) {
