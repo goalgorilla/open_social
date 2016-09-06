@@ -23,7 +23,7 @@
                     // Initiate the datepicker element. So we can make it user friendly again.
                     $date.datepicker({
                         altFormat: 'yy-mm-dd',
-                        dateFormat: 'yy-mm-dd'
+                        dateFormat: 'yy-mm-dd' // @Todo we can alter this to show the user a different format.
                     });
                 }
             }
