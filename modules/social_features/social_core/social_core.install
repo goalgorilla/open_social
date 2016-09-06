@@ -78,6 +78,7 @@ function _social_core_get_permissions($role) {
     'revert all revisions',
     'delete all revisions',
     'create url aliases',
+    'use text format full_html',
   ));
 
   // Site manager.
@@ -178,4 +179,22 @@ function _social_core_create_menu_links() {
     'weight' => 20,
   ])->save();
 
+}
+
+/**
+ * Enable full_html format for contentmanager and sitemanager roles.
+ */
+function social_core_update_8002() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'use text format full_html',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
