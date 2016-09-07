@@ -712,6 +712,10 @@ function socialbase_preprocess_field(&$variables) {
       break;
   }
 
+  if ($variables['element']['#view_mode'] == 'teaser') {
+    $variables['part_of_teaser'] = TRUE;
+  }
+
   switch ($variables['element']['#entity_type']) {
     case 'node':
     case 'post':
