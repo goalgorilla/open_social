@@ -75,7 +75,7 @@
 
     <div class="row margin-top-l">
 
-      {% if page.complementary_top %}
+      {% if page.complementary_top or page.complementary_bottom %}
         <div{{ attributes.addClass(complementary_top_classes).setAttribute('role', 'complementary') }}>
           {{ page.complementary_top }}
         </div>
