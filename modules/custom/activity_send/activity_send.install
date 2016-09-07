@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the activity_send module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function activity_send_schema() {
+  $schema['user_activity_send'] = array(
+    'fields' => array(
+      'uid' => array(
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'destination' => array(
+        'description' => 'The activity destination name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'message_template' => array(
+        'description' => 'The message template name.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'status' => array(
+        'description' => 'A boolean indicating whether this type of notifications is enabled or not.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+      'uas_uid' => array('uid'),
+      'uas_destination' => array('destination'),
+      'uas_message_template' => array('message_template'),
+      'uas_status' => array('status'),
+    ),
+  );
+
+  return $schema;
+}
