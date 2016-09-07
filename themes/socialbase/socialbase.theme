@@ -789,6 +789,7 @@ function socialbase_preprocess_page(&$variables) {
     if (in_array($node->bundle(), $page_to_exclude)) {
       $variables['display_page_title'] = FALSE;
     }
+
   }
 
 }
@@ -858,13 +859,6 @@ function socialbase_preprocess_node(&$variables) {
         $variables['visibility_label'] = t('public');
         break;
     }
-  }
-
-  if($node->getType() === 'event'){
-    $variables['details_label'] = t('Event details');
-  }
-  if($node->getType() === 'topic') {
-    $variables['details_label'] = t('Topic details');
   }
 
   if($node->status->value == NODE_NOT_PUBLISHED){
