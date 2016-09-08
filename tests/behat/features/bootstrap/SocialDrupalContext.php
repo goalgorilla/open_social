@@ -127,4 +127,14 @@ class SocialDrupalContext extends DrupalContext {
     $milliseconds = (int) ($seconds * 1000);
     $this->getSession()->wait($milliseconds, $condition);
   }
+
+  /**
+   * I enable the module :module_name.
+   *
+   * @When /^(?:|I )enable the module "([^"]*)"/
+   */
+  public function iEnableTheModule($module_name) {
+    $modules = [$module_name];
+    \Drupal::service('module_installer')->install($modules);
+  }
 }
