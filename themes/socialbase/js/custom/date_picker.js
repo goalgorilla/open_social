@@ -18,7 +18,7 @@
                   $time.prop('type', 'text');
                   // Initiate the datepicker element. So we can make it user friendly again.
                   var options = {
-                    'show2400': true,
+                    'show2400': false,
                     'scrollDefault': 'now',
                     'timeFormat': 'H:i'
                   };
