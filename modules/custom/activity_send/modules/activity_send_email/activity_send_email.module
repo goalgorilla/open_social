@@ -6,51 +6,53 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\activity_creator\ActivityInterface;
+use Drupal\message\Entity\Message;
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
 function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
-  $account = \Drupal::currentUser();
-
-  $form['email_notifications'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('E-mail notifications'),
-    '#tree' => TRUE,
-  );
-
-  // Get message templates for which email destination is enabled.
-  $email_message_templates = [];
-  /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
-  $message_templates = \Drupal::entityTypeManager()
-    ->getStorage('message_template')
-    ->loadMultiple();
-  foreach ($message_templates as $message_template) {
-    $destinations = $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-    if (in_array('email', $destinations)) {
-      $email_message_templates[$message_template->id()] = $message_template->getDescription();
-    }
-  }
-
-  // Get email notification settings of active user.
-  $query = \Drupal::database()->select('user_activity_send', 'uas');
-  $query->fields('uas', ['message_template', 'status']);
-  $query->condition('uas.uid', $account->id());
-  $user_email_settings = $query->execute()->fetchAllKeyed();
-
-  // Build checkbox for each message template.
-  foreach ($email_message_templates as $key => $title) {
-    $form['email_notifications'][$key] = array(
-      '#type' => 'checkbox',
-      '#title_display' => 'before',
-      '#title' => $title,
-      '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : FALSE,
+  $account = \Drupal::routeMatch()->getParameter('user');
+  if (is_object($account)) {
+    $form['email_notifications'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('E-mail notifications'),
+      '#tree' => TRUE,
     );
+
+    // Get message templates for which email destination is enabled.
+    $email_message_templates = [];
+    /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
+    $message_templates = \Drupal::entityTypeManager()
+      ->getStorage('message_template')
+      ->loadMultiple();
+    foreach ($message_templates as $message_template) {
+      $destinations = $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+      if (in_array('email', $destinations)) {
+        $email_message_templates[$message_template->id()] = $message_template->getDescription();
+      }
+    }
+
+    // Get email notification settings of active user.
+    $query = \Drupal::database()->select('user_activity_send', 'uas');
+    $query->fields('uas', ['message_template', 'status']);
+    $query->condition('uas.uid', $account->id());
+    $user_email_settings = $query->execute()->fetchAllKeyed();
+
+    // Build checkbox for each message template.
+    foreach ($email_message_templates as $key => $title) {
+      $form['email_notifications'][$key] = array(
+        '#type' => 'checkbox',
+        '#title_display' => 'before',
+        '#title' => $title,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : FALSE,
+      );
+    }
+
+    // Submit function to save send email settings.
+    $form['actions']['submit']['#submit'][] = '_activity_send_email_form_user_form_submit';
   }
-
-  // Submit function to save send email settings.
-  $form['actions']['submit']['#submit'][] = '_activity_send_email_form_user_form_submit';
-
 }
 
 /**
@@ -62,10 +64,10 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  *   Form state interface.
  */
 function _activity_send_email_form_user_form_submit($form, FormStateInterface $form_state) {
-  $account = \Drupal::currentUser();
+  $account = \Drupal::routeMatch()->getParameter('user');
   $email_notifications_values = $form_state->getValue('email_notifications');
 
-  if (!empty($email_notifications_values)) {
+  if (is_object($account) && !empty($email_notifications_values)) {
     foreach ($email_notifications_values as $message_template => $status) {
       $query = \Drupal::database()->merge('user_activity_send');
       $query->fields([
@@ -81,5 +83,67 @@ function _activity_send_email_form_user_form_submit($form, FormStateInterface $f
       ]);
       $query->execute();
     }
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function activity_send_email_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  $variables = array(
+    '%site_name' => \Drupal::config('system.site')->get('name'),
+  );
+
+  switch ($key) {
+    case 'activity_send_email':
+      $message['subject'] = t('Notification from %site_name', $variables, $options);
+      $message['body'][] = $params['body'];
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_send_email_activity_insert(ActivityInterface $activity) {
+  // Get target account.
+  if (isset($activity->field_activity_recipient_user)) {
+    $target_type = $activity->field_activity_recipient_user->target_type;
+    $target_id = $activity->field_activity_recipient_user->target_id;
+    $target_account = \Drupal::entityTypeManager()
+      ->getStorage($target_type)
+      ->load($target_id);
+  }
+  // Get Message Template id.
+  $mail = Message::load($activity->field_activity_message->target_id);
+  $message_template_id = $mail->getTemplate()->id();
+
+  // Get email notification settings of active user.
+  $query = \Drupal::database()->select('user_activity_send', 'uas');
+  $query->fields('uas', ['message_template', 'status']);
+  $query->condition('uas.destination', 'email');
+  $query->condition('uas.uid', $target_account->id());
+  $user_email_settings = $query->execute()->fetchAllKeyed();
+
+  // Check if email notifications is enabled for this kind of activity.
+  if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
+    // Send Email
+    $langcode = \Drupal::currentUser()->getPreferredLangcode();
+    $params['body'] = $target_id = $activity->field_activity_output_text->value;
+
+    $mail_manager = \Drupal::service('plugin.manager.mail');
+    $mail = $mail_manager->mail(
+      'activity_send_email',
+      'activity_send_email',
+      $target_account->getEmail(),
+      $langcode,
+      $params,
+      $reply = NULL,
+      $send = TRUE
+    );
   }
 }
