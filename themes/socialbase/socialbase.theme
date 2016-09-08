@@ -529,7 +529,7 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 
-  if (in_array('email_notifications', $variables['element']['#array_parents'])) {
+  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }
@@ -910,7 +910,7 @@ function socialbase_preprocess_form_element(&$variables) {
 
   // Tell the label for a switch form element it is in that switch form element
   if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
-    $variables['label']['#switch'] = TRUE;
+//    $variables['label']['#switch'] = TRUE;
   }
 
   // Use cards for the vertical tabs component
