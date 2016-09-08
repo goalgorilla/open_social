@@ -86,3 +86,33 @@ function download_count_uninstall() {
     ->delete();
   drupal_set_message(t('The download count module has been uninstalled.'));
 }
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of download_count.
+ */
+function download_count_install() {
+  // Set some default permissions.
+  _download_count_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _download_count_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = array(
+      'view download counts',
+    );
+
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
