@@ -148,6 +148,20 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
 }
 
+/**
+ * Implements hook_element_info_alter().
+ */
+function socialbase_element_info_alter(array &$types) {
+  $types['datetime']['#process'][] = 'socialbase_datetime_set_format';
+}
+
+/**
+ * Element process callback for datetime fields.
+ */
+function socialbase_datetime_set_format($element) {
+  $element['#attached']['library'][] = 'core/date';
+  return $element;
+}
 
 
 /**

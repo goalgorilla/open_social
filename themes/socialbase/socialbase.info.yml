@@ -42,7 +42,10 @@ libraries-extend:
     - socialbase/drupal.ajax
   core/drupal.tabledrag:
     - socialbase/drupal.tabledrag
-
+  core/drupal.date:
+    - socialbase/jquery.timepicker
+  core/jquery.ui.datepicker:
+    - socialbase/jquery.datepicker
 
 # The "libraries-override:" section will allow you to:
 # - Replace an entire library.
@@ -52,9 +55,16 @@ libraries-extend:
 libraries-override:
   core/normalize: false
   # Remove jQuery UI datepicker
-  core/jquery.ui/ui:
-    js:
-      datepicker-min.js: false
+  core/jquery.ui.datepicker:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/datepicker.css: false
+  core/jquery.ui:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/core.css: false
+      theme:
+        assets/vendor/jquery.ui/themes/base/theme.css: false
 
   system/base: false
   views/views.module: false
