@@ -1,0 +1,17 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the activity_basics module.
+ */
+
+/**
+ * Install token module.
+ */
+function activity_basics_update_8101(&$sandbox) {
+
+  $modules = array(
+    'token',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
