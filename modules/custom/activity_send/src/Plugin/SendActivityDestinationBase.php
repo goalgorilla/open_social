@@ -66,4 +66,32 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     }
   }
 
+  /**
+   * Returns target account.
+   */
+  public static function getSendTargetUser($activity) {
+    // Get target account.
+    if (isset($activity->field_activity_recipient_user)) {
+      $target_id = $activity->field_activity_recipient_user->target_id;
+      $target_account = \Drupal::entityTypeManager()
+        ->getStorage('user')
+        ->load($target_id);
+      return $target_account;
+    }
+  }
+
+  /**
+   * Check if user last activity was more than few minutes ago.
+   */
+  public static function isUserOffline($account) {
+    $query = \Drupal::database()->select('sessions', 's');
+    $query->addField('s', 'timestamp');
+    $query->condition('s.uid', $account->id());
+    $last_activity_time = $query->execute()->fetchField();
+    // 5 minutes ago
+    $current_time = REQUEST_TIME - (60 * 5);
+
+    return (empty($last_activity_time) || $last_activity_time < $current_time);
+  }
+
 }

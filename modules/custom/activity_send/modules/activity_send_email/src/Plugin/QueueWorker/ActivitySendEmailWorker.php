@@ -34,47 +34,32 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
     // First make sure it's an actual Activity entity.
     if ($activity = Activity::load($data['entity_id'])) {
       // Get target account.
-      if (isset($activity->field_activity_recipient_user)) {
-        $target_id = $activity->field_activity_recipient_user->target_id;
-        $target_account = \Drupal::entityTypeManager()
-          ->getStorage('user')
-          ->load($target_id);
+      $target_account = EmailActivityDestination::getSendTargetUser($activity);
+      // Check if user last activity was more than few minutes ago.
+      if (is_object($target_account) && EmailActivityDestination::isUserOffline($target_account)) {
+        // Get Message Template id.
+        $mail = Message::load($activity->field_activity_message->target_id);
+        $message_template_id = $mail->getTemplate()->id();
 
-        // Check if user last activity was more than few minutes ago.
-        if (!empty($target_account->id())) {
-          $query = \Drupal::database()->select('sessions', 's');
-          $query->addField('s', 'timestamp');
-          $query->condition('s.uid', $target_account->id());
-          $timestamp = $query->execute()->fetchField();
-          // 5 minutes ago
-          $time = REQUEST_TIME - (60 * 5);
+        // Get email notification settings of active user.
+        $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
 
-          if (!empty($timestamp) && $timestamp < $time) {
-            // Get Message Template id.
-            $mail = Message::load($activity->field_activity_message->target_id);
-            $message_template_id = $mail->getTemplate()->id();
+        // Check if email notifications is enabled for this kind of activity.
+        if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
+          // Send Email
+          $langcode = \Drupal::currentUser()->getPreferredLangcode();
+          $params['body'] = $activity->field_activity_output_text->value;
 
-            // Get email notification settings of active user.
-            $user_email_settings =  EmailActivityDestination::getSendEmailUserSettings($target_account);
-
-            // Check if email notifications is enabled for this kind of activity.
-            if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
-              // Send Email
-              $langcode = \Drupal::currentUser()->getPreferredLangcode();
-              $params['body'] = $activity->field_activity_output_text->value;
-
-              $mail_manager = \Drupal::service('plugin.manager.mail');
-              $mail = $mail_manager->mail(
-                'activity_send_email',
-                'activity_send_email',
-                $target_account->getEmail(),
-                $langcode,
-                $params,
-                $reply = NULL,
-                $send = TRUE
-              );
-            }
-          }
+          $mail_manager = \Drupal::service('plugin.manager.mail');
+          $mail = $mail_manager->mail(
+            'activity_send_email',
+            'activity_send_email',
+            $target_account->getEmail(),
+            $langcode,
+            $params,
+            $reply = NULL,
+            $send = TRUE
+          );
         }
       }
     }
