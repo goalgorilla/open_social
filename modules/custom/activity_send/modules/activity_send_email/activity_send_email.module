@@ -29,7 +29,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       ->loadMultiple();
     foreach ($message_templates as $message_template) {
       $destinations = $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-      if (in_array('email', $destinations)) {
+      if (is_array($destinations) && in_array('email', $destinations)) {
         $email_message_templates[$message_template->id()] = $message_template->getDescription();
       }
     }
@@ -110,7 +110,10 @@ function activity_send_email_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {
-  $data['entity_id'] = $activity->id();
-  $queue = \Drupal::queue('activity_send_email_worker');
-  $queue->createItem($data);
+  /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
+  $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+  // Trigger the create action for entities.
+  /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
+  $create_action = $activity_send_factory->createInstance('email_activity_send');
+  $create_action->create($activity);
 }
