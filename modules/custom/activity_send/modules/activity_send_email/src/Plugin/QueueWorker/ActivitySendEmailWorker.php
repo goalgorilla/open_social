@@ -7,6 +7,7 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\message\Entity\Message;
@@ -54,17 +55,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
             $message_template_id = $mail->getTemplate()->id();
 
             // Get email notification settings of active user.
-            $query = \Drupal::database()->select('user_activity_send', 'uas');
-            $query->fields('uas', ['message_template', 'status']);
-            $query->condition('uas.destination', 'email');
-            $query->condition('uas.uid', $target_account->id());
-            $user_email_settings = $query->execute()->fetchAllKeyed();
+            $user_email_settings =  EmailActivityDestination::getSendEmailUserSettings($target_account);
 
             // Check if email notifications is enabled for this kind of activity.
             if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
               // Send Email
               $langcode = \Drupal::currentUser()->getPreferredLangcode();
-              $params['body'] = $target_id = $activity->field_activity_output_text->value;
+              $params['body'] = $activity->field_activity_output_text->value;
 
               $mail_manager = \Drupal::service('plugin.manager.mail');
               $mail = $mail_manager->mail(
