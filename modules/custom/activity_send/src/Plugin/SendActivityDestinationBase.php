@@ -88,8 +88,9 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $query->addField('s', 'timestamp');
     $query->condition('s.uid', $account->id());
     $last_activity_time = $query->execute()->fetchField();
-    // 5 minutes ago
-    $current_time = REQUEST_TIME - (60 * 5);
+
+    $offline_window = \Drupal::config('download_count.settings')->get('activity_send_offline_window');
+    $current_time = REQUEST_TIME - $offline_window;
 
     return (empty($last_activity_time) || $last_activity_time < $current_time);
   }
