@@ -110,53 +110,7 @@ function activity_send_email_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {
-  // Get target account.
-  if (isset($activity->field_activity_recipient_user)) {
-    $target_type = $activity->field_activity_recipient_user->target_type;
-    $target_id = $activity->field_activity_recipient_user->target_id;
-    $target_account = \Drupal::entityTypeManager()
-      ->getStorage($target_type)
-      ->load($target_id);
-
-    // Check if user last activity was more than few minutes ago.
-    if (!empty($target_account->id())) {
-      $query = \Drupal::database()->select('sessions', 's');
-      $query->addField('s', 'timestamp');
-      $query->condition('s.uid', $target_account->id());
-
-      $timestamp = $query->execute()->fetchField();
-      $time = REQUEST_TIME - (60 * 5); //5 minutes ago
-
-      if (!empty($timestamp) && $timestamp < $time) {
-        // Get Message Template id.
-        $mail = Message::load($activity->field_activity_message->target_id);
-        $message_template_id = $mail->getTemplate()->id();
-
-        // Get email notification settings of active user.
-        $query = \Drupal::database()->select('user_activity_send', 'uas');
-        $query->fields('uas', ['message_template', 'status']);
-        $query->condition('uas.destination', 'email');
-        $query->condition('uas.uid', $target_account->id());
-        $user_email_settings = $query->execute()->fetchAllKeyed();
-
-        // Check if email notifications is enabled for this kind of activity.
-        if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
-          // Send Email
-          $langcode = \Drupal::currentUser()->getPreferredLangcode();
-          $params['body'] = $target_id = $activity->field_activity_output_text->value;
-
-          $mail_manager = \Drupal::service('plugin.manager.mail');
-          $mail = $mail_manager->mail(
-            'activity_send_email',
-            'activity_send_email',
-            $target_account->getEmail(),
-            $langcode,
-            $params,
-            $reply = NULL,
-            $send = TRUE
-          );
-        }
-      }
-    }
-  }
+  $data['entity_id'] = $activity->id();
+  $queue = \Drupal::queue('activity_send_email_worker');
+  $queue->createItem($data);
 }
