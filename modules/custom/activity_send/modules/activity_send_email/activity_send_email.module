@@ -117,33 +117,46 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
     $target_account = \Drupal::entityTypeManager()
       ->getStorage($target_type)
       ->load($target_id);
-  }
-  // Get Message Template id.
-  $mail = Message::load($activity->field_activity_message->target_id);
-  $message_template_id = $mail->getTemplate()->id();
 
-  // Get email notification settings of active user.
-  $query = \Drupal::database()->select('user_activity_send', 'uas');
-  $query->fields('uas', ['message_template', 'status']);
-  $query->condition('uas.destination', 'email');
-  $query->condition('uas.uid', $target_account->id());
-  $user_email_settings = $query->execute()->fetchAllKeyed();
+    // Check if user last activity was more than few minutes ago.
+    if (!empty($target_account->id())) {
+      $query = \Drupal::database()->select('sessions', 's');
+      $query->addField('s', 'timestamp');
+      $query->condition('s.uid', $target_account->id());
 
-  // Check if email notifications is enabled for this kind of activity.
-  if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
-    // Send Email
-    $langcode = \Drupal::currentUser()->getPreferredLangcode();
-    $params['body'] = $target_id = $activity->field_activity_output_text->value;
+      $timestamp = $query->execute()->fetchField();
+      $time = REQUEST_TIME - (60 * 5); //5 minutes ago
 
-    $mail_manager = \Drupal::service('plugin.manager.mail');
-    $mail = $mail_manager->mail(
-      'activity_send_email',
-      'activity_send_email',
-      $target_account->getEmail(),
-      $langcode,
-      $params,
-      $reply = NULL,
-      $send = TRUE
-    );
+      if (!empty($timestamp) && $timestamp < $time) {
+        // Get Message Template id.
+        $mail = Message::load($activity->field_activity_message->target_id);
+        $message_template_id = $mail->getTemplate()->id();
+
+        // Get email notification settings of active user.
+        $query = \Drupal::database()->select('user_activity_send', 'uas');
+        $query->fields('uas', ['message_template', 'status']);
+        $query->condition('uas.destination', 'email');
+        $query->condition('uas.uid', $target_account->id());
+        $user_email_settings = $query->execute()->fetchAllKeyed();
+
+        // Check if email notifications is enabled for this kind of activity.
+        if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
+          // Send Email
+          $langcode = \Drupal::currentUser()->getPreferredLangcode();
+          $params['body'] = $target_id = $activity->field_activity_output_text->value;
+
+          $mail_manager = \Drupal::service('plugin.manager.mail');
+          $mail = $mail_manager->mail(
+            'activity_send_email',
+            'activity_send_email',
+            $target_account->getEmail(),
+            $langcode,
+            $params,
+            $reply = NULL,
+            $send = TRUE
+          );
+        }
+      }
+    }
   }
 }
