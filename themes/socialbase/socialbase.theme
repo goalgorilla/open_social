@@ -282,7 +282,7 @@ function socialbase_preprocess_block(&$variables) {
   if (isset($variables['content']['#form_id']) && $variables['content']['#form_id'] == 'views_exposed_form') {
     $variables['complementary'] = TRUE;
   }
-  //dpm($variables['elements']['#id']);
+
   // Add search_block to main menu.
   if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
     $block = Block::load('search_content_block_header');
@@ -297,19 +297,16 @@ function socialbase_preprocess_block(&$variables) {
 
   // Preprocess search block header.
   if (isset($variables['content']['search_content_form'])) {
-    if ($variables['elements']['#id'] == 'search_content_block_header') {
-      $variables['content']['search_content_form']['#attributes']['role'] = 'search';
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
-      $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-      $variables['content']['search_content_form']['actions']['submit']['#addsearchicon'] = TRUE;
+    $variables['content']['search_content_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_content_form']['actions']['submit']['#addsearchicon'] = TRUE;
+
+    if ($region == 'hero') {
+      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
+      $variables['content']['search_content_form']['#region'] = 'hero';
     }
     else {
-      // @TODO: Replace with SVG icon.
-      $variables['content']['search_content_form']['actions']['submit']['#suffix'] = '<span class="search-icon"><i class="material-icons">search</i></span>';
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
-      $variables['content']['search_content_form']['#attributes']['role'] = 'search';
-      $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-      $variables['content']['search_content_form']['#id'] = 'search-content-form-hero';
+      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
     }
   }
   if (isset($variables['content']['search_users_form'])) {
@@ -534,11 +531,6 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  // Lets add the the search_content_form as the only theme suggestion if it
-  // really is the search_content_form.
-  if ($variables['element']['#id'] == 'search-content-form') {
-    $suggestions = array($variables['theme_hook_original'] . '__' . 'search_content_form');
-  }
 
   // Alter comment form.
   if ($variables['element']['#id'] == 'comment-form') {
@@ -548,11 +540,6 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     else {
       $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_form');
     }
-  }
-
-  // Also for the search hero content form on the /search/content.
-  if ($variables['element']['#id'] == 'search-content-form-hero' || $variables['element']['#form_id'] == 'search_users_form' || $variables['element']['#form_id'] == 'search_groups_form') {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'search_hero_form';
   }
 
   // Custom theme hook suggestion for user_anon.
@@ -793,6 +780,7 @@ function socialbase_preprocess_page(&$variables) {
     if (in_array($node->bundle(), $page_to_exclude)) {
       $variables['display_page_title'] = FALSE;
     }
+
   }
 
 }
@@ -853,7 +841,7 @@ function socialbase_preprocess_node(&$variables) {
     $content_visibility = reset($node_visibility_value);
     switch ($content_visibility['value']) {
       case 'community':
-        $variables['visibility_icon'] = 'group';
+        $variables['visibility_icon'] = 'community';
         $variables['visibility_label'] = t('community');
         break;
 
@@ -862,13 +850,6 @@ function socialbase_preprocess_node(&$variables) {
         $variables['visibility_label'] = t('public');
         break;
     }
-  }
-
-  if($node->getType() === 'event'){
-    $variables['details_label'] = t('Event details');
-  }
-  if($node->getType() === 'topic') {
-    $variables['details_label'] = t('Topic details');
   }
 
   if($node->status->value == NODE_NOT_PUBLISHED){
@@ -1092,7 +1073,23 @@ function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $
  * Implements template_preprocess_form().
  */
 function socialbase_preprocess_form(&$variables) {
+
   $element = $variables['element'];
+
+  // If this is a search content form set a variable for twig
+  if ($element['#form_id'] === 'search_content_form') {
+    $variables['is_search_form'] = TRUE;
+  }
+
+  // We have set the region via propress block, now pass this variable on to be used in twig
+  // In twig we can distinguish the navbar form from the hero form as they both have the same ID's.
+  if (isset($element['#region'])) {
+    if ($element['#region'] === 'hero') {
+      $variables['in_hero_region'] = TRUE;
+    }
+  }
+
+
   $variables['attributes']['class'][] = 'clearfix';
 
   if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {

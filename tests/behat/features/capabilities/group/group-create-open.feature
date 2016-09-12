@@ -54,7 +54,7 @@ Feature: Create Open Group
     And I should see "Test open group" in the "Sidebar second"
     And I click "Groups"
     And I should see "Test open group" in the "Main content"
-    And I should not see the link "Add a group" in the "Sidebar second"
+    And I should not see the link "Add a group" in the "Main content"
     And I click "Test open group"
   # And I should see "Newest members" in the "Sidebar second"
   # And I should see "Group User One" in the "Sidebar second"

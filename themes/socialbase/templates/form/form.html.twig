@@ -24,10 +24,30 @@
       The card is closed function socialbase_form_alter in the info_text suffix
     #}
 
+{% elseif is_search_form %}
+
+  {% if in_hero_region %}
+
+    <form{{ attributes }}>
+      <div class="form-group">
+        {{ children }}
+      </div>
+    </form>
+
+  {% else %}
+
+    <form{{ attributes }}>
+      <div class="form-group" id="navbar-search">
+        {{ children }}
+      </div>
+    </form>
+
+  {% endif %}
+
 {% else %}
 
-<form{{ attributes }}>
-  {{ children }}
-</form>
+  <form{{ attributes }}>
+    {{ children }}
+  </form>
 
 {% endif %}
