@@ -525,6 +525,10 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
+
+  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+    $suggestions[] = $variables['theme_hook_original'] . '__switch';
+  }
 }
 
 /**
@@ -608,6 +612,10 @@ function socialbase_theme_suggestions_form_element_label_alter(array &$suggestio
     if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
     }
+  }
+
+  if (isset($variables['element']['#switch']) && $variables['element']['#switch'] == TRUE) {
+    $suggestions[] = $variables['theme_hook_original'] . '__' . 'switch';
   }
 }
 
@@ -880,9 +888,17 @@ function socialbase_preprocess_image_style(&$variables) {
  * Implements hook_preprocess_form_element().
  */
 function socialbase_preprocess_form_element(&$variables) {
+
+  // Tell the label for a switch form element it is in that switch form element
+  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+    $variables['label']['#switch'] = TRUE;
+  }
+
+  // Use cards for the vertical tabs component
   if ($variables['element']['#type'] === 'vertical_tabs') {
     $variables['attributes']['class'][] = 'card';
   }
+
 }
 
 /**
