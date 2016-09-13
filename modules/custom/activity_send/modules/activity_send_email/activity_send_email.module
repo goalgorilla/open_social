@@ -77,11 +77,7 @@ function activity_send_email_mail($key, &$message, $params) {
       // Mail subject.
       $message['subject'] = t('Notification from %site_name', $variables, $options);
       // Mail body.
-      $target_account = $params['target_account'];
-      $target_stream_url = Url::fromRoute('entity.user.canonical', array('user' => $target_account->id()), array('absolute' => TRUE));
-      $target_stream_link = Link::fromTextAndUrl('profile', $target_stream_url)->toString();
-      $body = str_replace('profile', $target_stream_link, $params['body']);
-      $message['body'][] = $body;
+      $message['body'][] = $params['body'];
       break;
   }
 }

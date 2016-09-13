@@ -34,6 +34,11 @@ function activity_logger_token_info() {
     'description' => t("The related group url."),
   ];
 
+  $message['recipient-user-url'] = [
+    'name' => t("Recipient user url"),
+    'description' => t("The recipient user url."),
+  ];
+
   return [
     'types' => ['message' => $type],
     'tokens' => [
@@ -57,6 +62,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'gtitle':
         case 'gurl':
+        case 'recipient-user-url':
 
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
@@ -78,10 +84,14 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
             }
             // Or special handling for post entities.
             if ($entity->getEntityTypeId() === 'post') {
-              if ($entity->getEntityTypeId() === 'post' && !empty($entity->get('field_recipient_group')
-                  ->getValue())
-              ) {
+              if (!empty($entity->get('field_recipient_group')->getValue())) {
                 $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+              }
+              if (isset($entity->field_recipient_user)) {
+                $target_id = $entity->field_recipient_user->target_id;
+                $recipient_user = \Drupal::entityTypeManager()
+                  ->getStorage('user')
+                  ->load($target_id);
               }
             }
 
@@ -99,8 +109,18 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               }
             }
 
-          }
+            if ($name === 'recipient-user-url') {
+              if (!empty($recipient_user)) {
+                $target_stream_url = Url::fromRoute('entity.user.canonical',
+                  array('user' => $recipient_user->id()),
+                  array('absolute' => TRUE)
+                );
+                $replacements[$original] = $target_stream_url->toString();
+              }
+            }
 
+          }
+          break;
       }
     }
   }

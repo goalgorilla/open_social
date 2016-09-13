@@ -38,8 +38,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
       // Check if user last activity was more than few minutes ago.
       if (is_object($target_account) && EmailActivityDestination::isUserOffline($target_account)) {
         // Get Message Template id.
-        $mail = Message::load($activity->field_activity_message->target_id);
-        $message_template_id = $mail->getTemplate()->id();
+        $message = Message::load($activity->field_activity_message->target_id);
+        $message_template_id = $message->getTemplate()->id();
 
         // Get email notification settings of active user.
         $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
@@ -48,8 +48,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
         if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
           // Send Email
           $langcode = \Drupal::currentUser()->getPreferredLangcode();
-          $params['body'] = $activity->field_activity_output_text->value;
-          $params['target_account'] = $target_account;
+          $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
 
           $mail_manager = \Drupal::service('plugin.manager.mail');
           $mail = $mail_manager->mail(
