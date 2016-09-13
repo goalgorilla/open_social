@@ -75,9 +75,9 @@
       {% endif %}
     </div>
     <div class="media-body">
-      <h5 class="media-heading">
-        {{ author }} <br /> <small>{{ submitted }}</small>
-      </h5>
+      <div class="media-heading text-m">
+        {{ author }} <div class="post-date">{{ submitted }}</div>
+      </div>
       {% if content.links|render %}
         {{ content.links }}
       {% endif %}

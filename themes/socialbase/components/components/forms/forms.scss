@@ -45,6 +45,9 @@ form {
 
     .btn:last-child {
       margin-left: 8px;
+
+      // Safari fix 
+      flex-shrink: 0;
     }
 
   }
@@ -80,6 +83,10 @@ span.form-required {
   appearance: none;
   font-size: inherit;
 
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    font-size: $font-size-base;
+  }
+
   @include MQ($medium) {
     font-size: $font-size-base;
   }
@@ -89,36 +96,14 @@ span.form-required {
     box-shadow: 0 2px 0 0 $brand-primary;
   }
 
-  &.form-control--block {
-    max-width: none;
-  }
-
-  // ***************
-  // Textarea autogrow
-  // ***************
-
-  &.materialize-textarea {
-    overflow-y: hidden; // prevents scroll bar flash
-    //padding-top: 1.6rem; // prevents text jump on Enter keypress
-    padding-bottom: 1.6rem;
-    resize: none;
-    height: 38px;
-  }
-
-  &.textarea-large {
-    min-height: 5rem;
-  }
-
 }
 
-// For textarea autoresize
-.hiddendiv {
-  display: none;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
-  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+.form-control--autogrow {
+  overflow: hidden;
+  resize: none;
+  max-width: none;
 }
+
 
 .form-actions .btn {
   margin-bottom: 5px;

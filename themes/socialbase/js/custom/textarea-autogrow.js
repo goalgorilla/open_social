@@ -6,56 +6,20 @@
       $(document).ready(function() {
 
         // Textarea Auto Resize
-        var hiddenDiv = $('.hiddendiv').first();
-        if (!hiddenDiv.length) {
-          hiddenDiv = $('<div class="hiddendiv common"></div>');
-          $('body').append(hiddenDiv);
-        }
-        var text_area_selector = '.materialize-textarea';
+        $(document).on('focus.textarea', '.js-textarea-autogrow', function(){
+    			var savedValue = this.value;
+    			this.value = '';
+    			this.baseScrollHeight = this.scrollHeight;
+    			this.value = savedValue;
+    		})
+    		.on('input.textarea', '.js-textarea-autogrow', function(){
+    			var minRows = this.getAttribute('data-min-rows')|0,
+            rows;
 
-        function textareaAutoResize($textarea) {
-          // Set font properties of hiddenDiv
-
-          var fontFamily = $textarea.css('font-family');
-          var fontSize = $textarea.css('font-size');
-
-          if (fontSize) { hiddenDiv.css('font-size', fontSize); }
-          if (fontFamily) { hiddenDiv.css('font-family', fontFamily); }
-
-          if ($textarea.attr('wrap') === "off") {
-            hiddenDiv.css('overflow-wrap', "normal")
-                     .css('white-space', "pre");
-          }
-
-          hiddenDiv.text($textarea.val() + '\n');
-          var content = hiddenDiv.html().replace(/\n/g, '<br>');
-          hiddenDiv.html(content);
-
-
-          // When textarea is hidden, width goes crazy.
-          // Approximate with half of window size
-
-          if ($textarea.is(':visible')) {
-            hiddenDiv.css('width', $textarea.width());
-          }
-          else {
-            hiddenDiv.css('width', $(window).width()/2);
-          }
-
-          $textarea.css('height', hiddenDiv.height() + 52 );
-        }
-
-        $(text_area_selector).each(function () {
-          var $textarea = $(this);
-          if ($textarea.val().length) {
-            textareaAutoResize($textarea);
-          }
+          this.rows = minRows;
+          rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 24);
+          this.rows = minRows + rows;
         });
-
-        $('body').on('keyup keydown autoresize', text_area_selector, function () {
-          textareaAutoResize($(this));
-        });
-
 
       }); // End of $(document).ready
 
