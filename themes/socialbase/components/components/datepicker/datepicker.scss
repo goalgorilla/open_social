@@ -132,21 +132,28 @@ input[type='text'].form-time {
     font-weight: 300;
 
     &:hover {
-      background: $gray-lighter;
+      background: $gray-lightest;
       cursor: pointer;
     }
 
   }
 
+  .ui-state-highlight {
+    background-color: $gray-lighter;
+
+    &:hover {
+      color: white;
+      background-color: $gray-light;
+    }
+  }
+
   .ui-state-active {
     color: white;
     background-color: $brand-secondary;
-    border-color: $brand-secondary;
 
     &:hover {
       color: white;
       background-color: darken($brand-secondary, 15%);
-      border-color: darken($brand-secondary, 15%);
     }
 
   }
