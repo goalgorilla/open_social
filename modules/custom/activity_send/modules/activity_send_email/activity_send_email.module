@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Contains activity_basics.module..
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ */
+function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  $account = \Drupal::routeMatch()->getParameter('user');
+  if (is_object($account)) {
+    $form['email_notifications'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('E-mail notifications'),
+      '#tree' => TRUE,
+    );
+
+    // Get message templates for which email destination is enabled.
+    $email_message_templates = [];
+    /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
+    $message_templates = \Drupal::entityTypeManager()
+      ->getStorage('message_template')
+      ->loadMultiple();
+    foreach ($message_templates as $message_template) {
+      $destinations = $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+      if (in_array('email', $destinations)) {
+        $email_message_templates[$message_template->id()] = $message_template->getDescription();
+      }
+    }
+
+    // Get email notification settings of active user.
+    $query = \Drupal::database()->select('user_activity_send', 'uas');
+    $query->fields('uas', ['message_template', 'status']);
+    $query->condition('uas.uid', $account->id());
+    $user_email_settings = $query->execute()->fetchAllKeyed();
+
+    // Build checkbox for each message template.
+    foreach ($email_message_templates as $key => $title) {
+      $form['email_notifications'][$key] = array(
+        '#type' => 'checkbox',
+        '#title_display' => 'before',
+        '#title' => $title,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : FALSE,
+      );
+    }
+
+    // Submit function to save send email settings.
+    $form['actions']['submit']['#submit'][] = '_activity_send_email_form_user_form_submit';
+  }
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   Commnent on a post form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _activity_send_email_form_user_form_submit($form, FormStateInterface $form_state) {
+  $account = \Drupal::routeMatch()->getParameter('user');
+  $email_notifications_values = $form_state->getValue('email_notifications');
+
+  if (is_object($account) && !empty($email_notifications_values)) {
+    foreach ($email_notifications_values as $message_template => $status) {
+      $query = \Drupal::database()->merge('user_activity_send');
+      $query->fields([
+        'uid' => $account->id(),
+        'destination' => 'email',
+        'message_template' => $message_template,
+        'status' => $status
+      ]);
+      $query->keys([
+        'uid' => $account->id(),
+        'destination' => 'email',
+        'message_template' => $message_template,
+      ]);
+      $query->execute();
+    }
+  }
+}
