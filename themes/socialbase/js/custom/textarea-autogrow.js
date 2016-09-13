@@ -6,7 +6,7 @@
       $(document).ready(function() {
 
         // Textarea Auto Resize
-        $(document).one('focus.textarea', '.js-textarea-autogrow', function(){
+        $(document).on('focus.textarea', '.js-textarea-autogrow', function(){
     			var savedValue = this.value;
     			this.value = '';
     			this.baseScrollHeight = this.scrollHeight;

@@ -545,10 +545,10 @@ span.form-required {
   box-shadow: 0 2px 0 0 #29abe2;
 }
 
-.form-control--textarea {
-  box-sizing: padding-box;
+.form-control--autogrow {
   overflow: hidden;
   resize: none;
+  max-width: none;
 }
 
 .form-actions .btn {
@@ -1061,6 +1061,8 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   }
   .form-group-inline .btn:last-child{
     margin-left: 8px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
   }
   .form-inline .radio input[type="radio"],
   .form-inline .checkbox input[type="checkbox"]{
@@ -1124,6 +1126,9 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   .input-group-lg
   input[type="month"]{
     line-height: 49px;
+  }
+  .form-control{
+    font-size: 16px;
   }
 }
 

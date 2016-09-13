@@ -13,6 +13,5 @@
  * @see template_preprocess_textarea()
  */
 #}
-{{ attach_library('socialbase/textarea-autogrow') }}
 
-<textarea {{ attributes.addClass('form-control materialize-textarea').removeAttribute('rows') }}>{{ value }}</textarea>
+<textarea {{ attributes.addClass('form-control form-control--autogrow js-textarea-autogrow').setAttribute('data-min-rows', '2').removeAttribute('rows') }}>{{ value }}</textarea>

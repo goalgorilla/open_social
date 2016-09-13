@@ -45,6 +45,9 @@ form {
 
     .btn:last-child {
       margin-left: 8px;
+
+      // Safari fix 
+      flex-shrink: 0;
     }
 
   }
@@ -80,6 +83,10 @@ span.form-required {
   appearance: none;
   font-size: inherit;
 
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    font-size: $font-size-base;
+  }
+
   @include MQ($medium) {
     font-size: $font-size-base;
   }
@@ -91,10 +98,10 @@ span.form-required {
 
 }
 
-.form-control--textarea {
-  box-sizing: padding-box;
+.form-control--autogrow {
   overflow: hidden;
   resize: none;
+  max-width: none;
 }
 
 
