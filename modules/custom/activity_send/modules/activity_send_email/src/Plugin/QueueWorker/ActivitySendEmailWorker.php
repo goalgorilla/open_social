@@ -49,11 +49,12 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
           // Send Email
           $langcode = \Drupal::currentUser()->getPreferredLangcode();
           $params['body'] = $activity->field_activity_output_text->value;
+          $params['target_account'] = $target_account;
 
           $mail_manager = \Drupal::service('plugin.manager.mail');
           $mail = $mail_manager->mail(
             'activity_send_email',
-            'activity_send_email',
+            $message_template_id,
             $target_account->getEmail(),
             $langcode,
             $params,

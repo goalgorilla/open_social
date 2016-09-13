@@ -9,6 +9,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
@@ -22,8 +24,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#tree' => TRUE,
     );
 
-    $email_message_templates =  EmailActivityDestination::getSendEmailMessageTemplates();
-    $user_email_settings =  EmailActivityDestination::getSendEmailUserSettings($account);
+    $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
+    $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
     // Build checkbox for each message template.
     foreach ($email_message_templates as $key => $title) {
@@ -71,9 +73,15 @@ function activity_send_email_mail($key, &$message, $params) {
   );
 
   switch ($key) {
-    case 'activity_send_email':
+    case 'create_post_profile':
+      // Mail subject.
       $message['subject'] = t('Notification from %site_name', $variables, $options);
-      $message['body'][] = $params['body'];
+      // Mail body.
+      $target_account = $params['target_account'];
+      $target_stream_url = Url::fromRoute('entity.user.canonical', array('user' => $target_account->id()), array('absolute' => TRUE));
+      $target_stream_link = Link::fromTextAndUrl('profile', $target_stream_url)->toString();
+      $body = str_replace('profile', $target_stream_link, $params['body']);
+      $message['body'][] = $body;
       break;
   }
 }
