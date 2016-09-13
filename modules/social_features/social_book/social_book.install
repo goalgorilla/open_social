@@ -52,6 +52,14 @@ function _social_book_get_permissions($role) {
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
     'create new books',
     'add content to books',
+    'create book content',
+    'delete any book content',
+    'delete own book content',
+    'delete book revisions',
+    'revert book revisions',
+    'edit any book content',
+    'edit own book content',
+    'view book revisions',
   ));
 
   // Site manager.
@@ -61,3 +69,31 @@ function _social_book_get_permissions($role) {
 
   return $permissions[$role];
 }
+
+/**
+ * Enable book page creation permissions for CM and SM.
+ */
+function social_book_update_8001() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'create new books',
+    'add content to books',
+    'create book content',
+    'delete any book content',
+    'delete own book content',
+    'delete book revisions',
+    'revert book revisions',
+    'edit any book content',
+    'edit own book content',
+    'view book revisions',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
