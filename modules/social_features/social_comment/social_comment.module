@@ -38,7 +38,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
     $form['#attributes']['class'][] = 'card-nested-section';
     $form['actions']['submit']['#value'] = t('Reply');
-    $form['actions']['submit']['#attributes']['class'][] = 'btn-link';
+    $form['actions']['submit']['#attributes']['class'][] = 'btn-flat';
 
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
