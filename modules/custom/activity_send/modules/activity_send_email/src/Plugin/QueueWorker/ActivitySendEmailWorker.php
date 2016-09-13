@@ -32,7 +32,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
   public function processItem($data) {
 
     // First make sure it's an actual Activity entity.
-    if ($activity = Activity::load($data['entity_id'])) {
+    if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
       // Get target account.
       $target_account = EmailActivityDestination::getSendTargetUser($activity);
       // Check if user last activity was more than few minutes ago.
