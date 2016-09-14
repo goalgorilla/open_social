@@ -1,0 +1,7 @@
+social_group.social_group_controller_redirectGroupMemberships:
+  path: '/group/{group}/membership'
+  defaults:
+    _content: '\Drupal\social_group\Controller\SocialGroupContentListBuilder::render'
+    _title_callback: '\Drupal\social_group\Controller\SocialGroupController::groupMembersTitle'
+  requirements:
+    _user_is_logged_in: 'TRUE'
