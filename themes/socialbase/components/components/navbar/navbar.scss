@@ -136,9 +136,15 @@
 
   .navbar-collapse .navbar-nav {
     margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+    order: 1;
   }
 
   .navbar-collapse {
+
+    .navbar-collapse-order {
+      display: flex;
+      flex-flow: column;
+    }
 
     .navbar-nav > li > a {
       padding: 5px 15px 5px 25px;

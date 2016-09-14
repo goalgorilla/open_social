@@ -9,7 +9,7 @@
   background-color: $card-bg-color;
   padding: $card-padding;
   box-shadow: 0 8px 17px 0 transparent, 0 6px 20px 0 transparent;
-  z-index: 2;
+  z-index: 4;
   backface-visibility: hidden;
   transition: transform 0.5s, box-shadow 0.3s;
 
@@ -32,6 +32,7 @@
 
 .off-canvas-xs-only {
   @include MQ($small) {
+    margin-bottom: 0.75rem;
     position: relative;
     width: 100%;
     height: auto;
@@ -40,13 +41,35 @@
     overflow: visible;
     top: 0;
     padding: 0;
-    background: transparent;
+    border-radius: 10px;
+    background-clip: padding-box;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
 
 }
 
+.btn-primary ~ .off-canvas-xs-only {
+  @include MQ($small) {
+    margin-top: 0.75rem;
+  }
+}
+
 .offcanvas-head {
   position: relative;
+
+  @include MQ($small) {
+    padding: 15px 20px 0;
+    color: $gray-light;
+    line-height: 1;
+
+    .complementary-title {
+      vertical-align: middle;
+      font-weight: 500;
+      text-transform: uppercase;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+  }
 }
 
 .offcanvas-tools {
@@ -61,6 +84,6 @@
 
   @include MQ($small) {
     margin-top: 0;
-    margin-bottom: 30px;
+    padding: 20px;
   }
 }
