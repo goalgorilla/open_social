@@ -71,54 +71,56 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               ->getStorage($target_type)
               ->load($target_id);
 
-            // If comment get the entity to which the comment is attached.
-            if ($entity->getEntityTypeId() === 'comment') {
-              $entity = $entity->getCommentedEntity();
-            }
+            if (is_object($entity)) {
+              // If comment get the entity to which the comment is attached.
+              if ($entity->getEntityTypeId() === 'comment') {
+                $entity = $entity->getCommentedEntity();
+              }
 
-            // Try to get the group.
-            $group_content = GroupContent::loadByEntity($entity);
-            if (!empty($group_content)) {
-              $group_content = reset($group_content);
-              $group = $group_content->getGroup();
-            }
-            // Or special handling for post entities.
-            if ($entity->getEntityTypeId() === 'post') {
-              if (!empty($entity->get('field_recipient_group')->getValue())) {
-                $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+              // Try to get the group.
+              $group_content = GroupContent::loadByEntity($entity);
+              if (!empty($group_content)) {
+                $group_content = reset($group_content);
+                $group = $group_content->getGroup();
               }
-              if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
-                $target_id = $entity->field_recipient_user->target_id;
-                $recipient_user = \Drupal::entityTypeManager()
-                  ->getStorage('user')
-                  ->load($target_id);
+              // Or special handling for post entities.
+              if ($entity->getEntityTypeId() === 'post') {
+                if (!empty($entity->get('field_recipient_group')->getValue())) {
+                  $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+                }
+                if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
+                  $target_id = $entity->field_recipient_user->target_id;
+                  $recipient_user = \Drupal::entityTypeManager()
+                    ->getStorage('user')
+                    ->load($target_id);
+                }
               }
-            }
 
-            // If it's a group.. add it in the arguments.
-            if ($group instanceof Group) {
-              if ($name === 'gtitle') {
-                $replacements[$original] = $group->label();
+              // If it's a group.. add it in the arguments.
+              if ($group instanceof Group) {
+                if ($name === 'gtitle') {
+                  $replacements[$original] = $group->label();
+                }
+                if ($name === 'gurl') {
+                  $gurl = Url::fromRoute('entity.group.canonical', array(
+                    'group' => $group->id(),
+                    array()
+                  ));
+                  $replacements[$original] = $gurl->toString();
+                }
               }
-              if ($name === 'gurl') {
-                $gurl = Url::fromRoute('entity.group.canonical', array(
-                  'group' => $group->id(),
-                  array()
-                ));
-                $replacements[$original] = $gurl->toString();
-              }
-            }
 
-            if ($name === 'recipient-user-url') {
-              if (!empty($recipient_user)) {
-                $target_stream_url = Url::fromRoute('entity.user.canonical',
-                  array('user' => $recipient_user->id()),
-                  array('absolute' => TRUE)
-                );
-                $replacements[$original] = $target_stream_url->toString();
+              if ($name === 'recipient-user-url') {
+                if (!empty($recipient_user)) {
+                  $target_stream_url = Url::fromRoute('entity.user.canonical',
+                    array('user' => $recipient_user->id()),
+                    array('absolute' => TRUE)
+                  );
+                  $replacements[$original] = $target_stream_url->toString();
+                }
               }
-            }
 
+            }
           }
           break;
       }
