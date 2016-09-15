@@ -73,7 +73,7 @@ function activity_send_email_mail($key, &$message, $params) {
   );
 
   switch ($key) {
-    case 'create_post_profile':
+    case 'activity_send_email':
       // Mail subject.
       $message['subject'] = t('Notification from %site_name', $variables, $options);
       // Mail body.
@@ -86,10 +86,15 @@ function activity_send_email_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {
-  /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
-  $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
-  // Trigger the create action for entities.
-  /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
-  $create_action = $activity_send_factory->createInstance('email_activity_send');
-  $create_action->create($activity);
+
+  $destinations = $activity->getDestinations();
+  if (in_array('email', $destinations)) {
+    /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
+    $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+    // Trigger the create action for entities.
+    /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
+    $create_action = $activity_send_factory->createInstance('email_activity_send');
+    $create_action->create($activity);
+  }
+
 }

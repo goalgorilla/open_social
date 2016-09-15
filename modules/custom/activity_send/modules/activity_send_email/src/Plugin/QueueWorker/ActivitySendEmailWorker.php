@@ -53,7 +53,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
           $mail_manager = \Drupal::service('plugin.manager.mail');
           $mail = $mail_manager->mail(
             'activity_send_email',
-            $message_template_id,
+            'activity_send_email',
             $target_account->getEmail(),
             $langcode,
             $params,
