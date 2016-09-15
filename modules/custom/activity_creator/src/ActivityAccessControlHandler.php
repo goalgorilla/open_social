@@ -25,7 +25,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\activity_creator\ActivityInterface $entity */
     switch ($operation) {
       case 'view':
-        $recipient = $this->getRecipientFromActivity($entity);
+        $recipient = $entity->getRecipient();
         if ($recipient === NULL) {
           // This is simple, the message is not specific for group / user.
           // So we should check, does the user have permission to view entity?
@@ -69,32 +69,6 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
   }
 
   /**
-   * Get recipient.
-   */
-  protected function getRecipientFromActivity(EntityInterface $entity) {
-    $value = NULL;
-    $recipient_user = $entity->get('field_activity_recipient_user')->getValue();
-    if (!empty($recipient_user)) {
-      $recipient_user['0']['target_type'] = 'user';
-      return $recipient_user;
-    }
-    $recipient_group = $entity->get('field_activity_recipient_group')->getValue();
-    if (!empty($recipient_group)) {
-      $recipient_group['0']['target_type'] = 'group';
-      return $recipient_group;
-    }
-    return $value;
-  }
-
-  /**
-   * Get destinations.
-   */
-  protected function getDestinationFromActivity(EntityInterface $entity) {
-    $destinations = $entity->get('field_activity_destinations')->getValue();
-    return $destinations;
-  }
-
-  /**
    * Return access control from the related entity.
    */
   protected function returnAccessRelatedObject(EntityInterface $entity, $operation, $account) {
@@ -118,17 +92,12 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
    *    Returns TRUE if entity is personal notification, FALSE if it isn't.
    */
   protected function checkIfPersonalNotification(EntityInterface $entity) {
-    $recipient = $this->getRecipientFromActivity($entity);
+    $recipient = $entity->getRecipient();
     $value = FALSE;
     if (!empty($recipient) && $recipient['0']['target_type'] === 'user') {
       // This could be personalised, but first lets check the destinations.
-      $is_notification = FALSE;
-      $destinations = $this->getDestinationFromActivity($entity);
-      foreach ($destinations as $key => $destination) {
-        if ($destination['value'] === 'notifications') {
-          $is_notification = TRUE;
-        }
-      }
+      $destinations = $entity->getDestinations();
+      $is_notification = in_array('notifications', $destinations);
       // It is only personal if the only destination is notifications.
       if (count($destinations) <= 1 && $is_notification === TRUE) {
         $value = TRUE;
