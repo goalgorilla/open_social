@@ -151,6 +151,17 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL),
   );
 
+  // Add titles to output text fields for clarity.
+  if(isset($form['text'][0])){
+    $form['text'][0]['#title'] = t('Output text for normal activities in activity stream');
+  }
+  if(isset($form['text'][1])){
+    $form['text'][1]['#title'] = t('Output text for aggregated items in activity stream');
+  }
+  if(isset($form['text'][2])){
+    $form['text'][2]['#title'] = t('Output text for email notifications');
+  }
+
 }
 
 /**
