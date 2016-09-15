@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\social_post\Entity\Post;
+use Drupal\node\Entity\Node;
 
 /**
  * Base class for Activity context plugin plugins.
@@ -65,6 +67,44 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
 
   public function isValidEntity($entity) {
     return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRecipientsFromPost(array $referenced_entity) {
+    $recipients = [];
+
+    $post = Post::load($referenced_entity['target_id']);
+    $recipient_user = $post->get('field_recipient_user')->getValue();
+    if (!empty($recipient_user)) {
+      $recipients[] = [
+        'target_type' => 'user',
+        'target_id' => $recipient_user['0']['target_id'],
+      ];
+    }
+
+    return $recipients;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRecipientsFromNode(array $referenced_entity) {
+    $recipients = [];
+
+    if ($referenced_entity['target_type'] === 'node') {
+      $node = Node::load($referenced_entity['target_id']);
+      $recipient_user_id = $node->getOwnerId();
+      if (!empty($recipient_user_id)) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $recipient_user_id,
+        ];
+      }
+    }
+
+    return $recipients;
   }
 
 }

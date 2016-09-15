@@ -86,6 +86,15 @@ class ActivityLoggerFactory {
       $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+      $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
+
+      if(!empty($mt_entity_condition)){
+        $entity_condition_factory = \Drupal::service('plugin.manager.activity_entity_condition.processor');
+        $entity_condition_plugin = $entity_condition_factory->createInstance($mt_entity_condition);
+        $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
+      } else {
+        $entity_condition = TRUE;
+      }
 
       $activity_context_factory = \Drupal::service('plugin.manager.activity_context.processor');
       $context_plugin = $activity_context_factory->createInstance($mt_context);
@@ -93,6 +102,7 @@ class ActivityLoggerFactory {
       $entity_bundle_name = $entity->getEntityTypeId() . '.' .$entity->bundle();
       if ($entity_bundle_name === $mt_entity_bundle
       && $context_plugin->isValidEntity($entity)
+      && $entity_condition
       && $action === $mt_action) {
         $messagetypes[$key] = array(
           'messagetype' => $messagetype,

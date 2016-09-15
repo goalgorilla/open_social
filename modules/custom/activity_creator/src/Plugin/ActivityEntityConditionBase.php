@@ -14,5 +14,9 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class ActivityEntityConditionBase extends PluginBase implements ActivityEntityConditionInterface {
 
+  public function isValidEntityCondition($entity) {
+    return TRUE;
+  }
+
 }
 

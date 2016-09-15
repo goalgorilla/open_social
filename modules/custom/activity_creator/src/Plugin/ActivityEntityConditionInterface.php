@@ -14,4 +14,9 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface ActivityEntityConditionInterface extends PluginInspectionInterface {
 
+  /**
+   * Checks if this is a valid entity condition for the action.
+   */
+  public function isValidEntityCondition($entity);
+
 }
