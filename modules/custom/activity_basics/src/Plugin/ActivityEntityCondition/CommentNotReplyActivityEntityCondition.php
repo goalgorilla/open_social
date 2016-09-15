@@ -10,22 +10,22 @@ namespace Drupal\activity_basics\Plugin\ActivityEntityCondition;
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
 
 /**
- * Provides a 'CommentReply' activity condition.
+ * Provides a 'CommentNotReply' activity condition.
  *
  * @ActivityEntityCondition(
- *  id = "comment_reply",
- *  label = @Translation("Reply comment"),
+ *  id = "comment_not_reply",
+ *  label = @Translation("Not reply comment"),
  *  entities = {"comment" = {}}
  * )
  */
-class CommentReplyActivityEntityCondition extends ActivityEntityConditionBase {
+class CommentNotReplyActivityEntityCondition extends ActivityEntityConditionBase {
 
   /**
    * {@inheritdoc}
    */
   public function isValidEntityCondition($entity) {
     if ($entity->getEntityTypeId() === 'comment') {
-      if(!empty($entity->getParentComment())){
+      if(empty($entity->getParentComment())){
         return TRUE;
       }
     }
