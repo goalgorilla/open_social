@@ -32,7 +32,7 @@ class ProfileActivityContext extends ActivityContextBase {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
       if ($referenced_entity['target_type'] === 'post') {
-        $recipients += $this->getRecipientsFromPost();
+        $recipients += $this->getRecipientsFromPost($referenced_entity);
       }
     }
 
