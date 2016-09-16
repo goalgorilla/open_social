@@ -33,11 +33,11 @@ class OwnerActivityContext extends ActivityContextBase {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
       if ($referenced_entity['target_type'] === 'post') {
-        $recipients += $this->getRecipientsFromPost($referenced_entity);
+        $recipients += $this->getRecipientOwnerFromPost($referenced_entity);
       }
 
       if ($referenced_entity['target_type'] === 'node') {
-        $recipients += $this->getRecipientsFromNode($referenced_entity);
+        $recipients += $this->getRecipientOwnerFromNode($referenced_entity);
       }
 
     }

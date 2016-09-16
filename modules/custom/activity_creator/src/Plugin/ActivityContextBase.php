@@ -65,12 +65,15 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     return $recipients;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntity($entity) {
     return TRUE;
   }
 
   /**
-   * {@inheritdoc}
+   * Returns recipients from post.
    */
   public function getRecipientsFromPost(array $referenced_entity) {
     $recipients = [];
@@ -88,9 +91,9 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   }
 
   /**
-   * {@inheritdoc}
+   * Returns owner recipient from node.
    */
-  public function getRecipientsFromNode(array $referenced_entity) {
+  public function getRecipientOwnerFromNode(array $referenced_entity) {
     $recipients = [];
 
     if ($referenced_entity['target_type'] === 'node') {
@@ -102,6 +105,24 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
           'target_id' => $recipient_user_id,
         ];
       }
+    }
+
+    return $recipients;
+  }
+
+  /**
+   * Returns owner recipient from post.
+   */
+  public function getRecipientOwnerFromPost(array $referenced_entity) {
+    $recipients = [];
+
+    $post = Post::load($referenced_entity['target_id']);
+    $recipient_user_id = $post->getOwnerId();
+    if (!empty($recipient_user_id)) {
+      $recipients[] = [
+        'target_type' => 'user',
+        'target_id' => $recipient_user_id,
+      ];
     }
 
     return $recipients;
