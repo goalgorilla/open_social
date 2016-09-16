@@ -98,7 +98,6 @@ class SocialDemoComment implements ContainerInjectionInterface {
       $accountClass = SocialDemoUser::create($container);
       $uid = $accountClass->loadUserFromUuid($content['uid']);
 
-      //
       if ($content['comment_type'] === 'comment') {
         $entity_type = 'node';
         // Try and fetch the related node.
