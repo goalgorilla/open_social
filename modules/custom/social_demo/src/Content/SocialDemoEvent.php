@@ -98,12 +98,13 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       $uid = $accountClass->loadUserFromUuid($event['uid']);
 
       // Try and fetch the image.
-      $fileClass = new SocialDemoFile();
-      $fid = $fileClass->loadByUuid($event['field_event_image']);
-
       $media_id = '';
-      if ($file = File::load($fid)) {
-        $media_id = $file->id();
+      if (!empty($event['field_event_image'])) {
+        $fileClass = new SocialDemoFile();
+        $fid = $fileClass->loadByUuid($event['field_event_image']);
+        if ($file = File::load($fid)) {
+          $media_id = $file->id();
+        }
       }
 
       $start_date = $this->createDate($event['field_event_date']);
@@ -114,6 +115,13 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       }
       else {
         $content_visibility = 'community';
+      }
+
+      $image = array();
+      if (!empty($media_id)) {
+        $image = array (
+          'target_id' => $media_id,
+        );
       }
 
       // Let's create some nodes.
@@ -131,11 +139,7 @@ class SocialDemoEvent implements ContainerInjectionInterface {
         'created' => REQUEST_TIME,
         'changed' => REQUEST_TIME,
         'field_event_location' => $event['field_event_location'],
-        'field_event_image' => [
-          [
-            'target_id' => $media_id,
-          ],
-        ],
+        'field_event_image' => $image,
         'field_content_visibility' => [
           [
             'value' => $content_visibility,

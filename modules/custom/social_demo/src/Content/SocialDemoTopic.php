@@ -96,19 +96,21 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       $container = \Drupal::getContainer();
       $accountClass = SocialDemoUser::create($container);
       $uid = $accountClass->loadUserFromUuid($topic['uid']);
+
       // Try and fetch the image.
-      $fileClass = new SocialDemoFile();
-      $fid = $fileClass->loadByUuid($topic['field_topic_image']);
+      $media_id = '';
+      if (!empty($topic['field_topic_image'])) {
+        $fileClass = new SocialDemoFile();
+        $fid = $fileClass->loadByUuid($topic['field_topic_image']);
+        if ($file = File::load($fid)) {
+          $media_id = $file->id();
+        }
+      }
 
       // Determine topic type.
       $term = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->loadByProperties(array('name' => $topic['field_topic_type']));
       $term = array_pop($term);
       $topic_type_target = $term->id();
-
-      $media_id = '';
-      if ($file = File::load($fid)) {
-        $media_id = $file->id();
-      }
 
       if (isset($topic['field_content_visibility'])) {
         $content_visibility = $topic['field_content_visibility'];
@@ -116,6 +118,15 @@ class SocialDemoTopic implements ContainerInjectionInterface {
       else {
         $content_visibility = 'community';
       }
+
+      $image = array();
+      if (!empty($media_id)) {
+        $image = array (
+            'target_id' => $media_id,
+        );
+      }
+
+
       // Let's create some nodes.
       $node = Node::create([
         'uuid' => $topic['uuid'],
@@ -132,11 +143,7 @@ class SocialDemoTopic implements ContainerInjectionInterface {
             'target_id' => $topic_type_target,
           ],
         ],
-        'field_topic_image' => [
-          [
-            'target_id' => $media_id,
-          ],
-        ],
+        'field_topic_image' => $image,
         'field_content_visibility' => [
           [
             'value' => $content_visibility,
