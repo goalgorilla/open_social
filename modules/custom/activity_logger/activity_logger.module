@@ -37,7 +37,8 @@ function _activitiy_logger_get_content_entities( ) {
       $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
       $config_entity_bundles = $entity_type_bundle_info->getBundleInfo($entity_type->id());
       foreach ($config_entity_bundles as $key => $value) {
-        $options[$entity_id . '.' . $key] = $entity_type->getLabel() . ': ' . $value['label'];
+        // Dot character in key names is not allowed in config, so we use "-".
+        $options[$entity_id . '-' . $key] = $entity_type->getLabel() . ': ' . $value['label'];
       }
     }
   }
@@ -54,12 +55,13 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
   $wrapper_id = 'edit-activity-entity-condition-ajax-wrapper';
 
   $config_entity_bundles = _activitiy_logger_get_content_entities();
-  $form['activity_bundle_entity'] = array(
+  $form['activity_bundle_entities'] = array(
     '#type' => 'select',
     '#required' => TRUE,
+    '#multiple' => TRUE,
     '#title' => t('The entities that are affected for this message'),
     '#description' => t('Select a entity bundle type to for this message.'),
-    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entity', NULL),
+    '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entities', NULL),
     '#options' => $config_entity_bundles,
     '#ajax' => [
       'callback' => '_activity_logger_form_message_template_entity_ajax_callback',
@@ -72,13 +74,13 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     '#attributes' => ['id' => $wrapper_id],
   ];
 
-  $activity_bundle_entity = $form_state->getValue('activity_bundle_entity');
-  if(empty($activity_bundle_entity)){
-    $activity_bundle_entity = $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entity', NULL);
+  $activity_bundle_entities = $form_state->getValue('activity_bundle_entities');
+  if(empty($activity_bundle_entities)){
+    $activity_bundle_entities = $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entities', array());
   }
 
   $activity_entity_condition_options = \Drupal::service('plugin.manager.activity_entity_condition.processor');
-  $activity_entity_condition_options = $activity_entity_condition_options->getOptionsList($activity_bundle_entity);
+  $activity_entity_condition_options = $activity_entity_condition_options->getOptionsList($activity_bundle_entities);
 
   if (empty($activity_entity_condition_options)) {
     $activity_entity_condition_value = NULL;
@@ -170,7 +172,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
  * @see activity_logger_form_message_template_form_alter()
  */
 function activity_logger_form_message_template_form_builder($entity_type, MessageTemplateInterface $message_template, &$form, FormStateInterface $form_state) {
-  $message_template->setThirdPartySetting('activity_logger', 'activity_bundle_entity', $form_state->getValue('activity_bundle_entity'));
+  $message_template->setThirdPartySetting('activity_logger', 'activity_bundle_entities', $form_state->getValue('activity_bundle_entities'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_action', $form_state->getValue('activity_action'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_context', $form_state->getValue('activity_context'));
   $message_template->setThirdPartySetting('activity_logger', 'activity_destinations', $form_state->getValue('activity_destinations'));

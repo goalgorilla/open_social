@@ -38,39 +38,44 @@ class ActivityEntityConditionManager extends DefaultPluginManager {
   /**
    * Retrieves an options list of available trackers.
    *
-   * @param string $entity
-   *   Value of activity_bundle_entity in format "entity.bundle"
+   * @param array $entities
+   *   Value of activity_bundle_entities array with "entity.bundle" values.
    *
    * @return string[]
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList($entity = NULL) {
+  public function getOptionsList($entities = array()) {
     $options = array();
 
-    $entity = explode('.', $entity);
-    $entity_type = $entity[0];
-    $bundle = $entity[1];
-    // Get all entity condition plugin definitions.
-    foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
-      if (!empty($entity)) {
-        if (isset($plugin_definition['entities'][$entity_type])) {
-          // If only entity type is set in plugin.
-          if (empty($plugin_definition['entities'][$entity_type])) {
-            $options[$plugin_id] = Html::escape($plugin_definition['label']);
-          }
-          // If entity type and bundle(s) are set in plugin.
-          else {
-            if (in_array($bundle, $plugin_definition['entities'][$entity_type])) {
-              $options[$plugin_id] = Html::escape($plugin_definition['label']);
+    if (!empty($entities)) {
+      foreach ($entities as $entity) {
+        $entity = explode('-', $entity);
+        $entity_type = $entity[0];
+        $bundle = $entity[1];
+        // Get all entity condition plugin definitions.
+        foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
+          if (!empty($entity)) {
+            if (isset($plugin_definition['entities'][$entity_type])) {
+              // If only entity type is set in plugin.
+              if (empty($plugin_definition['entities'][$entity_type])) {
+                $options[$plugin_id] = Html::escape($plugin_definition['label']);
+              }
+              // If entity type and bundle(s) are set in plugin.
+              else {
+                if (in_array($bundle, $plugin_definition['entities'][$entity_type])) {
+                  $options[$plugin_id] = Html::escape($plugin_definition['label']);
+                }
+              }
             }
+          }
+          else {
+            $options[$plugin_id] = Html::escape($plugin_definition['label']);
           }
         }
       }
-      else {
-        $options[$plugin_id] = Html::escape($plugin_definition['label']);
-      }
     }
+
     return $options;
   }
 
