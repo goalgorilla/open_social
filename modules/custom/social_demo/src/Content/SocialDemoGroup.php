@@ -105,7 +105,7 @@ class SocialDemoGroup implements ContainerInjectionInterface {
         'langcode' => $group['language'],
         'type' => $group['group_type'],
         'label' => $group['title'],
-        'field_group_description' => $group['field_group_description'],
+        'field_group_description' => $group['description'],
         'uid' => $user_id,
         'created' => $grouptime,
         'changed' => $grouptime,
