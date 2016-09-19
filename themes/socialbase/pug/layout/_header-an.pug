@@ -2,37 +2,29 @@
   nav.navbar.navbar-default.navbar-fixed-top.z-depth-2
     .container
 
-      a.navbar-brand(href='home-lu.html')
-        img(src='images/social-logo-white.svg' alt='Brand logo')
+      ul.nav.navbar-nav.navbar-right
+        li
+          a(href='login.html') Log in
+        li
+          a(href='sign-up.html') Sign up
 
       .navbar-header
 
-        button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#menu-dropdown', type='button', aria-haspopup='true', aria-expanded='false')
+        a.navbar-brand(href='home-an.html')
+          img(src='images/social-logo-white.svg' alt='Brand logo')
+
+        button.navbar-toggle.collapsed(href='#', data-toggle='collapse', data-target='#main-navigation', type='button', aria-haspopup='true', aria-expanded='false')
           span Menu
           span.sr-only Toggle navigation
 
-        ul.nav.navbar-nav.navbar-right
-          li
-            a(href='login.html') Log in
-          li
-            a(href='sign-up.html') Sign up
 
-
-      #menu-dropdown.collapse.navbar-collapse(aria-expanded='false')
+      #main-navigation.collapse.navbar-collapse(aria-expanded='false')
         ul.nav.navbar-nav
-          li.navbar-search
-            form.navbar-form.navbar-left(role='search', method='get', action='search-content.html')
-              #navbar-search.form-group
-                input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
-                input.form-submit(type='submit', value='')
-                span.search-icon
-                  svg
-                    title Search
-                    use(xlink:href='#icon-search')
           li
             a(href='home-an.html') Home
-          li.dropdown
+          li.expanded.dropdown
             a.dropdown-toggle.clearfix(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false') Explore
+              span.caret
             ul.dropdown-menu
               li
                 a(href="explore.html") Community
@@ -40,3 +32,11 @@
                 a(href="explore-events.html") All events
               li
                 a(href="explore-topics.html") All topics
+        .navbar-search
+          form.navbar-form.clearfix(role='search', method='get', action='search-content.html')
+            #navbar-search.form-group
+              input#search.form-control(type='text', placeholder='Search', name='search', autocomplete='off')
+              button.form-submit.btn.btn-default(type='submit', value='Search') Search
+              span.search-icon
+                svg
+                  use(xlink:href='#icon-search')
