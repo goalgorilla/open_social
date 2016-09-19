@@ -58,10 +58,10 @@ function template_preprocess_activity(array &$variables) {
           ->getViewBuilder('profile')
           ->view($user_profile, 'compact');
         if ($full_url == '') {
-          $variables['actor'] = Link::fromTextAndUrl($content, $full_url);;
+          $variables['actor'] = $content;
         }
         else {
-          $variables['actor'] = $content;
+          $variables['actor'] = Link::fromTextAndUrl($content, $full_url);
         }
       }
     }

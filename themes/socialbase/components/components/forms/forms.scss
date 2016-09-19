@@ -46,7 +46,7 @@ form {
     .btn:last-child {
       margin-left: 8px;
 
-      // Safari fix 
+      // Safari fix
       flex-shrink: 0;
     }
 
@@ -173,6 +173,12 @@ span.form-required {
 // ***************
 // Radio Buttons
 // ***************
+
+.radio,
+.checkbox {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
 
 /* Remove default Radio Buttons */
 [type="radio"]:not(:checked),
@@ -398,6 +404,35 @@ span.form-required {
 
   }
 
+}
+
+// Special styles for iOS temporal inputs
+//
+// In Mobile Safari, setting `display: block` on temporal inputs causes the
+// text within the input to become vertically misaligned. As a workaround, we
+// set a pixel line-height that matches the given height of the input, but only
+// for Safari. See https://bugs.webkit.org/show_bug.cgi?id=139848
+//
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    &.form-control {
+      line-height: $line-height-computed;
+    }
+
+    &.input-sm,
+    .input-group-sm & {
+      line-height: floor($font-size-small * $line-height-small);
+    }
+
+    &.input-lg,
+    .input-group-lg & {
+      line-height: ceil($font-size-large * $line-height-large);
+    }
+  }
 }
 
 

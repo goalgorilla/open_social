@@ -613,6 +613,12 @@ span.form-required {
   color: #8a6d3b;
 }
 
+.radio,
+.checkbox {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
 /* Remove default Radio Buttons */
 [type="radio"]:not(:checked),
 [type="radio"]:checked,
@@ -1129,6 +1135,38 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   }
   .form-control{
     font-size: 16px;
+  }
+  input[type="date"].form-control,
+  input[type="time"].form-control,
+  input[type="datetime-local"].form-control,
+  input[type="month"].form-control{
+    line-height: 24px;
+  }
+  input[type="date"].input-sm,
+  .input-group-sm input[type="date"],
+  input[type="time"].input-sm,
+  .input-group-sm
+  input[type="time"],
+  input[type="datetime-local"].input-sm,
+  .input-group-sm
+  input[type="datetime-local"],
+  input[type="month"].input-sm,
+  .input-group-sm
+  input[type="month"]{
+    line-height: 21px;
+  }
+  input[type="date"].input-lg,
+  .input-group-lg input[type="date"],
+  input[type="time"].input-lg,
+  .input-group-lg
+  input[type="time"],
+  input[type="datetime-local"].input-lg,
+  .input-group-lg
+  input[type="datetime-local"],
+  input[type="month"].input-lg,
+  .input-group-lg
+  input[type="month"]{
+    line-height: 27px;
   }
 }
 

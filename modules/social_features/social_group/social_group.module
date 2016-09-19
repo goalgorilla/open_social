@@ -444,23 +444,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Get current Group.
   $group = _social_group_get_current_group();
 
-  if (is_object($group)) {
-    // Check for the Group permission.
-    $permission = 'administer members';
-    if ($group_membership = $group->getMember($account)) {
-      if ($group_membership->hasPermission($permission)) {
-        // For group managers we will show membership management interface.
-        unset($data['tabs'][0]['social_group.members']);
-      }
-    }
-    // For User 1 we will show membership management interface.
-    if ($account->id() == 1) {
-      unset($data['tabs'][0]['social_group.members']);
-    }
-  }
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
-    $data['tabs'][0]['group.content']['#link']['title'] = t('Members');
+    $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
   }
 
   // Change the default 'View' tab title.

@@ -6,6 +6,11 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\activity_creator\ActivityInterface;
+use Drupal\message\Entity\Message;
+use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
@@ -19,24 +24,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#tree' => TRUE,
     );
 
-    // Get message templates for which email destination is enabled.
-    $email_message_templates = [];
-    /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
-    $message_templates = \Drupal::entityTypeManager()
-      ->getStorage('message_template')
-      ->loadMultiple();
-    foreach ($message_templates as $message_template) {
-      $destinations = $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
-      if (in_array('email', $destinations)) {
-        $email_message_templates[$message_template->id()] = $message_template->getDescription();
-      }
-    }
-
-    // Get email notification settings of active user.
-    $query = \Drupal::database()->select('user_activity_send', 'uas');
-    $query->fields('uas', ['message_template', 'status']);
-    $query->condition('uas.uid', $account->id());
-    $user_email_settings = $query->execute()->fetchAllKeyed();
+    $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
+    $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
     // Build checkbox for each message template.
     foreach ($email_message_templates as $key => $title) {
@@ -63,23 +52,44 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  */
 function _activity_send_email_form_user_form_submit($form, FormStateInterface $form_state) {
   $account = \Drupal::routeMatch()->getParameter('user');
-  $email_notifications_values = $form_state->getValue('email_notifications');
+  $values = $form_state->getValue('email_notifications');
 
-  if (is_object($account) && !empty($email_notifications_values)) {
-    foreach ($email_notifications_values as $message_template => $status) {
-      $query = \Drupal::database()->merge('user_activity_send');
-      $query->fields([
-        'uid' => $account->id(),
-        'destination' => 'email',
-        'message_template' => $message_template,
-        'status' => $status
-      ]);
-      $query->keys([
-        'uid' => $account->id(),
-        'destination' => 'email',
-        'message_template' => $message_template,
-      ]);
-      $query->execute();
-    }
+  if (is_object($account) && !empty($values)) {
+    EmailActivityDestination::setSendEmailUserSettings($account, $values);
   }
+
+}
+
+/**
+ * Implements hook_mail().
+ */
+function activity_send_email_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  $variables = array(
+    '%site_name' => \Drupal::config('system.site')->get('name'),
+  );
+
+  switch ($key) {
+    case 'create_post_profile':
+      // Mail subject.
+      $message['subject'] = t('Notification from %site_name', $variables, $options);
+      // Mail body.
+      $message['body'][] = $params['body'];
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_send_email_activity_insert(ActivityInterface $activity) {
+  /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
+  $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+  // Trigger the create action for entities.
+  /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
+  $create_action = $activity_send_factory->createInstance('email_activity_send');
+  $create_action->create($activity);
 }

@@ -136,7 +136,7 @@ Feature: Create Open Group
   # DS-722 As an outsider I am not allowed to enrol to an event in group
     When I click "Events"
     And I click "Test group event"
-    And I should not see "Enroll" in the "Hero block"
+    And I should not see "Enroll" in the "Hero buttons"
 
   # Check for latest groups block on LU homepage
     When I am on "stream"
