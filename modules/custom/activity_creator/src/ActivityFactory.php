@@ -236,8 +236,8 @@ class ActivityFactory extends ControllerBase {
           $activity_query = \Drupal::entityQuery('activity');
           $activity_query->condition('field_activity_entity.target_id', $comment_ids, 'IN');
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
-          // We assume that related activities are provided by the same message.
-          $activity_query->condition('field_activity_message.target_id', $data['mid'], '=');
+          // We exclude activities with email destination from aggregation.
+          $activity_query->condition('field_activity_destinations.value', 'email', '!=');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
