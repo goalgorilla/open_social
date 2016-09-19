@@ -19,9 +19,9 @@ template: create_comment_author_node_post
 label: 'Create comment on authors node or post'
 description: 'A person commented on a post, topic or event created or organised by me'
 text:
-  - "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on yours content</p>\r\n"
-  - "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on yours content</p>\r\n"
-  - "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on yours content</p>\r\n"
+  - '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on yours <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
+  - '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on yours <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
+  - '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on yours <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
 settings:
   'token options':
     clear: false
