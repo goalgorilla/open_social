@@ -4,28 +4,3 @@ dependencies: {  }
 id: open_group
 label: 'Open group'
 description: 'This is a open group. Users may join without approval and all content added in this group will be visible for non members as well.'
-content:
-  group_membership:
-    id: group_membership
-    group_type: open_group
-    data:
-      group_cardinality: 0
-      entity_cardinality: 1
-      info_text:
-        value: '<p>By submitting this form you will become a member of the group.<br />Please fill out any available fields to complete your membership information.</p>'
-  'group_node:event':
-    id: 'group_node:event'
-    group_type: open_group
-    data:
-      group_cardinality: '1'
-      entity_cardinality: 1
-      info_text:
-        value: '<p>By submitting this form you will add this content to the group.<br />It will then be subject to the access control settings that were configured for the group.<br/>Please fill out any available fields to describe the relation between the content and the group.</p>'
-  'group_node:topic':
-    id: 'group_node:topic'
-    group_type: open_group
-    data:
-      group_cardinality: '1'
-      entity_cardinality: 1
-      info_text:
-        value: '<p>By submitting this form you will add this content to the group.<br />It will then be subject to the access control settings that were configured for the group.<br/>Please fill out any available fields to describe the relation between the content and the group.</p>'
