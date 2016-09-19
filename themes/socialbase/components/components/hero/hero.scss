@@ -2,10 +2,10 @@
 
 // force the direct child of the container to take 100% of width screen on xs-screens
 .hero-container > div {
-  margin-right: -1rem;
-  margin-left: -1rem;
+  margin-right: -($grid-gutter-width / 2);
+  margin-left: -($grid-gutter-width / 2);
 
-  @include MQ($medium) {
+  @include MQ($x-large) {
     margin: 0;
   }
 
@@ -101,25 +101,30 @@
   }
 
   .cover-wrap & {
-    margin: 2em 0 0.5em;
+    margin: 1em 0 0.5em;
 
     @include MQ($small) {
-      margin: 1em 0 0;
+      margin-bottom: 0;
     }
 
   }
 
 }
 
-.profile-img {
+// Profile
+
+.hero-avatar {
   @include z-depth-2;
+  border-radius: $hero-avatar-radius;
   margin: auto;
   width: 60px;
   height: 60px;
+  border: 2px solid $hero-avatar-border;
 
   @include MQ($small) {
     width: 128px;
     height: 128px;
+    border-width: 3px;
   }
 }
 
@@ -167,21 +172,6 @@
   z-index: 3;
 }
 
-// Profile
-
-.hero-avatar {
-  @include z-depth-2;
-  border-radius: $hero-avatar-radius;
-  width: 80px;
-  height: 80px;
-  border: 2px solid $hero-avatar-border;
-
-  @include MQ($small) {
-    width: 128px;
-    height: 128px;
-    border-width: 3px;
-  }
-}
 
 
 // Hero search
