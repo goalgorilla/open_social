@@ -87,12 +87,13 @@ class SocialDemoGroup implements ContainerInjectionInterface {
       $user_id = $accountClass->loadUserFromUuid($group['uid']);
 
       // Try and fetch the image.
-      $fileClass = new SocialDemoFile();
-      $fid = $fileClass->loadByUuid($group['image']);
-
       $media_id = '';
-      if ($file = File::load($fid)) {
-        $media_id = $file->id();
+      if (!empty($group['image'])) {
+        $fileClass = new SocialDemoFile();
+        $fid = $fileClass->loadByUuid($group['image']);
+        if ($file = File::load($fid)) {
+          $media_id = $file->id();
+        }
       }
 
       // Calculate data.
@@ -104,7 +105,7 @@ class SocialDemoGroup implements ContainerInjectionInterface {
         'langcode' => $group['language'],
         'type' => $group['group_type'],
         'label' => $group['title'],
-        'field_group_description' => $group['field_group_description'],
+        'field_group_description' => $group['description'],
         'uid' => $user_id,
         'created' => $grouptime,
         'changed' => $grouptime,

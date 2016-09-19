@@ -81,12 +81,13 @@ class SocialDemoUser implements ContainerInjectionInterface {
       }
 
       // Try and fetch the image.
-      $fileClass = new SocialDemoFile();
-      $fid = $fileClass->loadByUuid($account['picture']);
-
       $media_id = '';
-      if ($file = File::load($fid)) {
-        $media_id = $file->id();
+      if (!empty($account['picture'])) {
+        $fileClass = new SocialDemoFile();
+        $fid = $fileClass->loadByUuid($account['picture']);
+        if ($file = File::load($fid)) {
+          $media_id = $file->id();
+        }
       }
 
       // Let's create some accounts.
@@ -110,7 +111,9 @@ class SocialDemoUser implements ContainerInjectionInterface {
       $profile = array_pop($profile);
 
       // Set the field values.
-      $profile->field_profile_image = $media_id;
+      if (!empty($media_id)) {
+        $profile->field_profile_image = $media_id;
+      }
       $profile->uuid = $account['uuid'];
       $profile->field_profile_first_name = $account['first_name'];
       $profile->field_profile_last_name = $account['last_name'];
@@ -118,8 +121,8 @@ class SocialDemoUser implements ContainerInjectionInterface {
       $profile->field_profile_function = $account['function'];
       $profile->field_profile_phone_number = $account['phone_number'];
       $profile->field_profile_self_introduction = $account['self_introduction'];
-      $profile->field_profile_expertise = $account['expertise'];
-      $profile->field_profile_interests = $account['interests'];
+//      $profile->field_profile_expertise = '';
+//      $profile->field_profile_interests = ''
       $profile->field_profile_address = $account['address'];
 
       // Save the profile.
