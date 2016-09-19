@@ -91,33 +91,15 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   }
 
   /**
-   * Returns owner recipient from node.
+   * Returns owner recipient from entity.
    */
-  public function getRecipientOwnerFromNode(array $referenced_entity) {
+  public function getRecipientOwnerFromEntity(array $referenced_entity) {
     $recipients = [];
 
-    if ($referenced_entity['target_type'] === 'node') {
-      $node = Node::load($referenced_entity['target_id']);
-      $recipient_user_id = $node->getOwnerId();
-      if (!empty($recipient_user_id)) {
-        $recipients[] = [
-          'target_type' => 'user',
-          'target_id' => $recipient_user_id,
-        ];
-      }
-    }
+    $entity_storage = \Drupal::entityTypeManager()->getStorage($referenced_entity['target_type']);
+    $entity = $entity_storage->load($referenced_entity['target_id']);
 
-    return $recipients;
-  }
-
-  /**
-   * Returns owner recipient from post.
-   */
-  public function getRecipientOwnerFromPost(array $referenced_entity) {
-    $recipients = [];
-
-    $post = Post::load($referenced_entity['target_id']);
-    $recipient_user_id = $post->getOwnerId();
+    $recipient_user_id = $entity->getOwnerId();
     if (!empty($recipient_user_id)) {
       $recipients[] = [
         'target_type' => 'user',

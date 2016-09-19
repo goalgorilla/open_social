@@ -29,36 +29,18 @@ class OwnerActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
-
-      if ($referenced_entity['target_type'] === 'post') {
-        $recipients += $this->getRecipientOwnerFromPost($referenced_entity);
+      $allowed_entity_types = ['node', 'post'];
+      if (in_array($referenced_entity['target_type'], $allowed_entity_types)) {
+        $recipients += $this->getRecipientOwnerFromEntity($referenced_entity);
       }
-
-      if ($referenced_entity['target_type'] === 'node') {
-        $recipients += $this->getRecipientOwnerFromNode($referenced_entity);
-      }
-
     }
 
     return $recipients;
   }
 
   public function isValidEntity($entity) {
-    // Returns the entity to which the comment is attached.
-    if ($entity->getEntityTypeId() === 'comment') {
-      $entity = $entity->getCommentedEntity();
-    }
-
-    if ($entity->getEntityTypeId() === 'post') {
-      if (!empty($entity->get('field_recipient_group')->getValue())) {
-        return FALSE;
-      }
-      elseif (!empty($entity->get('field_recipient_user')->getValue())) {
-        return TRUE;
-      }
-    }
+    // @TODO: Add some check for owner.
     return TRUE;
   }
 
