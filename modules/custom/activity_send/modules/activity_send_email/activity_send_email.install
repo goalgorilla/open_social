@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the activity_send_email module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of activity_send_email.
+ */
+function activity_send_email_install() {
+  // Set email destination to given message templates.
+  $message_templates = ['create_post_profile'];
+  foreach ($message_templates as $message_template) {
+    $config_name = "message.template.{$message_template}";
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
+    $activity_destinations = $config->get('third_party_settings.activity_logger.activity_destinations');
+    $activity_destinations['email'] = 'email';
+    $config->set('third_party_settings.activity_logger.activity_destinations', $activity_destinations);
+    $config->save();
+  }
+}
