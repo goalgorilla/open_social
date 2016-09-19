@@ -250,7 +250,7 @@ function throwError(taskName, msg) {
 
 gulp.task('build', ['styles', 'styleguide' , 'scripts', 'font', 'images', 'content']);
 
-gulp.task('deploy', function() {
+gulp.task('deploy', ['build'], function() {
   // Dirs and Files to sync
 
   // Default options for rsync
