@@ -56,6 +56,7 @@ function social_topic_preprocess_node(&$variables) {
  * Enhance the exposed filter form of the topic overview.
  */
 function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // On user topics overview.
   if ($form['#id'] === 'views-exposed-form-topics-page-profile') {
     $form['type']['#options']['All'] = t('All types');
 
@@ -76,6 +77,38 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
     // page, when views is updated.
     $form['#action'] = '/user/' . $account_uid . '/topics';
   }
+  // On group topics overview.
+  if ($form['#id'] === 'views-exposed-form-group-topics-page-group-topics') {
+    $form['status']['#options']['All'] = t('All statuses');
+    $form['status']['#options'][0] = t('Unpublished');
+    $form['status']['#options'][1] = t('Published');
+
+    $group_from_route = _social_group_get_current_group();
+
+    $current_user = \Drupal::currentUser();
+    $membership = FALSE;
+    if ($group_membership = $group_from_route->getMember($current_user)) {
+      $membership = TRUE;
+    }
+
+    // Only show the unpublished option when you are member of the group.
+    // You can't place content in a group you are not a member of anyway.
+    if (!$membership) {
+      $form['status']['#access'] = FALSE;
+    }
+
+    $form['type']['#options']['All'] = t('All types');
+
+    // Get group from route.
+    if (!empty($group_from_route)) {
+      $group_id = $group_from_route->id();
+    }
+
+    $form['actions']['reset']['#access'] = TRUE;
+
+    // Make sure we redirect to the current group page.
+    $form['#action'] = '/group/' . $group_id . '/topics';
+  }
 }
 
 /**
@@ -88,7 +121,6 @@ function social_topic_block_view_alter(array &$build, BlockPluginInterface $bloc
   if ($build['#plugin_id'] === 'views_exposed_filter_block:topics-page_profile') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
   }
-
 }
 
 /**
@@ -101,6 +133,26 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = array(
         'field' => 'node_field_data.status',
+        'value' => NODE_PUBLISHED,
+        'operator' => '=',
+      );
+    }
+  }
+  // Only show the unpublished option when you are member of the group.
+  // You can't place content in a group you are not a member of anyway.
+  if ($view->id() == 'group_topics' && $view->getDisplay()->display['id'] == 'page_group_topics') {
+    $group_from_route = _social_group_get_current_group();
+    $current_user = \Drupal::currentUser();
+    $membership = FALSE;
+    if ($group_membership = $group_from_route->getMember($current_user)) {
+      $membership = TRUE;
+    }
+
+    // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"
+    // (see form alter when published is selected).
+    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NODE_PUBLISHED || !$membership ) {
+      $query->where[1]['conditions'][] = array(
+        'field' => 'node_field_data_group_content_field_data.status',
         'value' => NODE_PUBLISHED,
         'operator' => '=',
       );
