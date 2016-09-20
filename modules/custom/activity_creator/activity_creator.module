@@ -54,7 +54,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
   if ($entity) {
     // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
-    $message_template_id = $entity->getEntityType()->id();
+    $message_template_id = $entity->getTemplate()->id();
     $actor = $entity->getOwner()->id();
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();

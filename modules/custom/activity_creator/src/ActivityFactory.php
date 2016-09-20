@@ -253,7 +253,23 @@ class ActivityFactory extends ControllerBase {
    */
   public static function getActivityRelatedEntity($data) {
     $related_object = $data['related_object'][0];
-    if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
+
+    // We return parent comment as related object as comment
+    // for create_comment_reply messages.
+    if ($data['message_template'] === 'create_comment_reply') {
+      $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+      // @TODO: Check if comment published?
+      $comment = $comment_storage->load($related_object['target_id']);
+      $parent_comment = $comment->getParentComment();
+      if (!empty($parent_comment)) {
+        $related_object = [
+          'target_type' => $parent_comment->getEntityTypeId(),
+          'target_id' => $parent_comment->id(),
+        ];
+      }
+    }
+    // We return commented entity as related object for all other comments.
+    elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
       // @TODO: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);

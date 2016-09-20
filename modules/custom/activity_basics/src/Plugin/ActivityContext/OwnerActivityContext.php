@@ -30,7 +30,7 @@ class OwnerActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
-      $allowed_entity_types = ['node', 'post'];
+      $allowed_entity_types = ['node', 'post', 'comment'];
       if (in_array($referenced_entity['target_type'], $allowed_entity_types)) {
         $recipients += $this->getRecipientOwnerFromEntity($referenced_entity);
       }
