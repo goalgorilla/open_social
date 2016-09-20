@@ -27,13 +27,6 @@ settings:
         field: _none
       auto_create: false
       auto_create_bundle: event
-  node:
-    handler: 'default:node'
-    handler_settings:
-      target_bundles: null
-      sort:
-        field: _none
-      auto_create: false
   activity:
     handler: 'default:activity'
     handler_settings: {  }
@@ -69,5 +62,11 @@ settings:
     handler_settings: {  }
   user:
     handler: 'default:user'
+    handler_settings: {  }
+  post:
+    handler: 'default:post'
+    handler_settings: {  }
+  search_api_task:
+    handler: 'default:search_api_task'
     handler_settings: {  }
 field_type: dynamic_entity_reference
