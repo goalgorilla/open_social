@@ -21,11 +21,14 @@ class SocialTopicController extends ControllerBase {
     // TODO This might change depending on the view exposed filter settings.
     $topic_type_id = $attributes = \Drupal::request()->query->get('field_topic_type_target_id');
     if ($topic_type_id !== NULL) {
-      $term = \Drupal\taxonomy\Entity\Term::load($topic_type_id);
+      // Topic type can be "All" will crash overview on /newest-topics.
+      if (is_numeric(($topic_type_id))) {
+        $term = \Drupal\taxonomy\Entity\Term::load($topic_type_id);
 
-      if ($term->access('view') && $term->getVocabularyId() === 'topic_types') {
-        $term_title = $term->getName();
-        $title = $this->t('Topics of type @type', ['@type' => $term_title]);
+        if ($term->access('view') && $term->getVocabularyId() === 'topic_types') {
+          $term_title = $term->getName();
+          $title = $this->t('Topics of type @type', ['@type' => $term_title]);
+        }
       }
     }
 

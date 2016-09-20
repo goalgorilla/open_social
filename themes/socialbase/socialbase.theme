@@ -818,6 +818,26 @@ function socialbase_preprocess_node(&$variables) {
 
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
+
+    // Not for AN..
+    $is_anonymous = \Drupal::currentUser()->isAnonymous();
+    if (!$is_anonymous) {
+      // Only on Events & Topics.
+      if ($variables['node']->getType() == 'event' || $variables['node']->getType() == 'topic') {
+        // Add group name to the teaser (if it's part of a group).
+        $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($variables['node']);
+        if (!empty($group_content)) {
+          // It can only exist in one group. So we get the first pointer out of
+          // the array that gets returned from loading GroupContent.
+          $group = reset($group_content)->getGroup();
+
+          if (!empty($group)) {
+            $variables['content']['group_name'] = $group->label();
+          }
+        }
+      }
+    }
+
     $variables['display_submitted'] = TRUE;
   }
   if ($variables['view_mode'] === 'hero') {

@@ -22,4 +22,12 @@
     {%- block field_value -%} {{ topic_type }} {%- endblock -%}
   {% endembed %}
 
+  {% if content.group_name %}
+    {{ kint(content.group_name) }}
+    {% embed "node--teaser__field.html.twig" %}
+      {%- block field_icon -%} group {%- endblock -%}
+      {%- block field_value -%} {{ content.group_name }} {%- endblock -%}
+    {% endembed %}
+  {% endif %}
+
 {% endblock %}
