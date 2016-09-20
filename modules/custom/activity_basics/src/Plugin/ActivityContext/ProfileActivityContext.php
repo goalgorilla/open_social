@@ -40,6 +40,11 @@ class ProfileActivityContext extends ActivityContextBase {
   }
 
   public function isValidEntity($entity) {
+    // Special cases for comments.
+    if ($entity->getEntityTypeId() === 'comment') {
+      // Returns the entity to which the comment is attached.
+      $entity = $entity->getCommentedEntity();
+    }
     // Check if it's placed in a group (regardless off content type).
     if ($group_entity = GroupContent::loadByEntity($entity)) {
       return FALSE;
