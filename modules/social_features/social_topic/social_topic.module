@@ -79,10 +79,6 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
   }
   // On group topics overview.
   if ($form['#id'] === 'views-exposed-form-group-topics-page-group-topics') {
-    $form['status']['#options']['All'] = t('All statuses');
-    $form['status']['#options'][0] = t('Unpublished');
-    $form['status']['#options'][1] = t('Published');
-
     $group_from_route = _social_group_get_current_group();
 
     $current_user = \Drupal::currentUser();
@@ -91,10 +87,16 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
       $membership = TRUE;
     }
 
-    // Only show the unpublished option when you are member of the group.
-    // You can't place content in a group you are not a member of anyway.
-    if (!$membership) {
-      $form['status']['#access'] = FALSE;
+    if (!empty($form['status'])) {
+      $form['status']['#options']['All'] = t('All statuses');
+      $form['status']['#options'][0] = t('Unpublished');
+      $form['status']['#options'][1] = t('Published');
+
+      // Only show the unpublished option when you are member of the group.
+      // You can't place content in a group you are not a member of anyway.
+      if (!$membership) {
+        $form['status']['#access'] = FALSE;
+      }
     }
 
     $form['type']['#options']['All'] = t('All types');
