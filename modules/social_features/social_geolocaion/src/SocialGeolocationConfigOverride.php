@@ -16,7 +16,7 @@ class SocialGeolocationConfigOverride implements ConfigFactoryOverrideInterface 
     $overrides = array();
 
     // Set download count widget to files fields.
-    $search_views = ['search_groups'];
+    $search_views = ['search_groups', 'search_content'];
     foreach ($search_views as $content_type) {
       $config_name = "views.view.{$content_type}";
       $overrides[$config_name] = ['status' => FALSE];
