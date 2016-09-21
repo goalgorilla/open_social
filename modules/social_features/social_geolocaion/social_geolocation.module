@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @file
+ * The Social Geolocation module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\block\Entity\Block;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\geolocation\GeolocationCore;
+use Drupal\group\Entity\GroupInterface;
+
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set value to geolocation field based on address input.
+ */
+function social_geolocation_group_presave(GroupInterface $group) {
+  if (isset($group->field_group_address) && isset($group->field_group_geolocation)) {
+    // Get location string.
+    $address = $group->field_group_address->getString();
+    $new_coordinates = NULL;
+
+    // Get Google Maps API key.
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    if (!empty($address) && !empty($apikey)) {
+      // Init geocoder settings.
+      $plugins = ['googlemaps'];
+      $options = [
+        'googlemaps' => ['apikey' => $apikey],
+      ];
+      // Convert address to geolocation values.
+      if (\Drupal::hasService('geocoder')) {
+        $address_collection = \Drupal::service('geocoder')
+          ->geocode($address, $plugins, $options);
+        if (!empty($address_collection)) {
+          $lat = $address_collection->first()->getLatitude();
+          $lng = $address_collection->first()->getLongitude();
+
+          $new_coordinates = [
+            'lat' => $lat,
+            'lng' => $lng,
+            'lat_sin' => sin(deg2rad($lat)),
+            'lat_cos' => cos(deg2rad($lat)),
+            'lng_rad' => deg2rad($lng),
+          ];
+        }
+      }
+    }
+    // Set values to geolocation field.
+    $group->get('field_group_geolocation')->setValue($new_coordinates);
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Alter search_groups_proximity query and performs geocoding for proximity filter.
+ */
+function social_geolocation_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'search_groups_proximity') {
+    // Get exposed input.
+    $exposed_input = $view->getExposedInput();
+    // Get Google Maps API key.
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    if (!empty($exposed_input['location']) && !empty($apikey)) {
+      // Init geocoder settings.
+      $plugins = ['googlemaps'];
+      $options = [
+        'googlemaps' => ['apikey' => $apikey],
+      ];
+      // Convert location to geolocation values.
+      if (\Drupal::hasService('geocoder')) {
+        $address_collection = \Drupal::service('geocoder')
+          ->geocode($exposed_input['location'], $plugins, $options);
+        if (!empty($address_collection)) {
+          // Alter proximity query with correct coordinates.
+          foreach ($query->where as &$condition_group) {
+            foreach ($condition_group['conditions'] as &$condition) {
+              // Check if condition contains proximity part.
+              if ((strpos($condition['field'], 'COS( 0') !== FALSE)) {
+                // Init values for proximity query fragment.
+                $table_name = 'group__field_group_geolocation';
+                $field_id = 'field_group_geolocation';
+                $filter_lat = $address_collection->first()->getLatitude();
+                $filter_lng = $address_collection->first()->getLongitude();
+                $earth_radius = GeolocationCore::EARTH_RADIUS_KM;
+                // Get proximity query fragment from geolocation service.
+                $query_fragment = \Drupal::service('geolocation.core')->getProximityQueryFragment($table_name, $field_id, $filter_lat, $filter_lng, $earth_radius);
+                // Change proximity query fragment.
+                $filter_field = 'field_group_geolocation_proximity';
+                $operator = $view->filter[$filter_field]->operator;
+                $proximity_field = ":{$table_name}_{$filter_field}";
+                $condition['field'] = "{$query_fragment} {$operator} {$proximity_field}";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ *
+ * Hide proximity filter if Google Maps API key is not set.
+ */
+function social_geolocation_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'views_exposed_filter_block:search_groups_proximity-page') {
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+    return AccessResult::forbiddenIf(empty($apikey))->addCacheableDependency($block);
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
+}
+
+/**
+ * Form submit for views-exposed-form-search-groups-proximity-page.
+ */
+function _social_geolocation_groups_proximity_form_submit($form, FormStateInterface &$form_state) {
+  // Set values form search input to exposed text filters.
+  if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
+    $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
+    $form_state->setValue('description', \Drupal::routeMatch()->getParameter('keys'));
+    $form_state->setValue('location_name', \Drupal::routeMatch()->getParameter('keys'));
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Enhance the Views exposed filter blocks forms.
+ */
+function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $filter_forms = array(
+    'views-exposed-form-search-groups-proximity-page',
+  );
+  if (in_array($form['#id'], $filter_forms)) {
+    // Set current path as form action, in order to keep search input.
+    $form['#action'] = \Drupal::service('path.current')->getPath();
+    // Always enable the reset button.
+    $form['actions']['reset']['#access'] = TRUE;
+
+    if ('views-exposed-form-search-groups-proximity-page' == $form['#id']) {
+      // Hide lat and lng inputs.
+      $form['lat']['#access'] = FALSE;
+      $form['lng']['#access'] = FALSE;
+
+      // Add new address input.
+      $form['location'] = [
+        '#type' => 'textfield',
+        '#title' => t('Location'),
+        '#description' => t('Country, city or postal code'),
+        '#weight' => $form['lat']['#weight'],
+      ];
+
+      // Change type of proximity field from textfield to number.
+      $form['proximity']['#type'] = 'number';
+      $form['proximity']['#min'] = 0;
+      $form['proximity']['#max'] = 10000;
+
+      // Hide text inputs, because we use search input in header.
+      $form['title']['#access'] = FALSE;
+      $form['description']['#access'] = FALSE;
+      $form['location_name']['#access'] = FALSE;
+
+      // Add custom submit handler first.
+      array_unshift($form['#submit'], '_social_geolocation_groups_proximity_form_submit');
+    }
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ *
+ * Enhance the Views exposed filter blocks.
+ */
+function social_geolocation_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
+  $filter_blocks = array(
+    'exposed_form_search_groups_proximity_page_sidebar',
+  );
+
+  if (in_array($build['#id'], $filter_blocks)) {
+    // Disable cache for exposed filter block to get correct current path,
+    // which is used in $form['#action'].
+    $build['#cache'] = array(
+      'max-age' => 0,
+    );
+  }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function social_geolocation_local_tasks_alter(&$local_tasks) {
+  // Remove local tasks provided by social_search module.
+  unset($local_tasks['social_search.groups']);
+  unset($local_tasks['social_search.groups_no_value']);
+}

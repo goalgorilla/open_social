@@ -309,22 +309,14 @@ function socialbase_preprocess_block(&$variables) {
       $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
     }
   }
-  if (isset($variables['content']['search_users_form'])) {
+  if (isset($variables['content']['search_hero_form'])) {
     // Add class for the forms as well.
-    $variables['content']['search_users_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_users_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
-    $variables['content']['search_users_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_users_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_users_form']['#region'] = 'hero';
-  }
-  if (isset($variables['content']['search_groups_form'])) {
-    $variables['content']['search_groups_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_groups_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_groups_form']['search_input_groups']['#name'] = 'search_input_groups';
-    $variables['content']['search_groups_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_groups_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_groups_form']['#region'] = 'hero';
+    $variables['content']['search_hero_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_hero_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_hero_form']['search_input']['#name'] = 'search_input';
+    $variables['content']['search_hero_form']['actions']['submit']['#addsearchicon'] = TRUE;
+    $variables['content']['search_hero_form']['#attributes']['class'][] = 'hero-form';
+    $variables['content']['search_hero_form']['#region'] = 'hero';
   }
 
   // Add Group ID for "See all groups link".
@@ -1113,7 +1105,7 @@ function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
   // If this is a search content form set a variable for twig
-  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_users_form' || $element['#form_id'] === 'search_groups_form') {
+  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'search_groups_form') {
     $variables['is_search_form'] = TRUE;
   }
 
