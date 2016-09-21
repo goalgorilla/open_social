@@ -97,7 +97,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               }
 
               // If it's a group.. add it in the arguments.
-              if ($group instanceof Group) {
+              if (isset($group) && $group instanceof Group) {
                 if ($name === 'gtitle') {
                   $replacements[$original] = $group->label();
                 }
