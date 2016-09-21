@@ -15,6 +15,7 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\geolocation\GeolocationCore;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
+use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -30,6 +31,13 @@ function social_geolocation_node_presave(NodeInterface $node) {
   if ($node->getType() == 'event') {
     _social_geolocation_entity_presave($node, 'event');
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_geolocation_profile_presave(ProfileInterface $profile) {
+  _social_geolocation_entity_presave($profile, 'profile');
 }
 
 /**
@@ -84,6 +92,7 @@ function social_geolocation_views_query_alter(ViewExecutable $view, QueryPluginB
   $proximity_views = array(
     'search_content_proximity',
     'search_groups_proximity',
+    'search_users_proximity',
   );
 
   if (in_array($view->id(), $proximity_views)) {
@@ -98,6 +107,11 @@ function social_geolocation_views_query_alter(ViewExecutable $view, QueryPluginB
         $table_name = 'group__field_group_geolocation';
         $field_id = 'field_group_geolocation';
         $filter_field = 'field_group_geolocation_proximity';
+        break;
+      case 'search_users_proximity':
+        $table_name = 'profile__field_profile_geolocation';
+        $field_id = 'field_profile_geolocation';
+        $filter_field = 'field_profile_geolocation_proximity';
         break;
     }
 
@@ -151,6 +165,7 @@ function social_geolocation_block_access(Block $block, $operation, AccountInterf
   $proximity_forms = array(
     'views_exposed_filter_block:search_content_proximity-page',
     'views_exposed_filter_block:search_groups_proximity-page',
+    'views_exposed_filter_block:search_users_proximity-page',
   );
   if ($operation == 'view' && (in_array($block->getPluginId(), $proximity_forms))) {
     $config = \Drupal::config('geolocation.settings');
@@ -172,6 +187,7 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
   $filter_forms = array(
     'views-exposed-form-search-content-proximity-page',
     'views-exposed-form-search-groups-proximity-page',
+    'views-exposed-form-search-users-proximity-page',
   );
 
   if (in_array($form['#id'], $filter_forms)) {
@@ -230,6 +246,7 @@ function social_geolocation_block_view_views_exposed_filter_block_alter(array &$
   $filter_blocks = array(
     'exposed_form_search_content_proximity_page',
     'exposed_form_search_groups_proximity_page',
+    'exposed_form_search_users_proximity_page',
   );
 
   if (in_array($build['#id'], $filter_blocks)) {
@@ -250,4 +267,6 @@ function social_geolocation_local_tasks_alter(&$local_tasks) {
   unset($local_tasks['social_search.groups_no_value']);
   unset($local_tasks['social_search.content']);
   unset($local_tasks['social_search.content_no_value']);
+  unset($local_tasks['social_search.users']);
+  unset($local_tasks['social_search.users_no_value']);
 }
