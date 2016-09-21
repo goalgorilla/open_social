@@ -9,7 +9,7 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\GroupContent;
-use Drupal\social_post\Entity\Post;
+use Drupal\activity_creator\ActivityFactory;
 
 /**
  * Provides a 'ProfileActivityContext' activity context.
@@ -29,18 +29,10 @@ class ProfileActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $referenced_entity = $data['related_object']['0'];
+      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
       if ($referenced_entity['target_type'] === 'post') {
-        $post = Post::load($referenced_entity['target_id']);
-
-        $recipient_user = $post->get('field_recipient_user')->getValue();
-        if (!empty($recipient_user)) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $recipient_user['0']['target_id'],
-          ];
-        }
+        $recipients += $this->getRecipientsFromPost($referenced_entity);
       }
     }
 

@@ -12,6 +12,7 @@ use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembership;
 use Drupal\social_group\SocialGroupHelperService;
+use Drupal\activity_creator\ActivityFactory;
 
 /**
  * Provides a 'ContentInMyGroupActivityContext' acitivy context.
@@ -32,7 +33,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
 
-      $referenced_entity = $data['related_object']['0'];
+      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
       if ($gid = SocialGroupHelperService::getGroupFromEntity($referenced_entity)) {
         $recipients[] = [

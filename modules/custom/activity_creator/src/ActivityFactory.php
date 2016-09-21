@@ -200,7 +200,7 @@ class ActivityFactory extends ControllerBase {
       $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
 
       // Create separate activity for activity on user related streams.
-      $profile_allowed_destinations = ['stream_profile', 'notifications'];
+      $profile_allowed_destinations = ['stream_profile', 'notifications', 'email'];
       $profile_activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $profile_allowed_destinations);
       $activity = Activity::create($profile_activity_fields);
       $activity->save();
@@ -236,6 +236,8 @@ class ActivityFactory extends ControllerBase {
           $activity_query = \Drupal::entityQuery('activity');
           $activity_query->condition('field_activity_entity.target_id', $comment_ids, 'IN');
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
+          // We exclude activities with email destination from aggregation.
+          $activity_query->condition('field_activity_destinations.value', 'email', '!=');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
@@ -249,7 +251,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related entity for activity aggregation.
    */
-  private function getAggregationRelatedEntity($data) {
+  public static function getActivityRelatedEntity($data) {
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
@@ -272,7 +274,7 @@ class ActivityFactory extends ControllerBase {
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       // Get related entity.
-      $related_entity = $this->getAggregationRelatedEntity($data);
+      $related_entity = $this->getActivityRelatedEntity($data);
       if (!empty($related_entity['target_id']) && !empty($related_entity['target_type'])) {
         $query = \Drupal::database()->select('comment_field_data', 'cfd');
         $query->addExpression('COUNT(DISTINCT cfd.uid)');
