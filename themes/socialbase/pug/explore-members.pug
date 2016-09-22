@@ -1,7 +1,7 @@
 extends ./layout/base-lu.pug
 
 block title
-  title Explore topics
+  title Explore groups
 
 block breadcrumbs
   li
@@ -12,7 +12,7 @@ block breadcrumbs
     a(href='explore.html') Explore
     svg.icon-gray.icon-small
       use(xlink:href="#icon-navigate_next")
-  li Topics
+  li Users
 
 block content
 
@@ -27,7 +27,7 @@ block content
         | Filter
       .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
-          header.complementary-title Filter topics
+          header.complementary-title Filter members
           .offcanvas-tools.visible-xs-block
             .js-close-canvas.btn.btn-icon-toggle.btn-user-light.pull-right
               svg.pull-left.btn-icon.icon-black
@@ -37,31 +37,35 @@ block content
         .offcanvas-body
           form.clearfix
             .form-group
-              label What type of topics do you want to see?
-              .select-wrapper
-                select.form-control(onchange="enableMe('reset-button')")
-                  option(value="", selected="") - Any -
-                  option(value="blog") Blog
-                  option(value="discussion") Discussion
-                  option(value="topic") Topic
-
+              label(for="expertise-input") Expertises
+              .input-group
+                input#expertise-input.form-control(type="text", size="60", onchange="enableMe('reset-button', this)")
+                span.input-group-addon
+                  svg.icon-gray.icon-small
+                    use(xlink:href='#icon-autorenew')
             .form-group
-              input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
-              button.pull-right.btn.btn-default(type="submit", value="Filter") Filter
+              label(for="interests-input") Interests
+              .input-group
+                input#interests-input.form-control(type="text", size="60", onchange="enableMe('reset-button', this)")
+                span.input-group-addon
+                  svg.icon-gray.icon-small
+                    use(xlink:href='#icon-autorenew')
+
+            input#reset-button.btn.btn-flat.disabled(type="submit", value="Reset")
+            button.pull-right.btn.btn-default(type="submit", value="Filter") Filter
 
     .col-xs-12.col-sm-8
-      h4.section-title Community topics
+      h4.section-title Community members
 
-      include molecules/_topic2.pug
-      include molecules/_topic1.pug
-      include molecules/_topic4.pug
-
+      include molecules/_member2.pug
+      include molecules/_member3.pug
+      include molecules/_member4.pug
+      include molecules/_member5.pug
 
       include molecules/_pager.pug
-
 block scriptinline
 
   script.
-    function enableMe(id) {
+    function enableMe(id, elem) {
       jQuery('#' + id).removeClass('disabled');
     }

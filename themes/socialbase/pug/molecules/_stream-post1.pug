@@ -9,27 +9,27 @@
     .media-body
       h5.media-heading
         if user == "isAnonymous"
-          | John Johson 
-        else 
-          a(href="my-stream.html") John Johson 
+          | John Johson
+        else
+          a(href="my-stream.html") John Johson
         br
         if user == "isAnonymous"
-          a(href="single-post-an.html") 
+          a(href="single-post-an.html")
             small 15 hours
-        else 
-          a(href="single-post.html") 
+        else
+          a(href="single-post.html")
             small 15 hours
-      unless user == "isAnonymous"    
+      unless user == "isAnonymous"
         .btn-group.pull-right
           button.btn.btn-icon-toggle.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', aria-haspopup='true')
             svg.btn-icon.icon-gray
               use(xlink:href='#icon-expand_more')
           ul.dropdown-menu(role='menu')
-            li 
+            li
               a(href='post-edit.html') Edit
             li
               a(href='post-delete.html') Delete
-.margin-top-s Our software empowers people to effectively collaborate and organize. Replacing traditional intranets, it fuels bottom-up organizational innovation. 
+.margin-top-s Our software empowers people to effectively collaborate and organize. Replacing traditional intranets, it fuels bottom-up organizational innovation.
   a(href="#") www.getopensocial.com
 img.img-responsive(src="content/images/os_image.jpg", alt="")
 
@@ -42,12 +42,12 @@ img.img-responsive(src="content/images/os_image.jpg", alt="")
       .media-body
         form
           .form-group.form-group-inline.clearfix.text-right
-            textarea.form-control.form-control--block(placeholder='Write a comment...', width='100%')
+            textarea.form-control.form-control--autogrow.js-textarea-autogrow(placeholder='Write a comment...', data-min-rows="2")
             button.btn.btn-link(type='submit') Comment
 
   include ./_post1-reply3.pug
   include ./_post1-reply4.pug
-  
+
   .margin-top-l.text-center
     if user == "isAnonymous"
       a.btn.btn-link(href='single-post-an.html') show all 5 comments

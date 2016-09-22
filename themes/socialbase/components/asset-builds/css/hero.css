@@ -1,6 +1,6 @@
 .hero-container > div {
-  margin-right: -1rem;
-  margin-left: -1rem;
+  margin-right: -0.9375rem;
+  margin-left: -0.9375rem;
 }
 
 .hero-container > div .card {
@@ -88,14 +88,16 @@
 }
 
 .cover-wrap .page-title {
-  margin: 2em 0 0.5em;
+  margin: 1em 0 0.5em;
 }
 
-.profile-img {
+.hero-avatar {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 50%;
   margin: auto;
   width: 60px;
   height: 60px;
+  border: 2px solid white;
 }
 
 .hero-footer {
@@ -134,14 +136,6 @@
   top: 20px;
   right: 20px;
   z-index: 3;
-}
-
-.hero-avatar {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  border: 2px solid white;
 }
 
 .hero-form[role='search'] .form-group {
@@ -202,16 +196,7 @@
   }
 
   .cover-wrap .page-title {
-    margin: 1em 0 0;
-  }
-
-  .profile-img {
-    width: 128px;
-    height: 128px;
-  }
-
-  .hero-canvas .page-title {
-    margin: 1em 0 .5em;
+    margin-bottom: 0;
   }
 
   .hero-avatar {
@@ -219,16 +204,23 @@
     height: 128px;
     border-width: 3px;
   }
+
+  .hero-canvas .page-title {
+    margin: 1em 0 .5em;
+  }
 }
 
 @media screen and (min-width: 960px) {
 
-  .hero-container > div {
-    margin: 0;
-  }
-
   .cover-img .cover-wrap {
     min-height: 335px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+
+  .hero-container > div {
+    margin: 0;
   }
 }
 

@@ -6,35 +6,35 @@ block title
 block pagetitle
   .container.hero-container
     include ./molecules/_other-profile-hero.pug
-          
+
     .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.active.hidden-xs
-            a(href="other-stream.html") Stream  
+          li.active
+            a(href="other-stream.html") Stream
             span.visually-hidden (active tab)
           li
             a(href="other-profile-about.html") About
           li
             a(href='other-topics.html') Topics
           li
-            a(href='other-events.html') Events  
+            a(href='other-events.html') Events
           li
             a(href="other-groups.html") Groups
-      
+
 block content
-  
+
   .row.margin-top-l
 
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+    .col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
       include ./molecules/_other-events.pug
       include ./molecules/_other-topics.pug
       include ./molecules/_other-groups.pug
 
     .col-xs-12.col-sm-8
       h4.section-title.section-title-stream Jenny Baker`s stream
-    
+
       ul.stream
         li.stream-item
           i.stream-icon
@@ -42,31 +42,31 @@ block content
             .card-body
               include ./molecules/_stream-post-form.pug
         li.stream-item
-          i.stream-icon 
+          i.stream-icon
           .card.stream-card
             .card-body
               include ./molecules/_stream-post2.pug
         li.stream-item
-          i.stream-icon 
+          i.stream-icon
           .card.stream-card
             .card-body
               include ./molecules/_stream-post2.pug
-              
-        li.stream-item
-          i.stream-icon 
-          .card.stream-card
-            .card-body
-              include ./molecules/_stream-post2.pug
-              
-        li.stream-item
-          i.stream-icon 
-          .card.stream-card
-            .card-body
-              include ./molecules/_stream-post2.pug    
 
-block scriptinline  
-  
-  script.  
+        li.stream-item
+          i.stream-icon
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.pug
+
+        li.stream-item
+          i.stream-icon
+          .card.stream-card
+            .card-body
+              include ./molecules/_stream-post2.pug
+
+block scriptinline
+
+  script.
     function showMe (it, radio) {
       var visibility = radio.value;
       var icon = jQuery(radio).prevAll('svg').html();
