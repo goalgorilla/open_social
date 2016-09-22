@@ -198,3 +198,15 @@ function social_core_update_8002() {
     }
   }
 }
+
+/**
+ * Install image_widget_crop module.
+ */
+function social_core_update_8003() {
+
+  $modules = array(
+    'image_widget_crop',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
