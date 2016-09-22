@@ -4,9 +4,13 @@ dependencies:
   config:
     - core.entity_view_mode.profile.teaser
     - profile.type.profile
+    - taxonomy.vocabulary.expertise
+    - taxonomy.vocabulary.interests
+    - taxonomy.vocabulary.profile_tag
   module:
     - geolocation
     - profile
+    - taxonomy
     - user
 id: search_users_proximity
 label: 'Search Users (proximity)'
@@ -147,7 +151,7 @@ display:
             description: ''
             use_operator: false
             operator: field_profile_first_name_value_op
-            identifier: title
+            identifier: text_1
             required: false
             remember: false
             multiple: false
@@ -187,7 +191,7 @@ display:
             description: ''
             use_operator: false
             operator: field_profile_last_name_value_op
-            identifier: location_name
+            identifier: text_2
             required: false
             remember: false
             multiple: false
@@ -227,7 +231,7 @@ display:
             description: ''
             use_operator: false
             operator: field_profile_self_introduction_value_op
-            identifier: description
+            identifier: text_3
             required: false
             remember: false
             multiple: false
@@ -250,6 +254,147 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: string
+        field_profile_expertise_target_id:
+          id: field_profile_expertise_target_id
+          table: profile__field_profile_expertise
+          field: field_profile_expertise_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_expertise_target_id_op
+            label: Expertise
+            description: ''
+            use_operator: false
+            operator: field_profile_expertise_target_id_op
+            identifier: expertise
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: expertise
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_profile_interests_target_id:
+          id: field_profile_interests_target_id
+          table: profile__field_profile_interests
+          field: field_profile_interests_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_interests_target_id_op
+            label: Interests
+            description: ''
+            use_operator: false
+            operator: field_profile_interests_target_id_op
+            identifier: interests
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: interests
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_profile_profile_tag_target_id:
+          id: field_profile_profile_tag_target_id
+          table: profile__field_profile_profile_tag
+          field: field_profile_profile_tag_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_profile_tag_target_id_op
+            label: 'Profile tag'
+            description: ''
+            use_operator: false
+            operator: field_profile_profile_tag_target_id_op
+            identifier: profile_tag
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: profile_tag
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
         field_profile_geolocation_proximity:
           id: field_profile_geolocation_proximity
           table: profile__field_profile_geolocation
@@ -352,6 +497,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.compact'
@@ -377,6 +523,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.compact'
@@ -403,6 +550,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.compact'

@@ -1,0 +1,26 @@
+<?php
+/**
+ * @file
+ * The Social geolocation install.
+ */
+
+
+function social_geolocation_install() {
+  // Social Search and Social Geolocation provides views with the same paths.
+  $modules = array(
+    'social_search',
+  );
+  \Drupal::service('module_installer')->uninstall($modules);
+
+  // Remove exposed filter blocks from Social Search Views.
+  $block_ids = [
+    'exposed_form_search_content_page_sidebar',
+    'exposed_form_search_users_page_sidebar',
+  ];
+  foreach ($block_ids as $block_id) {
+    $block = Block::load($block_id);
+    if ($block instanceof Block) {
+      $block->delete();
+    }
+  }
+}

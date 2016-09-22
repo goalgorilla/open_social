@@ -21,7 +21,7 @@ class SearchHeroBlock extends BlockBase {
     $build = [];
 
     $form = \Drupal::formBuilder()->getForm('Drupal\social_search\Form\SearchHeroForm');
-    $build['search_hero_form'] = $form;
+    $build['search_form'] = $form;
 
     return $build;
   }

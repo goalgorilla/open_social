@@ -25,7 +25,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content search'
+          perm: 'access group search'
       cache:
         type: none
         options: {  }
@@ -158,7 +158,7 @@ display:
             description: ''
             use_operator: false
             operator: label_op
-            identifier: title
+            identifier: text_1
             required: false
             remember: false
             multiple: false
@@ -166,6 +166,8 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -198,7 +200,7 @@ display:
             description: ''
             use_operator: false
             operator: field_group_description_value_op
-            identifier: description
+            identifier: text_2
             required: false
             remember: false
             multiple: false
@@ -206,6 +208,8 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -236,7 +240,7 @@ display:
             description: ''
             use_operator: false
             operator: field_group_location_value_op
-            identifier: location_name
+            identifier: text_3
             required: false
             remember: false
             multiple: false
@@ -244,6 +248,8 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -401,7 +407,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
+          empty: true
           tokenize: false
           content:
             value: '<h4 class="section-title">Group results</h4><p>If you are searching for users, <a href="/search/users">click here</a> If you are searching for content, <a href="/search/content">click here</a></p>'

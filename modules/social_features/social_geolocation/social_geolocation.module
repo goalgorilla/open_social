@@ -201,12 +201,23 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
     $form['lng']['#access'] = FALSE;
 
     // Add new address input.
-    $form['location'] = [
+    $form['location'] = array(
       '#type' => 'textfield',
       '#title' => t('Location'),
       '#description' => t('Country, city or postal code'),
       '#weight' => $form['lat']['#weight'],
-    ];
+//      '#states' => array(
+//        'visible' => array(
+//          ':input[name="type"]' => array('value' => 'event'),
+//        ),
+//      ),
+    );
+
+//    $form['proximity']['#states'] = array(
+//      'visible' => array(
+//        ':input[name="type"]' => array('value' => 'event'),
+//      ),
+//    );
 
     // Change type of proximity field from textfield to number.
     $form['proximity']['#type'] = 'number';
@@ -214,12 +225,22 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
     $form['proximity']['#max'] = 10000;
 
     // Hide text inputs, because we use search input in header.
-    $form['title']['#access'] = FALSE;
-    $form['description']['#access'] = FALSE;
-    $form['location_name']['#access'] = FALSE;
+    $form['text_1']['#access'] = FALSE;
+    $form['text_2']['#access'] = FALSE;
+    $form['text_3']['#access'] = FALSE;
 
     // Add custom submit handler first.
     array_unshift($form['#submit'], 'social_geolocation_proximity_form_submit');
+
+    if ($form['#id'] == 'views-exposed-form-search-users-proximity-page') {
+      if (!empty($form['profile_tag'])) {
+        $form['profile_tag']['#type'] = 'checkboxes';
+      }
+      if (empty($form['profile_tag']['#options'])) {
+        unset($form['profile_tag']);
+      }
+    }
+
   }
 }
 
@@ -229,10 +250,10 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
 function social_geolocation_proximity_form_submit($form, FormStateInterface &$form_state) {
   // Set values form search input to exposed text filters.
   if (!empty(\Drupal::routeMatch()->getParameter('keys'))) {
-    $form_state->setValue('title', \Drupal::routeMatch()->getParameter('keys'));
-    $form_state->setValue('description', \Drupal::routeMatch()
+    $form_state->setValue('text_1', \Drupal::routeMatch()->getParameter('keys'));
+    $form_state->setValue('text_2', \Drupal::routeMatch()
       ->getParameter('keys'));
-    $form_state->setValue('location_name', \Drupal::routeMatch()
+    $form_state->setValue('text_3', \Drupal::routeMatch()
       ->getParameter('keys'));
   }
 }
