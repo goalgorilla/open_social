@@ -44,6 +44,6 @@ projects[r4032login][download][branch] = 8.x-1.x
 projects[search_api][type] = module
 projects[search_api][version] = 1.0-beta1
 projects[token][type] = module
-projects[token][version] = 1.0-beta1
+projects[token][version] = 1.0-beta2
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.0-rc2
