@@ -285,7 +285,9 @@ function socialbase_preprocess_block(&$variables) {
 
   // Add search_block to main menu.
   if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
-    $block = Block::load('search_content_block_header');
+    $block_id = \Drupal::moduleHandler()->moduleExists('social_geolocation') ? 'geolocation_search_content_block_header' : 'search_content_block_header';
+    $block = Block::load($block_id);
+
     if(!empty($block)){
       $block_output = \Drupal::entityManager()
         ->getViewBuilder('block')
@@ -296,27 +298,18 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   // Preprocess search block header.
-  if (isset($variables['content']['search_content_form'])) {
-    $variables['content']['search_content_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_content_form']['actions']['submit']['#addsearchicon'] = TRUE;
-
-    if ($region == 'hero') {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
-      $variables['content']['search_content_form']['#region'] = 'hero';
-    }
-    else {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
-    }
-  }
   if (isset($variables['content']['search_form'])) {
-    // Add class for the forms as well.
     $variables['content']['search_form']['#attributes']['role'] = 'search';
     $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_form']['search_input']['#name'] = 'search_input';
     $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_form']['#region'] = 'hero';
+
+    if ($region == 'hero') {
+      $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
+      $variables['content']['search_form']['#region'] = 'hero';
+    }
+    else {
+      $variables['content']['search_form']['#attributes']['class'][] = 'navbar-form';
+    }
   }
 
   // Add Group ID for "See all groups link".

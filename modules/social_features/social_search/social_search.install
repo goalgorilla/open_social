@@ -4,6 +4,9 @@
  * Install, update and uninstall functions for the social_search module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\views\Entity\View;
+
 /**
  * Implements hook_install().
  *
@@ -73,5 +76,29 @@ function social_search_update_8101(&$sandbox) {
     'search_api_views_taxonomy',
   );
   \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
+ * Remove deprecated bloks and views from Social Search module.
+ */
+function social_search_update_8102(&$sandbox) {
+
+  // Remove exposed filter blocks from Social Search Views.
+  $block_ids = [
+    'search_content_block_title',
+    'search_users_block_title',
+    'searchgroupsblock',
+  ];
+  foreach ($block_ids as $block_id) {
+    $block = Block::load($block_id);
+    if ($block instanceof Block) {
+      $block->delete();
+    }
+  }
+
+  // Delete Search Groups (proximity) Views.
+  $view = View::load('search_groups_proximity');
+  $view->delete();
 
 }

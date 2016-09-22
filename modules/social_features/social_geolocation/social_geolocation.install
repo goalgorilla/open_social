@@ -4,14 +4,12 @@
  * The Social geolocation install.
  */
 
+use Drupal\block\Entity\Block;
 
+/**
+ * Implements hook_install().
+ */
 function social_geolocation_install() {
-  // Social Search and Social Geolocation provides views with the same paths.
-  $modules = array(
-    'social_search',
-  );
-  \Drupal::service('module_installer')->uninstall($modules);
-
   // Remove exposed filter blocks from Social Search Views.
   $block_ids = [
     'exposed_form_search_content_page_sidebar',

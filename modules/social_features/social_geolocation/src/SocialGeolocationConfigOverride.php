@@ -19,7 +19,9 @@ class SocialGeolocationConfigOverride implements ConfigFactoryOverrideInterface 
     $search_views = ['search_groups', 'search_content', 'search_users'];
     foreach ($search_views as $content_type) {
       $config_name = "views.view.{$content_type}";
-      $overrides[$config_name] = ['status' => FALSE];
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name] = ['status' => FALSE];
+      }
     }
 
     return $overrides;

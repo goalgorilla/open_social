@@ -21,7 +21,7 @@ class SearchContentBlock extends BlockBase {
     $build = [];
 
     $form = \Drupal::formBuilder()->getForm('Drupal\social_search\Form\SearchContentForm');
-    $build['search_content_form'] = $form;
+    $build['search_form'] = $form;
 
     return $build;
   }
