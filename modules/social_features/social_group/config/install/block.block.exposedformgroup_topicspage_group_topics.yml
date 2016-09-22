@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.group_topics
+  module:
+    - system
+    - views
+  theme:
+    - socialbase
+id: exposedformgroup_topicspage_group_topics
+theme: socialbase
+region: complementary_top
+weight: -9
+provider: null
+plugin: 'views_exposed_filter_block:group_topics-page_group_topics'
+settings:
+  id: 'views_exposed_filter_block:group_topics-page_group_topics'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/topics'
+    negate: false
+    context_mapping: {  }

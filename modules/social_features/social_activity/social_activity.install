@@ -9,6 +9,14 @@ use \Drupal\menu_link_content\Entity\MenuLinkContent;
 function social_activity_install() {
   // Add menu items
   _social_activity_create_menu_links();
+
+  // We can't add this as dependency, because this modules should be installed
+  // after config and other activity modules installation.
+  $modules = array(
+    'activity_basics',
+    'activity_send_email',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }
 
 

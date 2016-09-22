@@ -214,4 +214,48 @@ class Activity extends ContentEntityBase implements ActivityInterface {
     return $link;
   }
 
+  /**
+   * Get destinations.
+   */
+  public function getDestinations() {
+    $values = [];
+    $field_activity_destinations = $this->field_activity_destinations;
+    if(isset($field_activity_destinations)){
+      $destinations = $field_activity_destinations->getValue();
+      foreach ($destinations as $key => $destination) {
+        $values[] = $destination['value'];
+      }
+    }
+    return $values;
+  }
+
+  /**
+   * Get recipient.
+   * Assume that activity can't have recipient group and user at the same time.
+   * @TODO: Split it to two separate functions.
+   */
+  public function getRecipient() {
+    $value = NULL;
+
+    $field_activity_recipient_user = $this->field_activity_recipient_user;
+    if (isset($field_activity_recipient_user)) {
+      $recipient_user = $field_activity_recipient_user->getValue();
+      if (!empty($recipient_user)) {
+        $recipient_user['0']['target_type'] = 'user';
+        return $recipient_user;
+      }
+    }
+
+    $field_activity_recipient_group = $this->field_activity_recipient_group;
+    if (isset($field_activity_recipient_group)) {
+      $recipient_group = $field_activity_recipient_group->getValue();
+      if (!empty($recipient_group)) {
+        $recipient_group['0']['target_type'] = 'group';
+        return $recipient_group;
+      }
+    }
+
+    return $value;
+  }
+
 }
