@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.group_events
+  module:
+    - system
+    - views
+  theme:
+    - socialbase
+id: exposedformgroup_eventspage_group_events
+theme: socialbase
+region: complementary_top
+weight: -9
+provider: null
+plugin: 'views_exposed_filter_block:group_events-page_group_events'
+settings:
+  id: 'views_exposed_filter_block:group_events-page_group_events'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/events'
+    negate: false
+    context_mapping: {  }

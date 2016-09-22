@@ -4,8 +4,11 @@ dependencies:
   config:
     - core.entity_view_mode.group_content.teaser
     - group.content_type.open_group-group_node-topic
+    - taxonomy.vocabulary.topic_types
   module:
     - group
+    - node
+    - taxonomy
     - user
 id: group_topics
 label: 'Group Topics'
@@ -40,11 +43,11 @@ display:
       exposed_form:
         type: basic
         options:
-          submit_button: Apply
-          reset_button: false
+          submit_button: Filter
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: false
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
@@ -178,6 +181,95 @@ display:
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
+        field_topic_type_target_id:
+          id: field_topic_type_target_id
+          table: node__field_topic_type
+          field: field_topic_type_target_id
+          relationship: gc__node
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_topic_type_target_id_op
+            label: 'is the type of'
+            description: ''
+            use_operator: false
+            operator: field_topic_type_target_id_op
+            identifier: type
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: topic_types
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          relationship: gc__node
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: true
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Published status'
+            description: ''
+            use_operator: false
+            operator: status_op
+            identifier: status
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
       sorts: {  }
       title: 'Group Topics'
       header: {  }
@@ -194,7 +286,21 @@ display:
           tokenize: false
           content: 'No topics in this group'
           plugin_id: text_custom
-      relationships: {  }
+      relationships:
+        gc__node:
+          id: gc__node
+          table: group_content_field_data
+          field: gc__node
+          relationship: none
+          group_type: group
+          admin_label: 'Group content Content'
+          required: false
+          group_content_plugins:
+            'group_node:topic': 'group_node:topic'
+            'group_node:event': '0'
+            'group_node:page': '0'
+          entity_type: group_content
+          plugin_id: group_content_to_entity
       arguments:
         gid:
           id: gid
@@ -234,6 +340,10 @@ display:
           entity_field: gid
           plugin_id: numeric
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
@@ -241,6 +351,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags: {  }
   page_group_topics:
@@ -251,6 +362,7 @@ display:
     display_options:
       display_extenders: {  }
       path: group/%group/topics
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -258,5 +370,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - user.permissions
       tags: {  }
