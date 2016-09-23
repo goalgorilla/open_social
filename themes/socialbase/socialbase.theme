@@ -1098,7 +1098,7 @@ function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
   // If this is a search content form set a variable for twig
-  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'geolocation_search_form') {
+  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'geolocation_search_form' || $element['#form_id'] === 'geolocation_search_content_form') {
     $variables['is_search_form'] = TRUE;
   }
 
