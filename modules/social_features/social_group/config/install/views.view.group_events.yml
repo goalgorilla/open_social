@@ -5,7 +5,9 @@ dependencies:
     - core.entity_view_mode.group_content.teaser
     - group.content_type.open_group-group_node-event
   module:
+    - datetime
     - group
+    - node
     - user
 id: group_events
 label: 'Group Events'
@@ -41,10 +43,10 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: false
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
@@ -147,6 +149,62 @@ display:
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
+        field_event_date_value:
+          id: field_event_date_value
+          table: node__field_event_date
+          field: field_event_date_value
+          relationship: gc__node
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_date_value_op
+            label: 'Start date (field_event_date)'
+            description: null
+            use_operator: false
+            operator: field_event_date_value_op
+            identifier: field_event_date_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: 'Event status'
+            description: ''
+            identifier: field_event_date_value
+            optional: false
+            widget: radios
+            multiple: false
+            remember: false
+            default_group: '1'
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'Upcoming events'
+                operator: '>='
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
+              2:
+                title: 'Events that have started or are finished'
+                operator: '<'
+                value:
+                  type: offset
+                  value: now
+                  min: ''
+                  max: ''
+          plugin_id: datetime
       sorts: {  }
       title: 'Group Events'
       header: {  }
@@ -163,7 +221,21 @@ display:
           tokenize: false
           content: 'No events in this group'
           plugin_id: text_custom
-      relationships: {  }
+      relationships:
+        gc__node:
+          id: gc__node
+          table: group_content_field_data
+          field: gc__node
+          relationship: none
+          group_type: group
+          admin_label: 'Group content Content'
+          required: false
+          group_content_plugins:
+            'group_node:event': 'group_node:event'
+            'group_node:page': '0'
+            'group_node:topic': '0'
+          entity_type: group_content
+          plugin_id: group_content_to_entity
       arguments:
         gid:
           id: gid
@@ -220,6 +292,7 @@ display:
     display_options:
       display_extenders: {  }
       path: group/%group/events
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:

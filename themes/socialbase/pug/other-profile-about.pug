@@ -4,44 +4,37 @@ block title
   title Jenny Baker
 
 block pagetitle
-  .container.hidden-xs
+  .container
     include ./molecules/_other-profile-hero.pug
 
-  .container    
-    .visible-xs-block.section
-      a.btn.btn-flat(href="other-stream.html")
-        svg.btn-icon
-          use(xlink:href='#icon-navigate_before')     
-        | Back to Jenny`s stream
-          
   .container
-    .brand-secondary.z-depth-1.hidden-xs
+    .brand-secondary.z-depth-1
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
-          li.hidden-xs
-            a(href="other-stream.html") Stream  
+          li
+            a(href="other-stream.html") Stream
           li.active
             a(href="other-profile-about.html") About
             span.visually-hidden (active tab)
           li
             a(href='other-topics.html') Topics
           li
-            a(href='other-events.html') Events  
+            a(href='other-events.html') Events
           li
             a(href="other-groups.html") Groups
-      
+
 block content
-  
+
   .row.margin-top-l
     .col-sm-12
       h1.h4.section-title About Jenny Baker
-    
+
     .col-xs-12.col-sm-8
-      
+
       .card
         .card-body.extra-padding
-        
+
           .list-group.list-group-divider
             .list-group-item
               .list-group-item-heading
@@ -51,31 +44,26 @@ block content
               .list-group-field +31 658974324
             .list-group-item
               .list-group-label E-mail
-              .list-group-field 
-                a(href="mailto:example@domain.com") jenny@jennybaker.com    
+              .list-group-field
+                a(href="mailto:example@domain.com") jenny@jennybaker.com
             .list-group-item
               .list-group-label Address
-              .list-group-field 
-                | My street name 123 
+              .list-group-field
+                | My street name 123
                 br
                 | 1234 BB
                 br
                 | Amsterdam
-          
+
           h4 Intro
           p Maecenas sed diam eget risus varius blandit sit amet non magna. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Sed posuere consectetur est at lobortis. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Donec ullamcorper nulla non metus auctor fringilla.
-          
+
           h4 Your interests
           .chip drupal
           .chip sales
           .chip barbecues
-          
+
           h4 Your expertise
           .chip php
           .chip interaction design
           .chip cooking
-              
-                    
-              
-          
-          

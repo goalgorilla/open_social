@@ -1,21 +1,21 @@
 extends ./layout/base-lu.pug
 
 block title
-  title Hapy Campers
+  title Happy Campers
 
 block pagetitle
-  
+
   .container.hero-container.hidden-xs
     include ./molecules/_my-group-hero.pug
-    
-  .container  
+
+  .container
     .visible-xs-block.section
       a.btn.btn-flat(href="group-stream.html")
         svg.btn-icon
-          use(xlink:href='#icon-navigate_before') 
+          use(xlink:href='#icon-navigate_before')
         | Back to group stream
 
-  .container.hero-container  
+  .container.hero-container
     .brand-secondary.z-depth-1.hidden-xs
       nav(role="navigation" aria-label="Tabs")
         h2.visually-hidden Secondary navigation
@@ -29,34 +29,33 @@ block pagetitle
               span.visually-hidden (active tab)
           li
             a(href="group-members.html") Members
-      
+
 block content
-      
-  .row.margin-top-l     
-      
+
+  .row.margin-top-l
+
     .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
       a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='node-add-event-in-group.html') Create event
-      br 
+      br
       br
       btn.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
         svg.pull-left.btn-icon.icon-black
-          title Filter list
           use(xlink:href='#icon-filter_list')
         | Filters
 
       .off-canvas.off-canvas-right.off-canvas-xs-only
         .offcanvas-head
-          header.card__label filter
+          header.complementary-title filter
           .offcanvas-tools.visible-xs-block
             button.js-close-canvas.btn.btn-icon-toggle.pull-right
               svg.pull-left.btn-icon.icon-black
                 title Close
                 use(xlink:href='#icon-close')
-    
+
         .offcanvas-body
           form
             .form-group.radios
-              label Event status 
+              label Event status
               .radio
                 input#radio1(name='event', type='radio', checked)
                 label(for='radio1') Upcoming
@@ -66,8 +65,8 @@ block content
               .radio
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
-              
-    
+
+
     .col-xs-12.col-sm-8
       h4.section-title Events in Happy Campers
       include molecules/_event1.pug
