@@ -4,21 +4,9 @@
  * The Social geolocation install.
  */
 
-use Drupal\block\Entity\Block;
-
 /**
  * Implements hook_install().
  */
 function social_geolocation_install() {
-  // Remove exposed filter blocks from Social Search Views.
-  $block_ids = [
-    'exposed_form_search_content_page_sidebar',
-    'exposed_form_search_users_page_sidebar',
-  ];
-  foreach ($block_ids as $block_id) {
-    $block = Block::load($block_id);
-    if ($block instanceof Block) {
-      $block->delete();
-    }
-  }
+  drupal_set_message(t("We recommend to uninstall Social Search module, because search functionality is overridden with Social Geolocation module."), 'warning');
 }
