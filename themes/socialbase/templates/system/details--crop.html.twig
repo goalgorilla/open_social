@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override for a details element.
+ * Default theme implementation for a details element.
  *
  * Available variables
  * - attributes: A list of HTML attributes for the details element.
@@ -12,84 +12,24 @@
  * - value: (optional) The value of the element, may not be set.
  *
  * @see template_preprocess_details()
+ *
+ * @ingroup themeable
  */
 #}
-{{ attach_library('socialbase/panels')}}
-{% set heading = title %}
 
-{%
-  set classes = [
-    'panel',
-    errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
-  ]
-%}
-<div{{ attributes.addClass(classes) }}>
-  {# Heading #}
-  {% if not hide_header %}
-    {% if heading %}
-      {% block heading %}
-        <div class="panel-heading">
-          <header>
-            {%
-              set heading_classes = [
-                'panel-title',
-              ]
-            %}
-            {% if collapsible %}
-              <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
-            {% else %}
-              <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
-            {% endif %}
-          </header>
-        </div>
-      {% endblock %}
-    {% endif %}
-  {% endif %}
+<details{{ attributes }}>
+  {%- if title -%}
 
-  {# Body #}
+    <summary{{ summary_attributes }}>{{ title }}</summary>
+  {%- endif -%}
 
-    {%
-      set body_classes = [
-      'panel-body',
-      collapsible ? 'panel-collapse',
-      collapsible ? 'collapse',
-      collapsible ? 'fade',
-      errors or collapsible and not collapsed ? 'in',
-      ]
-    %}
-    {%
-      set description_classes = [
-        'help-block',
-        description and description.position == 'invisible' ? 'sr-only',
-      ]
-    %}
-
-    <div{{ body_attributes.addClass(body_classes) }}>
-        {% if description and description.position == 'before' %}
-          <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
-        {% endif %}
-        {%- if children -%}
-          {{ children }}
-        {%- endif -%}
-        {%- if value -%}
-          {{ value }}
-        {%- endif -%}
-        {% if description and description.position == 'after' or description.position == 'invisible' %}
-          <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
-        {% endif %}
+  {% if errors %}
+    <div>
+      {{ errors }}
     </div>
-
-
-  {# Footer #}
-  {% if footer %}
-    {% block footer %}
-      {%
-        set footer_classes = [
-          'panel-footer',
-        ]
-      %}
-      <div{{ footer_attributes.addClass(footer_classes) }}>{{ footer }}</div>
-    {% endblock %}
   {% endif %}
 
-</div>
+  {{ description }}
+  {{ children }}
+  {{ value }}
+</details>
