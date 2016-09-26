@@ -206,18 +206,7 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
       '#title' => t('Location'),
       '#description' => t('Country, city or postal code'),
       '#weight' => $form['lat']['#weight'],
-//      '#states' => array(
-//        'visible' => array(
-//          ':input[name="type"]' => array('value' => 'event'),
-//        ),
-//      ),
     );
-
-//    $form['proximity']['#states'] = array(
-//      'visible' => array(
-//        ':input[name="type"]' => array('value' => 'event'),
-//      ),
-//    );
 
     // Change type of proximity field from textfield to number.
     $form['proximity']['#type'] = 'number';
