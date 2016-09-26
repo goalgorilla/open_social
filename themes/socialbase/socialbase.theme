@@ -191,7 +191,11 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__plain';
+  if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class']))  {
+    $suggestions[] = $hook . '__crop';
+  } else {
+    $suggestions[] = $hook . '__plain';
+  }
 }
 
 /**
