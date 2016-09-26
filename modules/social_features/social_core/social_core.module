@@ -259,6 +259,6 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, \Drup
  */
 function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   if ($form_id === 'node_topic_edit_form') {
-    $form['field_topic_image']['widget'][0]['#description'] = t('Crop you image to select which part of your image to highlight on display.');
+    $form['field_topic_image']['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
 }
