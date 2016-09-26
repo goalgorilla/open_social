@@ -258,7 +258,15 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, \Drup
  * Implements hook_form_alter().
  */
 function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  if ($form_id === 'node_topic_edit_form') {
-    $form['field_topic_image']['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
+  $formfield = array(
+    'node_topic_edit_form' => 'field_topic_image',
+    'node_topic_event_form' => 'field_event_image',
+    'profile_profile_edit_form' => 'field_profile_image',
+    'block_content_hero_call_to_action_block_edit_form' => 'field_hero_image',
+  );
+
+  if (array_key_exists($form_id, $formfield)) {
+    $fieldname = $formfield[$form_id];
+    $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
 }
