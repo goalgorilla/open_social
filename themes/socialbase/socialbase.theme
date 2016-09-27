@@ -191,7 +191,11 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__plain';
+  if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class']))  {
+    $suggestions[] = $hook . '__crop';
+  } else {
+    $suggestions[] = $hook . '__plain';
+  }
 }
 
 /**
@@ -1301,3 +1305,12 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
     $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
   }
 }
+
+
+/**
+ * Implements hook_js_alter
+ */
+function socialbase_js_alter(&$javascript) {
+  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = 'profiles/contrib/social/themes/socialbase/js/custom/imageWidgetCrop.js';
+}
+

@@ -8,7 +8,7 @@ dependencies:
     - field.field.block_content.hero_call_to_action_block.field_text_block
     - image.style.social_xx_large
   module:
-    - image
+    - image_widget_crop
     - link
     - text
 id: block_content.hero_call_to_action_block.default
@@ -24,18 +24,23 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
   field_hero_image:
-    type: image_image
+    type: image_widget_crop
     weight: 0
     settings:
+      show_crop_area: true
+      show_default_crop: true
       preview_image_style: social_xx_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero
       progress_indicator: throbber
     third_party_settings: {  }
   field_text_block:
-    type: text_textfield
+    type: text_textarea
     weight: 0
     settings:
-      size: 60
       placeholder: ''
+      rows: 5
     third_party_settings: {  }
   info:
     type: string_textfield

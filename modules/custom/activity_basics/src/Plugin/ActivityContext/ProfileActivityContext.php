@@ -45,6 +45,11 @@ class ProfileActivityContext extends ActivityContextBase {
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
     }
+
+    if (!isset($entity)) {
+      return FALSE;
+    }
+
     // Check if it's placed in a group (regardless off content type).
     if ($group_entity = GroupContent::loadByEntity($entity)) {
       return FALSE;
