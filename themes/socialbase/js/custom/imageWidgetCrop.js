@@ -1,6 +1,6 @@
 /**
  * @file
- * Defines the behaviors needed for cropper integration.
+ * Defines the custom behaviors needed for cropper integration.
  */
 
 (function ($, Drupal, drupalSettings) {
@@ -8,11 +8,11 @@
   var cropperSelector = '.crop-preview-wrapper__preview-image';
   var cropperValuesSelector = '.crop-preview-wrapper__value';
   var cropWrapperSelector = '.image-data__crop-wrapper';
-  var cropWrapperSummarySelector = '.js-btn-toggle-cropping'; // summary is not our template
+  var cropWrapperSummarySelector = 'summary'; // summary is not our template
   var verticalTabsSelector = '.vertical-tabs';
   var verticalTabsMenuItemSelector = '.vertical-tab-button'; // bootstrap version
   var resetSelector = '.crop-preview-wrapper__crop-reset';
-  var detailsWrapper = '#collapseCropping'; // custom wrapper in crop template of socialbase
+  var detailsWrapper = '.details-wrapper';
   var detailsParentSelector = '.image-widget-data';
   var table = '.responsive-enabled';
   var cropperOptions = {

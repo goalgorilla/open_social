@@ -16,32 +16,18 @@
  * @ingroup themeable
  */
 #}
-<div class="row">
-  <div {{ attributes.addClass('col-xs-12 margin-top-s') }}>
+<details{{ attributes }}>
     {%- if title -%}
-      <button class="btn btn-flat js-btn-toggle-cropping" type="button" data-toggle="collapse" data-target="#collapseCropping" aria-expanded="false" aria-controls="collapseCropping">
-        {{ title }}
-      </button>
-
-      <div class="collapse margin-top-s" id="collapseCropping">
+        <summary{{ summary_attributes.addClass('btn btn-flat') }}>{{ title }}</summary>
     {%- endif -%}
 
-    <div class="well">
-
-      {% if errors %}
+    {% if errors %}
         <div>
-          {{ errors }}
+            {{ errors }}
         </div>
-      {% endif %}
+    {% endif %}
 
-      {{ description }}
-      {{ children }}
-      {{ value }}
-    </div>
-
-    {%- if title -%}
-      </div>
-    {%- endif -%}
-
-  </div>
-</div>
+    {{ description }}
+    {{ children }}
+    {{ value }}
+</details>
