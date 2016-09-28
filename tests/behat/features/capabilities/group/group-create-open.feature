@@ -97,6 +97,7 @@ Feature: Create Open Group
   # And I should see "1 Jan" in the "Sidebar second"
     And I click "Events"
     And I should see "Test group event" in the "Main content"
+    And I should see "Test open group" in the "Main content"
 
   # DS-644 As a LU I want to see the topics of a group
     When I click "Topics"
@@ -119,6 +120,7 @@ Feature: Create Open Group
   # And I should see "Test group topic" in the "Sidebar second"
     And I click "Topics"
     And I should see "Test group topic" in the "Main content"
+    And I should see "Test open group" in the "Main content"
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "4" element with the css ".dropdown-toggle"

@@ -32,12 +32,12 @@ class CommunityActivityContext extends ActivityContextBase {
   public function isValidEntity($entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
-      // Replies on comments should not cause this notification to trigger.
-      if(!empty($entity->getParentComment())){
-        return FALSE;
-      }
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
+    }
+
+    if (!isset($entity)) {
+      return FALSE;
     }
 
     // Check if it's placed in a group (regardless off content type).

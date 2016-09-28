@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      comment-post_comment: comment-post_comment
+    activity_action: create_entitiy_action
+    activity_context: profile_activity_context
+    activity_destinations:
+      email: email
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: comment_not_reply
+template: create_comment_post_profile
+label: 'Create comment on post on my profile'
+description: 'A person commented on the post posted on my profile'
+text:
+  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on post&nbsp;on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on post&nbsp;on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on post&nbsp;on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

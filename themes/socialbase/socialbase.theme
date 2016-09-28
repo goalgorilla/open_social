@@ -191,7 +191,11 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__plain';
+  if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class']))  {
+    $suggestions[] = $hook . '__crop';
+  } else {
+    $suggestions[] = $hook . '__plain';
+  }
 }
 
 /**
@@ -818,6 +822,26 @@ function socialbase_preprocess_node(&$variables) {
 
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
+
+    // Not for AN..
+    $is_anonymous = \Drupal::currentUser()->isAnonymous();
+    if (!$is_anonymous) {
+      // Only on Events & Topics.
+      if ($variables['node']->getType() == 'event' || $variables['node']->getType() == 'topic') {
+        // Add group name to the teaser (if it's part of a group).
+        $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($variables['node']);
+        if (!empty($group_content)) {
+          // It can only exist in one group. So we get the first pointer out of
+          // the array that gets returned from loading GroupContent.
+          $group = reset($group_content)->getGroup();
+
+          if (!empty($group)) {
+            $variables['content']['group_name'] = $group->label();
+          }
+        }
+      }
+    }
+
     $variables['display_submitted'] = TRUE;
   }
   if ($variables['view_mode'] === 'hero') {
@@ -1281,3 +1305,12 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
     $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
   }
 }
+
+
+/**
+ * Implements hook_js_alter
+ */
+function socialbase_js_alter(&$javascript) {
+  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = 'profiles/contrib/social/themes/socialbase/js/custom/imageWidgetCrop.js';
+}
+

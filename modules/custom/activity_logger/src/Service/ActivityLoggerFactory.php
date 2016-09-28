@@ -82,21 +82,31 @@ class ActivityLoggerFactory {
 
     // Check all enabled messages.
     foreach ($message_storage->loadByProperties(array('status' => '1')) as $key => $messagetype) {
-      $mt_entity_bundle = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entity', NULL);
+      $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', NULL);
       $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
+      $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
+
+      if(!empty($mt_entity_condition)){
+        $entity_condition_factory = \Drupal::service('plugin.manager.activity_entity_condition.processor');
+        $entity_condition_plugin = $entity_condition_factory->createInstance($mt_entity_condition);
+        $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
+      } else {
+        $entity_condition = TRUE;
+      }
 
       $activity_context_factory = \Drupal::service('plugin.manager.activity_context.processor');
       $context_plugin = $activity_context_factory->createInstance($mt_context);
 
-      $entity_bundle_name = $entity->getEntityTypeId() . '.' .$entity->bundle();
-      if ($entity_bundle_name === $mt_entity_bundle
+      $entity_bundle_name = $entity->getEntityTypeId() . '-' .$entity->bundle();
+      if (in_array($entity_bundle_name, $mt_entity_bundles)
       && $context_plugin->isValidEntity($entity)
+      && $entity_condition
       && $action === $mt_action) {
         $messagetypes[$key] = array(
           'messagetype' => $messagetype,
-          'bundle' => $mt_entity_bundle,
+          'bundle' => $entity_bundle_name,
           'destinations' => $mt_destinations,
           'context' => $mt_context,
         );

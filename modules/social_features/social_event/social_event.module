@@ -38,6 +38,19 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     // page, when views is updated.
     $form['#action'] = '/user/' . $account_uid . '/events';
   }
+  if ($form['#id'] === 'views-exposed-form-group-events-page-group-events') {
+    $group_from_route = _social_group_get_current_group();
+
+    // Get group from route.
+    if (!empty($group_from_route)) {
+      $group_id = $group_from_route->id();
+    }
+
+    $form['actions']['reset']['#access'] = TRUE;
+
+    // Make sure we redirect to the current group page.
+    $form['#action'] = '/group/' . $group_id . '/events';
+  }
 }
 
 /**

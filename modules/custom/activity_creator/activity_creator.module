@@ -54,7 +54,7 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
   if ($entity) {
     // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
-    $message_template_id = $entity->getEntityType()->id();
+    $message_template_id = $entity->getTemplate()->id();
     $actor = $entity->getOwner()->id();
     $context = $entity->get('field_message_context')->getValue();
     $destinations = $entity->get('field_message_destination')->getValue();
@@ -250,4 +250,49 @@ function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $enti
     }
   }
 
+}
+
+/**
+ * Implements hook_cron().
+ */
+function activity_creator_cron() {
+  // Empty activity stream queues.
+  activity_creator_empty_queue();
+}
+
+/**
+ * Function that empties the activity queues.
+ */
+function activity_creator_empty_queue() {
+  // Activity queues.
+  $queues = [
+    'activity_creator_activities',
+    'activity_creator_logger',
+    'activity_logger_message',
+    'activity_send_email_worker',
+  ];
+
+  // The workermanager.
+  $workerManager = \Drupal::service('plugin.manager.queue_worker');
+
+  /** @var Drupal\Core\Queue\QueueFactory; $queue */
+  $queue = \Drupal::service('queue');
+
+  for ($i = 0; $i < 5; $i++) {
+    foreach ($workerManager->getDefinitions() as $name => $info) {
+      if (in_array($name, $queues)) {
+        /** @var Drupal\Core\Queue\QueueInterface $worker */
+        $worker = $queue->get($name);
+        /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
+        $queue_worker = $workerManager->createInstance($name);
+        // Must contain items.
+        if ($worker->numberOfItems() > 0) {
+          while ($item = $worker->claimItem()) {
+            $queue_worker->processItem($item->data);
+            $worker->deleteItem($item);
+          }
+        }
+      }
+    }
+  }
 }

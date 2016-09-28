@@ -13,15 +13,16 @@
  */
 #}
 {% if data.preview %}
-  <div{{ attributes.addClass('row') }}>
-    <div class="preview col-sm-4 col-md-3 margin-bottom-m">
+  <div{{ attributes.addClass('row margin-bottom-m').removeClass('clearfix') }}>
+    <div class="preview col-sm-4 col-md-3">
       {{ data.preview }}
     </div>
-    <div class="data col-sm-8 col-md-9">
+    <div class="data col-sm-8 col-md-9 image-widget-data">
       {# Render widget data without the image preview that was output already. #}
-      {{ data|without('preview') }}
+      {{ data|without('preview', 'image_crop') }}
     </div>
   </div>
+  {{ data.image_crop }}
 {% else %}
   <div{{ attributes.addClass(classes) }}>
     {{ data }}
