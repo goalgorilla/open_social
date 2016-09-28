@@ -79,6 +79,7 @@ function _social_core_get_permissions($role) {
     'delete all revisions',
     'create url aliases',
     'use text format full_html',
+    'view the administration theme',
   ));
 
   // Site manager.
@@ -210,4 +211,22 @@ function social_core_update_8003() {
   );
   \Drupal::service('module_installer')->install($modules);
 
+}
+
+/**
+ * Add permission to view admin theme for contentmanager and sitemanager roles.
+ */
+function social_core_update_8004() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'view the administration theme',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
