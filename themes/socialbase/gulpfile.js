@@ -236,7 +236,7 @@ var rsync         = require('gulp-rsync'),
     argv          = require('minimist')(process.argv);
 
 
-var deploy        = require('./secret/config.json');
+//var deploy        = require('./secret/config.json');
 
 
 // Generate an error for deploy if something goes wrong

@@ -169,6 +169,12 @@
   .navbar-right {
     text-align: center;
 
+    li {
+      @include MQ($small) {
+        float: left;
+      }
+    }
+
     @include MQ($x-large) {
       margin-right: 0;
     }
