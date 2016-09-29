@@ -15,6 +15,7 @@ use \Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
+use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -211,10 +212,8 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
    $suggestions[] = 'block__block_menu__' . $menu_name;
   }
 
-  $content = $variables['elements']['content'];
-
-  if (isset($content['#block_content']) and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
-    $suggestions[] = 'block__block_type__' . $content['#block_content']->bundle();
+  if (isset($variables['elements']['content']['#block_content'])) {
+    $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
   }
 
   $block_id = $variables['elements']['#derivative_plugin_id'];
@@ -350,26 +349,30 @@ function socialbase_preprocess_block(&$variables) {
     $variables['profile_user_id'] = $profile_user_id;
   }
   // AN Homepage block.
-  if ($variables['attributes']['id'] === 'block-anhomepageheroblock' || $variables['attributes']['id'] === 'block-' . $prefix . '-anhomepageheroblock') {
-    $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
-    $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
-    $entity = BlockContent::load($imageitem->id());
-    $file_id = $entity->get('field_hero_image')->target_id;
-    // If it's an existing file.
-    if ($file = File::load($file_id)) {
-      // Style and set it in the content.
-      $styled_image_url = ImageStyle::load($imagestyle)
-        ->buildUrl($file->getFileUri());
-      $variables['image_url'] = $styled_image_url;
+  if (isset($variables['elements']['content']['#block_content'])) {
+    if($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {
 
-      // Add extra class.
-      $variables['has_image'] = TRUE;
+      $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
+      $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
+      $entity = BlockContent::load($imageitem->id());
+      $file_id = $entity->get('field_hero_image')->target_id;
 
-      // Remove the origingal.
-      unset($variables['content']['field_hero_image']);
+      // If it's an existing file.
+      if ($file = File::load($file_id)) {
+        // Style and set it in the content.
+        $styled_image_url = ImageStyle::load($imagestyle)
+          ->buildUrl($file->getFileUri());
+        $variables['image_url'] = $styled_image_url;
 
+        // Add extra class.
+        $variables['has_image'] = TRUE;
+
+        // Remove the origingal.
+        unset($variables['content']['field_hero_image']);
+
+      }
     }
-  } // AN Homepage block.
+  }
 
 
 
@@ -1310,7 +1313,6 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
 /**
  * Implements hook_js_alter
  */
-function socialbase_js_alter(&$javascript) {
-  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = 'profiles/contrib/social/themes/socialbase/js/custom/imageWidgetCrop.js';
+function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] =  '/' . drupal_get_path('theme','socialbase') . '/js/custom/imageWidgetCrop.js';
 }
-
