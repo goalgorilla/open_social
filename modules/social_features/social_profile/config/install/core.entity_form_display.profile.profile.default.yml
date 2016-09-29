@@ -1,4 +1,3 @@
-uuid: f9ee68d7-421d-467e-a822-aee510c0ef0d
 langcode: en
 status: true
 dependencies:
@@ -19,7 +18,7 @@ dependencies:
   module:
     - address
     - field_group
-    - image
+    - image_widget_crop
     - telephone
     - text
 third_party_settings:
@@ -79,8 +78,6 @@ third_party_settings:
         required_fields: true
         id: contact
         classes: scollspy
-_core:
-  default_config_hash: TiPEL1BlGGKPJBoTZZ3_-D11cNJ-CCrgyfhfnc-Wo2Q
 id: profile.profile.default
 targetEntityType: profile
 bundle: profile
@@ -117,10 +114,17 @@ content:
   field_profile_image:
     weight: 3
     settings:
+      show_default_crop: true
       preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - teaser
+        - profile_medium
+        - profile_small
       progress_indicator: throbber
+      show_crop_area: false
     third_party_settings: {  }
-    type: image_image
+    type: image_widget_crop
   field_profile_interests:
     weight: 7
     settings:

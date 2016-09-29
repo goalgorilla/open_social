@@ -17,6 +17,18 @@ function social_group_install() {
   _social_group_set_permissions();
   // Add menu items
   _social_group_create_menu_links();
+
+  // Make sure the admin theme is not used when managing groups.
+  $group_settings = \Drupal::configFactory()->getEditable('group.settings');
+  $group_settings->set('use_admin_theme', FALSE);
+  $group_settings->save();
+
+  // Disable group nodes.
+  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  if (!is_null($view)) {
+    $view->setStatus(FALSE);
+    $view->save();
+  }
 }
 
 /**
@@ -87,5 +99,30 @@ function _social_group_create_menu_links() {
       'weight' => 20,
       'parent' => $parent,
     ])->save();
+  }
+}
+
+/**
+ * Install geolocation, geocoder and grolesync module.
+ */
+function social_group_update_8001() {
+
+  $modules = array(
+    'geolocation',
+    'geocoder',
+    'grolesync',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
+ * Make sure the group nodes view is disabled.
+ */
+function social_group_update_8002() {
+  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  if (!is_null($view)) {
+    $view->setStatus(FALSE);
+    $view->save();
   }
 }

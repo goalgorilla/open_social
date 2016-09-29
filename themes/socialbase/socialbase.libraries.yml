@@ -36,6 +36,7 @@ utilities:
       components/asset-builds/css/utilities.css: {}
   js:
     js/contrib/bootstrap/transition.js: {}
+    js/contrib/bootstrap/collapse.js: {}
 print:
   css:
     base:
@@ -129,7 +130,6 @@ navbar:
     component:
       components/asset-builds/css/navbar.css: {}
   js:
-    js/contrib/bootstrap/collapse.js: {}
     js/custom/navbar-collapse.js: {}
 navbar-search:
   js:
@@ -145,7 +145,7 @@ pagination:
   css:
     component:
       components/asset-builds/css/pagination.css: {}
-popovers:
+popover:
   css:
     component:
       components/asset-builds/css/popovers.css: {}
@@ -160,20 +160,36 @@ stream:
   css:
     component:
       components/asset-builds/css/stream.css: {}
+wells:
+  css:
+    component:
+      components/asset-builds/css/wells.css: {}
 drupal.ajax:
   css:
     component:
       components/asset-builds/css/ajax.css: {}
 
-pickadate:
+jquery.datepicker:
   css:
-    component:
+    theme:
       components/asset-builds/css/datepicker.css: {}
   js:
-    js/contrib/date_picker/picker.js: {}
-    js/contrib/date_picker/picker.date.js: {}
-    js/contrib/date_picker/picker.time.js: {}
-    js/contrib/date_picker/picker.init.js: {}
+    js/custom/date_picker.js: {}
+  dependencies:
+    - core/modernizr
+
+jquery.timepicker:
+  remote: https://github.com/jonthornton/jquery-timepicker
+  version: "1.11.3"
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/jonthornton/jquery-timepicker/master/README.md
+    gpl-compatible: true
+  js:
+    js/contrib/timepicker/jquery.timepicker.js: { minified: true }
+  css:
+    component:
+      components/asset-builds/css/timepicker.css: {}
 
 drupal.tabledrag:
   js:
@@ -190,6 +206,8 @@ tabs:
   css:
     component:
       components/asset-builds/css/tabs.css: {}
+  js:
+    js/contrib/bootstrap/tab.js: {}
 
 responsive-dom:
   js:

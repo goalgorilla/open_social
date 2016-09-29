@@ -38,6 +38,19 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     // page, when views is updated.
     $form['#action'] = '/user/' . $account_uid . '/events';
   }
+  if ($form['#id'] === 'views-exposed-form-group-events-page-group-events') {
+    $group_from_route = _social_group_get_current_group();
+
+    // Get group from route.
+    if (!empty($group_from_route)) {
+      $group_id = $group_from_route->id();
+    }
+
+    $form['actions']['reset']['#access'] = TRUE;
+
+    // Make sure we redirect to the current group page.
+    $form['#action'] = '/group/' . $group_id . '/events';
+  }
 }
 
 /**
@@ -76,16 +89,17 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_enrollments_link = FALSE;
   if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
     $node = \Drupal::service('current_route_match')->getParameter('node');
-    if (!is_null($node) && !is_object($node)) {
+    if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
     }
-    if (is_object($node) && $node->getType() === 'event') {
+    if (($node instanceof Node) && $node->getType() === 'event') {
       $can_show_enrollments_link = TRUE;
     }
 
-    if (!$can_show_enrollments_link) {
-      unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
-    }
+  }
+  // PLace this here, since hiding it should happen always and not only on the mentioned routes.
+  if (!$can_show_enrollments_link) {
+    unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
   }
 }
 

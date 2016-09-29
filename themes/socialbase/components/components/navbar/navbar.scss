@@ -12,71 +12,10 @@
   @media (min-width: $screen-sm-min) {
     // Inline-block all the things for "inline"
     .form-group {
-      display: inline-block;
       margin-bottom: 0;
-      vertical-align: middle;
-    }
-
-    // In navbar-form, allow folks to *not* use `.form-group`
-    .form-control {
-      display: inline-block;
-      width: auto; // Prevent labels from stacking above inputs in `.form-group`
-      vertical-align: middle;
-    }
-
-    // Make static controls behave like regular ones
-    .form-control-static {
-      display: inline-block;
-    }
-
-    .input-group {
-      display: inline-table;
-      vertical-align: middle;
-
-      .input-group-addon,
-      .input-group-btn,
-      .form-control {
-        width: auto;
-      }
-    }
-
-    // Input groups need that 100% width though
-    .input-group > .form-control {
-      width: 100%;
-    }
-
-    .control-label {
-      margin-bottom: 0;
-      vertical-align: middle;
-    }
-
-    // Remove default margin on radios/checkboxes that were used for stacking, and
-    // then undo the floating of radios and checkboxes to match.
-    .radio,
-    .checkbox {
-      display: inline-block;
-      margin-top: 0;
-      margin-bottom: 0;
-      vertical-align: middle;
-
-      label {
-        padding-left: 0;
-      }
-    }
-    .radio input[type="radio"],
-    .checkbox input[type="checkbox"] {
-      position: relative;
-      margin-left: 0;
-    }
-
-    // Re-override the feedback icon.
-    .has-feedback .form-control-feedback {
-      top: 0;
     }
   }
 }
-
-//
 
 @import 'contrib/bootstrap/navbar';
 
@@ -84,86 +23,89 @@
 
 .navbar-fixed-top {
 
-  .navbar-nav {
-    margin: 0;
-  }
-
   .navbar-right .dropdown-menu {
     right: 0;
     left: auto;
   }
 
-  .navbar > .container .navbar-brand {
-    margin-left: -$navbar-padding-horizontal;
+
+  @include MQ($grid-float-breakpoint) {
+
+    .navbar-nav {
+      margin-left: 10px;
+    }
+
   }
 
-  @media (min-width: $grid-float-breakpoint) {
+}
 
-    > .container .navbar-brand {
-      margin-left: 0;
-    }
+.navbar > .container .navbar-brand {
 
-    .navbar-right {
-      margin-right: 0;
-    }
+  @include MQ($x-large) {
+    margin-left: 0;
+  }
 
 }
 
 //
 
-  @media (max-width: $grid-float-breakpoint-max) {
-    // Dropdowns get same display when collapsed
-    // This is an override of bootstrap navbar line 241
-    .navbar-nav .open .dropdown-menu {
-      background-color: $dropdown-bg;
-      border: 0;
-      @include box-shadow(0 6px 12px rgba(0,0,0,.175));
-      position: fixed;
-      top: auto;
-      margin: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      max-width: none;
-      max-height: 100%;
-      height: calc(100% - 50px);
-      overflow-x: hidden;
-      overflow-y: auto;
-      backface-visibility: hidden;
+@media (max-width: $grid-float-breakpoint-max) {
+  // Dropdowns get same display when collapsed
+  // This is an override of bootstrap navbar line 241
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    background-color: $dropdown-bg;
+    border: 0;
+    @include box-shadow(0 6px 12px rgba(0,0,0,.175));
+    position: fixed;
+    top: auto;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 100%;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
+  }
+
+  .navbar-collapse .navbar-nav {
+    margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+    order: 1;
+  }
+
+  .navbar-collapse {
+
+    .navbar-collapse-order {
+      display: flex;
+      flex-flow: column;
     }
 
-    .navbar-collapse .navbar-nav {
-      margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
-    }
+    .navbar-nav > li > a {
+      padding: 5px 15px 5px 25px;
 
-    .navbar-collapse {
-
-      .navbar-nav > li > a {
-        padding: 5px 15px 5px 25px;
-
-        &.dropdown-toggle {
-          pointer-events: none;
-        }
+      &.dropdown-toggle {
+        pointer-events: none;
       }
+    }
 
-      .dropdown-menu {
-        display: block;
-        position: relative;
-        width: 100%;
-        background-color: transparent;
-        float: none;
-        max-width: none;
-        padding-top: 0;
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: transparent;
+      float: none;
+      max-width: none;
+      padding-top: 0;
 
-        li a {
-          color: white;
-          padding: 5px 15px 5px 37px;
+      li a {
+        color: white;
+        padding: 5px 15px 5px 37px;
 
-          &:hover,
-          &:focus {
-            background: $brand-secondary;
-          }
-
+        &:hover,
+        &:focus {
+          background: $brand-secondary;
         }
 
       }
@@ -171,7 +113,6 @@
     }
 
   }
-
 
 }
 
@@ -226,34 +167,24 @@
   }
 
   .navbar-right {
-    width: 100%;
     text-align: center;
-    float: none;
 
-    @include MQ($small) {
-      width: auto;
-      float: right;
-    }
-  }
-
-  .navbar-right li {
-    float: none;
-
-    @include MQ($small) {
-      float: left;
+    @include MQ($x-large) {
+      margin-right: 0;
     }
 
-  }
-
-  .navbar-right a {
-    color: white;
-
-    &:active,
-    &:focus,
-    &:hover {
+    a {
       color: white;
-      background: transparent
+
+      &:active,
+      &:focus,
+      &:hover {
+        color: white;
+        background: transparent
+      }
+
     }
+
   }
 
 }
@@ -322,8 +253,9 @@
 }
 
 // Hacking into responsive bootstrap behaviour
-.navbar-right {
+.navbar-fixed-top .navbar-right {
   margin-top: 0;
+  margin-bottom: 0;
   float: right;
 
   > li {
@@ -331,16 +263,18 @@
 
     > a {
       padding: 13px 10px 8px;
-      height: $navbar-height;
+      height: 50px;
     }
+  }
+
+
+  @include MQ($x-large) {
+    margin-right: 0;
   }
 
 }
 
 @include MQ($small) {
-  .navbar-fixed-top .navbar-nav {
-    margin-left: 10px;
-  }
 
   .navbar-search {
     float: right;
@@ -376,14 +310,6 @@
     border-radius: $input-border-radius;
     max-width: none;
     border: 0;
-
-    &::-webkit-input-placeholder,
-    &:-moz-placeholder,
-    &::-moz-placeholder,
-    &:-ms-input-placeholder {
-      color: $brand-primary-bright;
-    }
-
   }
 
   .form-submit,

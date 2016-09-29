@@ -27,35 +27,24 @@
  *   page's path (e.g. node/12345 and node/12345/revisions, but not
  *   comment/reply/12345).
  *
- * Regions:
- * - page.header: Items for the header region.
- * - page.highlighted: Items for the highlighted region.
- * - page.primary_menu: Items for the primary menu region.
- * - page.secondary_menu: Items for the secondary menu region.
- * - page.featured_top: Items for the featured top region.
- * - page.content: The main content of the current page.
- * - page.sidebar_first: Items for the first sidebar.
- * - page.sidebar_second: Items for the second sidebar.
- * - page.featured_bottom_first: Items for the first featured bottom region.
- * - page.featured_bottom_second: Items for the second featured bottom region.
- * - page.featured_bottom_third: Items for the third featured bottom region.
- * - page.footer_first: Items for the first footer column.
- * - page.footer_second: Items for the second footer column.
- * - page.footer_third: Items for the third footer column.
- * - page.footer_fourth: Items for the fourth footer column.
- * - page.footer_fifth: Items for the fifth footer column.
- * - page.breadcrumb: Items for the breadcrumb region.
  *
  * @see template_preprocess_page()
  * @see html.html.twig
  */
 #}
+
+{%
+  set complementary_top_classes = [
+    'col-xs-12 col-sm-4 col-sm-last complementary-top',
+    display_page_title ? 'margin-top-complementary',
+  ]
+%}
+
 <nav class="navbar navbar-default navbar-fixed-top z-depth-2" role="navigation" aria-labelledby="{{ heading_id }}">
   <div class="container">{{ page.header }}</div>
 </nav>
 
 <main id="content" class="main-container" role="main">
-
   {{ page.breadcrumb }}
 
   {% if (page.hero or page.secondary_navigation) %}
@@ -86,16 +75,21 @@
 
     <div class="row margin-top-l">
 
-      <div role="complementary" class="col-xs-12 col-sm-4 col-sm-last complementary-top margin-top-complementary">
-        {{ page.complementary_top }}
-      </div>
+      {% if page.complementary_top or page.complementary_bottom %}
+        <div{{ attributes.addClass(complementary_top_classes).setAttribute('role', 'complementary') }}>
+          {{ page.complementary_top }}
+        </div>
+      {% endif %}
 
       <div class="col-xs-12 col-sm-8">
         {% if page.title and display_page_title %}
           {{ page.title }}
         {% endif %}
 
-        {{ page.content }}
+        {% block content %}
+          {{ page.content }}
+        {% endblock %}
+
       </div>
 
       {% if page.complementary_bottom %}
@@ -122,8 +116,8 @@
 
 {% if page.footer %}
   <footer class="brand-secondary" role="contentinfo">
-    <div class="container clearfix">
-      <div class="navbar navbar-footer margin-top-l">
+    <div class="navbar navbar-footer">
+      <div class="container clearfix">
         {{ page.footer }}
       </div>
     </div>

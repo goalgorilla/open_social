@@ -14,9 +14,20 @@ Feature: Create Topic
       | Title | This is a test topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
+    And I attach the file "/files/humans.txt" to "Add a new file"
     And I press "Save"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
     And I should see "Discussion" in the "Hero block"
     And I should see "Body description text" in the "Main content"
+    And I should see "humans.txt"
     And I should not see "Enrollments"
+
+    # Quick edit
+    Given I click "Edit content"
+    Then I should not see "Enrollments"
+    When I fill in the following:
+      | Title | This is a test topic - edit |
+    And I press "Save and keep published"
+    Then I should see "Topic This is a test topic - edit has been updated"
+    And I should see "This is a test topic - edit" in the "Hero block"

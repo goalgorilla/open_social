@@ -432,8 +432,16 @@ pre code {
   overflow-y: scroll;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   font-size: 14px;
+  font-family: "montserrat", sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  word-wrap: break-word;
 }
 
 a {
@@ -444,17 +452,6 @@ a {
 
 a:hover {
   color: inherit;
-}
-
-html {
-  font-size: 16px;
-}
-
-body {
-  font-family: "montserrat", sans-serif;
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased;
-  word-wrap: break-word;
 }
 
 p {
@@ -527,24 +524,6 @@ strong {
   font-weight: 300;
 }
 
-.flow-text {
-  font-size: calc(12px + 9 * ((100vw - 420px) / 860));
-}
-
-@media screen and (min-width: 1280px) {
-
-  .flow-text {
-    font-size: 21px;
-  }
-}
-
-@media screen and (max-width: 420px) {
-
-  .flow-text {
-    font-size: 12px;
-  }
-}
-
 .caption {
   font-size: 1.2em;
   font-weight: 500;
@@ -590,12 +569,34 @@ code {
   max-width: 100%;
 }
 
+.post-date {
+  color: #777777;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
 small {
   font-size: 80%;
 }
 
 small .label {
   font-size: 90%;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.text-align-justify {
+  text-align: justify;
 }
 
 .text-xs {
@@ -813,6 +814,72 @@ a.default-light:focus {
   border-top: 4px solid \9;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
+}
+
+img.align-left {
+  float: left;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
+
+img.align-right {
+  float: right;
+  margin-left: 1em;
+  margin-bottom: 1em;
+}
+
+img.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.body-text a {
+  text-decoration: underline;
+}
+
+.body-text table {
+  border-color: #ddd;
+  border-style: solid;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
+.body-text table > thead > tr > th,
+.body-text table > thead > tr > td,
+.body-text table > tbody > tr > th,
+.body-text table > tbody > tr > td,
+.body-text table > tfoot > tr > th,
+.body-text table > tfoot > tr > td {
+  padding: 8px;
+  line-height: 1.5;
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+
+.body-text table > thead > tr > th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #ddd;
+}
+
+.body-text table > caption + thead > tr:first-child > th,
+.body-text table > caption + thead > tr:first-child > td,
+.body-text table > colgroup + thead > tr:first-child > th,
+.body-text table > colgroup + thead > tr:first-child > td,
+.body-text table > thead:first-child > tr:first-child > th,
+.body-text table > thead:first-child > tr:first-child > td {
+  border-top: 0;
+}
+
+.body-text table > tbody + tbody {
+  border-top: 2px solid #ddd;
+}
+
+.body-text table table {
+  background-color: #f3f3f3;
 }
 
 @media (min-width: 768px) {

@@ -64,17 +64,18 @@
  */
 #}
 {% if details_label %}
-    <h4 class="section-title">
-        {{ details_label }}
-    </h4>
+  <h4 class="section-title section-title-node">
+    {{ details_label }}
+  </h4>
 {% endif %}
 
 <article{{ attributes.addClass('card') }}>
 
-  <div{{ content_attributes.addClass('card-body extra-padding') }}>
+  <div{{ content_attributes.addClass('card-body extra-padding body-text') }}>
     {{ content.body }}
 
     {% if content.field_files|render is not empty %}
+    <div class="inline-clear margin-top-xxl"></div>
       <div class="card-nested-section">
         <h5>
           {% trans %}Files{% endtrans %}

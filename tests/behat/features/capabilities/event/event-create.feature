@@ -31,3 +31,12 @@ Feature: Create Event
     And I should see "Oldenzaalsestraat" in the "Hero block"
     And I should see "7514DR" in the "Hero block"
     And I should see "Enschede" in the "Hero block"
+
+    # Quick edit
+    Given I click "Edit content"
+    Then I should not see "Enrollments" in the "Hero block"
+    When I fill in the following:
+      | Title | This is a test event - edit |
+    And I press "Save and keep published"
+    Then I should see "Event This is a test event - edit has been updated"
+    And I should see "THIS IS A TEST EVENT - EDIT"

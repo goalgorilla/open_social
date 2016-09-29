@@ -35,6 +35,7 @@
 // *  28. Modals
 // *  29. Hero
 // *  30. Jumbotron
+// *  31. Wells
 
 
 // 0. Options
@@ -78,8 +79,6 @@ $gray-lighter-1:         #f7f7f7 !default;
 $gray-lightest:          #f3f3f3 !default;
 
 $brand-primary-dark: mix(black, $brand-primary, 30%) !default;
-$brand-primary-light: mix(white, $brand-primary, 30%) !default;
-$brand-primary-bright: mix(white, $brand-primary, 60%) !default;
 
 
 // 2. Scaffolding
@@ -257,23 +256,23 @@ $btn-link-disabled-color:        $gray-light !default;
 // 7. Cards
 // ==========================================================================
 
- $card-padding: 20px !default;
- $card-padding-large: 48px !default;
- $card-radius: 10px !default;
- $card-bg-color: white !default;
- $card-link-color: $brand-primary !default;
- $card-link-color-light: lighten($card-link-color, 20%) !default;
+$card-padding: 20px !default;
+$card-padding-large: 48px !default;
+$card-radius: 10px !default;
+$card-bg-color: white !default;
+$card-link-color: $brand-primary !default;
+$card-link-color-light: lighten($card-link-color, 20%) !default;
 
- $card-spacer-x:            1.25rem !default;
- $card-spacer-y:            .75rem !default;
- $card-border-width:        1px !default;
- $card-border-radius:       $border-radius-base !default;
- $card-border-color:        #e5e5e5 !default;
- $card-border-radius-inner: $card-border-radius !default;
- $card-cap-bg:              #f5f5f5 !default;
- $card-bg:                  #fff !default;
+$card-spacer-x:            1.25rem !default;
+$card-spacer-y:            .75rem !default;
+$card-border-width:        1px !default;
+$card-border-radius:       $border-radius-base !default;
+$card-border-color:        #e5e5e5 !default;
+$card-border-radius-inner: $card-border-radius !default;
+$card-cap-bg:              #f5f5f5 !default;
+$card-bg:                  #fff !default;
 
- $card-link-hover-color:    #fff !default;
+$card-link-hover-color:    #fff !default;
 
 // 8. Collapsible
 // ==========================================================================
@@ -430,29 +429,21 @@ $state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !
  $screen-xs:                  480px !default;
  //** Deprecated `$screen-xs-min` as of v3.2.0
  $screen-xs-min:              $screen-xs !default;
- //** Deprecated `$screen-phone` as of v3.0.1
- $screen-phone:               $screen-xs-min !default;
 
  // Small screen / tablet
  //** Deprecated `$screen-sm` as of v3.0.1
  $screen-sm:                  768px !default;
  $screen-sm-min:              $screen-sm !default;
- //** Deprecated `$screen-tablet` as of v3.0.1
- $screen-tablet:              $screen-sm-min !default;
 
  // Medium screen / desktop
  //** Deprecated `$screen-md` as of v3.0.1
  $screen-md:                  992px !default;
  $screen-md-min:              $screen-md !default;
- //** Deprecated `$screen-desktop` as of v3.0.1
- $screen-desktop:             $screen-md-min !default;
 
  // Large screen / wide desktop
  //** Deprecated `$screen-lg` as of v3.0.1
  $screen-lg:                  1200px !default;
  $screen-lg-min:              $screen-lg !default;
- //** Deprecated `$screen-lg-desktop` as of v3.0.1
- $screen-lg-desktop:          $screen-lg-min !default;
 
  // So media queries don't overlap when required, provide a maximum
  $screen-xs-max:              ($screen-sm-min - 1) !default;
@@ -487,8 +478,8 @@ $grid-breakpoints: (
 
 $container-max-widths: (
   sm: 100%,
-  md: 992px,
-  lg: 992px,
+  md: 100%,
+  lg: 1200px,
   xl: 1200px
 ) !default;
 
@@ -511,17 +502,6 @@ $element-bottom-margin: ($grid-gutter-width*2)/3 !default;
 $grid-float-breakpoint:     $screen-sm-min !default;
 //** Point at which the navbar begins collapsing.
 $grid-float-breakpoint-max: ($grid-float-breakpoint - 1) !default;
-
-
-// ?. Date picker
-// ==========================================================================
-
- $datepicker-weekday-bg: darken($brand-primary-dark, 7%) !default;
- $datepicker-date-bg: $brand-primary-dark !default;
- $datepicker-year: rgba(255, 255, 255, .4) !default;
- $datepicker-focus: rgba(0,0,0, .05) !default;
- $datepicker-selected: $brand-primary-dark !default;
- $datepicker-selected-outfocus: desaturate(lighten($brand-primary-dark, 35%), 15%) !default;
 
 
 // 14. Breadcrumbs
@@ -547,7 +527,7 @@ $navbar-height:                    50px !default;
 $navbar-font-size:                 0.875rem !default;
 $navbar-margin-bottom:             0 !default;
 $navbar-border-radius:             $border-radius-base !default;
-$navbar-padding-horizontal:        1rem !default;
+$navbar-padding-horizontal:        ($grid-gutter-width / 2) !default;
 $navbar-padding-vertical:          (($navbar-height - $line-height-computed) / 2) !default;
 $navbar-collapse-max-height:       340px !default;
 
@@ -915,3 +895,10 @@ $jumbotron-bg:                   white !default;
 $jumbotron-heading-color:        inherit !default;
 $jumbotron-font-size:            ceil(($font-size-base * 1.5)) !default;
 $jumbotron-heading-font-size:    ceil(($font-size-base * 4.5)) !default;
+
+
+// 30.  Wells
+// ==========================================================================
+
+$well-bg:                     white !default;
+$well-border:                 $gray-lighter !default;

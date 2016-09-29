@@ -511,7 +511,7 @@ form.card-nested-section:last-child {
 }
 
 .form-no-label label + .form-required {
-  float: right;
+  display: none;
 }
 
 span.form-required {
@@ -545,29 +545,10 @@ span.form-required {
   box-shadow: 0 2px 0 0 #29abe2;
 }
 
-.form-control.form-control--block {
-  max-width: none;
-}
-
-.form-control.materialize-textarea {
-  overflow-y: hidden;
-  padding-bottom: 1.6rem;
+.form-control--autogrow {
+  overflow: hidden;
   resize: none;
-  height: 38px;
-}
-
-.form-control.textarea-large {
-  min-height: 5rem;
-}
-
-.hiddendiv {
-  display: none;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  /* future version of deprecated 'word-wrap' */
-  padding-top: 1.2rem;
-  /* prevents text jump on Enter keypress */
+  max-width: none;
 }
 
 .form-actions .btn {
@@ -630,6 +611,12 @@ span.form-required {
 
 .has-warning .select-wrapper:after {
   color: #8a6d3b;
+}
+
+.radio,
+.checkbox {
+  margin-top: 0;
+  margin-bottom: 5px;
 }
 
 /* Remove default Radio Buttons */
@@ -833,6 +820,10 @@ span.form-required {
 [type="checkbox"]:disabled:checked + label:after {
   background-color: #BDBDBD;
   border-color: #BDBDBD;
+}
+
+.form-inline {
+  margin-bottom: 1rem;
 }
 
 .textarea--cke .cke {
@@ -1076,6 +1067,8 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   }
   .form-group-inline .btn:last-child{
     margin-left: 8px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
   }
   .form-inline .radio input[type="radio"],
   .form-inline .checkbox input[type="checkbox"]{
@@ -1139,6 +1132,41 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   .input-group-lg
   input[type="month"]{
     line-height: 49px;
+  }
+  .form-control{
+    font-size: 16px;
+  }
+  input[type="date"].form-control,
+  input[type="time"].form-control,
+  input[type="datetime-local"].form-control,
+  input[type="month"].form-control{
+    line-height: 24px;
+  }
+  input[type="date"].input-sm,
+  .input-group-sm input[type="date"],
+  input[type="time"].input-sm,
+  .input-group-sm
+  input[type="time"],
+  input[type="datetime-local"].input-sm,
+  .input-group-sm
+  input[type="datetime-local"],
+  input[type="month"].input-sm,
+  .input-group-sm
+  input[type="month"]{
+    line-height: 21px;
+  }
+  input[type="date"].input-lg,
+  .input-group-lg input[type="date"],
+  input[type="time"].input-lg,
+  .input-group-lg
+  input[type="time"],
+  input[type="datetime-local"].input-lg,
+  .input-group-lg
+  input[type="datetime-local"],
+  input[type="month"].input-lg,
+  .input-group-lg
+  input[type="month"]{
+    line-height: 27px;
   }
 }
 

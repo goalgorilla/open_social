@@ -10,15 +10,15 @@ block breadcrumbs
     a(href='group-stream.html') Amsterdam Meetup
   li.active Comment
 
-    
+
 block content
-      
+
   .row.margin-top-l
-  
+
     .col-xs-12.col-sm-8
-      
+
       h4.section-title Comment
-      
+
       .card
         .card-body
           include ./molecules/_comment1.pug
@@ -29,5 +29,5 @@ block content
             .media-body
               form#insert-comment
                 .form-group.form-group-inline
-                  textarea.form-control.form-control--block(placeholder='Add a reply...', width='100%')
+                  textarea.form-control.form-control--autogrow.js-textarea-autogrow(placeholder='Write a reply...', data-min-rows="2")
                   button.btn.btn-link(type='submit') Reply

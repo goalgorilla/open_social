@@ -22,46 +22,23 @@
  * @ingroup themeable
  */
 #}
-{%
-  set classes = [
-    'js-form-item',
-    'form-item',
-    'js-form-wrapper',
-    'form-wrapper',
-    'form-group',
-    'radios'
-  ]
-%}
-<fieldset{{ attributes.addClass(classes) }}>
-  {%
-    set legend_span_classes = [
-      'control-label',
-      'fieldset-legend',
-      required ? 'js-form-required',
-    ]
-  %}
-  {% set label_data = legend_span %}
-  {% set label = legend %}
-  {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label {{ label_data.attributes.addClass(legend_span_classes) }}>{{ label.title }}</label>
-  {% if required %}
-    <span class="form-required">*</span>
+<div class="form-group radios">
+  <label>{{ legend.title }}</label>
+
+  {% if errors %}
+    <div>
+      {{ errors }}
+    </div>
   {% endif %}
-  <div class="fieldset-wrapper">
-    {% if errors %}
-      <div>
-        {{ errors }}
-      </div>
-    {% endif %}
-    {% if prefix %}
-      <span class="field-prefix">{{ prefix }}</span>
-    {% endif %}
-    {{ children }}
-    {% if suffix %}
-      <span class="field-suffix">{{ suffix }}</span>
-    {% endif %}
-    {% if description.content %}
-      <div{{ description.attributes.addClass('description') }}>{{ description.content }}</div>
-    {% endif %}
-  </div>
-</fieldset>
+  {% if prefix %}
+    <span class="field-prefix">{{ prefix }}</span>
+  {% endif %}
+  {{ children }}
+  {% if suffix %}
+    <span class="field-suffix">{{ suffix }}</span>
+  {% endif %}
+  {% if description.content %}
+    <div{{ description.attributes.addClass('description') }}>{{ description.content }}</div>
+  {% endif %}
+
+</div>

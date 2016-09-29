@@ -32,16 +32,30 @@ libraries:
   - socialbase/navbar
   - socialbase/stream
   - socialbase/tabs
+  - socialbase/wells
 
 # Add the type css to be loaded by the ckeditor iframe.
 ckeditor_stylesheets:
-  - components/asset-builds/css/type.css
+  - components/asset-builds/css/ckeditor.css
 
 libraries-extend:
   core/drupal.ajax:
     - socialbase/drupal.ajax
   core/drupal.tabledrag:
     - socialbase/drupal.tabledrag
+
+  # attach the timepicker library to all date fields
+  core/drupal.date:
+    - socialbase/jquery.timepicker
+
+  #extend the core datepicker with a stylesheet and attach the listener
+  core/jquery.ui.datepicker:
+    - socialbase/jquery.datepicker
+
+  # attach the bootstrap library script and css component
+  bootstrap/popover:
+    - socialbase/popover
+
 
 
 # The "libraries-override:" section will allow you to:
@@ -52,12 +66,20 @@ libraries-extend:
 libraries-override:
   core/normalize: false
   # Remove jQuery UI datepicker
-  core/jquery.ui/ui:
-    js:
-      datepicker-min.js: false
+  core/jquery.ui.datepicker:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/datepicker.css: false
+  core/jquery.ui:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/core.css: false
+      theme:
+        assets/vendor/jquery.ui/themes/base/theme.css: false
 
   system/base: false
   views/views.module: false
+  classy/file: false
 
 regions:
   hidden: Hidden

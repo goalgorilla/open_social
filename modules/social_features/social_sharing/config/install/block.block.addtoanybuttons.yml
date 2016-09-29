@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - addtoany
+    - node
+  theme:
+    - socialbase
+id: addtoanybuttons
+theme: socialbase
+region: complementary_bottom
+weight: -25
+provider: null
+plugin: addtoany_block
+settings:
+  id: addtoany_block
+  label: 'Share this page'
+  provider: addtoany
+  label_display: visible
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+      page: page
+      topic: topic
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

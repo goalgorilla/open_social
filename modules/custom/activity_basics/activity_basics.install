@@ -1,0 +1,65 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the activity_basics module.
+ */
+
+/**
+ * Install token module.
+ */
+function activity_basics_update_8101(&$sandbox) {
+
+  $modules = array(
+    'token',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
+ * Install activity_send_email module.
+ */
+function activity_basics_update_8102() {
+
+  $modules = array(
+    'activity_send_email',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
+ * Replace message template single value field activity_bundle_entity with multiple values activity_bundle_entities.
+ */
+function activity_basics_update_8103() {
+
+  $message_templates = [
+    'create_comment_community_node',
+    'create_comment_community_post',
+    'create_comment_group_node',
+    'create_comment_group_post',
+    'create_event_community',
+    'create_event_group',
+    'create_topic_community',
+    'create_topic_group',
+    'create_post_community',
+    'create_post_group',
+    'create_post_profile',
+  ];
+
+  foreach ($message_templates as $message_template) {
+    $config_name = "message.template.{$message_template}";
+    $config = \Drupal::service('config.factory')->getEditable($config_name);
+
+    $activity_bundle_entity = $config->get('third_party_settings.activity_logger.activity_bundle_entity');
+    $config->clear('third_party_settings.activity_logger.activity_bundle_entity');
+
+    $bundle_entity = explode('.', $activity_bundle_entity);
+    $activity_bundle_entity_new = $bundle_entity[0] . '-' . $bundle_entity[1];
+    $activity_bundle_entities = [$activity_bundle_entity_new => $activity_bundle_entity_new];
+
+    $config->set('third_party_settings.activity_logger.activity_bundle_entities', $activity_bundle_entities);
+    $config->save();
+  }
+
+}

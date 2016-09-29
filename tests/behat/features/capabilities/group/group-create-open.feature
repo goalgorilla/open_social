@@ -54,7 +54,7 @@ Feature: Create Open Group
     And I should see "Test open group" in the "Sidebar second"
     And I click "Groups"
     And I should see "Test open group" in the "Main content"
-    And I should not see the link "Add a group" in the "Sidebar second"
+    And I should not see the link "Add a group" in the "Main content"
     And I click "Test open group"
   # And I should see "Newest members" in the "Sidebar second"
   # And I should see "Group User One" in the "Sidebar second"
@@ -97,6 +97,7 @@ Feature: Create Open Group
   # And I should see "1 Jan" in the "Sidebar second"
     And I click "Events"
     And I should see "Test group event" in the "Main content"
+    And I should see "Test open group" in the "Main content"
 
   # DS-644 As a LU I want to see the topics of a group
     When I click "Topics"
@@ -119,6 +120,7 @@ Feature: Create Open Group
   # And I should see "Test group topic" in the "Sidebar second"
     And I click "Topics"
     And I should see "Test group topic" in the "Main content"
+    And I should see "Test open group" in the "Main content"
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "4" element with the css ".dropdown-toggle"
@@ -136,7 +138,7 @@ Feature: Create Open Group
   # DS-722 As an outsider I am not allowed to enrol to an event in group
     When I click "Events"
     And I click "Test group event"
-    And I should not see "Enroll" in the "Hero block"
+    And I should not see "Enroll" in the "Hero buttons"
 
   # Check for latest groups block on LU homepage
     When I am on "stream"

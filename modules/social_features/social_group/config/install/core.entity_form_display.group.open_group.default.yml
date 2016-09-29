@@ -12,7 +12,7 @@ dependencies:
   module:
     - address
     - field_group
-    - image
+    - image_widget_crop
     - path
 third_party_settings:
   field_group:
@@ -64,10 +64,16 @@ content:
   field_group_image:
     weight: 3
     settings:
-      progress_indicator: throbber
+      show_crop_area: true
+      show_default_crop: true
       preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero
+        - teaser
+      progress_indicator: throbber
     third_party_settings: {  }
-    type: image_image
+    type: image_widget_crop
   field_group_location:
     weight: 32
     settings:

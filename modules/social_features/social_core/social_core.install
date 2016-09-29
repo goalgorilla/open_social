@@ -24,6 +24,14 @@ function social_core_install() {
 }
 
 /**
+ * Re-set permissions.
+ */
+function social_core_update_8001(&$sandbox) {
+  // Set some default permissions.
+  _social_core_set_permissions();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_core_set_permissions() {
@@ -70,11 +78,24 @@ function _social_core_get_permissions($role) {
     'revert all revisions',
     'delete all revisions',
     'create url aliases',
+    'use text format full_html',
+    'view the administration theme',
   ));
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
+    'administer taxonomy',
+    'delete terms in expertise',
+    'edit terms in expertise',
+    'delete terms in interests',
+    'edit terms in interests',
+    'delete terms in topic_types',
+    'edit terms in topic_types',
+    'administer site configuration',
+    'administer users',
+    'administer account settings',
+    'administer themes',
+    'administer blocks',
   ));
 
   return $permissions[$role];
@@ -108,7 +129,7 @@ function _social_core_create_an_homepage_block() {
     'uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4',
   ));
   $block->field_text_block = array(
-    'value' => '<h3>Title of the AN homepage block (TODO: change this later!)</h3><p> Text in the AN homepage block</p>',
+    'value' => '<h3>Become a member or log in</h3><p>powered by Open Social</p>',
     'format' => 'full_html',
   );
 
@@ -159,4 +180,53 @@ function _social_core_create_menu_links() {
     'weight' => 20,
   ])->save();
 
+}
+
+/**
+ * Enable full_html format for contentmanager and sitemanager roles.
+ */
+function social_core_update_8002() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'use text format full_html',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Install image_widget_crop module.
+ */
+function social_core_update_8003() {
+
+  $modules = array(
+    'libraries',
+    'image_widget_crop',
+  );
+  \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
+ * Add permission to view admin theme for contentmanager and sitemanager roles.
+ */
+function social_core_update_8004() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'view the administration theme',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
