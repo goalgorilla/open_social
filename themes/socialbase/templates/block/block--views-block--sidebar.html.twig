@@ -30,24 +30,24 @@
  */
 #}
 <div class="card card-with-actionbar teaser--small">
-    <div class="card-head">
-        <header>{{ title_prefix }} {{ label }} {{ title_suffix }}</header>
-        {% if subtitle %}
-        <div class="subtitle">
-            {{ subtitle }}
-        </div>
-        {% endif %}
+  <div class="card-head">
+    <header>{{ title_prefix }} {{ label }} {{ title_suffix }}</header>
+    {% if subtitle %}
+    <div class="subtitle">
+        {{ subtitle }}
     </div>
-    <div class="card-body">
-        <div class="list-group list-group-divider">
-            {{ content }}
-        </div>
-        <div class="card-actionbar text-center">
-            {% if view_all_path %}
-            <a href="{{ view_all_path }}" class="btn btn-flat">
-              {% trans %} All {% endtrans %} {{ label }}
-            </a>
-            {% endif %}
-        </div>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <div class="list-group list-group-divider">
+      {{ content }}
     </div>
+    <div class="card-actionbar">
+      {% if view_all_path %}
+      <a href="{{ view_all_path }}" class="btn btn-flat">
+        {% trans %} All {% endtrans %} {{ label }}
+      </a>
+      {% endif %}
+    </div>
+  </div>
 </div>
