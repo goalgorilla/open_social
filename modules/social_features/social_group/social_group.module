@@ -376,18 +376,6 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
   // Add a css class to widget form elements for all fields of type mytype.
   $field_definition = $context['items']->getFieldDefinition();
 
-  // Unset the groups address requirement field settings front-end wise.
-  if ($field_definition->getType() == 'address') {
-    $element['#required'] = FALSE;
-    $element['country_code']['#required'] = FALSE;
-    $element['recipient']['#required'] = FALSE;
-    $element['organization']['#required'] = FALSE;
-    $element['address_line1']['#required'] = FALSE;
-    $element['address_line2']['#required'] = FALSE;
-    $element['postal_code']['#required'] = FALSE;
-    $element['locality']['#required'] = FALSE;
-  }
-
   // Unset the public options on visibility field.
   if ($field_definition->getType() == 'entity_access_field') {
 
