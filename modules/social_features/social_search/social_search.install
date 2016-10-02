@@ -99,6 +99,8 @@ function social_search_update_8102(&$sandbox) {
 
   // Delete Search Groups (proximity) Views.
   $view = View::load('search_groups_proximity');
-  $view->delete();
+  if ($view) {
+    $view->delete();
+  }
 
 }

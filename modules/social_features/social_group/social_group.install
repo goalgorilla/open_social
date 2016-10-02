@@ -126,3 +126,13 @@ function social_group_update_8002() {
     $view->save();
   }
 }
+
+/**
+ * Remove geolocation fields.
+ */
+function social_group_update_8003() {
+  $fields = entity_load_multiple_by_properties('field_storage_config', array('type' => 'geolocation'));
+  foreach ($fields as $field) {
+    $field->delete();
+  }
+}
