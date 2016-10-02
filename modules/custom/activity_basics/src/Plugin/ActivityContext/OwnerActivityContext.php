@@ -29,19 +29,44 @@ class OwnerActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
       $allowed_entity_types = ['node', 'post', 'comment'];
-      if (in_array($referenced_entity['target_type'], $allowed_entity_types)) {
-        $recipients += $this->getRecipientOwnerFromEntity($referenced_entity);
+      if (in_array($related_entity['target_type'], $allowed_entity_types)) {
+        $recipients += $this->getRecipientOwnerFromEntity($related_entity, $data);
       }
     }
 
     return $recipients;
   }
 
-  public function isValidEntity($entity) {
-    // @TODO: Add some check for owner.
-    return TRUE;
+  /**
+   * Returns owner recipient from entity.
+   */
+  public function getRecipientOwnerFromEntity(array $related_entity, array $data) {
+    $recipients = [];
+
+    $entity_storage = \Drupal::entityTypeManager()
+      ->getStorage($related_entity['target_type']);
+    $entity = $entity_storage->load($related_entity['target_id']);
+
+    // Don't return recipients if user comments on own content.
+    $original_related_object = $data['related_object'][0];
+    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'comment') {
+      $storage = \Drupal::entityTypeManager()
+        ->getStorage($original_related_object['target_type']);
+      $original_related_entity = $storage->load($original_related_object['target_id']);
+
+      if (!empty($original_related_entity) && $original_related_entity->getOwnerId() == $entity->getOwnerId()) {
+        return $recipients;
+      }
+    }
+
+    $recipients[] = [
+      'target_type' => 'user',
+      'target_id' => $entity->getOwnerId(),
+    ];
+
+    return $recipients;
   }
 
 }

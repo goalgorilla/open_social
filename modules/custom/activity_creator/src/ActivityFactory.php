@@ -124,7 +124,7 @@ class ActivityFactory extends ControllerBase {
       $value = $message->getText(NULL);
       // Text for aggregated activities.
       if (!empty($value[1]) && !empty($arguments)) {
-        $text = t($value[1], $arguments);
+        $text = str_replace('@count', $arguments['@count'], $value[1]);
       }
       // Text for default activities.
       else {

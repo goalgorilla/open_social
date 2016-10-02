@@ -18,13 +18,20 @@ function social_profile_install() {
   _social_profile_set_permissions();
   // Add some links.
   _social_profile_create_menu_links();
+  // Add default profile image
+  _social_profile_add_default_profile_image();
+}
 
+/**
+ * Function to set default profile image if not set already.
+ */
+function _social_profile_add_default_profile_image() {
   // Add default image.
   $config_factory = \Drupal::configFactory();
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
 
-  $uri  = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
+  $uri = file_unmanaged_copy(drupal_get_path('module', 'social_profile') . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'default-profile-picture.png', 'public://default-profile-picture.png', FILE_EXISTS_REPLACE);
 
   $media = File::create([
     'uri' => $uri,
@@ -117,4 +124,23 @@ function _social_profile_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
+}
+
+/**
+ * Set default profile image.
+ */
+function social_profile_update_8001(&$sandbox) {
+  // Only run when there is not a file added to the file managed table.
+  // Confirmed that it's not there on our current platforms. (But is locally).
+  $query = \Drupal::database()->select('file_managed', 'fm');
+  $query->addField('fm', 'uuid');
+  $query->condition('fm.filename', 'default-profile-picture.png');
+  $query->range(0, 1);
+  $result = $query->execute()->fetchField();
+
+  // $result will be FALSE if there is no UUID available.
+  if (!$result) {
+    _social_profile_add_default_profile_image();
+  }
+
 }

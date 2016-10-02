@@ -22,6 +22,13 @@ function social_group_install() {
   $group_settings = \Drupal::configFactory()->getEditable('group.settings');
   $group_settings->set('use_admin_theme', FALSE);
   $group_settings->save();
+
+  // Disable group nodes.
+  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  if (!is_null($view)) {
+    $view->setStatus(FALSE);
+    $view->save();
+  }
 }
 
 /**
@@ -107,4 +114,15 @@ function social_group_update_8001() {
   );
   \Drupal::service('module_installer')->install($modules);
 
+}
+
+/**
+ * Make sure the group nodes view is disabled.
+ */
+function social_group_update_8002() {
+  $view = \Drupal::service('entity.manager')->getStorage('view')->load('group_nodes');
+  if (!is_null($view)) {
+    $view->setStatus(FALSE);
+    $view->save();
+  }
 }

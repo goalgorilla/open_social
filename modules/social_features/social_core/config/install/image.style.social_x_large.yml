@@ -1,13 +1,21 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - crop
 name: social_x_large
 label: 'social extra large (220 x 220)'
 effects:
-  29ad1d94-2731-11e6-b67b-9e71128cae77:
-    uuid: 29ad1d94-2731-11e6-b67b-9e71128cae77
-    id: image_scale_and_crop
+  8caebde6-8403-4c7c-8a0b-75374fb31168:
+    uuid: 8caebde6-8403-4c7c-8a0b-75374fb31168
+    id: crop_crop
     weight: 1
+    data:
+      crop_type: teaser
+  b4346485-59a7-4ed0-b3d9-57982b3ece26:
+    uuid: b4346485-59a7-4ed0-b3d9-57982b3ece26
+    id: image_resize
+    weight: 2
     data:
       width: 220
       height: 220

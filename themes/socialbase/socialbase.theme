@@ -15,6 +15,7 @@ use \Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
+use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -191,7 +192,11 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function socialbase_theme_suggestions_details_alter(array &$suggestions, array $variables, $hook) {
-  $suggestions[] = $hook . '__plain';
+  if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class']))  {
+    $suggestions[] = $hook . '__crop';
+  } else {
+    $suggestions[] = $hook . '__plain';
+  }
 }
 
 /**
@@ -207,10 +212,8 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
    $suggestions[] = 'block__block_menu__' . $menu_name;
   }
 
-  $content = $variables['elements']['content'];
-
-  if (isset($content['#block_content']) and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
-    $suggestions[] = 'block__block_type__' . $content['#block_content']->bundle();
+  if (isset($variables['elements']['content']['#block_content'])) {
+    $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
   }
 
   $block_id = $variables['elements']['#derivative_plugin_id'];
@@ -331,26 +334,30 @@ function socialbase_preprocess_block(&$variables) {
     $variables['profile_user_id'] = $profile_user_id;
   }
   // AN Homepage block.
-  if ($variables['attributes']['id'] === 'block-anhomepageheroblock' || $variables['attributes']['id'] === 'block-' . $prefix . '-anhomepageheroblock') {
-    $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
-    $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
-    $entity = BlockContent::load($imageitem->id());
-    $file_id = $entity->get('field_hero_image')->target_id;
-    // If it's an existing file.
-    if ($file = File::load($file_id)) {
-      // Style and set it in the content.
-      $styled_image_url = ImageStyle::load($imagestyle)
-        ->buildUrl($file->getFileUri());
-      $variables['image_url'] = $styled_image_url;
+  if (isset($variables['elements']['content']['#block_content'])) {
+    if($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {
 
-      // Add extra class.
-      $variables['has_image'] = TRUE;
+      $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
+      $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
+      $entity = BlockContent::load($imageitem->id());
+      $file_id = $entity->get('field_hero_image')->target_id;
 
-      // Remove the origingal.
-      unset($variables['content']['field_hero_image']);
+      // If it's an existing file.
+      if ($file = File::load($file_id)) {
+        // Style and set it in the content.
+        $styled_image_url = ImageStyle::load($imagestyle)
+          ->buildUrl($file->getFileUri());
+        $variables['image_url'] = $styled_image_url;
 
+        // Add extra class.
+        $variables['has_image'] = TRUE;
+
+        // Remove the origingal.
+        unset($variables['content']['field_hero_image']);
+
+      }
     }
-  } // AN Homepage block.
+  }
 
 
 
@@ -1102,6 +1109,11 @@ function socialbase_preprocess_form(&$variables) {
     $variables['is_search_form'] = TRUE;
   }
 
+  // Add the custom search autocomplete to search users for now only.
+  if ($element['#form_id'] === 'search_users_form') {
+    $variables['#attached']['library'][] = 'socialbase/searchautocomplete';
+  }
+
   // We have set the region via propress block, now pass this variable on to be used in twig
   // In twig we can distinguish the navbar form from the hero form as they both have the same ID's.
   if (isset($element['#region'])) {
@@ -1285,4 +1297,12 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
     $variables['form']['actions']['submit']['#attributes']['class'][] = 'pull-right';
     $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
   }
+}
+
+
+/**
+ * Implements hook_js_alter
+ */
+function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] =  '/' . drupal_get_path('theme','socialbase') . '/js/custom/imageWidgetCrop.js';
 }
