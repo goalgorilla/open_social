@@ -63,7 +63,7 @@ function social_verify_custom_requirements(&$install_state) {
 
   // Added a custom check for users to see if the Address libraries are
   // downloaded.
-  if (!class_exists('\CommerceGuys\Addressing\Repository\AddressFormatRepository')) {
+  if (!class_exists('\CommerceGuys\Addressing\Address')) {
     $requirements['addressing_library'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),

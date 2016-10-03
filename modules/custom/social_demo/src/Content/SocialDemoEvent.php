@@ -6,7 +6,7 @@ namespace Drupal\social_demo\Content;
  * Social Demo Content Topic.
  */
 
-use Drupal\address\Entity\AddressFormat;
+use CommerceGuys\Addressing\Address;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\file\Entity\File;
@@ -150,14 +150,14 @@ class SocialDemoEvent implements ContainerInjectionInterface {
       $node->set('field_event_date_end', $end_date);
 
       // TODO: Actually make this work.
-      $address_entity = AddressFormat::create([
-        'country_code' => $event['country_code'],
-        'locality' => $event['locality'],
-        'postal_code' => $event['postal_code'],
-        'address_line1' => $event['address_line1'],
-      ]);
-      $node->set('field_event_address', $address_entity);
+      $address = new Address();
+      $address = $address
+        ->withCountryCode($event['field_event_address']['country_code'])
+        ->withPostalCode($event['field_event_address']['postal_code'])
+        ->withLocality($event['field_event_address']['locality'])
+        ->withAddressLine1($event['field_event_address']['address_line1']);
 
+      $node->set('field_event_address', $address);
       $node->save();
 
       // Check if the referenced group exists.
