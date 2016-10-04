@@ -128,7 +128,7 @@ function social_group_update_8002() {
 }
 
 /**
- * Uninstall geocoder and geolocation modules. Remove geolocation fields.
+ * Uninstall geocoder and geolocation modules. Remove group geolocation field.
  */
 function social_group_update_8003() {
   $modules = array(
@@ -136,9 +136,11 @@ function social_group_update_8003() {
     'geocoder',
   );
 
+  $config_factory = \Drupal::service('config.factory');
+
   foreach ($modules as $module) {
     // Remove config.
-    \Drupal::service('config.factory')->getEditable("$module.settings")->delete();
+    $config_factory->getEditable("$module.settings")->delete();
 
     // Remove cache tables.
     if (db_table_exists("cache_$module")) {
@@ -149,15 +151,11 @@ function social_group_update_8003() {
     $query = \Drupal::database()->delete('key_value');
     $query->condition('name', $module);
     $query->execute();
-
-    // Remove field storages.
-    $fields = entity_load_multiple_by_properties('field_storage_config', array('type' => $module));
-    if(!empty($fields)){
-      foreach ($fields as $field) {
-        $field->delete();
-      }
-    }
   }
   // Uninstall geocoder and geolocation modules.
   \Drupal::service('module_installer')->uninstall($modules);
+
+  // Remove group geolocation field.
+  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
+  $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
 }
