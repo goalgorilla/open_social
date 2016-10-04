@@ -288,7 +288,9 @@ function socialbase_preprocess_block(&$variables) {
 
   // Add search_block to main menu.
   if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
-    $block = Block::load('search_content_block_header');
+    $block_id = \Drupal::moduleHandler()->moduleExists('social_geolocation') ? 'geolocation_search_content_block_header' : 'search_content_block_header';
+    $block = Block::load($block_id);
+
     if(!empty($block)){
       $block_output = \Drupal::entityManager()
         ->getViewBuilder('block')
@@ -299,35 +301,18 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   // Preprocess search block header.
-  if (isset($variables['content']['search_content_form'])) {
-    $variables['content']['search_content_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_content_form']['actions']['submit']['#addsearchicon'] = TRUE;
+  if (isset($variables['content']['search_form'])) {
+    $variables['content']['search_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
 
     if ($region == 'hero') {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
-      $variables['content']['search_content_form']['#region'] = 'hero';
+      $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
+      $variables['content']['search_form']['#region'] = 'hero';
     }
     else {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
+      $variables['content']['search_form']['#attributes']['class'][] = 'navbar-form';
     }
-  }
-  if (isset($variables['content']['search_users_form'])) {
-    // Add class for the forms as well.
-    $variables['content']['search_users_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_users_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
-    $variables['content']['search_users_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_users_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_users_form']['#region'] = 'hero';
-  }
-  if (isset($variables['content']['search_groups_form'])) {
-    $variables['content']['search_groups_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_groups_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_groups_form']['search_input_groups']['#name'] = 'search_input_groups';
-    $variables['content']['search_groups_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_groups_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_groups_form']['#region'] = 'hero';
   }
 
   // Add Group ID for "See all groups link".
@@ -1120,7 +1105,7 @@ function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
   // If this is a search content form set a variable for twig
-  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_users_form' || $element['#form_id'] === 'search_groups_form') {
+  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'geolocation_search_form' || $element['#form_id'] === 'geolocation_search_content_form') {
     $variables['is_search_form'] = TRUE;
   }
 

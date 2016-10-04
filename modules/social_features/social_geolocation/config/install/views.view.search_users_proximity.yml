@@ -1,0 +1,563 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.teaser
+    - profile.type.profile
+    - taxonomy.vocabulary.expertise
+    - taxonomy.vocabulary.interests
+    - taxonomy.vocabulary.profile_tag
+  module:
+    - geolocation
+    - profile
+    - taxonomy
+    - user
+id: search_users_proximity
+label: 'Search Users (proximity)'
+module: views
+description: ''
+tag: ''
+base_table: profile
+base_field: profile_id
+core: 8.x
+display:
+  default:
+    display_plugin: default
+    id: default
+    display_title: Master
+    position: 0
+    display_options:
+      access:
+        type: perm
+        options:
+          perm: 'access users search'
+      cache:
+        type: none
+        options: {  }
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_comment: ''
+          query_tags: {  }
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Filter
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        type: full
+        options:
+          items_per_page: 10
+          offset: 0
+          id: 0
+          total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      style:
+        type: default
+      row:
+        type: 'entity:profile'
+        options:
+          relationship: none
+          view_mode: teaser
+      fields:
+        rendered_entity:
+          table: profile
+          field: rendered_entity
+          id: rendered_entity
+          entity_type: null
+          entity_field: null
+          plugin_id: rendered_entity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          view_mode: default
+      filters:
+        field_profile_first_name_value:
+          id: field_profile_first_name_value
+          table: profile__field_profile_first_name
+          field: field_profile_first_name_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_profile_first_name_value_op
+            label: 'First name'
+            description: ''
+            use_operator: false
+            operator: field_profile_first_name_value_op
+            identifier: text_1
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_profile_last_name_value:
+          id: field_profile_last_name_value
+          table: profile__field_profile_last_name
+          field: field_profile_last_name_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_profile_last_name_value_op
+            label: 'Last name'
+            description: ''
+            use_operator: false
+            operator: field_profile_last_name_value_op
+            identifier: text_2
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_profile_self_introduction_value:
+          id: field_profile_self_introduction_value
+          table: profile__field_profile_self_introduction
+          field: field_profile_self_introduction_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_profile_self_introduction_value_op
+            label: 'Self introduction'
+            description: ''
+            use_operator: false
+            operator: field_profile_self_introduction_value_op
+            identifier: text_3
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_profile_expertise_target_id:
+          id: field_profile_expertise_target_id
+          table: profile__field_profile_expertise
+          field: field_profile_expertise_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_expertise_target_id_op
+            label: Expertise
+            description: ''
+            use_operator: false
+            operator: field_profile_expertise_target_id_op
+            identifier: expertise
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: expertise
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_profile_interests_target_id:
+          id: field_profile_interests_target_id
+          table: profile__field_profile_interests
+          field: field_profile_interests_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_interests_target_id_op
+            label: Interests
+            description: ''
+            use_operator: false
+            operator: field_profile_interests_target_id_op
+            identifier: interests
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: interests
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_profile_profile_tag_target_id:
+          id: field_profile_profile_tag_target_id
+          table: profile__field_profile_profile_tag
+          field: field_profile_profile_tag_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 2
+          exposed: true
+          expose:
+            operator_id: field_profile_profile_tag_target_id_op
+            label: 'Profile tag'
+            description: ''
+            use_operator: false
+            operator: field_profile_profile_tag_target_id_op
+            identifier: profile_tag
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: profile_tag
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_profile_geolocation_proximity:
+          id: field_profile_geolocation_proximity
+          table: profile__field_profile_geolocation
+          field: field_profile_geolocation_proximity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            lat: ''
+            lng: ''
+            units: km
+          group: 2
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Distance (in kilometers)'
+            description: 'Recommended range from 10 to 1000'
+            use_operator: false
+            operator: ''
+            identifier: proximity
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          expose_units: 0
+          plugin_id: geolocation_filter_proximity
+        type:
+          id: type
+          table: profile
+          field: type
+          value:
+            profile: profile
+          entity_type: profile
+          entity_field: type
+          plugin_id: bundle
+          group: 2
+      sorts: {  }
+      title: 'Search users'
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: true
+          content:
+            value: '<h4 class="section-title">Member results</h4><p>If you are searching for content, <a href="/search/content">click here</a> If you are searching for groups, <a href="/search/groups">click here</a></p>'
+            format: full_html
+          plugin_id: text
+      footer: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No results found.'
+            format: basic_html
+          plugin_id: text
+      relationships: {  }
+      arguments: {  }
+      display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: OR
+          2: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
+      tags:
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
+        - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.teaser'
+  page:
+    display_plugin: page
+    id: page
+    display_title: Page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: search/users/%keys
+      exposed_block: true
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
+      tags:
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
+        - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.teaser'
+  page_no_value:
+    display_plugin: page
+    id: page_no_value
+    display_title: 'Page (no value)'
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: search/users
+      exposed_block: true
+      display_description: ''
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - user.permissions
+      tags:
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
+        - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.teaser'

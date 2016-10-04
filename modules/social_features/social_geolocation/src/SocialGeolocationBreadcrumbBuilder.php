@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_search;
+namespace Drupal\social_geolocation;
 
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
@@ -11,7 +11,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 /**
  * Class to define the search breadcrumb builder.
  */
-class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
+class SocialGeolocationBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   use StringTranslationTrait;
 
   /**
@@ -19,12 +19,12 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function applies(RouteMatchInterface $route_match) {
     $search_routes = array(
-      'view.search_content.page',
-      'view.search_content.page_no_value',
-      'view.search_users.page',
-      'view.search_users.page_no_value',
-      'view.search_groups.page',
-      'view.search_groups.page_no_value',
+      'view.search_content_proximity.page',
+      'view.search_content_proximity.page_no_value',
+      'view.search_users_proximity.page',
+      'view.search_users_proximity.page_no_value',
+      'view.search_groups_proximity.page',
+      'view.search_groups_proximity.page_no_value',
     );
     return in_array($route_match->getRouteName(), $search_routes);
   }
@@ -36,18 +36,18 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb = new Breadcrumb();
 
     switch ($route_match->getRouteName()) {
-      case 'view.search_content.page':
-      case 'view.search_content.page_no_value':
+      case 'view.search_content_proximity.page':
+      case 'view.search_content_proximity.page_no_value':
         $page_title = $this->t('Search content');
         break;
 
-      case 'view.search_users.page':
-      case 'view.search_users.page_no_value':
+      case 'view.search_users_proximity.page':
+      case 'view.search_users_proximity.page_no_value':
         $page_title = $this->t('Search users');
         break;
 
-      case 'view.search_groups.page':
-      case 'view.search_groups.page_no_value':
+      case 'view.search_groups_proximity.page':
+      case 'view.search_groups_proximity.page_no_value':
         $page_title = $this->t('Search groups');
         break;
 

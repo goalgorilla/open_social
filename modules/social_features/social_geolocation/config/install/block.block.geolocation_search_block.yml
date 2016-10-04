@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_geolocation
+    - system
+  theme:
+    - socialbase
+id: geolocation_search_block
+theme: socialbase
+region: hero
+weight: null
+provider: null
+plugin: geolocation_search_block
+settings:
+  id: geolocation_search_block
+  label: Search
+  provider: social_geolocation
+  label_display: visible
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/content\r\n/search/content/*\r\n/search/users\r\n/search/users/*\r\n/search/groups\r\n/search/groups/*"
+    negate: false
+    context_mapping: {  }
