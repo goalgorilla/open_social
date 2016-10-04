@@ -37,6 +37,7 @@ function _social_profile_add_default_profile_image() {
     'uri' => $uri,
   ]);
   $media->uuid = '4eb1d927-28f4-402a-8c87-017e637f434a';
+  $media->status = 1;
   $media->save();
 
   $default_image['uuid'] = $media->uuid();
@@ -129,7 +130,7 @@ function _social_profile_create_menu_links() {
 /**
  * Set default profile image.
  */
-function social_profile_update_8001(&$sandbox) {
+function social_profile_update_8002(&$sandbox) {
   // Only run when there is not a file added to the file managed table.
   // Confirmed that it's not there on our current platforms. (But is locally).
   $query = \Drupal::database()->select('file_managed', 'fm');
