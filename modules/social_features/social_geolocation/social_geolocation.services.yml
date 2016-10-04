@@ -1,9 +1,0 @@
-services:
-  social_geolocation.overrider:
-    class: \Drupal\social_geolocation\SocialGeolocationConfigOverride
-    tags:
-      - {name: config.factory.override, priority: 5}
-  social_geolocation.breadcrumb:
-    class: Drupal\social_geolocation\SocialGeolocationBreadcrumbBuilder
-    tags:
-      - { name: breadcrumb_builder, priority: 100 }

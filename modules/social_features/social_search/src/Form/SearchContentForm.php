@@ -43,7 +43,7 @@ class SearchContentForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $search_content_view = \Drupal::moduleHandler()->moduleExists('social_geolocation') ? 'search_content_proximity' : 'search_content';
+    $search_content_view = 'search_content';
     if (empty($form_state->getValue('search_input_content'))) {
       // Redirect to the search content page with empty search values.
       $search_content_page = Url::fromRoute("view.$search_content_view.page_no_value");
