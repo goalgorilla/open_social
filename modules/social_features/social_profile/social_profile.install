@@ -97,6 +97,8 @@ function _social_profile_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
     'delete terms in profile_tag',
     'edit terms in profile_tag',
+    'administer profile settings',
+    'view profile email',
   ));
 
   return $permissions[$role];
@@ -156,10 +158,24 @@ function social_profile_update_8002(&$sandbox) {
 }
 
 /**
- * Add social_profile.settings config.
+ * Add social_profile.settings config. Update permissions for SM role.
  */
 function social_profile_update_8003(&$sandbox) {
   $config = \Drupal::service('config.factory')
     ->getEditable('social_profile.settings');
   $config->set('social_profile_show_email', 1)->save();
+
+  // Add permission to view profile email and administer profile settings for
+  // sitemanager role.
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $permissions = array(
+    'administer profile settings',
+    'view profile email',
+  );
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
