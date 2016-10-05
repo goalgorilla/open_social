@@ -236,7 +236,7 @@ var rsync         = require('gulp-rsync'),
     argv          = require('minimist')(process.argv);
 
   try {
-    var deploy        = require('./deploy-config.json');
+    var deploy    = require('./deploy_config.json');
   } catch(error) {
     console.log('Deploy config file missing');
   }
