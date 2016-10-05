@@ -196,3 +196,70 @@ function social_profile_user_insert(UserInterface $account) {
     $profile->save();
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ */
+function social_profile_form_user_form_alter(&$form, FormStateInterface $form_state) {
+  $profile = _social_profile_get_profile_from_route();
+
+  if ($profile instanceof Profile) {
+    if (isset($profile->field_profile_show_email)) {
+      $show_email = $profile->field_profile_show_email->value;
+      $form['profile_privacy'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Privacy settings'),
+        '#tree' => TRUE,
+      );
+      $form['profile_privacy']['social_profile_show_email'] = array(
+        '#type' => 'checkbox',
+        '#title_display' => 'before',
+        '#title' => t('Show my email on my profile'),
+        '#default_value' => $show_email,
+      );
+      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
+    }
+  }
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   Commnent on a post form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_profile_form_user_form_submit($form, FormStateInterface $form_state) {
+  $profile = _social_profile_get_profile_from_route();
+  $profile_privacy = $form_state->getValue('profile_privacy');
+
+  if ($profile instanceof Profile) {
+    if(isset($profile->field_profile_show_email)){
+      $profile->field_profile_show_email->value = $profile_privacy['social_profile_show_email'];
+      $profile->save();
+    }
+  }
+}
+
+function _social_profile_get_profile_from_route() {
+  $profile = NULL;
+  $entity_type_manager = \Drupal::entityTypeManager();
+
+  $account = \Drupal::routeMatch()->getParameter('user');
+  if (!is_object($account) && !is_null($account)) {
+    $account = $entity_type_manager
+      ->getStorage('user')
+      ->load($account);
+  }
+
+  if (!empty($account)) {
+    $storage = $entity_type_manager->getStorage('profile');
+    if (!empty($storage)) {
+      $profile = $storage->loadByUser($account, 'profile');
+    }
+  }
+
+  return $profile;
+}
+
