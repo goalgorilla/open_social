@@ -25,8 +25,19 @@ block content
 
             .form-group
               label.form-required Description
-              textarea.form-control.materialize-textarea(required)
-                | Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              .textarea--cke
+                textarea#ckeditor.form-control(required)
+                  :markdown
+                    Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. *Cras justo odio*, dapibus ac facilisis in, egestas eget quam. This is [an example](http://example.com/ "Title") inline link. Aenean lacinia bibendum nulla sed consectetur. Nullam quis risus eget urna mollis ornare vel eu leo.
+
+                    ### Ridiculus Vestibulum
+                    Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Vestibulum id ligula porta felis euismod semper. __Cras justo odio__, dapibus ac facilisis in, egestas eget quam. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Nullam quis risus eget urna mollis ornare vel _eu_ leo.
+
+                    * List
+                    * Item
+                    * Example
+
+                    Nulla vitae elit libero, a pharetra augue. Donec sed odio dui. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec ullamcorper nulla non metus auctor fringilla. Sed posuere consectetur est at lobortis.
 
             .form-group
               label Image
@@ -37,7 +48,7 @@ block content
                 .data.col-sm-8.col-md-9
                   .form-no-label
                     label.visually-hidden(for="edit-field-topic-image-0-alt") Alternative text
-                    input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text")
+                    input#edit-field-topic-image-0-alt.form-text.form-control(placeholder="Alternative text", type="text", value="Yellow camper on tour")
                     #edit-field-topic-image-0-alt--description.help-block This text will be used by screen readers, search engines, or when the image cannot be loaded.
                   span.file.file--mime-image-jpeg.file--image
                     span.file-icon
@@ -57,7 +68,7 @@ block content
 
               .form-group
                 label Location name
-                input.form-control(type="text")
+                input.form-control(type="text", value="The Old Tavern")
 
               .form-group
                 label Country
@@ -68,6 +79,7 @@ block content
                       option - None -
                       option(value='AB') Albania
                       option(value='DZ') Algeria
+                      option(value="US", selected) United States
 
                   span.input-group-addon
                     span.icon.glyphicon.glyphicon-refresh
@@ -75,3 +87,12 @@ block content
         .form-actions.clearfix
           a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Delete group
           input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')
+
+block scriptinline
+  script(src='js/contrib/ckeditor/ckeditor.js')
+  script(src='js/contrib/ckeditor/adapters/jquery.js')
+
+  script.
+    jQuery(document).ready(function($){
+      $( '#ckeditor' ).ckeditor();
+    });
