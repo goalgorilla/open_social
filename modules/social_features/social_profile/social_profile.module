@@ -164,18 +164,29 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
 function social_profile_preprocess_profile(&$variables) {
   $profile = $variables['profile'];
   $user = User::load($profile->getOwnerId());
+  $current_user = \Drupal::currentUser();
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
   $variables['profile_name'] = $user->getDisplayName();;
   $variables['profile_contact_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
-  // Derived from MailToFormatter.php.
-  $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+
+  // Email field.
+  $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+  if (isset($profile->field_profile_show_email)) {
+    $profile_show_email = $profile->field_profile_show_email->value;
+  }
+  if ($global_show_email
+    || !$global_show_email && !empty($profile_show_email)
+    || $current_user->hasPermission('view profile email')
+  ) {
+    // Derived from MailToFormatter.php.
+    $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+  }
 
   // Edit profile URL.
-  $account = \Drupal::currentUser();
-  if ($profile->access('edit', $account)) {
+  if ($profile->access('edit', $current_user)) {
     $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
   }
 }

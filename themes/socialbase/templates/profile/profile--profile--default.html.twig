@@ -81,10 +81,12 @@
                 <div class="list-group-field">{{ content.field_profile_phone_number }}</div>
             </div>
             {% endif %}
+            {% if user_mail %}
             <div class="list-group-item">
                 <div class="list-group-label">{% trans %}E-mail{% endtrans %}</div>
                 <div class="list-group-field">{{ user_mail }}</a></div>
             </div>
+            {% endif %}
             {% if content.field_profile_address|render %}
             <div class="list-group-item">
                 <div class="list-group-label">{% trans %}Address{% endtrans %}</div>
