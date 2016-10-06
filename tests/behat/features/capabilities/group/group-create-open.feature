@@ -33,7 +33,6 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I click "Test open group"
     And I should see "Test open group" in the "Hero block"
-    And I should see "Description text" in the "Hero block"
     And I should see "1 member" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"
@@ -44,23 +43,9 @@ Feature: Create Open Group
     And I should see "7514DR" in the "Hero block"
     And I should see "Enschede" in the "Hero block"
 
-  # @TODO: Uncomment this when Group hero caching will be fixed.
-  # DS-648 As a LU I want to see the members of a group
-    And I logout
-    And I am logged in as "Group User Two"
-    And I am on "newest-members"
-    And I click "Group User One"
-  # And I should see "Recently joined groups" in the "Sidebar second"
-    And I should see "Test open group" in the "Sidebar second"
-    And I click "Groups"
-    And I should see "Test open group" in the "Main content"
-    And I should not see the link "Add a group" in the "Main content"
-    And I click "Test open group"
-  # And I should see "Newest members" in the "Sidebar second"
-  # And I should see "Group User One" in the "Sidebar second"
-    And I click "Members"
-    And I should see "Members of Test open group"
-    And I should see "Group User One"
+    # As a LU I want to see the information about a group
+    When I click "About"
+    Then I should see "Description text" in the "Main content"
 
   # DS-647 As a LU I want to join a group
     And I should see the link "Join" in the "Hero block"
