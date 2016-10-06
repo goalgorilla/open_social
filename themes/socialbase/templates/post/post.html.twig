@@ -25,6 +25,9 @@
         {% endif %}
       </div>
       <div class="media-body">
+        {% if content.links %}
+          {{ content.links }}
+        {% endif %}
         <div class="media-heading text-m">
           {% if content.user_id %}
             {{ content.user_id }}
@@ -34,13 +37,12 @@
       </div>
     </div>
     <div class="margin-top-s">
+
       {% if content.field_post %}
         {{ content.field_post }}
       {% endif %}
     </div>
-    {% if content.links %}
-      {{ content.links }}
-    {% endif %}
+
     <div class="card-nested-section">
       {% if content.field_post_comments %}
         {{ content.field_post_comments }}

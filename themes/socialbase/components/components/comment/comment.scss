@@ -1,0 +1,78 @@
+@import 'init';
+
+.comment {
+  position: relative;
+  margin-top: .5em;
+  padding-top: .5em;
+  line-height: 1.2;
+  display: flex;
+  width: 100%;
+}
+
+.comment__avatar {
+  margin-right: 8px;
+  width: 44px;
+
+  @include MQ($small) {
+    margin-right: 12px;
+  }
+
+}
+
+.comment__content {
+  flex: 1;
+}
+
+.comment__author {
+  color: $gray-base;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.comment__metadata {
+  display: inline-block;
+  margin-left: 0.2em;
+  font-size: $button-font-size-small;
+  color: $gray-light;
+
+  > * {
+    display: inline-block;
+    margin-right: 0.5em;
+  }
+}
+
+.comment__text {
+  margin: .25em 0 .5em;
+  line-height: 1.3;
+
+  p {
+    margin: 0;
+  }
+}
+
+.comments {
+  margin: 0 0 .5em .5em;
+  padding: 1em 0 1em 1em;
+
+  .comment:first-of-type {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
+
+// make sure the btn-group is positioned top right of the comment
+.comment__actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.comment__reply-btn {
+  color: $link-color;
+  fill: $link-color;
+  background-color: transparent;
+  border-color: transparent;
+  padding: 0;
+  font-size: $button-font-size-small;
+}
