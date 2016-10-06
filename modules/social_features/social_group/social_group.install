@@ -126,3 +126,12 @@ function social_group_update_8002() {
     $view->save();
   }
 }
+
+/**
+ * Remove deprecated group description field.
+ */
+function social_group_update_8004(&$sandbox) {
+  $description_field = 'group.open_group.field_group_description';
+  $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($description_field);
+  $field->delete();
+}
