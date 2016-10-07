@@ -58,7 +58,7 @@ gulp.task('styleguide', function() {
   .pipe(gulp.dest(config.dist)) // tell gulp our output folder
 });
 
-gulp.task('watch:styleguide', function () {
+gulp.task('watch:styleguide', ['styleguide'], function () {
   return gulp.watch(config.patterns + '**/*', ['styleguide'] );
 });
 
@@ -90,7 +90,7 @@ gulp.task('scripts', function() {
   .pipe( gulp.dest(config.dist + '/js') );
 });
 
-gulp.task('watch:js', function () {
+gulp.task('watch:js', ['scripts', 'scripts-drupal'],  function () {
   return gulp.watch([config.js + '**/*.js', config.components + '**/*.js'], ['scripts', 'scripts-drupal'] );
 });
 
@@ -235,8 +235,11 @@ var rsync         = require('gulp-rsync'),
     gulpif        = require('gulp-if'),
     argv          = require('minimist')(process.argv);
 
-
-//var deploy        = require('./secret/config.json');
+  try {
+    var deploy    = require('./deploy_config.json');
+  } catch(error) {
+    console.log('Deploy config file missing');
+  }
 
 
 // Generate an error for deploy if something goes wrong
