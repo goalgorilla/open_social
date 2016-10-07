@@ -1,0 +1,61 @@
+extends ./layout/base-lu.pug
+
+block title
+  title Happy Campers
+
+block pagetitle
+  .container.hero-container
+    include ./molecules/_my-group-hero.pug
+
+  .container.hero-container
+    .brand-secondary.z-depth-1
+      nav(role="navigation" aria-label="Tabs")
+        h2.visually-hidden Secondary navigation
+        ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
+          li
+            a(href='group-stream.html') Stream
+          li.active
+            a(href='group-about.html') About
+              span.visually-hidden (active tab)
+          li
+            a(href='group-topics.html') Topics
+          li
+            a(href='group-events.html') Events
+          li
+            a(href="group-members.html") Members
+
+block content
+
+  .row.margin-top-l
+    .col-sm-4.col-sm-last.margin-top-complementary
+
+      include ./molecules/_group-upcoming-events.pug
+      include ./molecules/_group-new-topics.pug
+      include ./molecules/_group-new-members.pug
+
+    .col-xs-12.col-sm-8
+      h4.section-title.section-title-node About Happy Campers
+
+      .card
+        .card-body.extra-padding.body-text
+          :markdown
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. *Cras justo odio*, dapibus ac facilisis in, egestas eget quam. This is [an example](http://example.com/ "Title") inline link. Aenean lacinia bibendum nulla sed consectetur. Nullam quis risus eget urna mollis ornare vel eu leo.
+
+            ### Ridiculus Vestibulum
+            Nullam id dolor id nibh ultricies vehicula ut id elit. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Vestibulum id ligula porta felis euismod semper. __Cras justo odio__, dapibus ac facilisis in, egestas eget quam. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Nullam quis risus eget urna mollis ornare vel _eu_ leo.
+
+            * List
+            * Item
+            * Example
+
+            Nulla vitae elit libero, a pharetra augue. Donec sed odio dui. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec ullamcorper nulla non metus auctor fringilla. Sed posuere consectetur est at lobortis.
+
+            **Here is the code**
+
+            ```
+            Curabitur blandit tempus porttitor. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Maecenas faucibus mollis interdum. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam quis risus eget urna mollis ornare vel eu leo.
+            ```
+          img.responsive-img(src="content/images/purple-roller.jpg")
+
+
+block scriptinline
