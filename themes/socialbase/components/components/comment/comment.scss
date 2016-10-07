@@ -51,12 +51,28 @@
 }
 
 .comments {
-  margin: 0 0 .5em .5em;
-  padding: 1em 0 1em 1em;
+  border-radius: $border-radius-base;
+  background: $gray-lightest;
+  margin-bottom: 0.5em;
+  padding: 1em 0.5em 1em 1em;
+
+  @include MQ($medium) {
+    margin-left: 56px;
+  }
 
   .comment:first-of-type {
     padding-top: 0;
     margin-top: 0;
+  }
+
+  // avatars in replies shoudl be smaller
+  .comment__avatar {
+    width: 34px;
+
+    img {
+      width: 34px;
+      height: 34px;
+    }
   }
 }
 
