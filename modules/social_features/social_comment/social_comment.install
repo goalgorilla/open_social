@@ -49,6 +49,7 @@ function _social_comment_get_permissions($role) {
     'skip comment approval',
     'edit own comments',
     'delete own comments',
+    'administer own comments',
   ));
 
 
@@ -63,4 +64,22 @@ function _social_comment_get_permissions($role) {
   ));
 
   return $permissions[$role];
+}
+
+/**
+ * Enable 'administer own comments' permission for authenticated users.
+ */
+function social_comment_update_8001(&$sandbox) {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'administer own comments',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'authenticated') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
