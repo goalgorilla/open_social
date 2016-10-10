@@ -214,3 +214,14 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       ->view($entity, 'full');
   }
 }
+
+/**
+ * Implements hook_field_info_alter().
+ *
+ * Change the default list_class for fields of type 'comment'.
+ */
+function social_comment_field_info_alter(&$info) {
+  if (isset($info['comment'])) {
+    $info['comment']['list_class'] = '\Drupal\social_comment\SocialCommentFieldItemList';
+  }
+}

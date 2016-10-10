@@ -99,17 +99,6 @@ function social_verify_custom_requirements(&$install_state) {
     ];
   }
 
-  // Check to see if bcmath extension is actually available.
-  $bc_math_enabled = (extension_loaded('bcmath'));
-  if (!$bc_math_enabled) {
-    $requirements['bcmatch'] = array(
-      'title' => t('BC Math'),
-      'value' => t('Not installed'),
-      'severity' => REQUIREMENT_ERROR,
-      'description' => t('the PHP BC Math library is not installed (correctly). <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-    );
-  }
-
   return install_display_requirements($install_state, $requirements);
 }
 
