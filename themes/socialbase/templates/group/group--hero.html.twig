@@ -45,8 +45,7 @@
     <div class="hero-footer">
       <div class="row row-md-center">
         <div class="col-xs-12 col-md-6 col-md-offset-3">
-          {{ content.field_group_description }}
-          {% if content.field_group_description|render and (content.field_group_location|render or content.field_group_address|render)  %}
+          {% if content.field_group_location|render or content.field_group_address|render  %}
             <br />
             <svg class="hero-footer-icon">
               <use xlink:href="#icon-location"></use>

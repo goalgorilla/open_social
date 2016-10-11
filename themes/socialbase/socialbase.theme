@@ -518,7 +518,8 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 
-  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }
@@ -902,7 +903,8 @@ function socialbase_preprocess_image_style(&$variables) {
 function socialbase_preprocess_form_element(&$variables) {
 
   // Tell the label for a switch form element it is in that switch form element
-  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $variables['label']['#switch'] = TRUE;
   }
 

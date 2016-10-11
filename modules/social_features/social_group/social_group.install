@@ -5,6 +5,9 @@
  */
 
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\Core\Database\Database;
 
 /**
  * Implements hook_install().
@@ -128,9 +131,83 @@ function social_group_update_8002() {
 }
 
 /**
+ * Converts group description field type from plain text to formatted text.
+ */
+function social_group_update_8004(&$sandbox) {
+
+  $entity = 'group';
+  $bundle = 'open_group';
+  $field_name = 'field_group_description';
+  $display_mode = 'default';
+
+  // Add a new column 'format' for description field type.
+  $spec = array(
+    'type' => 'varchar',
+    'description' => '',
+    'length' => 255,
+    'not null' => FALSE,
+    'default' => NULL,
+  );
+  $schema = Database::getConnection()->schema();
+  $table = "{$entity}__{$field_name}";
+  $col = "{$field_name}_format";
+  $schema->addField($table, $col, $spec);
+
+  // Update the field storage settings.
+  $field_storage_id = "{$entity}.$field_name";
+  $field_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config')->load($field_storage_id);
+
+  // Since the usual workflow for field storages do not allow changing the
+  // field type, we have to work around it in this case.
+  $new_field_storage = $field_storage->toArray();
+  $new_field_storage['type'] = 'text_long';
+  $new_field_storage['module'] = 'text';
+  $new_field_storage['settings'] = [];
+  $new_field_storage['dependencies']['module'][] = 'text';
+  $new_field_storage = FieldStorageConfig::create($new_field_storage);
+  $new_field_storage->original = $new_field_storage;
+  $new_field_storage->enforceIsNew(FALSE);
+  $new_field_storage->save();
+
+  // Update the field settings.
+  $field_id = "{$entity}.{$bundle}.$field_name";
+  $field = \Drupal::entityTypeManager()->getStorage('field_config')->load($field_id);
+  $new_field = $field->toArray();
+  $new_field['field_type'] = 'text_long';
+  $new_field['dependencies']['module'][] = 'text';
+  $new_field = FieldConfig::create($new_field);
+  $new_field->original = $field;
+  $new_field->enforceIsNew(FALSE);
+  $new_field->save();
+
+  // Update entity view display.
+  $display_id = "{$entity}.{$bundle}.$display_mode";
+  $view_display = \Drupal::entityManager()->getStorage('entity_view_display')->load($display_id);
+  if ($component = $view_display->getComponent($field_name)) {
+    $view_display->setComponent($field_name, array(
+        'type' => 'basic_string',
+        'settings' => [],
+      ) + $component)->save();
+  }
+
+  // Update entity form display.
+  $form_display_name = 'group.open_group.default';
+  $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load($form_display_name);
+  if (($component = $form_display->getComponent($field_name)) && $component['type'] == 'string_textarea') {
+    $form_display->setComponent($field_name, array(
+        'type' => 'text_textarea',
+        'settings' => array(
+          'rows' => 5,
+          'placeholder' => '',
+        ),
+      ) + $component)->save();
+  }
+}
+
+/**
  * Uninstall geocoder and geolocation modules. Remove group geolocation field.
  */
-function social_group_update_8003() {
+function social_group_update_8005() {
   $modules = array(
     'geolocation',
     'geocoder',
@@ -156,6 +233,6 @@ function social_group_update_8003() {
   \Drupal::service('module_installer')->uninstall($modules);
 
   // Remove group geolocation field.
-  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
+  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation1')->delete();
   $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
 }
