@@ -637,7 +637,10 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__page';
   }
 
-  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
+  if (!empty($views_display->display['id']) && (
+    $views_display->display['id'] == 'block_stream_homepage' ||
+    $views_display->display['id'] == 'page_activity_stream' ||
+    $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group')) {
     $suggestions[] = $variables['theme_hook_original'] . '__stream';
   }
 

@@ -5,3 +5,11 @@ social_core.access_denied:
     _title: 'Access Denied'
   requirements:
     _permission: 'access content'
+
+social_core.homepage:
+  path: '/stream'
+  defaults:
+    _controller: '\Drupal\social_core\Controller\SocialCoreController::stream'
+    _title: 'Stream'
+  requirements:
+    _permission: 'access content'
