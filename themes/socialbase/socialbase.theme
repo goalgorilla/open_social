@@ -1316,10 +1316,13 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
   }
 }
 
-
 /**
  * Implements hook_js_alter().
  */
 function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
   $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = drupal_get_path('theme','socialbase') . '/js/custom/imageWidgetCrop.js';
+
+  if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {
+    $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
+  }
 }
