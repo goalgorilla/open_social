@@ -47,6 +47,24 @@ Feature: Create Open Group
     When I click "About"
     Then I should see "Description text" in the "Main content"
 
+  # @TODO: Uncomment this when Group hero caching will be fixed.
+  # DS-648 As a LU I want to see the members of a group
+    And I logout
+    And I am logged in as "Group User Two"
+    And I am on "newest-members"
+    And I click "Group User One"
+  # And I should see "Recently joined groups" in the "Sidebar second"
+    And I should see "Test open group" in the "Sidebar second"
+    And I click "Groups"
+    And I should see "Test open group" in the "Main content"
+    And I should not see the link "Add a group" in the "Main content"
+    And I click "Test open group"
+  # And I should see "Newest members" in the "Sidebar second"
+  # And I should see "Group User One" in the "Sidebar second"
+    And I click "Members"
+    And I should see "Members of Test open group"
+    And I should see "Group User One"
+
   # DS-647 As a LU I want to join a group
     And I should see the link "Join" in the "Hero block"
     And I click "Join"
