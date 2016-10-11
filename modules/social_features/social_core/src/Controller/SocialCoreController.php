@@ -23,4 +23,14 @@ class SocialCoreController extends ControllerBase {
     return array('#markup' => $text);
   }
 
+  /**
+   * Empty page for the homepage.
+   */
+  public function stream() {
+    $element = array(
+      '#markup' => '',
+    );
+    return $element;
+  }
+
 }

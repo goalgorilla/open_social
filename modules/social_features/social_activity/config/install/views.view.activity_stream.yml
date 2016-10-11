@@ -250,6 +250,23 @@ display:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
         - 'config:core.entity_view_display.activity.activity.notification_archive'
+  block_stream_homepage:
+    display_plugin: block
+    id: block_stream_homepage
+    display_title: 'Homepage stream block'
+    position: 3
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url.query_args
+      tags:
+        - 'config:core.entity_view_display.activity.activity.default'
+        - 'config:core.entity_view_display.activity.activity.notification'
+        - 'config:core.entity_view_display.activity.activity.notification_archive'
   page_activity_stream:
     display_plugin: page
     id: page_activity_stream
@@ -258,6 +275,12 @@ display:
     display_options:
       display_extenders: {  }
       path: stream
+      access:
+        type: none
+        options: {  }
+      defaults:
+        access: false
+      enabled: false
     cache_metadata:
       max-age: -1
       contexts:
