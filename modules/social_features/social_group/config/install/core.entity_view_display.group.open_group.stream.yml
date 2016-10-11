@@ -2,27 +2,23 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.group.stream
     - field.field.group.open_group.field_group_address
     - field.field.group.open_group.field_group_description
     - field.field.group.open_group.field_group_geolocation
     - field.field.group.open_group.field_group_image
     - field.field.group.open_group.field_group_location
     - group.type.open_group
-id: group.open_group.default
+id: group.open_group.stream
 targetEntityType: group
 bundle: open_group
-mode: default
-content:
-  field_group_description:
-    type: basic_string
-    weight: 0
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
+mode: stream
+content: {  }
 hidden:
   changed: true
   created: true
   field_group_address: true
+  field_group_description: true
   field_group_geolocation: true
   field_group_image: true
   field_group_location: true

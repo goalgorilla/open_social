@@ -251,19 +251,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
   }
-
-  $group_forms = array(
-    'group_open_group_add_form',
-    'group_open_group_edit_form',
-  );
-
-  // Perform alterations on group add/edit forms.
-  if (in_array($form_id, $group_forms)) {
-    // Add character count script for description textarea.
-    $form['#attached']['library'][] = 'social_group/add_form';
-    $form['field_group_description']['widget']['0']['value']['#attributes'] = array('length' => '200');
-  }
-
 }
 
 /**
