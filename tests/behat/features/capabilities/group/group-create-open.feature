@@ -14,7 +14,7 @@ Feature: Create Open Group
     And I click "Groups"
     And I click "Add a group"
     When I fill in "Title" with "Test open group"
-    And I fill in "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "GG HQ"
     And I select "NL" from "Country"
     And I wait for AJAX to finish
@@ -46,6 +46,24 @@ Feature: Create Open Group
     # As a LU I want to see the information about a group
     When I click "About"
     Then I should see "Description text" in the "Main content"
+
+  # @TODO: Uncomment this when Group hero caching will be fixed.
+  # DS-648 As a LU I want to see the members of a group
+    And I logout
+    And I am logged in as "Group User Two"
+    And I am on "newest-members"
+    And I click "Group User One"
+  # And I should see "Recently joined groups" in the "Sidebar second"
+    And I should see "Test open group" in the "Sidebar second"
+    And I click "Groups"
+    And I should see "Test open group" in the "Main content"
+    And I should not see the link "Add a group" in the "Main content"
+    And I click "Test open group"
+  # And I should see "Newest members" in the "Sidebar second"
+  # And I should see "Group User One" in the "Sidebar second"
+    And I click "Members"
+    And I should see "Members of Test open group"
+    And I should see "Group User One"
 
   # DS-647 As a LU I want to join a group
     And I should see the link "Join" in the "Hero block"
