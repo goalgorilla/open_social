@@ -229,10 +229,11 @@ function social_group_update_8005() {
     $query->condition('name', $module);
     $query->execute();
   }
-  // Uninstall geocoder and geolocation modules.
-  \Drupal::service('module_installer')->uninstall($modules);
 
   // Remove group geolocation field.
-  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation1')->delete();
+  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
   $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
+
+  // Uninstall geocoder and geolocation modules.
+  \Drupal::service('module_installer')->uninstall($modules);
 }
