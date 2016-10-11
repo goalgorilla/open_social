@@ -20,6 +20,8 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image
   _social_profile_add_default_profile_image();
+  // Set default config.
+  _social_profile_set_default_config();
 }
 
 /**
@@ -130,6 +132,15 @@ function _social_profile_create_menu_links() {
 }
 
 /**
+ * Set default config.
+ */
+function _social_profile_set_default_config() {
+  $config = \Drupal::configFactory()->getEditable('social_profile.settings');
+  $config->set('social_profile_show_email', 1);
+  $config->save();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function social_profile_uninstall() {
@@ -161,9 +172,7 @@ function social_profile_update_8002(&$sandbox) {
  * Add social_profile.settings config. Update permissions for SM role.
  */
 function social_profile_update_8003(&$sandbox) {
-  $config = \Drupal::service('config.factory')
-    ->getEditable('social_profile.settings');
-  $config->set('social_profile_show_email', 1)->save();
+  _social_profile_set_default_config();
 
   // Add permission to view profile email and administer profile settings for
   // sitemanager role.
