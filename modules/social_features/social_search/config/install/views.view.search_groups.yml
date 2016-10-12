@@ -1,5 +1,5 @@
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - search_api.index.social_groups
@@ -26,12 +26,8 @@ display:
         options:
           perm: 'access group search'
       cache:
-        type: search_api
-        options:
-          results_lifespan: '3600'
-          results_lifespan_custom: '0'
-          output_lifespan: '3600'
-          output_lifespan_custom: '0'
+        type: none
+        options: {  }
       query:
         type: views_query
         options:

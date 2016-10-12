@@ -14,7 +14,7 @@ Feature: Create Open Group
     And I click "Groups"
     And I click "Add a group"
     When I fill in "Title" with "Test open group"
-    And I fill in "edit-field-group-description-0-value" with "Description text"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "GG HQ"
     And I select "NL" from "Country"
     And I wait for AJAX to finish
@@ -33,7 +33,6 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I click "Test open group"
     And I should see "Test open group" in the "Hero block"
-    And I should see "Description text" in the "Hero block"
     And I should see "1 member" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"
@@ -43,6 +42,10 @@ Feature: Create Open Group
     And I should see "Oldenzaalsestraat" in the "Hero block"
     And I should see "7514DR" in the "Hero block"
     And I should see "Enschede" in the "Hero block"
+
+    # As a LU I want to see the information about a group
+    When I click "About"
+    Then I should see "Description text" in the "Main content"
 
   # @TODO: Uncomment this when Group hero caching will be fixed.
   # DS-648 As a LU I want to see the members of a group

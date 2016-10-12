@@ -14,7 +14,7 @@ Feature: Edit my group as a group manager
     And I click "Groups"
     And I click "Add a group"
     When I fill in "Title" with "Test open group"
-    And I fill in "edit-field-group-description-0-value" with "Description text"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I should see "1 member"
@@ -23,14 +23,18 @@ Feature: Edit my group as a group manager
     And I click "Groups"
     And I click "Test open group" in the "Main content"
     Then I should see "Test open group"
-    And I should see "Description text"
+
+    # As a LU I want to see the information about a group
+    When I click "About"
+    Then I should see "Description text" in the "Main content"
 
     When I click "Edit group"
-    And I fill in "edit-field-group-description-0-value" with "Description text - edited"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
     And I click "Test open group" in the "Main content"
-    And I should see "Description text - edited"
+    And I click "About"
+    Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
 
   # DS-706 As a Group Manager I want to manage group memberships
@@ -79,7 +83,7 @@ Feature: Edit my group as a group manager
     And I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Delete"
     Then I should see "This action cannot be undone"
-    And I should see the button "Delete
+    And I should see the button "Delete"
     And I should see the link "Cancel"
     And I click "Cancel"
 

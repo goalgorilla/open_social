@@ -1,6 +1,6 @@
 /**
  * @file
- * Handles AJAX fetching of views, including filter submission and response.
+ * Init navbar-search.
  */
 
 (function ($) {

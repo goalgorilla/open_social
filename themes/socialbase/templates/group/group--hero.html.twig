@@ -45,8 +45,7 @@
     <div class="hero-footer">
       <div class="row row-md-center">
         <div class="col-xs-12 col-md-6 col-md-offset-3">
-          {{ content.field_group_description }}
-          {% if content.field_group_description|render and (content.field_group_location|render or content.field_group_address|render)  %}
+          {% if content.field_group_location|render or content.field_group_address|render  %}
             <br />
             <svg class="hero-footer-icon">
               <use xlink:href="#icon-location"></use>
@@ -58,18 +57,20 @@
             {{ content.field_group_address }} </span>
         </div>
 
-        <div class="col-xs-12 col-md-3">
-          <div class="btn-group">
-            {% if joined %}
-              <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">Joined<span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
-              </ul>
-            {% else %}
-              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
-            {% endif %}
+        {% if group_operations_url %}
+          <div class="col-xs-12 col-md-3">
+            <div class="btn-group">
+              {% if joined %}
+                <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">Joined<span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
+                </ul>
+              {% else %}
+                <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
+              {% endif %}
+            </div>
           </div>
-        </div>
+        {% endif %}
       </div>
     </div>
   </div>

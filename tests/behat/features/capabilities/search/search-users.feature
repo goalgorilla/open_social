@@ -13,8 +13,8 @@
     And I am logged in as an "authenticated user"
     And I am on "search/users"
     When I fill in the following:
-      | search_input_users | one |
-    And I press "Search Users"
+      | search_input | one |
+    And I press "Search"
     And I should see the heading "Search" in the "Hero block" region
     And I should see "User one" in the "Main content"
     And I should not see "User two" in the "Main content"
