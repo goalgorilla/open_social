@@ -203,3 +203,37 @@ function social_group_update_8004(&$sandbox) {
       ) + $component)->save();
   }
 }
+
+/**
+ * Uninstall geocoder and geolocation modules. Remove group geolocation field.
+ */
+function social_group_update_8005() {
+  $modules = array(
+    'geolocation',
+    'geocoder',
+  );
+
+  $config_factory = \Drupal::service('config.factory');
+
+  foreach ($modules as $module) {
+    // Remove config.
+    $config_factory->getEditable("$module.settings")->delete();
+
+    // Remove cache tables.
+    if (db_table_exists("cache_$module")) {
+      db_drop_table("cache_$module");
+    }
+
+    // Remove data from system.schema.
+    $query = \Drupal::database()->delete('key_value');
+    $query->condition('name', $module);
+    $query->execute();
+  }
+
+  // Remove group geolocation field.
+  $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
+  $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
+
+  // Uninstall geocoder and geolocation modules.
+  \Drupal::service('module_installer')->uninstall($modules);
+}
