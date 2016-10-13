@@ -225,9 +225,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $create_account_url = Url::fromUserInput('/user/register');
       $create_account_link = Link::fromTextAndUrl(t('create a new account'), $create_account_url)->toString();
 
-      drupal_set_message($this->t('Please log in or !create_account_link so that you can enroll to the event.',
+      drupal_set_message($this->t('Please log in or @create_account_link so that you can enroll to the event.',
         [
-          '!create_account_link' => $create_account_link,
+          '@create_account_link' => $create_account_link,
         ]));
       return;
     }
