@@ -8,8 +8,8 @@
         var $complementaryBottom = $('.complementary-bottom');
 
         $complementaryBottom.responsiveDom({
-            appendTo: $complementaryTop,
-            mediaQuery: '(min-width: 768px)'
+          appendTo: $complementaryTop,
+          mediaQuery: '(min-width: 768px)'
         });
 			});
 

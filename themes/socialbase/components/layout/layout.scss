@@ -9,9 +9,18 @@
 }
 
 @include MQ($small) {
-  .margin-top-complementary {
+  .complementary-top {
     // line-height * section-title font size + padding top + padding bottom
     margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
+  }
+
+  .path-frontpage,
+  .path-node:not(.page-node-edit) {
+
+    .complementary-top {
+      margin-top: 0;
+    }
+
   }
 
   // provide an offset that matches the section title element + a paragraph

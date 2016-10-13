@@ -63,7 +63,7 @@ function social_verify_custom_requirements(&$install_state) {
 
   // Added a custom check for users to see if the Address libraries are
   // downloaded.
-  if (!class_exists('\CommerceGuys\Addressing\Repository\AddressFormatRepository')) {
+  if (!class_exists('\CommerceGuys\Addressing\Address')) {
     $requirements['addressing_library'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
@@ -97,17 +97,6 @@ function social_verify_custom_requirements(&$install_state) {
       'description' => t('The Address module requires the commerceguys/zone library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
       'severity' => REQUIREMENT_ERROR,
     ];
-  }
-
-  // Check to see if bcmath extension is actually available.
-  $bc_math_enabled = (extension_loaded('bcmath'));
-  if (!$bc_math_enabled) {
-    $requirements['bcmatch'] = array(
-      'title' => t('BC Math'),
-      'value' => t('Not installed'),
-      'severity' => REQUIREMENT_ERROR,
-      'description' => t('the PHP BC Math library is not installed (correctly). <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-    );
   }
 
   return install_display_requirements($install_state, $requirements);

@@ -21,6 +21,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('entity.group.canonical')) {
       $route->setPath('/group/{group}/stream');
       $defaults = $route->getDefaults();
+      $defaults['_entity_view'] = 'group.stream';
       $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupStreamTitle';
       $route->setDefaults($defaults);
     }

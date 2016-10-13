@@ -43,7 +43,7 @@
   {%- endif -%}
 
   {% if links['comment-edit'] or links['comment-delete'] %}
-    <div class="btn-group pull-right">
+    <div class="comment__actions btn-group pull-right">
       <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
         <svg class="btn-icon icon-gray">
           <use xlink:href="#icon-expand_more"></use>
@@ -83,12 +83,10 @@
 
 {% if links['comment-reply'] %}
 
-  <div class="clearfix reply-placeholder">
-    <div class="btn btn-flat btn-sm pull-right">
-      {%- for key, item in links|reverse if key == "comment-reply" -%}
-        {{ item.link }}
-      {%- endfor -%}
-    </div>
+  <div class="btn comment__reply-btn">
+    {%- for key, item in links|reverse if key == "comment-reply" -%}
+      {{ item.link }}
+    {%- endfor -%}
   </div>
 
 {%- endif %}

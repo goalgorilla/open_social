@@ -15,6 +15,7 @@ use \Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
+use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -211,10 +212,8 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
    $suggestions[] = 'block__block_menu__' . $menu_name;
   }
 
-  $content = $variables['elements']['content'];
-
-  if (isset($content['#block_content']) and $content['#block_content'] instanceof \Drupal\block_content\BlockContentInterface) {
-    $suggestions[] = 'block__block_type__' . $content['#block_content']->bundle();
+  if (isset($variables['elements']['content']['#block_content'])) {
+    $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
   }
 
   $block_id = $variables['elements']['#derivative_plugin_id'];
@@ -289,7 +288,9 @@ function socialbase_preprocess_block(&$variables) {
 
   // Add search_block to main menu.
   if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
-    $block = Block::load('search_content_block_header');
+    $block_id = \Drupal::moduleHandler()->moduleExists('social_geolocation') ? 'geolocation_search_content_block_header' : 'search_content_block_header';
+    $block = Block::load($block_id);
+
     if(!empty($block)){
       $block_output = \Drupal::entityManager()
         ->getViewBuilder('block')
@@ -300,35 +301,18 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   // Preprocess search block header.
-  if (isset($variables['content']['search_content_form'])) {
-    $variables['content']['search_content_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_content_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_content_form']['actions']['submit']['#addsearchicon'] = TRUE;
+  if (isset($variables['content']['search_form'])) {
+    $variables['content']['search_form']['#attributes']['role'] = 'search';
+    $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
+    $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
 
     if ($region == 'hero') {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'hero-form';
-      $variables['content']['search_content_form']['#region'] = 'hero';
+      $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
+      $variables['content']['search_form']['#region'] = 'hero';
     }
     else {
-      $variables['content']['search_content_form']['#attributes']['class'][] = 'navbar-form';
+      $variables['content']['search_form']['#attributes']['class'][] = 'navbar-form';
     }
-  }
-  if (isset($variables['content']['search_users_form'])) {
-    // Add class for the forms as well.
-    $variables['content']['search_users_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_users_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_users_form']['search_input_users']['#name'] = 'search_input_users';
-    $variables['content']['search_users_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_users_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_users_form']['#region'] = 'hero';
-  }
-  if (isset($variables['content']['search_groups_form'])) {
-    $variables['content']['search_groups_form']['#attributes']['role'] = 'search';
-    $variables['content']['search_groups_form']['actions']['submit']['#is_button'] = FALSE;
-    $variables['content']['search_groups_form']['search_input_groups']['#name'] = 'search_input_groups';
-    $variables['content']['search_groups_form']['actions']['submit']['#addsearchicon'] = TRUE;
-    $variables['content']['search_groups_form']['#attributes']['class'][] = 'hero-form';
-    $variables['content']['search_groups_form']['#region'] = 'hero';
   }
 
   // Add Group ID for "See all groups link".
@@ -350,26 +334,30 @@ function socialbase_preprocess_block(&$variables) {
     $variables['profile_user_id'] = $profile_user_id;
   }
   // AN Homepage block.
-  if ($variables['attributes']['id'] === 'block-anhomepageheroblock' || $variables['attributes']['id'] === 'block-' . $prefix . '-anhomepageheroblock') {
-    $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
-    $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
-    $entity = BlockContent::load($imageitem->id());
-    $file_id = $entity->get('field_hero_image')->target_id;
-    // If it's an existing file.
-    if ($file = File::load($file_id)) {
-      // Style and set it in the content.
-      $styled_image_url = ImageStyle::load($imagestyle)
-        ->buildUrl($file->getFileUri());
-      $variables['image_url'] = $styled_image_url;
+  if (isset($variables['elements']['content']['#block_content'])) {
+    if($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {
 
-      // Add extra class.
-      $variables['has_image'] = TRUE;
+      $imageitem = $variables['content']['field_hero_image'][0]['#item']->getEntity();
+      $imagestyle = $variables['content']['field_hero_image'][0]['#image_style'];
+      $entity = BlockContent::load($imageitem->id());
+      $file_id = $entity->get('field_hero_image')->target_id;
 
-      // Remove the origingal.
-      unset($variables['content']['field_hero_image']);
+      // If it's an existing file.
+      if ($file = File::load($file_id)) {
+        // Style and set it in the content.
+        $styled_image_url = ImageStyle::load($imagestyle)
+          ->buildUrl($file->getFileUri());
+        $variables['image_url'] = $styled_image_url;
 
+        // Add extra class.
+        $variables['has_image'] = TRUE;
+
+        // Remove the origingal.
+        unset($variables['content']['field_hero_image']);
+
+      }
     }
-  } // AN Homepage block.
+  }
 
 
 
@@ -530,7 +518,8 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 
-  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }
@@ -633,7 +622,10 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__page';
   }
 
-  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'page_activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
+  if (!empty($views_display->display['id']) && (
+    $views_display->display['id'] == 'block_stream_homepage' ||
+    $views_display->display['id'] == 'page_activity_stream' ||
+    $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group')) {
     $suggestions[] = $variables['theme_hook_original'] . '__stream';
   }
 
@@ -914,7 +906,8 @@ function socialbase_preprocess_image_style(&$variables) {
 function socialbase_preprocess_form_element(&$variables) {
 
   // Tell the label for a switch form element it is in that switch form element
-  if (in_array('email_notifications', $variables['element']['#array_parents'], TRUE)) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $variables['label']['#switch'] = TRUE;
   }
 
@@ -1117,8 +1110,13 @@ function socialbase_preprocess_form(&$variables) {
   $element = $variables['element'];
 
   // If this is a search content form set a variable for twig
-  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_users_form' || $element['#form_id'] === 'search_groups_form') {
+  if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'geolocation_search_form' || $element['#form_id'] === 'geolocation_search_content_form') {
     $variables['is_search_form'] = TRUE;
+  }
+
+  // Add the custom search autocomplete to search users for now only.
+  if ($element['#form_id'] === 'search_users_form') {
+    $variables['#attached']['library'][] = 'socialbase/searchautocomplete';
   }
 
   // We have set the region via propress block, now pass this variable on to be used in twig
@@ -1269,7 +1267,7 @@ function socialbase_preprocess_file_widget_multiple(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_hook().
+ * Implements template_preprocess_table().
  */
 function socialbase_preprocess_table(&$variables) {
   $variables['card'] = TRUE;
@@ -1306,11 +1304,29 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
   }
 }
 
+function socialbase_preprocess_html(&$variables) {
+  //indentify the difference between nodes and node/add & node/edit
+  if ($variables['root_path'] == 'node') {
+    $current_path = \Drupal::service('path.current')->getPath();
+    $path_pieces = explode("/", $current_path);
+    $path_target = array('add');
+    if(count(array_intersect($path_pieces, $path_target)) > 0 ){
+      $variables['node_edit'] = TRUE;
+    }
+  }
 
-/**
- * Implements hook_js_alter
- */
-function socialbase_js_alter(&$javascript) {
-  $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = 'profiles/contrib/social/themes/socialbase/js/custom/imageWidgetCrop.js';
 }
 
+/**
+ * Implements hook_js_alter().
+ */
+function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+  if (isset($javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js'])) {
+    $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = drupal_get_path('theme','socialbase') . '/js/custom/imageWidgetCrop.js';
+  }
+
+  if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {
+    $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
+  }
+
+}

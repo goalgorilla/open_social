@@ -98,6 +98,7 @@
       float: none;
       max-width: none;
       padding-top: 0;
+      box-shadow: none;
 
       li a {
         color: white;
@@ -151,6 +152,10 @@
 
 }
 
+.profile .dropdown-toggle img {
+  border: 1px solid white;
+}
+
 .navbar-footer {
 
   .navbar-brand {
@@ -168,6 +173,12 @@
 
   .navbar-right {
     text-align: center;
+
+    li {
+      @include MQ($small) {
+        float: left;
+      }
+    }
 
     @include MQ($x-large) {
       margin-right: 0;

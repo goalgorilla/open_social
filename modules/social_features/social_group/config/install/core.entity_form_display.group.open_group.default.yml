@@ -4,7 +4,6 @@ dependencies:
   config:
     - field.field.group.open_group.field_group_address
     - field.field.group.open_group.field_group_description
-    - field.field.group.open_group.field_group_geolocation
     - field.field.group.open_group.field_group_image
     - field.field.group.open_group.field_group_location
     - group.type.open_group
@@ -14,6 +13,7 @@ dependencies:
     - field_group
     - image_widget_crop
     - path
+    - text
 third_party_settings:
   field_group:
     group_content:
@@ -60,7 +60,7 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textarea
+    type: text_textarea
   field_group_image:
     weight: 3
     settings:
@@ -94,5 +94,4 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_group_geolocation: true
   uid: true

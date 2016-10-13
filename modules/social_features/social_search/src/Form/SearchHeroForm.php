@@ -8,17 +8,17 @@ use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 
 /**
- * Class SearchGroupsForm.
+ * Class SearchHeroForm.
  *
  * @package Drupal\social_search\Form
  */
-class SearchGroupsForm extends FormBase {
+class SearchHeroForm extends FormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'search_groups_form';
+    return 'search_hero_form';
   }
 
   /**
@@ -26,19 +26,18 @@ class SearchGroupsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form['search_input_groups'] = array(
+    $form['search_input'] = array(
       '#type' => 'textfield',
     );
 
     // Prefill search input on the search group page.
-    if (\Drupal::routeMatch()->getRouteName() == 'view.search_groups_proximity.page') {
-      $form['search_input_groups']['#default_value'] = \Drupal::routeMatch()->getParameter('keys');
-    }
+    $form['search_input']['#default_value'] = \Drupal::routeMatch()
+      ->getParameter('keys');
 
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array(
       '#type' => 'submit',
-      '#value' => t('Search Groups'),
+      '#value' => t('Search'),
     );
 
     return $form;
@@ -48,14 +47,18 @@ class SearchGroupsForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if (empty($form_state->getValue('search_input_groups'))) {
-      // Redirect to the search group page with empty search values.
-      $search_group_page = Url::fromRoute('view.search_groups_proximity.page_no_value');
+    $current_route = \Drupal::routeMatch()->getRouteName();
+    $route_parts = explode('.', $current_route);
+    if (empty($form_state->getValue('search_input'))) {
+      // Redirect to the search page with empty search values.
+      $new_route = "view.{$route_parts[1]}.page_no_value";
+      $search_group_page = Url::fromRoute($new_route);
     }
     else {
-      // Redirect to the search content page with filters in the GET parameters.
-      $search_input = $form_state->getValue('search_input_groups');
-      $search_group_page = Url::fromRoute('view.search_groups_proximity.page', array('keys' => $search_input));
+      // Redirect to the search page with filters in the GET parameters.
+      $search_input = $form_state->getValue('search_input');
+      $new_route = "view.{$route_parts[1]}.page";
+      $search_group_page = Url::fromRoute($new_route, array('keys' => $search_input));
     }
     $redirect_path = $search_group_page->toString();
 

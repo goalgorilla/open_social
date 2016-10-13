@@ -5,6 +5,7 @@
  */
 
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use \Drupal\block\Entity\Block;
 
 function social_activity_install() {
   // Add menu items
@@ -17,6 +18,8 @@ function social_activity_install() {
     'activity_send_email',
   );
   \Drupal::service('module_installer')->install($modules);
+
+  _social_activity_create_activity_homepage_block();
 }
 
 
@@ -42,5 +45,66 @@ function _social_activity_create_menu_links() {
       'weight' => 10,
       'parent' => $parent,
     ])->save();
+  }
+}
+
+/**
+ * Place a block for the activity stream homepage.
+ */
+function social_activity_update_8001() {
+  _social_activity_create_activity_homepage_block();
+}
+
+function _social_activity_create_activity_homepage_block() {
+  // Revert view so it has the block display.
+  $config_revert = \Drupal::service('features.config_update');
+  $config_revert->revert('view', 'activity_stream');
+
+  $config = \Drupal::configFactory();
+
+  // Do not add a new block if it alreadyexists.
+  $block = Block::load('views_block__activity_stream_block_stream_homepage');
+  if (!isset($block)) {
+    $visibility = array(
+      'request_path' => array(
+        'id' => 'request_path',
+        'pages' => '/stream',
+        'negate' => FALSE,
+        'context_mapping' => array(),
+      ),
+    );
+
+    $settings = array(
+      'plugin' => 'views_block:activity_stream-block_stream_homepage',
+      'region' => 'content',
+      'id' => 'views_block__activity_stream_block_stream_homepage',
+      'theme' => $config->get('system.theme')->get('default'),
+      'label' => '',
+      'visibility' => $visibility,
+      'weight' => NULL,
+    );
+
+    $values = [];
+    foreach (array('region', 'id', 'theme', 'plugin', 'weight', 'visibility') as $key) {
+      $values[$key] = $settings[$key];
+      // Remove extra values that do not belong in the settings array.
+      unset($settings[$key]);
+    }
+    foreach ($values['visibility'] as $id => $visibility) {
+      $values['visibility'][$id]['id'] = $id;
+    }
+
+    $settings = array (
+      'id' => 'views_block:activity_stream-block_stream_homepage',
+      'label' => '',
+      'provider' => 'views',
+      'label_display' => '0',
+      'views_label' => '',
+      'items_per_page' => 'none',
+    );
+    $values['settings'] = $settings;
+    $block = Block::create($values);
+
+    $block->save();
   }
 }
