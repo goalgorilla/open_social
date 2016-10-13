@@ -1304,6 +1304,19 @@ function socialbase_preprocess_views_exposed_form(&$variables) {
   }
 }
 
+function socialbase_preprocess_html(&$variables) {
+  //indentify the difference between nodes and node/add & node/edit
+  if ($variables['root_path'] == 'node') {
+    $current_path = \Drupal::service('path.current')->getPath();
+    $path_pieces = explode("/", $current_path);
+    $path_target = array('add');
+    if(count(array_intersect($path_pieces, $path_target)) > 0 ){
+      $variables['node_edit'] = TRUE;
+    }
+  }
+
+}
+
 /**
  * Implements hook_js_alter().
  */
@@ -1315,4 +1328,5 @@ function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInte
   if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {
     $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
   }
+
 }
