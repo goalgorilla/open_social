@@ -28,6 +28,7 @@
     logged_in ? 'user-logged-in',
     not root_path ? 'path-frontpage' : 'path-' ~ root_path|clean_class,
     node_type ? 'page-node-type-' ~ node_type|clean_class,
+    node_edit ? 'page-node-edit',
   ]
 %}
 
@@ -43,7 +44,7 @@
     <css-placeholder token="{{ placeholder_token|raw }}">
     <js-placeholder token="{{ placeholder_token|raw }}">
   </head>
-  <body{{ attributes }}>
+  <body{{ attributes.addClass(body_classes) }}>
     <a href="#main-content" class="sr-only sr-only-focusable">
       {{ 'Skip to main content'|t }}
     </a>
