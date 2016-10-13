@@ -109,7 +109,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Add the enrollment closed label.
     if ($this->eventHasBeenFinished($node)) {
-      $submit_text = $this->t('Enrollments are closed');
+      $submit_text = $this->t('Event has passed');
       $enrollment_open = FALSE;
     }
 
