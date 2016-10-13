@@ -66,23 +66,14 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/comment')}}
+<article{{ attributes.addClass('js-comment comment') }}>
+  <div class="comment__avatar"> {{ author_picture }} </div>
 
-<article{{ attributes.addClass('js-comment media-wrapper') }}>
-
-  <div class="media">
-    <div class="media-left">
-      {{ author_picture }}
-    </div>
-
-    <div class="media-body">
-      <h5 class="media-heading">
-        {{ author }}
-      </h5>
-      <small>{{ submitted }}</small>
-    </div>
+  <div class="comment__content">
+    <span class="comment_author"> {{ author }} </span>
+    <span class="comment__metadata">&bullet; {{ submitted }} </span>
+    <div class="comment__text"> {{ content }} </div>
   </div>
 
-  <div {{ content_attributes.addClass('margin-top-s') }}>
-    {{ content }}
-  </div>
 </article>

@@ -11,7 +11,7 @@
  * @see template_preprocess_views_mini_pager()
  */
 #}
-
+{{ attach_library('socialbase/pagination') }}
 {% if items.previous or items.next %}
   <nav role="navigation" aria-labelledby="pagination-heading">
     <h4 class="sr-only">{{ 'Pagination'|t }}</h4>

@@ -506,10 +506,6 @@ form.card-nested-section:last-child {
   cursor: text;
 }
 
-.form-group-inline .form-control--block {
-  margin-bottom: 5px;
-}
-
 .form-no-label label + .form-required {
   display: none;
 }
@@ -1272,13 +1268,15 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
     -ms-flex-align: start;
     align-items: flex-start;
   }
-  .form-group-inline .form-control--block{
+  .form-group-inline .form-group{
+    margin-bottom: 0;
+  }
+  .form-group-inline .form-item{
     -webkit-box-flex: 1;
     -ms-flex: 1;
     flex: 1;
-    margin-bottom: 0;
   }
-  .form-group-inline .btn:last-child{
+  .form-group-inline .btn{
     margin-left: 8px;
     -ms-flex-negative: 0;
     flex-shrink: 0;

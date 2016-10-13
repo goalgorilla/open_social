@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
@@ -104,6 +105,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     );
 
     $submit_text = $this->t('Enroll');
+    $enrollment_open = TRUE;
+
+    // Add the enrollment closed label.
+    if ($this->eventHasBeenFinished($node)) {
+      $submit_text = $this->t('Event has passed');
+      $enrollment_open = FALSE;
+    }
 
     $conditions = array(
       'field_account' => $uid,
@@ -118,7 +126,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($current_enrollment_status === '1') {
         $submit_text = $this->t('Enrolled');
-
         $to_enroll_status = '0';
       }
     }
@@ -131,6 +138,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $form['enroll_for_this_event'] = array(
       '#type' => 'submit',
       '#value' => $submit_text,
+      '#disabled' => !$enrollment_open,
     );
 
     $form['#attributes']['name'] = 'enroll_action_form';
@@ -163,6 +171,33 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     }
 
     return $form;
+  }
+
+
+  /**
+   * Function to determine if an event has been finished.
+   *
+   * @param Node $node The event.
+   *
+   * @return TRUE if the evens is finished / completed.
+   */
+  protected function eventHasBeenFinished(Node $node) {
+    // Use the start date when the end date is not set to determine if the
+    // event is closed.
+    $check_end_date = $node->field_event_date->value;
+
+    if (isset($node->field_event_date_end->value)) {
+      $check_end_date = $node->field_event_date_end->value;
+    }
+    // Get Event end date to compare w/ current timestamp.
+    $event_end_timestamp = strtotime($check_end_date);
+
+    // Check to see if Event end date is in the future, hence we can still "Enroll".
+
+    if (time() > $event_end_timestamp) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

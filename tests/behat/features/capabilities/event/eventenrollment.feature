@@ -7,7 +7,13 @@ Feature: Enroll for an event
   @LU @critical
   Scenario: Successfully enroll for an event
     Given I am logged in as an "authenticated user"
-    When I am viewing a "event" with the title "Enrollment test event"
+    Given I am viewing my event:
+      | title                    | My Behat Event created |
+      | field_event_date         | +8 days                |
+      | field_event_date_end     | +9 days                |
+      | status                   | 1                      |
+      | field_content_visibility | community              |
+
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
     And I should see the link "Enrollments"
@@ -59,7 +65,13 @@ Feature: Enroll for an event
   @LU
   Scenario: Successfully cancel enrollment for an event
     Given I am logged in as an "authenticated user"
-    When I am viewing a "event" with the title "Enrollment test event"
+    When I am viewing my event:
+      | title                    | My Behat Event created |
+      | field_event_date         | +8 days                |
+      | field_event_date_end     | +9 days                |
+      | status                   | 1                      |
+      | field_content_visibility | community              |
+
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
     And I should see the link "Enrollments"
@@ -100,3 +112,26 @@ Feature: Enroll for an event
     And I click "eventenrollment" in the "Hero block"
     And I click "Events"
     Then I should see "Enrolled"
+
+  @closed_enrollments
+  Scenario: Can no longer enroll to an event when it has finished.
+    Given I am logged in as an "authenticated user"
+    When I am viewing my event:
+      | title                    | My Behat Event created |
+      | field_event_date         | -1 days                |
+      | status                   | 1                      |
+      | field_content_visibility | community              |
+
+    Then I should see "No one has enrolled for this event"
+    And I should see the button "Event has passed"
+    And I should see the link "Enrollments"
+    When I am viewing my event:
+      | title                    | My Behat Event created |
+      | field_event_date         | -3 days                |
+      | field_event_date_end     | -2 days                |
+      | status                   | 1                      |
+      | field_content_visibility | community              |
+
+    Then I should see "No one has enrolled for this event"
+    And I should see the button "Event has passed"
+    And I should see the link "Enrollments"

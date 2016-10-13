@@ -30,20 +30,19 @@ form {
 
 .form-group-inline {
 
-  .form-control--block {
-    margin-bottom: 5px;
-  }
-
   @include MQ($small) {
     display: flex;
     align-items: flex-start;
 
-    .form-control--block {
-      flex: 1;
+    .form-group {
       margin-bottom: 0;
     }
 
-    .btn:last-child {
+    .form-item {
+      flex: 1;
+    }
+
+    .btn {
       margin-left: 8px;
 
       // Safari fix
