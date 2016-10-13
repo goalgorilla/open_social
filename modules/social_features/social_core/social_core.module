@@ -159,7 +159,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   unset($links['comment__field_topic_comments']);
   unset($links['comment__field_event_comments']);
 
-  if (isset($context['view_mode']) && $context['view_mode'] === 'activity') {
+  if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
     // Add a readmore link.
     $node_title_stripped = strip_tags($entity->label());
     $links['node']['#links']['node-readmore'] = array(
