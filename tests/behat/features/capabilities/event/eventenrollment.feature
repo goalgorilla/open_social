@@ -123,7 +123,7 @@ Feature: Enroll for an event
       | field_content_visibility | community              |
 
     Then I should see "No one has enrolled for this event"
-    And I should see the button "Enrollments are closed"
+    And I should see the button "Event has passed"
     And I should see the link "Enrollments"
     When I am viewing my event:
       | title                    | My Behat Event created |
@@ -133,5 +133,5 @@ Feature: Enroll for an event
       | field_content_visibility | community              |
 
     Then I should see "No one has enrolled for this event"
-    And I should see the button "Enrollments are closed"
+    And I should see the button "Event has passed"
     And I should see the link "Enrollments"
