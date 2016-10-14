@@ -120,20 +120,6 @@ function _social_core_create_an_homepage_block() {
   $media->save();
 
   $fid = $media->id();
-  $data = [
-    'x' => 0,
-    'y' => 302,
-    'width' => 1919,
-    'height' => 676,
-  ];
-  $crop_type = \Drupal::entityTypeManager()
-    ->getStorage('crop_type')
-    ->load('hero');
-  $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
-  $image_widget_crop_manager->applyCrop($data, [
-    'file-uri' => $uri,
-    'file-id' => $fid,
-  ], $crop_type);
 
   // Create a block with a specific uuid so we can use it in the config
   // to load it into the theme see block.block.anhomepageheroblock.yml.
