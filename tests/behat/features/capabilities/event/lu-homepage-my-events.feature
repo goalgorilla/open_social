@@ -26,9 +26,9 @@ Feature: See my upcoming events
     Then I should see "Enrolled"
 
     When I go to the homepage
-    Then I should not see "My Behat Event created"
-    And I should see "My Behat Event enrolled"
-    And I should see "Enrolled"
+    Then I should not see "My Behat Event created" in the "Sidebar second"
+    And I should see "My Behat Event enrolled" in the "Sidebar second"
+    And I should see "Enrolled" in the "Sidebar second"
 
     When I am at "my-events"
     Then I should see "Events for this user"
