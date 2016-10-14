@@ -222,13 +222,25 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         )
       );
 
-      $create_account_url = Url::fromUserInput('/user/register');
-      $create_account_link = Link::fromTextAndUrl(t('create a new account'), $create_account_url)->toString();
+      // Check if user can register accounts.
+      if (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+        $log_in_url = Url::fromUserInput('/user/login');
+        $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)->toString();
+        $create_account_url = Url::fromUserInput('/user/register');
+        $create_account_link = Link::fromTextAndUrl(t('create a new account'), $create_account_url)->toString();
+        $message = $this->t('Please @log_in or @create_account_link so that you can enroll to the event.', array(
+          '@log_in' => $log_in_link,
+          '@create_account_link' => $create_account_link,
+        ));
+      } else {
+        $log_in_url = Url::fromUserInput('/user/login');
+        $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)->toString();
+        $message = $this->t('Please @log_in so that you can enroll to the event.', array(
+          '@log_in' => $log_in_link,
+        ));
+      }
 
-      drupal_set_message($this->t('Please log in or !create_account_link so that you can enroll to the event.',
-        [
-          '!create_account_link' => $create_account_link,
-        ]));
+      drupal_set_message($message);
       return;
     }
 
