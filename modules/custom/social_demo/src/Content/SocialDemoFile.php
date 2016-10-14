@@ -64,20 +64,6 @@ class SocialDemoFile {
       ]);
       $media->save();
 
-      // Add coordinates for cropping images.
-      $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
-
-      foreach ($file['crops'] as $crop_name => $data) {
-        $crop_type = \Drupal::entityTypeManager()
-          ->getStorage('crop_type')
-          ->load($crop_name);
-
-        $image_widget_crop_manager->applyCrop($data, [
-          'file-uri' => $uri,
-          'file-id' => $media->id(),
-        ], $crop_type);
-      }
-
       $content_counter++;
     }
 
