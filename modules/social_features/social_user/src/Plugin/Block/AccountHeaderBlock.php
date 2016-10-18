@@ -42,7 +42,7 @@ class AccountHeaderBlock extends BlockBase {
               'icon_label' => '',
               'title' => t('New Event'),
               'title_classes' => '',
-              'url' => '/node/add/event',
+              'url' => Url::fromUserInput('/node/add/event'),
             ),
             'add_topic' => array(
               'classes' => '',
@@ -52,7 +52,7 @@ class AccountHeaderBlock extends BlockBase {
               'icon_label' => '',
               'title' => t('New Topic'),
               'title_classes' => '',
-              'url' => '/node/add/topic',
+              'url' => Url::fromUserInput('/node/add/topic'),
             ),
             'add_group' => array(
               'classes' => '',
@@ -62,7 +62,7 @@ class AccountHeaderBlock extends BlockBase {
               'icon_label' => '',
               'title' => t('New Group'),
               'title_classes' => '',
-              'url' => '/group/add/open_group',
+              'url' => Url::fromUserInput('/group/add/open_group'),
             ),
           ),
         ),
@@ -72,7 +72,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_classes' => 'icon-group',
           'title' => t('My groups'),
           'title_classes' => 'sr-only',
-          'url' => '/user/' . $account_uid . '/groups',
+          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
         ),
       ];
 
@@ -86,7 +86,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_label' => '',
           'title' => t('New Book page'),
           'title_classes' => '',
-          'url' => '/node/add/book',
+          'url' => Url::fromUserInput('/node/add/book'),
         );
       }
 
@@ -100,7 +100,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_label' => '',
           'title' => t('New Page'),
           'title_classes' => '',
-          'url' => '/node/add/page',
+          'url' => Url::fromUserInput('/node/add/page'),
         );
       }
 
@@ -164,7 +164,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('My profile'),
             'title_classes' => '',
-            'url' => '/user',
+            'url' => Url::fromUserInput('/user'),
           ),
           'my_events' => array(
             'classes' => '',
@@ -174,7 +174,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('My events'),
             'title_classes' => '',
-            'url' => '/user/' . $account_uid . '/events',
+            'url' => Url::fromUserInput('/user/' . $account_uid . '/events'),
           ),
           'my_topics' => array(
             'classes' => '',
@@ -184,7 +184,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('My topics'),
             'title_classes' => '',
-            'url' => '/user/' . $account_uid . '/topics',
+            'url' => Url::fromUserInput('/user/' . $account_uid . '/topics'),
           ),
           'my_groups' => array(
             'classes' => '',
@@ -194,7 +194,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('My groups'),
             'title_classes' => '',
-            'url' => '/user/' . $account_uid . '/groups',
+            'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
           ),
           'divide_account' => array(
             'divider' => 'true',
@@ -209,7 +209,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('Edit account'),
             'title_classes' => '',
-            'url' => '/user/' . $account_uid . '/edit',
+            'url' => Url::fromUserInput('/user/' . $account_uid . '/edit'),
           ),
           'edit_profile' => array(
             'classes' => '',
@@ -219,7 +219,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('Edit profile'),
             'title_classes' => '',
-            'url' => '/user/' . $account_uid . '/profile',
+            'url' => Url::fromUserInput('/user/' . $account_uid . '/profile'),
           ),
           'divide_logout' => array(
             'divider' => 'true',
@@ -234,7 +234,7 @@ class AccountHeaderBlock extends BlockBase {
             'icon_label' => '',
             'title' => t('Logout'),
             'title_classes' => '',
-            'url' => '/user/logout',
+            'url' => Url::fromUserInput('/user/logout'),
           ),
         ),
       );
