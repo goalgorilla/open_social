@@ -45,7 +45,11 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
         $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
 
         // Check if email notifications is enabled for this kind of activity.
-        if (!empty($user_email_settings[$message_template_id]) && isset($activity->field_activity_output_text)) {
+        // If user don't change it's enabled by default.
+        if ((!isset($user_email_settings[$message_template_id])
+            || (isset($user_email_settings[$message_template_id]) && $user_email_settings[$message_template_id] == 1))
+          && isset($activity->field_activity_output_text)
+        ) {
           // Send Email
           $langcode = \Drupal::currentUser()->getPreferredLangcode();
           $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
