@@ -756,9 +756,8 @@ function socialbase_preprocess_page(&$variables) {
   if (!empty($variables['page']['#title'])) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
-
-  $svg = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
-  $variables['svg_icons'] = t('svg', array('svg' => $svg));
+  // Get all SVG Icons.
+  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
 
   // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
 
