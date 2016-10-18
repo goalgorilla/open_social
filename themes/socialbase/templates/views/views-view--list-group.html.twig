@@ -32,6 +32,16 @@
  * @ingroup templates
  */
 #}
+{%
+  set classes = [
+    'view',
+    'view-' ~ id|clean_class,
+    'view-id-' ~ id,
+    'view-display-id-' ~ display_id,
+    dom_id ? 'js-view-dom-id-' ~ dom_id,
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
 
   {{ title_prefix }}
   {% if title %}
@@ -79,3 +89,4 @@
       {{ feed_icons }}
     </div>
   {% endif %}
+</div>

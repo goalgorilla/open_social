@@ -46,33 +46,44 @@
  */
 #}
 
-{% if card %}
+{%
+  set classes = [
+    'block-' ~ configuration.provider|clean_class,
+    'block-' ~ plugin_id|clean_class,
+  ]
+%}
 
-    <div class="card">
+<section{{ attributes.addClass(classes) }}>
 
-        {{ title_prefix }}
-        {% if label %}
-            <div class="card-head">
-                <header {{ title_attributes.addClass('text-center') }}>{{ label }}</header>
-            </div>
-        {% endif %}
-        {{ title_suffix }}
+  {% if card %}
+
+      <div class="card">
+
+          {{ title_prefix }}
+          {% if label %}
+              <div class="card-head">
+                  <header {{ title_attributes.addClass('text-center') }}>{{ label }}</header>
+              </div>
+          {% endif %}
+          {{ title_suffix }}
 
 
-        <div class="card-body">
-            {{ content }}
-        </div>
+          <div class="card-body">
+              {{ content }}
+          </div>
 
-    </div>
+      </div>
 
-{% else %}
+  {% else %}
 
-    {{ title_prefix }}
-    {% if label %}
-        <h2{{ title_attributes.addClass('h4 section-title section-title-stream') }}>{{ label }}</h2>
-    {% endif %}
-    {{ title_suffix }}
+      {{ title_prefix }}
+      {% if label %}
+          <h2{{ title_attributes.addClass('h4 section-title section-title-stream') }}>{{ label }}</h2>
+      {% endif %}
+      {{ title_suffix }}
 
-    {{ content }}
+      {{ content }}
 
-{% endif %}
+  {% endif %}
+
+</section>
