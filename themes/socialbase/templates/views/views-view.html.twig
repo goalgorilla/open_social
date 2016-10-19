@@ -43,52 +43,40 @@
 %}
 <div{{ attributes.addClass(classes) }}>
   {{ title_prefix }}
-  {% if title %}
-    {{ title }}
-  {% endif %}
+  {{ title }}
   {{ title_suffix }}
+
   {% if header %}
     <div class="view-header">
       {{ header }}
     </div>
   {% endif %}
+
   {% if exposed %}
     <div class="view-filters form-group">
       {{ exposed }}
     </div>
   {% endif %}
+
   {% if attachment_before %}
     <div class="attachment attachment-before">
       {{ attachment_before }}
     </div>
   {% endif %}
 
-  {% if rows %}
-    <div class="view-content">
-      {{ rows }}
-    </div>
-  {% elseif empty %}
-    <div class="view-empty">
-      {{ empty }}
-    </div>
-  {% endif %}
+  {{ rows }}
+  {{ empty }}
+  {{ pager }}
 
-  {% if pager %}
-    {{ pager }}
-  {% endif %}
-  {% if attachment_after %}
-    <div class="attachment attachment-after">
-      {{ attachment_after }}
-    </div>
-  {% endif %}
-  {% if more %}
-    {{ more }}
-  {% endif %}
+  {{ attachment_after }}
+  {{ more }}
+
   {% if footer %}
     <div class="view-footer">
       {{ footer }}
     </div>
   {% endif %}
+
   {% if feed_icons %}
     <div class="feed-icons">
       {{ feed_icons }}

@@ -9,7 +9,7 @@
 @mixin form-inline {
 
   // Kick in the inline
-  @media (min-width: $screen-sm-min) {
+  @media (min-width: $grid-float-breakpoint) {
     // Inline-block all the things for "inline"
     .form-group {
       margin-bottom: 0;
@@ -222,6 +222,11 @@
     margin: 6px 0;
     padding-left: 10px;
     padding-right: 10px;
+
+    @include MQ($grid-float-breakpoint) {
+      position: absolute;
+    }
+    
   }
 }
 
@@ -285,7 +290,7 @@
 
 }
 
-@include MQ($small) {
+@include MQ($grid-float-breakpoint) {
 
   .navbar-search {
     float: right;
@@ -352,7 +357,7 @@
 
   }
 
-  @include MQ($small) {
+  @include MQ($grid-float-breakpoint) {
 
     .form-group {
   		border-radius: $input-border-radius;

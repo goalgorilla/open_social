@@ -705,6 +705,21 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   .nav-tabs-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:focus {
     border-bottom-color: #29abe2;
   }
+}
+
+@media screen and (min-width: 768px) {
+
+  .navbar-footer .navbar-brand {
+    width: auto;
+    float: left;
+  }
+
+  .navbar-footer .navbar-right li {
+    float: left;
+  }
+}
+
+@media (min-width: 992px) {
 
   .navbar {
     border-radius: 10px;
@@ -812,19 +827,14 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 992px) {
 
   .navbar-fixed-top .navbar-nav {
     margin-left: 10px;
   }
 
-  .navbar-footer .navbar-brand {
-    width: auto;
-    float: left;
-  }
-
-  .navbar-footer .navbar-right li {
-    float: left;
+  .navbar .navbar-form {
+    position: absolute;
   }
 
   .navbar-search {
@@ -903,7 +913,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
 
   .navbar-nav .open .dropdown-menu {
     position: static;
