@@ -396,15 +396,15 @@ function socialbase_preprocess_block(&$variables) {
       break;
     case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = '/group/'.$group->id().'/members';
+      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/members');
       break;
     case 'upcoming_events-upcoming_events_group':
       $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = '/group/'.$group->id().'/events';
+      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/events');
       break;
     case 'latest_topics-group_topics_block':
       $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = '/group/'.$group->id().'/topics';
+      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
       break;
   }
 }
