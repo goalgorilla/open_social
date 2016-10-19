@@ -8,6 +8,7 @@ use Drupal\Core\Field\FieldItemList;
 use Drupal\file\Entity\File;
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\crop\Entity\CropType;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_install().
@@ -248,4 +249,95 @@ function social_core_update_8004() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+}
+
+/**
+ * Crop images for groups, profiles and nodes.
+ */
+function social_core_update_8005(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['items'] = [];
+    $sandbox['max'] = 0;
+
+    $query = \Drupal::entityQuery('node', 'OR')
+      ->condition('type', 'event')
+      ->condition('type', 'topic');
+
+    $sandbox['items']['node_ids'] = $query->execute();
+    $sandbox['max'] = count($sandbox['items']['node_ids']);
+
+    $query = \Drupal::entityQuery('group');
+    $sandbox['items']['group_ids'] = $query->execute();
+    $sandbox['max'] += count($sandbox['items']['group_ids']);
+
+    $query = \Drupal::entityQuery('user');
+    $sandbox['items']['user_ids'] = $query->execute();
+    $sandbox['max'] += count($sandbox['items']['user_ids']);
+  }
+
+  $value = NULL;
+
+  if ($sandbox['items']['node_ids']) {
+    $nid = array_shift($sandbox['items']['node_ids']);
+    $node = Node::load($nid);
+
+    if ($node->getType() == 'topic') {
+      $value = $node->field_topic_image->first() ? $node->field_topic_image->first()->getValue() : NULL;
+    } elseif ($node->getType() == 'event') {
+      $value = $node->field_event_image->first() ? $node->field_event_image->first()->getValue() : NULL;
+    }
+
+    $crop_names = [
+      'hero',
+      'teaser',
+    ];
+  }
+
+  if ($value) {
+    $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
+
+    foreach ($crop_names as $crop_name) {
+      $crop_type = \Drupal::entityTypeManager()
+        ->getStorage('crop_type')
+        ->load($crop_name);
+
+      if (!empty($crop_type) && $crop_type instanceof CropType) {
+        list($ratio_width, $ratio_height) = explode(':', $crop_type->aspect_ratio);
+        $ratio = $ratio_width / $ratio_height;
+
+        if ($ratio > 1) {
+          $width = $value['width'];
+          $height = $value['height'] * (($value['width'] / $value['height']) / $ratio);
+        } elseif ($ratio === 1) {
+          $width = $height = min([$value['width'], $value['height']]);
+        } else {
+          $width = $value['width'] * (($value['width'] / $value['height']) / $ratio);
+          $height = $value['height'];
+        }
+
+        $center_x = round($value['width'] / 2);
+        $center_y = round($value['height'] / 2);
+
+        $file = File::load($value['target_id']);
+        $crop_width_half  = round($width / 2);
+        $crop_height_half = round($height / 2);
+        $x = max(0, $center_x - $crop_width_half);
+        $y = max(0, $center_y - $crop_height_half);
+
+        $image_widget_crop_manager->applyCrop([
+          'x' => $x,
+          'y' => $y,
+          'width' => $width,
+          'height' => $height,
+        ], [
+          'file-uri' => $file->getFileUri(),
+          'file-id' => $value['target_id'],
+        ], $crop_type);
+      }
+    }
+  }
+
+  $sandbox['progress']++;
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
 }
