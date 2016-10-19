@@ -8,6 +8,7 @@ namespace Drupal\social_demo\Content;
 
 use Drupal\file\Entity\File;
 use Drupal\social_demo\Yaml\SocialDemoParser;
+use Drupal\crop\Entity\CropType;
 
 /**
  * Implements Demo content for Files.
@@ -63,6 +64,22 @@ class SocialDemoFile {
         'uri' => $uri,
       ]);
       $media->save();
+
+      // Add coordinates for cropping images.
+      $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
+
+      foreach ($file['crops'] as $crop_name => $data) {
+        $crop_type = \Drupal::entityTypeManager()
+          ->getStorage('crop_type')
+          ->load($crop_name);
+
+        if (!empty($crop_type) && $crop_type instanceof CropType) {
+          $image_widget_crop_manager->applyCrop($data, [
+            'file-uri' => $uri,
+            'file-id' => $media->id(),
+          ], $crop_type);
+        }
+      }
 
       $content_counter++;
     }
