@@ -9,6 +9,8 @@ use Drupal\file\Entity\File;
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
+use Drupal\profile\Entity\Profile;
+use Drupal\group\Entity\Group;
 
 /**
  * Implements hook_install().
@@ -262,7 +264,9 @@ function social_core_update_8005(&$sandbox) {
 
     $query = \Drupal::entityQuery('node', 'OR')
       ->condition('type', 'event')
-      ->condition('type', 'topic');
+      ->condition('type', 'topic')
+      ->condition('type', 'page')
+      ->condition('type', 'book');
 
     $sandbox['items']['node_ids'] = $query->execute();
     $sandbox['max'] = count($sandbox['items']['node_ids']);
@@ -271,9 +275,9 @@ function social_core_update_8005(&$sandbox) {
     $sandbox['items']['group_ids'] = $query->execute();
     $sandbox['max'] += count($sandbox['items']['group_ids']);
 
-    $query = \Drupal::entityQuery('user');
-    $sandbox['items']['user_ids'] = $query->execute();
-    $sandbox['max'] += count($sandbox['items']['user_ids']);
+    $query = \Drupal::entityQuery('profile');
+    $sandbox['items']['profile_ids'] = $query->execute();
+    $sandbox['max'] += count($sandbox['items']['profile_ids']);
   }
 
   $value = NULL;
@@ -282,25 +286,54 @@ function social_core_update_8005(&$sandbox) {
     $nid = array_shift($sandbox['items']['node_ids']);
     $node = Node::load($nid);
 
-    if ($node->getType() == 'topic') {
-      $value = $node->field_topic_image->first() ? $node->field_topic_image->first()->getValue() : NULL;
-    } elseif ($node->getType() == 'event') {
-      $value = $node->field_event_image->first() ? $node->field_event_image->first()->getValue() : NULL;
+    switch ($node->getType()) {
+      case 'topic':
+        $value = $node->field_topic_image->first() ? $node->field_topic_image->first()->getValue() : NULL;
+        break;
+
+      case 'event':
+        $value = $node->field_event_image->first() ? $node->field_event_image->first()->getValue() : NULL;
+        break;
+
+      case 'page':
+        $value = $node->field_page_image->first() ? $node->field_page_image->first()->getValue() : NULL;
+        break;
+
+      case 'book':
+        $value = $node->field_book_image->first() ? $node->field_book_image->first()->getValue() : NULL;
+        break;
     }
 
-    $crop_names = [
+    $crop_type_names = [
       'hero',
       'teaser',
+    ];
+  } elseif ($sandbox['items']['group_ids']) {
+    $gid = array_shift($sandbox['items']['group_ids']);
+    $group = Group::load($gid);
+    $value = $group->field_group_image->first() ? $group->field_group_image->first()->getValue() : NULL;
+    $crop_type_names = [
+      'hero',
+      'teaser',
+    ];
+  } elseif ($sandbox['items']['profile_ids']) {
+    $pid = array_shift($sandbox['items']['profile_ids']);
+    $profile = Profile::load($pid);
+    $value = $profile->field_profile_image->first() ? $profile->field_profile_image->first()->getValue() : NULL;
+    $crop_type_names = [
+      'teaser',
+      'profile_medium',
+      'profile_small',
     ];
   }
 
   if ($value) {
     $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
 
-    foreach ($crop_names as $crop_name) {
+    foreach ($crop_type_names as $crop_type_name) {
       $crop_type = \Drupal::entityTypeManager()
         ->getStorage('crop_type')
-        ->load($crop_name);
+        ->load($crop_type_name);
 
       if (!empty($crop_type) && $crop_type instanceof CropType) {
         list($ratio_width, $ratio_height) = explode(':', $crop_type->aspect_ratio);
@@ -316,24 +349,34 @@ function social_core_update_8005(&$sandbox) {
           $height = $value['height'];
         }
 
+        $file = File::load($value['target_id']);
+        $crop_element = [
+          'file-uri' => $file->getFileUri(),
+          'file-id' => $file->id(),
+        ];
+
         $center_x = round($value['width'] / 2);
         $center_y = round($value['height'] / 2);
-
-        $file = File::load($value['target_id']);
         $crop_width_half  = round($width / 2);
         $crop_height_half = round($height / 2);
         $x = max(0, $center_x - $crop_width_half);
         $y = max(0, $center_y - $crop_height_half);
+        $image_styles = $image_widget_crop_manager->getImageStylesByCrop($crop_type_name);
+        $crops = $image_widget_crop_manager->loadImageStyleByCrop($image_styles, $crop_type, $crop_element['file-uri']);
 
-        $image_widget_crop_manager->applyCrop([
-          'x' => $x,
-          'y' => $y,
-          'width' => $width,
-          'height' => $height,
-        ], [
-          'file-uri' => $file->getFileUri(),
-          'file-id' => $value['target_id'],
-        ], $crop_type);
+        if (!$crops) {
+          $image_widget_crop_manager->applyCrop([
+            'x' => $x,
+            'y' => $y,
+            'width' => $width,
+            'height' => $height,
+          ], [
+            'file-uri' => $file->getFileUri(),
+            'file-id' => $value['target_id'],
+          ], $crop_type);
+
+          image_path_flush($file->getFileUri());
+        }
       }
     }
   }
