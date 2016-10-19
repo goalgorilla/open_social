@@ -116,3 +116,13 @@ function _download_count_set_permissions() {
     user_role_grant_permissions($role->id(), $permissions);
   }
 }
+
+/**
+ * Increase download count flood window from 2 to 5 seconds.
+ */
+function download_count_update_8001(&$sandbox) {
+  $config = \Drupal::service('config.factory')
+    ->getEditable('download_count.settings');
+  $config->set('download_count_flood_window', 5);
+  $config->save();
+}
