@@ -46,37 +46,40 @@
  */
 #}
 {{ attach_library('socialbase/off-canvas')}}
-<button class="waves-effect waves-light btn btn-default btn-block btn-raised visible-xs-inline-block js-open-canvas">
-  <svg class="pull-left btn-icon icon-black">
-    <title> Filter list</title>
-    <use xlink:href="#icon-filter_list"></use>
-  </svg>
-  Filter
-</button>
-<div class="off-canvas off-canvas-right off-canvas-xs-only">
-  <div class="offcanvas-head">
 
-  {{ title_prefix }}
-  {% if label %}
-    <header{{ title_attributes.addClass('complementary-title') }}>{{ label }}</header>
-  {% endif %}
-  {{ title_suffix }}
+<div{{ attributes }}>
+  <button class="waves-effect waves-light btn btn-default btn-block btn-raised visible-xs-inline-block js-open-canvas">
+    <svg class="pull-left btn-icon icon-black">
+      <title> Filter list</title>
+      <use xlink:href="#icon-filter_list"></use>
+    </svg>
+    Filter
+  </button>
+  <div class="off-canvas off-canvas-right off-canvas-xs-only">
+    <div class="offcanvas-head">
 
-    <div class="offcanvas-tools visible-xs-block">
-      <div class="js-close-canvas btn btn-icon-toggle pull-right">
-        <svg class="pull-left btn-icon icon-black">
-          <title> Close</title>
-          <use xlink:href="#icon-close"></use>
-        </svg>
+    {{ title_prefix }}
+    {% if label %}
+      <header{{ title_attributes.addClass('complementary-title') }}>{{ label }}</header>
+    {% endif %}
+    {{ title_suffix }}
+
+      <div class="offcanvas-tools visible-xs-block">
+        <div class="js-close-canvas btn btn-icon-toggle pull-right">
+          <svg class="pull-left btn-icon icon-black">
+            <title> Close</title>
+            <use xlink:href="#icon-close"></use>
+          </svg>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="offcanvas-body">
+    <div class="offcanvas-body">
 
-    {% block content %}
-      {{ content }}
-    {% endblock %}
+      {% block content %}
+        {{ content }}
+      {% endblock %}
 
+    </div>
   </div>
 </div>
