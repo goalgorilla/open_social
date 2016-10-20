@@ -24,13 +24,6 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     $form['#action'] = \Drupal::service('path.current')->getPath();
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
-
-    if ('views-exposed-form-search-content-page' === $form['#id']) {
-      // @TODO: remove this class when theme will be ready.
-      $form['type']['#attributes'] = array(
-        'class' => array('browser-default'),
-      );
-    }
   }
 }
 
@@ -41,11 +34,11 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
  */
 function social_search_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
   $filter_blocks = array(
-    'exposed_form_search_content_page_sidebar',
-    'exposed_form_search_users_page_sidebar',
+    'search_content-page',
+    'search_users-page',
   );
 
-  if (in_array($build['#id'], $filter_blocks)) {
+  if (in_array($build['#derivative_plugin_id'], $filter_blocks)) {
     // Disable cache for exposed filter block to get correct current path,
     // which is used in $form['#action'].
     $build['#cache'] = array(
