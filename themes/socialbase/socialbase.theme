@@ -839,12 +839,6 @@ function socialbase_preprocess_node(&$variables) {
     unset($variables['label']);
   }
 
-  // Try to add unpublished as a article class for now when nodes are published
-  // or unpublished.
-  if (!$variables['elements']['#node']->isPublished()) {
-    $variables['attributes']['class'][] = 'unpublished';
-  }
-
   // Date formats.
   $date = $variables['node']->getCreatedTime();
   if ($variables['view_mode'] === 'small_teaser') {

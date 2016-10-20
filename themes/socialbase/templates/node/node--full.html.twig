@@ -63,13 +63,23 @@
  *   in different view modes.
  */
 #}
+
+{%
+  set classes = [
+    'card',
+    node.isPromoted() ? 'promoted',
+    node.isSticky() ? 'sticky',
+    not node.isPublished() ? 'unpublished',
+  ]
+%}
+
 {% if details_label %}
   <h4 class="section-title section-title-node">
     {{ details_label }}
   </h4>
 {% endif %}
 
-<article{{ attributes.addClass('card') }}>
+<article{{ attributes.addClass(classes) }}>
 
   <div{{ content_attributes.addClass('card-body extra-padding body-text') }}>
     {{ content.body }}
