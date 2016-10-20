@@ -9,7 +9,7 @@ use Drupal\Core\Block\BlockBase;
  *
  * @Block(
  *  id = "search_content_block",
- *  admin_label = @Translation("Search content block"),
+ *  admin_label = @Translation("Search navbar block"),
  * )
  */
 class SearchContentBlock extends BlockBase {
