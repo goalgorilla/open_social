@@ -1,12 +1,13 @@
 @import "init";
 
 // force the direct child of the container to take 100% of width screen on xs-screens
-.hero-container > div {
-  margin-right: -($grid-gutter-width / 2);
-  margin-left: -($grid-gutter-width / 2);
+.hero-container.container {
+  padding-right: 0;
+  padding-left: 0;
 
-  @include MQ($x-large) {
-    margin: 0;
+  @include MQ($grid-float-breakpoint) {
+    padding-left: $grid-gutter-width / 2;
+    padding-right: $grid-gutter-width / 2;
   }
 
   .card {
