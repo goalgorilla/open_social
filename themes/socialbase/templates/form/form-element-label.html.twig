@@ -19,8 +19,11 @@
 
 {%-
   set classes = [
+    'control-label',
     title_display == 'after' ? 'option',
-    title_display == 'invisible' ? 'visually-hidden',
+    title_display == 'invisible' ? 'sr-only',
+    required ? 'js-form-required',
+    required ? 'form-required',
   ]
 -%}
 

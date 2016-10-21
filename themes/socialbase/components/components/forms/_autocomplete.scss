@@ -12,8 +12,6 @@
 }
 
 .ui-widget-header {
-	border: 1px solid $gray-light-1;
-	background: $gray-lighter;
 	font-weight: 700;
 }
 
@@ -25,14 +23,6 @@
 
 /* Interaction states
 ----------------------------------*/
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default {
-	border: 1px solid #d3d3d3/*{borderColorDefault}*/;
-	background: #e6e6e6;
-	font-weight: normal/*{fwDefault}*/;
-	color: #555555/*{fcDefault}*/;
-}
 .ui-state-default a,
 .ui-state-default a:link,
 .ui-state-default a:visited {
@@ -61,7 +51,7 @@
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	border: 1px solid #aaaaaa/*{borderColorActive}*/;
-	background: #ffffff/*{bgColorActive}*/ url("images/ui-bg_glass_65_ffffff_1x400.png")/*{bgImgUrlActive}*/ 50%/*{bgActiveXPos}*/ 50%/*{bgActiveYPos}*/ repeat-x/*{bgActiveRepeat}*/;
+	background: #ffffff;
 	font-weight: normal/*{fwDefault}*/;
 	color: #212121/*{fcActive}*/;
 }
@@ -77,14 +67,14 @@
 .ui-state-highlight,
 .ui-widget-content .ui-state-highlight,
 .ui-widget-header .ui-state-highlight {
-	border: 1px solid #fcefa1/*{borderColorHighlight}*/;
-	background: #fbf9ee/*{bgColorHighlight}*/ url("images/ui-bg_glass_55_fbf9ee_1x400.png")/*{bgImgUrlHighlight}*/ 50%/*{bgHighlightXPos}*/ 50%/*{bgHighlightYPos}*/ repeat-x/*{bgHighlightRepeat}*/;
-	color: #363636/*{fcHighlight}*/;
+	border: 1px solid $gray-lighter;
+	background: $gray-lighter;
+	color: #363636;
 }
 .ui-state-highlight a,
 .ui-widget-content .ui-state-highlight a,
 .ui-widget-header .ui-state-highlight a {
-	color: #363636/*{fcHighlight}*/;
+	color: #363636;
 }
 .ui-state-error,
 .ui-widget-content .ui-state-error,
@@ -179,8 +169,6 @@
 .ui-state-disabled {
 	cursor: default !important;
 }
-
-
 
 /* Misc visuals
 ----------------------------------*/

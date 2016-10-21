@@ -65,12 +65,13 @@
 #}
 {%
   set classes = [
-    node.bundle|clean_class,
-    view_mode ? view_mode|clean_class,
-    'clearfix',
+    'card',
+    node.isPromoted() ? 'promoted',
+    node.isSticky() ? 'sticky',
+    not node.isPublished() ? 'unpublished',
   ]
 %}
-<article{{ attributes.addClass('card') }}>
+<article{{ attributes.addClass(classes) }}>
 
   <div{{ content_attributes.addClass('card-body extra-padding') }}>
     {{ content.body }}
