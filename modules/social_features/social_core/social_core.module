@@ -198,7 +198,9 @@ function social_core_preprocess_field(&$variables) {
  * Implements hook_preprocess_block().
  */
 function social_core_preprocess_block(&$variables) {
-  $profile_user_id = \Drupal::routeMatch()->getParameter('user');
+  /** @var \Drupal\user\Entity\User $account */
+  $account = \Drupal::routeMatch()->getParameter('user');
+  /** @var \Drupal\group\Entity\Group $group */
   $group = \Drupal::routeMatch()->getParameter('group');
 
   // Add variables to sidebar blocks
@@ -224,15 +226,15 @@ function social_core_preprocess_block(&$variables) {
       break;
     case 'events-block_events_on_profile':
       $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $profile_user_id));
+      $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
       break;
     case 'topics-block_user_topics':
       $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $profile_user_id));
+      $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
       break;
     case 'groups-block_user_groups':
       $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $profile_user_id));
+      $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
       break;
     case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
