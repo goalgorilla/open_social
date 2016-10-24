@@ -80,7 +80,7 @@ Feature: See comments in activity stream
 
     When I wait for the queue to be empty
     When I am on "/user"
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
 
     And I click "Test group event"
@@ -107,21 +107,21 @@ Feature: See comments in activity stream
 
     Given I am logged in as "SeeUser"
     And I click "CreateUser"
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     And I should see "This is a third event comment"
     And I should not see "This is a first event comment"
     And I should not see "This is a reply event comment"
 
     And I click "Test open group"
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     And I should see "This is a third event comment"
     And I should not see "This is a first event comment"
     And I should not see "This is a reply event comment"
 
     When I am on the homepage
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     And I should see "This is a third event comment"
     And I should not see "This is a first event comment"
@@ -134,11 +134,11 @@ Feature: See comments in activity stream
 
     Given I am an anonymous user
     When I am on the homepage
-    Then I should not see "CreateUser created an event in group Test open group"
+    Then I should not see "CreateUser created an event in Test open group"
     And I should not see "Test group event"
     And I should not see "This is a third event comment"
 
     When I go to "explore"
-    Then I should not see "CreateUser created an event in group Test open group"
+    Then I should not see "CreateUser created an event in Test open group"
     And I should not see "Test group event"
     And I should not see "This is a third event comment"

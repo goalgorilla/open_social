@@ -147,15 +147,15 @@ Feature: See and get notified when content is created
     When I click "Test open group"
       When I wait for the queue to be empty
       When I am on "user"
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
 
     Given I am logged in as "SeeUser"
     And I click "CreateUser"
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     When I am on the homepage
-    Then I should see "CreateUser created an event in group Test open group"
+    Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     When I go to "explore"
     Then I should not see "CreateUser created an event"
@@ -163,8 +163,8 @@ Feature: See and get notified when content is created
 
     Given I am an anonymous user
     When I am on the homepage
-    Then I should not see "CreateUser created an event in group Test open group"
+    Then I should not see "CreateUser created an event in Test open group"
     And I should not see "Test group event"
     When I go to "explore"
-    Then I should not see "CreateUser created an event in group Test open group"
+    Then I should not see "CreateUser created an event in Test open group"
     And I should not see "Test group event"
