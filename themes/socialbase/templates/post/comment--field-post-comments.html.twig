@@ -67,21 +67,14 @@
  */
 #}
 
-<div class="media-wrapper">
-  <div class="media">
-    <div class="media-left">
-      {% if author_picture %}
-        {{ author_picture }}
-      {% endif %}
-    </div>
-    <div class="media-body">
-      <div class="media-heading text-m">
-        {{ author }} <div class="post-date">{{ submitted }}</div>
-      </div>
-      {% if content.links|render %}
-        {{ content.links }}
-      {% endif %}
-      <p>{{ content.field_comment_body }}</p>
-    </div>
+{{ attach_library('socialbase/comment')}}
+<article{{ attributes.addClass('js-comment comment') }}>
+  <div class="comment__avatar"> {{ author_picture }} </div>
+
+  <div class="comment__content">
+    <span class="comment_author"> {{ author }} </span>
+    <span class="comment__metadata">&bullet; {{ submitted }} </span>
+    <div class="comment__text"> {{ content }} </div>
   </div>
-</div>
+
+</article>
