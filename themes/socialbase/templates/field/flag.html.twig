@@ -12,8 +12,6 @@
  */
 #}
 {% spaceless %}
-{# Attach the flag CSS library.#}
-{{ attach_library('flag/flag.link') }}
 
 {# Depending on the flag action, set the appropriate action class. #}
 {% if action == 'unflag' %}
@@ -26,6 +24,7 @@
 {% set classes = [
 'btn',
 'btn-default',
+'pull-right',
 'flag',
 'flag-' ~ flag.id(),
 'flag-' ~ flag.id() ~ '-' ~ flaggable.id(),
@@ -33,5 +32,7 @@ action_class
 ] %}
 {% set attributes = attributes.addClass(classes) %}
 
-<a role="button"{{ attributes }}>{{ title }}</a>
+<div class="clearfix">
+  <button role="button"{{ attributes }}>{{ title }}</button>
+</div>
 {% endspaceless %}
