@@ -44,8 +44,21 @@ class ActivityLoggerFactory {
       $new_message['template'] = $message_type;
       $new_message['created'] = $entity->getCreatedTime();
       $new_message['uid'] = $entity->getOwner()->id();
+
+      $additional_fields = [
+        ['name' => 'field_message_context', 'type' => 'list_string'],
+        ['name' => 'field_message_destination', 'type' => 'list_string'],
+        [
+          'name' => 'field_message_related_object',
+          'type' => 'dynamic_entity_reference'
+        ],
+      ];
+      $this->createFieldInstances($message_type, $additional_fields);
+
+
       $new_message['field_message_context'] = $mt_context;
       $new_message['field_message_destination'] = $destinations;
+
       $new_message['field_message_related_object'] = [
         'target_type' => $entity->getEntityTypeId(),
         'target_id' => $entity->id(),
@@ -88,22 +101,24 @@ class ActivityLoggerFactory {
       $mt_destinations = $messagetype->getThirdPartySetting('activity_logger', 'activity_destinations', NULL);
       $mt_entity_condition = $messagetype->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
 
-      if(!empty($mt_entity_condition)){
+      if (!empty($mt_entity_condition)) {
         $entity_condition_factory = \Drupal::service('plugin.manager.activity_entity_condition.processor');
         $entity_condition_plugin = $entity_condition_factory->createInstance($mt_entity_condition);
         $entity_condition = $entity_condition_plugin->isValidEntityCondition($entity);
-      } else {
+      }
+      else {
         $entity_condition = TRUE;
       }
 
       $activity_context_factory = \Drupal::service('plugin.manager.activity_context.processor');
       $context_plugin = $activity_context_factory->createInstance($mt_context);
 
-      $entity_bundle_name = $entity->getEntityTypeId() . '-' .$entity->bundle();
+      $entity_bundle_name = $entity->getEntityTypeId() . '-' . $entity->bundle();
       if (in_array($entity_bundle_name, $mt_entity_bundles)
-      && $context_plugin->isValidEntity($entity)
-      && $entity_condition
-      && $action === $mt_action) {
+        && $context_plugin->isValidEntity($entity)
+        && $entity_condition
+        && $action === $mt_action
+      ) {
         $messagetypes[$key] = array(
           'messagetype' => $messagetype,
           'bundle' => $entity_bundle_name,
@@ -114,6 +129,49 @@ class ActivityLoggerFactory {
     }
     // Return the message types that belong to the requested action.
     return $messagetypes;
+  }
+
+  protected function createFieldInstances($message_type, $fields) {
+    foreach ($fields as $field) {
+      $id = 'message.' . $message_type . '.' . $field['name'];
+      $config_storage = \Drupal::entityTypeManager()
+        ->getStorage('field_config');
+      // Create field instances if they do not exits.
+      if ($config_storage->load($id) === NULL) {
+        $field_instace = [
+          'langcode' => 'en',
+          'status' => TRUE,
+          'config' => [
+            'field.storage.message.' . $field['name'],
+            'message.template.' . $message_type,
+          ],
+          'module' => ['options'],
+          'id' => $id,
+          'field_name' => $field['name'],
+          'entity_type' => 'message',
+          'bundle' => $message_type,
+          'label' => '',
+          'description' => '',
+          'reqiured' => FALSE,
+          'translatable' => FALSE,
+          'default_value' => [],
+          'default_value_callback' => '',
+          'field_type' => $field['type'],
+        ];
+
+        if ($field['type'] === 'list_string') {
+          $field_instance['module'] = ['options'];
+          $field_instance['settings'] = [];
+        }
+        elseif ($field['type'] === 'dynamic_entity_reference') {
+          $field_instance['module'] = ['dynamic_entity_reference'];
+          $field_instance['settings'] = [
+
+          ];
+        }
+        $config_storage->create($field_instace)->save();
+      }
+    }
   }
 
 }
