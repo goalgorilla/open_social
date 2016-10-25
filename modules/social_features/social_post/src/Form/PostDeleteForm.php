@@ -19,7 +19,7 @@ class PostDeleteForm extends ContentEntityDeleteForm {
       $path = $destination->get();
       return Url::fromUserInput($path);
     }
-    // Default to the frontpage.
-    return  Url::fromRoute('<front>');
+    // Default to the stream page.
+    return  Url::fromRoute('social_core.homepage');
   }
 }
