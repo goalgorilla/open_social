@@ -73,6 +73,9 @@
     'card-with-actionbar',
     view_mode == 'activity' ? 'card--teaser-stream',
     view_mode == 'activity_comment' ? 'card--teaser-stream',
+    node.isPromoted() ? 'promoted',
+    node.isSticky() ? 'sticky',
+    not node.isPublished() ? 'unpublished',
   ]
 %}
 

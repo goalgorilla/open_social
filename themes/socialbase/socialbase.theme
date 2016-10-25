@@ -240,7 +240,6 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
  */
 function socialbase_preprocess_block(&$variables) {
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
-  $group = \Drupal::routeMatch()->getParameter('group');
   $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
 
   // Fetch the current active (sub)theme.
@@ -357,55 +356,6 @@ function socialbase_preprocess_block(&$variables) {
 
       }
     }
-  }
-
-
-
-  // Add variables to sidebar blocks
-  switch ($variables['elements']['#derivative_plugin_id']) {
-    case 'upcoming_events-block_my_upcoming_events':
-      $variables['view_all_path'] = 'my-events';
-      break;
-    case 'upcoming_events-block_community_events':
-      $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'community-events';
-      break;
-    case 'latest_topics-block_latest_topics':
-      $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'newest-topics';
-      break;
-    case 'newest_groups-block_newest_groups':
-      $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'all-groups';
-      break;
-    case 'newest_users-block_newest_users':
-      $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'newest-members';
-      break;
-    case 'events-block_events_on_profile':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $profile_user_id));
-      break;
-    case 'topics-block_user_topics':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $profile_user_id));
-      break;
-    case 'groups-block_user_groups':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $profile_user_id));
-      break;
-    case 'group_members-block_newest_members':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/members');
-      break;
-    case 'upcoming_events-upcoming_events_group':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/events');
-      break;
-    case 'latest_topics-group_topics_block':
-      $variables['subtitle'] = t('in the group');
-      $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
-      break;
   }
 }
 
@@ -837,12 +787,6 @@ function socialbase_preprocess_node(&$variables) {
   }
   if ($variables['view_mode'] === 'hero') {
     unset($variables['label']);
-  }
-
-  // Try to add unpublished as a article class for now when nodes are published
-  // or unpublished.
-  if (!$variables['elements']['#node']->isPublished()) {
-    $variables['attributes']['class'][] = 'unpublished';
   }
 
   // Date formats.
