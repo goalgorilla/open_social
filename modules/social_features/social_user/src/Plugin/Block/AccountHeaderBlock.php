@@ -15,66 +15,78 @@ use Drupal\Core\Url;
  */
 class AccountHeaderBlock extends BlockBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  public function build() {
-    $account = \Drupal::currentUser();
-    if ($account->id() !== 0) {
-      $account_name = $account->getAccountName();
-      $account_uid = $account->id();
+    /**
+     * {@inheritdoc}
+     */
+    public function build() {
+        $account = \Drupal::currentUser();
+        if ($account->id() !== 0) {
+            $account_name = $account->getAccountName();
+            $account_uid = $account->id();
 
-      $links = [
-        'add' => array(
-          'classes' => 'dropdown',
-          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-          'link_classes' => 'dropdown-toggle clearfix',
-          'icon_classes' => 'icon-add_box',
-          'title' => t('Add content'),
-          'title_classes' => 'sr-only',
-          'url' => '#',
-          'below' => array(
-            'add_event' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => t('New Event'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/node/add/event'),
-            ),
-            'add_topic' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => t('New Topic'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/node/add/topic'),
-            ),
-            'add_group' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => t('New Group'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/group/add/open_group'),
-            ),
-          ),
-        ),
-        'groups' => array(
+            $links = [
+                'add' => array(
+                    'classes' => 'dropdown',
+                    'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
+                    'link_classes' => 'dropdown-toggle clearfix',
+                    'icon_classes' => 'icon-add_box',
+                    'title' => t('Add content'),
+                    'title_classes' => 'sr-only',
+                    'url' => '#',
+                    'below' => array(),
+                ),
+                'groups' => array(
+                    'classes' => '',
+                    'link_attributes' => '',
+                    'icon_classes' => 'icon-group',
+                    'title' => t('My groups'),
+                    'title_classes' => 'sr-only',
+                    'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
+                ),
+            ];
+
+      // Check is the User is allowd to create Events
+      if($account->hasPermission('create event content')){
+         $links['add']['below']['add_event'] = array(
+           'classes' => '',
+           'link_attributes' => '',
+           'link_classes' => '',
+           'icon_classes' => '',
+           'icon_label' => '',
+           'title' => t('New Event'),
+           'title_classes' => '',
+           'url' => Url::fromUserInput('/node/add/event'),
+         );
+      }
+
+      // Check is the User is allowd to create Topics
+      if($account->hasPermission('create topic content')){
+        $links['add']['below']['add_topic'] = array(
           'classes' => '',
           'link_attributes' => '',
-          'icon_classes' => 'icon-group',
-          'title' => t('My groups'),
-          'title_classes' => 'sr-only',
-          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
-        ),
-      ];
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => t('New Topic'),
+          'title_classes' => '',
+          'url' => Url::fromUserInput('/node/add/topic'),
+        );
+      }
+
+
+      // Check if the user is allowed to create new Groups
+      if($account->hasPermission('create open_group group')){
+        $links['add']['below']['add_group'] = array(
+           'classes' => '',
+           'link_attributes' => '',
+           'link_classes' => '',
+           'icon_classes' => '',
+           'icon_label' => '',
+           'title' => t('New Group'),
+           'title_classes' => '',
+           'url' => Url::fromUserInput('/group/add/open_group'),
+           );
+      }
 
       // Check if the current user is allowed to create new books.
       if (\Drupal::moduleHandler()->moduleExists('social_book') && $account->hasPermission('create new books')) {
@@ -102,6 +114,11 @@ class AccountHeaderBlock extends BlockBase {
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/page'),
         );
+      }
+
+      // Check if user cann add anything if nor remove add link
+      if(count($links['add']['below']) == 0){
+        unset($links['add']);
       }
 
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
