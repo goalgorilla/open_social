@@ -82,6 +82,11 @@
 <article{{ attributes.addClass(classes) }}>
 
   <div{{ content_attributes.addClass('card-body extra-padding body-text') }}>
+
+    {% if content.flag_follow_content|render is not empty %}
+      {{ content.flag_follow_content }}
+    {% endif %}
+
     {{ content.body }}
 
     {% if content.field_files|render is not empty %}
