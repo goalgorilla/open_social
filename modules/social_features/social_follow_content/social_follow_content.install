@@ -28,7 +28,9 @@ function _social_follow_content_set_permissions() {
     }
 
     $permissions = _social_follow_content_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
+    if(!empty($permissions)){
+      user_role_grant_permissions($role->id(), $permissions);
+    }
   }
 }
 
@@ -46,7 +48,6 @@ function _social_follow_content_get_permissions($role) {
     'flag follow_content',
     'unflag follow_content',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
