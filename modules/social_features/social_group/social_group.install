@@ -10,6 +10,25 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
 
 /**
+ * Implements hook_update_dependencies().
+ *
+ * @return mixed
+ */
+function social_group_update_dependencies() {
+  // Indicate that the mymodule_update_8002() function provided by this module
+  // must run before the yet_another_module_update_8005() function provided by
+  // the 'yet_another_module' module. (Note that declaring dependencies in this
+  // direction should be done only in rare situations, since it can lead to the
+  // following problem: If a site has already run the yet_another_module
+  // module's database updates before it updates its codebase to pick up the
+  // newest mymodule code, then the dependency declared here will be ignored.)
+  $dependencies['system'][8200] = array(
+    'social_group' => 8005,
+  );
+  return $dependencies;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_group.
