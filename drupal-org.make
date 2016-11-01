@@ -30,6 +30,7 @@ projects[flag][download][revision] = 6e93e43e1fd220bb5d4fd0153ffb8ba7780013a2
 projects[flag][download][branch] = 8.x-4.x
 projects[group][type] = module
 projects[group][version] = 1.0-beta4
+projects[group][patch][] = "https://www.drupal.org/files/issues/error-when-uploading-files-2793621-5.patch"
 projects[image_widget_crop][type] = module
 projects[image_widget_crop][version] = 1.3
 projects[libraries][type] = module
