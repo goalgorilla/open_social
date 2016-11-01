@@ -1273,3 +1273,13 @@ function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInte
   }
 
 }
+
+/**
+ * Implements theme_preprocess_username().
+ */
+function socialbase_preprocess_username(&$variables) {
+  $account = $variables['account'] ? : new AnonymousUserSession();
+
+  // Override the default drupal truncate function for all user names, so the whole name will be displayed.
+  $variables['name'] = $account->getDisplayName();
+}
