@@ -7,7 +7,7 @@ block pagetitle
   .container.hero-container.hidden-xs
     include ./molecules/_my-profile-hero.pug
 
-  .container  
+  .container
 
     .visible-xs-block.section
       a.btn.btn-flat(href="my-stream.html")
@@ -21,24 +21,24 @@ block pagetitle
         h2.visually-hidden Secondary navigation
         ul.nav.nav-tabs.tabs-center.brand-secondary.nav-tabs--xl
           li.hidden-xs
-            a(href="my-stream.html") Stream  
+            a(href="my-stream.html") Stream
           li
             a(href="my-profile-about.html") About
           li
             a(href='my-topics.html') Topics
           li.active
-            a(href='my-events.html') Events 
-            span.visually-hidden (active tab) 
+            a(href='my-events.html') Events
+            span.visually-hidden (active tab)
           li
             a(href="my-groups.html") Groups
-      
+
 block content
-  
+
   .row.margin-top-l
-    
-    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.margin-top-complementary
+
+    .col-xs-12.col-sm-4.col-sm-last.margin-bottom-l.complementary-top
       a.waves-effect.waves-light.btn.btn-block.btn-primary.btn-raised(href='node-add-event.html') Create event
-      br 
+      br
       br
       button.waves-effect.waves-light.btn.btn-block.btn-default.btn-raised.visible-xs-block.js-open-canvas
         svg.pull-left.btn-icon.icon-black
@@ -54,11 +54,11 @@ block content
               svg.pull-left.btn-icon.icon-black
                 title Close
                 use(xlink:href='#icon-close')
-    
+
         .offcanvas-body
           form
             .form-group.radios
-              label Event status 
+              label Event status
               .radio
                 input#radio1(name='event', type='radio', checked)
                 label(for='radio1') Upcoming
@@ -68,7 +68,7 @@ block content
               .radio
                 input#radio3(name='event', type='radio')
                 label(for='radio3') Unpublished
-              
+
 
     .col-xs-12.col-sm-8
       h4.section-title My events
@@ -76,5 +76,5 @@ block content
       include molecules/_event2.pug
       include molecules/_event3.pug
       include molecules/_event4.pug
-        
+
       include molecules/_pager.pug

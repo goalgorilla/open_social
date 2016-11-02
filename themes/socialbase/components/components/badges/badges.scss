@@ -11,6 +11,11 @@
 .badge-accent {
   background-color: $brand-accent;
   color: $default-color;
+
+  &:hover {
+    color: $default-color;
+  }
+
 }
 
 .badge-primary {
@@ -67,8 +72,8 @@
 
   input[type=checkbox]:checked ~ .icon-badge-toggle,
   input[type=checkbox]:checked ~ .badge--toggle__label {
-    background-color: $gray-dark;
-    color: white;
+    background-color: $gray-lighter;
+    color: $default-color;
   }
 
   .badge--toggle__label {
@@ -81,28 +86,28 @@
     opacity: 1;
   }
 
-
-  &.badge-gray-lighter {
-    input[type=checkbox]:checked ~ .icon-badge-toggle,
-    input[type=checkbox]:checked ~ .badge--toggle__label {
-      background-color: $gray-lighter;
-      color: $default-color;
-    }
-  }
 }
 
-.js .card--teaser-stream .badge--toggle {
-  &.badge-gray-lighter {
-    input[type=checkbox] {
-      ~ .icon-badge-toggle, ~ .badge--toggle__label {
-        background: $gray-lighter;
-      }
+a.badge--comment-count {
+  background-color: transparent;
+  padding: 0;
+  color: $default-color;
 
-      &:checked {
-        ~ .icon-badge-toggle, ~ .badge--toggle__label {
-          background-color: white;
-        }
-      }
-    }
+  &:hover,
+  &:focus {
+    background-color: $gray-lighter;
+    color: $default-color;
   }
+
+  .icon-badge {
+    width: 22px;
+    height: 18px;
+    padding-left: 8px;
+    fill: $default-color;
+  }
+
+}
+
+.badge--comment-count__number {
+    padding: 4px 8px 4px 4px;
 }

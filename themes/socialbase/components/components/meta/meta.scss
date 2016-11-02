@@ -1,0 +1,79 @@
+@import 'init';
+
+.metainfo {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  margin-bottom: 20px;
+  line-height: 1.4;
+
+  .metainfo__follow {
+    margin-top: 0.5em;
+    flex-basis: 100%;
+    align-self: flex-start;
+
+    @include MQ($small) {
+      flex-basis: auto;
+      margin-top: 0;
+    }
+  }
+
+}
+
+.metainfo__avatar {
+  margin-right: 12px;
+
+  .img-metainfo__avatar {
+    border-radius: 50%;
+    width: 44px;
+    height: auto;
+  }
+
+}
+
+.metainfo__content {
+  flex: 1;
+  font-size: 0.875rem;
+
+  a {
+    text-decoration: underline;
+    color: $default-color;
+    display: inline-block;
+  }
+
+  .badge--toggle {
+    vertical-align: text-top;
+  }
+
+}
+
+.metainfo__authorname {
+  display: inline-block;
+  color: $gray-light;
+  margin-right: 0.2em;
+}
+
+.metainfo__published-date {
+  display: inline-block;
+  color: $gray-light;
+}
+
+.metainfo__properties {
+  flex: 1 1 100%;
+  margin: 20px 0 40px;
+}
+
+.metainfo__follow .badge--comment-count {
+  float: right;
+  margin-bottom: 5px;
+}
+
+.article__special-fields {
+  padding: 20px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid $gray-light-1;
+
+  .icon-small {
+    vertical-align: top;
+  }
+}

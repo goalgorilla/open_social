@@ -63,6 +63,10 @@ a.badge:hover, a.badge:focus {
   color: #4d4d4d;
 }
 
+.badge-accent:hover {
+  color: #4d4d4d;
+}
+
 .badge-primary {
   background-color: #29abe2;
 }
@@ -122,8 +126,8 @@ a.badge:hover, a.badge:focus {
 
 .js .badge--toggle input[type=checkbox]:checked ~ .icon-badge-toggle,
 .js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
-  background-color: #333333;
-  color: white;
+  background-color: #e6e6e6;
+  color: #4d4d4d;
 }
 
 .js .badge--toggle .badge--toggle__label {
@@ -136,18 +140,26 @@ a.badge:hover, a.badge:focus {
   opacity: 1;
 }
 
-.js .badge--toggle.badge-gray-lighter input[type=checkbox]:checked ~ .icon-badge-toggle,
-.js .badge--toggle.badge-gray-lighter input[type=checkbox]:checked ~ .badge--toggle__label {
+a.badge--comment-count {
+  background-color: transparent;
+  padding: 0;
+  color: #4d4d4d;
+}
+
+a.badge--comment-count:hover, a.badge--comment-count:focus {
   background-color: #e6e6e6;
   color: #4d4d4d;
 }
 
-.js .card--teaser-stream .badge--toggle.badge-gray-lighter input[type=checkbox] ~ .icon-badge-toggle, .js .card--teaser-stream .badge--toggle.badge-gray-lighter input[type=checkbox] ~ .badge--toggle__label {
-  background: #e6e6e6;
+a.badge--comment-count .icon-badge {
+  width: 22px;
+  height: 18px;
+  padding-left: 8px;
+  fill: #4d4d4d;
 }
 
-.js .card--teaser-stream .badge--toggle.badge-gray-lighter input[type=checkbox]:checked ~ .icon-badge-toggle, .js .card--teaser-stream .badge--toggle.badge-gray-lighter input[type=checkbox]:checked ~ .badge--toggle__label {
-  background-color: white;
+.badge--comment-count__number {
+  padding: 4px 8px 4px 4px;
 }
 
 /*# sourceMappingURL=badges.css.map */
