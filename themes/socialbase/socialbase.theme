@@ -756,6 +756,52 @@ function socialbase_preprocess_page(&$variables) {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  $account = $node->getOwner();
+  $variables['content_type'] = $node->bundle();
+
+  // Only on knowledge_product.
+  if ($node->getType() == 'knowledge_product') {
+    // Add group name to the teaser (if it's part of a group).
+    $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($node);
+    if (!empty($group_content)) {
+      // It can only exist in one group. So we get the first pointer out of
+      // the array that gets returned from loading GroupContent.
+      $group = reset($group_content)->getGroup();
+
+      if (!empty($group)) {
+        $variables['content']['group_name'] = $group->label();
+      }
+    }
+  }
+
+  // Display author information.
+  if ($account) {
+    // Author profile picture.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, 'compact');
+        $variables['author_picture'] = $content;
+      }
+    }
+
+    // Author name.
+    $username = array(
+      '#theme' => 'username',
+      '#account' => $account,
+    );
+    $variables['author'] = drupal_render($username);
+  }
+
+  if (isset($variables['elements']['#node']) && !isset($variables['created_date_formatted'])) {
+    $variables['created_date_formatted'] = \Drupal::service('date.formatter')
+      ->format($variables['elements']['#node']->getCreatedTime(), 'social_long_date');
+  }
+
   // Get current node.
   $node = $variables['node'];
   // Get current user.
@@ -785,6 +831,7 @@ function socialbase_preprocess_node(&$variables) {
 
     $variables['display_submitted'] = TRUE;
   }
+
   if ($variables['view_mode'] === 'hero') {
     unset($variables['label']);
   }

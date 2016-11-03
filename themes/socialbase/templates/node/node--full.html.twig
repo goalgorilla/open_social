@@ -64,12 +64,13 @@
  */
 #}
 
+{{ attach_library('socialbase/meta')}}
+
 {%
   set classes = [
     'card',
-    node.isPromoted() ? 'promoted',
-    node.isSticky() ? 'sticky',
-    not node.isPublished() ? 'unpublished',
+    node.isPromoted() ? 'node--promoted',
+    not node.isPublished() ? 'node--unpublished',
   ]
 %}
 
@@ -81,43 +82,77 @@
 
 <article{{ attributes.addClass(classes) }}>
 
-  <div{{ content_attributes.addClass('card-body extra-padding body-text') }}>
+  <div{{ content_attributes.addClass('card-body extra-padding') }}>
 
-    {% if content.flag_follow_content|render is not empty %}
-      {{ content.flag_follow_content }}
+    {% if not node.isPublished() %}
+      <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
     {% endif %}
 
-    {{ content.body }}
+    <header class="metainfo">
 
-    {% if content.field_files|render is not empty %}
-    <div class="inline-clear margin-top-xxl"></div>
-      <div class="card-nested-section">
-        <h5>
-          {% trans %}Files{% endtrans %}
-        </h5>
-          {{ content.field_files }}
+      <div class="metainfo__avatar">
+        {{ author_picture }}
       </div>
-    {% endif %}
+
+      <div class="metainfo__content">
+
+        {{ author }}
+        <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+        <div>
+          {% if group_link %}
+            {% trans %} in group {% endtrans %}
+            {{ group_link }}
+          {% endif %}
+        </div>
+
+      </div>
+
+      {% if content.flag_follow_content|render is not empty %}
+        {{ content.flag_follow_content }}
+      {% endif %}
+
+      <div class="metainfo__brief">
+
+        {% if node.isSticky() %}
+          <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
+        {% endif %}
+
+        <a href="#section-comments" class="badge badge--comment-count">
+          <label>
+            <svg class="icon-small icon-badge">
+              <use xlink:href="#icon-comment"></use>
+            </svg>
+            <span class="badge--comment-count__number">{{ comment_count }}</span>
+          </label>
+        </a>
+
+        {% if visibility_icon and visibility_label %}
+          <div class="badge badge--toggle">
+            <label>
+              <input type="checkbox">
+              <svg class="icon-gray icon-badge-toggle">
+                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+              </svg>
+              <span class="badge--toggle__label">{{ visibility_label }}</span>
+            </label>
+          </div>
+        {% endif %}
+
+      </div>
+
+    </header>
+
+    <div class="body-text">
+      {{ content|without('book_navigation', 'field_book_comments', 'field_topic_comments', 'field_event_comments', 'field_page_comments', 'flag_follow_content') }}
+    </div>
+
   </div>
 
 </article>
 
-{% if content.book_navigation|render is not empty %}
-  {{ content.book_navigation }}
-{% endif %}
 
-{% if content.field_book_comments|render is not empty %}
-  {{ content.field_book_comments }}
-{% endif %}
-
-{% if content.field_topic_comments|render is not empty %}
-  {{ content.field_topic_comments }}
-{% endif %}
-
-{% if content.field_event_comments|render is not empty %}
-  {{ content.field_event_comments }}
-{% endif %}
-
-{% if content.field_page_comments|render is not empty %}
-  {{ content.field_page_comments }}
-{% endif %}
+{{ content.book_navigation }}
+{{ content.field_book_comments }}
+{{ content.field_topic_comments }}
+{{ content.field_event_comments }}
+{{ content.field_page_comments }}

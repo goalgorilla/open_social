@@ -62,9 +62,14 @@
   margin: 20px 0 40px;
 }
 
-.metainfo__follow .badge--comment-count {
-  float: right;
-  margin-bottom: 5px;
+.metainfo__brief {
+  margin-top: 10px;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+}
+
+.metainfo__brief .badge--comment-count {
+  margin-right: 3px;
 }
 
 .article__special-fields {
@@ -75,6 +80,19 @@
 
 .article__special-fields .icon-small {
   vertical-align: top;
+}
+
+.node--unpublished__label {
+  display: inline-block;
+  position: absolute;
+  font-style: italic;
+  font-weight: 500;
+  top: 0;
+  right: 0;
+  border-radius: 0 10px 0 10px;
+  background-color: #29abe2;
+  color: white;
+  padding: 0.5em 1em;
 }
 
 @media screen and (min-width: 768px) {
