@@ -4,7 +4,6 @@ dependencies:
   config:
     - block_content.type.platform_intro
     - field.field.block_content.platform_intro.field_text_block
-    - field.field.block_content.platform_intro.field_title
   module:
     - field_group
     - text
@@ -12,7 +11,6 @@ third_party_settings:
   field_group:
     group_block_content:
       children:
-        - field_title
         - field_text_block
       parent_name: ''
       weight: 0
@@ -35,13 +33,6 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-  field_title:
-    weight: 1
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
   info:
     type: string_textfield
     weight: 1
