@@ -2,8 +2,7 @@
 
 .comment {
   position: relative;
-  margin-top: .5em;
-  padding-top: .5em;
+  margin-top: 1em;
   line-height: 1.2;
   display: flex;
   width: 100%;
@@ -25,20 +24,20 @@
 
 .comment__author {
   color: $gray-base;
-  cursor: pointer;
-  font-size: 1.1em;
+  padding-right: 30px;
 }
 
 .comment__metadata {
   display: inline-block;
-  margin-left: 0.2em;
   font-size: $button-font-size-small;
   color: $gray-light;
+
 
   > * {
     display: inline-block;
     margin-right: 0.5em;
   }
+
 }
 
 .comment__text {
@@ -61,7 +60,6 @@
   }
 
   .comment:first-of-type {
-    padding-top: 0;
     margin-top: 0;
   }
 
@@ -80,7 +78,7 @@
 // make sure the btn-group is positioned top right of the comment
 .comment__actions {
   position: absolute;
-  top: 0;
+  top: -8px;
   right: 0;
 }
 
