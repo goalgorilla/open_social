@@ -88,62 +88,72 @@
       <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
     {% endif %}
 
-    <header class="metainfo">
+    {% if (content_type == 'page' and content.flag_follow_content|render is not empty) or content_type != 'page' %}
 
-      <div class="metainfo__avatar">
-        {{ author_picture }}
-      </div>
+      <header class="metainfo">
 
-      <div class="metainfo__content">
+        {% if content_type != 'page' %}
 
-        {{ author }}
-        <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-        <div>
-          {% if topic_type %}
-            {{ topic_type }}
-          {% endif %}
-          {% if group_link %}
-            {% trans %} in group {% endtrans %}
-            {{ group_link }}
-          {% endif %}
-        </div>
+          <div class="metainfo__avatar">
+            {{ author_picture }}
+          </div>
 
-      </div>
+          <div class="metainfo__content">
 
-      {% if content.flag_follow_content|render is not empty %}
-        {{ content.flag_follow_content }}
-      {% endif %}
+            {{ author }}
+            <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+            <div>
+              {% if topic_type %}
+                {{ topic_type }}
+              {% endif %}
+              {% if group_link %}
+                {% trans %} in group {% endtrans %}
+                {{ group_link }}
+              {% endif %}
+            </div>
 
-      <div class="metainfo__brief">
+          </div>
 
-        {% if node.isSticky() %}
-          <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
         {% endif %}
 
-        <a href="#section-comments" class="badge badge--comment-count">
-          <label>
-            <svg class="icon-small icon-badge">
-              <use xlink:href="#icon-comment"></use>
-            </svg>
-            <span class="badge--comment-count__number">{{ comment_count }}</span>
-          </label>
-        </a>
-
-        {% if visibility_icon and visibility_label %}
-          <div class="badge badge--toggle">
-            <label>
-              <input type="checkbox">
-              <svg class="icon-gray icon-badge-toggle">
-                <use xlink:href="#icon-{{ visibility_icon }}"></use>
-              </svg>
-              <span class="badge--toggle__label">{{ visibility_label }}</span>
-            </label>
+        {% if content.flag_follow_content|render is not empty %}
+          <div class="metainfo__follow">
+            {{ content.flag_follow_content }}
           </div>
         {% endif %}
 
-      </div>
+        <div class="metainfo__brief">
 
-    </header>
+          {% if node.isSticky() %}
+            <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
+          {% endif %}
+
+          <a href="#section-comments" class="badge badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
+            <label>
+              <svg class="icon-small icon-badge">
+                <use xlink:href="#icon-comment"></use>
+              </svg>
+              <span class="badge--comment-count__number">{{ comment_count }}</span>
+            </label>
+          </a>
+
+          {% if visibility_icon and visibility_label %}
+            <div class="badge badge--toggle">
+              <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+                <input type="checkbox">
+                <svg class="icon-gray icon-badge-toggle">
+                  <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                </svg>
+                <span class="badge--toggle__label">{{ visibility_label }}</span>
+              </label>
+            </div>
+          {% endif %}
+
+        </div>
+
+      </header>
+
+    {% endif %}
 
     <div class="body-text">
       {{ content|without('book_navigation', 'field_book_comments', 'field_topic_comments', 'field_event_comments', 'field_page_comments', 'flag_follow_content') }}
