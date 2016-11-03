@@ -738,6 +738,24 @@ function socialbase_preprocess_page(&$variables) {
 
 }
 
+/**
+ * Prepare group link when an event or topic belongs to one group.
+ */
+function socialbase_group_link($node) {
+  $group_link = NULL;
+  $group_content = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'entity_id' => $node->id(),
+      //@TODO: fix this to work with all group types.
+      'type' => 'open_group-group_node-' . $node->getType(),
+    ]);
+  if (!empty($group_content)) {
+    $group = reset($group_content)->getGroup();
+    $group_link = $group->link();
+  }
+  return $group_link;
+}
 
 
 /**
@@ -759,6 +777,12 @@ function socialbase_preprocess_node(&$variables) {
   $node = $variables['node'];
   $account = $node->getOwner();
   $variables['content_type'] = $node->bundle();
+
+  // We get the group link to the node if there is one, will return NULL if not.
+  $group_link = socialbase_group_link($node);
+  if (!empty($group_link)) {
+    $variables['group_link'] = $group_link;
+  }
 
   // Only on knowledge_product.
   if ($node->getType() == 'knowledge_product') {
