@@ -128,14 +128,16 @@
             <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
           {% endif %}
 
-          <a href="#section-comments" class="badge badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
-            <label>
-              <svg class="icon-small icon-badge">
-                <use xlink:href="#icon-comment"></use>
-              </svg>
-              <span class="badge--comment-count__number">{{ comment_count }}</span>
-            </label>
-          </a>
+          {% if comment_field_status is not empty %}
+            <a href="#section-comments" class="badge badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
+              <label>
+                <svg class="icon-small icon-badge">
+                  <use xlink:href="#icon-comment"></use>
+                </svg>
+                <span class="badge--comment-count__number">{{ comment_count }}</span>
+              </label>
+            </a>
+          {% endif %}
 
           {% if visibility_icon and visibility_label %}
             <div class="badge badge--toggle">
@@ -156,16 +158,12 @@
     {% endif %}
 
     <div class="body-text">
-      {{ content|without('book_navigation', 'field_book_comments', 'field_topic_comments', 'field_event_comments', 'field_page_comments', 'flag_follow_content') }}
+      {{ content|without('book_navigation', 'flag_follow_content') }}
     </div>
 
   </div>
 
 </article>
 
-
 {{ content.book_navigation }}
-{{ content.field_book_comments }}
-{{ content.field_topic_comments }}
-{{ content.field_event_comments }}
-{{ content.field_page_comments }}
+{{ below_content }}

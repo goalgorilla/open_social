@@ -894,6 +894,34 @@ function socialbase_preprocess_node(&$variables) {
     $variables['status_label'] = t('unpublished');
   }
 
+  // Let's see if we can remove comments from the content and render them in a
+  // separate content_below array.
+  $comment_field_name = '';
+  $variables['comment_field_name'] = '';
+
+  // Check on our node if we have the comment type field somewhere.
+  $fields_on_node = $node->getFieldDefinitions();
+  foreach ($fields_on_node as $field) {
+    if ($field->getType() == 'comment') {
+      $comment_field_name = $field->getName();
+      // If we have a comment and the status is OPEN or CLOSED we can render things.
+      // Because that means we at least show the comment section.
+      if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
+        $variables['comment_field_status'] = $comment_field_name;
+      }
+    }
+  }
+
+  // Our node has a comment reference. Let's remove it from content array.
+  $variables['below_content'] = array();
+  if (!empty($comment_field_name)) {
+    if (!empty($variables['content'][$comment_field_name])) {
+      // Add it to our custom comments_section for the template purposes and
+      // remove it.
+      $variables['below_content'][$comment_field_name] = $variables['content'][$comment_field_name];
+      unset($variables['content'][$comment_field_name]);
+    }
+  }
 }
 
 /**
