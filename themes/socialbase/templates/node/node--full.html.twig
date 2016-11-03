@@ -99,6 +99,9 @@
         {{ author }}
         <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
         <div>
+          {% if topic_type %}
+            {{ topic_type }}
+          {% endif %}
           {% if group_link %}
             {% trans %} in group {% endtrans %}
             {{ group_link }}
