@@ -1,0 +1,52 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.platform_intro
+    - field.field.block_content.platform_intro.field_text_block
+    - field.field.block_content.platform_intro.field_title
+  module:
+    - field_group
+    - text
+third_party_settings:
+  field_group:
+    group_block_content:
+      children:
+        - field_title
+        - field_text_block
+      parent_name: ''
+      weight: 0
+      label: 'Block content'
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+id: block_content.platform_intro.default
+targetEntityType: block_content
+bundle: platform_intro
+mode: default
+content:
+  field_text_block:
+    type: text_textarea
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  info:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }
