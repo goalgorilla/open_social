@@ -928,27 +928,10 @@ function socialbase_preprocess_node(&$variables) {
       // to add any comments.
       if (($node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::CLOSED && $comment_count > 0) || $node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::OPEN) {
         $variables['comment_field_status'] = $comment_field_name;
-
-        $prefix = [
-          '#markup' => '<a id="section-comments"></a>'
-        ];
-
-        $variables['below_content'][$comment_field_name]['title_prefix'] = $prefix;
         $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
         $variables['comment_count'] = $comment_count;
       }
     }
-  }
-}
-
-/**
- * Implements hook_preprocess_field().
- */
-function socialbase_preprocess_field__comment(&$variables) {
-  if ($variables['element']['#field_type'] == 'comment') {
-    // By default comment doesn't add
-    $variables['title_prefix'] = $variables['element']['title_prefix'];
-    $variables['title_suffix'] = $variables['element']['title_suffix'];
   }
 }
 

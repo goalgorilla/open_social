@@ -9,4 +9,3 @@ projects[drupal][patch][] = "https://www.drupal.org/files/issues/navigation_bloc
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2687773-18-Cleanup-user-input-for-checkboxes-8.2.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2723707-field-storage-does-not-validate-5.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2744069-5-views-in-queries.patch"
-projects[drupal][patch][] = "https://www.drupal.org/files/issues/rename-preprocess-comment-field-2823834-2.patch"
