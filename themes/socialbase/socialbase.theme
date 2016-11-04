@@ -904,11 +904,6 @@ function socialbase_preprocess_node(&$variables) {
   foreach ($fields_on_node as $field) {
     if ($field->getType() == 'comment') {
       $comment_field_name = $field->getName();
-      // If we have a comment and the status is OPEN or CLOSED we can render things.
-      // Because that means we at least show the comment section.
-      if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
-        $variables['comment_field_status'] = $comment_field_name;
-      }
     }
   }
 
@@ -921,7 +916,41 @@ function socialbase_preprocess_node(&$variables) {
       $variables['below_content'][$comment_field_name] = $variables['content'][$comment_field_name];
       unset($variables['content'][$comment_field_name]);
     }
+
+    // If we have a comment and the status is OPEN or CLOSED we can render icon
+    // for comment count, and add the comment count to the node.
+    if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
+      $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
+      $t_args = array(':num_comments' => $comment_count);
+
+      // If it's closed, we only show the comment section when there are
+      // comments placed. Closed means we show comments but you are not able
+      // to add any comments.
+      if ($node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::CLOSED && $comment_count > 0) {
+        $variables['comment_field_status'] = $comment_field_name;
+        $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
+        $variables['comment_count'] = $comment_count;
+      }
+    }
   }
+}
+
+/**
+ * Get comment count for a discussion.
+ *
+ * @param $entity
+ * @return int
+ */
+function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
+  $count = 0;
+
+  $comment_count = $node->{$comment_field_name}->comment_count;
+
+  if ($comment_count) {
+    $count = $comment_count;
+  }
+
+  return $count;
 }
 
 /**
