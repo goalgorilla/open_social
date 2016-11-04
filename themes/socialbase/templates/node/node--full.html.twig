@@ -158,7 +158,22 @@
     {% endif %}
 
     <div class="body-text">
-      {{ content|without('book_navigation', 'flag_follow_content') }}
+      {% if content_type == 'event' %}
+        <div class="article__special-fields">
+          <div>
+            <svg class="teaser-icon"><use xlink:href="#icon-event"></use></svg>
+            <span class="sr-only">{% trans %}Event date {% endtrans %}</span>
+            <span class="inline-center">{{event_date}}</span>
+          </div>
+          <div>
+            <svg class="teaser-icon"><use xlink:href="#icon-location"></use></svg>
+            <span class="sr-only">{% trans %}Event location {% endtrans %}</span>
+            <span class="inline-center">{{content.field_event_location}}</span>
+          </div>
+        </div>
+      {% endif %}
+
+      {{ content|without('field_event_location', 'book_navigation', 'flag_follow_content') }}
     </div>
 
   </div>
