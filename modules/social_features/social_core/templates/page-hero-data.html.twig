@@ -25,17 +25,15 @@
 <div class="cover">
 {% endif %}
 {% if node %}
-
-{% if node_edit_url %}
-  <div class="hero-action-button">
-    <a href="{{ node_edit_url }}" title="Edit content" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
-      <svg class="icon-gray icon-medium">
-        <use xlink:href="#icon-edit"></use>
-      </svg>
-    </a>
-  </div>
-{% endif %}
-
+  {% if node_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ node_edit_url }}" title="Edit content" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
+  {% endif %}
 <div class="cover-wrap">
 {% endif %}
 
@@ -51,57 +49,7 @@
   <div class="hero-footer">
     <div class="row row-md-center">
       <div class="col-xs-12 col-md-6 col-md-offset-3">
-
-        {% if visibility_icon and  visibility_label %}
-          <div class="badge badge-gray-dark badge--toggle">
-            <label>
-              <input type="checkbox">
-              <svg class="icon-white icon-small icon-badge-toggle">
-                <use xlink:href="#icon-{{ visibility_icon }}"></use>
-              </svg>
-              <span class="badge--toggle__label">{{ visibility_label }}</span>
-            </label>
-          </div>
-        {% endif %}
-
-        {{ hero_node }}
-
-        <div>
-
-        {% if node_type == "topic" %}
-          {%- trans -%}By&nbsp;{%- endtrans -%}
-          {{ author_name }}
-          {%- trans -%}&nbsp;on&nbsp;{%- endtrans -%}
-          {{ created_date_formatted }}
-
-          <div>
-            <svg class="icon-white icon-medium">
-              <use xlink:href="#icon-label"></use>
-            </svg>
-            {{ topic_type }}
-            {% if group_link %}
-                in group {{ group_link }}
-            {% endif %}
-          </div>
-        {% elseif node_type == "book" %}
-
-          {%- trans %} Authored on {%- endtrans %} {{ created_date_formatted }}
-
-        {% elseif node_type == "page" %}
-          {# Do not display the author, date or group name #}
-        {% else %}
-          <div>
-            {%- trans -%}By&nbsp;{%- endtrans -%}
-              {{ author_name }}
-            {% if group_link %}
-              <span>in group {{ group_link }} </span>
-            {% endif %}
-          </div>
-        {% endif %}
-        </div>
-
       </div>
-
     {% if event_enrollment %}
       <div class="col-xs-12 col-md-3">
           <div class="btn-group">
