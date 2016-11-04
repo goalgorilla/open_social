@@ -269,6 +269,13 @@ function socialbase_preprocess_block(&$variables) {
 
   }
 
+  // for all platform_intro blocks we want them to appear as cards. 
+  if (isset($variables['elements']['content']['#block_content'])) {
+     if ($variables['elements']['content']['#block_content']->bundle() == 'platform_intro') {
+       $variables['card'] = TRUE;
+     }
+  }
+
   if (!is_null($profile_user_id) && is_object($profile_user_id)) {
     $profile_user_id = $profile_user_id->id();
   }
@@ -1382,4 +1389,14 @@ function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInte
     $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
   }
 
+}
+
+/**
+ * Implements theme_preprocess_username().
+ */
+function socialbase_preprocess_username(&$variables) {
+  $account = $variables['account'] ? : new AnonymousUserSession();
+
+  // Override the default drupal truncate function for all user names, so the whole name will be displayed.
+  $variables['name'] = $account->getDisplayName();
 }
