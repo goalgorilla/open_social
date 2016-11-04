@@ -904,13 +904,13 @@ function socialbase_preprocess_node(&$variables) {
     if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
       $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
       $t_args = array(':num_comments' => $comment_count);
+      $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
 
       // If it's closed, we only show the comment section when there are
       // comments placed. Closed means we show comments but you are not able
       // to add any comments.
       if (($node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::CLOSED && $comment_count > 0) || $node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::OPEN) {
         $variables['comment_field_status'] = $comment_field_name;
-        $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
         $variables['comment_count'] = $comment_count;
       }
     }
