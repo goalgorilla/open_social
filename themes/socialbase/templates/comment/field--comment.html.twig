@@ -28,15 +28,17 @@
 #}
 {{ attach_library('socialbase/comment')}}
 
-<section{{ attributes.setAttribute('id', 'section-comments') }}>
 
-  {% if not label_hidden %}
-    {{ title_prefix }}
-    <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
-    {{ title_suffix }}
-  {% endif %}
+{# extra condition to make sure the card is not shown when there are no comments #}
+{% if comments %}
+  <section{{ attributes.setAttribute('id', 'section-comments') }}>
 
-  {# extra condition to make sure the card is not shown when there are no comments #}
+    {% if not label_hidden %}
+      {{ title_prefix }}
+      <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+      {{ title_suffix }}
+    {% endif %}
+
 
     <div class="card">
       <div class="card-body">
@@ -50,4 +52,6 @@
       </div>
     </div>
 
-</section>
+  </section>
+
+{% endif %}
