@@ -90,7 +90,7 @@ Feature: Create Open Group
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Hero block"
+    And I should see the link "Test open group" in the "Main content"
     And I click "Test open group"
   # TODO: And I should see "Upcoming Events" in the "Sidebar second"
   # And I should see "Test group event" in the "Sidebar second"
