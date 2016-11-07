@@ -88,33 +88,30 @@
       <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
     {% endif %}
 
-    {% if (content_type == 'page' and content.flag_follow_content|render is not empty) or content_type != 'page' %}
 
+    {% block nodefull_header %}
       <header class="metainfo">
 
-        {% if content_type != 'page' %}
+        <div class="metainfo__avatar">
+          {{ author_picture }}
+        </div>
 
-          <div class="metainfo__avatar">
-            {{ author_picture }}
+        <div class="metainfo__content">
+
+          {{ author }}
+          <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+          <div>
+            {% if topic_type %}
+              {{ topic_type }}
+            {% endif %}
+            {% if group_link %}
+              {% trans %} in group {% endtrans %}
+              {{ group_link }}
+            {% endif %}
           </div>
 
-          <div class="metainfo__content">
+        </div>
 
-            {{ author }}
-            <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-            <div>
-              {% if topic_type %}
-                {{ topic_type }}
-              {% endif %}
-              {% if group_link %}
-                {% trans %} in group {% endtrans %}
-                {{ group_link }}
-              {% endif %}
-            </div>
-
-          </div>
-
-        {% endif %}
 
         {% if content.flag_follow_content|render is not empty %}
           <div class="metainfo__follow">
@@ -154,33 +151,18 @@
         </div>
 
       </header>
-
-    {% endif %}
+    {% endblock %}
 
     <div class="body-text">
-      {% if content_type == 'event' %}
-        <div class="article__special-fields">
-          <div>
-            <svg class="article__special-fields-icon"><use xlink:href="#icon-event"></use></svg>
-            <span class="sr-only">{% trans %}Event date {% endtrans %}</span>
-            <span class="inline-center">{{event_date}}</span>
-          </div>
-          {% if content.field_event_location|render is not empty %}
-            <div>
-              <svg class="article__special-fields-icon"><use xlink:href="#icon-location"></use></svg>
-              <span class="sr-only">{% trans %}Event location {% endtrans %}</span>
-              <span class="inline-center">{{content.field_event_location}}</span>
-            </div>
-          {% endif %}
-        </div>
-      {% endif %}
-
-      {{ content|without('field_event_location', 'book_navigation', 'flag_follow_content') }}
+      {% block nodefull_body %}
+        {{ content|without('flag_follow_content') }}
+      {% endblock %}
     </div>
 
   </div>
 
 </article>
 
-{{ content.book_navigation }}
-{{ below_content }}
+{% block nodefull_below_content %}
+  {{ below_content }}
+{% endblock %}
