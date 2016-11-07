@@ -37,6 +37,9 @@ function _social_like_set_permissions() {
  * @return array
  */
 function _social_like_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
   // Authenticated.
   $permissions['authenticated'] = [
     'add or remove like votes on post',
@@ -44,6 +47,12 @@ function _social_like_get_permissions($role) {
     'add or remove like votes on post_comment of comment',
     'add or remove like votes on topic of node',
   ];
+
+  // Content manager.
+  $permissions['contentmanager'] = [];
+
+  // Site manager.
+  $permissions['sitemanager'] = [];
 
   return $permissions[$role];
 }
