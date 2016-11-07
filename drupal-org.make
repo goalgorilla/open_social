@@ -32,6 +32,7 @@ projects[group][version] = 1.0-beta4
 projects[group][patch][] = "https://www.drupal.org/files/issues/error-when-uploading-files-2793621-5.patch"
 projects[image_widget_crop][type] = module
 projects[image_widget_crop][version] = 1.4
+projects[image_widget_crop][patch][] = "https://www.drupal.org/files/issues/image_style_configuration-2825449-2.patch"
 projects[libraries][type] = module
 projects[libraries][download][type] = git
 projects[libraries][download][revision] = fa93a5aec2cfcfd5717e42c7112e381487fed9fd
