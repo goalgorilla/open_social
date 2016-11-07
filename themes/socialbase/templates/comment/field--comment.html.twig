@@ -28,9 +28,9 @@
 #}
 {{ attach_library('socialbase/comment')}}
 
+{# extra condition to make sure the card is not shown when there are no comments and comments are closed #}
+{% if comments or comment_form %}
 
-{# extra condition to make sure the card is not shown when there are no comments #}
-{% if comments %}
   <section{{ attributes.setAttribute('id', 'section-comments') }}>
 
     {% if not label_hidden %}

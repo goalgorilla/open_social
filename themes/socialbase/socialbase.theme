@@ -269,7 +269,7 @@ function socialbase_preprocess_block(&$variables) {
 
   }
 
-  // for all platform_intro blocks we want them to appear as cards. 
+  // for all platform_intro blocks we want them to appear as cards.
   if (isset($variables['elements']['content']['#block_content'])) {
      if ($variables['elements']['content']['#block_content']->bundle() == 'platform_intro') {
        $variables['card'] = TRUE;
@@ -773,21 +773,6 @@ function socialbase_preprocess_node(&$variables) {
     $variables['group_link'] = $group_link;
   }
 
-  // Only on knowledge_product.
-  if ($node->getType() == 'knowledge_product') {
-    // Add group name to the teaser (if it's part of a group).
-    $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($node);
-    if (!empty($group_content)) {
-      // It can only exist in one group. So we get the first pointer out of
-      // the array that gets returned from loading GroupContent.
-      $group = reset($group_content)->getGroup();
-
-      if (!empty($group)) {
-        $variables['content']['group_name'] = $group->label();
-      }
-    }
-  }
-
   // Display author information.
   if ($account) {
     // Author profile picture.
@@ -818,7 +803,7 @@ function socialbase_preprocess_node(&$variables) {
   // Get current node.
   $node = $variables['node'];
   // Get current user.
-  $account = \Drupal::currentUser();
+  $currentuser = \Drupal::currentUser();
 
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
@@ -863,7 +848,7 @@ function socialbase_preprocess_node(&$variables) {
   }
 
   // Content visibility.
-  if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+  if ((isset($node->field_content_visibility)) && !$currentuser->isAnonymous()) {
     $node_visibility_value = $node->field_content_visibility->getValue();
     $content_visibility = reset($node_visibility_value);
     switch ($content_visibility['value']) {
