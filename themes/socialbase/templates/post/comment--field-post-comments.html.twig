@@ -74,7 +74,12 @@
   <div class="comment__content">
     <span class="comment_author"> {{ author }} </span>
     <span class="comment__metadata">&bullet; {{ submitted }} </span>
-    <div class="comment__text"> {{ content }} </div>
+    <div class="comment__text"> {{ content|without('like_and_dislike') }} </div>
+    {% if elements.like_and_dislike %}
+      <div class="comment__votes">
+        {{ elements.like_and_dislike }}
+      </div>
+    {% endif %}
   </div>
 
 </article>

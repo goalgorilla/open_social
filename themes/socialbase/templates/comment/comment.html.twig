@@ -71,10 +71,16 @@
   <div class="comment__avatar"> {{ author_picture }} </div>
 
   <div class="comment__content">
+<<<<<<< HEAD
     <div class="comment__author"> {{ author }}
       <span class="comment__metadata">&bullet; {{ submitted }} </span>
     </div>
     <div class="comment__text"> {{ content }} </div>
+    {% if elements.like_and_dislike %}
+      <div class="comment__votes">
+        {{ elements.like_and_dislike }}
+      </div>
+    {% endif %}
   </div>
 
 </article>

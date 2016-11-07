@@ -1,0 +1,49 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_like module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_like.
+ */
+function social_like_install() {
+
+  // Set some default permissions.
+  _social_like_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_like_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_like_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_like_get_permissions($role) {
+  // Authenticated.
+  $permissions['authenticated'] = [
+    'add or remove like votes on post',
+    'add or remove like votes on comment of comment',
+    'add or remove like votes on post_comment of comment',
+    'add or remove like votes on topic of node',
+  ];
+
+  return $permissions[$role];
+}

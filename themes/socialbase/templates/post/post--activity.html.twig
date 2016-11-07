@@ -30,9 +30,7 @@
 
 <div{{ attributes.addClass(classes) }}>
 
-  {% if content.field_post %}
-    {{ content.field_post }}
-  {% endif %}
+  {{ content|without('links', 'field_post_comments') }}
 
 </div>
 

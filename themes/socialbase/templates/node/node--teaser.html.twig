@@ -129,6 +129,12 @@
             {%- trans -%} Enrolled {%- endtrans -%}
           </span>
         {% endif %}
+
+        {% if content.like_and_dislike %}
+        <div class="actionbar__item">
+          {{ content.like_and_dislike }}
+        </div>
+        {% endif %}
       </div>
       {{ content.links }}
     </div>
