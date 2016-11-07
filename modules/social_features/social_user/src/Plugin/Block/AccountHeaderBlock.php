@@ -150,7 +150,7 @@ class AccountHeaderBlock extends BlockBase {
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-account_circle',
-        'title' => t('Profile of ') . $account_name,
+        'title' => t('Profile of @account', array('@account' => $account_name)),
         'label' => $account_name,
         'title_classes' => 'sr-only',
         'url' => '#',
