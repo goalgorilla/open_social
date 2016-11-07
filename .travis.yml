@@ -39,16 +39,13 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
-  - docker-compose -f docker-compose-travis.yml up -d
+  - docker-compose -f docker-compose-ci.yml up -d
   - docker ps -a
 
 script:
-  - docker exec -i social_web bash /root/dev-scripts/install/install_script.sh
-  - docker exec -i social_web_scripts sh /root/travis/unit-tests.sh
-  - docker ps
-  - docker logs social_selenium
-  - sleep 30
-  - docker exec -it social_behat sh /root/travis/behatstability.sh
+  - docker exec -i social_ci_web bash /var/www/dev-scripts/install/install_script.sh
+  - docker exec -i social_ci_web_scripts sh /var/www/dev-scripts/unit-tests.sh
+  - docker exec -it social_ci_behat sh /var/www/dev-scripts/behatstability.sh
 
 after_success:
   - bash dev-scripts/trigger_dockerhub.sh
