@@ -766,7 +766,7 @@ function socialbase_preprocess_node(&$variables) {
 
     // Not for AN..
     $is_anonymous = \Drupal::currentUser()->isAnonymous();
-    if (!$is_anonymous) {
+    if (!$is_anonymous && $variables['node']->id()) {
       // Only on Events & Topics.
       if ($variables['node']->getType() == 'event' || $variables['node']->getType() == 'topic') {
         // Add group name to the teaser (if it's part of a group).
