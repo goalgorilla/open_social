@@ -84,15 +84,19 @@
 <div {{ attributes.addClass(classes) }}>
 
   <div class='card-image'>
+
     {% if view_mode == 'teaser' %}
       {% block card_teaser_type %} {% endblock %}
     {% endif %}
+
     {% block card_image %} {% endblock %}
+
     {% if status_label %}
       <div class="status">
         {{ status_label }}
       </div>
     {% endif %}
+
   </div>
 
   <div class='card-body'>
@@ -104,19 +108,17 @@
     {% endif %}
     {{ title_suffix }}
 
-
     {% block card_body %}
-      {{ content.body }}
+      {{ content }}
     {% endblock %}
-
 
     <div class="card-actionbar">
       <div class="actionbar">
         {% if visibility_icon and visibility_label %}
-          <div class="badge badge-gray-lighter badge--toggle">
-            <label>
+          <div class="badge badge--toggle">
+            <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
               <input type="checkbox">
-              <svg class="icon-gray icon-small icon-badge-toggle">
+              <svg class="icon-gray icon-badge-toggle">
                 <use xlink:href="#icon-{{ visibility_icon }}"></use>
               </svg>
               <span class="badge--toggle__label">{{ visibility_label }}</span>

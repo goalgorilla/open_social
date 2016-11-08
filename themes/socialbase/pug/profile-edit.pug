@@ -4,34 +4,34 @@ block title
   title Edit profile
 
 
-      
+
 block content
-      
+
   .row.margin-top-l
-    
-  
-    #scrollspy.col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
+
+
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last.complementary-top
       .toc-wrapper.hidden-print
         ul.table-of-contents.nav
           li
             a(href='#name') Name &amp; profile image
           li
-            a(href='#work') Work 
-          li 
+            a(href='#work') Work
+          li
             a(href='#contact') Contact information
-          li 
+          li
             a(href='#details') Details about you
-  
+
     .col-xs-12.col-sm-8
       h4.section-title Edit profile
-    
+
       form(method='get', action='my-profile-about.html')
-      
+
         #name.card.card-underline.scrollspy
-        
+
           .card-head
             header Name & profile image
-      
+
           .card-body
 
             .row
@@ -43,8 +43,8 @@ block content
                 .form-group
                   label Last name
                   input.form-control(type="text", value='Johnson')
-              
-              .col-xs-12    
+
+              .col-xs-12
                 .form-group
                   label Profile image
                   .image-widget.form-managed-file.clearfix.row
@@ -64,7 +64,7 @@ block content
                         span.file-size 263.85 KB
 
                       button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
-                
+
                 .form-group
                   label Cover image
 
@@ -85,17 +85,17 @@ block content
                         span.file-size 263.85 KB
 
                       button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
-              
+
         #work.card.card-underline.scrollspy
-        
+
           .card-head
-            header Work 
-      
-          .card-body 
+            header Work
+
+          .card-body
 
             .row
               .col-xs-12.col-sm-6
-                .form-group                
+                .form-group
                   label Function
                   input.form-control(type="text", value='Receptionist')
               .col-xs-12.col-sm-6
@@ -104,20 +104,20 @@ block content
                   input.form-control(type="text", value='Bastion Hotels')
 
         #contact.card.card-underline.scrollspy
-        
+
           .card-head
             header Contact information
-      
+
           .card-body
-            
+
             .form-group
-              label Phone 
+              label Phone
               input.form-control(type="tel", value='+31 612345678')
-              
+
             .form-group
-              label Location name 
+              label Location name
               input.form-control(type="text", value='')
-            
+
             .form-group
               label Country
               select.form-control
@@ -125,11 +125,11 @@ block content
                 option(value='1', selected) Netherlands
                 option(value='2') United Kingdom
                 option(value='3') France
-            
+
             .form-group
               label.form-required Post code
               input.form-control(type="text", value='1234 BB')
-              
+
             .form-group
               label.form-required City
               input.form-control(type="text", value='Amsterdam')
@@ -139,12 +139,12 @@ block content
               input.form-control(type="text", value='My streetname 123')
 
         #details.card.card-underline.scrollspy
-        
+
           .card-head
             header Details about you
-      
+
           .card-body
-            
+
             .form-group
               label.form-required Write some details about yourself
               .textarea--cke
@@ -154,24 +154,23 @@ block content
             .form-group
               label Your expertises
               input.form-control(type="text", value='drupal, sales, barbecues')
-            
+
             .form-group
               label Your interests
               input.form-control(type="text", value='php, interaction design, cooking')
 
         .form-actions.clearfix
           a.waves-effect.waves-light.btn.btn-raised.btn-default(href="my-profile-about.html") Discard changes
-          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')
 
-    
 
-        
-block scriptinline  
+
+
+block scriptinline
   script(src='js/contrib/ckeditor/ckeditor.js')
   script(src='js/contrib/ckeditor/adapters/jquery.js')
-  
+
   script.
     jQuery(document).ready(function($){
-      $( '#ckeditor' ).ckeditor();  
+      $( '#ckeditor' ).ckeditor();
     });
-    

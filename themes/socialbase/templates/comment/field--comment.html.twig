@@ -27,14 +27,18 @@
  */
 #}
 {{ attach_library('socialbase/comment')}}
-{% if node %}
 
-  {% if comments or comment_form %}
+{# extra condition to make sure the card is not shown when there are no comments and comments are closed #}
+{% if comments or comment_form %}
+
+  <section{{ attributes.setAttribute('id', 'section-comments') }}>
+
     {% if not label_hidden %}
       {{ title_prefix }}
       <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
       {{ title_suffix }}
     {% endif %}
+
 
     <div class="card">
       <div class="card-body">
@@ -47,48 +51,7 @@
 
       </div>
     </div>
-  {% endif %}
 
-{% else %}
-
-    {% if logged_in %}
-      {{nodelink}}
-
-      {% if comments and not label_hidden %}
-          {{ title_prefix }}
-          <h2{{ title_attributes }}>{{ label }}</h2>
-          {{ title_suffix }}
-      {% endif %}
-
-      {% if comment_form %}
-          {{ comment_form }}
-      {% endif %}
-
-      {% if not comments|render %}
-        {% if more_link %}
-          <hr class="ruler-xs">
-          <div class="btn btn-flat">
-            {{ more_link }}
-          </div>
-        {% endif %}
-      {% endif %}
-
-      {% if comments|render %}
-        <div class="hidden-xs card-nested-section">
-
-          {{ comments }}
-
-          <div class="margin-top-l text-center">
-            {% if more_link %}
-              <div class="btn btn-flat">
-                {{ more_link }}
-              </div>
-            {% endif %}
-          </div>
-
-        </div>
-      {% endif %}
-
-    {% endif %}
+  </section>
 
 {% endif %}

@@ -1,14 +1,14 @@
 extends ./layout/base-lu.pug
 
 block title
-  title Create Topic  
+  title Create Topic
 
-      
+
 block content
-      
+
   .row.margin-top-l
-        
-    #scrollspy.col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
+
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last.complementary-top
       .toc-wrapper.hidden-print
         ul.table-of-contents.nav
           li
@@ -21,17 +21,17 @@ block content
             a(href='#attachments') Attachments
           li
             a(href='#comment-settings') Comment settings
-      
+
     .col-xs-12.col-sm-8
       h1.h4.section-title Create Topic
-    
+
       form(action='topic.html', method='get')
-      
+
         #content.card.card-underline.scrollspy
-        
+
           .card-head
             header Content
-      
+
           .card-body
 
             .form-group.radios
@@ -44,7 +44,7 @@ block content
                 label(for='discussion') Discussion
               .radio
                 input#topic(type='radio', name='type')
-                label(for='topic') Topic  
+                label(for='topic') Topic
 
             .form-group
               label.form-required Title
@@ -55,12 +55,12 @@ block content
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
               .help-block One file only - 2 MB limit - Allowed types: png gif jpg jpeg
-        
+
         #visibility.card.card-underline.scrollspy
-        
+
           .card-head
             header Visibility
-      
+
           .card-body
 
             .form-group.radios
@@ -74,12 +74,12 @@ block content
                 input#public(type='radio', name='type', disabled)
                 label(for='public') Public
                 .help-block Visible for everyone, including people who are not a member
-        
+
         #description.card.card-underline.scrollspy
           .card-head
             header Description
-      
-          .card-body 
+
+          .card-body
             .form-group
               label.form-required Description
               .textarea--cke
@@ -96,12 +96,12 @@ block content
               .image-widget.form-managed-file.clearfix
                 input.form-control(type='file', value='upload an image')
               .help-block 15 MB per file limit - Allowed types: xls xlsx doc
-            
+
         #comment-settings.form-item.card.scrollspy.tabs-left
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")
             li.active
               a(href="#comments") Comment settings
-                
+
           .card-body.tab-content
             #comments.tab-pane.active
               .form-group.radios
@@ -114,23 +114,23 @@ block content
                   input#closed(type='radio', name='comments')
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
-              
-        .form-actions.clearfix          
-          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
-          input.waves-effect.waves-light.btn.btn-raised.btn-default(type='submit', value='Preview')  
 
-    
+        .form-actions.clearfix
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')
+          input.waves-effect.waves-light.btn.btn-raised.btn-default(type='submit', value='Preview')
 
-        
-block scriptinline  
+
+
+
+block scriptinline
   script(src='js/contrib/ckeditor/ckeditor.js')
   script(src='js/contrib/ckeditor/adapters/jquery.js')
-  
+
   script.
     jQuery(document).ready(function($){
-      $( '#ckeditor' ).ckeditor();  
+      $( '#ckeditor' ).ckeditor();
     });
-    
+
     function showMe (it, it2, box) {
       var visibility = (box.checked) ? "block" : "none";
       document.getElementById(it).style.display = visibility;

@@ -1,21 +1,15 @@
 # Socialbase theme #
-The Socialbase theme is designed to provide a ready-made theme with the option to customize it easily.
+The Socialbase theme is designed to provide a ready-made theme with the option to customize it easily in a subtheme.
 
 # Changing the style of the theme  #
-- The simple way
-In case you want to use the default layout and components provided, it is very easy to get started.
-In the components folder you can find a folder called theme. You can add your variable overrides here. More is explained in the readme file there.
-- The advanced way
-You can create a new sub theme like you normally would do and set Socialbase as the base theme. Now you can replace or add your own libraries. We try to keep the Socialbase structured into components so they can be easily overridden in a sub theme.  
+You can create a new sub theme like you normally would do and set Socialbase as the base theme. Now you can replace, extend or add your own libraries. We try to keep the Socialbase structured into components so they can be easily overridden in a sub theme.  
 
 # Contributing #
 
 Socialbase uses Gulp.js as a task runner, so that it can do many different tasks automatically:
  - Build CSS from your Sass using libSass and node-sass.
  - Add vendor prefixes for the browsers you want to support using Autoprefixer.
- - Build a style guide of your components with jade templates.
- - Lint your Sass using sass-lint.
- - Lint your JavaScript using eslint.
+ - Build a style guide of your components with pug templates.
  - Watch all of your files as you develop and re-build everything on the fly.
 
 Set up your front-end development build tools:

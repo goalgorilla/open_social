@@ -11,7 +11,6 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_theme().
@@ -21,18 +20,11 @@ function social_core_theme() {
     'page_hero_data' => array(
       'variables' => array(
         'title' => NULL,
-        'author_name' => NULL,
-        'created_date' => NULL,
-        'created_date_formatted' => NULL,
-        'topic_type' => NULL,
-        'group_link' => NULL,
         'hero_node' => NULL,
         'node' => NULL,
         'node_type' => NULL,
         'section_class' => NULL,
         'event_enrollment' => NULL,
-        'visibility_icon' => NULL,
-        'visibility_label' => NULL,
         'hero_styled_image_url' => NULL,
       ),
     ),
@@ -54,9 +46,6 @@ function social_core_theme() {
  *   - hero_node: Rendered hero display of the current active node or NULL.
  */
 function template_preprocess_page_hero_data(&$variables) {
-  // @todo create $variables['author_formatted']?
-  // @todo Pass in all the page_title variables?
-
   // Get current user.
   $account = \Drupal::currentUser();
 
@@ -90,23 +79,6 @@ function template_preprocess_page_hero_data(&$variables) {
       }
     }
 
-    // Content visibility.
-    if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
-      $node_visibility_value = $node->field_content_visibility->getValue();
-      $content_visibility = reset($node_visibility_value);
-      switch ($content_visibility['value']) {
-        case 'community':
-          $variables['visibility_icon'] = 'group';
-          $variables['visibility_label'] = t('community');
-          break;
-
-        case 'public':
-          $variables['visibility_icon'] = 'public';
-          $variables['visibility_label'] = t('public');
-          break;
-      }
-    }
-
     // Add the hero styled image.
     $image_field = "field_{$node->getType()}_image";
     if (!empty($node->{$image_field}->entity)) {
@@ -114,26 +86,6 @@ function template_preprocess_page_hero_data(&$variables) {
         ->buildUrl($node->{$image_field}->entity->getFileUri());
     }
 
-  }
-
-  if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
-    $variables['created_date_formatted'] = \Drupal::service('date.formatter')
-      ->format($variables['created_date'], 'social_long_date');
-  }
-
-  if (isset($variables['topic_type'])) {
-    $topic_type_entities = $variables['topic_type']->referencedEntities();
-    if (count($topic_type_entities) === 1) {
-      foreach ($topic_type_entities as $topic) {
-        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', array('field_topic_type_target_id' => $topic->id()));
-        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
-          ->toString();
-        $variables['topic_type'] = $topic_type_link;
-      }
-    }
-    else {
-      $variables['topic_type'] = NULL;
-    }
   }
 }
 
