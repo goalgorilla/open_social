@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The primary PHP file for the Social base theme.
@@ -732,16 +733,20 @@ function socialbase_preprocess_page(&$variables) {
  */
 function socialbase_group_link($node) {
   $group_link = NULL;
-  $group_content = \Drupal::entityTypeManager()
-    ->getStorage('group_content')
-    ->loadByProperties([
-      'entity_id' => $node->id(),
-      //@TODO: fix this to work with all group types.
-      'type' => 'open_group-group_node-' . $node->getType(),
-    ]);
-  if (!empty($group_content)) {
-    $group = reset($group_content)->getGroup();
-    $group_link = $group->link();
+
+  //Exclude nodes without ids (Preview)
+  if(!empty($node->id())){
+    $group_content = \Drupal::entityTypeManager()
+      ->getStorage('group_content')
+      ->loadByProperties([
+        'entity_id' => $node->id(),
+        //@TODO: fix this to work with all group types.
+        'type' => 'open_group-group_node-' . $node->getType(),
+      ]);
+    if (!empty($group_content)) {
+      $group = reset($group_content)->getGroup();
+      $group_link = $group->link();
+    }
   }
   return $group_link;
 }
@@ -906,6 +911,11 @@ function socialbase_preprocess_node(&$variables) {
         $variables['comment_count'] = $comment_count;
       }
     }
+  }
+
+  //Add styles for nodes in preview
+  if($node->in_preview){
+    $variables['#attached']['library'][] = 'socialbase/preview';
   }
 }
 
