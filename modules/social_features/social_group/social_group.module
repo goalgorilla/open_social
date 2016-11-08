@@ -15,6 +15,8 @@ use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 /**
  * @file
@@ -104,6 +106,23 @@ function social_group_preprocess_group(&$variables) {
       $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
     }
   }
+  // Count number of group members.
+  $members = $group->getMembers();
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  $members_count = 0;
+  if ($members && $profile_storage) {
+    foreach ($members as $member) {
+      $member_account = $member->getUser();
+      if ($member_account instanceof User) {
+        $member_profile = $profile_storage->loadByUser($member_account, 'profile');
+        if ($member_profile instanceof Profile) {
+          $members_count++;
+        }
+      }
+    }
+  }
+  $variables['group_members'] = $members_count;
 }
 
 /**

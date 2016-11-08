@@ -269,6 +269,13 @@ function socialbase_preprocess_block(&$variables) {
 
   }
 
+  // for all platform_intro blocks we want them to appear as cards.
+  if (isset($variables['elements']['content']['#block_content'])) {
+     if ($variables['elements']['content']['#block_content']->bundle() == 'platform_intro') {
+       $variables['card'] = TRUE;
+     }
+  }
+
   if (!is_null($profile_user_id) && is_object($profile_user_id)) {
     $profile_user_id = $profile_user_id->id();
   }
@@ -358,24 +365,6 @@ function socialbase_preprocess_block(&$variables) {
     }
   }
 }
-
-// @todo get the reference element in the svg
-
-// function socialbase_preprocess_file_upload_help(&$variables) {
-//   if (in_array('glyphicon-question-sign',   $variables['popover']['toggle']['#icon']['#attributes']['class'])) {
-//     $variables['popover']['toggle']['#icon']['#tag'] = 'svg';
-//     $variables['popover']['toggle']['#icon']['#attributes']['class'] = 'icon-small';
-//     $variables['popover']['toggle']['#icon']['reference'] = [
-//       '#type' => 'html_tag',
-//       '#tag' => 'use',
-//       '#value' => '',
-//       '#attributes' => [
-//         'xlink:href' => 'icon.svg#icon-help',
-//       ],
-//     ];
-//
-//   }
-// }
 
 /**
  * Implements hook_preprocess_details().
@@ -738,6 +727,24 @@ function socialbase_preprocess_page(&$variables) {
 
 }
 
+/**
+ * Prepare group link when an event or topic belongs to one group.
+ */
+function socialbase_group_link($node) {
+  $group_link = NULL;
+  $group_content = \Drupal::entityTypeManager()
+    ->getStorage('group_content')
+    ->loadByProperties([
+      'entity_id' => $node->id(),
+      //@TODO: fix this to work with all group types.
+      'type' => 'open_group-group_node-' . $node->getType(),
+    ]);
+  if (!empty($group_content)) {
+    $group = reset($group_content)->getGroup();
+    $group_link = $group->link();
+  }
+  return $group_link;
+}
 
 
 /**
@@ -756,10 +763,47 @@ function socialbase_preprocess_page(&$variables) {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  $account = $node->getOwner();
+  $variables['content_type'] = $node->bundle();
+
+  // We get the group link to the node if there is one, will return NULL if not.
+  $group_link = socialbase_group_link($node);
+  if (!empty($group_link)) {
+    $variables['group_link'] = $group_link;
+  }
+
+  // Display author information.
+  if ($account) {
+    // Author profile picture.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder('profile')
+          ->view($user_profile, 'compact');
+        $variables['author_picture'] = $content;
+      }
+    }
+
+    // Author name.
+    $username = array(
+      '#theme' => 'username',
+      '#account' => $account,
+    );
+    $variables['author'] = drupal_render($username);
+  }
+
+  if (isset($variables['elements']['#node']) && !isset($variables['created_date_formatted'])) {
+    $variables['created_date_formatted'] = \Drupal::service('date.formatter')
+      ->format($variables['elements']['#node']->getCreatedTime(), 'social_long_date');
+  }
+
   // Get current node.
   $node = $variables['node'];
   // Get current user.
-  $account = \Drupal::currentUser();
+  $currentuser = \Drupal::currentUser();
 
   // Only add submitted data on teasers since we have the page hero block.
   if ($variables['view_mode'] === 'teaser') {
@@ -785,6 +829,7 @@ function socialbase_preprocess_node(&$variables) {
 
     $variables['display_submitted'] = TRUE;
   }
+
   if ($variables['view_mode'] === 'hero') {
     unset($variables['label']);
   }
@@ -803,7 +848,7 @@ function socialbase_preprocess_node(&$variables) {
   }
 
   // Content visibility.
-  if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
+  if ((isset($node->field_content_visibility)) && !$currentuser->isAnonymous()) {
     $node_visibility_value = $node->field_content_visibility->getValue();
     $content_visibility = reset($node_visibility_value);
     switch ($content_visibility['value']) {
@@ -823,6 +868,63 @@ function socialbase_preprocess_node(&$variables) {
     $variables['status_label'] = t('unpublished');
   }
 
+  // Let's see if we can remove comments from the content and render them in a
+  // separate content_below array.
+  $comment_field_name = '';
+  $variables['comment_field_name'] = '';
+
+  // Check on our node if we have the comment type field somewhere.
+  $fields_on_node = $node->getFieldDefinitions();
+  foreach ($fields_on_node as $field) {
+    if ($field->getType() == 'comment') {
+      $comment_field_name = $field->getName();
+    }
+  }
+
+  // Our node has a comment reference. Let's remove it from content array.
+  $variables['below_content'] = array();
+  if (!empty($comment_field_name)) {
+    if (!empty($variables['content'][$comment_field_name])) {
+      // Add it to our custom comments_section for the template purposes and
+      // remove it.
+      $variables['below_content'][$comment_field_name] = $variables['content'][$comment_field_name];
+      unset($variables['content'][$comment_field_name]);
+    }
+
+    // If we have a comment and the status is OPEN or CLOSED we can render icon
+    // for comment count, and add the comment count to the node.
+    if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
+      $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
+      $t_args = array(':num_comments' => $comment_count);
+      $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
+
+      // If it's closed, we only show the comment section when there are
+      // comments placed. Closed means we show comments but you are not able
+      // to add any comments.
+      if (($node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::CLOSED && $comment_count > 0) || $node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::OPEN) {
+        $variables['comment_field_status'] = $comment_field_name;
+        $variables['comment_count'] = $comment_count;
+      }
+    }
+  }
+}
+
+/**
+ * Get comment count for a discussion.
+ *
+ * @param $entity
+ * @return int
+ */
+function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
+  $count = 0;
+
+  $comment_count = $node->{$comment_field_name}->comment_count;
+
+  if ($comment_count) {
+    $count = $comment_count;
+  }
+
+  return $count;
 }
 
 /**
@@ -1272,4 +1374,14 @@ function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInte
     $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
   }
 
+}
+
+/**
+ * Implements theme_preprocess_username().
+ */
+function socialbase_preprocess_username(&$variables) {
+  $account = $variables['account'] ? : new AnonymousUserSession();
+
+  // Override the default drupal truncate function for all user names, so the whole name will be displayed.
+  $variables['name'] = $account->getDisplayName();
 }

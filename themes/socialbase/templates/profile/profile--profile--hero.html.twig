@@ -54,4 +54,7 @@
       </div>
     </div>
   {% endif %}
+
+  {# render other fields that developers might add #}
+  {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
 </div>

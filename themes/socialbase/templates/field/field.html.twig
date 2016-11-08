@@ -42,7 +42,7 @@
   {% for item in items %}
     {% if entity_type == "node" %}
       {% if field_name == "body" and part_of_teaser %}
-        {{ item.content|render|striptags('<a>')|raw }}
+        {{ item.content|render|striptags }}
       {% else %}
         {{ item.content }}
       {% endif %}

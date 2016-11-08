@@ -17,4 +17,4 @@ Feature: Create Page
     # Authored by should not be visible
     And I should not see "By" in the "Hero block"
     # Authored date should not be visible
-    And I should not see "on" in the "Hero block"
+    And I should not see " on" in the "Hero block"

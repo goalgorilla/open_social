@@ -1,4 +1,4 @@
-@stability
+@dev-helpers @pass
 Feature: Passing test
 
   Scenario: Test drupal
