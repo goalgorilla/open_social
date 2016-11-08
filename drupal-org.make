@@ -53,4 +53,5 @@ projects[token][type] = module
 projects[token][version] = 1.0-beta2
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.0
+projects[bootstrap][patch][] = "http://cgit.drupalcode.org/bootstrap/patch/?id=a2b7d45e9cecb422daabcda8fe829036408d9b8c"
 projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/dropbutton_actions-2824693-18.patch"
