@@ -53,9 +53,7 @@ class GroupAddTopicBlock extends BlockBase {
             'btn',
             'btn-primary',
             'btn-raised',
-            'btn-block',
             'waves-effect',
-            'waves-light',
           ),
         ),
       );

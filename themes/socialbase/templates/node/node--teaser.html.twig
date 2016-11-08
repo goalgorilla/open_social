@@ -114,6 +114,18 @@
 
     <div class="card-actionbar">
       <div class="actionbar">
+
+        {% if comment_count > 0 %}
+          <a href="{{ url }}#section-comments" class="badge badge--comment-count">
+            <label>
+              <svg class="icon-small icon-badge">
+                <use xlink:href="#icon-comment"></use>
+              </svg>
+              <span class="badge--comment-count__number">{{ comment_count }}</span>
+            </label>
+          </a>
+        {% endif %}
+
         {% if visibility_icon and visibility_label %}
           <div class="badge badge--toggle">
             <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
