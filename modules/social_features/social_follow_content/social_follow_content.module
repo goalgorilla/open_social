@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * The Social core module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\flag\Entity\Flagging;
+
+/**
+ * Implements hook_ENTIT_YTYPE_insert().
+ */
+function social_follow_content_event_enrollment_insert(EntityInterface $entity) {
+  social_follow_content_event_enrollment_follow($entity);
+}
+
+/**
+ * Implements hook_ENTIT_YTYPE_update().
+ */
+function social_follow_content_event_enrollment_update(EntityInterface $entity) {
+  social_follow_content_event_enrollment_follow($entity);
+}
+
+/**
+ * Automatically follow content when user enrolls the event.
+ */
+function social_follow_content_event_enrollment_follow(EntityInterface $entity) {
+  if ($entity->field_enrollment_status->value) {
+    // Check if user already follow this content.
+    $account = \Drupal::currentUser();
+    $properties = [
+      'uid' => $account->id(),
+      'entity_type' => 'node',
+      'entity_id' => $entity->field_event->target_id,
+      'flag_id' => 'follow_content',
+    ];
+    $flaggings = \Drupal::entityTypeManager()
+      ->getStorage('flagging')
+      ->loadByProperties($properties);
+    $flagging = reset($flaggings);
+
+    if (empty($flagging)) {
+      $flagging = Flagging::create($properties);
+      $flagging->save();
+      $message = t('You have succesfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
+      drupal_set_message($message);
+    }
+  }
+}
