@@ -395,3 +395,13 @@ function social_core_update_8005(&$sandbox) {
   $sandbox['progress']++;
   $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
 }
+
+/**
+ * Install social_follow_content module.
+ */
+function social_core_update_8006(&$sandbox) {
+  $modules = array(
+    'social_follow_content',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
