@@ -42,9 +42,11 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
 
     if (empty($flagging)) {
       $flagging = Flagging::create($properties);
-      $flagging->save();
-      $message = t('You have succesfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
-      drupal_set_message($message);
+      if($flagging){
+        $flagging->save();
+        $message = t('You have succesfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
+        drupal_set_message($message);
+      }
     }
   }
 }
