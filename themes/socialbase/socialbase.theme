@@ -676,7 +676,7 @@ function socialbase_preprocess_field(&$variables) {
     );
 
     $urlwithoptions = $node->toUrl('canonical', $link_options);
-    $variables['nodelink'] = Link::fromTextAndUrl('Comment', $urlwithoptions);
+    $variables['nodelink'] = Link::fromTextAndUrl(t('Comment'), $urlwithoptions);
   }
 
 }
@@ -710,8 +710,7 @@ function socialbase_preprocess_page(&$variables) {
   }
 
   if ($node instanceof Node) {
-
-  // list pages where we want to hide the default page title
+    // list pages where we want to hide the default page title
     $page_to_exclude = [
       'event',
       'topic',
