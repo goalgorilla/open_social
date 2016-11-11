@@ -21,13 +21,13 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('user.login')) {
       $route->setDefaults(array(
         '_form' => '\Drupal\social_user\Form\SocialUserLoginForm',
-        '_title' => t('Log in'),
+        '_title' => t('Log in')->render(),
       ));
     }
     if ($route = $collection->get('user.pass')) {
       $route->setDefaults(array(
         '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
-        '_title' => t('Reset your password'),
+        '_title' => t('Reset your password')->render(),
       ));
     }
     // Route the user view page to user/{uid}/timeline.
