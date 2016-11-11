@@ -128,9 +128,11 @@ Feature: See comments in activity stream
     And I should not see "This is a reply event comment"
 
     When I go to "explore"
-    Then I should not see "CreateUser created an event"
-    And I should not see "Test group event"
+    Then I should see "CreateUser created an event in Test open group"
+    And I should see "Test group event"
     And I should not see "This is a third event comment"
+    And I should not see "This is a first event comment"
+    And I should not see "This is a reply event comment"
 
     Given I am an anonymous user
     When I am on the homepage
