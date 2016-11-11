@@ -33,12 +33,6 @@
  */
 #}
 
-{%
-  set complementary_top_classes = [
-    'col-xs-12 col-sm-4 col-sm-last complementary-top'
-  ]
-%}
-
 <nav class="navbar navbar-default navbar-fixed-top z-depth-2" role="navigation" aria-labelledby="{{ heading_id }}">
   <div class="container">{{ page.header }}</div>
 </nav>
@@ -75,12 +69,12 @@
     <div class="row margin-top-l">
 
       {% if page.complementary_top or page.complementary_bottom %}
-        <div{{ attributes.addClass(complementary_top_classes).setAttribute('role', 'complementary') }}>
+        <div{{ attributes.addClass('col-xs-12 col-md-4 col-md-last complementary-top').setAttribute('role', 'complementary') }}>
           {{ page.complementary_top }}
         </div>
       {% endif %}
 
-      <div class="col-xs-12 col-sm-8">
+      <div class="col-xs-12 col-md-8">
         {% if page.title and display_page_title %}
           {{ page.title }}
         {% endif %}
@@ -93,7 +87,7 @@
 
       {% if page.complementary_bottom %}
       {{ attach_library('socialbase/responsive-dom') }}
-        <div role="complementary" class="col-xs-12 hidden-sm hidden-md hidden-lg">
+        <div role="complementary" class="col-xs-12 hidden-md hidden-lg">
           <div class="complementary-bottom">
             {{ page.complementary_bottom }}
           </div>
@@ -115,10 +109,8 @@
 
 {% if page.footer %}
   <footer class="brand-secondary" role="contentinfo">
-    <div class="navbar navbar-footer">
-      <div class="container clearfix">
-        {{ page.footer }}
-      </div>
+    <div class="container clearfix">
+      {{ page.footer }}
     </div>
   </footer>
 {% endif %}

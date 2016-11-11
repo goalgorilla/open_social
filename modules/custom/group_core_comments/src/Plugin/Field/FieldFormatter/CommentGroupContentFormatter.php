@@ -29,7 +29,11 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $output = parent::viewElements($items, $langcode);
     $entity = $items->getEntity();
-    $group_contents = GroupContent::loadByEntity($entity);
+
+    //exclude entities without the set id.
+    if (!empty($entity->id())) {
+      $group_contents = GroupContent::loadByEntity($entity);
+    }
 
     if (!empty($group_contents)) {
       // Add cache contexts.
