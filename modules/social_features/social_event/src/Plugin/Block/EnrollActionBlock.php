@@ -61,7 +61,7 @@ class EnrollActionBlock extends BlockBase {
       'enroll_action_form' => $form,
     );
 
-    $text = (string) t('You have enrolled for this event.');
+    $text = (string) $this->t('You have enrolled for this event.');
 
     // Add extra text to.
     if ($form['to_enroll_status']['#value'] === '0') {
