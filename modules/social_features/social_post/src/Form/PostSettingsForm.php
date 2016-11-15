@@ -48,7 +48,7 @@ class PostSettingsForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['Post_settings']['#markup'] = 'Settings form for Post entities. Manage field settings here.';
+    $form['Post_settings']['#markup'] = $this->t('Settings form for Post entities. Manage field settings here.');
     return $form;
   }
 

@@ -21,9 +21,9 @@ function social_topic_install() {
 
   // Create some default taxonomy terms.
   $terms = array(
-    'Blog',
-    'Discussion',
-    'News',
+    t('Blog'),
+    t('Discussion'),
+    t('News'),
   );
 
   foreach ($terms as $term_name) {
@@ -110,7 +110,7 @@ function _social_topic_create_menu_links() {
 
   if (!is_null($parent)) {
     MenuLinkContent::create([
-      'title' => 'All topics',
+      'title' => t('All topics'),
       'link' => ['uri' => 'internal:/newest-topics'],
       'menu_name' => 'main',
       'expanded' => FALSE,

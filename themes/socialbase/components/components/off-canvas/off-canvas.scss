@@ -31,7 +31,7 @@
 }
 
 .off-canvas-xs-only {
-  @include MQ($small) {
+  @include MQ($medium) {
     margin-bottom: 0.75rem;
     position: relative;
     width: 100%;
@@ -48,18 +48,51 @@
 
 }
 
+// on mobile we want to "add" and "filter" buttons to be on one row
 .block-group-add-event-block,
 .block-group-add-topic-block,
 .block-event-add-block,
 .block-topic-add-block,
 .block-group-add-block {
-  margin-bottom: 0.75rem;
+  display: inline-block;
+
+  .btn {
+    margin-bottom: 0.75rem;
+  }
+
+  @include MQ($medium) {
+    display: block;
+
+    .btn {
+      width: 100%;
+    }
+
+  }
+
+}
+
+.views-exposed-form {
+  display: inline-block;
+  float: right;
+
+  @include MQ($medium) {
+    display: block;
+    float: none;
+  }
+
+}
+
+.btn--offcanvas-trigger {
+
+  @include MQ($medium) {
+    display: none;
+  }
 }
 
 .offcanvas-head {
   position: relative;
 
-  @include MQ($small) {
+  @include MQ($medium) {
     padding: 15px 20px 0;
     color: $gray-light;
     line-height: 1;
@@ -79,12 +112,16 @@
   left: 0;
   right: 0;
   top: 0;
+
+  @include MQ($medium) {
+    display: none;
+  }
 }
 
 .offcanvas-body {
 	margin-top: 30px;
 
-  @include MQ($small) {
+  @include MQ($medium) {
     margin-top: 0;
     padding: 20px;
   }

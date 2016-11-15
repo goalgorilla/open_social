@@ -124,7 +124,10 @@
 }
 
 .scrollable-menu {
-  height: calc(100vh - 114px);
+
+  // heights of navbar-fixed, dropdown padding, dropdown-header (2x), dividers (2x) not to be subtracted to get accurate height
+  height: calc(100vh - 148px);
+
   overflow-x: hidden;
   list-style-type: none;
   padding: 0;

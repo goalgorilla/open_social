@@ -2,12 +2,12 @@ extends ./layout/base-lu.pug
 
 block title
   title Edit Topic Why are color runs so popular?
-    
+
 block content
-      
-  .row.margin-top-l      
-      
-    #scrollspy.col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
+
+  .row.margin-top-l
+
+    #scrollspy.col-xs-12.col-sm-4.col-sm-last.complementary-top
       .toc-wrapper.hidden-print
         ul.table-of-contents.nav
           li
@@ -20,12 +20,12 @@ block content
             a(href='#attachments') Attachments
           li
             a(href='#comment-settings') Comment settings
-      
+
     .col-xs-12.col-sm-8
       h1.h4.section-title Edit: Why are color runs so popular?
-    
+
       form(action='topic.html', method='get')
-      
+
         #content.card.card-underline.scrollspy
           .card-head
             header Content
@@ -40,7 +40,7 @@ block content
                 label(for='discussion') Discussion
               .radio
                 input#topic(type='radio', name='type')
-                label(for='topic') Topic  
+                label(for='topic') Topic
 
             .form-group
               label.form-required Title
@@ -65,12 +65,12 @@ block content
                     span.file-size 263.85 KB
 
                   button#edit-field-test-0-remove-button.button.js-form-submit.form-submit.btn-default.btn.btn-non-clickable(type="submit") Remove
-          
+
         #visibility.card.card-underline.scrollspy
-        
+
           .card-head
             header Visibility
-      
+
           .card-body
 
             .form-group.radios
@@ -83,13 +83,13 @@ block content
                 input#public(type='radio', name='type')
                 label(for='public') Public
                 .help-block Visible for everyone, including people who are not a member
-        
+
         #description.card.card-underline.scrollspy
-        
+
           .card-head
             header Description
-      
-          .card-body 
+
+          .card-body
             .form-group
               label.form-required Description
               .textarea--cke
@@ -216,7 +216,7 @@ block content
           ul.card-head.nav.nav-tabs.vertical-tabs-list(data-toggle="tabs")
             li.active
               a(href="#comments") Comment settings
-              
+
           .card-body.tab-content
             #comments.tab-pane.active
               .form-group.radios
@@ -229,22 +229,22 @@ block content
                   input#closed(type='radio', checked, name='comments')
                   label(for='closed') Closed
                   .help-block Users cannot post comments.
-              
+
         .form-actions.clearfix
-          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save') 
+          input.waves-effect.waves-light.btn.btn-raised.btn-primary.pull-right(type='submit', value='Save')
           a.waves-effect.waves-light.btn-raised.btn.btn-default(href="topic.html") Discard changes
           a.waves-effect.waves-light.btn-raised.btn.btn-default(href='#') Delete
           a.waves-effect.waves-light.btn-raised.btn.btn-default(href="topic.html") Preview
-        
-block scriptinline  
+
+block scriptinline
   script(src='js/contrib/ckeditor/ckeditor.js')
   script(src='js/contrib/ckeditor/adapters/jquery.js')
-  
+
   script.
     jQuery(document).ready(function($){
-      $( '#ckeditor' ).ckeditor();  
+      $( '#ckeditor' ).ckeditor();
     });
-    
+
     function showMe (it, box) {
       var visibility = (box.checked) ? "block" : "none";
       document.getElementById(it).style.display = visibility;

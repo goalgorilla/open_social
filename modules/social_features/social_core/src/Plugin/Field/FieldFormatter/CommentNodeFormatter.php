@@ -51,7 +51,11 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
     $status = $items->status;
     $access_comments_in_group = FALSE;
 
-    $group_contents = GroupContent::loadByEntity($entity);
+    //exclude entities without the set id.
+    if (!empty($entity->id())) {
+      $group_contents = GroupContent::loadByEntity($entity);
+    }
+
     if (!empty($group_contents)) {
       // Add cache contexts.
       $elements['#cache']['contexts'][] = 'group.type';

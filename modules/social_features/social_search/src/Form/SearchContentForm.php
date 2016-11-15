@@ -33,7 +33,7 @@ class SearchContentForm extends FormBase {
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array(
       '#type' => 'submit',
-      '#value' => t('Search Content'),
+      '#value' => $this->t('Search Content'),
     );
 
     return $form;
