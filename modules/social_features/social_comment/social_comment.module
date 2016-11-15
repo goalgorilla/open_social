@@ -195,7 +195,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
           ),
         );
         $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
-        $build['comment_link'] = Link::fromTextAndUrl('Comment', $commented_entity_url)->toRenderable();
+        $build['comment_link'] = Link::fromTextAndUrl(t('Comment'), $commented_entity_url)->toRenderable();
       }
 
       $comment_count = $commented_entity->{$comment_field_name}->comment_count;

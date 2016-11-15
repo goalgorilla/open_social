@@ -31,25 +31,27 @@
   {% if items %}
 
 
-    <ul{{ attributes.addClass('header-menu list-unstyled nav navbar-nav navbar-right') }}>
+  <ul{{ attributes.addClass('nav navbar-nav navbar-right') }}>
 
-    {% for item in items %}
+    <li class="dropdown profile">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" aria-haspopup="true" role="button" title="{% trans %} User menu {% endtrans %}">
+        <svg class="icon-white icon-medium">
+          <use xlink:href="#icon-account_circle"></use>
+        </svg>
+        <span class="sr-only">{% trans %} User menu {% endtrans %}</span>
+      </a>
+      <ul class="dropdown-menu">
+        {% for item in items %}
+          <li>  {{ link(item.title, item.url)  }}
+            {% if item.below %}
+              {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
 
-    {%
-      set classes = [
-        'menu__item',
-        item.in_active_trail ? 'menu__item--active-trail',
-      ]
-    %}
-      <li{{ item.attributes.addClass(classes) }}>
-        {{ link(item.title, item.url, { 'class':['menu__link']})  }}
-        {% if item.below %}
-          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
-        {% endif %}
-      </li>
-    {% endfor %}
-
-    </ul>
+  </ul>
 
   {% endif %}
 {% endmacro %}

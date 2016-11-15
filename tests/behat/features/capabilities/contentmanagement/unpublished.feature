@@ -16,7 +16,7 @@ Feature: Un/publish a node
       And I click "Save as unpublished"
     Then I should see "Topic This is a test topic has been created."
       And I should see "This is a test topic" in the "Hero block"
-      And I should see "Discussion" in the "Hero block"
+      And I should see "Discussion" in the "Main content"
       And I should see "Body description text" in the "Main content"
 
     When I click "Edit content"

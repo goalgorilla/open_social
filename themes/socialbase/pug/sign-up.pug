@@ -3,21 +3,23 @@ extends ./layout/base-an.pug
 block title
   title Sign up
 
-block breadcrumbs  
+block breadcrumbs
   li
     a(href='home-an.html') Home
+    svg.icon-gray.icon-small
+      use(xlink:href="#icon-navigate_next")
   li.active Sign up
 
 block content
-  
+
   .row
     .col-xs-12.col-md-8.section-header
       h1.h4.section-title Sign up
 
       .card
-      
+
         .card-body
-              
+
           form(action="profile-edit.html", accept-charset='UTF-8')
             .form-group
               label(for='edit-email') E-mail address
@@ -30,7 +32,7 @@ block content
               span.form-required *
               input#edit-username.form-control(type='text', required='required')
               .help-block Several special characters are allowed, including space, period (.), hyphen (-), apostrophe (&rsquo;), underscore (_), and the @ sign.
-                
+
             #edit-pass.js-form-item.form-group.js-form-type-password-confirm.form-type-password-confirm.js-form-item-pass.form-item-pass.form-no-label.row
                 .js-form-item.form-group.js-form-type-password.form-type-password.js-form-item-pass-pass1.form-item-pass-pass1.col-sm-7
                   label.js-form-required.form-required(for='edit-pass-pass1') Password
@@ -41,7 +43,7 @@ block content
 
             .margin-top-xxl.clearfix
               input.btn.btn-primary.pull-right(type='submit', value='Sign up')
-      
+
     block scriptinline
       script(type='application/json', data-drupal-selector='drupal-settings-json').
         {"path":{"baseUrl":"\\/","scriptPath":null,"pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","ajaxTrustedUrl":{"form_action_cc611e1d":true},"password":{"confirmTitle":"Passwords match:","confirmSuccess":"yes", "confirmFailure":"no", "showStrengthIndicator":true, "strengthTitle":"Password strength:","hasWeaknesses":"To make your password stronger:","tooShort":"Make it at least 12 characters","addLowerCase":"Add lowercase letters","addUpperCase":"Add uppercase letters","addNumbers":"Add numbers","addPunctuation":"Add punctuation","sameAsUsername":"Make it different from your username","weak":"Weak","fair":"Fair","good":"Good","strong":"Strong","username":""},"user":{"uid":0,"permissionsHash":"9079ad224d4b0fce406984c277ed66ca1008545fc31b1bfc7dfd6d40a4b15c1b"}}

@@ -16,7 +16,7 @@
 <ul class="nav navbar-nav navbar-right">
 {% for item in links|without('search_block') %}
     <li class="{{ item.classes }}">
-        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
+        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
           {% if item.icon_image %}
             {{ item.icon_image }}
           {% elseif item.icon_classes %}
@@ -24,7 +24,7 @@
               <use xlink:href="#{{ item.icon_classes }}" />
             </svg>
           {% endif %}
-          <span class="{{item.title_classes}}">{{ item.title }}</span>
+          <span class="{{item.title_classes}}">{{ item.label }}</span>
         </a>
         {% if item.below %}
             {% if item.below is iterable %}
@@ -32,8 +32,8 @@
                 {% for item in item.below %}
                   {% if item.url %}
                     <li class="{{ item.classes }}">
-                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} >
-                        <span class="{{item.title_classes}}">{{ item.title }}</span>
+                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
+                        <span class="{{item.title_classes}}">{{ item.label }}</span>
                       </a>
                     </li>
                   {% elseif item.divider %}

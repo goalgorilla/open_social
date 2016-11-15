@@ -1,4 +1,4 @@
-@api @group @stability @DS-811 @DS-816
+@api @group @DS-811 @DS-816 @stability
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -33,15 +33,14 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I click "Test open group"
     And I should see "Test open group" in the "Hero block"
-    And I should see "1 member" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
-    And I should see "GG HQ" in the "Hero block"
-    And I should see "Oldenzaalsestraat" in the "Hero block"
-    And I should see "7514DR" in the "Hero block"
-    And I should see "Enschede" in the "Hero block"
+    And I should see "GG HQ" in the "Main content"
+    And I should see "Oldenzaalsestraat" in the "Main content"
+    And I should see "7514DR" in the "Main content"
+    And I should see "Enschede" in the "Main content"
 
     # As a LU I want to see the information about a group
     When I click "About"
@@ -72,7 +71,6 @@ Feature: Create Open Group
     And I should see the button "Cancel"
     And I should see the button "Join group"
     And I press "Join group"
-    And I should see "2 member" in the "Hero block"
     And I should see the button "Joined"
 
   # DS-643 As a LU I want to see the events of a group
@@ -90,10 +88,9 @@ Feature: Create Open Group
     And I press "Create node in group"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
-    And I should see "1 January 2025 - 11:00" in the "Hero block"
     And I should see the button "Enroll"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Hero block"
+    And I should see the link "Test open group" in the "Main content"
     And I click "Test open group"
   # TODO: And I should see "Upcoming Events" in the "Sidebar second"
   # And I should see "Test group event" in the "Sidebar second"
@@ -115,9 +112,8 @@ Feature: Create Open Group
     And I press "Create node in group"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
-    And I should see "Discussion" in the "Hero block"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Hero block"
+    And I should see the link "Test open group" in the "Main content"
     And I click "Test open group"
   # TODO: And I should see "Latest Topics" in the "Sidebar second"
   # And I should see "Test group topic" in the "Sidebar second"

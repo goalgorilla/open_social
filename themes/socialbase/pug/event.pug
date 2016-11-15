@@ -6,49 +6,36 @@ block title
 block breadcrumbs
   li
     a(href='home-lu.html') Home
+    svg.icon-gray.icon-small
+      use(xlink:href="#icon-navigate_next")
   li
     a(href='group-stream.html') Happy campers
+    svg.icon-gray.icon-small
+      use(xlink:href="#icon-navigate_next")
   li.active Amsterdam Meetup
 
 block pagetitle
 
   .container.hero-container
-    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/event-hero.jpg')")  
+    .cover.cover-img.cover-img-gradient(style="background-image: url('content/images/event-hero.jpg')")
       .hero-action-button
         a.btn.btn-default.btn-floating.waves-effect.waves-circle(href='node-edit-event.html')
           svg.icon-gray.icon-medium
-            use(xlink:href='#icon-edit')  
-      .cover-wrap   
+            use(xlink:href='#icon-edit')
+      .cover-wrap
         h1.page-title Amsterdam Meetup
-        .hero-footer
-          .row.row-md-center
-            .col-xs-12.col-md-6.col-md-offset-3
-              .badge.badge--toggle
-                label
-                  input(type='checkbox')
-                  svg.icon-white.icon-badge-toggle
-                    use(xlink:href='#icon-community')   
-                  span.badge--toggle__label community
-              div
-                time.eventdate.updated June 6 2016 - 12:00 
-                span @ Keizersgracht 376, Amsterdam
-              div(itemprop="author", itemscope="", itemtype="http://schema.org/Person") 
-                span By 
-                a(itemprop="url", rel="author", href="my-stream.html") John Johnson 
-                span
-                  | in group 
-                  a(itemprop="organizer", href="group-stream.html") Happy Campers
-            .col-xs-12.col-md-3
-              .row
-                .col-xs-12
-                  span.badge.badge-dark 44 places left
-                .col-xs-12
-                  .btn-group
-                    button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Enrolled        
-                      span.caret
-                    ul.dropdown-menu
-                      li
-                        a(href="#") Cancel enrollment     
+        .hero-footer.row
+          .col-xs-12.col-md-3.col-md-offset-9
+            .row
+              .col-xs-12
+                span.badge.badge-dark 44 places left
+              .col-xs-12
+                .btn-group
+                  button.btn.btn-accent.btn-lg.btn-raised.dropdown-toggle(type="button", autocomplete="off", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Enrolled
+                    span.caret
+                  ul.dropdown-menu
+                    li
+                      a(href="#") Cancel enrollment
 
 block secondary_navigation
   .container.hero-container
@@ -61,69 +48,108 @@ block secondary_navigation
               span.visually-hidden (active tab)
           li
             a(href="event-enrollments.html") Enrollments
-      
+
 block content
-      
+
   .row.margin-top-l
-  
-    .col-xs-12.col-sm-4.col-sm-last.margin-top-complementary
-      .margin-top-sidebar
-        .card.small-padding
-          .card-head.text-center 
-            header 5 people have enrolled
-          .card-body.text-center
-            .img-grid
-              img.img-circle.img-medium(src='content/images/member2.jpg')
-              img.img-circle.img-medium(src='content/images/member3.jpg')
-              img.img-circle.img-medium(src='content/images/member5.jpg')
-              img.img-circle.img-medium(src='content/images/member4.jpg')
-              img.img-circle.img-medium(src='content/images/member1.jpg')
-              img.img-circle.img-medium(src='content/images/member2.jpg')
-              img.img-circle.img-medium(src='content/images/member3.jpg')
-              img.img-circle.img-medium(src='content/images/member5.jpg')
-              img.img-circle.img-medium(src='content/images/member4.jpg')
-              img.img-circle.img-medium(src='content/images/member1.jpg')
 
-            a.btn.btn-flat(href="event-enrollments.html") View all
-    
+    .col-xs-12.col-sm-4.col-sm-last
+      .card.small-padding
+        .card-head.text-center
+          header 5 people have enrolled
+        .card-body.text-center
+          .img-grid
+            img.img-circle.img-medium(src='content/images/member2.jpg')
+            img.img-circle.img-medium(src='content/images/member3.jpg')
+            img.img-circle.img-medium(src='content/images/member5.jpg')
+            img.img-circle.img-medium(src='content/images/member4.jpg')
+            img.img-circle.img-medium(src='content/images/member1.jpg')
+            img.img-circle.img-medium(src='content/images/member2.jpg')
+            img.img-circle.img-medium(src='content/images/member3.jpg')
+            img.img-circle.img-medium(src='content/images/member5.jpg')
+            img.img-circle.img-medium(src='content/images/member4.jpg')
+            img.img-circle.img-medium(src='content/images/member1.jpg')
+
+          a.btn.btn-flat(href="event-enrollments.html") View all
+
     .col-xs-12.col-sm-8
-      h4.section-title.section-title-node Event details
+
       .card
-        .card-body.extra-padding
-          p 
-            strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business.
-          
-          p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
+        article.card-body.extra-padding
 
-          p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
-        
-          p 
-            img.img-responsive(src='content/images/iphone6.jpg')
+          header.metainfo
+            .metainfo__avatar
+              img.img-metainfo__avatar(src='content/images/member5.jpg', alt='John Johnson')
+            .metainfo__content
+              a.metainfo__authorname(itemprop="url", rel="author", href="my-stream.html") John Johnson
+              span.metainfo__published-date
+                time(datetime="2016-01-26T10:00:00-05:00", itemprop="datePublished") &bullet; 26 November 2016
+              div
+                | in group <a itemprop="organizer" href="group-stream.html"> Happy Campers </a> &bullet;
+                .badge.badge--toggle
+                  label
+                    input(type='checkbox')
+                    svg.icon-gray.icon-badge-toggle
+                      use(xlink:href='#icon-community')
+                    span.badge--toggle__label community
 
-          p I wondered how other independent and freelance web workers dealt with this conflict between earning money and contributing back. I also wondered if I was alone in feeling that the clock is ticking. I put together a survey (the responses to which probably will be the background to several other pieces of research), and a few things stood out immediately.
-          
-          p John Gruber:
-          blockquote
-            q I worry that the inherent slowness of the web and ill-considered trend toward over-produced web design is going to start hurting traffic to DF.
-          
-          p I asked the question, “Are you involved in open source projects, writing tutorials, mentoring, speaking at events-that you do free of charge or for expenses only?” 59% said they were not involved, with 27% of those people citing time constraints. Some people did explain that they were involved in volunteer work outside of the web. By the time I filtered out the under-40s, the non-involvement figure rose to 70%.
+            .metainfo__follow
+              div
+                a.badge.badge--comment-count(href="#section-comments")
+                  label
+                    svg.icon-small.icon-badge
+                      use(xlink:href='#icon-comment')
+                    span.badge--comment-count__number 5
+              a.btn.btn-default.btn-sm.flag.flag--follow-content Follow
 
-      h4.section-title Comments
-      
-      .card
-        .card-body.extra-padding
-          include ./molecules/_comment1.pug
-          hr
-          include ./molecules/_comment2.pug
-          hr
-          include ./molecules/_comment3.pug
-          hr
-          .media
-            .media-left
-              img.img-medium.img-circle(src='content/images/member5.jpg')
-            .media-body
-              form#comment-form
-                .form-group.form-group-inline
-                  textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a new comment...', width='100%')
-                  button.btn.btn-primary(type='submit') Comment
-      
+          .article__special-fields
+            div
+              svg.teaser-icon
+                use(xlink:href='#icon-event')
+              span.sr-only Event date
+              span.inline-center 6 December 2016 - 12:00 to 18:00
+            div
+              svg.teaser-icon
+                use(xlink:href='#icon-location')
+              span.sr-only Event location
+              span.inline-center Keizersgracht 376, Amsterdam
+
+          .body-text
+
+            p
+              strong Doing business in the web industry has unbelievably low start-up and fixed running costs. You need little more than a computer and an internet connection. The overheads of freelancers and small agencies that build websites and applications for other people, or develop a digital product, are tiny in comparison to a traditional business.
+
+            p As an industry we have become accustomed to getting hundreds of hours of work, and the benefit of years of hard-won knowledge for free.
+
+            p My free time in the last couple of years has been put into looking at the Grid Layout spec. I start most days answering emailed questions about the examples I’ve posted, before I get down to the work that pays the bills.
+
+            p
+              img.img-responsive(src='content/images/iphone6.jpg')
+
+            p I wondered how other independent and freelance web workers dealt with this conflict between earning money and contributing back. I also wondered if I was alone in feeling that the clock is ticking. I put together a survey (the responses to which probably will be the background to several other pieces of research), and a few things stood out immediately.
+
+            p John Gruber:
+            blockquote
+              q I worry that the inherent slowness of the web and ill-considered trend toward over-produced web design is going to start hurting traffic to DF.
+
+            p I asked the question, “Are you involved in open source projects, writing tutorials, mentoring, speaking at events-that you do free of charge or for expenses only?” 59% said they were not involved, with 27% of those people citing time constraints. Some people did explain that they were involved in volunteer work outside of the web. By the time I filtered out the under-40s, the non-involvement figure rose to 70%.
+
+      section#section-comments
+        h4.section-title Comments (5)
+
+        .card
+          .card-body.extra-padding
+            include ./molecules/_comment1.pug
+            hr
+            include ./molecules/_comment2.pug
+            hr
+            include ./molecules/_comment3.pug
+            hr
+            .media
+              .media-left
+                img.img-medium.img-circle(src='content/images/member5.jpg')
+              .media-body
+                form#comment-form
+                  .form-group.form-group-inline
+                    textarea.form-control.form-control--block.materialize-textarea(placeholder='Add a new comment...', width='100%')
+                    button.btn.btn-primary(type='submit') Comment

@@ -14,6 +14,8 @@ dependencies:
     - field.field.node.event.field_files
     - node.type.event
   module:
+    - address
+    - datetime
     - file
     - group_core_comments
     - text
@@ -26,27 +28,39 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+  field_event_address:
+    type: address_plain
+    weight: 3
+    label: hidden
     settings: {  }
     third_party_settings: {  }
   field_event_comments:
-    weight: 1
+    weight: 5
     label: above
     settings:
       pager_id: 0
+      view_mode: default
     third_party_settings: {  }
     type: comment_group_content
-  field_files:
+  field_event_location:
+    type: string
     weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_files:
+    weight: 6
     label: above
     settings: {  }
     third_party_settings: {  }
     type: file_default
 hidden:
   field_content_visibility: true
-  field_event_address: true
   field_event_date: true
   field_event_date_end: true
   field_event_image: true
-  field_event_location: true
   links: true

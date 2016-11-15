@@ -8,7 +8,8 @@ Feature: Login
   Scenario: Successfully login with e-mail
     Given I am an anonymous user
     And I am on the homepage
-    When I click "Log in"
+    When I click "User menu"
+    And I click "Log in"
     And I fill in the following:
         | Username or email address | admin@example.com |
         | Password | admin |
@@ -19,7 +20,8 @@ Feature: Login
   Scenario: unsuccessful login without leaking data
     Given I am an anonymous user
     And I am on the homepage
-    When I click "Log in"
+    When I click "User menu"
+    And I click "Log in"
     And I fill in the following:
       | Username or email address | test@test.com |
       | Password | test |
