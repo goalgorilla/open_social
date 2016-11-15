@@ -68,7 +68,7 @@ class SocialMinkContext extends MinkContext{
       if (!($driver instanceof Selenium2Driver)) {
         return;
       }
-      $today = date("H:i:s");
+      $today = date("H_i_s");
       $this->iMakeAScreenshotWithFileName($today . '-error');
     }
   }
