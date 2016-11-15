@@ -20,13 +20,17 @@ Feature: Preview Topic
     And I should see "This is a test topic"
 
     When I select "Activity" from "View mode"
+    And I wait for AJAX to finish
     And I should see "This is a test topic"
 
     When I select "Activity comment" from "View mode"
+    And I wait for AJAX to finish
     And I should see "This is a test topic"
 
     When I select "Small teaser" from "View mode"
+    And I wait for AJAX to finish
     And I should see "This is a test topic"
 
     When I select "Teaser" from "View mode"
+    And I wait for AJAX to finish
     And I should see "This is a test topic"
