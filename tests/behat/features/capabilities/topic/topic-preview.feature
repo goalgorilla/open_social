@@ -16,6 +16,7 @@ Feature: Preview Topic
     And I click radio button "Discussion"
     And I attach the file "/files/humans.txt" to "Add a new file"
     And I press "Preview"
+    And I wait for AJAX to finish
     And I should see "This is a test topic"
 
     When I select "Activity" from "View mode"
