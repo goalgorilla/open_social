@@ -13,6 +13,7 @@ Feature: Edit my group as a group manager
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    And I wait for AJAX to finish
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
@@ -29,6 +30,7 @@ Feature: Edit my group as a group manager
     Then I should see "Description text" in the "Main content"
 
     When I click "Edit group"
+    And I wait for AJAX to finish
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
