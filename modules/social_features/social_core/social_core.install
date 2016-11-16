@@ -165,11 +165,11 @@ function _social_core_create_an_homepage_block() {
   $action_links = array(
     array(
       'uri' => 'internal:/user/register',
-      'title' => 'Sign up',
+      'title' => t('Sign up'),
     ),
     array(
       'uri' => 'internal:/user/login',
-      'title' => 'Login',
+      'title' => t('Login'),
     ),
   );
   $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
@@ -185,7 +185,7 @@ function _social_core_create_an_homepage_block() {
 function _social_core_create_menu_links() {
   // Home.
   MenuLinkContent::create([
-    'title' => 'Home',
+    'title' => t('Home'),
     'link' => ['uri' => 'internal:/'],
     'menu_name' => 'main',
     'expanded' => FALSE,
@@ -194,7 +194,7 @@ function _social_core_create_menu_links() {
 
   // Explore.
   MenuLinkContent::create([
-    'title' => 'Explore',
+    'title' => t('Explore'),
     // This way we get an empty link.
     'link' => ['uri' => 'internal:'],
     'menu_name' => 'main',

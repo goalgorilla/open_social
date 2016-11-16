@@ -145,7 +145,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('There is no members yet.');
+    $build['table']['#empty'] = $this->t('There are no members yet.');
     return $build;
   }
 
