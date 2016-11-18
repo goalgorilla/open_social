@@ -5,6 +5,7 @@
  */
 
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\message\Entity\MessageTemplate;
 use \Drupal\block\Entity\Block;
 
 function social_activity_install() {
@@ -106,5 +107,38 @@ function _social_activity_create_activity_homepage_block() {
     $block = Block::create($values);
 
     $block->save();
+  }
+}
+
+/**
+ * Update all existing Message Templates to work with newest Message version.
+ */
+function social_activity_update_8002() {
+  $templates = MessageTemplate::loadMultiple();
+  $new_text = [];
+
+  if (!empty($templates)) {
+    foreach ($templates as $name => $template) {
+
+      //check if text is in the wrong format
+      if (empty($text_array = $template->get('text'))) {
+
+        foreach ($text_array as $text) {
+          if (is_string($text)) {
+            $new_text[] = [
+              'format' => 'basic_html',
+              'value' => $text,
+            ];
+          }
+        }
+        $config_name = "message.template.{$template->getConfigTarget()}";
+        $config = \Drupal::service('config.factory')->getEditable($config_name);
+
+        if (!empty($new_text) && !empty($config)) {
+          $config->set('text', $new_text);
+          $config->save();
+        }
+      }
+    }
   }
 }
