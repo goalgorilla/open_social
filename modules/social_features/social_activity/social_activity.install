@@ -113,7 +113,7 @@ function _social_activity_create_activity_homepage_block() {
 /**
  * Update all existing Message Templates to work with newest Message version.
  */
-function social_activity_update_8002() {
+function social_activity_update_8009() {
   $templates = MessageTemplate::loadMultiple();
   $new_text = [];
 
@@ -121,7 +121,7 @@ function social_activity_update_8002() {
     foreach ($templates as $name => $template) {
 
       //check if text is in the wrong format
-      if (empty($text_array = $template->get('text'))) {
+      if (!empty($text_array = $template->get('text'))) {
 
         foreach ($text_array as $text) {
           if (is_string($text)) {
@@ -131,12 +131,19 @@ function social_activity_update_8002() {
             ];
           }
         }
-        $config_name = "message.template.{$template->getConfigTarget()}";
-        $config = \Drupal::service('config.factory')->getEditable($config_name);
 
-        if (!empty($new_text) && !empty($config)) {
-          $config->set('text', $new_text);
-          $config->save();
+        //if all text was ok this would be empty, no need to update in that case
+        if (!empty($new_text)) {
+          $templates[$name]->set('text', $new_text);
+          $templates[$name]->save();
+
+          $config_name = "message.template.{$template->getConfigTarget()}";
+          $config = \Drupal::service('config.factory')->getEditable($config_name);
+
+          if (!empty($config)) {
+            $config->set('text', $new_text);
+            $config->save();
+          }
         }
       }
     }
