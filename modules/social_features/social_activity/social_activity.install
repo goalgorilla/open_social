@@ -1,9 +1,9 @@
 <?php
+
 /**
  * @file
  * The Social activity install.
  */
-
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 use \Drupal\block\Entity\Block;
@@ -22,7 +22,6 @@ function social_activity_install() {
 
   _social_activity_create_activity_homepage_block();
 }
-
 
 /**
  * Function to create some menu items.
@@ -95,7 +94,7 @@ function _social_activity_create_activity_homepage_block() {
       $values['visibility'][$id]['id'] = $id;
     }
 
-    $settings = array (
+    $settings = array(
       'id' => 'views_block:activity_stream-block_stream_homepage',
       'label' => '',
       'provider' => 'views',
@@ -115,10 +114,10 @@ function _social_activity_create_activity_homepage_block() {
  */
 function social_activity_update_8002() {
   $templates = MessageTemplate::loadMultiple();
-  $new_text = [];
 
   if (!empty($templates)) {
     foreach ($templates as $name => $template) {
+      $new_text = [];
 
       //check if text is in the wrong format
       if (!empty($text_array = $template->get('text'))) {
