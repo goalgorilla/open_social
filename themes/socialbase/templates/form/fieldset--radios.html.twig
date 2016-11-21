@@ -22,8 +22,21 @@
  * @ingroup themeable
  */
 #}
+
+{%-
+set classes = [
+'control-label',
+title_display == 'invisible' ? 'sr-only',
+required ? 'js-form-required',
+required ? 'form-required',
+]
+-%}
+
 <div class="form-group radios">
-  <label>{{ legend.title }}</label>
+  <label{{ attributes.addClass(classes) }}>{{ legend.title }}</label>
+  {%- if required -%}
+    <span class="form-required">*</span>
+  {%- endif -%}
 
   {% if errors %}
     <div>
