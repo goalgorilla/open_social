@@ -148,3 +148,63 @@ function social_activity_update_8002() {
     }
   }
 }
+
+/**
+ * Update Dynamic Entity Reference related configs to work with latest version of DER.
+ */
+function social_activity_update_8003() {
+  $config = \Drupal::service('config.factory')->getEditable('core.entity_view_display.activity.activity.default');
+
+  //only update if config exists and this is not a fresh install
+  if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
+    if (!empty($settings['view_mode'])) {
+      $config->clear('content.field_activity_entity.settings');
+
+      $config->set('content.field_activity_entity.settings', social_activity_get_der_settings());
+      $config->save();
+    }
+  }
+}
+
+/**
+ * Get entity view mode settings for Dynamic Entity Reference update.
+ *
+ * @return array View mode settings, keyed by entity machine name
+ */
+function social_activity_get_der_settings() {
+  $result = [];
+
+  $settings = [
+    'activity' => [
+      'comment',
+      'node',
+      'post',
+    ],
+    'stream' => [
+      'group',
+    ],
+    'default' => [
+      'crop',
+      'event_enrollment',
+      'flagging',
+      'message',
+      'search_api_task',
+      'activity',
+      'block_content',
+      'menu_link_content',
+      'file',
+      'group_content',
+      'profile',
+      'taxonomy_term',
+      'user',
+    ],
+  ];
+
+  foreach ($settings as $view_mode => $entities) {
+    foreach ($entities as $entity) {
+      $result[$entity]['view_mode'] = $view_mode;
+    }
+  }
+
+  return $result;
+}
