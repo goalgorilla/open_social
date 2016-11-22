@@ -1,5 +1,18 @@
-<div class="clearfix">
+{% if part_of_teaser %}
+
   {% for item in items %}
-    {{ item.content }}
+    {% set body %}
+      {{ item.content }}
+    {% endset %}
+    {{ body|striptags|length > 75 ? body|striptags|slice(0, 75) ~ '...' : body|striptags }}
   {% endfor %}
-</div>
+
+{% else %}
+
+  <div class="clearfix">
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  </div>
+
+{% endif %}
