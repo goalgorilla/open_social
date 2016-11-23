@@ -1,10 +1,7 @@
 {% if part_of_teaser %}
 
   {% for item in items %}
-    {% set body %}
-      {{ item.content }}
-    {% endset %}
-    {{ body|striptags|length > 75 ? body|striptags|slice(0, 75) ~ '...' : body|striptags }}
+    {{ item.content|render|striptags }}
   {% endfor %}
 
 {% else %}
