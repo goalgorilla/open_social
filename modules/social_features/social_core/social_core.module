@@ -295,3 +295,27 @@ function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $fo
     $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
 }
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_core_element_info_alter(array &$info) {
+  if (isset($info['text_format']['#process'])) {
+    $info['text_format']['#process'][] = 'social_core_filter_process_format';
+  }
+}
+
+/**
+ * Remove ability of selecting format if full_html is available.
+ */
+function social_core_filter_process_format($element) {
+  if (isset($element['format']['format']['#options']['full_html'])) {
+    $element['#format'] = 'full_html';
+    $element['format']['format']['#access'] = FALSE;
+    $element['format']['format']['#value'] = 'full_html';
+    $element['format']['help']['#access'] = FALSE;
+    $element['format']['format']['#options'] = ['full_html' => 'Full HTML'];
+  }
+
+  return $element;
+}
