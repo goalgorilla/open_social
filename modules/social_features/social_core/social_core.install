@@ -25,6 +25,8 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items
   _social_core_create_menu_links();
+  //Set jpeg quality
+  _social_core_set_image_quality();
 }
 
 /**
@@ -404,4 +406,20 @@ function social_core_update_8006(&$sandbox) {
     'social_follow_content',
   );
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Set higher jpeg quality instead of default 75%.
+ */
+function social_core_update_8007() {
+  _social_core_set_image_quality();
+}
+
+/**
+ * Set image quality.
+ */
+function _social_core_set_image_quality() {
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+
+  $config->set('jpeg_quality', 90)->save();
 }
