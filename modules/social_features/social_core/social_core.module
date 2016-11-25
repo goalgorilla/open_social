@@ -11,6 +11,7 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
+use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Implements hook_theme().
@@ -309,7 +310,24 @@ function social_core_element_info_alter(array &$info) {
  * Remove ability of selecting format if full_html is available.
  */
 function social_core_filter_process_format($element) {
-  if (isset($element['format']['format']['#options']['full_html'])) {
+  $full_html = FilterFormat::load('full_html');
+  $permission_name = $full_html->getPermissionName();
+  $account = \Drupal::currentUser();
+
+  if ($element['#type'] == 'text_format' && $element['#format'] == 'full_html' && !$account->hasPermission($permission_name)) {
+    $element['#format'] = 'basic_html';
+    $element['value']['#format'] = 'basic_html';
+    $element['format']['format']['#default_value'] = 'basic_html';
+    $element['value']['#disabled'] = FALSE;
+    $element['format']['format']['#access'] = TRUE;
+    $element['format']['#access'] = TRUE;
+    $key = array_search('filter_form_access_denied', $element['value']['#pre_render']);
+
+    if (isset($element['value']['#pre_render'][$key])) {
+      unset($element['value']['#pre_render'][$key]);
+    }
+  }
+  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name)) {
     $element['#format'] = 'full_html';
     $element['format']['format']['#access'] = FALSE;
     $element['format']['format']['#value'] = 'full_html';
