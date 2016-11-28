@@ -102,8 +102,13 @@ function social_group_preprocess_group(&$variables) {
 
   // Add group edit url for management.
   if ($group instanceof Group) {
-    if ($group->access('update', $account)) {
-      $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+    // Get the current route name to check if the user is on the edit or delete page.
+    $route = \Drupal::routeMatch()->getRouteName();
+    if (!in_array($route, array('entity.group.edit_form', 'entity.group.delete_form'))) {
+      if ($group->access('update', $account)) {
+        $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+        $variables['#cache']['contexts'][] = 'route.name';
+      }
     }
   }
   // Count number of group members.
@@ -165,6 +170,7 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
   // For group entities.
   if ($entity instanceof Group) {
     // Add cache contexts for the hero view mode.
+    $variables['#cache']['contexts'][] = 'url.query_args';
     if ($build['#view_mode'] == 'hero') {
       // Add cache contexts for group type & permissions. We need join / leave for
       // the CTA and also update permissions for the button to edit a group.

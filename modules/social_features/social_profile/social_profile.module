@@ -186,8 +186,13 @@ function social_profile_preprocess_profile(&$variables) {
   }
 
   // Edit profile URL.
-  if ($profile->access('edit', $current_user)) {
-    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+  // Get the current route name to check if the user is on the edit or delete page.
+  $route = \Drupal::routeMatch()->getRouteName();
+  if (!in_array($route, array('entity.profile.type.profile.user_profile_form'))) {
+    if ($profile->access('edit', $current_user)) {
+      $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+      $variables['#cache']['contexts'][] = 'route.name';
+    }
   }
 }
 
