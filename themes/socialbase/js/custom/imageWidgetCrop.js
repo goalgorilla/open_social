@@ -92,9 +92,21 @@
       }
     });
 
-    // Open crop details and apply crop automatically
-    $cropWrapper.children(cropWrapperSummarySelector).once('imageWidgetAuto').trigger("click");
-    Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+    // This part is needed to load saved crops automatically without issues
+    $(window).load(function () {
+      Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+    });
+
+    // Open crop details and apply crop automatically on image upload
+    $(document).ajaxSuccess(function (event, xhr, settings) {
+
+      // Filter by triggering element to avoid accidental calls
+      if (typeof settings.extraData !== 'undefined' && settings.extraData.hasOwnProperty('_triggering_element_name')) {
+        if (typeof $('button[name="' + settings.extraData._triggering_element_name + '"]') !== 'undefined') {
+          Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+        }
+      }
+    });
 
     $reset.on('click', function (e) {
       e.preventDefault();
@@ -220,7 +232,11 @@
       Drupal.imageWidgetCrop.updateHardLimits($this);
       Drupal.imageWidgetCrop.checkSoftLimits($this);
 
-      // Set dimensions for containers. Otherwise hidden crops won't work properly
+      /*
+       * Temporarily set width/height for hidden wrappers,  otherwise cropper
+       * library sets them to minimum values. Unset to auto after the crop has been
+       * generated.
+       */
       var firstContainer = $this.next('div');
 
       if (containerDimensions === null) {
@@ -405,19 +421,10 @@
    */
   Drupal.imageWidgetCrop.initializeCropperAutomatically = function ($element) {
     if ($element.length !== 0) {
-
-      /*
-       * Temporarily set width/height for hidden wrappers,  otherwise cropper
-       * library sets them to minimum values. Unset to auto after the crop has been
-       * generated.
-       */
       var firstItem = $element.find('.in ' + cropperSelector);
       var ratio = Drupal.imageWidgetCrop.getRatio($(firstItem));
 
-      // Ensure everything is loaded before calling crop
-      $(window).load(function () {
-        Drupal.imageWidgetCrop.initializeCropper($(firstItem), ratio);
-      });
+      Drupal.imageWidgetCrop.initializeCropper($(firstItem), ratio);
     }
   };
 
