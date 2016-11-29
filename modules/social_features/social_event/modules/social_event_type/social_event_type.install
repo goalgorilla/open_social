@@ -1,0 +1,42 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_event_type module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_event_type.
+ */
+function social_event_type_install() {
+  // Fetch sitemananger role
+  $role = \Drupal\user\Entity\Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof \Drupal\user\Entity\Role) {
+    // Set permission.
+    $role->grantPermission('set social event type settings');
+    $role->grantPermission('edit terms in event_types');
+    $role->grantPermission('delete terms in event_types');
+    $role->trustData()->save();
+  }
+}
+
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Perform actions related to the de-installation of social_event_type.
+ */
+function social_event_type_uninstall() {
+  // Fetch sitemananger role
+  $role = \Drupal\user\Entity\Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof \Drupal\user\Entity\Role) {
+    // Set permission.
+    $role->revokePermission('set social event type settings');
+    $role->revokePermission('edit terms in event_types');
+    $role->revokePermission('delete terms in event_types');
+    $role->trustData()->save();
+  }
+}

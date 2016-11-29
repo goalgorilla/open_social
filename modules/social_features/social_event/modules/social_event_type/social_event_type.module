@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * The Social event type module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_type_form_node_event_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  social_event_type_widget_alter($form);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_type_form_node_event_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  social_event_type_widget_alter($form);
+}
+
+
+/**
+ * Function that does some magic to the event type field.
+ * @param $form
+ */
+function social_event_type_widget_alter(&$form) {
+  /** @var \Drupal\Core\Config\ConfigFactory $config */
+  $config = \Drupal::service('config.factory')->getEditable('social_event_type.settings');
+
+  // Check if the field is set to mandatory.
+  if ($config->get('social_event_type_required') == TRUE) {
+    $form['field_event_type']['widget']['#required'] = TRUE;
+  }
+
+  // Set the event type label for none.
+  if (isset($form['field_event_type']['widget']['#options']['_none'])) {
+    $form['field_event_type']['widget']['#options']['_none'] = t($config->get('social_event_type_empty_label'));
+    // If the field was set to mandatory, remove the _none option.
+    if ($config->get('social_event_type_required') == TRUE) {
+      unset($form['field_event_type']['widget']['#options']['_none']);
+    }
+  }
+
+  // Change the widget if more than X.
+  if (count($form['field_event_type']['widget']['#options']) >= $config->get('social_event_type_select_changer')) {
+    $form['field_event_type']['widget']['#type'] = 'select';
+  }
+}
