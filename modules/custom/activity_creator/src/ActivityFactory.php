@@ -121,7 +121,7 @@ class ActivityFactory extends ControllerBase {
   private function getFieldOutputText(Message $message, $arguments = []) {
     $value = NULL;
     if (isset($message)) {
-      $value = $message->getText(NULL);
+      $value = $message->getText();
       // Text for aggregated activities.
       if (!empty($value[1]) && !empty($arguments)) {
         $text = str_replace('@count', $arguments['@count'], $value[1]);

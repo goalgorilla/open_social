@@ -47,7 +47,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
   public static function getSendEmailOutputText(Message $message) {
     $value = NULL;
     if (isset($message)) {
-      $value = $message->getText(NULL);
+      $value = $message->getText();
       // Text for email.
       if (!empty($value[2])) {
         $text = $value[2];
