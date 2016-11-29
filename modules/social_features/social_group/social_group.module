@@ -170,7 +170,6 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
   // For group entities.
   if ($entity instanceof Group) {
     // Add cache contexts for the hero view mode.
-    $variables['#cache']['contexts'][] = 'url.query_args';
     if ($build['#view_mode'] == 'hero') {
       // Add cache contexts for group type & permissions. We need join / leave for
       // the CTA and also update permissions for the button to edit a group.
