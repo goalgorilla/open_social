@@ -7,6 +7,7 @@
 namespace Drupal\activity_creator;
 
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\message\Entity\Message;
 
@@ -121,7 +122,11 @@ class ActivityFactory extends ControllerBase {
   private function getFieldOutputText(Message $message, $arguments = []) {
     $value = NULL;
     if (isset($message)) {
+
       $value = $message->getText();
+      if (empty($value)) {
+        $value = $this->getMessageText($message);
+      }
       // Text for aggregated activities.
       if (!empty($value[1]) && !empty($arguments)) {
         $text = str_replace('@count', $arguments['@count'], $value[1]);
@@ -348,6 +353,97 @@ class ActivityFactory extends ControllerBase {
       $value = $data['actor'];
     }
     return $value;
+  }
+
+  /**
+   * Get message text.
+   *
+   * @return array
+   *    Message text array.
+   */
+  public function getMessageText(Message $message) {
+
+    /** @var \Drupal\message\Entity\MessageTemplate $message_template */
+    $message_template = $message->getTemplate();
+
+    $message_arguments = $message->getArguments();
+    $message_template_text = $message_template->get('text');
+
+    $output = $this->processArguments($message_arguments, $message_template_text, $message);
+
+    $token_options = $message_template->getSetting('token options', []);
+    if (!empty($token_options['token replace'])) {
+      // Token should be processed.
+      $output = $this->processTokens($output, !empty($token_options['clear']), $message);
+    }
+
+    return $output;
+  }
+
+
+  /**
+   * Process the message given the arguments saved with it.
+   *
+   * @param array $arguments
+   *   Array with the arguments.
+   * @param array $output
+   *   Array with the templated text saved in the message template.
+   *
+   * @return array
+   *   The templated text, with the placeholders replaced with the actual value,
+   *   if there are indeed arguments.
+   */
+  protected function processArguments(array $arguments, array $output, Message $message) {
+    // Check if we have arguments saved along with the message.
+    if (empty($arguments)) {
+      return $output;
+    }
+
+    foreach ($arguments as $key => $value) {
+      if (is_array($value) && !empty($value['callback']) && is_callable($value['callback'])) {
+
+        // A replacement via callback function.
+        $value += ['pass message' => FALSE];
+
+        if ($value['pass message']) {
+          // Pass the message object as-well.
+          $value['arguments']['message'] = $message;
+        }
+
+        $arguments[$key] = call_user_func_array($value['callback'], $value['arguments']);
+      }
+    }
+
+    foreach ($output as $key => $value) {
+      $output[$key] = new FormattableMarkup($value, $arguments);
+    }
+
+    return $output;
+  }
+
+  /**
+   * Replace placeholders with tokens.
+   *
+   * @param array $output
+   *   The templated text to be replaced.
+   * @param bool $clear
+   *   Determine if unused token should be cleared.
+   *
+   * @return array
+   *   The output with placeholders replaced with the token value,
+   *   if there are indeed tokens.
+   */
+  protected function processTokens(array $output, $clear, Message $message) {
+    $options = [
+      'clear' => $clear,
+    ];
+
+    foreach ($output as $key => $value) {
+      $output[$key] = \Drupal::token()
+        ->replace($value, ['message' => $message], $options);
+    }
+
+    return $output;
   }
 
 }
