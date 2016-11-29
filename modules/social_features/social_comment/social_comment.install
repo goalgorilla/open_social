@@ -83,3 +83,21 @@ function social_comment_update_8001(&$sandbox) {
     }
   }
 }
+
+/**
+ * Enable 'delete all comments' permission for site manager users.
+ */
+function social_comment_update_8002(&$sandbox) {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  $permissions = array(
+    'delete all comments',
+  );
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
