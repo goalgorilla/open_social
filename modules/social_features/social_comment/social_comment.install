@@ -60,7 +60,7 @@ function _social_comment_get_permissions($role) {
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-    'delete all comments'
+
   ));
 
   return $permissions[$role];
@@ -79,24 +79,6 @@ function social_comment_update_8001(&$sandbox) {
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
     if ($role->id() === 'authenticated') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
-  }
-}
-
-/**
- * Enable 'delete all comments' permission for site manager users.
- */
-function social_comment_update_8002(&$sandbox) {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
-
-  $permissions = array(
-    'delete all comments',
-  );
-
-  /** @var \Drupal\user\Entity\Role $role */
-  foreach ($roles as $role) {
-    if ($role->id() === 'sitemanager') {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
