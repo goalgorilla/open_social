@@ -769,10 +769,26 @@ display:
       defaults:
         filters: false
         filter_groups: false
+        sorts: false
       filter_groups:
         operator: AND
         groups:
           1: AND
+      sorts:
+        event_passed_upcoming_sort:
+          id: event_passed_upcoming_sort
+          table: node
+          field: event_passed_upcoming_sort
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          granularity: minute
+          entity_type: node
+          plugin_id: event_passed_upcoming_sort
     cache_metadata:
       max-age: -1
       contexts:
