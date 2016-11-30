@@ -48,4 +48,3 @@ Feature: See upcoming events in the community
 
     When I click radio button "Events that have started or are finished"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".card-title"
-    And i break
