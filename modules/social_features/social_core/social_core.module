@@ -308,18 +308,28 @@ function social_core_element_info_alter(array &$info) {
 
 /**
  * Remove ability of selecting format if full_html is available.
+ * @todo Instead of defining the list of fields it would be better to add a separate
+ * setting to all text_format fields, allowing to select wether to show format selector or not
  */
 function social_core_filter_process_format($element) {
+
+  // Only fields listed here will have text format settings disabled
+  $full_html_field_ids = [
+    'edit-body-0',
+    'edit-field-profile-self-introduction-0',
+    'edit-field-group-description-0'
+  ];
+
   $full_html = FilterFormat::load('full_html');
   $permission_name = $full_html->getPermissionName();
   $account = \Drupal::currentUser();
-
   if ($element['#type'] == 'text_format' && $element['#format'] == 'full_html' && !$account->hasPermission($permission_name)) {
     $element['#format'] = 'basic_html';
     $element['value']['#format'] = 'basic_html';
     $element['format']['format']['#default_value'] = 'basic_html';
+    $element['format']['format']['#value'] = 'basic_html';
     $element['value']['#disabled'] = FALSE;
-    $element['format']['format']['#access'] = TRUE;
+    $element['format']['format']['#access'] = FALSE;
     $element['format']['#access'] = TRUE;
     $key = array_search('filter_form_access_denied', $element['value']['#pre_render']);
 
@@ -327,7 +337,7 @@ function social_core_filter_process_format($element) {
       unset($element['value']['#pre_render'][$key]);
     }
   }
-  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name)) {
+  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name) && in_array($element['#id'], $full_html_field_ids)) {
     $element['#format'] = 'full_html';
     $element['format']['format']['#access'] = FALSE;
     $element['format']['format']['#value'] = 'full_html';
