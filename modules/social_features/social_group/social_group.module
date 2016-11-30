@@ -171,7 +171,7 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
       $build['#cache']['contexts'][] = 'group.type';
       $build['#cache']['contexts'][] = 'group_membership.roles.permissions';
       $build['#cache']['contexts'][] = 'group_membership.audience';
-
+      $build['#cache']['tags'][] = 'group_block:' . $entity->id();
     }
   }
 }
@@ -185,6 +185,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
   );
+
+  // Perform alterations on joining / leaving groups.
+  if ($form_id == 'group_content_open_group-group_membership_delete_form') {
+    $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
+  }
+
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
@@ -228,6 +234,21 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Add custom submit handler just for redirect purposes. We don't want to
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+  }
+}
+
+/**
+ * Form submit for removing members from a group so we can clear caches.
+ */
+function _social_membership_delete_form_submit($form, FormStateInterface $form_state) {
+  $group = _social_group_get_current_group();
+
+  if (is_object($group)) {
+    // Invalidate cache tags.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags(array($cache_tag));
+    }
   }
 }
 
@@ -508,6 +529,8 @@ function _social_group_cache_tags(GroupInterface $group) {
 
   // Add cachetags that are based on id.
   $tags[] = 'group_hero:' . $group->id();
+  // Add cache tags for the blocks.
+  $tags[] = 'group_block:' . $group->id();
 
   $current_user = \Drupal::currentUser();
   if ($group_membership = $group->getMember($current_user)) {
