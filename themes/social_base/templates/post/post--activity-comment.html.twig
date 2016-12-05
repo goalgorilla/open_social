@@ -1,0 +1,48 @@
+  {#
+  /**
+  * @file post.html.twig
+  * Default theme implementation to present Post data.
+  *
+  * This template is used when viewing Post pages.
+  *
+  *
+  * Available variables:
+  * - content: A list of content items. Use 'content' to print all content, or
+  * - attributes: HTML attributes for the container element.
+  *
+  * @see template_preprocess_post()
+  *
+  * @ingroup themeable
+  */
+  #}
+
+{%
+  set classes = [
+    'margin-top-s',
+    logged_in ? 'margin-bottom-m',
+  ]
+%}
+
+  <hr class="ruler-s">
+
+  <div class="media">
+    <div class="media-left">
+      {% if author_picture %}
+        {{ author_picture }}
+      {% endif %}
+    </div>
+    <div class="media-body">
+      <div class="media-heading text-m">
+        {% if content.user_id %}
+          {{ content.user_id }}
+        {% endif %}
+        <div class="post-date">{{ date }}</div>
+      </div>
+    </div>
+  </div>
+
+<div{{ attributes.addClass(classes) }}>
+  {% if content.field_post %}
+    {{ content.field_post }}
+  {% endif %}
+</div>

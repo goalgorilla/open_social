@@ -1,0 +1,16 @@
+@import "settings";
+
+.main-container {
+  overflow: hidden;
+  min-height: 100%;
+  min-height: calc(100vh - 50px);
+  padding-top: 50px;
+  padding-bottom: 100px;
+}
+
+@include MQ($medium) {
+  .complementary-top {
+    // line-height * section-title font size + padding top + padding bottom
+    margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
+  }
+}

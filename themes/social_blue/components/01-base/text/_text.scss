@@ -1,0 +1,38 @@
+@include text-emphasis-variant('.text-primary', $brand-primary);
+@include text-emphasis-variant('.text-success', $state-success-text);
+@include text-emphasis-variant('.text-info', $state-info-text);
+@include text-emphasis-variant('.text-warning', $state-warning-text);
+@include text-emphasis-variant('.text-danger', $state-danger-text);
+
+@include text-emphasis-variant('.text-gray', $gray);
+@include text-emphasis-variant('.text-gray-light', $gray-light);
+@include text-emphasis-variant('.text-gray-lighter', $grey-light-1);
+@include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
+@include text-emphasis-variant('.text-accent', $brand-accent);
+
+// Contextual backgrounds
+// For now we'll leave these alongside the text classes until v4 when we can
+// safely shift things around (per SemVer rules).
+.bg-primary {
+  // Given the contrast here, this is the only class to have its color inverted
+  // automatically.
+  color: #fff;
+}
+@include bg-variant('.bg-primary', $brand-primary);
+@include bg-variant('.bg-success', $state-success-bg);
+@include bg-variant('.bg-info', $state-info-bg);
+@include bg-variant('.bg-warning', $state-warning-bg);
+@include bg-variant('.bg-danger', $state-danger-bg);
+
+@include bg-variant('.bg-gray', $gray);
+@include bg-variant('.bg-gray-light', $gray-light);
+@include bg-variant('.bg-gray-lighter', $gray-lighter);
+@include bg-variant('.bg-gray-lightest', $gray-lightest);
+@include bg-variant('.bg-white', white);
+
+@include style-variant('.brand-primary', $brand-primary, white);
+@include style-variant('.brand-secondary', $brand-secondary, white);
+@include style-variant('.brand-accent', $brand-accent, $default-color);
+@include style-variant('.brand-user', $gray-darker, white);
+
+@include style-variant('.default-light', $gray-lighter, $default-color);

@@ -1,0 +1,33 @@
+{#
+/**
+ * @file activity.html.twig
+ * Default theme implementation to present Activity data.
+ *
+ * This template is used when viewing Activity pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_activity()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<a href="{{ full_url }}" class="{{ status_class }}">
+  <div{{ attributes.addClass('media') }}>
+    <div class="media-left">
+      {% if actor %}
+        {{- actor -}}
+      {% endif %}
+    </div>
+    <div class="media-body">
+      {% if content %}
+        {{- content -}}
+      {% endif %}
+      <div class="text-gray-light">{{ date }}</div>
+    </div>
+  </div>
+</a>

@@ -1,0 +1,146 @@
+
+// Horizontal rules
+
+hr {
+  margin-top:    $line-height-computed;
+  margin-bottom: $line-height-computed;
+  border: 0;
+  border-top: 1px solid $hr-border;
+}
+
+
+// Only display content to screen readers
+//
+// See: http://a11yproject.com/posts/how-to-hide-content
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+// Use in conjunction with .sr-only to only display content when it's focused.
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+// Credit: HTML5 Boilerplate
+
+.sr-only-focusable {
+  &:active,
+  &:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
+}
+
+
+// iOS "clickable elements" fix for role="button"
+//
+// Fixes "clickability" issue (and more generally, the firing of events such as focus as well)
+// for traditionally non-focusable elements with role="button"
+// see https://developer.mozilla.org/en-US/docs/Web/Events/click#Safari_Mobile
+
+[role="button"] {
+  cursor: pointer;
+}
+
+
+
+.no-margin {            margin: 0; }
+.margin-left-s {margin-left: 5px;}
+.margin-left-m {margin-left: 10px;}
+.margin-left-l {margin-left: 20px;}
+.margin-left-xl {margin-left: 30px;}
+
+.margin-bottom-s {      margin-bottom: 5px; }
+.margin-bottom-m {  	  margin-bottom: 10px; }
+.margin-bottom-l {	    margin-bottom: 20px; }
+.margin-bottom-xl {	    margin-bottom: 30px; }
+.margin-top-s {	        margin-top: 5px; }
+.margin-top-m {	        margin-top: 10px; }
+.margin-top-l {	        margin-top: 20px; }
+.margin-top-xl {	      margin-top: 30px; }
+.margin-top-xxl {	      margin-top: 40px; }
+
+.no-padding { padding: 0 !important;}
+.padding-xs { padding: 6px; }
+.padding-sm { padding: 12px; }
+.padding-md { padding: 24px; }
+.padding-lg { padding: 48px; }
+.no-side-padding { padding: 24px 0; }
+
+.no-border { border: 0 !important;}
+
+.inline-center {
+  vertical-align: middle;
+  line-height: 1;
+  margin-right: 5px;
+}
+
+.align-center {
+  align-self: center;
+}
+
+// can be used on anchor that need to display as a block
+.block {
+  display: block;
+}
+
+// Pushpin
+.pin-top, .pin-bottom {
+  position: relative;
+}
+.pinned {
+  position: fixed !important;
+}
+
+hr {
+
+  &.ruler-xs {
+    margin: 2px 0;
+  }
+
+  &.ruler-sm {
+    margin: 10px 0;
+  }
+
+  &.ruler-md {
+    margin: 15px 0;
+  }
+
+  &.ruler-s {
+    margin: ($line-height-computed / 2.5) 0;
+  }
+
+  &.ruler-l {
+    margin: ($line-height-computed * 2.5) 0;
+  }
+}
+
+.js .js-hide {
+  display: none;
+}
+
+.js-show {
+  display: none;
+}
+
+.js .js-show {
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  word-wrap: normal;
+}

@@ -1,0 +1,28 @@
+// shortcode for building a media query
+@mixin MQ($width) {
+
+  @if ($width == 'retina2') {
+    @media screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+      @content;
+    }
+  }
+
+  @else if ($width == 'retina3') {
+    @media screen and (-webkit-min-device-pixel-ratio: 3), only screen and (min-resolution: 288dpi), only screen and (min-resolution: 3dppx) {
+      @content;
+    }
+  }
+
+  @else {
+    @media screen and (min-width: $width) {
+      @content;
+    }
+  }
+
+}
+
+@mixin MQH($height, $width) {
+  @media screen and (min-width: $width), screen and (min-height: $height) {
+    @content;
+  }
+}

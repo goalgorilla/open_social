@@ -1,0 +1,98 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a group.
+ *
+ * Available variables:
+ * - group: The group entity with limited access to object properties and
+ *   methods. Only "getter" methods (method names starting with "get", "has",
+ *   or "is") and a few common methods such as "id" and "label" are available.
+ *   Calling other methods (such as group.delete) will result in an exception.
+ * - label: The title of the group.
+ * - content: All group items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the
+ *   printing of a given child element.
+ * - url: Direct URL of the current group.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - group: The current template type (also known as a "theming hook").
+ *   - group--[type]: The current group type. For example, if the group is a
+ *     "Classroom" it would result in "group--classroom". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - group--[view_mode]: The View Mode of the group; for example, a
+ *     teaser would result in: "group--teaser", and full: "group--full".
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ *
+ * @see template_preprocess_group()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('socialbase/teaser')}}
+<div class="card card--teaser card-with-actionbar">
+    <div class='card-image'>
+        {{ content.field_group_image }}
+    </div>
+    <div class='card-body'>
+        {{ title_prefix }}
+        {% if not page %}
+          <h4{{ title_attributes }} class="card-title">
+            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+          </h4>
+        {% endif %}
+        {{ title_suffix }}
+        <div class="text-truncate">
+          <svg class="teaser-icon">
+            <use xlink:href="#icon-group"></use>
+          </svg>
+          <span class="inline-center">
+            {% trans %}
+              1 member
+            {% plural group_members %}
+              @count members
+            {% endtrans %}
+            &nbsp;
+          </span>
+        </div>
+        {% if content.field_group_location|render or content.field_group_address|render %}
+            <div class="text-truncate">
+                <svg class="teaser-icon">
+                    <use xlink:href="#icon-location"></use>
+                </svg>
+            <span class="inline-center">
+              {% if content.field_group_location|render %}
+                {{- content.field_group_location -}}
+              {% endif %}
+              {% if content.field_group_location|render and content.field_group_address|render %} &bullet;{% endif %}
+              {% if content.field_group_address|render %}
+                {{- content.field_group_address -}}
+              {% endif %}
+            </span>
+            </div>
+        {% endif %}
+
+        <div class="card-actionbar">
+          <div class="actionbar">
+              {% if joined %}
+                <span class="label label-default">
+                  {% trans %}Joined{% endtrans %}
+                </span>
+              {% endif %}
+          </div>
+          <a href="{{ url }}" class="btn btn-flat pull-right" title="{{ label }}">
+            {% trans %}Read more{% endtrans %}
+          </a>
+        </div>
+    </div>
+</div>

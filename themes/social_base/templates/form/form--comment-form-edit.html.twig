@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('socialbase/comment')}}
+<div class="card">
+  <div class="card-body">
+
+    <article{{ attributes.addClass('js-comment comment') }}>
+      <div class="comment__avatar"> {{ author_picture }} </div>
+
+      <div class="comment__content">
+        <span class="comment_author"> {{ author }} </span>
+        <span class="comment__metadata">&bullet; {{ submitted }} </span>
+        <div class="comment__text">
+          <form{{ attributes }}>
+            <div class="form-group">
+              {{ children }}
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </article>
+
+  </div>
+</div>

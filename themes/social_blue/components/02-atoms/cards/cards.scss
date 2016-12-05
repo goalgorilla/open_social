@@ -1,0 +1,29 @@
+@import 'settings';
+
+.card {
+  border-radius: $card-border-radius;
+  background-color: $card-bg;
+}
+
+.card-head {
+  border-radius: $card-border-radius $card-border-radius 0 0;
+}
+
+.card-body {
+
+  &:first-child {
+    border-top-left-radius: $card-border-radius;
+    border-top-right-radius: $card-border-radius;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: $card-border-radius;
+    border-bottom-right-radius: $card-border-radius;
+  }
+
+}
+
+.card-nested-section:last-child {
+  border-bottom-left-radius: $card-border-radius;
+  border-bottom-right-radius: $card-border-radius;
+}

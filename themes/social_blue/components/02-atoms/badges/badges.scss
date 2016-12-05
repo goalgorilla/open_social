@@ -1,0 +1,51 @@
+.badge {
+  color: $badge-color;
+  background-color: $badge-bg;
+  border-radius: $badge-border-radius;
+}
+
+// Hover state, but only for links
+a.badge {
+  &:hover,
+  &:focus {
+    color: $badge-link-hover-color;
+    text-decoration: none;
+  }
+}
+
+// Account for badges in navs
+.list-group-item.active > & {
+  color: $badge-active-color;
+  background-color: $badge-active-bg;
+}
+
+.badge-accent {
+  background-color: $brand-accent;
+  color: $default-color;
+
+  &:hover {
+    color: $default-color;
+  }
+
+}
+
+.badge-primary {
+  background-color: $brand-primary;
+}
+
+.badge-secondary {
+  background-color: $brand-secondary;
+}
+
+.badge-gray-lighter {
+  background-color: $gray-lighter;
+  color: $gray-light;
+
+  .icon-badge-toggle {
+    background-color: white;
+  }
+}
+
+.badge-gray-dark {
+  background-color: $gray-dark;
+}

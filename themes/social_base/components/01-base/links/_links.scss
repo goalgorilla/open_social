@@ -1,0 +1,33 @@
+// Links
+
+a {
+  text-decoration: none;
+	font-weight: 500;
+	color: inherit;
+
+	// Gets rid of tap active state
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover,
+  &:focus {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &:focus {
+    @include tab-focus;
+  }
+}
+
+.body-text {
+
+  a {
+    text-decoration: underline;
+    color: $link-color;
+
+    &:hover {
+      color: $link-hover-color;
+    }
+  }
+
+}
