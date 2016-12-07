@@ -1,0 +1,112 @@
+.badge {
+  display: inline-block;
+  min-width: 10px;
+  font-weight: 500;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-align: center;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.badge:empty {
+  display: none;
+}
+
+.btn .badge {
+  position: relative;
+  top: -1px;
+}
+
+.btn-xs .badge,
+.btn-group-xs > .btn .badge {
+  top: 0;
+  padding: 1px 5px;
+}
+
+.list-group-item > .badge {
+  float: right;
+}
+
+.list-group-item > .badge + .badge {
+  margin-right: 5px;
+}
+
+.nav-pills > li > a > .badge {
+  margin-left: 3px;
+}
+
+.badge label {
+  margin-bottom: 0;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.badge--toggle {
+  padding: 0;
+  background-color: transparent;
+  -webkit-transition: width 0.3s ease;
+  transition: width 0.3s ease;
+}
+
+.badge--toggle,
+.badge--toggle * {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.js .badge--toggle .badge--toggle__label {
+  width: 0;
+  opacity: 0;
+  display: inline-block;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .icon-badge-toggle,
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #4d4d4d;
+}
+
+.js .badge--toggle .badge--toggle__label {
+  border-radius: 0 8px 8px 0;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
+  width: auto;
+  padding: 3px 12px 3px 6px;
+  opacity: 1;
+}
+
+a.badge--comment-count {
+  background-color: #e6e6e6;
+  padding: 0;
+  color: #4d4d4d;
+}
+
+a.badge--comment-count:hover, a.badge--comment-count:focus {
+  background-color: #e6e6e6;
+  color: #4d4d4d;
+}
+
+a.badge--comment-count .icon-badge {
+  width: 22px;
+  height: 18px;
+  padding-left: 8px;
+  fill: #4d4d4d;
+}
+
+.badge--comment-count__number {
+  padding: 4px 8px 4px 4px;
+}

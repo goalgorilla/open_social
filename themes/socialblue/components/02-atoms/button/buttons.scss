@@ -1,0 +1,48 @@
+.btn-default {
+  @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+}
+.btn-primary {
+  @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+}
+
+.btn-accent {
+  @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
+  fill: $btn-accent-color;
+}
+
+.btn-flat {
+  @include button-variant($brand-primary, transparent, transparent);
+  fill: $brand-primary;
+
+  &:hover,
+  &:focus,
+  .open .dropdown-toggle & {
+    background-color: rgba(0, 0, 0, 0.12);
+    border-color: transparent;
+    color: inherit;
+    fill: darken($brand-primary, 10%);
+  }
+
+  &:active,
+  &.active {
+    background-color: rgba(12, 12, 12, 0.25);
+    border-color: transparent;
+    color: white;
+  }
+
+}
+
+.btn-link {
+  &:hover,
+  &:focus {
+    text-decoration: $link-hover-decoration;
+  }
+  
+}
+
+.btn-link[disabled] {
+  &:hover,
+  &:focus {
+    color: $btn-link-disabled-color;
+  }
+}

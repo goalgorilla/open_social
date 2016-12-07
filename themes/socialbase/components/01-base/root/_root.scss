@@ -1,0 +1,24 @@
+// Reset the box-sizing
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body {
+  font-size: $font-size-small;
+  line-height: $line-height-base;
+	-webkit-font-smoothing: antialiased; //smooth font in webkit
+  -moz-osx-font-smoothing: grayscale; //smooth font in firefox
+	word-wrap: break-word;
+
+  @include MQ($small) {
+    font-size: $font-size-base;
+  }
+
+}

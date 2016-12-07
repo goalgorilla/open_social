@@ -1,0 +1,16 @@
+.form-control {
+  color: $input-color;
+  border: 1px solid $input-border;
+  border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
+
+  // Customize the `:focus` state to imitate native WebKit styles.
+  @include form-control-focus;
+
+  &::-moz-placeholder {
+    color: $input-color-placeholder;
+  }
+
+  &:-ms-input-placeholder { color: $input-color-placeholder } // Internet Explorer 10+
+  &::-webkit-input-placeholder  { color: $input-color-placeholder } // Safari and Chrome
+
+}

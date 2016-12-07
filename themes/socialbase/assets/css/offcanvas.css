@@ -1,0 +1,138 @@
+.off-canvas {
+  position: fixed;
+  top: 50px;
+  overflow: auto;
+  width: 280px;
+  height: 100%;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 8px 17px 0 transparent, 0 6px 20px 0 transparent;
+  z-index: 4;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-transition: box-shadow 0.3s, -webkit-transform 0.5s;
+  transition: box-shadow 0.3s, -webkit-transform 0.5s;
+  transition: transform 0.5s, box-shadow 0.3s;
+  transition: transform 0.5s, box-shadow 0.3s, -webkit-transform 0.5s;
+}
+
+.off-canvas.is-open {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.off-canvas-left {
+  -webkit-transform: translateX(-280px);
+          transform: translateX(-280px);
+  left: 0;
+}
+
+.off-canvas-right {
+  -webkit-transform: translateX(280px);
+          transform: translateX(280px);
+  right: 0;
+}
+
+.block-group-add-event-block,
+.block-group-add-topic-block,
+.block-event-add-block,
+.block-topic-add-block,
+.block-group-add-block {
+  display: inline-block;
+}
+
+.block-group-add-event-block .btn,
+.block-group-add-topic-block .btn,
+.block-event-add-block .btn,
+.block-topic-add-block .btn,
+.block-group-add-block .btn {
+  margin-bottom: 0.75rem;
+}
+
+.views-exposed-form {
+  display: inline-block;
+  float: right;
+}
+
+.offcanvas-head {
+  position: relative;
+}
+
+.offcanvas-tools {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.offcanvas-body {
+  margin-top: 30px;
+}
+
+@media screen and (min-width: 960px) {
+
+  .off-canvas-xs-only {
+    margin-bottom: 0.75rem;
+    position: relative;
+    width: 100%;
+    height: auto;
+    right: auto;
+    -webkit-transform: none;
+    transform: none;
+    overflow: visible;
+    top: 0;
+    padding: 0;
+    border-radius: 10px;
+    background-clip: padding-box;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block {
+    display: block;
+  }
+
+  .block-group-add-event-block .btn,
+  .block-group-add-topic-block .btn,
+  .block-event-add-block .btn,
+  .block-topic-add-block .btn,
+  .block-group-add-block .btn {
+    width: 100%;
+  }
+
+  .views-exposed-form {
+    display: block;
+    float: none;
+  }
+
+  .btn--offcanvas-trigger {
+    display: none;
+  }
+
+  .offcanvas-head {
+    padding: 15px 20px 0;
+    color: #777777;
+    line-height: 1;
+  }
+
+  .offcanvas-head .complementary-title {
+    vertical-align: middle;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .offcanvas-tools {
+    display: none;
+  }
+
+  .offcanvas-body {
+    margin-top: 0;
+    padding: 20px;
+  }
+}

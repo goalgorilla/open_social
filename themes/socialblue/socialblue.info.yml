@@ -1,0 +1,74 @@
+name: Social Blue theme
+description: Demo theme for Open social installations.
+screenshot: screenshot.png
+type: theme
+
+base theme: social_base
+
+core: 8.x
+version: '1.0'
+
+
+libraries:
+# The following are libraries defined by Social base in social_base.libraries.yml.
+  - social_base/print
+  - social_base/base
+  - social_base/buttons
+  - social_base/forms
+  - social_base/alerts
+  - social_base/badges
+  - social_base/cards
+  - social_base/dropdowns
+  - social_base/hero
+  - social_base/input-groups
+  - social_base/layout
+  - social_base/labels
+  - social_base/list-group
+  - social_base/media
+  - social_base/modals
+  - social_base/navbar
+  - social_base/stream
+  - social_base/tabs
+
+# This section is used by the contrib module, Component Libraries. It allows you
+# to reference .twig files in your components/ directory.
+component-libraries:
+  base:
+    paths:
+      - components/01-base
+  atoms:
+    paths:
+      - components/02-atoms
+  molecules:
+    paths:
+      - components/03-molecules
+  organisms:
+    paths:
+      - components/04-organisms
+  templates:
+    paths:
+      - components/05-templates
+  pages:
+    paths:
+      - components/06-pages
+
+# Special stylesheets for CKEditor to use while editing.
+ckeditor_stylesheets:
+  - components/asset-builds/css/ckeditor.css
+
+
+regions:
+  hidden: Hidden
+  header: Header
+  breadcrumb: Breadcrumb
+  hero: Hero
+  secondary_navigation: Secondary navigation
+  content_top: Content top
+  title: Page title
+  content: Content
+  complementary_top: Complementary top
+  complementary_bottom: Complementary bottom
+  content_bottom: Content bottom
+  footer: Footer
+
+debug: false

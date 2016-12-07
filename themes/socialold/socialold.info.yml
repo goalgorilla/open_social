@@ -1,0 +1,102 @@
+name: Social base theme
+type: theme
+base theme: bootstrap
+description: Theme layer for drupal social.
+core: 8.x
+
+# The "libraries:" section will add a library to _all_ pages.
+# The order here is determined first by SMACSS category and after that you can determine the order here.
+libraries:
+  - socialbase/print
+  - socialbase/normalize
+  - socialbase/fonts
+  - socialbase/buttons
+  - socialbase/forms
+  - socialbase/scaffolding
+  - socialbase/tables
+  - socialbase/type
+  - socialbase/utilities
+  - socialbase/alerts
+  - socialbase/badges
+  - socialbase/cards
+  - socialbase/dropdowns
+  - socialbase/hero
+  - socialbase/grid
+  - socialbase/icons
+  - socialbase/input-groups
+  - socialbase/layout
+  - socialbase/labels
+  - socialbase/list-group
+  - socialbase/media
+  - socialbase/modals
+  - socialbase/navbar
+  - socialbase/stream
+  - socialbase/tabs
+  - socialbase/wells
+
+# Add the type css to be loaded by the ckeditor iframe.
+ckeditor_stylesheets:
+  - components/asset-builds/css/ckeditor.css
+
+libraries-extend:
+  core/drupal.ajax:
+    - socialbase/drupal.ajax
+  core/drupal.tabledrag:
+    - socialbase/drupal.tabledrag
+
+  # attach the timepicker library to all date fields
+  core/drupal.date:
+    - socialbase/jquery.timepicker
+
+  #extend the core datepicker with a stylesheet and attach the listener
+  core/jquery.ui.datepicker:
+    - socialbase/jquery.datepicker
+
+  # attach the bootstrap library script and css component
+  bootstrap/popover:
+    - socialbase/popover
+
+
+
+# The "libraries-override:" section will allow you to:
+# - Replace an entire library.
+# - Remove an entire library.
+# - Replace an asset in a library with another asset.
+# - Remove an asset from a library.
+libraries-override:
+  core/normalize: false
+  # Remove jQuery UI datepicker
+  core/jquery.ui.datepicker:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/datepicker.css: false
+  core/jquery.ui:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/core.css: false
+      theme:
+        assets/vendor/jquery.ui/themes/base/theme.css: false
+
+  system/base: false
+  views/views.module: false
+  classy/file: false
+
+regions:
+  hidden: Hidden
+  header: Header
+  breadcrumb: Breadcrumb
+  hero: Hero
+  secondary_navigation: Secondary navigation
+  content_top: Content top
+  title: Page title
+  content: Content
+  complementary_top: Complementary top
+  complementary_bottom: Complementary bottom
+  content_bottom: Content bottom
+  footer: Footer
+# Comment (remove) regions_hidden part in your subtheme.
+# Hidden regions should be visible when you enable new theme due to core bug.
+regions_hidden:
+  - hidden
+
+debug: false
