@@ -1,5 +1,15 @@
-<div class="clearfix">
+{% if part_of_teaser %}
+
   {% for item in items %}
-    {{ item.content }}
+    {{ item.content|render|striptags }}
   {% endfor %}
-</div>
+
+{% else %}
+
+  <div class="clearfix">
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  </div>
+
+{% endif %}
