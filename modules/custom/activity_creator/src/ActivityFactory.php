@@ -437,8 +437,16 @@ class ActivityFactory extends ControllerBase {
     ];
 
     foreach ($output as $key => $value) {
-      $output[$key] = \Drupal::token()
-        ->replace($value, ['message' => $message], $options);
+      if (is_string($value)) {
+        $output[$key] = \Drupal::token()
+          ->replace($value, ['message' => $message], $options);
+      }
+      else {
+        if (isset($value['value'])) {
+          $output[$key] = \Drupal::token()
+            ->replace($value['value'], ['message' => $message], $options);
+        }
+      }
     }
 
     return $output;
