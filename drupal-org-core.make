@@ -1,7 +1,7 @@
 api = 2
 core = 8.x
 projects[drupal][type] = core
-projects[drupal][version] = 8.2.3
+projects[drupal][version] = 8.2.4
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2724283-block-22.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2369119-120.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/728702-163.patch"
