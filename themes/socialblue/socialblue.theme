@@ -4,3 +4,28 @@
  * @file
  * The primary PHP file for the Social Blue theme.
  */
+
+ /**
+  * This function is needed in each subtheme now. Revise this so we can remove it from subthemes later.
+  * Implements hook_theme_suggestions_fieldset_alter().
+  */
+ function socialblue_theme_suggestions_fieldset_alter(array &$suggestions, array $variables) {
+   if (isset($variables['element']['#type'])) {
+     // Override bootstrap base theme suggestions.
+     switch ($variables['element']['#type']) {
+       case 'radios':
+       case 'checkboxes':
+         $suggestions[] = 'fieldset__' . $variables['element']['#type'];
+         break;
+       case 'fieldset':
+         $suggestions[] = 'bootstrap_panel';
+         break;
+
+       default:
+         $suggestions[] = $variables['theme_hook_original'];
+     }
+   }
+   else {
+     $suggestions[] = $variables['theme_hook_original'];
+   }
+ }
