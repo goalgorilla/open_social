@@ -45,9 +45,13 @@ class EmailActivityDestination extends SendActivityDestinationBase {
    * Get field value for 'output_text' field from data array.
    */
   public static function getSendEmailOutputText(Message $message) {
-    $value = NULL;
+    $text = NULL;
     if (isset($message)) {
-      $value = $message->getText(NULL);
+      $value = $message->getText();
+      if (empty($value)) {
+        $activity_factory = \Drupal::service('activity_creator.activity_factory');
+        $value = $activity_factory->getMessageText($message);
+      }
       // Text for email.
       if (!empty($value[2])) {
         $text = $value[2];
