@@ -43,7 +43,7 @@ function drush_social_demo_add() {
   foreach ($content_types as $key => $type) {
     $num_created = 0;
     // Create an instance of the necessary class.
-    $className = "\Drupal\social_demo\Content\SocialDemo" . ucfirst($type);
+    $className = "\\Drupal\\social_demo\\Content\\SocialDemo" . ucfirst($type);
 
     if (class_exists($className)) {
       $container = \Drupal::getContainer();
@@ -51,7 +51,7 @@ function drush_social_demo_add() {
       $num_created = $class->createContent();
     }
 
-    drush_print($num_created . " " . $type . " created");
+    drush_print("$num_created $type created");
   }
 
 }
@@ -64,7 +64,7 @@ function drush_social_demo_remove() {
 
   foreach ($content_types as $key => $type) {
     // Create an instance of the necessary class.
-    $className = "\Drupal\social_demo\Content\SocialDemo" . ucfirst($type);
+    $className = "\\Drupal\\social_demo\\Content\\SocialDemo" . ucfirst($type);
 
     if (class_exists($className)) {
       $container = \Drupal::getContainer();
