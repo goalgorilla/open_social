@@ -43,10 +43,10 @@ before_install:
   - docker ps -a
 
 script:
-  - docker exec -i social_ci_web bash /var/www/dev-scripts/install/install_script.sh
-  - docker exec -i social_ci_web_scripts sh /var/www/dev-scripts/unit-tests.sh
-  - docker exec -it social_ci_behat sh /var/www/dev-scripts/behatstability.sh
+  - docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh
+  - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
+  - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
 
 after_success:
-  - bash dev-scripts/trigger_dockerhub.sh
-  - bash dev-scripts/trigger_travis.sh
+  - bash scripts/social/trigger_dockerhub.sh
+  - bash scripts/social/trigger_travis.sh
