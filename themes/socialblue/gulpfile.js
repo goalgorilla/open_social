@@ -15,7 +15,7 @@ var options = {};
 
 // The root paths are used to construct all the other paths in this
 // configuration. The "project" root path is where this gulpfile.js is located.
-// While Zen distributes this in the theme root folder, you can also put this
+// While Open Social distributes this in the theme root folder, you can also put this
 // (and the package.json) in your project's root folder and edit the paths
 // accordingly.
 options.rootPath = {
@@ -25,12 +25,12 @@ options.rootPath = {
 };
 
 options.theme = {
-  name       : 'social_skeleton',
+  name       : 'social_blue',
   root       : options.rootPath.theme,
   components : options.rootPath.theme + 'components/',
-  build      : options.rootPath.theme + 'components/asset-builds/',
-  css        : options.rootPath.theme + 'components/asset-builds/css/',
-  js         : options.rootPath.theme + 'js/'
+  build      : options.rootPath.theme + 'assets/',
+  css        : options.rootPath.theme + 'assets/css/',
+  js         : options.rootPath.theme + 'assets/js/'
 };
 
 // Set the URL used to access the Drupal website under development. This will
@@ -43,22 +43,32 @@ options.sass = {
   importer: importOnce,
   includePaths: [
     options.theme.components,
-    options.rootPath.project + 'node_modules/breakpoint-sass/stylesheets',
-    options.rootPath.project + 'node_modules/chroma-sass/sass',
-    options.rootPath.project + 'node_modules/support-for/sass',
-    options.rootPath.project + 'node_modules/typey/stylesheets',
-    options.rootPath.project + 'node_modules/zen-grids/sass'
   ],
   outputStyle: 'expanded'
 };
 
-// Define which browsers to add vendor prefixes for.
-options.autoprefixer = {
-  browsers: [
-    '> 1%',
-    'ie 9'
-  ]
+var sassFiles = [
+  options.theme.components + '**/*.scss',
+  // Do not open Sass partials as they will be included as needed.
+  '!' + options.theme.components + '**/_*.scss'
+];
+
+// On screen notification for errors while performing tasks
+var onError = function(err) {
+  notify.onError({
+    title:    "Gulp error in " + err.plugin,
+    message:  "<%= error.message %>",
+    sound: "Beep"
+  })(err);
+  this.emit('end');
 };
+
+// Define icons source and destination paths
+options.icons = {
+  src   : options.theme.components + '01-base/icons/source/',
+  dest  : options.theme.build + 'icons/'
+};
+
 
 // Define the style guide paths and options.
 options.styleGuide = {
@@ -75,12 +85,12 @@ options.styleGuide = {
   // The css and js paths are URLs, like '/misc/jquery.js'.
   // The following paths are relative to the generated style guide.
   css: [
-    // base/special stylesheets
+    // Base stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'base.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'layouts.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'chroma-kss-styles.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'kss-only.css'),
-    // component stylesheets
+    // Atom stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'box.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'clearfix.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'comment.css'),
@@ -96,7 +106,7 @@ options.styleGuide = {
     path.relative(options.rootPath.styleGuide, options.theme.css + 'visually-hidden.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'watermark.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'wireframe.css'),
-    // form stylesheets
+    // Molecule stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'autocomplete.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'collapsible-fieldset.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'form-item.css'),
@@ -105,11 +115,12 @@ options.styleGuide = {
     path.relative(options.rootPath.styleGuide, options.theme.css + 'progress-throbber.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'resizable-textarea.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'table-drag.css'),
-    // navigation stylesheets
+    // Organisms stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'breadcrumb.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'more-link.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'nav-menu.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'navbar.css'),
+    // Template stylesheets
     path.relative(options.rootPath.styleGuide, options.theme.css + 'pager.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'skip-link.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'tabs.css')
@@ -118,24 +129,17 @@ options.styleGuide = {
   ],
 
   homepage: 'homepage.md',
-  title: 'Open Social Style Guide'
+  title: 'Open Social Blue Style Guide'
 };
 
 // Define the paths to the JS files to lint.
 options.eslint = {
   files  : [
     options.rootPath.project + 'gulpfile.js',
-    options.theme.js + '**/*.js',
-    '!' + options.theme.js + '**/*.min.js',
     options.theme.components + '**/*.js',
-    '!' + options.theme.build + '**/*.js'
+    '!' + options.theme.components + '**/*.min.js'
   ]
 };
-
-// If your files are on a network share, you may want to turn on polling for
-// Gulp watch. Since polling is less efficient, we disable polling by default.
-options.gulpWatchOptions = {};
-// options.gulpWatchOptions = {interval: 1000, mode: 'poll'};
 
 
 // ################################
@@ -147,7 +151,16 @@ var gulp      = require('gulp'),
   del         = require('del'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-sass'),
-  kss         = require('kss');
+  kss         = require('kss'),
+  postcss       = require('gulp-postcss'),
+  autoprefixer  = require('autoprefixer'),
+  mqpacker      = require('css-mqpacker');
+
+// Must be defined after plugins are called.
+var sassProcessors = [
+  autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
+  mqpacker({sort: true})
+];
 
 // The default task.
 gulp.task('default', ['build']);
@@ -157,22 +170,14 @@ gulp.task('default', ['build']);
 // #################
 gulp.task('build', ['styles:production', 'styleguide', 'lint']);
 
-// ##########
-// Build CSS.
-// ##########
-var sassFiles = [
-  options.theme.components + '**/*.scss',
-  // Do not open Sass partials as they will be included as needed.
-  '!' + options.theme.components + '**/_*.scss',
-  // Chroma markup has its own gulp task.
-  '!' + options.theme.components + 'style-guide/kss-example-chroma.scss'
-];
 
 gulp.task('styles', ['clean:css'], function () {
   return gulp.src(sassFiles)
     .pipe($.sourcemaps.init())
     .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.autoprefixer(options.autoprefixer))
+    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe($.postcss(sassProcessors) )
+    .pipe($.rucksack() )
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe($.sourcemaps.write('./'))
@@ -183,30 +188,38 @@ gulp.task('styles', ['clean:css'], function () {
 gulp.task('styles:production', ['clean:css'], function () {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.autoprefixer(options.autoprefixer))
+    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe($.postcss(sassProcessors) )
+    .pipe($.rucksack() )
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.theme.css));
 });
 
+
+// ===================================================
+// Move and minify JS.
+// ===================================================
+gulp.task('minify-scripts', function () {
+  return gulp.src(options.theme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest(options.theme.js));
+});
+
+
 // ##################
 // Build style guide.
 // ##################
-gulp.task('styleguide', ['clean:styleguide', 'styleguide:kss-example-chroma'], function () {
+gulp.task('styleguide', ['clean:styleguide'], function () {
   return kss(options.styleGuide);
 });
 
-gulp.task('styleguide:kss-example-chroma', function () {
-  return gulp.src(options.theme.components + 'style-guide/kss-example-chroma.scss')
-    .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.replace(/(\/\*|\*\/)\n/g, ''))
-    .pipe($.rename('kss-example-chroma.twig'))
-    .pipe($.size({showFiles: true}))
-    .pipe(gulp.dest(options.theme.build + 'twig'));
-});
-
 // Debug the generation of the style guide with the --verbose flag.
-gulp.task('styleguide:debug', ['clean:styleguide', 'styleguide:kss-example-chroma'], function () {
+gulp.task('styleguide:debug', ['clean:styleguide'], function () {
   options.styleGuide.verbose = true;
   return kss(options.styleGuide);
 });
@@ -262,7 +275,7 @@ gulp.task('browser-sync', ['watch:css'], function () {
 });
 
 gulp.task('watch:css', ['styles'], function () {
-  return gulp.watch(options.theme.components + '**/*.scss', options.gulpWatchOptions, ['styles']);
+  return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
 gulp.task('watch:lint-and-styleguide', ['styleguide', 'lint:sass'], function () {
@@ -273,7 +286,7 @@ gulp.task('watch:lint-and-styleguide', ['styleguide', 'lint:sass'], function () 
 });
 
 gulp.task('watch:js', ['lint:js'], function () {
-  return gulp.watch(options.eslint.files, options.gulpWatchOptions, ['lint:js']);
+  return gulp.watch(options.eslint.files, ['lint:js']);
 });
 
 // ######################

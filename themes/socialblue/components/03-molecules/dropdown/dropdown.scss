@@ -4,8 +4,10 @@
   border-radius: $border-radius-base;
 }
 
-// Hover/Focus state
+// Links within the dropdown menu
 .dropdown-menu > li > a {
+  color: $dropdown-link-color;
+
   &:hover,
   &:focus {
     color: $dropdown-link-hover-color;
@@ -26,4 +28,17 @@
 
 .dropdown-menu li > a {
   color: $dropdown-link-color;
+}
+
+// Disabled state
+//
+// Gray out text and ensure the hover/focus state remains gray
+
+.dropdown-menu > .disabled > a {
+  &,
+  &:hover,
+  &:focus {
+    color: $dropdown-link-disabled-color;
+  }
+  
 }

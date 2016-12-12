@@ -1,5 +1,6 @@
 .form-control {
   color: $input-color;
+  background-color: $input-bg;
   border: 1px solid $input-border;
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
 
@@ -12,5 +13,17 @@
 
   &:-ms-input-placeholder { color: $input-color-placeholder } // Internet Explorer 10+
   &::-webkit-input-placeholder  { color: $input-color-placeholder } // Safari and Chrome
+
+  // Disabled and read-only inputs
+  //
+  // HTML5 says that controls under a fieldset > legend:first-child won't be
+  // disabled if the fieldset is disabled. Due to implementation difficulty, we
+  // don't honor that edge case; we style them as disabled anyway.
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    background-color: $input-bg-disabled;
+    opacity: 1; // iOS fix for unreadable disabled content; see https://github.com/twbs/bootstrap/issues/11655
+  }
 
 }

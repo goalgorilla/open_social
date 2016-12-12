@@ -1,3 +1,9 @@
+@import 'settings';
+
+.btn {
+  border-radius: $btn-border-radius-base;
+}
+
 .btn-default {
   @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
 }
@@ -37,7 +43,7 @@
   &:focus {
     text-decoration: $link-hover-decoration;
   }
-  
+
 }
 
 .btn-link[disabled] {

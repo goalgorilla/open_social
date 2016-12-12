@@ -3,32 +3,63 @@ description: Demo theme for Open social installations.
 screenshot: screenshot.png
 type: theme
 
-base theme: social_base
+base theme: socialbase
 
 core: 8.x
 version: '1.0'
 
+libraries-extend:
+  socialbase/base:
+    - socialblue/base
+  socialbase/alerts:
+    - socialblue/alerts
+  socialbase/badges:
+    - socialblue/badges
+  socialbase/button:
+    - socialblue/button
+  socialbase/cards:
+    - socialblue/cards
+  socialbase/form-controls:
+    - socialblue/form-controls
+  socialbase/labels:
+    - socialblue/labels
+  socialbase/list-group:
+    - socialblue/list-group
+  # Extend molecules
+  socialbase/breadcrumbs:
+    - socialblue/breadcrumbs
+  socialbase/dropdown:
+    - socialblue/dropdown
+  socialbase/form-elements:
+      - socialblue/form-elements
+  socialbase/form-input-groups:
+    - socialblue/form-input-groups
+  # attach the datepicker stylesheet to all date fields
+  core/drupal.date:
+    - socialblue/form--datepicker
+  # extend the core datepicker with a stylesheet
+  core/jquery.ui.datepicker:
+    - socialblue/form--timepicker
+  socialbase/popover:
+    - socialblue/popover
+  socialbase/navbar:
+    - socialblue/navbar
+  socialbase/teaser:
+    - socialblue/teaser
+  # Extend Organisms
+  socialbase/comment:
+    - socialblue/comment
+  socialbase/hero:
+    - socialblue/hero
+  socialbase/meta:
+    - socialblue/meta
+  socialbase/stream:
+    - socialblue/stream
 
-libraries:
-# The following are libraries defined by Social base in social_base.libraries.yml.
-  - social_base/print
-  - social_base/base
-  - social_base/buttons
-  - social_base/forms
-  - social_base/alerts
-  - social_base/badges
-  - social_base/cards
-  - social_base/dropdowns
-  - social_base/hero
-  - social_base/input-groups
-  - social_base/layout
-  - social_base/labels
-  - social_base/list-group
-  - social_base/media
-  - social_base/modals
-  - social_base/navbar
-  - social_base/stream
-  - social_base/tabs
+
+
+ckeditor_stylesheets:
+  - assets/css/ckeditor.css
 
 # This section is used by the contrib module, Component Libraries. It allows you
 # to reference .twig files in your components/ directory.
@@ -51,11 +82,6 @@ component-libraries:
   pages:
     paths:
       - components/06-pages
-
-# Special stylesheets for CKEditor to use while editing.
-ckeditor_stylesheets:
-  - components/asset-builds/css/ckeditor.css
-
 
 regions:
   hidden: Hidden
