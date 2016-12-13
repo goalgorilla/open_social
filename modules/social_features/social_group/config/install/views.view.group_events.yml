@@ -8,6 +8,7 @@ dependencies:
     - datetime
     - group
     - node
+    - social_event
     - user
 id: group_events
 label: 'Group Events'
@@ -241,7 +242,21 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: node_access
-      sorts: {  }
+      sorts:
+        event_passed_upcoming_sort:
+          id: event_passed_upcoming_sort
+          table: node
+          field: event_passed_upcoming_sort
+          relationship: gc__node
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          granularity: minute
+          entity_type: node
+          plugin_id: event_passed_upcoming_sort
       title: 'Group Events'
       header: {  }
       footer: {  }

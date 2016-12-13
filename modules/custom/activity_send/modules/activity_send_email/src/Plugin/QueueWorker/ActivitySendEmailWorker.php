@@ -52,18 +52,22 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
         ) {
           // Send Email
           $langcode = \Drupal::currentUser()->getPreferredLangcode();
-          $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
 
-          $mail_manager = \Drupal::service('plugin.manager.mail');
-          $mail = $mail_manager->mail(
-            'activity_send_email',
-            'activity_send_email',
-            $target_account->getEmail(),
-            $langcode,
-            $params,
-            $reply = NULL,
-            $send = TRUE
-          );
+          $body_text = EmailActivityDestination::getSendEmailOutputText($message);
+          if ($body_text !== NULL) {
+            $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
+
+            $mail_manager = \Drupal::service('plugin.manager.mail');
+            $mail = $mail_manager->mail(
+              'activity_send_email',
+              'activity_send_email',
+              $target_account->getEmail(),
+              $langcode,
+              $params,
+              $reply = NULL,
+              $send = TRUE
+            );
+          }
         }
       }
     }

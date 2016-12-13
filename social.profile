@@ -134,7 +134,7 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
   $form['social']['demo_content'] = [
     '#type' => 'checkbox',
     '#title' => t('Generate demo content and users'),
-    '#description' => 'Will generate files, users, groups, events, topics, comments and posts.',
+    '#description' => t('Will generate files, users, groups, events, topics, comments and posts.'),
   ];
 
   // Submit handler to enable features.
