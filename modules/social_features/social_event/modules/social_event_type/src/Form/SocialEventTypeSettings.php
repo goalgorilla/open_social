@@ -36,8 +36,8 @@ class SocialEventTypeSettings extends ConfigFormBase {
 
     $form['social_event_type_required'] = array(
       '#type' => 'checkbox',
-      '#title' => $this->t('Event types mandatory'),
-      '#description' => $this->t('Set wether event types field is mandatory or not.'),
+      '#title' => $this->t('Event types required'),
+      '#description' => $this->t('Set wether event types field is required or not.'),
       '#default_value' => $config->get('social_event_type_required'),
     );
 
