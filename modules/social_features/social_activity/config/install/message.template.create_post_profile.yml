@@ -19,9 +19,15 @@ template: create_post_profile
 label: 'Create post on profile'
 description: 'A person created a post on my profile'
 text:
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
 settings:
   'token options':
     clear: false
