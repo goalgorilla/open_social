@@ -14,7 +14,7 @@ Feature: See upcoming events in the community
     Given event content:
       | title         | field_event_date | status | field_content_visibility |
       | Behat Event 1 | +10 minutes      | 1      | public                   |
-      | Behat Event 2 | +10 minutes      | 1      | public                   |
+      | Behat Event 2 | +20 minutes      | 1      | public                   |
 
     Given I am on the homepage
 
@@ -36,3 +36,15 @@ Feature: See upcoming events in the community
     Then I should see "Community events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
+
+    When I click radio button "Upcoming events"
+    And I press "Filter"
+    And "Behat Event 1" should precede "Behat Event 2" for the query ".card-title"
+
+    Given event content:
+      | title         | field_event_date | status | field_content_visibility |
+      | Behat Event 1 | -10 minutes      | 1      | public                   |
+      | Behat Event 2 | -20 minutes      | 1      | public                   |
+
+    When I click radio button "Events that have started or are finished"
+    And "Behat Event 1" should precede "Behat Event 2" for the query ".card-title"

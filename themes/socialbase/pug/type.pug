@@ -1,0 +1,109 @@
+- var pagetype = "styleguide"
+- var page = "Type"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../assets/icons/icons.svg
+
+    .docsheader
+      .container
+        h1 Style &amp; Content
+        p.lead Styles for displaying content with some of the most commonly used HTML elements, including normalization, typography, images, tables, and more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            .page-header
+              include ./layout/_style-nav.pug
+
+          .col-xs-12.col-md-9
+            h2.page-header Font
+            p The standard font Drupal social uses is Montserrat. We have included the font files with our framework.
+            p We bundle our framework with 3 different font weights you can use: 300, 500 and 700
+            ul.list
+              li.h4(style='font-weight:300') Font with weight 300
+              li.h4(style='font-weight:500') Font with weight 500
+              li.h4(style='font-weight:700') Font with weight 700
+
+            h2.page-header Changing default font
+            p In case you want to use a different font on your webpage, fear not. Simply change the font stack by modifying the code below to your liking and add it to your custom css.
+            pre
+              code.language-css.
+                html {
+                  font-family: 'montserrat', sans-serif;
+                }
+
+            h2.page-header Headings and paragraphs
+
+            p
+              :markdown
+                We provide some basic styling on heading tags. In the example, you can see the the 6 header tags' different sizes. `.h1` through `.h6` classes are also available, for when you want to match the font styling of a heading but still want your text to be displayed inline.
+
+              h1 Heading h1
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              h2 Heading h2
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              h3 Heading h3
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              h4 Heading h4
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              h5 Heading h5
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+              h6 Heading h6
+              p Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+
+            h2.page-header Lists
+            h4 Unordered
+            p
+              :markdown
+                A list of items in which the order does _not_ explicitly matter.
+            ul
+              li Sit Ullamcorper Ultricies
+              li Tortor
+              li Mollis
+              li Dolor
+                ul
+                  li Cursus
+                  li Cras
+                  li Pellentesque
+                  li Egestas Sem
+              li Cursus Malesuada
+              li Fermentum Tellus
+            h4 Ordered
+            p
+              :markdown
+                A list of items in which the order _does_ explicitly matter.
+            ol
+              li Sit Ullamcorper Ultricies
+              li Tortor
+              li Mollis
+              li Dolor
+              li Cursus
+              li Cras
+              li Pellentesque
+              li Egestas Sem
+              li Cursus Malesuada
+              li Fermentum Tellus
+
+            h2.page-header Blockquotes
+
+            p Blockquotes are mainly used to give emphasis to a quote or citation. You can also use these for some extra text hierarchy and emphasis.
+
+            blockquote
+              | This is an example quotation that uses the blockquote tag.
+              br
+              | Here is another line to make it look bigger.
+
+            pre
+              code.language-markup.
+                <blockquote>
+                  This is an example quotation that uses the blockquote tag.
+                </blockquote>
+
+    include ./layout/_scripts.pug

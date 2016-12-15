@@ -1,0 +1,65 @@
+- var pagetype = "styleguide"
+- var page = "Pagination"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../assets/icons/icons.svg
+
+    .docsheader
+      .container
+        h1 Components
+        p.lead Over a dozen reusable components built to provide buttons, dropdowns, navigation, input groups, navigation, alerts, and much more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            include ./layout/_component-nav.pug
+
+          .col-xs-12.col-md-9
+            h2.page-header Pagination
+            p Provide pagination links with the multi-page pagination component. On mobile we only show the pagination items "previous", "next" and "active".
+            p
+              :markdown
+                Links are customizable for different circumstances. Use `.disabled` for unclickable links and `.active` to indicate the current page.
+
+            include ./molecules/_pager.pug
+
+            pre
+              code.language-markup.
+                <nav role="navigation" aria-labelledby="pagination-heading" class="pager-nav text-center">
+                  <h4 id="pagination-heading" class="visually-hidden">Pagination</h4>
+                  <ul class="pagination">
+                    <li class="disabled pager__item pager__item--previous">
+                      <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">
+                          <i class="material-icons">chevron_left</i>
+                        </span>
+                      </a>
+                    </li>
+                    <li class="pager__item active">
+                      <a href="#">1
+                        <span class="sr-only"> (current) </span>
+                      </a>
+                    </li>
+                    <li class="pager__item"><a href="#">2</a></li>
+                    <li class="pager__item"><a href="#">3</a></li>
+                    <li class="pager__item"><a href="#">4</a></li>
+                    <li class="pager__item"><a href="#">5</a></li>
+                    <li class="pager__item pager__item--next">
+                      <a href="#" aria-label="Next">
+                        <span aria-hidden="true">
+                          <i class="material-icons">chevron_right</i>
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+
+    include ./layout/_scripts.pug

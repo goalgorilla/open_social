@@ -1,0 +1,150 @@
+- var pagetype = "styleguide"
+- var page = "Tables"
+- var tablesaw = "true"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../assets/icons/icons.svg
+
+    .docsheader
+      .container
+        h1 Style &amp; Content
+        p.lead Styles for displaying content with some of the most commonly used HTML elements, including normalization, typography, images, tables, and more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            .page-header
+              include ./layout/_style-nav.pug
+
+          .col-xs-12.col-md-9
+
+            h2.page-header Table
+            p
+              :markdown
+
+                For basic styling — light padding and only horizontal dividers — add the base class `.table` to a `<table>`.
+
+            table.table
+              thead
+                tr
+                  th Member
+                  th Organisation
+                  th Role
+                  th Action
+
+              tbody
+                include molecules/table-prototype-1
+                include molecules/table-prototype-2
+                include molecules/table-prototype-3
+                include molecules/table-prototype-4
+                include molecules/table-prototype-5
+
+            pre
+              code.language-markup.
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Organisation</th>
+                      <th>Role</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="media">
+                          <div class="media-left"><a href="my-stream.html"><img src="assets/content/images/member-table-view-5.jpg"></a></div>
+                          <div class="media-body"><a href="my-stream.html">John Johnson</a></div>
+                        </div>
+                      </td>
+                      <td>Receptionist at Bastion Hotels</td>
+                      <td>Member</td>
+                      <td>
+                        <div class="btn-group">
+                          <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-sm btn-raised dropdown-toggle">Manage<span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">Remove</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+            h2.page-header Table scroll/swipe
+            p To allow smooth interaction with bigger and more complex tables we make use of the
+             a(href='https://github.com/filamentgroup/tablesaw') Tablesaw library.
+            p
+              :markdown
+                Add classes `.table` and `.tablesaw` to the table element.
+                To allow the user to use the swipe gesture (or use the left and right buttons) to navigate the columns you need to add the following attribute `<table data-tablesaw-mode="swipe">`.
+
+                To lock (prevent from scrolling) the first column you can use `data-tablesaw-priority="persist"` attribute on the `<th>` element like `<data-tablesaw-priority="persist">`. It is not recommended to use this on other columns or multiple columns as this will cause problems on small devices.
+
+                To a add a mini map use `<table data-tablesaw-mode="swipe" data-tablesaw-minimap>`.
+
+            table.table.tablesaw.tablesaw-swipe(data-tablesaw-mode="swipe", data-tablesaw-minimap)
+              thead
+                tr
+                  th(data-tablesaw-priority="persist") Member
+                  th Organisation
+                  th Role
+                  th Action
+
+              tbody
+                include molecules/_member1-table-view.pug
+                include molecules/_member2-table-view.pug
+                include molecules/_member3-table-view.pug
+                include molecules/_member4-table-view.pug
+                include molecules/_member5-table-view.pug
+                include molecules/_member1-table-view.pug
+                include molecules/_member2-table-view.pug
+                include molecules/_member3-table-view.pug
+                include molecules/_member4-table-view.pug
+                include molecules/_member5-table-view.pug
+            pre
+              code.language-markup.
+                <table data-tablesaw-mode="swipe" data-tablesaw-minimap class="table tablesaw">
+                  <thead>
+                    <tr>
+                      <th data-tablesaw-priority="persist">Member</th>
+                      <th>Organisation</th>
+                      <th>Role</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="tablesaw-cell-persist">
+                        <div class="media media-middle">
+                          <div class="media-left"><a href="my-stream.html"><img src="assets/content/images/member-table-view-5.jpg"></a></div>
+                          <div class="media-body"><a href="my-stream.html">John Johnson</a></div>
+                        </div>
+                      </td>
+                      <td>Receptionist at Bastion Hotels</td>
+                      <td>Member</td>
+                      <td>
+                        <div class="btn-group">
+                          <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-sm btn-raised dropdown-toggle">Manage<span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">Edit</a></li>
+                            <li><a href="#">Remove</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+    include ./layout/_scripts.pug

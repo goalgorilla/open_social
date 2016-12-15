@@ -178,3 +178,203 @@ gulp.task('clean:css', function () {
     options.basetheme.css + '**/*.map'
   ], {force: true});
 });
+
+
+
+// ##############################################################################################################
+
+// Old style guide -- needs to be removed when twig styleguide is set up
+
+var config = {
+  "dist"        : "dist/",
+  "build"       : "assets/",
+  "components"  : "components/",
+  "content"     : "content/",
+  "css"         : "assets/css/",
+  "font"        : "../socialblue/assets/font/",
+  "icons"       : "assets/icons/",
+  "images"      : "assets/images/",
+  "js"          : "assets/js/",
+  "patterns"    : "pug/",
+  "drupal"      : "../../../../../core/"
+}
+
+var pug           = require('gulp-pug'),
+    connect       = require('gulp-connect'),
+    concat        = require('gulp-concat'),
+    notify        = require('gulp-notify'),
+    path          = require('path'),
+    plumber       = require('gulp-plumber');
+
+
+gulp.task('styleguide', function() {
+  return gulp.src(config.patterns + '**/*.pug')
+  .pipe(plumber({ handleError: onError }))
+  .pipe(pug({ pretty: true })) // pipe to pug plugin
+  .pipe(gulp.dest(config.dist)) // tell gulp our output folder
+});
+
+gulp.task('watch:styleguide', ['styleguide'], function () {
+  return gulp.watch(config.patterns + '**/*', ['styleguide'] );
+});
+
+//copy drupal scripts from drupal to make them available for the styleguide
+gulp.task('scripts-drupal', function() {
+  return gulp.src([
+    config.drupal + 'assets/vendor/domready/ready.min.js',
+    config.drupal + 'assets/vendor/jquery/jquery.min.js',
+    config.drupal + 'assets/vendor/jquery-once/jquery.once.min.js',
+    config.drupal + '/misc/drupalSettingsLoader.js',
+    config.drupal + '/misc/drupal.js',
+    config.drupal + '/misc/debounce.js',
+    config.drupal + '/misc/forms.js',
+    config.drupal + '/misc/tabledrag.js',
+    config.drupal + '/modules/user/user.js',
+    config.drupal + '/modules/file/file.js'
+  ])
+  .pipe( concat('drupal-core.js') )
+  .pipe( gulp.dest(config.dist + '/js') );
+});
+
+
+// ===================================================
+// Copy assets to dist folder
+// ===================================================
+
+gulp.task('sg-images', function() {
+  return gulp.src(config.images + '**/*')
+  .pipe( gulp.dest(config.dist + 'assets/images') );
+});
+
+gulp.task('sg-content', function() {
+  return gulp.src(config.content + '**/*')
+  .pipe( gulp.dest(config.dist + 'assets/content') );
+});
+
+gulp.task('sg-icons', function() {
+  return gulp.src(config.icons + '**/*')
+  .pipe( gulp.dest(config.dist + 'assets/icons') );
+});
+
+gulp.task('sg-font', function() {
+  return gulp.src(config.font + '**/*')
+  .pipe( gulp.dest(config.dist + 'assets/font') );
+});
+
+gulp.task('sg-stylesheets', function() {
+  return gulp.src(config.css + '**/*')
+  .pipe( gulp.dest(config.dist + 'assets/css') );
+});
+
+gulp.task('watch:sg-stylesheets', ['styles'], function () {
+  return gulp.watch(config.css + '**/*', ['sg-stylesheets'] );
+});
+
+gulp.task('sg-scripts', function() {
+  return gulp.src(config.js + '/**/*')
+  .pipe( gulp.dest(config.dist + 'assets/js') );
+});
+
+gulp.task('blue-styleguide-stylesheets', function() {
+  return gulp.src('../socialblue/components/styleguide/**/*')
+  .pipe( gulp.dest(config.dist + 'assets/js') );
+});
+
+gulp.task('css-assets-blue', function () {
+  return gulp.src('../socialblue/assets/css/*.css')
+  .pipe(gulp.dest(config.dist + 'assets/css/blue') );
+});
+
+gulp.task('js-assets-blue', function () {
+  return gulp.src('../socialblue/assets/js/*.js')
+  .pipe(gulp.dest(config.dist + 'assets/js/blue') );
+});
+
+
+gulp.task('watch:sg-scripts', function () {
+  return gulp.watch(config.js + '**/*', ['sg-scripts'] );
+});
+
+
+// ===================================================
+// Set up a server
+// ===================================================
+
+gulp.task('connect', function() {
+  connect.server({
+    root: [config.dist],
+    livereload: false,
+    port: 5000
+  });
+});
+
+
+// ===================================================
+// Deploy
+// ===================================================
+
+var rsync         = require('gulp-rsync'),
+    prompt        = require('gulp-prompt'),
+    gutil         = require('gulp-util'),
+    gulpif        = require('gulp-if'),
+    argv          = require('minimist')(process.argv);
+
+  try {
+    var deploy    = require('./deploy_config.json');
+  } catch(error) {
+    console.log('Deploy config file missing');
+  }
+
+
+// Generate an error for deploy if something goes wrong
+function throwError(taskName, msg) {
+  throw new gutil.PluginError({
+    plugin: taskName,
+    message: msg
+  });
+}
+
+gulp.task('build', ['styleguide', 'sg-stylesheets', 'sg-scripts', 'sg-font', 'sg-images', 'sg-icons', 'sg-content']);
+
+gulp.task('deploy', ['build'], function() {
+  // Dirs and Files to sync
+
+  // Default options for rsync
+  var rsyncConf = {
+    progress: true,
+    incremental: true,
+    relative: true,
+    emptyDirectories: true,
+    recursive: true,
+    clean: true,
+    exclude: [],
+  };
+
+  if (argv.production) {
+    rsyncConf.hostname = deploy.hostname; // hostname
+    rsyncConf.username = deploy.username; // ssh username
+    rsyncConf.destination = deploy.destination; // path where uploaded files go
+    rsyncConf.root = config.dist;
+  // Missing/Invalid Target
+  } else {
+    throwError('deploy', gutil.colors.red('Missing or invalid target'));
+  }
+
+  // Use gulp-rsync to sync the files
+  return gulp.src(config.dist + '/**/*')
+  .pipe(gulpif(
+      argv.production,
+      prompt.confirm({
+        message: 'Heads Up! Are you SURE you want to push to PRODUCTION?',
+        default: false
+      })
+  ))
+  .pipe(rsync(rsyncConf));
+
+});
+
+// ===================================================
+// Watch and rebuild tasks
+// ===================================================
+
+gulp.task('default', ['watch:css', 'watch:styleguide', 'watch:sg-stylesheets', 'watch:sg-scripts', 'connect']);

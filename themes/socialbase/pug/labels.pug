@@ -1,0 +1,51 @@
+- var pagetype = "styleguide"
+- var page = "Labels"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../assets/icons/icons.svg
+
+    .docsheader
+      .container
+        h1 Components
+        p.lead Over a dozen reusable components built to provide buttons, dropdowns, navigation, input groups, navigation, alerts, and much more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            include ./layout/_component-nav.pug
+
+          .col-xs-12.col-md-9
+            h2.page-header Labels
+            p This component is used to provide some short complementary information. You can enlarge them and use different color styles. Badges are displayed inline by default.
+
+            .list-group-item
+              h6.list-group-item-heading
+                a(href="#", rel="")
+                  span Charity Run Springfield
+              small.text-gray-lighter.list-group-item-text 2 Dec 11:00 - 18:00
+                span.label.label-primary Enrolled
+
+            pre
+              code.language-markup.
+                <div class="list-group-item">
+                  <h6 class="list-group-item-heading">
+                    <a href="#" rel="bookmark">
+                      <span>Charity Run Springfield</span>
+                    </a>
+                  </h6>
+                  <small class="text-gray-lighter list-group-item-text">2 Dec 11:00 - 18:00
+                      <span class="label label-primary">
+                    | Enrolled
+                  </span>
+                  </small>
+                </div>
+
+    include ./layout/_scripts.pug

@@ -1,0 +1,47 @@
+- var pagetype = "styleguide"
+- var page = "Breadcrumbs"
+
+doctype html
+html(lang="en")
+  head
+    include ./layout/_head.pug
+
+  body
+    include ./layout/_gtm.pug
+    include ./layout/_header-styleguide.pug
+    include ../assets/icons/icons.svg
+
+    .docsheader
+      .container
+        h1 Components
+        p.lead Over a dozen reusable components built to provide buttons, dropdowns, navigation, input groups, navigation, alerts, and much more.
+
+    main.main-container.styleguide-container(role='main')
+      .container
+        .row
+          .col-xs-12.col-sm-3.col-sm-last
+            include ./layout/_component-nav.pug
+
+          .col-xs-12.col-md-9
+            h2.page-header Breadcrumbs
+            p Breadcrumbs are a good way to display your current location. This is usually used when you have multiple layers of content. They are hidden on small screens.
+
+            nav.visible-md-block.visible-lg-block
+              ol.breadcrumb
+                li
+                  a(href='#!') Home
+                li
+                  a(href='#!') Overview
+                li.active Detail
+
+            pre
+              code.language-markup.
+                <nav class="visible-md-block visible-lg-block">
+                  <ol class="breadcrumb">
+                    <li><a href="#!">Home</a></li>
+                    <li><a href="#!">Overview</a></li>
+                    <li class="active">Detail</li>
+                  </ol>
+                </nav>
+
+    include ./layout/_scripts.pug
