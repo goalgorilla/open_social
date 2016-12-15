@@ -18,7 +18,6 @@
  *   - in_active_trail: TRUE if the link is in the active trail.
  */
 #}
-
 {% import _self as menus %}
 
 {#
@@ -30,26 +29,31 @@
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-
-    <ul{{ attributes.addClass('user-menu list-unstyled') }}>
-
+    {% if menu_level == 0 %}
+      <ul class="nav navbar-nav navbar-right">
+    {% else %}
+      <ul class="dropdown-menu">
+    {% endif %}
     {% for item in items %}
-
-    {%
-      set classes = [
-        'menu__item',
-        item.in_active_trail ? 'menu__item--active-trail',
-      ]
-    %}
-      <li{{ item.attributes.addClass(classes) }}>
-        {{ link(item.title, item.url, { 'class':['menu__link']})  }}
-        {% if item.below %}
-          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
-        {% endif %}
+      {%
+        set item_classes = [
+          'expanded',
+          'dropup',
+          item.in_active_trail ? 'active',
+        ]
+      %}
+      {% if menu_level == 0 and item.is_expanded %}
+        <li{{ item.attributes.addClass(item_classes) }}>
+        <a href="{{ item.url }}" class="dropdown-toggle" data-target="#" data-toggle="dropdown">{{ item.title }} <span class="caret"></span></a>
+      {% else %}
+        <li>
+        {{ link(item.title, item.url) }}
+      {% endif %}
+      {% if item.below %}
+        {{ menus.menu_links(item.below, attributes.removeClass('nav', 'navbar-nav'), menu_level + 1) }}
+      {% endif %}
       </li>
     {% endfor %}
-
     </ul>
-
   {% endif %}
 {% endmacro %}

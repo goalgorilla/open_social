@@ -51,7 +51,7 @@ form-controls:
     component:
       assets/css/form-controls.css: {}
   js:
-    js/custom/textarea-autogrow.min.js: {}
+    assets/js/textarea-autogrow.min.js: {}
   dependencies:
     - core/drupal.form
 
@@ -72,10 +72,10 @@ block--introtext:
     component:
       assets/css/block--introtext.css: {}
 
-breadcrumbs:
+breadcrumb:
   css:
     component:
-      assets/css/breadcrumbs.css: {}
+      assets/css/breadcrumb.css: {}
 
 dropdown:
   css:
@@ -99,17 +99,19 @@ form--autocomplete:
     component:
       assets/css/ajax.css: {}
       assets/css/autocomplete.css: {}
+
+form--search-autocomplete:
   js:
     assets/js/autocomplete.min.js: {}
-#  dependencies:
-#    - core/drupal.autocomplete
+  dependencies:
+    - core/drupal.autocomplete
 
 form--datepicker:
   css:
     component:
       assets/css/datepicker.css: {}
   js:
-    assets/js/date-picker.min.js: {}
+    assets/js/date-picker-init.min.js: {}
   dependencies:
     - core/modernizr
 

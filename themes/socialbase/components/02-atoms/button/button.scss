@@ -151,7 +151,8 @@ input[type="button"] {
 // --------------------------------------------------
 
 .btn-raised {
-  @include z-depth-1;
+  // z-depth-1 will give a small gray border which doesn't look good with colored buttons
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 	transition: box-shadow, .15s ease-out;
 
   &:active,

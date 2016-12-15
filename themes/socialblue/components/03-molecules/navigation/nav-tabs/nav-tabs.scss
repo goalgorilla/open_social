@@ -8,7 +8,6 @@
     // Actual tabs (as links)
     > a {
 
-      border-radius: $border-radius-base $border-radius-base 0 0;
       &:hover {
         border-color: $nav-tabs-link-hover-border-color $nav-tabs-link-hover-border-color $nav-tabs-border-color;
       }
@@ -103,4 +102,12 @@
 	&, &:hover, &:focus {
 		border-left: 2px solid $brand-primary;
 	}
+}
+
+.tabs-left > .nav-tabs {
+  border-radius: $border-radius-base 0 0 $border-radius-base;
+}
+
+.tabs-right > .nav-tabs {
+  border-radius: 0 $border-radius-base $border-radius-base 0;
 }

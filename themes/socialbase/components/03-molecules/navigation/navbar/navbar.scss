@@ -143,8 +143,7 @@
   }
 }
 
-.navbar-fixed-top,
-.navbar-fixed-bottom {
+.navbar-fixed-top {
   .navbar-collapse {
     max-height: $navbar-collapse-max-height;
 
@@ -159,8 +158,7 @@
 //
 // When a container is present, change the behavior of the header and collapse.
 
-.container,
-.container-fluid {
+.container {
   > .navbar-header,
   > .navbar-collapse {
     margin-right: -$navbar-padding-horizontal;
@@ -180,19 +178,9 @@
 // Display the navbar across the entirety of the page or fixed it to the top or
 // bottom of the page.
 
-// Static top (unfixed, but 100% wide) navbar
-.navbar-static-top {
-  z-index: $zindex-navbar;
-  border-width: 0 0 1px;
-
-  @media (min-width: $grid-float-breakpoint) {
-    border-radius: 0;
-  }
-}
 
 // Fix the top/bottom navbars when screen real estate supports it
-.navbar-fixed-top,
-.navbar-fixed-bottom {
+.navbar-fixed-top {
   position: fixed;
   right: 0;
   left: 0;
@@ -206,12 +194,9 @@
 .navbar-fixed-top {
   top: 0;
   border-width: 0 0 1px;
+  @include z-depth-2;
 }
-.navbar-fixed-bottom {
-  bottom: 0;
-  margin-bottom: 0; // override .navbar defaults
-  border-width: 1px 0 0;
-}
+
 
 
 // Brand/project name
@@ -361,10 +346,13 @@
 
 // Dropdown menus
 
-// Menu position and menu carets
-.navbar-nav > li > .dropdown-menu {
+// Menu position
+.navbar-nav > .dropdown > .dropdown-menu {
   margin-top: 0;
-  @include border-top-radius(0);
+}
+
+.navbar-nav > .dropup > .dropdown-menu {
+  margin-bottom: 0;
 }
 
 
@@ -427,7 +415,7 @@
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
     background-color: $dropdown-bg;
     border: 0;
-    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    @include z-depth-3;
     position: fixed;
     top: auto;
     margin: 0;
@@ -486,49 +474,6 @@
 
 .profile .dropdown-toggle img {
   border: 2px solid white;
-}
-
-.navbar-footer {
-
-  .navbar-brand {
-    color: white;
-    width: 100%;
-    text-align: center;
-    float: none;
-
-    @include MQ($small) {
-      width: auto;
-      float: left;
-    }
-
-  }
-
-  .navbar {
-    text-align: center;
-
-    li {
-      @include MQ($small) {
-        float: left;
-      }
-    }
-
-    @include MQ($x-large) {
-      margin-right: 0;
-    }
-
-    a {
-      color: white;
-
-      &:active,
-      &:focus,
-      &:hover {
-        color: white;
-      }
-
-    }
-
-  }
-
 }
 
 .navbar-default .navbar-brand,

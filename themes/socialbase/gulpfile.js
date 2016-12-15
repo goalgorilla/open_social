@@ -121,7 +121,7 @@ var svgmin        = require('gulp-svgmin'),
     svgstore      = require('gulp-svgstore'),
     cheerio       = require('gulp-cheerio');
 
-gulp.task('icons', function () {
+gulp.task('sprite-icons', function () {
   return gulp.src(options.icons.src + '*.svg')
     .pipe(svgmin())
     .pipe(svgstore({inlineSvg: true}))
@@ -135,7 +135,11 @@ gulp.task('icons', function () {
     .pipe(gulp.dest(options.icons.dest))
 });
 
-
+gulp.task('image-icons', function () {
+  return gulp.src(options.icons.src + '*.svg')
+    .pipe(svgmin())
+    .pipe(gulp.dest(options.basetheme.build + 'images/icons/'))
+});
 
 // ##############################
 // Watch for changes and rebuild.
@@ -158,7 +162,7 @@ gulp.task('watch:css', ['styles'], function () {
 });
 
 gulp.task('watch:icons', function () {
-  return gulp.watch(options.icons.src + '**/*.svg', ['icons'] );
+  return gulp.watch(options.icons.src + '**/*.svg', ['sprite-icons'] );
 });
 
 

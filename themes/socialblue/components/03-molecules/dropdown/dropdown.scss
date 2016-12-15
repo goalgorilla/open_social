@@ -1,44 +1,29 @@
 @import "settings";
 
 .dropdown-menu {
-  border-radius: $border-radius-base;
-}
+  border-radius: 3px;
 
-// Links within the dropdown menu
-.dropdown-menu > li > a {
-  color: $dropdown-link-color;
-
-  &:hover,
-  &:focus {
-    color: $dropdown-link-hover-color;
-    background-color: $dropdown-link-hover-bg;
+  // Links within the dropdown menu
+  > li > a {
+    font-weight: 300;
   }
-}
 
-// Active state
-.dropdown-menu > .active > a {
-  &,
-  &:hover,
-  &:focus {
-    color: $dropdown-link-active-color;
-    background-color: $dropdown-link-active-bg;
+  // Disabled state
+  > .disabled > a {
+    &,
+    &:hover,
+    &:focus {
+      color: $dropdown-link-disabled-color;
+    }
   }
-}
 
+  .list-group-item {
 
-.dropdown-menu li > a {
-  color: $dropdown-link-color;
-}
+    &:last-child {
+      border-bottom: 0;
+      @include border-bottom-radius(0);
+    }
 
-// Disabled state
-//
-// Gray out text and ensure the hover/focus state remains gray
-
-.dropdown-menu > .disabled > a {
-  &,
-  &:hover,
-  &:focus {
-    color: $dropdown-link-disabled-color;
   }
-  
+
 }

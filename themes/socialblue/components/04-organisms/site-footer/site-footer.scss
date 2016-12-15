@@ -1,0 +1,19 @@
+@import 'settings';
+
+.site-footer {
+  background-color: $brand-secondary;
+  color: white;
+
+  @include MQ($medium) {
+    // Links within the dropdown menu
+    .dropdown-menu > li > a {
+      color: $default-color;
+
+      &:hover,
+      &:focus {
+        background-color: $dropdown-link-hover-bg;
+      }
+    }
+  }
+
+}

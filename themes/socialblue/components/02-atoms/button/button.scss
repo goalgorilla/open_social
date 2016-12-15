@@ -2,6 +2,11 @@
 
 .btn {
   border-radius: $btn-border-radius-base;
+
+  &.btn-floating {
+    border-radius: 50%;
+  }
+
 }
 
 .btn-default {
@@ -39,8 +44,12 @@
 }
 
 .btn-link {
+  @include button-variant($brand-primary, transparent, transparent);
+  fill: $brand-primary;
+
   &:hover,
   &:focus {
+    color: $link-hover-color;
     text-decoration: $link-hover-decoration;
   }
 

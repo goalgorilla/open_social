@@ -4,12 +4,14 @@
 .badge {
   display: inline-block;
   min-width: 10px;
+  max-width: 100%;
   font-weight: $badge-font-weight;
   line-height: $badge-line-height;
   vertical-align: middle;
   white-space: nowrap;
   text-align: center;
   padding: ($badge-font-size/3) ($badge-font-size/1.5);
+  margin-bottom: $padding-small-vertical;
   font-size: $badge-font-size;
 
   // Empty badges collapse automatically (not available in IE8)
@@ -37,9 +39,12 @@
     margin-right: 5px;
   }
 
-  .nav-pills > li > a > & {
-    margin-left: 3px;
-  }
+}
+
+.badge--large {
+  padding-left: 1em;
+  padding-right: 1em;
+  font-size: 0.875rem;
 }
 
 .badge label {
@@ -62,7 +67,7 @@
   user-select: none;
 }
 
-// custom chip modifier
+// custom badge modifier
 .js .badge--toggle {
 
   .badge--toggle__label {
@@ -91,25 +96,16 @@
 }
 
 a.badge--comment-count {
-  background-color: $gray-lighter;
   padding: 0;
-  color: $default-color;
-
-  &:hover,
-  &:focus {
-    background-color: $gray-lighter;
-    color: $default-color;
-  }
 
   .icon-badge {
     width: 22px;
     height: 18px;
     padding-left: 8px;
-    fill: $default-color;
   }
 
 }
 
 .badge--comment-count__number {
-    padding: 4px 8px 4px 4px;
+  padding: 4px 8px 4px 4px;
 }

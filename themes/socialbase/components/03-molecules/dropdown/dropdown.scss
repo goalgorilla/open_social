@@ -38,15 +38,14 @@
   display: none; // none by default, but block on "open" of the menu
   float: left;
   min-width: 160px;
+  max-width: 500px;
   padding: 5px 0;
   margin: 2px 0 0; // override default ul
   list-style: none;
-  font-size: $font-size-base;
+  font-size: 0.875rem;
   text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
   background-color: $dropdown-bg;
-  border: 1px solid $dropdown-fallback-border; // IE8 fallback
-  border: 1px solid $dropdown-border;
-  box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  @include z-depth-3;
   background-clip: padding-box;
 
   // Aligns the dropdown menu to right
@@ -63,14 +62,22 @@
   }
 
   // Links within the dropdown menu
-  > li > a {
+
+  li > a {
+    padding: 8px 10px;
     display: block;
-    padding: 3px 20px;
     clear: both;
-    font-weight: normal;
     line-height: $line-height-base;
-    white-space: nowrap; // prevent links from randomly breaking onto new lines
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include MQ($small) {
+      padding: 4px 10px 4px 15px;
+    }
+
   }
+
 }
 
 // Hover/Focus state
@@ -207,25 +214,6 @@
 
 
 .dropdown-menu {
-  font-size: 0.875rem;
-  border-radius: 0;
-  max-width: 500px;
-  border: 0;
-
-  li > a {
-    padding: 8px 10px;
-    font-weight: 300;
-    display: block;
-    clear: both;
-    line-height: $line-height-base;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    @include MQ($small) {
-      padding: 4px 10px 4px 15px;
-    }
-
-  }
 
   .divider {
     margin: 6px 0;
@@ -265,11 +253,6 @@
 
   &.profile .header-nav-current-user {
     padding: 4px 15px 0;
-  }
-
-  .list-group-item:last-child {
-    border-bottom: 0;
-    border-radius: 0;
   }
 
   .list-group-item {

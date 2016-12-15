@@ -563,6 +563,7 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   }
 
   if (!empty($views_display->display['id']) && (
+    $views_display->display['id'] == 'page_explore' ||
     $views_display->display['id'] == 'block_stream_homepage' ||
     $views_display->display['id'] == 'page_activity_stream' ||
     $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group')) {
@@ -1170,7 +1171,7 @@ function socialbase_preprocess_form(&$variables) {
 
   // Add the custom search autocomplete to search users for now only.
   if ($element['#form_id'] === 'search_users_form') {
-    $variables['#attached']['library'][] = 'socialbase/form--autocomplete';
+    $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
   }
 
   // We have set the region via propress block, now pass this variable on to be used in twig
