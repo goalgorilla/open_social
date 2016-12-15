@@ -28,7 +28,14 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
     $commented_entity = $entity->getCommentedEntity();
     $group_contents = GroupContent::loadByEntity($commented_entity);
 
-    $administer_access = $this->getPermissionInGroups('administer comments', $account, $group_contents);
+    //Check for 'delete all comments' permission in case content is not from group
+    if (empty($group_contents) && $account->hasPermission('delete all comments')) {
+      $administer_access = AccessResult::allowed();
+    }
+    else {
+      $administer_access = $this->getPermissionInGroups('administer comments', $account, $group_contents);
+    }
+
     if ($administer_access->isAllowed()) {
       $access = AccessResult::allowed()->cachePerPermissions();
       return ($operation != 'view') ? $access : $access->andIf($entity->getCommentedEntity()->access($operation, $account, TRUE));

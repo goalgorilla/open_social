@@ -38,6 +38,7 @@ class GroupHeroBlock extends BlockBase {
     // Cache contexts.
     $build['#cache']['contexts'][] = 'url.path';
 
+
     return $build;
   }
 

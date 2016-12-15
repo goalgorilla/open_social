@@ -18,9 +18,15 @@ template: create_comment_post_profile
 label: 'Create comment on post on my profile'
 description: 'A person commented on the post posted on my profile'
 text:
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
-  - "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
+  -
+    format: full_html
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on a post on your <a href=\"[message:recipient-user-url]\">profile</a></p>\r\n"
 settings:
   'token options':
     clear: false

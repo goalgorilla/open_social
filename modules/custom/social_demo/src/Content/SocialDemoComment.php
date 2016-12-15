@@ -154,7 +154,7 @@ class SocialDemoComment implements ContainerInjectionInterface {
       $comment = Comment::create([
         'uuid' => $content['uuid'],
         'field_comment_body' => $content['body'],
-        'langcode' => 'en',
+        'langcode' => 'und',
         'uid' => $uid,
         'entity_id' => $nid,
         'pid' => $pid,

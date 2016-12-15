@@ -168,9 +168,17 @@ function social_event_views_data_alter(array &$data) {
     'title' => t('Event enrolled or created'),
     'filter' => array(
       'title' => t('Event enrolled or created'),
-      'help' => t('Enable events for on the user profles.'),
+      'help' => t('Enable events for on the user profiles.'),
       'field' => 'field_event',
       'id' => 'event_enrolled_or_created',
+    ),
+  );
+  $data['node']['event_passed_upcoming_sort'] = array(
+    'title' => t('Event sorting (passed and upcoming)'),
+    'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
+    'sort' => array(
+      'field' => 'field_event_date_value',
+      'id' => 'event_passed_upcoming_sort',
     ),
   );
 }
