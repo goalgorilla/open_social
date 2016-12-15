@@ -15,7 +15,7 @@ use Drupal\crop\Entity\CropType;
  */
 class SocialDemoFile {
 
-  private $files;
+  protected $files;
 
   /**
    * Read file contents on construction.
