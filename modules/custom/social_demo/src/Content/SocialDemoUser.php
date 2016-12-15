@@ -89,6 +89,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
           $media_id = $file->id();
         }
       }
+      $roles = [];
       if (isset($account['roles'])) {
         $roles = array_filter($account['roles']);
       }
