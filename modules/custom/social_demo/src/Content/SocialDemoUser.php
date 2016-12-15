@@ -89,7 +89,9 @@ class SocialDemoUser implements ContainerInjectionInterface {
           $media_id = $file->id();
         }
       }
-      $roles = array_filter($account['roles']);
+      if (isset($account['roles'])) {
+        $roles = array_filter($account['roles']);
+      }
       if (empty($roles)) {
         $roles = array(DRUPAL_AUTHENTICATED_RID);
       }
