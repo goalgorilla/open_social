@@ -101,7 +101,7 @@ gulp.task('styles:production', ['clean:css'], function () {
 // ===================================================
 // Move and minify JS.
 // ===================================================
-gulp.task('minify-scripts', function () {
+gulp.task('minify-scripts', ['clean:js'], function () {
   return gulp.src(options.basetheme.components + '**/*.js')
     .pipe($.uglify())
     .pipe($.flatten())
@@ -179,6 +179,12 @@ gulp.task('clean:css', function () {
   ], {force: true});
 });
 
+// Clean JS files.
+gulp.task('clean:js', function () {
+  return del([
+    options.basetheme.js + '**/*.js'
+  ], {force: true});
+});
 
 
 // ##############################################################################################################

@@ -12,17 +12,11 @@
   z-index: 4;
   backface-visibility: hidden;
   transition: transform 0.5s, box-shadow 0.3s;
-
-  &.is-open {
-    transform: translateX(0);
-    @include z-depth-2;
-  }
-
 }
 
-.off-canvas-left {
-  transform: translateX(-280px);
-  left: 0;
+#block-filter:target {
+  transform: translateX(0);
+  @include z-depth-2;
 }
 
 .off-canvas-right {

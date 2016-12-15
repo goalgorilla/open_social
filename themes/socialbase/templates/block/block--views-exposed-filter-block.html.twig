@@ -48,14 +48,14 @@
 {{ attach_library('socialbase/offcanvas')}}
 
 <div{{ attributes }}>
-  <button class="waves-effect waves-light btn btn-default btn-raised btn--offcanvas-trigger js-open-canvas">
+  <a href="#block-filter" class="waves-effect waves-light btn btn-default btn-raised btn--offcanvas-trigger">
     <svg class="pull-left btn-icon icon-black">
       <title> Filter list</title>
       <use xlink:href="#icon-filter_list"></use>
     </svg>
     {% trans %}Filter{% endtrans %}
-  </button>
-  <div class="off-canvas off-canvas-right off-canvas-xs-only">
+  </a>
+  <div id="block-filter" class="off-canvas off-canvas-right off-canvas-xs-only">
     <div class="offcanvas-head">
 
     {{ title_prefix }}
@@ -65,12 +65,12 @@
     {{ title_suffix }}
 
       <div class="offcanvas-tools">
-        <div class="js-close-canvas btn btn-icon-toggle pull-right">
+        <a href="#" class="btn btn-icon-toggle pull-right">
           <svg class="pull-left btn-icon icon-black">
             <title> Close</title>
             <use xlink:href="#icon-close"></use>
           </svg>
-        </div>
+        </a>
       </div>
     </div>
 
