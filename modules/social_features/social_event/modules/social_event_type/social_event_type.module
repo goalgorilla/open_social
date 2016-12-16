@@ -35,7 +35,6 @@ function social_event_type_widget_alter(&$form) {
 
   // Set the event type label for none.
   if (isset($form['field_event_type']['widget']['#options']['_none'])) {
-    $form['field_event_type']['widget']['#options']['_none'] = t($config->get('social_event_type_empty_label'));
     // If the field was set to mandatory, remove the _none option.
     if ($config->get('social_event_type_required') == TRUE) {
       unset($form['field_event_type']['widget']['#options']['_none']);

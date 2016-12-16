@@ -41,18 +41,6 @@ class SocialEventTypeSettings extends ConfigFormBase {
       '#default_value' => $config->get('social_event_type_required'),
     );
 
-    $form['social_event_type_empty_label'] = array(
-      '#type' => 'textfield',
-      '#title' => $this->t('Empty label'),
-      '#description' => $this->t('What should be displayed when empty.'),
-      '#default_value' => $config->get('social_event_type_empty_label'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="social_event_type_required"]' => array('checked' => FALSE),
-        ),
-      ),
-    );
-
     $form['social_event_type_select_changer'] = array(
       '#type' => 'number',
       '#title' => $this->t('Change input widget'),
@@ -81,7 +69,6 @@ class SocialEventTypeSettings extends ConfigFormBase {
 
     $this->config('social_event_type.settings')
       ->set('social_event_type_required', $form_state->getValue('social_event_type_required'))
-      ->set('social_event_type_empty_label', $form_state->getValue('social_event_type_empty_label'))
       ->set('social_event_type_select_changer', $form_state->getValue('social_event_type_select_changer'))
       ->save();
   }
