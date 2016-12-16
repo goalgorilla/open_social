@@ -17,21 +17,23 @@ class SocialDemoParser extends Yaml {
    *
    * @param string $file
    *   The filename string.
+   * @param string $module
+   *   The module where the Yaml file is placed.
    *
    * @return string
    *   String with the full pathname including the file.
    */
-  public function getPath($file) {
+  public function getPath($file, $module = 'social_demo') {
     // @todo Fix this for other file paths?!.
 
-    return drupal_get_path('module', 'social_demo') . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . $file;
+    return drupal_get_path('module', $module) . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . $file;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function parseFile($file) {
-    return $this->parse(file_get_contents($this->getPath($file)));
+  public function parseFile($file, $module = 'social_demo') {
+    return $this->parse(file_get_contents($this->getPath($file, $module)));
   }
 
 }
