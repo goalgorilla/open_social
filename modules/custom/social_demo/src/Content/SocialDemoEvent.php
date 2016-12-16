@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialDemoEvent implements ContainerInjectionInterface {
 
-  private $events;
+  protected $events;
 
   /**
    * The user storage.

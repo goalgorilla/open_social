@@ -20,7 +20,7 @@ use Drupal\group\Entity\Group;
  */
 class SocialDemoGroup implements ContainerInjectionInterface {
 
-  private $groups;
+  protected $groups;
 
   /**
    * The user storage.
