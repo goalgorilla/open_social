@@ -18,10 +18,10 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
 
   public function loadOverrides($names) {
     $overrides = array();
-    // Add a field group.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
       $config = \Drupal::service('config.factory')->getEditable($config_name);
+      // Add a field group.
       $field_group_settings = $config->get('third_party_settings.field_group');
       $field_group_settings['group_event_managers'] = [
         'children' => [
