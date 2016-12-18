@@ -1,0 +1,32 @@
+uuid: ef0e7d14-a55f-4028-bdfd-158831ff7ef3
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.managers
+  module:
+    - node
+    - views
+  theme:
+    - socialbase
+id: views_block__managers_event_enrollments
+theme: socialbase
+region: complementary_bottom
+weight: 0
+provider: null
+plugin: 'views_block:managers-event_enrollments'
+settings:
+  id: 'views_block:managers-event_enrollments'
+  label: 'Event managers'
+  provider: views
+  label_display: visible
+  views_label: 'Event managers'
+  items_per_page: none
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
