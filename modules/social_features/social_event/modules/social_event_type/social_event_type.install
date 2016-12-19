@@ -39,4 +39,9 @@ function social_event_type_uninstall() {
     $role->revokePermission('delete terms in event_types');
     $role->trustData()->save();
   }
+
+  // Also remove the fields and the vocabulary.
+  \Drupal::configFactory()->getEditable('field.field.node.event.field_event_type')->delete();
+  \Drupal::configFactory()->getEditable('field.storage.node.field_event_type')->delete();
+  \Drupal::configFactory()->getEditable('taxonomy.vocabulary.event_types')->delete();
 }
