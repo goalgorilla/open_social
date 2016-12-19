@@ -5,7 +5,7 @@
   padding-right: 0;
   padding-left: 0;
 
-  @include MQ($grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     padding-left: $grid-gutter-width / 2;
     padding-right: $grid-gutter-width / 2;
   }
@@ -41,7 +41,7 @@
     z-index: 1;
   }
 
-  @include MQ($medium) {
+  @include for-tablet-landscape-up {
 
     .cover-wrap {
       min-height: 335px;
@@ -51,7 +51,7 @@
 
 .cover-with-canvas {
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     padding: 40px;
   }
 
@@ -101,7 +101,7 @@
   .cover-wrap & {
     margin: 1em 0 0.5em;
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       margin-bottom: 0;
     }
 
@@ -117,7 +117,7 @@
   width: 60px;
   height: 60px;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     width: 128px;
     height: 128px;
     border-width: 3px;
@@ -147,7 +147,7 @@
     margin-top: 0;
     text-align: left;
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       margin: 1em 0 .5em;
     }
   }

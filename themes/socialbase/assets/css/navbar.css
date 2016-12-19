@@ -92,16 +92,12 @@
 }
 
 .navbar-fixed-top {
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   position: fixed;
+  top: 0;
   right: 0;
   left: 0;
   z-index: 1030;
-}
-
-.navbar-fixed-top {
-  top: 0;
-  border-width: 0 0 1px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 .navbar-brand {
@@ -137,7 +133,7 @@
 }
 
 .navbar-nav {
-  margin: 6.5px -0.9375rem;
+  margin: 0 -0.9375rem;
 }
 
 .navbar-nav > li > a {
@@ -146,12 +142,18 @@
   line-height: 24px;
 }
 
-.navbar-form {
+.navbar-search {
   margin-left: -0.9375rem;
   margin-right: -0.9375rem;
-  padding: 10px;
+}
+
+.navbar-form {
+  padding: 0.625em 10px;
   border: 0;
-  margin: 6px 0;
+}
+
+.navbar-form .form-group {
+  margin-bottom: 0;
 }
 
 .navbar-nav > .dropdown > .dropdown-menu {
@@ -276,7 +278,7 @@
   z-index: 90;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 900px) {
 
   .navbar-header {
     float: left;
@@ -312,12 +314,7 @@
     margin-left: 0;
   }
 
-  .navbar-fixed-top {
-    border-radius: 0;
-  }
-
-  .navbar > .container .navbar-brand,
-  .navbar > .container-fluid .navbar-brand {
+  .navbar > .container .navbar-brand {
     margin-left: -0.9375rem;
   }
 
@@ -337,10 +334,6 @@
   .navbar-nav > li > a {
     padding-top: 13px;
     padding-bottom: 13px;
-  }
-
-  .navbar-form .form-group {
-    margin-bottom: 0;
   }
 
   .navbar-form {
@@ -363,16 +356,9 @@
   .navbar-right ~ .navbar-right {
     margin-right: 0;
   }
-}
-
-@media screen and (min-width: 960px) {
 
   .navbar-fixed-top .navbar-nav {
     margin-left: 10px;
-  }
-
-  .navbar > .container .navbar-brand {
-    margin-left: 0;
   }
 
   .navbar-search {
@@ -426,21 +412,21 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@media (min-width: 1200px) {
 
   .navbar-fixed-top .navbar-right {
     margin-right: 0;
   }
 }
 
-@media (max-device-width: 480px) and (orientation: landscape) {
+@media screen and (max-height: 480px) {
 
   .navbar-fixed-top .navbar-collapse {
     max-height: 200px;
   }
 }
 
-@media (max-width: 959px) {
+@media (max-width: 599px) {
 
   .navbar-nav .open .dropdown-menu {
     position: static;
@@ -464,14 +450,9 @@
   .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-nav .open .dropdown-menu > li > a:focus {
     background-image: none;
   }
+}
 
-  .navbar-form .form-group {
-    margin-bottom: 5px;
-  }
-
-  .navbar-form .form-group:last-child {
-    margin-bottom: 0;
-  }
+@media (max-width: 899px) {
 
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
     background-color: #fff;

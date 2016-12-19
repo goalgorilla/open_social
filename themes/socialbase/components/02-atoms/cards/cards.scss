@@ -31,7 +31,7 @@
 
   &.extra-padding {
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       padding: $card-padding-large;
     }
 
@@ -62,7 +62,7 @@
   border-top: 1px solid $gray-lighter;
 
   .extra-padding & {
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       margin-left: -$card-padding-large;
       margin-right: -$card-padding-large;
       padding: $card-padding $card-padding-large;
@@ -81,7 +81,7 @@
     border-bottom: 0;
 
     .extra-padding & {
-      @include MQ($small) {
+      @include for-tablet-portrait-up {
         margin-bottom: -$card-padding-large;
       }
     }
@@ -128,7 +128,7 @@
   justify-content: space-around;
   border-top: 1px solid $gray-lighter;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     justify-content: flex-start;
   }
 

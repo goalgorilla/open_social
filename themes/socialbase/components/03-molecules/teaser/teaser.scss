@@ -3,7 +3,7 @@
 .card--teaser {
   display: flex;
   flex-wrap: wrap;
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     flex-wrap: nowrap;
     height: 220px; // matches width of image
   }
@@ -14,7 +14,7 @@
       display: none;
     }
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       display: block;
       height: 220px;
       flex: 0 0 220px;
@@ -62,7 +62,7 @@
       display: table;
     }
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       position: absolute;
       margin-bottom: 0;
       left: 0;
@@ -97,7 +97,7 @@
 
 // Unpublished teaser states
 
-@include MQ($small) {
+@include for-tablet-portrait-up {
 
   .unpublished .status {
     position: absolute;

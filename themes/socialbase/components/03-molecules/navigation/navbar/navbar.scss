@@ -39,24 +39,6 @@
 }
 
 
-
-
-
-// Include mixin for contrib navbar dependency
-// https://github.com/twbs/bootstrap/pull/19432
-// This commit somehow doesn't seem to have made it in version 3.3.7.
-
-@mixin form-inline {
-
-  // Kick in the inline
-  @media (min-width: $grid-float-breakpoint) {
-    // Inline-block all the things for "inline"
-    .form-group {
-      margin-bottom: 0;
-    }
-  }
-}
-
 //
 // Navbars
 // --------------------------------------------------
@@ -87,7 +69,7 @@
 .navbar-header {
   @include clearfix;
 
-  @media (min-width: $grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     float: left;
   }
 }
@@ -116,7 +98,7 @@
     overflow-y: auto;
   }
 
-  @media (min-width: $grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     width: auto;
     border-top: 0;
     box-shadow: none;
@@ -147,7 +129,7 @@
   .navbar-collapse {
     max-height: $navbar-collapse-max-height;
 
-    @media (max-device-width: $screen-xs-min) and (orientation: landscape) {
+    @media screen and (max-height: 480px) {
       max-height: 200px;
     }
   }
@@ -164,7 +146,7 @@
     margin-right: -$navbar-padding-horizontal;
     margin-left:  -$navbar-padding-horizontal;
 
-    @media (min-width: $grid-float-breakpoint) {
+    @include for-tablet-landscape-up {
       margin-right: 0;
       margin-left:  0;
     }
@@ -181,23 +163,13 @@
 
 // Fix the top/bottom navbars when screen real estate supports it
 .navbar-fixed-top {
+  @include z-depth-2;
   position: fixed;
+  top: 0;
   right: 0;
   left: 0;
   z-index: $zindex-navbar-fixed;
-
-  // Undo the rounded corners
-  @media (min-width: $grid-float-breakpoint) {
-    border-radius: 0;
-  }
 }
-.navbar-fixed-top {
-  top: 0;
-  border-width: 0 0 1px;
-  @include z-depth-2;
-}
-
-
 
 // Brand/project name
 
@@ -217,9 +189,8 @@
     display: block;
   }
 
-  @media (min-width: $grid-float-breakpoint) {
-    .navbar > .container &,
-    .navbar > .container-fluid & {
+  @include for-tablet-landscape-up {
+    .navbar > .container & {
       margin-left: -$navbar-padding-horizontal;
     }
   }
@@ -248,7 +219,7 @@
     outline: 0;
   }
 
-  @media (min-width: $grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     display: none;
   }
 }
@@ -260,7 +231,7 @@
 // the nav the full height of the horizontal nav (above 768px).
 
 .navbar-nav {
-  margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+  margin: 0 (-$navbar-padding-horizontal);
 
   > li > a {
     padding-top:    10px;
@@ -268,7 +239,7 @@
     line-height: $line-height-computed;
   }
 
-  @media (max-width: $grid-float-breakpoint-max) {
+  @include for-phone-only {
     // Dropdowns get custom display when collapsed
     .open .dropdown-menu {
       position: static;
@@ -293,7 +264,7 @@
   }
 
   // Uncollapse the nav
-  @media (min-width: $grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     float: left;
     margin: 0;
 
@@ -313,28 +284,21 @@
 // Extension of the `.form-inline` with some extra flavor for optimum display in
 // our navbars.
 
-.navbar-form {
+.navbar-search {
   margin-left: -$navbar-padding-horizontal;
   margin-right: -$navbar-padding-horizontal;
-  padding: 10px;
-  border: 0;
-  margin: 6px 0;
+}
 
-  // Mixin behavior for optimum display
-  @include form-inline;
+.navbar-form {
+  padding: $nav-link-padding;
+  border: 0;
 
   .form-group {
-    @media (max-width: $grid-float-breakpoint-max) {
-      margin-bottom: 5px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
+    margin-bottom: 0;
   }
 
   // Undo 100% width for pull classes
-  @media (min-width: $grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
     width: auto;
     margin-left: 0;
     margin-right: 0;
@@ -365,13 +329,13 @@
 //
 // Declared after the navbar components to ensure more specificity on the margins.
 
-@media (min-width: $grid-float-breakpoint) {
+@include for-tablet-landscape-up {
   .navbar-left {
     float: left !important;
   }
   .navbar-right {
     float: right !important;
-  margin-right: -$navbar-padding-horizontal;
+    margin-right: -$navbar-padding-horizontal;
 
     ~ .navbar-right {
       margin-right: 0;
@@ -389,7 +353,7 @@
     left: auto;
   }
 
-  @include MQ($grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
 
     .navbar-nav {
       margin-left: 10px;
@@ -399,17 +363,9 @@
 
 }
 
-.navbar > .container .navbar-brand {
-
-  @include MQ($grid-float-breakpoint) {
-    margin-left: 0;
-  }
-
-}
-
 //
 
-@media (max-width: $grid-float-breakpoint-max) {
+@include for-tablet-landscape-down {
   // Dropdowns get same display when collapsed
   // This is an override of bootstrap navbar line 241
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
@@ -430,12 +386,12 @@
     backface-visibility: hidden;
   }
 
-  .navbar-collapse .navbar-nav {
-    margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
-    order: 1;
-  }
-
   .navbar-collapse {
+
+    .navbar-nav {
+      margin: ($navbar-padding-vertical / 2) (-$navbar-padding-horizontal);
+      order: 1;
+    }
 
     .navbar-collapse-order {
       display: flex;
@@ -517,13 +473,13 @@
   }
 
 
-  @include MQ($x-large) {
+  @include for-desktop-up {
     margin-right: 0;
   }
 
 }
 
-@include MQ($grid-float-breakpoint) {
+@include for-tablet-landscape-up {
 
   .navbar-search {
     float: right;
@@ -587,7 +543,7 @@
 
   }
 
-  @include MQ($grid-float-breakpoint) {
+  @include for-tablet-landscape-up {
 
     .form-group {
       width: 0%;

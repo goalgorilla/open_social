@@ -6,7 +6,7 @@
   position: relative;
   margin-left: -15px;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     margin-left: 0;
   }
 
@@ -19,7 +19,7 @@
     background: darken($gray-lighter, 20%);
     position: absolute;
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       left: 14px;
       top: 42px;
     }
@@ -42,7 +42,7 @@
   border-radius: 50%;
   border: 1px solid white;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     left: 7px;
     top: 36px;
     width: 16px;
@@ -55,7 +55,7 @@
   margin: 0 0 $card-padding $card-padding;
   font-size: 0.875rem;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     margin-left: (2 * $card-padding)
   }
 
@@ -75,7 +75,7 @@
     border-width: 7px;
     top: 16px;
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       border-width: 9px;
       top: 35px;
     }
@@ -86,7 +86,7 @@
     border-width: 6px;
     top: 17px;
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       border-width: 8px;
       top: 36px;
     }
@@ -121,7 +121,7 @@
   margin: 10px -15px 10px;
   background: $gray-lighter;
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     height: 200px; // matches width of image
   }
 
@@ -131,7 +131,7 @@
 
   .card-image {
 
-    @include MQ($small) {
+    @include for-tablet-portrait-up {
       height: 200px;
       flex: 0 0 200px;
       border-radius: 0;

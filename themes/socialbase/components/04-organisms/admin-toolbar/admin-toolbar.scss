@@ -13,7 +13,7 @@
 .toolbar-vertical .off-canvas-right {
   transform: translateY(39px) translateX(280px);
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     transform: none;
   }
 }
@@ -21,7 +21,7 @@
 .toolbar-vertical .off-canvas-right.is-open {
   transform: translateY(39px) translateX(0);
 
-  @include MQ($small) {
+  @include for-tablet-portrait-up {
     transform: none;
   }
 
@@ -33,7 +33,7 @@
   z-index: 10;
 }
 
-.toolbar-fixed .main-container {
+.toolbar-vertical .main-container {
   padding-top: 0;
 }
 
