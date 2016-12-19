@@ -31,6 +31,11 @@ class SocialPageTitleBlock extends PageTitleBlock {
     }
 
     if ($node) {
+      $translation = \Drupal::service('entity.repository')->getTranslationFromContext($node);
+
+      if (!empty($translation)) {
+        $node->setTitle($translation->getTitle());
+      }
       $title = $node->getTitle();
       $group_link = NULL;
 
