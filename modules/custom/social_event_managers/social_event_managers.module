@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Contains social_event_managers.module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_managers_form_node_event_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // On event event edit node form we check if users can alter author.
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Not on newly created nodes so we check if there is a route match for a node
+  // object.
+  if ($node) {
+    // Get the current user
+    $user = \Drupal::currentUser();
+
+    // Remove authoring information for everybody on node event edit form.
+    $form['author']['#access'] = FALSE;
+
+    // Check for permission. Otherwise you can't change the author.
+    // Unless you are the author / have the right permissions.
+    if ($user->hasPermission('administer nodes') || $user->id() == $node->getOwnerId()) {
+      $form['author']['#access'] = TRUE;
+    }
+  }
+}
