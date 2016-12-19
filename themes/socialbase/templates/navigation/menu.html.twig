@@ -18,6 +18,9 @@
  *   - in_active_trail: TRUE if the link is in the active trail.
  */
 #}
+
+<div class="navbar {{'menu-' ~ menu_name|clean_class}}">
+
 {% import _self as menus %}
 
 {#
@@ -28,11 +31,12 @@
 
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
+
   {% if items %}
     {% if menu_level == 0 %}
-      <ul class="nav navbar-nav">
+      <ul{{ attributes.addClass('nav', 'navbar-nav') }}>
     {% else %}
-      <ul class="dropdown-menu">
+      <ul{{ attributes.addClass('dropdown-menu') }}>
     {% endif %}
     {% for item in items %}
       {%
@@ -57,3 +61,5 @@
     </ul>
   {% endif %}
 {% endmacro %}
+
+</div>
