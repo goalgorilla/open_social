@@ -60,7 +60,9 @@ function social_event_type_preprocess_node(&$variables) {
       foreach ($event_type_entities as $event) {
         $variables['metadata'] = t('in @event', array('@event' => $event->link()));
         // Set event type link
-        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array('field_event_type_target_id' => $event->id()));
+        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
+          'field_event_date_value' => 1, // @TODO Need to determine here wether this event has past or is upcoming.
+          'event_type_id' => $event->id()));
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
         $variables['event_type'] = $event_type_link;
