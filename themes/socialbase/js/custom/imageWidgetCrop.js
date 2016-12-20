@@ -14,6 +14,7 @@
   var resetSelector = '.crop-preview-wrapper__crop-reset';
   var detailsWrapper = '.details-wrapper';
   var detailsParentSelector = '.image-widget-data';
+  var containerDimensions = null; // need this to apply correct size to all tabs
   var table = '.responsive-enabled';
   var cropperOptions = {
     background: false,
@@ -76,7 +77,7 @@
         // If detailsWrapper is not visible display it and initialize cropper.
         if (!$(this).siblings(detailsWrapper).is(':visible')) {
           evt.preventDefault();
-          $(this).parent().attr('open','open');
+          $(this).parent().attr('open', 'open');
           $(table).addClass('responsive-enabled--opened');
           $(this).parent().find(detailsWrapper).show();
           Drupal.imageWidgetCrop.initializeCropperOnChildren($(this).parent());
@@ -91,6 +92,22 @@
       }
     });
 
+    // This part is needed to load saved crops automatically without issues
+    $(window).load(function () {
+      Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+    });
+
+    // Open crop details and apply crop automatically on image upload
+    $(document).ajaxSuccess(function (event, xhr, settings) {
+
+      // Filter by triggering element to avoid accidental calls
+      if (typeof settings.extraData !== 'undefined' && settings.extraData.hasOwnProperty('_triggering_element_name')) {
+        if (typeof $('button[name="' + settings.extraData._triggering_element_name + '"]') !== 'undefined') {
+          Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+        }
+      }
+    });
+
     $reset.on('click', function (e) {
       e.preventDefault();
       var $element = $(this).siblings(cropperSelector);
@@ -99,11 +116,11 @@
     });
 
     // Handling cropping when viewport resizes.
-    $(window).resize(function() {
-      $(detailsParentSelector).each(function() {
+    $(window).resize(function () {
+      $(detailsParentSelector).each(function () {
         // Find only opened widgets.
         var cropperDetailsWrapper = $(this).children('details[open="open"]');
-        cropperDetailsWrapper.each(function() {
+        cropperDetailsWrapper.each(function () {
           // Find all croppers for opened widgets.
           var $croppers = $(this).find(cropperSelector);
           $croppers.each(function () {
@@ -214,20 +231,36 @@
       var $this = $(this);
       Drupal.imageWidgetCrop.updateHardLimits($this);
       Drupal.imageWidgetCrop.checkSoftLimits($this);
-    });
 
-    // If 'Show default crop' is checked apply default crop.
-    if (drupalSettings['crop_default']) {
-      var dataDefault = $element.cropper('getData');
-      // Calculate delta between original and thumbnail images.
-      var deltaDefault = $element.data('original-height') / $element.prop('naturalHeight');
       /*
-       * All data returned by cropper plugin multiple with delta in order to get
-       * proper crop sizes for original image.
+       * Temporarily set width/height for hidden wrappers,  otherwise cropper
+       * library sets them to minimum values. Unset to auto after the crop has been
+       * generated.
        */
-      Drupal.imageWidgetCrop.updateCropValues($values, dataDefault, deltaDefault);
-      Drupal.imageWidgetCrop.updateCropSummaries($element);
-    }
+      var firstContainer = $this.next('div');
+
+      if (containerDimensions === null) {
+        containerDimensions = {
+          width: firstContainer.width(),
+          height: firstContainer.height()
+        };
+
+        Drupal.imageWidgetCrop.initializeSecondaryCroppers($element);
+      }
+
+      // If 'Show default crop' is checked apply default crop.
+      if (drupalSettings['crop_default']) {
+        var dataDefault = $element.cropper('getData');
+        // Calculate delta between original and thumbnail images.
+        var deltaDefault = $element.data('original-height') / $element.prop('naturalHeight');
+        /*
+         * All data returned by cropper plugin multiple with delta in order to get
+         * proper crop sizes for original image.
+         */
+        Drupal.imageWidgetCrop.updateCropValues($values, dataDefault, deltaDefault);
+        Drupal.imageWidgetCrop.updateCropSummaries($element);
+      }
+    });
   };
 
   /**
@@ -378,6 +411,43 @@
     var visibleCropper = $element.find(cropperSelector + ':visible');
     var ratio = Drupal.imageWidgetCrop.getRatio($(visibleCropper));
     Drupal.imageWidgetCrop.initializeCropper($(visibleCropper), ratio);
+  };
+
+  /**
+   * Initialize cropper on first visible element.
+   *
+   * @param {Object} $element - Element that wraps crop items.
+   * @todo Adjust this once/if module author provides a better solution
+   */
+  Drupal.imageWidgetCrop.initializeCropperAutomatically = function ($element) {
+    if ($element.length !== 0) {
+      var firstItem = $element.find('.in ' + cropperSelector);
+      var ratio = Drupal.imageWidgetCrop.getRatio($(firstItem));
+
+      Drupal.imageWidgetCrop.initializeCropper($(firstItem), ratio);
+    }
+  };
+
+  /**
+   * Initialize cropper on secondary (hidden) elements. This should always be done
+   * after the first elment was initialized.
+   *
+   * @param {Object} $element - Element that wraps crop items.
+   * @todo Adjust this once/if module author provides a better solution
+   */
+  Drupal.imageWidgetCrop.initializeSecondaryCroppers = function ($element) {
+    var allCropperElements = $element.parent().parent().parent().siblings('.vertical-tabs-pane');
+    var $allCropperElements = $(allCropperElements);
+
+    $allCropperElements.each(function (i, item) {
+      var hiddenCropper = $(item).find(cropperSelector);
+      $(hiddenCropper).parent().width(containerDimensions.width);
+      $(hiddenCropper).parent().height(containerDimensions.height);
+
+      var ratio = Drupal.imageWidgetCrop.getRatio($(hiddenCropper));
+      Drupal.imageWidgetCrop.initializeCropper($(hiddenCropper), ratio);
+      $(hiddenCropper).parent('div').height('auto');
+    });
   };
 
   /**

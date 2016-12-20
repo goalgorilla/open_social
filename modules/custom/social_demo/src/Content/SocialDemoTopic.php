@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialDemoTopic implements ContainerInjectionInterface {
 
-  private $topics;
+  protected $topics;
 
   /**
    * The user storage.
