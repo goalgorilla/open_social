@@ -101,6 +101,9 @@
           {{ author }}
           <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
           <div>
+            {% if event_type %}
+              {{ event_type }}
+            {% endif %}
             {% if topic_type %}
               {{ topic_type }}
             {% endif %}

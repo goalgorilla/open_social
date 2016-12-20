@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+
 /**
  * @file
  * The Social event type module.
@@ -44,5 +47,30 @@ function social_event_type_widget_alter(&$form) {
   // Change the widget if more than X.
   if (count($form['field_event_type']['widget']['#options']) >= $config->get('social_event_type_select_changer')) {
     $form['field_event_type']['widget']['#type'] = 'select';
+  }
+}
+
+function social_event_type_preprocess_node(&$variables) {
+  /* @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  if ($node->getType() === 'event') {
+    $event_type = $node->get('field_event_type');
+    $event_type_entities = $event_type->referencedEntities();
+    if (count($event_type_entities) === 1) {
+      foreach ($event_type_entities as $event) {
+        $variables['metadata'] = t('in @event', array('@event' => $event->link()));
+        // Set event type link
+        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
+          'field_event_date_value' => 1, // @TODO Need to determine here wether this event has past or is upcoming.
+          'event_type_id' => $event->id()));
+        $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
+          ->toString();
+        $variables['event_type'] = $event_type_link;
+      }
+    }
+    else {
+      $variables['metadata'] = NULL;
+      $variables['event_type'] = NULL;
+    }
   }
 }
