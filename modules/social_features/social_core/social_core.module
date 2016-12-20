@@ -299,3 +299,13 @@ function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $fo
     $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
 }
+
+/**
+ * Implements hook_preprocess().
+ */
+function social_core_preprocess_breadcrumb(&$variables) {
+  // Get the user.
+  $user = \Drupal::currentUser();
+  // Add cache tag for the user.
+  $variables['#cache']['tags'][] = 'user:breadcrumb:' . $user->id();
+}

@@ -96,6 +96,11 @@ function social_profile_form_profile_profile_edit_form_alter(&$form, FormStateIn
  *   The form state interface.
  */
 function _social_profile_profile_edit_form_submit($form, FormStateInterface $form_state) {
+  // Get username.
+  $user = \Drupal::currentUser();
+  // Invalidate cache tag.
+  \Drupal\Core\Cache\Cache::invalidateTags(array('user:breadcrumb:' . $user->id()));
+
   // Set redirect to the profile overview page when a user saves their profile.
   $form_state->setRedirect(
     'view.user_information.user_information',
@@ -168,7 +173,7 @@ function social_profile_preprocess_profile(&$variables) {
 
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
-  $variables['profile_name'] = $user->getDisplayName();;
+  $variables['profile_name'] = $user->getDisplayName();
   $variables['profile_contact_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
 
