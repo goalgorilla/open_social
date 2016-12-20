@@ -57,11 +57,18 @@ function social_event_type_preprocess_node(&$variables) {
     $event_type = $node->get('field_event_type');
     $event_type_entities = $event_type->referencedEntities();
     if (count($event_type_entities) === 1) {
+      /** @var \Drupal\node\Entity\Node $event */
       foreach ($event_type_entities as $event) {
         $variables['metadata'] = t('in @event', array('@event' => $event->link()));
-        // Set event type link
+        // Set event type link.
+        $now = strtotime("now");
+        $end = strtotime($node->get('field_event_date_end')->getString());
+        // 1 are upcoming events.
+        // 2 are ones that have started or are finshed
+        $datetype = ($now > $end) ? 2 : 1;
+
         $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
-          'field_event_date_value' => 1, // @TODO Need to determine here wether this event has past or is upcoming.
+          'field_event_date_value' => $datetype,
           'event_type_id' => $event->id()));
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
