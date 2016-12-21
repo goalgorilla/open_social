@@ -204,6 +204,7 @@ function social_core_preprocess_block(&$variables) {
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
       break;
+    // @TODO Need to expose the view_all_path variable here for the template (block--views-block--managers-event-managers.html.twig) to render the correct link consitant with the way we render links in other block views. I think the footer in the view can be removed then.
   }
 }
 
@@ -211,7 +212,7 @@ function social_core_preprocess_block(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_core_menu_local_tasks_alter(&$data, $route_name) {
-  
+
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
     if (isset($data['tabs'][0]['user.register'])) {
