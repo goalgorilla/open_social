@@ -1,0 +1,90 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_files
+    - image.style.social_x_large
+    - node.type.event
+  module:
+    - address
+    - datetime
+    - image
+    - options
+    - user
+id: node.event.teaser
+targetEntityType: node
+bundle: event
+mode: teaser
+content:
+  field_content_visibility:
+    type: list_default
+    weight: 7
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_event_address:
+    type: address_default
+    weight: 4
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_event_date:
+    type: datetime_default
+    weight: 1
+    label: hidden
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_event_date_end:
+    type: datetime_default
+    weight: 2
+    label: hidden
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_event_image:
+    type: image
+    weight: 0
+    label: hidden
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  field_event_location:
+    type: string
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_event_type:
+    type: entity_reference_label
+    weight: 5
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+  flag_follow_content:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_event_comments: true
+  field_files: true
