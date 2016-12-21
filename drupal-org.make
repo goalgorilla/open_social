@@ -51,5 +51,4 @@ projects[search_api][version] = 1.0-beta3
 projects[token][type] = module
 projects[token][version] = 1.0-beta2
 projects[bootstrap][type] = theme
-projects[bootstrap][version] = 3.0-rc2
-projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2821397-3.patch"
+projects[bootstrap][version] = 3.1
