@@ -120,6 +120,7 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
   $social_optional_modules = [
     'social_book' => t('Book functionality'),
     'social_sharing' => t('Share content on social media'),
+    'social_event_type' => t('Catagorize events in event types'),
   ];
 
   // Checkboxes to enable Optional modules.
