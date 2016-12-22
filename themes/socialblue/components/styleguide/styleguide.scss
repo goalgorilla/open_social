@@ -25,7 +25,7 @@
   font-size: 1.25rem;
 }
 
-@include MQ($small) {
+@include for-tablet-portrait-up {
   .docsheader {
     text-align: left;
 
@@ -41,7 +41,7 @@
   }
 }
 
-@include MQ($large) {
+@include for-desktop-up {
   .docsheader p {
     margin-right: 235px;
   }
@@ -98,7 +98,7 @@
 }
 
 /* Show and affix the side nav when space allows it */
-@include MQ($medium) {
+@include for-tablet-landscape-up {
   .docs-sidebar .nav > .active > ul {
     display: block;
   }
