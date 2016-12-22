@@ -204,7 +204,6 @@ function social_core_preprocess_block(&$variables) {
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
       break;
-    // @TODO Need to expose the view_all_path variable here for the template (block--views-block--managers-event-managers.html.twig) to render the correct link consitant with the way we render links in other block views. I think the footer in the view can be removed then.
   }
 }
 

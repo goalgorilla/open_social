@@ -5,6 +5,24 @@
  * Contains social_event_managers.module.
  */
 
+use Drupal\node\Entity\Node;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function social_event_managers_preprocess_block(&$variables) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Add variables to sidebar blocks
+  switch ($variables['elements']['#derivative_plugin_id']) {
+    case 'managers-event_managers':
+      $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/managers');
+      break;
+  }
+}
+
 /**
  * Implements hook_form_FORM_ID_alter().
  */

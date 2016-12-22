@@ -142,7 +142,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'There are no event managers for this event yet.'
+          content: 'We could not find any event managers for this event.'
           plugin_id: text_custom
       relationships:
         uid:
@@ -216,10 +216,10 @@ display:
       tags:
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.compact'
         - 'config:core.entity_view_display.profile.profile.default'
-        - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.teaser'
   event_managers:
@@ -230,20 +230,7 @@ display:
     display_options:
       display_extenders: {  }
       block_description: 'Managers Block'
-      footer:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: false
-          tokenize: true
-          content:
-            value: '<a href="/node/{{ raw_arguments.nid }}/managers">See all managers</a>'
-            format: basic_html
-          plugin_id: text
+      footer: {  }
       defaults:
         footer: false
         style: false
@@ -255,6 +242,7 @@ display:
         use_more: false
         use_more_always: false
         use_more_text: false
+        empty: false
       style:
         type: default
         options: {  }
@@ -307,9 +295,11 @@ display:
           plugin_id: node_nid
       link_display: view_enrollments
       link_url: ''
-      use_more: true
+      use_more: false
       use_more_always: false
       use_more_text: 'See all managers'
+      block_hide_empty: true
+      empty: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -325,9 +315,9 @@ display:
         - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
-  view_enrollments:
+  view_managers:
     display_plugin: page
-    id: view_enrollments
+    id: view_managers
     display_title: Page
     position: 1
     display_options:
@@ -339,7 +329,7 @@ display:
         description: ''
         expanded: false
         parent: ''
-        weight: 0
+        weight: 2
         context: '0'
         menu_name: main
       style:

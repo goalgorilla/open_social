@@ -25,3 +25,5 @@ Feature: Event Management
     Then I should see "This is an event with event managers has been created."
     And I should see "THIS IS AN EVENT WITH EVENT MANAGERS"
     And I should see "Body description text" in the "Main content"
+    And I should see the link "Managers"
+    And I should see "Event Managers"
