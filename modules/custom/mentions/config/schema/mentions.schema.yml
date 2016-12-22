@@ -1,0 +1,58 @@
+mentions.mentions_type.*:
+  type: config_entity
+  label: 'Mentions Type'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    name:
+      type: string
+      label: 'Name'
+    description:
+      type: string
+      label: 'Description'
+    mention_type:
+      type: string
+      label: 'Mention Type'
+    input:
+      type: mapping
+      label: 'Input Settings'
+      mapping:
+        prefix:
+          type: string
+          label: 'Prefix'
+        entity_type:
+          type: string
+          label: 'Entity Type'
+        inputvalue:
+          type: string
+          label: 'Value'
+        suffix:
+          type: string
+          label: 'Suffix'
+    output:
+        type: 'mapping'
+        label: 'Output Settings'
+        mapping:
+          outputvalue:
+            type: string
+            label: 'Value'
+          renderlink:
+            type: integer
+            label: 'Render as link'
+          renderlinktextbox:
+            type: string
+            label: 'Link'
+            
+filter_settings.filter_mentions:
+  type: filter
+  label: 'Mentions Filter settings'
+  mapping:
+    mentions_filter:
+      type: sequence
+      label: 'Mentions Type'
+      sequence:
+        type: string
+        label: 'Mention'
+
+      

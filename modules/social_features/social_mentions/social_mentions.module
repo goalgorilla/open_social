@@ -1,0 +1,174 @@
+<?php
+
+/**
+ * @file
+ * Contains social_mentions.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\comment\CommentInterface;
+use Drupal\Core\Url;
+use Drupal\Component\Serialization\Json;
+
+define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
+define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
+define('SOCIAL_MENTIONS_SUGGESTIONS_ALL', 'all');
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_mentions_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $mentions_forms = array(
+    'social_post_entity_form',
+    'comment_post_comment_form',
+    'comment_comment_form',
+  );
+
+  if (in_array($form_id, $mentions_forms)) {
+    $config = \Drupal::config('mentions.settings');
+    $form['#attached']['library'][] = 'social_mentions/social_mentions';
+    $form['#attached']['library'][] = 'socialbase/mention';
+    $form['#attached']['drupalSettings']['socialMentions'] = [
+      'suggestionsFormat' => $config->get('suggestions_format'),
+    ];
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_mentions_theme($existing, $type, $theme, $path) {
+  $items = [
+    'mentions' => [
+      'render element' => 'elements',
+      'template' => 'mentions',
+    ],
+    'profile__profile__autocomplete_item' => [
+      'template' => 'profile--profile--autocomplete_item',
+      'path' => $path . '/templates',
+      'render element' => 'elements',
+      'base hook' => 'profile',
+    ],
+  ];
+
+  return $items;
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function social_mentions_preprocess_mentions(&$variables) {
+  if (!empty($variables['elements']['#mentions'])) {
+    $mention = $variables['elements']['#mentions'];
+
+    if (isset($mention->entity_type)) {
+      $entity_type = $mention->getMentionedEntityTypeId();
+      $entity = $mention->getMentionedEntity();
+
+      if ($entity) {
+        $content = \Drupal::entityTypeManager()
+          ->getViewBuilder($entity_type)
+          ->view($entity, 'activity');
+        $variables['mention_context'] = $content;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_comment_links_alter().
+ */
+function social_mentions_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+  if ($entity->hasParentComment()) {
+    /* @var \Drupal\Core\Session\AccountInterface $account */
+    $account = $entity->getOwner();
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    $config = \Drupal::config('mentions.settings');
+    $suggestions_format = $config->get('suggestions_format');
+
+    $item = [
+      'uid' => $account->id(),
+      'username' => $account->getAccountName(),
+      'value' => $account->getAccountName(),
+      'html_item' => '',
+      'profile_id' => '',
+    ];
+
+    if ($suggestions_format != SOCIAL_MENTIONS_SUGGESTIONS_USERNAME) {
+      /* @var \Drupal\profile\Entity\ProfileInterface $profile */
+      if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE))) {
+        $item['profile_id'] = $profile->id();
+        $item['value'] = $account->getDisplayName();
+      }
+    }
+
+    // Disable reply if full name is not set for only username format.
+    if ($suggestions_format == SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME && $account->getAccountName() == $account->getDisplayName()) {
+      return;
+    }
+
+    $links['comment']['#links']['comment-reply'] = [
+      'title' => t('Reply'),
+      'url' => Url::fromUserInput('#' . $entity->getParentComment()->id()),
+      'attributes' => [
+        'class' => ['mention-reply'],
+        'data-author' => Json::encode($item),
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_mentions_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (!$form_state->getFormObject()->getEntity()->hasParentComment()) {
+    $form['pid'] = [
+      '#type' => 'hidden',
+      '#attributes' => [
+        'class' => ['parent-comment'],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Add social specific configurations to mentions settings form.
+ */
+function social_mentions_form_mentions_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('mentions.settings');
+
+  $form['display'] = array(
+    '#type' => 'details',
+    '#title' => t('Display settings'),
+    '#open' => TRUE,
+  );
+
+  $options = [
+    SOCIAL_MENTIONS_SUGGESTIONS_USERNAME => t('Only username'),
+    SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME => t('Only full name (first and last)'),
+    SOCIAL_MENTIONS_SUGGESTIONS_ALL => t('Both (username and full name)'),
+  ];
+
+  $form['display']['suggestions_format'] = array(
+    '#type' => 'radios',
+    '#required' => TRUE,
+    '#options' => $options,
+    '#title' => t('Suggestions format'),
+    '#default_value' => $config->get('suggestions_format'),
+  );
+
+  $form['#submit'][] = 'social_mentions_form_mentions_settings_form_submit';
+}
+
+/**
+ * Form submit for mentions_settings_form.
+ */
+function social_mentions_form_mentions_settings_form_submit($form, FormStateInterface $form_state) {
+  // Save config.
+  $config = \Drupal::configFactory()->getEditable('mentions.settings');
+  $config->set('suggestions_format', $form_state->getValue('suggestions_format'));
+  $config->save();
+}

@@ -423,3 +423,13 @@ function _social_core_set_image_quality() {
 
   $config->set('jpeg_quality', 90)->save();
 }
+
+/**
+ * Install social_mentions module.
+ */
+function social_core_update_8008() {
+  $modules = array(
+    'social_mentions',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}

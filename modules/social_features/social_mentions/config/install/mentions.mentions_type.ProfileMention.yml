@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies: {  }
+id: ProfileMention
+name: ProfileMention
+description: 'Mention by Profile entity'
+mention_type: entity
+input:
+  prefix: '@'
+  suffix: ''
+  entity_type: profile
+  inputvalue: profile_id
+output:
+  outputvalue: '[social_mentions:user_name]'
+  renderlink: 1
+  renderlinktextbox: 'user/[profile:uid:target_id]'

@@ -24,14 +24,14 @@ Feature: Comment on a Post
         # Scenario: Post a comment on this private post
   Given I am logged in as "PostUser2"
     And I am on the homepage
-   When I fill in "Comment #1" for "field_comment_body[0][value]"
+   When I fill in "Comment #1" for "Post comment"
     And I press "Comment"
    Then I should see the success message "Your comment has been posted."
 
         # Scenario: edit comment
   When I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Edit"
-    And I fill in "Comment #1 to be deleted" for "field_comment_body[0][value]"
+    And I fill in "Comment #1 to be deleted" for "Post comment"
     And I press "Submit"
    Then I should see the success message "Your comment has been posted."
 
@@ -45,10 +45,10 @@ Feature: Comment on a Post
    Then I should see "The comment and all its replies have been deleted."
 
   Given I am on the homepage
-   When I fill in "Comment #2" for "field_comment_body[0][value]"
+   When I fill in "Comment #2" for "Post comment"
     And I press "Comment"
    Then I should see the success message "Your comment has been posted."
-   When I fill in "Comment #3" for "field_comment_body[0][value]"
+   When I fill in "Comment #3" for "Post comment"
     And I press "Comment"
    Then I should see the success message "Your comment has been posted."
     And I should see "Comment #3"
