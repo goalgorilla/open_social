@@ -33,7 +33,7 @@
  */
 #}
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation" aria-labelledby="{{ heading_id }}">
+<nav class="navbar navbar-default navbar-fixed-top" role="banner">
   <div class="container">{{ page.header }}</div>
 </nav>
 
@@ -69,9 +69,9 @@
     <div class="row margin-top-l">
 
       {% if page.complementary_top or page.complementary_bottom %}
-        <div{{ attributes.addClass('col-xs-12 col-md-4 col-md-last complementary-top').setAttribute('role', 'complementary') }}>
+        <aside{{ attributes.addClass('col-xs-12 col-md-4 col-md-last complementary-top').setAttribute('role', 'complementary') }}>
           {{ page.complementary_top }}
-        </div>
+        </aside>
       {% endif %}
 
       <div class="col-xs-12 col-md-8">
