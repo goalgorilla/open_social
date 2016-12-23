@@ -8,6 +8,7 @@
 use \Drupal\Core\Form\FormStateInterface;
 use \Drupal\Core\Database\Database;
 use \Drupal\Core\Database\Query\Select;
+use \Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_alter().
@@ -128,5 +129,108 @@ function social_user_export_user_apply_filter(Select $query, array $conditions) 
   if (!empty($conditions['created']['min']) && !empty($conditions['created']['max'])) {
     $conditions['created'] = array_map('strtotime', $conditions['created']);
     $query->condition('uf.created', array_values($conditions['created']), 'BETWEEN');
+  }
+}
+
+/**
+ * Returns quantity of comments posted by specific user.
+ *
+ * @param UserInterface $account
+ * @return int
+ */
+function social_user_export_comments_count(UserInterface $account) {
+  $query = \Drupal::database()->select('comment', 'c');
+  $query->join('comment_field_data', 'cfd', 'cfd.cid = c.cid');
+  $query->condition('cfd.uid', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns quantity of posts created by specific user.
+ *
+ * @param UserInterface $account
+ * @return int
+ */
+function social_user_export_posts_count(UserInterface $account) {
+  $query = \Drupal::database()->select('post', 'p');
+  $query->join('post_field_data', 'pfd', 'pfd.id = p.id');
+  $query->condition('pfd.user_id', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns quantity of nodes created by specific user.
+ *
+ * @param UserInterface $account
+ * @param string $type
+ * @return int
+ */
+function social_user_export_nodes_count(UserInterface $account, $type) {
+  $query = \Drupal::database()->select('node', 'n');
+  $query->join('node_field_data', 'nfd', 'nfd.nid = n.nid');
+  $query
+    ->condition('nfd.type', $type)
+    ->condition('nfd.uid', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns quantity of enrollments of specific user.
+ *
+ * @param UserInterface $account
+ * @return int
+ */
+function social_user_export_events_enrollments_count(UserInterface $account) {
+  $query = \Drupal::database()->select('event_enrollment', 'ee');
+  $query->join('event_enrollment_field_data', 'eefd', 'eefd.id = ee.id');
+  $query->condition('eefd.user_id', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns quantity of groups created by specific user.
+ *
+ * @param UserInterface $account
+ * @return int
+ */
+function social_user_export_groups_count(UserInterface $account) {
+  $query = \Drupal::database()->select('groups', 'g');
+  $query->join('groups_field_data', 'gfd', 'gfd.id = g.id');
+  $query->condition('gfd.uid', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function social_user_export_file_download($uri) {
+  $scheme = \Drupal::service('file_system')->uriScheme($uri);
+  $target = file_uri_target($uri);
+  $access = \Drupal::currentUser()->hasPermission('administer users');
+
+  if ($scheme == 'private' && preg_match('/^csv\/export-users-([a-f0-9]{12})\.csv$/i', $target) && $access) {
+    return [
+      'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
+    ];
   }
 }

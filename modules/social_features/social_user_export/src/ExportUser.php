@@ -2,10 +2,12 @@
 
 namespace Drupal\social_user_export;
 
+use Drupal\Core\Url;
 use \Drupal\user\UserInterface;
 use \League\Csv\Writer;
 use \Drupal\Core\Link;
 use \Drupal\user\Entity\User;
+use \Drupal\Component\Utility\Random;
 
 class ExportUser {
 
@@ -14,7 +16,7 @@ class ExportUser {
    */
   public static function exportUserOperation(UserInterface $entity, &$context) {
     if (empty($context['results']['file_path'])) {
-      $context['results']['file_path'] = self::getFilePath();
+      $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
       $csv->setDelimiter(',');
       $csv->setEnclosure('"');
@@ -29,6 +31,12 @@ class ExportUser {
         t('Registration date'),
         t('Status'),
         t('Roles'),
+        t('Posts created'),
+        t('Comments created'),
+        t('Topics created'),
+        t('Events enrollments'),
+        t('Events created'),
+        t('Groups created'),
       ];
       $csv->insertOne($headers);
     }
@@ -59,6 +67,12 @@ class ExportUser {
       \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
       !empty($status[0]['value']) ? t('Active') : t('Blocked'),
       implode(', ', $roles),
+      social_user_export_posts_count($entity),
+      social_user_export_comments_count($entity),
+      social_user_export_nodes_count($entity, 'topic'),
+      social_user_export_events_enrollments_count($entity),
+      social_user_export_nodes_count($entity, 'event'),
+      social_user_export_groups_count($entity),
     ]);
 
     $context['message'] = t('Exporting: @name', [
@@ -121,13 +135,21 @@ class ExportUser {
    */
   public static function finishedCallback($success, $results, $operations) {
     if ($success && !empty($results['file_path'])) {
-      $link = Link::createFromRoute(t('Download file'), 'social_user_export.export_user_download', [
-        'name' => basename($results['file_path']),
-      ]);
+      $data = @file_get_contents($results['file_path']);
+      $name = basename($results['file_path']);
+      $path = 'private://csv';
 
-      drupal_set_message(t('Export is complete. @link', [
-        '@link' => $link->toString(),
-      ]));
+      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && ($file = file_save_data($data, $path . '/' . $name))) {
+        $url = Url::fromUri(file_create_url($path . '/' . $name));
+        $link = Link::fromTextAndUrl(t('Download file'), $url);
+
+        drupal_set_message(t('Export is complete. @link', [
+          '@link' => $link->toString(),
+        ]));
+      }
+      else {
+        drupal_set_message(t('When saving the file an error occurred'), 'error');
+      }
     }
     else {
       drupal_set_message('An error occurred', 'error');
@@ -139,8 +161,9 @@ class ExportUser {
    *
    * @return string
    */
-  public static function getFilePath() {
-    $filename = 'export-users-' . microtime(true) . '.csv';
+  public static function getFileTemporaryPath() {
+    $hash = md5(microtime(TRUE));
+    $filename = 'export-users-' . substr($hash, 20, 12) . '.csv';
     $file_path = file_directory_temp() . '/' . $filename;
 
     return $file_path;
