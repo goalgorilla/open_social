@@ -16,6 +16,17 @@ function social_user_install() {
 }
 
 /**
+ * Install social_user_export module.
+ */
+function social_user_update_8001() {
+  $modules = [
+    'social_user_export',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {

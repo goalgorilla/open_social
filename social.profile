@@ -178,6 +178,7 @@ function social_install_profile_modules(&$install_state) {
     'social_search' => 'social_search',
     'social_activity' => 'social_activity',
     'social_follow_content' => 'social_follow_content',
+    'social_user_export' => 'social_user_export',
   );
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between
