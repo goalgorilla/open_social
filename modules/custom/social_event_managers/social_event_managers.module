@@ -46,3 +46,59 @@ function social_event_managers_form_node_event_edit_form_alter(&$form, \Drupal\C
     }
   }
 }
+
+/**
+ * Implements hook_node_access_records().
+ * @param \Drupal\node\NodeInterface $node
+ * @return array
+ */
+function social_event_managers_node_access_records(\Drupal\node\NodeInterface $node) {
+
+  $grants = [];
+
+  // Only for events.
+  if ($node->getType() === 'event') {
+
+    // Event organizers should be granted access.
+    foreach($node->get('field_event_managers')->getValue() as $eventmanager) {
+      // Load the event managers account.
+      if ($account = \Drupal\user\Entity\User::load($eventmanager['target_id'])) {
+        // Event organizers must have access to view the record in the first place.
+        if ($node->access('view',$account)) {
+          // Add grant.
+          $grants[] = array(
+            'realm' => 'social_event_managers:'.$node->id(),
+            'gid' => $eventmanager['target_id'],
+            'grant_view' => 1,
+            'grant_update' => 1,
+            'grant_delete' => 1,
+            'langcode' => 'und'
+          );
+        }
+      }
+    }
+  }
+
+  return $grants;
+}
+
+
+/**
+ * Implements hook_node_grants().
+ */
+function social_event_managers_node_grants(\Drupal\Core\Session\AccountInterface $account, $op) {
+
+  $grants = [];
+
+  // TODO: Fetch all nodes this user has access to and add a grant for each of those!
+  $query = \Drupal::database()->select('node__field_event_managers', 'em');
+  $query->fields('em', ['entity_id']);
+  $query->condition('em.field_event_managers_target_id', 5);
+  // Add grants.
+  foreach($query->execute()->fetchAllAssoc('entity_id') as $nid) {
+    $grants['social_event_managers:' . $nid->entity_id][] = $account->id();
+  }
+
+  // Tell Drupal about users grants.
+  return $grants;
+}
