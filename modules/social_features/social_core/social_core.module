@@ -211,7 +211,7 @@ function social_core_preprocess_block(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_core_menu_local_tasks_alter(&$data, $route_name) {
-  
+
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
     if (isset($data['tabs'][0]['user.register'])) {
