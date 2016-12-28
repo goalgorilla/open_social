@@ -7,16 +7,8 @@
   margin-right: 2px;
   line-height: 1.5;
   border: 1px solid transparent;
-}
-
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-  border-bottom-color: transparent;
-  cursor: default;
-}
-
-.nav-tabs > li > a {
-  border-radius: 0;
-  border: 0;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
   font-weight: 500;
   position: relative;
   -webkit-user-select: none;
@@ -32,8 +24,8 @@
 }
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-  border: 0;
   border-bottom-color: transparent;
+  cursor: default;
 }
 
 .card-underline .card-head .nav-tabs {
@@ -45,24 +37,12 @@
   overflow: hidden;
 }
 
-.tab-content > .tab-pane {
-  display: none;
-}
-
-.tab-content > .active {
-  display: block;
-}
-
 .tabs-center {
   text-align: center;
 }
 
 .card-underline .card-head .tabs-center {
   margin-top: -1px;
-}
-
-.card-underline .card-head.nav-tabs-justified a {
-  margin-bottom: -1px;
 }
 
 .tabs-right > .nav-tabs,
@@ -160,23 +140,14 @@
 
 @media (min-width: 600px) {
 
-  .nav-tabs {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
-
-  .nav-tabs > li {
-    float: left;
-    margin-bottom: -1px;
-  }
-
   .nav-tabs > li > a {
     border-bottom: 2px solid transparent;
     margin-right: 5px;
   }
 
-  .nav-tabs.nav-tabs-right {
-    float: right;
+  .nav-tabs {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
   }
 
   .tabs-center li {

@@ -133,7 +133,7 @@
 }
 
 // Scale up the modal
-@media (min-width: $screen-sm-min) {
+@include for-tablet-portrait-up {
   // Automatically set modal's width for larger viewports
   .modal-dialog {
     width: $modal-md;
@@ -147,6 +147,6 @@
   .modal-sm { width: $modal-sm; }
 }
 
-@media (min-width: $screen-md-min) {
+@include for-tablet-landscape-up {
   .modal-lg { width: $modal-lg; }
 }

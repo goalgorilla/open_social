@@ -1,5 +1,4 @@
 .nav {
-  margin-bottom: 0;
   padding-left: 0;
   list-style: none;
 }
@@ -21,7 +20,7 @@
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 0.625em 10px;
+  padding: 0.5em 10px;
 }
 
 .nav > li > a:hover, .nav > li > a:focus {
@@ -50,21 +49,9 @@
   clear: both;
 }
 
-.navbar-header:before, .navbar-header:after {
-  content: " ";
-  display: table;
-}
-
-.navbar-header:after {
-  clear: both;
-}
-
 .navbar-collapse {
   overflow-x: visible;
-  padding-right: 0.9375rem;
-  padding-left: 0.9375rem;
   border-top: 1px solid transparent;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -85,12 +72,6 @@
   max-height: 340px;
 }
 
-.container > .navbar-header,
-.container > .navbar-collapse {
-  margin-right: -0.9375rem;
-  margin-left: -0.9375rem;
-}
-
 .navbar-fixed-top {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   position: fixed;
@@ -101,11 +82,11 @@
 }
 
 .navbar-brand {
-  float: left;
-  padding: 13px 0.9375rem;
-  font-size: 20px;
-  line-height: 24px;
+  display: inline-block;
+  vertical-align: top;
   height: 50px;
+  max-width: 200px;
+  overflow: hidden;
 }
 
 .navbar-brand:hover, .navbar-brand:focus {
@@ -114,6 +95,9 @@
 
 .navbar-brand > img {
   display: block;
+  pointer-events: none;
+  width: auto;
+  height: 50px;
 }
 
 .navbar-toggle {
@@ -132,23 +116,14 @@
   outline: 0;
 }
 
-.navbar-nav {
-  margin: 0 -0.9375rem;
-}
-
 .navbar-nav > li > a {
   padding-top: 10px;
   padding-bottom: 10px;
   line-height: 24px;
 }
 
-.navbar-search {
-  margin-left: -0.9375rem;
-  margin-right: -0.9375rem;
-}
-
 .navbar-form {
-  padding: 0.625em 10px;
+  padding: 0.5em 10px;
   border: 0;
 }
 
@@ -171,24 +146,6 @@
 
 .profile .dropdown-toggle img {
   border: 2px solid white;
-}
-
-.navbar-default .navbar-brand,
-.navbar-default .navbar-brand:focus,
-.navbar-default .navbar-brand:hover {
-  width: auto;
-  padding: 0;
-  max-width: 200px;
-  height: 50px;
-  overflow: hidden;
-}
-
-.navbar-default .navbar-brand img,
-.navbar-default .navbar-brand:focus img,
-.navbar-default .navbar-brand:hover img {
-  pointer-events: none;
-  width: auto;
-  height: 50px;
 }
 
 .navbar-default .navbar-nav > .open > a,
@@ -287,7 +244,6 @@
   .navbar-collapse {
     width: auto;
     border-top: 0;
-    box-shadow: none;
   }
 
   .navbar-collapse.collapse {
@@ -308,14 +264,9 @@
     padding-right: 0;
   }
 
-  .container > .navbar-header,
-  .container > .navbar-collapse {
-    margin-right: 0;
-    margin-left: 0;
-  }
-
-  .navbar > .container .navbar-brand {
-    margin-left: -0.9375rem;
+  .navbar-fixed-top .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .navbar-toggle {
@@ -338,8 +289,7 @@
 
   .navbar-form {
     width: auto;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 6px 0;
     padding-top: 0;
     padding-bottom: 0;
   }
@@ -350,11 +300,6 @@
 
   .navbar-right {
     float: right !important;
-    margin-right: -0.9375rem;
-  }
-
-  .navbar-right ~ .navbar-right {
-    margin-right: 0;
   }
 
   .navbar-fixed-top .navbar-nav {
@@ -474,7 +419,7 @@
   }
 
   .navbar-collapse .navbar-nav {
-    margin: 6.5px -0.9375rem;
+    margin: 6.5px -1rem;
     -webkit-box-ordinal-group: 2;
     -ms-flex-order: 1;
     order: 1;

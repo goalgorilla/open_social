@@ -57,17 +57,21 @@
     is_checkbox ? 'checkbox',
     is_autocomplete ? 'form-autocomplete',
     errors ? 'error has-error',
-    name == 'pass' and logged_in ? 'row',
-    name == 'pass[pass1]' ? 'col-xs-12 col-sm-7',
-    name == 'pass[pass2]' ? 'col-xs-12 col-sm-7',
+    name == 'pass' and logged_in ? 'section-password',
+    name == 'pass[pass1]' ? 'form-group--password',
+    name == 'pass[pass2]' ? 'form-group--password form-group--confirm-password',
   ]
 %}{%
   set description_classes = [
     'help-block',
-    name == 'pass' and logged_in ? 'col-xs-12',
+    name == 'pass' and logged_in ? 'form-group--password__help-block',
     description_display == 'invisible' ? 'visually-hidden',
   ]
 %}
+
+{% if name == 'password' %}
+  {{ attach_library('socialbase/form--password') }}
+{% endif %}
 
 <div{{ attributes.addClass(classes).removeClass('form-inline') }}>
   {% if label_display in ['before', 'invisible'] %}

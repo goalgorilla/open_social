@@ -9,7 +9,7 @@
 
         $complementaryBottom.responsiveDom({
           appendTo: $complementaryTop,
-          mediaQuery: '(min-width: 960px)'
+          mediaQuery: '(min-width: 900px)'
         });
 			});
 

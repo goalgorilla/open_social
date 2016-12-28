@@ -2,25 +2,31 @@
 /***************
      Switch
 ***************/
-.switch,
 .switch * {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
 }
 
-.switch label {
-    cursor: pointer;
+.switch {
+  display: flex;
 }
 
-.switch label input[type=checkbox]{
+.switch__label {
+  flex: 1 1 auto;
+}
+
+.switch__options {
+  flex: 1 0 150px;
+  text-align: right;
+}
+
+.switch input[type=checkbox]{
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.switch label .lever {
+.switch .lever {
     content: "";
     display: inline-block;
     position: relative;
@@ -34,7 +40,7 @@
     margin: 0 16px;
 }
 
-.switch label .lever:after {
+.switch .lever:after {
     content: "";
     position: absolute;
     display: inline-block;
@@ -52,7 +58,7 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   box-shadow: 0 1px 3px 1px rgba(0,0,0,.4), 0 0 0 15px rgba(0, 0, 0, .08);
 }
 
-.switch label input[type=checkbox]:checked + .lever:after {
+.switch input[type=checkbox]:checked + .lever:after {
   left: 24px;
 }
 
@@ -60,7 +66,7 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 .switch input[type=checkbox][disabled] + .lever{
   cursor: default;
 }
-.switch label input[type=checkbox][disabled] + .lever:after,
-.switch label input[type=checkbox][disabled]:checked + .lever:after {
+.switch input[type=checkbox][disabled] + .lever:after,
+.switch input[type=checkbox][disabled]:checked + .lever:after {
   background-color: $input-disabled-solid-color;
 }

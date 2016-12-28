@@ -1,11 +1,51 @@
 @import "settings";
 
+
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include for-tablet-landscape-up {
+    max-width: 1024px;
+  }
+}
+
+.row {
+
+  @include for-tablet-landscape-up {
+    display: flex;
+  }
+}
+
 .main-container {
   overflow: hidden;
   min-height: 100%;
   min-height: calc(100vh - 50px);
   padding-top: 50px;
   padding-bottom: 100px;
+  position: relative;
+  z-index: 0;
+}
+
+.region--main-content {
+  padding-left: 1em;
+  padding-right: 1em;
+
+  @include for-tablet-landscape-up {
+    flex: 1 0 (100%/1.5);
+  }
+}
+
+.region--complementary {
+  padding-left: 1em;
+  padding-right: 1em;
+
+  @include for-tablet-landscape-up {
+    flex: 1 0 (100%/3);
+    order: 2;
+  }
+
 }
 
 @include for-tablet-landscape-up {

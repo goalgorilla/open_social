@@ -2,18 +2,6 @@ p {
   margin: 0 0 0.75rem;
 }
 
-.lead {
-  margin-bottom: $line-height-computed;
-  font-size: floor(($font-size-base * 1.15));
-  font-weight: 300;
-  line-height: 1.4;
-
-  @media (min-width: $screen-sm-min) {
-    font-size: ($font-size-base * 1.5);
-  }
-}
-
-
 .subtitle {
 	font-size: 0.75rem;
 	line-height: 1;
@@ -42,23 +30,6 @@ em.placeholder {
   margin-bottom: 30px;
 }
 
-ol, ul {
-  padding-left: 1.5em;
-
-  .popover &:last-child {
-    margin-bottom: 0;
-  }
-
-}
-
-ol {
-  list-style-position: outside;
-}
-
-// override bootstrap default
-code {
-  border-radius: 2px;
-}
 
 .section-title {
   padding: 1.25rem;
@@ -81,17 +52,6 @@ code {
 		}
   }
 
-}
-
-.complementary-title {
-	font-size: 1.25rem;
-}
-
-
-.text-caption {
-  display: block;
-  margin-bottom: 24px;
-  font-size: 12px;
 }
 
 .text-truncate {
@@ -134,15 +94,6 @@ small,
 .text-justify        { text-align: justify; }
 .text-nowrap         { white-space: nowrap; }
 
-// Transformation
-.text-lowercase      { text-transform: lowercase; }
-.text-uppercase      { text-transform: uppercase; }
-.text-capitalize     { text-transform: capitalize; }
-
-// Contextual colors
-.text-muted {
-  color: $text-muted;
-}
 
 // Sizes
 // -------------------------
@@ -166,10 +117,6 @@ abbr[title],
 abbr[data-original-title] {
   cursor: help;
   border-bottom: 1px dotted $abbr-border-color;
-}
-.initialism {
-  font-size: 90%;
-  @extend .text-uppercase;
 }
 
 // Blockquotes

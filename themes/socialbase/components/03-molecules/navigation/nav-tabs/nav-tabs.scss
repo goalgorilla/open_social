@@ -13,6 +13,23 @@
       margin-right: 2px;
       line-height: $line-height-base;
       border: 1px solid transparent;
+      transition: all 0.3s;
+      font-weight: 500;
+      position: relative;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+      &:hover,
+      &:focus {
+        outline: none;
+      }
+
+      @include for-tablet-portrait-up {
+        border-bottom: 2px solid transparent;
+        margin-right: 5px;
+      }
+
     }
 
     // Active state, and its :hover to override normal :hover
@@ -26,54 +43,9 @@
     }
   }
 
-}
-
-
-.nav-tabs {
-
   @include for-tablet-portrait-up {
     border-bottom-width: 1px;
     border-bottom-style: solid;
-  }
-
-  > li {
-
-    @include for-tablet-portrait-up {
-      float: left;
-      margin-bottom: -1px;
-    }
-
-    > a {
-      border-radius: 0;
-      border: 0;
-      font-weight: 500;
-      position: relative;
-      user-select: none;
-      -webkit-touch-callout: none;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-
-      @include for-tablet-portrait-up {
-        border-bottom: 2px solid transparent;
-        margin-right: 5px;
-      }
-
-      &:hover,
-      &:focus {
-        outline: none;
-      }
-
-    }
-
-    // Active state, and its :hover to override normal :hover
-    &.active > a {
-      &,
-      &:hover,
-      &:focus {
-        border: 0;
-        border-bottom-color: transparent;
-      }
-    }
-
   }
 
   .card-underline .card-head & {
@@ -85,26 +57,6 @@
     overflow: hidden;
   }
 
-
-  &.nav-tabs-right {
-    @include for-tablet-portrait-up {
-      float: right;
-    }
-  }
-
-}
-
-// Tabbable tabs
-// -------------------------
-
-// Hide tabbable panes to start, show them when `.active`
-.tab-content {
-  > .tab-pane {
-    display: none;
-  }
-  > .active {
-    display: block;
-  }
 }
 
 .tabs-center {
@@ -123,10 +75,6 @@
     margin-top: -1px;
   }
 
-}
-
-.card-underline .card-head.nav-tabs-justified a {
-  margin-bottom: -1px;
 }
 
 @include for-tablet-portrait-up {

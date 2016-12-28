@@ -1,6 +1,5 @@
 {%
   set classes = [
-    'switch',
     'form-group',
     title_display not in ['after', 'before'] ? 'form-no-label',
     disabled == 'disabled' ? 'form-disabled',
@@ -19,10 +18,8 @@
     {{ prefix }}
   {% endif %}
 
-  <label class="block">
-    <div class="row">
-      {{ label }}
-    </div>
+  <label class="switch">
+    {{ label }}
   </label>
 
 

@@ -5,7 +5,6 @@
 // --------------------------------------------------
 
 .nav {
-  margin-bottom: 0;
   padding-left: 0; // Override default ul/ol
   list-style: none;
   @include clearfix;
@@ -67,7 +66,6 @@
 // styling of responsive aspects.
 
 .navbar-header {
-  @include clearfix;
 
   @include for-tablet-landscape-up {
     float: left;
@@ -87,10 +85,7 @@
 
 .navbar-collapse {
   overflow-x: visible;
-  padding-right: $navbar-padding-horizontal;
-  padding-left:  $navbar-padding-horizontal;
   border-top: 1px solid transparent;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
   @include clearfix;
   -webkit-overflow-scrolling: touch;
 
@@ -101,7 +96,6 @@
   @include for-tablet-landscape-up {
     width: auto;
     border-top: 0;
-    box-shadow: none;
 
     &.collapse {
       display: block !important;
@@ -136,23 +130,6 @@
 }
 
 
-// Both navbar header and collapse
-//
-// When a container is present, change the behavior of the header and collapse.
-
-.container {
-  > .navbar-header,
-  > .navbar-collapse {
-    margin-right: -$navbar-padding-horizontal;
-    margin-left:  -$navbar-padding-horizontal;
-
-    @include for-tablet-landscape-up {
-      margin-right: 0;
-      margin-left:  0;
-    }
-  }
-}
-
 
 //
 // Navbar alignment options
@@ -169,16 +146,24 @@
   right: 0;
   left: 0;
   z-index: $zindex-navbar-fixed;
+
+  @include for-tablet-landscape-up {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+  }
 }
 
 // Brand/project name
 
 .navbar-brand {
-  float: left;
-  padding: $navbar-padding-vertical $navbar-padding-horizontal;
-  font-size: $font-size-large;
-  line-height: $line-height-computed;
+  display: inline-block;
+  vertical-align: top;
   height: $navbar-height;
+  max-width: 200px;
+  overflow: hidden;
 
   &:hover,
   &:focus {
@@ -187,13 +172,11 @@
 
   > img {
     display: block;
+    pointer-events: none;
+    width: auto;
+    height: 50px;
   }
 
-  @include for-tablet-landscape-up {
-    .navbar > .container & {
-      margin-left: -$navbar-padding-horizontal;
-    }
-  }
 }
 
 
@@ -231,7 +214,6 @@
 // the nav the full height of the horizontal nav (above 768px).
 
 .navbar-nav {
-  margin: 0 (-$navbar-padding-horizontal);
 
   > li > a {
     padding-top:    10px;
@@ -284,11 +266,6 @@
 // Extension of the `.form-inline` with some extra flavor for optimum display in
 // our navbars.
 
-.navbar-search {
-  margin-left: -$navbar-padding-horizontal;
-  margin-right: -$navbar-padding-horizontal;
-}
-
 .navbar-form {
   padding: $nav-link-padding;
   border: 0;
@@ -300,8 +277,7 @@
   // Undo 100% width for pull classes
   @include for-tablet-landscape-up {
     width: auto;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 6px 0;
     padding-top: 0;
     padding-bottom: 0;
   }
@@ -335,11 +311,6 @@
   }
   .navbar-right {
     float: right !important;
-    margin-right: -$navbar-padding-horizontal;
-
-    ~ .navbar-right {
-      margin-right: 0;
-    }
   }
 }
 
@@ -431,24 +402,6 @@
 .profile .dropdown-toggle img {
   border: 2px solid white;
 }
-
-.navbar-default .navbar-brand,
-.navbar-default .navbar-brand:focus,
-.navbar-default .navbar-brand:hover {
-  width: auto;
-  padding: 0;
-  max-width: 200px;
-  height: 50px;
-  overflow: hidden;
-
-  img {
-    pointer-events: none;
-    width: auto;
-    height: 50px;
-  }
-
-}
-
 
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:focus,

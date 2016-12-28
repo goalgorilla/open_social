@@ -59,22 +59,20 @@
   <div class="container">
 
     {% if page.content_top %}
-      <div class="row margin-top-l">
-        <div class="col-xs-12">
-          {{ page.content_top }}
-        </div>
+      <div class="margin-top-l">
+        {{ page.content_top }}
       </div>
     {% endif %}
 
     <div class="row margin-top-l">
 
       {% if page.complementary_top or page.complementary_bottom %}
-        <aside{{ attributes.addClass('col-xs-12 col-md-4 col-md-last complementary-top').setAttribute('role', 'complementary') }}>
+        <aside{{ attributes.addClass('region--complementary complementary-top').setAttribute('role', 'complementary') }}>
           {{ page.complementary_top }}
         </aside>
       {% endif %}
 
-      <div class="col-xs-12 col-md-8">
+      <div class="region--main-content">
         {% if page.title and display_page_title %}
           {{ page.title }}
         {% endif %}
@@ -87,7 +85,7 @@
 
       {% if page.complementary_bottom %}
       {{ attach_library('socialbase/responsive-dom') }}
-        <div role="complementary" class="col-xs-12 hidden-md hidden-lg">
+        <div role="complementary" class="region--complementary">
           <div class="complementary-bottom">
             {{ page.complementary_bottom }}
           </div>
@@ -96,9 +94,7 @@
 
       {% if page.content_bottom %}
         <div class="row margin-top-sm">
-          <div class="col-xs-12">
-            {{ page.content_bottom }}
-          </div>
+          {{ page.content_bottom }}
         </div>
       {% endif %}
 
