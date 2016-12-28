@@ -23,6 +23,13 @@
     {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
   {% endembed %}
 
+  {% if event_type %}
+    {% embed "node--teaser__field.html.twig" %}
+      {%- block field_icon -%} label {%- endblock -%}
+      {%- block field_value -%} {{ event_type }} {%- endblock -%}
+    {% endembed %}
+  {% endif %}
+
   {% if content.group_name %}
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} group {%- endblock -%}

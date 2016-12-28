@@ -156,7 +156,7 @@
   border: 2px solid white;
 }
 
-.navbar-footer {
+.menu-footer {
 
   .navbar-brand {
     color: white;
@@ -171,17 +171,13 @@
 
   }
 
-  .navbar {
+  .navbar-nav {
     text-align: center;
 
     li {
       @include MQ($small) {
         float: left;
       }
-    }
-
-    @include MQ($x-large) {
-      margin-right: 0;
     }
 
     a {
@@ -191,6 +187,7 @@
       &:focus,
       &:hover {
         color: white;
+        text-decoration: underline;
       }
 
     }
