@@ -783,6 +783,17 @@ fieldset[disabled] .btn-accent.focus {
   background-color: #333333;
 }
 
+.btn-iconized {
+  line-height: 12px;
+}
+
+.btn-iconized .icon-inline {
+  fill: inherit;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
 .btn-raised {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   -webkit-transition: box-shadow, .15s ease-out;
@@ -861,6 +872,11 @@ fieldset[disabled] .btn-flat.focus {
   box-shadow: none;
   color: inherit;
   fill: #1a8dbe;
+}
+
+.btn-flat:hover .icon-inline, .btn-flat:focus .icon-inline,
+.open .dropdown-toggle .btn-flat .icon-inline {
+  fill: #4d4d4d;
 }
 
 .btn-flat:active, .btn-flat.active {

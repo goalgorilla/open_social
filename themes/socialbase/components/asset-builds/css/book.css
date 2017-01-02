@@ -1,3 +1,11 @@
+.book-menu .list-item {
+  list-style: none;
+}
+
+.book-menu .list-item--active-trail > a {
+  color: #29abe2;
+}
+
 .navigation-book {
   padding: 0.5em 0;
   font-size: 14px;
@@ -18,25 +26,54 @@
   font-size: 14px;
 }
 
-.navigation-book .pager__item--previous {
-  text-align: left;
-  width: 42%;
+.navigation-book .pager__item {
   display: block;
-  float: left;
 }
 
-.navigation-book .pager__item--up {
-  margin: 0 5%;
-  width: 4%;
-  display: block;
-  float: left;
+.navigation-book .pager__item span {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navigation-book .pager__item .icon-inline {
+  margin-top: 6px;
+  position: absolute;
+  top: 0;
+}
+
+.navigation-book .pager__item .icon-inline + span {
+  line-height: 24px;
+}
+
+.navigation-book .pager__item--previous {
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.navigation-book .pager__item--previous span {
+  padding-left: 24px;
+}
+
+.navigation-book .pager__item--previous .icon-inline {
+  left: 0;
+  margin-left: 12px;
 }
 
 .navigation-book .pager__item--next {
   text-align: right;
-  width: 42%;
-  display: block;
-  float: right;
+  margin-left: 0px;
+}
+
+.navigation-book .pager__item--next span {
+  padding-right: 24px;
+}
+
+.navigation-book .pager__item--next .icon-inline {
+  right: 0;
+  margin-right: 12px;
 }
 
 #book-outline {
@@ -70,6 +107,23 @@ html.js #edit-book-pick-book {
 
 #book-admin-edit .form-item {
   float: left;
+}
+
+@media screen and (min-width: 960px) {
+
+  .navigation-book .pager__item {
+    max-width: 50%;
+    display: inline-block;
+  }
+
+  .navigation-book .pager__item--previous {
+    margin-bottom: 0px;
+    float: left;
+  }
+
+  .navigation-book .pager__item--next {
+    float: right;
+  }
 }
 
 /*# sourceMappingURL=book.css.map */
