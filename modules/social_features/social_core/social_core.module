@@ -74,8 +74,12 @@ function template_preprocess_page_hero_data(&$variables) {
 
     // Add node edit url for management.
     if ($node instanceof Node) {
-      if ($node->access('update', $account)) {
-        $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+      // Get the current route name to check if the user is on the edit or delete page.
+      $route = \Drupal::routeMatch()->getRouteName();
+      if (!in_array($route, array('entity.node.edit_form','entity.node.delete_form'))) {
+        if ($node->access('update',$account)) {
+          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+        }
       }
     }
 
@@ -207,7 +211,7 @@ function social_core_preprocess_block(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_core_menu_local_tasks_alter(&$data, $route_name) {
-  
+
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
     if (isset($data['tabs'][0]['user.register'])) {
@@ -294,4 +298,14 @@ function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $fo
     $fieldname = $formfield[$form_id];
     $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function social_core_preprocess_breadcrumb(&$variables) {
+  // Get the user.
+  $user = \Drupal::currentUser();
+  // Add cache tag for the user.
+  $variables['#cache']['tags'][] = 'user:breadcrumb:' . $user->id();
 }

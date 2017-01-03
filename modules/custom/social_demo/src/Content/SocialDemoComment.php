@@ -22,7 +22,7 @@ use Drupal\node\Entity\Node;
  */
 class SocialDemoComment implements ContainerInjectionInterface {
 
-  private $comments;
+  protected $comments;
 
   /**
    * The user storage.

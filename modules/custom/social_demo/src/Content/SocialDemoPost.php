@@ -18,7 +18,7 @@ use Drupal\social_post\Entity\Post;
  */
 class SocialDemoPost implements ContainerInjectionInterface {
 
-  private $posts;
+  protected $posts;
 
   /**
    * The user storage.

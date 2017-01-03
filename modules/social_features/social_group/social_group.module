@@ -102,8 +102,13 @@ function social_group_preprocess_group(&$variables) {
 
   // Add group edit url for management.
   if ($group instanceof Group) {
-    if ($group->access('update', $account)) {
-      $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+    // Get the current route name to check if the user is on the edit or delete page.
+    $route = \Drupal::routeMatch()->getRouteName();
+    if (!in_array($route, array('entity.group.edit_form', 'entity.group.delete_form'))) {
+      if ($group->access('update', $account)) {
+        $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+        $variables['#cache']['contexts'][] = 'route.name';
+      }
     }
   }
   // Count number of group members.
