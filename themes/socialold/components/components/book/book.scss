@@ -2,6 +2,14 @@
 
 .book-menu {
 
+  .list-item {
+    list-style: none;
+  }
+
+  .list-item--active-trail > a {
+    color: $brand-primary;
+  }
+
 }
 
 .navigation-book {
@@ -24,25 +32,71 @@
   }
 }
 
-.navigation-book .pager__item--previous {
-  text-align: left;
-  width: 42%;
+.navigation-book .pager__item {
   display: block;
-  float: left;
+
+  @include MQ($screen-md) {
+    max-width: 50%;
+    display: inline-block;
+  }
+
+  span {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon-inline {
+    margin-top: 6px;
+    position: absolute;
+    top: 0;
+
+    & + span {
+      line-height: 24px;
+    }
+  }
+
 }
 
-.navigation-book .pager__item--up {
-  margin: 0 5%;
-  width: 4%;
-  display: block;
-  float: left;
+.navigation-book .pager__item--previous {
+  text-align: left;
+  margin-bottom: 5px;
+
+  @include MQ($screen-md) {
+    margin-bottom: 0px;
+    float: left;
+  }
+
+  span {
+    padding-left: 24px;
+  }
+
+  .icon-inline {
+    left: 0;
+    margin-left: 12px;
+  }
+
 }
 
 .navigation-book .pager__item--next {
   text-align: right;
-  width: 42%;
-  display: block;
-  float: right;
+  margin-left: 0px;
+
+  @include MQ($screen-md) {
+    float: right;
+  }
+
+  span {
+    padding-right: 24px;
+  }
+
+  .icon-inline {
+    right: 0;
+    margin-right: 12px;
+  }
+
 }
 
 #book-outline {

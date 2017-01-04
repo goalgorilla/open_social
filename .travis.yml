@@ -34,6 +34,7 @@ before_install:
   # Change this back to composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT} before merge to 8.x-1.x!!!
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
+  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
   # Lets install via docker-compose.

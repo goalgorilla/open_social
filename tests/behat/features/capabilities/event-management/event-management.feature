@@ -78,3 +78,10 @@ Feature: Event Management
     And I click "Edit content"
     Then I should see "Save and keep published"
     And I should not see "Authoring information"
+
+    # Regression test for topic
+    Given "topic" content:
+      | title                   | body          |
+      | Topic regression test   | Description   |
+    And I open the "topic" node with title "Topic regression test"
+    Then I should not see the link "Managers"

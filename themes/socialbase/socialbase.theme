@@ -19,6 +19,13 @@ use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
+ * Implements template_preprocess_book_navigation().
+ */
+function socialbase_preprocess_book_navigation(&$variables) {
+  $variables['tree'] = ''; // Disables the menu tree below the content on a book node in full display mode.
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_social_user_password_form_alter(&$form, FormStateInterface $form_state, $form_id) {
