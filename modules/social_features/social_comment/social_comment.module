@@ -137,6 +137,11 @@ function social_comment_preprocess_comment(&$variables) {
     }
   }
 
+  // Add node ID attribute for comment "new" indicator.
+  if(\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node'){
+    $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
+  }
+
 }
 
 /**
@@ -211,7 +216,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     // Comment.
     $build['comment'] = \Drupal::entityTypeManager()
       ->getViewBuilder($entity->getEntityTypeId())
-      ->view($entity, 'full');
+      ->view($entity, 'activity_comment');
   }
 }
 
