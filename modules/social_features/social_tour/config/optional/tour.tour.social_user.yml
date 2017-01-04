@@ -1,0 +1,31 @@
+uuid: 4241bd57-1d1a-4b12-83a4-38e015ac58e2
+langcode: en
+status: true
+dependencies:
+  - social_user
+id: social-user
+label: 'Add or edit a forum container'
+module: social_tour
+routes:
+  -
+    route_name: user.reset
+  -
+    route_name: user.reset.form
+  -
+    route_name: entity.user.edit_form
+tips:
+  introduction:
+    id: introduction
+    plugin: text
+    label: 'Welcome, we are glad you joined us!'
+    body: 'To help you get started, we’ve put together a short guided tour. Would you like to begin?'
+    weight: 1
+  create_password:
+    id: create_password
+    plugin: text
+    label: Password
+    location: 'right'
+    body: 'First create your password'
+    weight: 2
+    attributes:
+      data-id: bootstrap-panel
