@@ -47,9 +47,9 @@ Feature: Edit my group as a group manager
     And I should see "Group Manager One"
     And I should see "Organisation"
     And I should see "GoalGorilla"
-    # And I click "Next Column"
     And I should see "Role"
     And I should see "Group Manager"
+    And I click "Next Column"
     And I should see "Operations"
     And I should see the button "Edit"
     When I press the "Toggle Dropdown" button
