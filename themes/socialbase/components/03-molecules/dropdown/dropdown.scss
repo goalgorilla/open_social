@@ -224,6 +224,7 @@
   }
 
   .media-left {
+    flex-shrink: 0;
 
     @include for-tablet-portrait-up {
       padding-right: 8px;
@@ -235,8 +236,13 @@
 
   }
 
-  .media-body a {
-    white-space: nowrap; // prevent links from randomly breaking onto new lines
+  .media-body {
+    white-space: normal;
+
+    a {
+      white-space: nowrap; // prevent links from randomly breaking onto new lines
+    }
+
   }
 
   &.dropdown-md {
