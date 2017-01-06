@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.activity_stream_profile
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_views_block__activity_stream_profile_block_1
+theme: socialblue
+region: content
+weight: -9
+provider: null
+plugin: 'views_block:activity_stream_profile-block_1'
+settings:
+  id: 'views_block:activity_stream_profile-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/stream'
+    negate: false
+    context_mapping: {  }

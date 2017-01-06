@@ -3,12 +3,13 @@ status: true
 dependencies:
   module:
     - social_core
+    - system
   theme:
-    - bartik
-id: pagetitleblock
-theme: bartik
-region: content
-weight: -4
+    - socialblue
+id: socialblue_pagetitleblock_content
+theme: socialblue
+region: title
+weight: 0
 provider: null
 plugin: social_page_title_block
 settings:
@@ -16,4 +17,9 @@ settings:
   label: 'Page title block'
   provider: social_core
   label_display: '0'
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '/search/*'
+    negate: true
+    context_mapping: {  }
