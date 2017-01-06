@@ -25,11 +25,33 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
   );
 
   if (in_array($form_id, $mentions_forms)) {
+    // Initialize variables.
+    $prefix = '[~';
+    $suffix = ']';
+
     $config = \Drupal::config('mentions.settings');
+
+    if ($config->get('suggestions_format') === 'username') {
+      if ($usermention = \Drupal\mentions\Entity\MentionsType::load('UserMention')) {
+        $usermention = $usermention->getInputSettings();
+        $prefix = $usermention['prefix'];
+        $suffix = $usermention['suffix'];
+      }
+    }
+    else {
+      if ($profilemention = \Drupal\mentions\Entity\MentionsType::load('ProfileMention')) {
+        $profilemention = $profilemention->getInputSettings();
+        $prefix = $profilemention['prefix'];
+        $suffix = $profilemention['suffix'];
+      }
+    }
+
     $form['#attached']['library'][] = 'social_mentions/social_mentions';
     $form['#attached']['library'][] = 'socialbase/mention';
     $form['#attached']['drupalSettings']['socialMentions'] = [
       'suggestionsFormat' => $config->get('suggestions_format'),
+      'prefix' => $prefix,
+      'suffix' => $suffix,
     ];
   }
 }

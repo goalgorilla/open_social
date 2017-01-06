@@ -39,10 +39,10 @@
               var type = settings.socialMentions.suggestionsFormat;
 
               if (type == 'full_name' || (type == 'all' && mention.profile_id)) {
-                return '@' + mention.profile_id;
+                return settings.socialMentions.prefix + mention.profile_id + settings.socialMentions.suffix;
               }
 
-              return '@' + mention.username;
+              return settings.socialMentions.prefix + mention.username + settings.socialMentions.suffix;
             }
           });
       });
