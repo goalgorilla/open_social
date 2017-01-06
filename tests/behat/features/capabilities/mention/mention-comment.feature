@@ -13,7 +13,7 @@ Feature: Create Mention in a Comment
     And I am logged in as "user_1"
     And I am viewing a "topic" with the title "Mention in a comment test topic 2"
     When I fill in the following:
-      | Add a comment | @user_2, @user_3, see my comment. |
+      | Add a comment | [~user_2], [~user_3], see my comment. |
     And I press "Comment"
     And I should see "user_2, user_3, see my comment." in the "Main content"
     And I should see the link "user_2"
