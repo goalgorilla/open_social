@@ -1,14 +1,18 @@
 uuid: 4241bd57-1d1a-4b12-83a4-38e015ac58e2
 langcode: en
 status: true
+translatable: true
 dependencies:
-  - social_user
+  module:
+    - social_user
 id: social-user
 label: 'Add or edit a forum container'
 module: social_tour
 routes:
   -
     route_name: user.reset
+  -
+    route_name: user.pass
   -
     route_name: user.reset.form
   -
@@ -20,12 +24,14 @@ tips:
     label: 'Welcome, we are glad you joined us!'
     body: 'To help you get started, we’ve put together a short guided tour. Would you like to begin?'
     weight: 1
-  create_password:
-    id: create_password
-    plugin: text
-    label: Password
-    location: 'right'
-    body: 'First create your password'
-    weight: 2
     attributes:
-      data-id: bootstrap-panel
+      backdrop: 1
+  backdrop:
+    id: backdrop
+    plugin: text
+    label: 'we backdrop this shit'
+    body: 'To help you get started, we’ve put together a short guided tour. Would you like to begin?'
+    weight: 1
+    attributes:
+      backdrop: 1
+      data-id: 'social-user-password-form'

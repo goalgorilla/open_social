@@ -4,3 +4,36 @@
  * @file
  * The Social Tour module.
  */
+
+use Drupal\tour\Entity\Tour;
+
+/**
+ * Implements hook_page_attachments().
+ *
+ * This will add the social_tour library to all pages that have a tour
+ * enabled so we can start it automatically.
+ *
+ * Only for users with access though.
+ */
+function social_tour_page_attachments(array &$page) {
+  if (!\Drupal::currentUser()->hasPermission('access tour')) {
+    return;
+  }
+
+  // Load all of the items and match on route name.
+  $route_match = \Drupal::routeMatch();
+  $route_name = $route_match->getRouteName();
+
+  // Check if we have a tour at the current route for the current user.
+  $results = \Drupal::entityQuery('tour')
+    ->condition('routes.*.route_name', $route_name)
+    ->execute();
+
+  // If we have a tour available, and there is at least one tour tip we attach
+  // our JS library that makes sure the tour pops up immediately.
+  if (!empty($results) && $tours = Tour::loadMultiple(array_keys($results))) {
+    if (!empty($tours)) {
+      $page['#attached']['library'][] = 'social_tour/social_tour';
+    }
+  }
+}
