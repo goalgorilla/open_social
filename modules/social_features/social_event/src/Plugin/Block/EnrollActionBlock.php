@@ -25,7 +25,12 @@ class EnrollActionBlock extends BlockBase {
    */
   protected function blockAccess(AccountInterface $account) {
     $route_name = \Drupal::request()->get(RouteObjectInterface::ROUTE_NAME);
-    if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
+    $routes_to_check = [
+      'view.event_enrollments.view_enrollments',
+      'entity.node.canonical',
+      'view.managers.view_managers',
+    ];
+    if (in_array($route_name, $routes_to_check)) {
       $node = \Drupal::service('current_route_match')->getParameter('node');
       if (!is_null($node) && !is_object($node)) {
         $node = node_load($node);

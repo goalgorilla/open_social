@@ -87,7 +87,12 @@ function social_event_block_view_alter(array &$build, BlockPluginInterface $bloc
  */
 function social_event_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_enrollments_link = FALSE;
-  if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
+  $routes_to_check = [
+    'view.event_enrollments.view_enrollments',
+    'entity.node.canonical',
+    'view.managers.view_managers',
+  ];
+  if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);

@@ -19,6 +19,13 @@ use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 
 /**
+ * Implements template_preprocess_book_navigation().
+ */
+function socialbase_preprocess_book_navigation(&$variables) {
+  $variables['tree'] = ''; // Disables the menu tree below the content on a book node in full display mode.
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_social_user_password_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -1328,6 +1335,11 @@ function socialbase_preprocess_file_widget_multiple(&$variables) {
 function socialbase_preprocess_table(&$variables) {
   $variables['card'] = TRUE;
   $files_field = 'edit-field-files';
+
+  if ($variables['attributes']['id'] === 'field-event-managers-values') {
+    $variables['card'] = FALSE;
+  }
+
   if (!empty($variables['attributes']['id']) && (strpos($variables['attributes']['id'], $files_field) !== FALSE)) {
     $variables['attributes']['class'][] = 'tablesaw';
     $variables['attributes']['data-tablesaw-mode'] = 'stack';

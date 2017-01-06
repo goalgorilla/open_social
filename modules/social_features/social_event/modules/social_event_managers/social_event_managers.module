@@ -1,0 +1,182 @@
+<?php
+
+/**
+ * @file
+ * Contains social_event_managers.module.
+ */
+
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\social_event_managers\SocialEventManagersAccessHelper;
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function social_event_managers_preprocess_block(&$variables) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Add variables to sidebar blocks
+  switch ($variables['elements']['#derivative_plugin_id']) {
+    case 'managers-event_managers':
+      $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/managers');
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_managers_form_node_event_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // On event event edit node form we check if users can alter author.
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Not on newly created nodes so we check if there is a route match for a node
+  // object.
+  if ($node) {
+    // Get the current user
+    $user = \Drupal::currentUser();
+
+    // Remove authoring information for everybody on node event edit form.
+    $form['author']['#access'] = FALSE;
+
+    // Check for permission. Otherwise you can't change the author.
+    // Unless you are the author / have the right permissions.
+    if ($user->hasPermission('administer nodes') || $user->id() == $node->getOwnerId()) {
+      $form['author']['#access'] = TRUE;
+    }
+  }
+}
+
+/**
+ * Implements hook_node_access_records().
+ * @param \Drupal\node\NodeInterface $node
+ * @return array
+ */
+function social_event_managers_node_access_records(\Drupal\node\NodeInterface $node) {
+
+  $grants = [];
+
+  // Only for events.
+  if ($node->getType() === 'event') {
+
+    // Event organizers should be granted access.
+    foreach($node->get('field_event_managers')->getValue() as $eventmanager) {
+      // Load the event managers account.
+      if ($account = \Drupal\user\Entity\User::load($eventmanager['target_id'])) {
+        // Event organizers must have access to view the record in the first place.
+        if ($node->access('view',$account)) {
+          // Add grant.
+          $grants[] = array(
+            'realm' => 'social_event_managers:'.$node->id(),
+            'gid' => $eventmanager['target_id'],
+            'grant_view' => 1,
+            'grant_update' => 1,
+            'grant_delete' => 0,
+          );
+        }
+      }
+    }
+  }
+
+  return $grants;
+}
+
+/**
+ * Implements hook_node_grants().
+ */
+function social_event_managers_node_grants(\Drupal\Core\Session\AccountInterface $account, $op) {
+
+  $grants = [];
+
+  // TODO: Fetch all nodes this user has access to and add a grant for each of those!
+  $query = \Drupal::database()->select('node__field_event_managers', 'em');
+  $query->fields('em', ['entity_id']);
+  $query->condition('em.field_event_managers_target_id', $account->id());
+  // Add grants.
+  foreach($query->execute()->fetchAllAssoc('entity_id') as $nid) {
+    $grants['social_event_managers:' . $nid->entity_id][] = $account->id();
+  }
+
+  // Tell Drupal about users grants.
+  return $grants;
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function social_event_managers_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'node_access') {
+    // Remove the gnode implementation, we have a fallback in our hook.
+    if (isset($implementations['gnode']) && function_exists('gnode_node_access')) {
+      unset($implementations['gnode']);
+    }
+  }
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * Remember: if any module returns forbidden and denies access to certain node
+ * and operation it will not allow the user to do the operation on the node.
+ *
+ * We need this implementation because we also want to give edit access to event
+ * manager regardless these scenarios thought of in gnode_node_access:
+ * - is a member in the group and:
+ * - has edit own or edit any permission in the group
+ *
+ * The gnode module specifically returns allowed if any of the above scenarios
+ * are met, but forbidden in all the other scenarios. Our code ensures that if
+ * we are in operation update and if gnode already returns forbidden we are able
+ * to return an allowed if user is an event manager.
+ */
+function social_event_managers_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  // Only continue if the gnode module is enabled.
+  if (function_exists('gnode_node_access')) {
+    $gnode_access = gnode_node_access($node, $op, $account);
+
+    if ($op === 'update') {
+      if ($gnode_access instanceof \Drupal\Core\Access\AccessResultForbidden) {
+        $social_event_managers_access = SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
+
+        // Only return the result of SocialEventManagersAccessHelper
+        // if it is allowed.
+        if ($social_event_managers_access instanceof \Drupal\Core\Access\AccessResultAllowed) {
+          return $social_event_managers_access;
+        }
+      }
+      return $gnode_access;
+    }
+    return $gnode_access;
+  }
+
+  return SocialEventManagersAccessHelper::getEntityAccessResult($node, $op, $account);
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
+  $can_show_managers_link = FALSE;
+  $routes_to_check = [
+    'view.event_enrollments.view_enrollments',
+    'entity.node.canonical',
+    'view.managers.view_managers',
+  ];
+  if (in_array($route_name, $routes_to_check)) {
+    $node = \Drupal::service('current_route_match')->getParameter('node');
+    if (!is_null($node) && (!$node instanceof Node)) {
+      $node = Node::load($node);
+    }
+    if (($node instanceof Node) && $node->getType() === 'event') {
+      $can_show_managers_link = TRUE;
+    }
+
+  }
+  // PLace this here, since hiding it should happen always and not only on the mentioned routes.
+  if (!$can_show_managers_link) {
+    unset($data['tabs'][0]['views_view:view.managers.view_managers']);
+  }
+}

@@ -73,6 +73,17 @@
   fill: $btn-accent-color;
 }
 
+.btn-iconized {
+  line-height: 12px;
+
+  .icon-inline {
+    fill: inherit;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+
+}
 
 // Button raised
 // --------------------------------------------------
@@ -113,6 +124,10 @@
 		@include z-depth-0;
 		color: inherit;
     fill: darken($brand-primary, 10%);
+
+    .icon-inline {
+      fill: $default-color;
+    }
 	}
 
 	&:active,

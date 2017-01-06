@@ -13,7 +13,10 @@ php:
 
 env:
   global:
+    # Travis Token.
     secure: "u6jLZiftQdb8Ozxngu5sgwmnXeUyvNF3/Y+5eX3+Xyb7Sm6K++cBLbYl/zNbuzp1rZE5dn3pVTQc4tstVXZw2B5KjCd64r9HE9gdwCEnS/AA/w3wGlaEBinTzKOrrN1EvqNNhnJUY2JmqEYVom+UYwLZWIIKM/5OoaeidNqHDvImZZLAeYfPMGnySsFC01yCzrOn6jv8Bwu00dQPVEOQylVEV5qgdGYz6CvGGslcvGxhvR0qdY/IXhrA0yxIk1yA6vu1mQpCSjGpPLy024JhcqRr3AzjH2N0QRKlL7vcNFxl/OC0qcK2bOl8lcQydeC5LRp92eeCLfMfvqHDqLJKvebCsvaZSmqlzCURlcHaJOM5bce7XPVyNLdwnfppgSacocGol38qxfEc09qV4AZnklwigYCfnk346oSaocKApy48KRW4cNXL45U7+z10IzVAENGwbyyuwdvKHhDtMCgMd8eeYfRF5EvENOKVSG02Kca8X2fLBhmJsXkFcBEW7pSRZKxixkIkuAwEYSQW/lvvM4LJmd2np7vZDEMh1dmf7TBRBygDVmM7vtdYRSzivR/T9nH+mXPP9FcjVvlPPeWAEaqtLPmmONmYRjDRcoHjJh3YnSMpvVs8wejDf7iS6A44cI6xZQRoEoCFA/WUu5EnzmoOCY7HvZ62xnZ0I9nNyL4="
+    # Docker Hub token.
+    secure: "YUkomj6ieyi6AqrMnFyhPTORMvBhvMtZolvMZmckiAUaEV+Kiwb6TU6BsxARU1LeAfeSDuu5Ay69yib20AHe/OI8m7DmzZhhmnfRcV5aE09/xIdS7DN55g0a+9rWMHuYreeX7Xc8KX6DAEEcmW7EotyCO1pf8ljMD7wHuO+HpeydCLEGM200r1pSLCZpPCCTnHQXJBQ8MwSZu6tcPiVNnrmYs/fbbWOxB8QIv330SaF/i8trFDGJBUFLRw/7cIStA5Ye9EJp7AS7e+nR+kuCs/GPsRxSNH8BNtbk78iPwFILCH+xPhjRQ/hVL4St7DeN/F0PXn13GPAXkfrUXqrOgpDcpqPgtucEJekyDW9+YBuz2AJDynaIuWqjIWW1gheCVPSrsF7a9l7u/RVoQbeuSmGkbQXWzQuUaOkhVM6bq28qzRraeq/gNidV1ZikwoV7oi57HBxBQPZpVlKrLmNJ4Tsa9FkFwzjt55NV8VtxV8rav3r4zeQ3C/6yLAXr0Z3hX8bJdPCTgE4k+4dbA9nLjgZh6YV5yXwoIXNq8tF/A/rctpAA491AOk57qfLOH8Xi+y9kOPjshG5dNSprfIL/yZxz5CgED5OPNhh2veH9GrXlUcNzyO2+BI7kMQ8ipc+wy39Hw0xOu2JF40x4TVQuphc9flh/OQLDRludDY3aJd4="
 
 services:
   - docker
@@ -31,6 +34,7 @@ before_install:
   # Change this back to composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT} before merge to 8.x-1.x!!!
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
+  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
   # Lets install via docker-compose.
@@ -43,10 +47,10 @@ before_install:
   - docker ps -a
 
 script:
-  - docker exec -i social_ci_web bash /var/www/dev-scripts/install/install_script.sh
-  - docker exec -i social_ci_web_scripts sh /var/www/dev-scripts/unit-tests.sh
-  - docker exec -it social_ci_behat sh /var/www/dev-scripts/behatstability.sh
+  - docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh
+  - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
+  - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
 
 after_success:
-  - bash dev-scripts/trigger_dockerhub.sh
-  - bash dev-scripts/trigger_travis.sh
+  - bash scripts/social/trigger_dockerhub.sh
+  - bash scripts/social/trigger_travis.sh
