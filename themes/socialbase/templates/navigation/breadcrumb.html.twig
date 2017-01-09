@@ -12,7 +12,8 @@
 {% if breadcrumb %}
   {{ attach_library('socialbase/breadcrumb') }}
 
-  <nav class="breadcrumbs">
+  <nav role="navigation" class="breadcrumbs">
+    <h2 id="system-breadcrumb" class="visually-hidden">{{ 'Breadcrumb'|t }}</h2>
     <ol class="breadcrumb container">
       {% for item in breadcrumb %}
         <li {{ item.attributes }}>

@@ -1,5 +1,5 @@
-.toolbar-tray-open.toolbar-vertical #header,
-.toolbar-tray-open.toolbar-vertical #content {
+.toolbar-tray-open.toolbar-vertical .navbar-default,
+.toolbar-tray-open.toolbar-vertical .main-container {
   margin-left: -15rem;
 }
 
@@ -13,17 +13,13 @@
           transform: translateY(39px) translateX(0);
 }
 
-.toolbar-fixed .navbar-fixed-top {
+.toolbar-fixed .navbar-default {
   position: relative;
   z-index: 10;
 }
 
-.toolbar-vertical .main-container {
+.toolbar-fixed .main-container {
   padding-top: 0;
-}
-
-.hero-container > .contextual {
-  margin: 0;
 }
 
 @media (min-width: 600px) {
@@ -39,9 +35,9 @@
   }
 }
 
-@media screen and (max-width: 767px) {
+@media (max-width: 599px) {
 
-  .toolbar-vertical .navbar-fixed-top {
+  .toolbar-vertical .navbar-default {
     position: relative;
     z-index: 1;
   }
