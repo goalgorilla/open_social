@@ -1,5 +1,13 @@
 @import 'settings';
 
+.book-menu {
+
+  .list-item {
+    list-style: none;
+  }
+
+}
+
 .navigation-book {
   padding: 0.5em 0;
   font-size: $font-size-small;
@@ -13,34 +21,77 @@
   }
 
   .page-links {
-    border-top: 1px solid $gray-light-1;
     text-align: center;
-    padding: 1em 0;
     font-size: $font-size-small;
   }
-
-  .list-item--active-trail > a {
-    text-decoration: underline;
-  }
-
 }
 
 .navigation-book .pager__item {
+  display: block;
   position: relative;
+
+  @include for-tablet-portrait-up {
+    max-width: 50%;
+    display: inline-block;
+  }
+
+  span {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .icon-inline {
+    margin-top: 6px;
+    position: absolute;
+    top: 0;
+
+    & + span {
+      line-height: 24px;
+    }
+  }
+
 }
 
 .navigation-book .pager__item--previous {
   text-align: left;
-  width: 42%;
-  display: block;
-  float: left;
+  margin-bottom: 5px;
+
+  @include for-tablet-portrait-up {
+    margin-bottom: 0px;
+    float: left;
+  }
+
+  span {
+    padding-left: 24px;
+  }
+
+  .icon-inline {
+    left: 0;
+    margin-left: 12px;
+  }
+
 }
 
 .navigation-book .pager__item--next {
   text-align: right;
-  width: 42%;
-  display: block;
-  float: right;
+  margin-left: 0px;
+
+  @include for-tablet-portrait-up {
+    float: right;
+  }
+
+  span {
+    padding-right: 24px;
+  }
+
+  .icon-inline {
+    right: 0;
+    margin-right: 12px;
+  }
+
 }
 
 #book-outline {
