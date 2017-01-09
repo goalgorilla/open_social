@@ -29,7 +29,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   $form['actions']['submit']['#value'] = t('Comment');
   // Hide title of 'Comment' field.
   if (!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])) {
-    $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'none';
+    $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'invisible';
   }
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
@@ -228,7 +228,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     // Comment.
     $build['comment'] = \Drupal::entityTypeManager()
       ->getViewBuilder($entity->getEntityTypeId())
-      ->view($entity, 'full');
+      ->view($entity, 'activity_comment');
   }
 }
 

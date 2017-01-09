@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      mentions-mentions: mentions-mentions
+    activity_action: create_entitiy_action
+    activity_context: mention_activity_context
+    activity_destinations:
+      notifications: notifications
+      stream_profile: stream_profile
+      email: email
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: mention_comment
+template: create_mention_comment
+label: 'Create mention in a comment'
+description: 'A person mentioned me in a comment'
+text:
+  -
+    value: '<p><a href="[message:author:url:relative]">[message:author:display-name]</a> mentioned you in a comment</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:relative]">[message:author:display-name]</a> mentioned you in a comment</p>'
+    format: full_html
+  -
+    value: '<p><a href="[message:author:url:relative]">[message:author:display-name]</a> mentioned you in a <a href="[message:field_message_related_object:entity:url:absolute]">comment</a></p>'
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

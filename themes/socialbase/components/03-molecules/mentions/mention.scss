@@ -1,0 +1,47 @@
+@import "settings";
+
+.mentions-input {
+  .ui-autocomplete {
+    @include z-depth-3;
+    border-radius: 10px;
+    padding: 10px 0;
+
+    .ui-menu-item {
+      list-style: none;
+    }
+  }
+}
+
+.mention__item {
+  @include clearfix;
+  font-size: 0.875rem;
+  height: 38px;
+  overflow: hidden;
+  display: flex;
+  padding: 7px 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: $gray;
+
+  &:hover {
+    background: $gray-lighter;
+  }
+
+}
+
+.mention__avatar {
+  width: 24px;
+  height: auto;
+  margin-right: 10px;
+
+  img {
+    width: 24px;
+    height: auto;
+  }
+}
+
+.mention__name {
+  font-size: 0.875rem;
+  align-self: center;
+  flex: 1;
+}

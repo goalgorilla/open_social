@@ -64,7 +64,7 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['field_comment_body']['widget'][0]['#title'] = '';
+  $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'primary';
   }
@@ -1300,8 +1300,10 @@ function socialbase_preprocess_activity(&$variables) {
     // Remove href from output text.
     $variables['content']['field_activity_output_text'][0]['#text'] = strip_tags($variables['content']['field_activity_output_text'][0]['#text']);
     // Remove href from profile image.
-    if (is_object($variables['actor'])) {
-      $variables['actor'] = $variables['actor']->getText();
+    if (!empty($variables['actor'])) {
+      if (is_object($variables['actor'])) {
+        $variables['actor'] = $variables['actor']->getText();
+      }
     }
   }
 }
