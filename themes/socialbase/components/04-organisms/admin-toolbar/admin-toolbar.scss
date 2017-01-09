@@ -2,8 +2,8 @@
 
 // make sure the site doesn't get pushed by the admin toolbar
 .toolbar-tray-open.toolbar-vertical {
-  #header,
-  #content {
+  .navbar-default,
+  .main-container {
     margin-left: -15rem;
   }
 
@@ -28,26 +28,19 @@
 }
 
 // make sure we can see both menu's
-.toolbar-fixed .navbar-fixed-top {
+.toolbar-fixed .navbar-default {
   position: relative;
   z-index: 10;
 }
 
-.toolbar-vertical .main-container {
+.toolbar-fixed .main-container {
   padding-top: 0;
 }
 
-.hero-container > .contextual {
-  margin: 0;
-}
 
-@media screen and (max-width:767px) {
-	.toolbar-vertical {
-
-		.navbar-fixed-top {
-			position: relative;
-			z-index: 1;
-		}
-
+@include for-phone-only {
+	.toolbar-vertical .navbar-default {
+    position: relative;
+		z-index: 1;
 	}
 }
