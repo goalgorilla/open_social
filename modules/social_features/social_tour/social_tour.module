@@ -37,3 +37,71 @@ function social_tour_page_attachments(array &$page) {
     }
   }
 }
+
+/**
+ * Implements hook_page_bottom().
+ *
+ * Because the social_tour weight is higher than the core tour.module weight
+ * we make sure this code runs after tour_page_bottom(). Thus we can remove
+ * any tours a user has already seen.
+ */
+function social_tour_page_bottom(array &$page_bottom) {
+  if (!\Drupal::currentUser()->hasPermission('access tour')) {
+    return;
+  }
+
+  // Load all of the items and match on route name.
+  $route_match = \Drupal::routeMatch();
+  $route_name = $route_match->getRouteName();
+  $seen_before = FALSE;
+
+  // Get all the tours available for the current route name.
+  $results = \Drupal::entityQuery('tour')
+    ->condition('routes.*.route_name', $route_name)
+    ->execute();
+
+  if (!empty($results) && $tours = Tour::loadMultiple(array_keys($results))) {
+    foreach ($tours as $id => $tour) {
+      // Now we check the user data, if it's set for the current tour we don't have to render it anymore.
+      // because that means the user has already seen it, either they finished the tour
+      // or they skipped the tour. But in any way we don't want the user to see the tour twice.
+      if (\Drupal::currentUser()->id() !== 0) {
+        // For logged in users of any role we add it to the user data.
+        // For each tour that is rendered we set the tour id to TRUE.
+        $seen_before = \Drupal::service('user.data')
+          ->get('social_tour', \Drupal::currentUser()
+            ->id(), $id);
+      }
+      else {
+        // for Anonymous we put it in a session. Probably they won't even see
+        // a tour.
+        $seen_before = $_SESSION['social_tour'][$id];
+      }
+      if ($seen_before) {
+        // Remove the tour from the render array.
+        unset($tours[$id]);
+        // Remove the tour from the page bottom array if the tour module already
+        // added it. See tour_page_bottom() in tour.module.
+        unset($page_bottom['tour'][$id]);
+      }
+    }
+    if (!empty($tours)) {
+      // Ah so we rendered the tour in the bottom of the page, we can also set it to the user data
+      // so the user doesn't see it anymore.
+      foreach ($tours as $id => $tour) {
+        if (\Drupal::currentUser()->id() !== 0) {
+          // For logged in users of any role we add it to the user data.
+          // For each tour that is rendered we set the tour id to TRUE.
+          \Drupal::service('user.data')
+            ->set('social_tour', \Drupal::currentUser()
+              ->id(), $id, TRUE);
+        }
+        else {
+          // for Anonymous we put it in a session. Probably they won't even see
+          // a tour.
+          $_SESSION['social_tour'][$id] = TRUE;
+        }
+      }
+    }
+  }
+}

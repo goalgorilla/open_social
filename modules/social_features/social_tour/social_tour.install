@@ -12,6 +12,8 @@
 function social_tour_install() {
   // Set some default permissions.
   _social_tour_set_permissions();
+  // Set weight so it's executed after the core tour module.
+  module_set_weight('social_tour', 50);
 }
 
 /**
