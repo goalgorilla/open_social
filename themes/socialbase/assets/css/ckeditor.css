@@ -47,6 +47,24 @@ pre code {
   overflow-y: scroll;
 }
 
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: inherit;
@@ -802,6 +820,10 @@ address {
 }
 
 @media (min-width: 600px) {
+
+  body {
+    font-size: 16px;
+  }
 
   .dl-horizontal dt {
     float: left;

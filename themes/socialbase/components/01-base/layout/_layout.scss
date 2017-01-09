@@ -51,6 +51,11 @@
 }
 
 @include for-tablet-landscape-up {
+  .path-frontpage .complementary-top,
+  .path-node:not(.page-node-edit) .complementary-top {
+    margin-top: 0;
+  }
+
   .complementary-top {
     // line-height * section-title font size + padding top + padding bottom
     margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
