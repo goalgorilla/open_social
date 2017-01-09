@@ -506,17 +506,11 @@ function social_features_import($args) {
       return;
     }
 
-    // Forcefully revert all components of a feature.
-    if ($force) {
-      $components = $feature->getConfigOrig();
-    }
     // Only revert components that are detected to be Overridden.
-    else {
-      $components = $manager->detectOverrides($feature);
-      $missing = $manager->reorderMissing($manager->detectMissing($feature));
-      // Be sure to import missing components first.
-      $components = array_merge($missing, $components);
-    }
+    $components = $manager->detectOverrides($feature);
+    $missing = $manager->reorderMissing($manager->detectMissing($feature));
+    // Be sure to import missing components first.
+    $components = array_merge($missing, $components);
 
     if (!empty($components_needed) && is_array($components_needed)) {
       $components = array_intersect($components, $components_needed);
