@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Entity Access By Field module install file.
+ */
+
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of entity_access_by_field.
+ */
+function entity_access_by_field_install() {
+
+  // Set some default permissions.
+  _entity_access_by_field_set_permissions();
+
+}
+
+/**
+ * Set permissions.
+ */
+function entity_access_by_field_update_8001(&$sandbox) {
+  // Set some default permissions.
+  _entity_access_by_field_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _entity_access_by_field_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _entity_access_by_field_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _entity_access_by_field_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+
+  ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+    'override disabled public visibility',
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
+
+  return $permissions[$role];
+}
