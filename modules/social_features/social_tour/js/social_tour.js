@@ -36,6 +36,12 @@
                 // Start the tour immediately if it's available.
                 if ($(context).find('ol#tour').length > 0 && model.isActive !== true) {
                     model.set('isActive', true);
+
+										// Alter the tour button templates.
+										$('.button.button--primary', '.tip-module-social-tour').each(function(){
+											$(this).removeClass('button').addClass('btn');
+											$(this).removeClass('button--primary').addClass('btn-primary');
+										})
                 }
             });
         }

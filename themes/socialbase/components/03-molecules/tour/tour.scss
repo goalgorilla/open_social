@@ -1,0 +1,86 @@
+@import 'settings';
+
+.joyride-close-tip {
+  color: $tour-text-color;
+  font-weight: bold;
+  font-size: 2em;
+  line-height: 1;
+  right: 0px;
+  top: 0px;
+  padding: 7px 13px;
+  height: 45px;
+  width: 45px;
+  transition: .3s background-color ease;
+
+  &:focus,
+  &:hover {
+    background-color: black;
+  }
+}
+
+.joyride-modal-bg {
+  display: block !important; // We force the display of the backdrop until it is removed from the DOM.
+  pointer-events: none; // We disable clicking on the backdrop.
+  z-index: $zindex-tour-backdrop;
+  background: $tour-backdrop-color;
+}
+
+.joyride-nub.top {
+  border-bottom: 28px solid $tour-background-color;
+  border-top: none;
+}
+
+.joyride-nub.bottom {
+  border-top: 28px solid $tour-background-color;
+  border-bottom: none;
+}
+
+.joyride-nub.left {
+  border-right: 28px solid $tour-background-color;
+  border-left: none;
+}
+
+.joyride-nub.right {
+  border-left: 28px solid $tour-background-color;
+  border-right: none;
+}
+
+.joyride-tip-guide {
+  background: $tour-background-color;
+  color: $tour-text-color;
+  z-index: $zindex-tour;
+
+  @include for-tablet-portrait-up {
+    width: 450px;
+  }
+
+}
+
+.joyride-next-tip {
+  margin-left: 10px;
+}
+
+.joyride-content-wrapper {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+
+  @include for-tablet-portrait-up {
+    padding: 35px 65px 35px 35px;
+  }
+}
+
+.tour-tip-body,
+.tour-tip-label {
+  text-align: left;
+}
+
+.tour-tip-label {
+  font-size: 1.5rem;
+}
+
+.joyride-nub {
+  z-index: 1;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-top: 28px solid transparent;
+  border-bottom: 28px solid transparent;
+}

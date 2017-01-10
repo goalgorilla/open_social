@@ -79,10 +79,10 @@ function social_tour_page_bottom(array &$page_bottom) {
       }
       if ($seen_before) {
         // Remove the tour from the render array.
-        unset($tours[$id]);
+        // unset($tours[$id]);
         // Remove the tour from the page bottom array if the tour module already
         // added it. See tour_page_bottom() in tour.module.
-        unset($page_bottom['tour'][$id]);
+        // unset($page_bottom['tour'][$id]);
       }
     }
     if (!empty($tours)) {
