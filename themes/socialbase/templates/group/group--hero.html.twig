@@ -19,11 +19,16 @@
  * @ingroup themeable
  */
 #}
-{% if group_hero_styled_image_url %}
-  <div style="background-image: url('{{ group_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
-{% else %}
-  <div class="cover">
-{% endif %}
+{{ attach_library('socialbase/hero')}}
+
+{%
+  set cover_classes = [
+    'cover',
+    group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+  ]
+%}
+
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}" {% endif %}>
   {% if group_edit_url %}
     <div class="hero-action-button">
       <a href="{{ group_edit_url }}"  title="Edit group" class="btn btn-default btn-floating waves-effect waves-circle">
@@ -43,35 +48,33 @@
       {% endtrans %}
     </p>
     <div class="hero-footer">
-      <div class="row row-md-center">
-        <div class="col-xs-12 col-md-6 col-md-offset-3">
-          {% if content.field_group_location|render or content.field_group_address|render  %}
-            <br />
-            <svg class="hero-footer-icon">
-              <use xlink:href="#icon-location"></use>
-            </svg>
-          {% endif %}
-          <span class="inline-center">
-            {% if content.field_group_location|render %}
-              {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
-            {{ content.field_group_address }} </span>
-        </div>
-
-        {% if group_operations_url %}
-          <div class="col-xs-12 col-md-3">
-            <div class="btn-group">
-              {% if joined %}
-                <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">{% trans %}Joined{% endtrans %}<span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
-                </ul>
-              {% else %}
-                <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
-              {% endif %}
-            </div>
-          </div>
+      <div class="hero-footer__text">
+        {% if content.field_group_location|render or content.field_group_address|render  %}
+          <br />
+          <svg class="hero-footer-icon">
+            <use xlink:href="#icon-location"></use>
+          </svg>
         {% endif %}
+        <span class="inline-center">
+          {% if content.field_group_location|render %}
+            {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
+          {{ content.field_group_address }} </span>
       </div>
+
+      {% if group_operations_url %}
+        <div class="hero-footer__cta">
+          <div class="btn-group">
+            {% if joined %}
+              <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">{% trans %}Joined{% endtrans %}<span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
+              </ul>
+            {% else %}
+              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
     </div>
-  </div>
-</div>
+  </div> {# cover-wrap #}
+</div> {# cover #}

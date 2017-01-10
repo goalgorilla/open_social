@@ -1,33 +1,25 @@
 script(src='js/drupal-core.js')
 script(src='js/contrib/bootstrap.min.js')
-script(src='js/contrib/waves/waves.js')
-script(src='js/custom/offcanvas.js')
-script(src='js/custom/textarea-autogrow.js')
-script(src='js/custom/navbar-search.js')
+script(src='assets/js/blue/waves.min.js')
+script(src='assets/js/offcanvas.min.js')
+script(src='assets/js/textarea-autogrow.min.js')
+script(src='assets/js/navbar-search.min.js')
 script(src='js/init.js')
-script(src='js/contrib/responsive-dom/jquery.responsive-dom.js')
-script(src='js/custom/responsive-dom/responsive-dom-init.js')
+script(src='assets/js/jquery.responsive-dom.min.js')
+script(src='assets/js/responsive-dom-init.min.js')
 
 if tablesaw
-  script(src='js/contrib/tablesaw/tablesaw.js')
-  script(src='js/contrib/tablesaw/tablesaw-init.js')
+  script(src='assets/js/tablesaw.min.js')
+  script(src='assets/js/tablesaw-init.min.js')
 
-if datepicker
-  script(src="js/contrib/date_picker/picker.js")
-  script(src="js/contrib/date_picker/picker.date.js")
-  script(src="js/contrib/date_picker/picker.time.js")
-  script(src="js/contrib/date_picker/picker.init.js")
-  link(href='css/components/asset-builds/datepicker.css', rel='stylesheet')
 
 if pagetype == "template"
-
-  script(src='js/custom/navbar-search.js')
+  script(src='assets/js/navbar-search.min.js')
 
   script.
-    new UISearch( document.getElementById( 'navbar-search' ) );
+    new UISearch( document.getElementById('navbar-search') );
 
 if pagetype == "styleguide"
-
   script(src='js/contrib/prism/prism.js')
   script(src='js/styleguide.js')
 

@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group
+    - system
+  theme:
+    - socialblue
+id: socialblue_group_add_event_block
+theme: socialblue
+region: complementary_top
+weight: -96
+provider: null
+plugin: group_add_event_block
+settings:
+  id: group_add_event_block
+  label: 'Group add event block'
+  provider: social_group
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/events'
+    negate: false
+    context_mapping: {  }

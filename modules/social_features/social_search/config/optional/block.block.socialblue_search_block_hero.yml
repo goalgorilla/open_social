@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_search
+    - system
+  theme:
+    - socialblue
+id: socialblue_search_block_hero
+theme: socialblue
+region: hero
+weight: null
+provider: null
+plugin: search_hero_block
+settings:
+  id: search_hero_block
+  label: Search
+  provider: social_search
+  label_display: visible
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/content\r\n/search/content/*\r\n/search/users\r\n/search/users/*\r\n/search/groups\r\n/search/groups/*"
+    negate: false
+    context_mapping: {  }

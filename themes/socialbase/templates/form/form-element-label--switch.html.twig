@@ -19,13 +19,13 @@
 
 
 {%- if title is not empty -%}
-  <div class="col-xs-6">
+  <div class="switch__label">
     {{ title }}
     {%- if required -%}
       <span class="form-required">*</span>
     {%- endif -%}
   </div>
-  <div class="col-xs-6">
+  <div class="switch__options">
     {%- trans -%} Off {%- endtrans -%}
     {{ element }}
     <span class="lever"></span>

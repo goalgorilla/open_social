@@ -32,6 +32,17 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
       if (!empty($build['#comment_indent_final'])) {
         $build['#suffix'] = str_repeat('</div>', $build['#comment_indent_final']);
       }
+
+      // Need to display reply comments without indentation in activity items.
+      $no_indent_view_modes = [
+        'activity',
+        'activity_comment',
+      ];
+      if (in_array($view_mode, $no_indent_view_modes)) {
+        $build['#prefix'] = '';
+        $build['#suffix'] = '';
+      }
+
     }
   }
 

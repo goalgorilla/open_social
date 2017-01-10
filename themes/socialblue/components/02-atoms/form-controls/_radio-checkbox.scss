@@ -1,0 +1,35 @@
+[type="radio"]:checked + label {
+  color: $radio-fill-color;
+}
+
+// Checked styles
+[type="radio"]:checked + label:before {
+  border: 2px solid $radio-fill-color;
+}
+
+[type="radio"]:checked + label:after {
+  border: 2px solid $radio-fill-color;
+  background-color: $radio-fill-color;
+}
+
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px lighten($brand-primary, 10%);
+}
+
+[type="checkbox"] {
+
+  &:checked {
+
+    + label:after {
+      border: 2px solid $brand-primary-dark;
+      background-color: $brand-primary-dark;
+    }
+  }
+
+  // Focused styles
+  &.tabbed:checked:focus + label:after {
+    background-color: $brand-primary-dark;
+    border-color: $brand-primary-dark;
+  }
+
+}

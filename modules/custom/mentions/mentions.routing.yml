@@ -1,0 +1,66 @@
+entity.mentions_type.list:
+  path: '/admin/structure/mentions'
+  defaults:
+    _entity_list: 'mentions_type'
+    _title: 'Mentions Type'
+  requirements:
+    _permission: 'administer mentions'
+    
+entity.mentions_type.add_form:
+  path: '/admin/structure/mentions/add'
+  defaults:
+    _title: 'Mentions Type'
+    _entity_form: 'mentions_type.add'
+  requirements:
+    _permission: 'administer mentions'
+
+entity.mentions_type.edit_form:
+  path: '/admin/structure/mentions/{mentions_type}/edit'
+  defaults:
+    _entity_form: 'mentions_type.edit'
+    _title: 'Edit Mentions Type'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    parameters:
+      mentions_type:
+        type: entity:mentions_type    
+    
+entity.mentions_type.delete_form:
+  path: '/admin/structure/mentions/{mentions_type}/delete'
+  defaults:
+    _entity_form: 'mentions_type.delete'
+    _title: 'Delete Mentions Type'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    parameters:
+      mentions_type:
+        type: entity:mentions_type
+          
+ 
+mentions.mentions_type_form:
+  path: '/admin/structure/mentions/mentionstype'
+  defaults:
+    _form: '\Drupal\mentions\Form\MentionsTypeForm'
+    _title: 'MentionsTypeForm'
+  requirements:
+    _permission: 'access administration pages'
+
+
+entity.mentions.canonical:
+  path: '/mentions/{mentions}'
+  defaults:
+    _title: 'Mention'
+    _controller: '\Drupal\mentions\MentionsController::mentionPermalink'
+  requirements:
+    _permission: 'access mentions'
+    mentions: \d+
+    
+mentions.settings:
+ path: 'admin/config/people/mentions'
+ defaults:
+    _form: '\Drupal\mentions\Form\MentionsSettingsForm'
+    _title: 'Mentions'
+ requirements:
+    _permission: 'administer mentions'

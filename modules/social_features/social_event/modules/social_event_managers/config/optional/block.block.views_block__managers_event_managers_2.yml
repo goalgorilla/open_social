@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.managers
+  module:
+    - node
+    - views
+  theme:
+    - socialblue
+id: views_block__managers_event_managers_2
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: 'views_block:managers-event_managers'
+settings:
+  id: 'views_block:managers-event_managers'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
