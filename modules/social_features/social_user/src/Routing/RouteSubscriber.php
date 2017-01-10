@@ -31,7 +31,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       ));
     }
     if ($route = $collection->get('user.reset.form')) {
-      $route->setDefault('_title', 'Set your password');
+      $route->setDefault('_title', t('Set your password')->render());
     }
     // Route the user view page to user/{uid}/timeline.
     if ($route = $collection->get('entity.user.canonical')) {
