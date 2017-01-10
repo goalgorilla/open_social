@@ -18,46 +18,49 @@
  * - hero_node
  */
 #}
+{{ attach_library('socialbase/hero')}}
 
 {% if hero_styled_image_url %}
-<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+  <div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
 {% else %}
-<div class="cover">
+  <div class="cover">
 {% endif %}
-{% if node %}
-  {% if node_edit_url %}
-    <div class="hero-action-button">
-      <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
-        <svg class="icon-gray icon-medium">
-          <use xlink:href="#icon-edit"></use>
-        </svg>
-      </a>
-    </div>
+
+  {% if node %}
+    {% if node_edit_url %}
+      <div class="hero-action-button">
+        <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+          <svg class="icon-gray icon-medium">
+            <use xlink:href="#icon-edit"></use>
+          </svg>
+        </a>
+      </div>
+    {% endif %}
+  <div class="cover-wrap">
   {% endif %}
-<div class="cover-wrap">
-{% endif %}
 
-{{ title_prefix }}
+  {{ title_prefix }}
 
-{% if title %}
-    <h1{{ title_attributes.addClass(section_class) }}>{{ title }}</h1>
-{% endif %}
+  {% if title %}
+      <h1{{ title_attributes.addClass(section_class) }}>{{ title }}</h1>
+  {% endif %}
 
-{{ title_suffix }}
+  {{ title_suffix }}
 
-{% if event_enrollment %}
-  <div class="hero-footer">
-    <div class="row row-md-center">
-      <div class="col-xs-12 col-md-3 col-md-offset-9">
-          <div class="btn-group">
-            {{ event_enrollment }}
-          </div>
+  {% if event_enrollment %}
+    <div class="hero-footer">
+      <div class="row row-md-center">
+        <div class="col-xs-12 col-md-3 col-md-offset-9">
+            <div class="btn-group">
+              {{ event_enrollment }}
+            </div>
+        </div>
       </div>
     </div>
-  </div>
-{% endif %}
+  {% endif %}
 
-{% if node %}
-</div>
-{% endif %}
+  {% if node %}
+    </div>
+  {% endif %}
+
 </div>

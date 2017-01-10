@@ -1,0 +1,54 @@
+/**
+ * AJAX (throbber) styling.
+ */
+@-webkit-keyframes glyphicon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
+}
+@keyframes glyphicon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg);
+  }
+}
+
+.glyphicon-spin {
+  display: inline-block;
+  -webkit-animation: glyphicon-spin 1s infinite linear;
+          animation: glyphicon-spin 1s infinite linear;
+}
+
+a .glyphicon-spin {
+  display: inline-block;
+  text-decoration: none;
+}
+
+html.js .btn .ajax-throbber {
+  margin-left: .5em;
+  margin-right: -.25em;
+}
+
+html.js .input-group-addon .glyphicon {
+  color: #777777;
+  opacity: .5;
+  -webkit-transition: 150ms color, 150ms opacity;
+  transition: 150ms color, 150ms opacity;
+}
+
+html.js .input-group-addon .glyphicon.glyphicon-spin {
+  opacity: 1;
+}
+
+html.js .ajax-new-content:empty {
+  display: none !important;
+}

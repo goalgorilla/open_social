@@ -1,0 +1,157 @@
+label {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.control-label {
+  font-size: 0.875rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.form-group > label {
+  font-weight: 300;
+  font-size: 0.875rem;
+  cursor: text;
+}
+
+.form-no-label label + .form-required {
+  display: none;
+}
+
+span.form-required {
+  margin: 0 3px;
+}
+
+.help-block {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.75rem;
+  color: #777777;
+}
+
+.radio .help-block {
+  padding-left: 25px;
+  max-width: none;
+  margin-top: 0;
+}
+
+.form-control--autogrow {
+  overflow: hidden;
+  resize: none;
+  max-width: none;
+}
+
+.form-actions .btn {
+  margin-bottom: 5px;
+}
+
+.form-control-static {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-bottom: 0;
+  min-height: 40px;
+}
+
+.form-control-static.input-lg, .form-control-static.input-sm {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.has-feedback {
+  position: relative;
+}
+
+.has-feedback .form-control {
+  padding-right: 47.5px;
+}
+
+.form-control-feedback {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  display: block;
+  width: 38px;
+  height: 38px;
+  line-height: 38px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.has-feedback label ~ .form-control-feedback {
+  top: 29px;
+}
+
+.has-feedback label.sr-only ~ .form-control-feedback {
+  top: 0;
+}
+
+@media (min-width: 600px) {
+
+  .form-group-inline {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+  }
+
+  .form-group-inline .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-group-inline .form-item {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+
+  .form-group-inline .btn {
+    margin-left: 8px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+  }
+
+  .form-inline .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+
+  .form-inline .form-control {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+  }
+
+  .form-inline .input-group {
+    display: inline-table;
+    vertical-align: middle;
+  }
+
+  .form-inline .input-group .input-group-addon,
+  .form-inline .input-group .input-group-btn,
+  .form-inline .input-group .form-control {
+    width: auto;
+  }
+
+  .form-inline .input-group > .form-control {
+    width: 100%;
+  }
+
+  .form-inline .control-label {
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+
+  .form-inline .has-feedback .form-control-feedback {
+    top: 0;
+  }
+}
