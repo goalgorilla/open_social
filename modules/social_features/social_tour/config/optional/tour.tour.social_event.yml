@@ -1,0 +1,30 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_event
+id: social-event
+label: 'Event functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.user_information.user_information
+tips:
+  # route = any event visited for the 1st time
+  welcome_event:
+    id: welcome_event
+    plugin: text
+    label: 'Welcome at the home page of this event!'
+    body: 'Here you can see all information about the event and follow it to be always up to date!'
+    weight: 1
+    attributes:
+      backdrop: 1
+  filter_tooltip:
+    id: filter_tooltip
+    plugin: text
+    location: 'right'
+    body: 'Select here if you want to see upcoming or finished events'
+    weight: 2
+    attributes:
+     data_id: views-exposed-form-upcoming-events-page-community-events

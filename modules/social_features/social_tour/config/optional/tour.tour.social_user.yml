@@ -1,4 +1,3 @@
-uuid: 4241bd57-1d1a-4b12-83a4-38e015ac58e2
 langcode: en
 status: true
 translatable: true
@@ -6,32 +5,41 @@ dependencies:
   module:
     - social_user
 id: social-user
-label: 'Add or edit a forum container'
+label: 'Social profile'
 module: social_tour
 routes:
   -
-    route_name: user.reset
-  -
-    route_name: user.pass
-  -
-    route_name: user.reset.form
-  -
-    route_name: entity.user.edit_form
+    route_name: entity.profile.type.profile.user_profile_form
 tips:
-  introduction:
-    id: introduction
+  welcome_message:
+    id: welcome_message
     plugin: text
-    label: 'Welcome, we are glad you joined us!'
-    body: 'To help you get started, we’ve put together a short guided tour. Would you like to begin?'
+    label: 'Welcome!'
+    body: 'Welcome [current-user:display-name]. You succesfully created a password. With this platform you can collaborate with like minded people from all over the world!'
     weight: 1
     attributes:
       backdrop: 1
-  backdrop:
-    id: backdrop
+  group_info:
+    id: group_info
     plugin: text
-    label: 'we backdrop this shit'
-    body: 'To help you get started, we’ve put together a short guided tour. Would you like to begin?'
-    weight: 1
+    label: 'Create groups'
+    body: 'Create groups to gather people with the same interests, expertise or tasks'
+    weight: 2
     attributes:
       backdrop: 1
-      data-id: 'social-user-password-form'
+  event_info:
+    id: event_info
+    plugin: text
+    label: 'Organise events'
+    body: 'Organise events where people can meet in person or online'
+    weight: 3
+    attributes:
+      backdrop: 1
+  topic_info:
+    id: topic_info
+    plugin: text
+    label: 'Share information'
+    body: 'Share information and create discussions with a post or topic'
+    weight: 4
+    attributes:
+     backdrop: 1

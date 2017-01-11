@@ -1,0 +1,30 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_group
+id: social-group
+label: 'Group functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.user_information.user_information
+tips:
+  # route = any group visited for the 1st time
+  welcome_homepage:
+    id: welcome_homepage
+    plugin: text
+    label: 'Welcome on the home page stream!'
+    body: 'On this page you see a stream with all the content you joined or follow!'
+    weight: 1
+    attributes:
+      backdrop: 1
+  content_tooltip:
+    id: content_tooltip
+    plugin: text
+    location: 'bottom'
+    body: 'Here you can create your own group or another type of content!'
+    weight: 2
+    attributes:
+      date_id: icon-white icon-medium pull-left icon-add_box
