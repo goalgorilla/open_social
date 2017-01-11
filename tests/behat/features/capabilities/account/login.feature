@@ -1,4 +1,4 @@
-@account @login @security @stability @AN @perfect @DS-233
+@api @account @login @security @stability @AN @perfect @DS-233
 Feature: Login
   Benefit: In order to participate
   Role: AN
@@ -6,15 +6,19 @@ Feature: Login
 
   @critical
   Scenario: Successfully login with e-mail
-    Given I am an anonymous user
+    Given users:
+      | name             | status | pass             | mail                         |
+      | test_email_login |      1 | test_email_login | test_email_login@example.com |
     And I am on the homepage
     When I click "User menu"
     And I click "Log in"
     And I fill in the following:
-        | Username or email address | admin@example.com |
-        | Password | admin |
+      | Username or email address | test_email_login@example.com |
+      | Password | test_email_login |
     And I press "Log in"
-    Then I should see "Explore"
+    And I click "Profile of test_email_login"
+    Then I should see "My profile"
+    And I should see "test_email_login"
 
   @security
   Scenario: unsuccessful login without leaking data
