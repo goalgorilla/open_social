@@ -15,31 +15,35 @@ tips:
     id: welcome_message
     plugin: text
     label: 'Welcome!'
+    location: 'top'
     body: 'Welcome [current-user:display-name]. You succesfully created a password. With this platform you can collaborate with like minded people from all over the world!'
     weight: 1
     attributes:
-      backdrop: 1
+      data-id: 'details'
   group_info:
     id: group_info
     plugin: text
     label: 'Create groups'
+    location: 'bottom'
     body: 'Create groups to gather people with the same interests, expertise or tasks'
     weight: 2
     attributes:
-      backdrop: 1
+      data-class: 'cover-wrap'
   event_info:
     id: event_info
     plugin: text
+    location: 'right'
     label: 'Organise events'
     body: 'Organise events where people can meet in person or online'
     weight: 3
     attributes:
-      backdrop: 1
+      data-id: 'edit-field-profile-function-0-value'
   topic_info:
     id: topic_info
     plugin: text
     label: 'Share information'
+    location: 'left'
     body: 'Share information and create discussions with a post or topic'
     weight: 4
     attributes:
-     backdrop: 1
+     data-id: 'edit-submit'
