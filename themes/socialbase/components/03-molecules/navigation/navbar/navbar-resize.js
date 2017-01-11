@@ -9,10 +9,10 @@
         var tabletLandscapeUpBreakpoint = 900;
 
         if (viewportWidth >= tabletLandscapeUpBreakpoint) {
-          $('.dropdown-menu', '.dropdown.profile').removeClass().addClass('menu nav navbar-nav');
+          $('.dropdown-menu', '.dropdown.profile.not-logged-in').removeClass().addClass('menu nav navbar-nav');
         }
         else {
-          $('.menu.nav.navbar-nav', '.dropdown.profile').removeClass().addClass('dropdown-menu');
+          $('.menu.nav.navbar-nav', '.dropdown.profile.not-logged-in').removeClass().addClass('dropdown-menu');
         }
 
       }
