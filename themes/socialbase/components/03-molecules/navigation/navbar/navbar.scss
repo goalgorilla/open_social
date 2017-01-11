@@ -410,6 +410,14 @@
   transition: color .2s ease, background-color .2s ease;
 }
 
+// Display profile dropdown links inline when larger than tab portrait
+@include for-tablet-landscape-up {
+
+  .dropdown.profile .dropdown-toggle {
+    display: none;
+  }
+
+}
 
 // Hacking into responsive bootstrap behaviour
 .navbar-fixed-top .navbar-right {
