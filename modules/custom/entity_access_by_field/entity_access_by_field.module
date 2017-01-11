@@ -160,54 +160,43 @@ function entity_access_by_field_form_alter(&$form, \Drupal\Core\Form\FormStateIn
 
   if (isset($form['field_content_visibility']) || isset($form['field_visibility'])) {
 
-    // Load the current user.
-    $account = \Drupal::currentUser();
-    $roles = $account->getRoles();
     // Fetch the data.
     $config = \Drupal::config('entity_access_by_field.settings');
     $data = $config->getRawData();
-    // Check if it's an existing node.
-    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    // Load the current user.
+    $account = \Drupal::currentUser();
 
-    // Edit node, so look at the node owner.
-    /** @var \Drupal\node\Entity\Node $node */
-    if (!empty($nid) && $node = Node::load($nid)) {
-      // Overwrite user.
-      $account = $node->getOwner();
-      $roles = $account->getRoles();
-    }
+    // Check if the option is enabled and the current user has no permission
+    // to override disabled public visibility.
+    if (isset($data['disable_public_visibility']) && $data['disable_public_visibility'] === 1 && !$account->hasPermission('override disabled public visibility')) {
 
-    // Check if this user is auth user only.
-    if (count($roles) == 1 && $roles[0] === \Drupal\user\RoleInterface::AUTHENTICATED_ID) {
+      // This is for nodes.
+      if (isset($form['field_content_visibility'])) {
+        // Some vars for easier reading.
+        $field = &$form['field_content_visibility'];
+        $widget = &$form['field_content_visibility']['widget'];
+        $options = &$form['field_content_visibility']['widget']['#options'];
 
-      // Check if we need to do someting here.
-      if (isset($data['disable_public_visibility']) && $data['disable_public_visibility'] === 1) {
-        // This is for nodes.
-        if (isset($form['field_content_visibility'])) {
-          $widget = &$form['field_content_visibility']['widget'];
-          $options = &$form['field_content_visibility']['widget']['#options'];
-
-          // Remove the public option.
-          unset($options['public']);
-          // Check if the public options is currently selected.
-          if ($widget['#default_value'] === 'public') {
-            $widget['#default_value'] = 'community';
-          }
+        // Remove the public option.
+        unset($options['public']);
+        // Check if the public options is currently selected.
+        if ($widget['#default_value'] === 'public') {
+          // Set the default value to community.
+          $widget['#default_value'] = 'community';
         }
-        // This is for posts.
-        else {
-          $widget = &$form['field_visibility']['widget'][0];
-          $options = &$form['field_visibility']['widget'][0]['#options'];
+      }
+      // This is for posts.
+      else {
+        $widget = &$form['field_visibility']['widget'][0];
+        $options = &$form['field_visibility']['widget'][0]['#options'];
 
-          // Remove the public option.
-          unset($options[1]);
+        // Remove the public option.
+        unset($options[1]);
 
-          // Check if the public options is currently selected.
-          if ($widget['#default_value'] === '1') {
-            $widget['#default_value'] = '2';
-          }
+        // Check if the public options is currently selected.
+        if ($widget['#default_value'] === '1') {
+          $widget['#default_value'] = '2';
         }
-
       }
     }
   }
