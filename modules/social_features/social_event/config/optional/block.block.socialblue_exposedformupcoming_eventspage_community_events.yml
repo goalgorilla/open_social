@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.upcoming_events
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_exposedformupcoming_eventspage_community_events
+theme: socialblue
+region: complementary_top
+weight: 3
+provider: null
+plugin: 'views_exposed_filter_block:upcoming_events-page_community_events'
+settings:
+  id: 'views_exposed_filter_block:upcoming_events-page_community_events'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: /community-events
+    negate: false
+    context_mapping: {  }

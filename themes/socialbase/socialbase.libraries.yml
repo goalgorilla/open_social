@@ -1,237 +1,269 @@
-# The SMACSS category "base" is loaded first.
-normalize:
+## 1. The SMACSS category Base — CSS reset/normalize plus HTML element styling.
+base:
   css:
     base:
-      components/asset-builds/css/normalize.css: {}
-buttons:
-  css:
-    base:
-      components/asset-builds/css/buttons.css: {}
-      components/asset-builds/css/waves.css: {}
+      assets/css/base.css: {}
   js:
-    js/contrib/waves/waves.js: {}
-forms:
-  css:
-    base:
-      components/asset-builds/css/forms.css: {}
-  js:
-    js/custom/textarea-autogrow.js: {}
+    assets/js/transition.min.js: {}
+    assets/js/collapse.min.js: {}
   dependencies:
-    - core/drupal.form
-scaffolding:
-  css:
-    base:
-      components/asset-builds/css/scaffolding.css: {}
-tables:
-  css:
-    base:
-      components/asset-builds/css/tables.css: {}
-type:
-  css:
-    base:
-      components/asset-builds/css/type.css: {}
-utilities:
-  css:
-    base:
-      components/asset-builds/css/utilities.css: {}
-  js:
-    js/contrib/bootstrap/transition.js: {}
-    js/contrib/bootstrap/collapse.js: {}
-searchautocomplete:
-  js:
-    js/custom/search_autocomplete.js: {}
-  dependencies:
-    - core/drupal.autocomplete
+    - core/drupal
+    - core/jquery
+    - core/jquery.once
+
 print:
   css:
     base:
-      components/asset-builds/css/print.css: { media: print }
+      assets/css/print.css: { media: print }
 
-# The SMACSS category, "layout", is loaded after "base" styles.
-layout:
-  css:
-    layout:
-      components/asset-builds/css/layout.css: {}
+## 2. The SMACSS category Component — discrete, reusable UI elements
 
-# The SMACSS category, "component", is loaded after "layout" styles.
-icons:
-  css:
-    component:
-      components/asset-builds/css/icons.css: {}
-admin:
-  css:
-    component:
-      components/asset-builds/css/admin-toolbar.css: {}
+### 2.1 Atoms
 alerts:
   css:
     component:
-      components/asset-builds/css/alerts.css: {}
+      assets/css/alerts.css: {}
   js:
-    js/contrib/bootstrap/alert.js: {}
+    assets/js/alert.min.js: {}
+
 badges:
   css:
     component:
-      components/asset-builds/css/badges.css: {}
-book:
-  css:
-    component:
-      components/asset-builds/css/book.css: {}
+      assets/css/badges.css: {}
 
-breadcrumbs:
+button:
   css:
     component:
-      components/asset-builds/css/breadcrumbs.css: {}
+      assets/css/button.css: {}
+
 cards:
   css:
     component:
-      components/asset-builds/css/cards.css: {}
-comment:
-  css:
-    component:
-      components/asset-builds/css/comment.css: {}
-dropdowns:
-  css:
-    component:
-      components/asset-builds/css/dropdowns.css: {}
-  js:
-    js/contrib/bootstrap/dropdown.js: {}
-file:
-  css:
-    component:
-      components/asset-builds/css/file.css: {}
+      assets/css/cards.css: {}
 
-grid:
+close-icon:
   css:
     component:
-      components/asset-builds/css/grid.css: {}
-hero:
+      assets/css/close-icon.css: {}
+
+form-controls:
   css:
     component:
-      components/asset-builds/css/hero.css: {}
-input-groups:
-  css:
-    component:
-      components/asset-builds/css/input-groups.css: {}
+      assets/css/form-controls.css: {}
+  js:
+    assets/js/textarea-autogrow.min.js: {}
+  dependencies:
+    - core/drupal.form
+
 labels:
   css:
     component:
-      components/asset-builds/css/labels.css: {}
+      assets/css/labels.css: {}
+
 list-group:
   css:
     component:
-      components/asset-builds/css/list-group.css: {}
-media:
-  css:
-    component:
-      components/asset-builds/css/media.css: {}
-mention:
-  css:
-    component:
-      components/asset-builds/css/mention.css: {}
-meta:
-  css:
-    component:
-      components/asset-builds/css/meta.css: {}
-modals:
-  css:
-    component:
-      components/asset-builds/css/modals.css: {}
-  js:
-    js/contrib/bootstrap/modal.js: {}
-navbar:
-  css:
-    component:
-      components/asset-builds/css/navbar.css: {}
-  js:
-    js/custom/navbar-collapse.js: {}
-navbar-search:
-  js:
-    js/custom/navbar-search.js: {}
-off-canvas:
-  css:
-    component:
-      components/asset-builds/css/off-canvas.css: {}
-  js:
-    js/custom/offcanvas.js: {}
+      assets/css/list-group.css: {}
 
-pagination:
-  css:
-    component:
-      components/asset-builds/css/pagination.css: {}
-popover:
-  css:
-    component:
-      components/asset-builds/css/popovers.css: {}
-  js:
-    js/contrib/bootstrap/tooltip.js: {}
-    js/contrib/bootstrap/popover.js: {}
-preview:
-  css:
-    component:
-      components/asset-builds/css/preview.css: {}
-stream:
-  css:
-    component:
-      components/asset-builds/css/stream.css: {}
-wells:
-  css:
-    component:
-      components/asset-builds/css/wells.css: {}
-drupal.ajax:
-  css:
-    component:
-      components/asset-builds/css/ajax.css: {}
 
-jquery.datepicker:
+### 2.2 Molecules
+block--introtext:
   css:
-    theme:
-      components/asset-builds/css/datepicker.css: {}
+    component:
+      assets/css/block--introtext.css: {}
+
+breadcrumb:
+  css:
+    component:
+      assets/css/breadcrumb.css: {}
+
+dropdown:
+  css:
+    component:
+      assets/css/dropdown.css: {}
   js:
-    js/custom/date_picker.js: {}
+    assets/js/dropdown.min.js: {}
+
+file:
+  css:
+    component:
+      assets/css/file.css: {}
+
+form-elements:
+  css:
+    component:
+      assets/css/form-elements.css: {}
+
+form--autocomplete:
+  css:
+    component:
+      assets/css/ajax.css: {}
+      assets/css/autocomplete.css: {}
+
+form--search-autocomplete:
+  js:
+    assets/js/autocomplete.min.js: {}
+  dependencies:
+    - core/drupal.autocomplete
+
+form--datepicker:
+  css:
+    component:
+      assets/css/datepicker.css: {}
+  js:
+    assets/js/date-picker-init.min.js: {}
   dependencies:
     - core/modernizr
 
-jquery.timepicker:
+form--input-groups:
+  css:
+    component:
+      assets/css/input-groups.css: {}
+
+form--password:
+  css:
+    component:
+      assets/css/password.css: {}
+
+form--timepicker:
   remote: https://github.com/jonthornton/jquery-timepicker
   version: "1.11.3"
   license:
     name: MIT
     url: https://raw.githubusercontent.com/jonthornton/jquery-timepicker/master/README.md
     gpl-compatible: true
-  js:
-    js/contrib/timepicker/jquery.timepicker.js: { minified: true }
   css:
     component:
-      components/asset-builds/css/timepicker.css: {}
-
-drupal.tabledrag:
+      assets/css/timepicker.css: {}
   js:
-    js/misc/tabledrag.js: {}
+    assets/js/jquery.timepicker.min.js: {}
+
+media:
+  css:
+    component:
+      assets/css/media.css: {}
+
+mention:
+  css:
+    component:
+      assets/css/mention.css: {}
+
+nav-book:
+  css:
+    component:
+      assets/css/nav-book.css: {}
+
+nav-tabs:
+  css:
+    component:
+      assets/css/nav-tabs.css: {}
+  js:
+    assets/js/tab.min.js: {}
+
+navbar:
+  css:
+    component:
+      assets/css/navbar.css: {}
+  js:
+    assets/js/navbar-collapse.min.js: {}
+    assets/js/navbar-search.min.js: {}
+
+pagination:
+  css:
+    component:
+      assets/css/pagination.css: {}
+
+popover:
+  css:
+    component:
+      assets/css/popover.css: {}
+  js:
+    assets/js/tooltip.min.js: {}
+    assets/js/popover.min.js: {}
+
+tabledrag:
+  js:
+    assets/js/tabledrag.min.js: {}
 
 tablesaw:
   css:
     component:
-      components/asset-builds/css/tablesaw.css: {}
+      assets/css/tablesaw.css: {}
   js:
-    js/contrib/tablesaw/tablesaw.js: {}
-    js/contrib/tablesaw/tablesaw-init.js: {}
-tabs:
-  css:
-    component:
-      components/asset-builds/css/tabs.css: {}
-  js:
-    js/contrib/bootstrap/tab.js: {}
+    assets/js/tablesaw.min.js: {}
+    assets/js/tablesaw-init.min.js: {}
+
 teaser:
   css:
     component:
-      components/asset-builds/css/teaser.css: {}
+      assets/css/teaser.css: {}
+
+### 2.3 Organisms
+admin-toolbar:
+  css:
+    component:
+      assets/css/admin-toolbar.css: {}
+
+comment:
+  css:
+    component:
+      assets/css/comment.css: {}
+
+hero:
+  css:
+    component:
+      assets/css/hero.css: {}
+
+meta:
+  css:
+    component:
+      assets/css/meta.css: {}
+
+modal:
+  css:
+    component:
+      assets/css/modal.css: {}
+  js:
+    assets/js/modal.min.js: {}
+
+offcanvas:
+  css:
+    component:
+      assets/css/offcanvas.css: {}
+
+stream:
+  css:
+    component:
+      assets/css/stream.css: {}
+
+### 2.4 Templates
+page-node:
+  css:
+    component:
+      assets/css/page-node.css: {}
+  dependencies:
+    - socialbase/meta
+
+page-search:
+  css:
+    component:
+      assets/css/page-search.css: {}
+  dependencies:
+    - socialbase/hero
+
+page-preview:
+  css:
+    component:
+      assets/css/page-preview.css: {}
+
+page-stream:
+  css:
+    component:
+      assets/css/page-stream.css: {}
+  dependencies:
+    - socialbase/stream
+
 responsive-dom:
   js:
-    js/contrib/responsive-dom/jquery.responsive-dom.js: {}
-    js/custom/responsive-dom/responsive-dom-init.js: {}
-
-# The SMACSS category, "theme", is loaded after "components".
-fonts:
-  css:
-    theme:
-      components/asset-builds/css/fonts.css: {}
+    assets/js/jquery.responsive-dom.min.js: {}
+    assets/js/responsive-dom-init.min.js: {}

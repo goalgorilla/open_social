@@ -1,0 +1,36 @@
+// ***************
+// Selects
+// ***************
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+// @see http://stackoverflow.com/q/21103542
+.select-wrapper {
+
+  .input-group & {
+
+    // Reset rounded corners
+    &:first-child .form-control:first-child {
+      @include border-left-radius($input-border-radius);
+    }
+    &:last-child .form-control:first-child {
+      @include border-right-radius($input-border-radius);
+    }
+  }
+
+
+  &:after {
+  
+    .has-error & {
+      color: $state-danger-text;
+    }
+    .has-success & {
+      color: $state-success-text;
+    }
+    .has-warning & {
+      color: $state-warning-text;
+    }
+
+  }
+
+}
