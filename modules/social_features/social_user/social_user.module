@@ -53,10 +53,50 @@ function social_user_register_validate(&$form, FormStateInterface $form_state) {
 function social_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
   // Add forcing of changing password, message to user
   // if they logged in via a one-time login link.
+  // See AccountForm.php this is where user_pass_reset gets set. Only when user
+  // uses a one time login link it's true.
   if ($form_state->get('user_pass_reset')) {
     $form['#attached']['library'][] = 'social_user/user_form_protection';
+    // We prepend it because a user first has to be saved :) and the profile
+    // user save needs to fire first!
+    $form['actions']['submit']['#submit'][] = '_social_user_pass_reset_submit';
+
+    // We have to pass some values, because at this point the user is still
+    // unsaved and the createdTime and the changedTime are still the same!
+    // So it's actually the first time the user logs in and we can do our
+    // redirect.
+    $user = \Drupal::routeMatch()->getParameter('user');
+    if ($user->getCreatedTime() == $user->getChangedTime()) {
+      $form_state->set('first_time_login', TRUE);
+    }
   }
 }
+
+function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
+  $storage = $form_state->getValues();
+  $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
+
+  // Only when there is actual user, and the actual user is changing his own account.
+  // we redirect. When you're editting others you don't want this ofcourse.
+  if (!empty($submitted_user_id) && \Drupal::currentUser()->id() == $submitted_user_id) {
+    $first_time_login = $form_state->get('first_time_login');
+
+    // If created & changed user time are the same, the user has never submitted
+    // the user save form before. Which means we can redirect to user profile.
+    if ($first_time_login) {
+      $form_state->setRedirect(
+        'entity.profile.type.profile.user_profile_form',
+        array('user' => $submitted_user_id, 'profile_type' => 'profile', array())
+      );
+      $form_state->set('first_time_login', FALSE);
+    }
+    else {
+      // We redirect them to the home page stream.
+      $form_state->setRedirect('social_core.homepage');
+    }
+  }
+}
+
 
 /**
  * Check if an users with the input field for name or mail field is blocked.
