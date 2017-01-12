@@ -570,6 +570,7 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   }
 
   if (!empty($views_display->display['id']) && (
+    $views_display->display['id'] == 'page_explore' ||
     $views_display->display['id'] == 'block_stream_homepage' ||
     $views_display->display['id'] == 'page_activity_stream' ||
     $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group')) {
@@ -697,14 +698,14 @@ function socialbase_preprocess_page(&$variables) {
 
   // If we have the admin toolbar on screen we need overrides for our styles.
   if ($variables['is_admin']) {
-    $variables['#attached']['library'][] = 'socialbase/admin';
+    $variables['#attached']['library'][] = 'socialbase/admin-toolbar';
   }
   // Add plain title for node preview page templates.
   if (!empty($variables['page']['#title'])) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
   // Get all SVG Icons.
-  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/images/icons.svg');
+  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg');
 
   // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
 
@@ -1177,7 +1178,7 @@ function socialbase_preprocess_form(&$variables) {
 
   // Add the custom search autocomplete to search users for now only.
   if ($element['#form_id'] === 'search_users_form') {
-    $variables['#attached']['library'][] = 'socialbase/searchautocomplete';
+    $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
   }
 
   // We have set the region via propress block, now pass this variable on to be used in twig
@@ -1336,14 +1337,17 @@ function socialbase_preprocess_table(&$variables) {
   $variables['card'] = TRUE;
   $files_field = 'edit-field-files';
 
-  if ($variables['attributes']['id'] === 'field-event-managers-values') {
-    $variables['card'] = FALSE;
-  }
+  if (isset($variables['attributes']['id'])) {
+    if ($variables['attributes']['id'] === 'field-event-managers-values') {
+      $variables['card'] = FALSE;
+    }
 
-  if (!empty($variables['attributes']['id']) && (strpos($variables['attributes']['id'], $files_field) !== FALSE)) {
-    $variables['attributes']['class'][] = 'tablesaw';
-    $variables['attributes']['data-tablesaw-mode'] = 'stack';
-    $variables['card'] = FALSE;
+    if (!empty($variables['attributes']['id']) && (strpos($variables['attributes']['id'], $files_field) !== FALSE)) {
+      $variables['attributes']['class'][] = 'tablesaw';
+      $variables['attributes']['data-tablesaw-mode'] = 'stack';
+      $variables['card'] = FALSE;
+    }
+
   }
 }
 

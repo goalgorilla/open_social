@@ -1,0 +1,128 @@
+.book-menu .list-item {
+  list-style: none;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.book-menu .list-item--active-trail > a {
+  text-decoration: underline;
+}
+
+.navigation-book {
+  padding: 0.5em 0;
+  font-size: 14px;
+}
+
+.navigation-book .book-menu {
+  padding-left: 66px;
+}
+
+.navigation-book a:hover {
+  text-decoration: underline;
+}
+
+.navigation-book .page-links {
+  text-align: center;
+  font-size: 14px;
+}
+
+.navigation-book .pager__item {
+  display: block;
+  position: relative;
+}
+
+.navigation-book .pager__item span {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navigation-book .pager__item .icon-inline {
+  margin-top: 6px;
+  position: absolute;
+  top: 0;
+}
+
+.navigation-book .pager__item .icon-inline + span {
+  line-height: 24px;
+}
+
+.navigation-book .pager__item--previous {
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.navigation-book .pager__item--previous span {
+  padding-left: 24px;
+}
+
+.navigation-book .pager__item--previous .icon-inline {
+  left: 0;
+  margin-left: 12px;
+}
+
+.navigation-book .pager__item--next {
+  text-align: right;
+  margin-left: 0px;
+}
+
+.navigation-book .pager__item--next span {
+  padding-right: 24px;
+}
+
+.navigation-book .pager__item--next .icon-inline {
+  right: 0;
+  margin-right: 12px;
+}
+
+#book-outline {
+  min-width: 56em;
+}
+
+.book-outline-form .form-item {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+html.js #edit-book-pick-book {
+  display: none;
+}
+
+.form-item-book-bid .description {
+  clear: both;
+}
+
+#book-admin-edit select {
+  margin-right: 24px;
+}
+
+#book-admin-edit select.progress-disabled {
+  margin-right: 0;
+}
+
+#book-admin-edit tr.ajax-new-content {
+  background-color: #ffd;
+}
+
+#book-admin-edit .form-item {
+  float: left;
+}
+
+@media (min-width: 600px) {
+
+  .navigation-book .pager__item {
+    max-width: 50%;
+    display: inline-block;
+  }
+
+  .navigation-book .pager__item--previous {
+    margin-bottom: 0px;
+    float: left;
+  }
+
+  .navigation-book .pager__item--next {
+    float: right;
+  }
+}

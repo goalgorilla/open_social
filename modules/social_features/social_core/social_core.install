@@ -433,3 +433,32 @@ function social_core_update_8008() {
   );
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Enable socialblue theme and make default if socialbase is current default.
+ */
+function social_core_update_8009() {
+
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+
+  if ($system_theme_settings === 'socialbase') {
+
+    $themes = ['socialblue'];
+    \Drupal::service('theme_handler')->install($themes);
+
+    \Drupal::configFactory()
+      ->getEditable('system.theme')
+      ->set('default', 'socialblue')
+      ->save();
+
+    // Ensure that the install profile's theme is used.
+    // @see _drupal_maintenance_theme()
+    \Drupal::service('theme.manager')->resetActiveTheme();
+
+    drupal_set_message('Installed socialblue theme and made this the default. Please check release notes.');
+  }
+  else {
+    drupal_set_message('Skipped installing socialblue theme. Please check release notes.');
+  }
+
+}
