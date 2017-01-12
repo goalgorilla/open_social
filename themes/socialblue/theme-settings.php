@@ -57,20 +57,13 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
   );
 
   // Font tab.
+  $fonts = array(); //
+  $fonts []= 'Montserrat';
   $form['os_font_settings']['font_primary'] = array(
-    '#type'          => 'textfield',
-    '#title'         => t('Primary font'),
-    '#default_value' => $config->get('font_primary'),
-    '#description'   => t("The primary font used in this theme."),
-  );
-  $form['os_font_settings']['font_fallback'] = array(
     '#type' => 'select',
-    '#title' => t('Font fallback'),
-    '#options' => array(
-      'serif' => 'serif',
-      'sans-serif' => 'sans-serif'
-    ),
-    '#default_value' => $config->get('font_fallback'),
-    '#description' => t("The fallback family."),
+    '#title' => t('Font'),
+    '#options' => $fonts,
+    '#default_value' => $config->get('font_primary'),
+    '#description' => t("The font family to use."),
   );
 }
