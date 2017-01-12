@@ -48,19 +48,9 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     '#title' => t('Accents color'),
     '#default_value' => theme_get_setting('colors.color_accents'),
   );
-  $form['os_color_settings']['logo'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Logo'),
-    '#default_value' => theme_get_setting('colors.logo'),
-  );
-  $form['os_color_settings']['favicon'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Favicon'),
-    '#default_value' => theme_get_setting('colors.favicon'),
-  );
   $form['os_color_settings']['border_radius'] = array(
     '#type' => 'textfield',
-    '#title' => t('Border radius'),
+    '#title' => t('Border radius (px)'),
     '#default_value' => theme_get_setting('colors.border_radius'),
   );
 
