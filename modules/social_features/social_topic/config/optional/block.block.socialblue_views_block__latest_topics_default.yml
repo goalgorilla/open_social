@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.latest_topics
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_views_block__latest_topics_default
+theme: socialblue
+region: complementary_bottom
+weight: 3
+provider: null
+plugin: 'views_block:latest_topics-block_latest_topics'
+settings:
+  id: 'views_block:latest_topics-block_latest_topics'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: "/stream\r\n/explore"
+    negate: false
+    context_mapping: {  }

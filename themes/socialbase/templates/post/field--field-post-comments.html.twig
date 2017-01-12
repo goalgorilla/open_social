@@ -27,13 +27,6 @@
  */
 #}
 
-{%
-  set classes = [
-    more_link ? 'margin-bottom-xl',
-  ]
-%}
-
-
 {% if comments and not label_hidden %}
     {{ title_prefix }}
     <h2{{ title_attributes }}>{{ label }}</h2>
@@ -42,22 +35,22 @@
 
 {% if comment_form %}
 
-  <div {{ attributes.addClass(classes) }}>
-    {{ comment_form }}
-  </div>
+  {% if more_link %}
+    <div class="margin-bottom-xl">
+  {% endif %}
+
+  {{ comment_form }}
+
+  {% if more_link %}
+    </div>
+  {% endif %}
 
 {% endif %}
 
 {{ comments }}
 
-{% if logged_in %}
-
+{% if logged_in and more_link %}
   <div class="margin-top-l text-center">
-
-    {% if more_link %}
-        {{ more_link }}
-    {% endif %}
-
+    {{ more_link }}
   </div>
-
 {% endif %}

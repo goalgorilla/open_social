@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.topics
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_views_block__topics_block_user_topics
+theme: socialblue
+region: complementary_bottom
+weight: 3
+provider: null
+plugin: 'views_block:topics-block_user_topics'
+settings:
+  id: 'views_block:topics-block_user_topics'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/stream'
+    negate: false
+    context_mapping: {  }

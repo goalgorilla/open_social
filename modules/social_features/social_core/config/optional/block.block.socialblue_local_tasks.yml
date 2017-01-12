@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+    - user
+  theme:
+    - socialblue
+id: socialblue_local_tasks
+theme: socialblue
+region: secondary_navigation
+weight: -6
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: true
+  secondary: true
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      anonymous: anonymous
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+  request_path:
+    id: request_path
+    pages: "post/*/edit\r\npost/*/delete\r\n/post/*/edit\r\n/post/*/delete"
+    negate: true
+    context_mapping: {  }

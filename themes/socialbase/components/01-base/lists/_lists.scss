@@ -1,0 +1,121 @@
+// Lists
+// -------------------------
+
+// Unordered and Ordered lists
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: ($line-height-computed / 2);
+  padding-left: 1.5em;
+  list-style-position: outside;
+
+  ul,
+  ol {
+    margin-bottom: 0;
+  }
+}
+
+ol, ul {
+
+  .popover &:last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+// List options
+
+// [converter] extracted from `.list-unstyled` for libsass compatibility
+@mixin list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+// [converter] extracted as `@mixin list-unstyled` for libsass compatibility
+.list-unstyled {
+  @include list-unstyled;
+}
+
+
+// Inline turns list items into inline-block
+.list-inline {
+  @include list-unstyled;
+  margin-left: -5px;
+
+  > li {
+    display: inline-block;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+// Description Lists
+dl {
+  margin-top: 0; // Remove browser default
+  margin-bottom: $line-height-computed;
+}
+dt,
+dd {
+  line-height: $line-height-base;
+}
+dt {
+  font-weight: bold;
+}
+dd {
+  margin-left: 0; // Undo browser default
+}
+
+// Horizontal description lists
+//
+// Defaults to being stacked without any of the below styles applied, until the
+// grid breakpoint is reached (default of ~768px).
+
+.dl-horizontal {
+  dd {
+    @include clearfix; // Clear the floated `dt` if an empty `dd` is present
+  }
+
+  @media (min-width: $dl-horizontal-breakpoint) {
+    dt {
+      float: left;
+      width: ($dl-horizontal-offset - 20);
+      clear: left;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    dd {
+      margin-left: $dl-horizontal-offset;
+    }
+  }
+}
+
+.list-item--collapsed,
+.list-item--expanded {
+  list-style: none;
+  position: relative;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    margin-left: -1em;
+    margin-right: 0.45em;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-top:   $caret-width-base solid transparent;
+    border-top:   $caret-width-base solid \9; // IE8
+    border-left: $caret-width-base dashed;
+    border-bottom:  $caret-width-base solid transparent;
+  }
+
+}
+
+.list-item--expanded::before {
+  margin-left: -1.2em;
+  margin-right: 0.4em;
+  border-top:   $caret-width-base dashed;
+  border-top:   $caret-width-base solid \9; // IE8
+  border-right: $caret-width-base solid transparent;
+  border-left:  $caret-width-base solid transparent;
+}
