@@ -6,6 +6,8 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     return;
   }
 
+  $config = \Drupal::config('socialblue.settings');
+
   $form['open_social_settings'] = array(
     '#type' => 'vertical_tabs',
     '#title' => t('Opensocial settings'),
@@ -36,29 +38,29 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
   $form['os_color_settings']['color_primary'] = array(
     '#type' => 'textfield',
     '#title' => t('Primary color'),
-    '#default_value' => theme_get_setting('colors.color_primary'),
+    '#default_value' => $config->get('color_primary'),
   );
   $form['os_color_settings']['color_secondary'] = array(
     '#type' => 'textfield',
     '#title' => t('Secondary color'),
-    '#default_value' => theme_get_setting('colors.color_secondary'),
+    '#default_value' => $config->get('color_secondary'),
   );
   $form['os_color_settings']['color_accents'] = array(
     '#type' => 'textfield',
     '#title' => t('Accents color'),
-    '#default_value' => theme_get_setting('colors.color_accents'),
+    '#default_value' => $config->get('color_accents'),
   );
   $form['os_color_settings']['border_radius'] = array(
     '#type' => 'textfield',
     '#title' => t('Border radius (px)'),
-    '#default_value' => theme_get_setting('colors.border_radius'),
+    '#default_value' => $config->get('border_radius'),
   );
 
   // Font tab.
-  $form['os_font_settings']['font_parimary'] = array(
+  $form['os_font_settings']['font_primary'] = array(
     '#type'          => 'textfield',
     '#title'         => t('Primary font'),
-    '#default_value' => theme_get_setting('font.font_primary'),
+    '#default_value' => $config->get('font_primary'),
     '#description'   => t("The primary font used in this theme."),
   );
   $form['os_font_settings']['font_fallback'] = array(
@@ -68,7 +70,7 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
       'serif' => 'serif',
       'sans-serif' => 'sans-serif'
     ),
-    '#default_value' => theme_get_setting('font.font_fallback'),
+    '#default_value' => $config->get('font_fallback'),
     '#description' => t("The fallback family."),
   );
 }
