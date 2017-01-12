@@ -71,12 +71,6 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     '#default_value' => theme_get_setting('font.font_primary'),
     '#description'   => t("The primary font used in this theme."),
   );
-  $form['os_font_settings']['font_secondary'] = array(
-    '#type'          => 'textfield',
-    '#title'         => t('Secondary font'),
-    '#default_value' => theme_get_setting('font.font_secondary'),
-    '#description'   => t("The secondary font used in this theme."),
-  );
   $form['os_font_settings']['font_fallback'] = array(
     '#type' => 'select',
     '#title' => t('Font fallback'),
