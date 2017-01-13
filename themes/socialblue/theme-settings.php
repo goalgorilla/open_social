@@ -20,7 +20,7 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     '#type' => 'details',
     '#group' => 'open_social_settings',
     '#title' => t('Colors'),
-    '#weight' => 10,
+    '#weight' => 20,
     '#collapsible' => true,
     '#collapsed' => true,
   );
@@ -29,27 +29,11 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     '#type' => 'details',
     '#group' => 'open_social_settings',
     '#title' => t('Fonts'),
-    '#weight' => 20,
+    '#weight' => 10,
     '#collapsible' => true,
     '#collapsed' => true,
   );
 
-  // Color tab.
-  $form['os_color_settings']['color_primary'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Primary color'),
-    '#default_value' => $config->get('color_primary'),
-  );
-  $form['os_color_settings']['color_secondary'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Secondary color'),
-    '#default_value' => $config->get('color_secondary'),
-  );
-  $form['os_color_settings']['color_accents'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Accents color'),
-    '#default_value' => $config->get('color_accents'),
-  );
   $form['os_color_settings']['border_radius'] = array(
     '#type' => 'textfield',
     '#title' => t('Border radius (px)'),
@@ -57,8 +41,14 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
   );
 
   // Font tab.
-  $fonts = array(); //
-  $fonts []= 'Montserrat';
+  $fonts = [];
+  if (\Drupal::service('module_handler')->moduleExists('social_font')) {
+      /** @var \Drupal\social_font\Entity\Font $font_entities */
+    foreach(\Drupal\social_font\Entity\Font::loadMultiple() as $font_entities) {
+      $fonts []= $font_entities->get('name')->value;
+    }
+  }
+
   $form['os_font_settings']['font_primary'] = array(
     '#type' => 'select',
     '#title' => t('Font'),
