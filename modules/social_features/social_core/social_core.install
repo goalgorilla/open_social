@@ -460,5 +460,14 @@ function social_core_update_8009() {
   else {
     drupal_set_message('Skipped installing socialblue theme. Please check release notes.');
   }
+}
 
+/**
+ * Install social_font module.
+ */
+function social_core_update_8010() {
+  $modules = array(
+    'social_font',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }
