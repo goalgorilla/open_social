@@ -57,8 +57,14 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
   );
 
   // Font tab.
-  $fonts = array(); //
-  $fonts []= 'Montserrat';
+  $fonts = [];
+  if (\Drupal::service('module_handler')->moduleExists('social_font')) {
+      /** @var \Drupal\social_font\Entity\Font $font_entities */
+    foreach(\Drupal\social_font\Entity\Font::loadMultiple() as $font_entities) {
+      $fonts []= $font_entities->get('name')->value;
+    }
+  }
+
   $form['os_font_settings']['font_primary'] = array(
     '#type' => 'select',
     '#title' => t('Font'),
