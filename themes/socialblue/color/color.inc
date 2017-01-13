@@ -7,6 +7,7 @@
 
 $info = array(
   // Available colors and color labels used in theme.
+  // @TODO Make sure you use these as class names.
   'fields' => array(
     'bg-primary' => t('Primary color'),
     'brand-secondary' => t('Secondary color'),
@@ -42,21 +43,22 @@ $info = array(
   //  ),
 
   // Gradient definitions.
-  'gradients' => array(
-    array(
-      // (x, y, width, height).
-      'dimension' => array(0, 0, 0, 0),
-      // Direction of gradient ('vertical' or 'horizontal').
-      'direction' => 'vertical',
-      // Keys of colors to use for the gradient.
-      'colors' => array('top', 'bottom'),
-    ),
-  ),
+  //  'gradients' => array(
+  //    array(
+  //      // (x, y, width, height).
+  //      'dimension' => array(0, 0, 0, 0),
+  //      // Direction of gradient ('vertical' or 'horizontal').
+  //      'direction' => 'vertical',
+  //      // Keys of colors to use for the gradient.
+  //      'colors' => array('top', 'bottom'),
+  //    ),
+  //  ),
 
-  // Preview files. @todo Make sure we update the preview it will help
+  // Preview files.
+  // @todo Make sure we update the preview it will help
   // Distro users / SaaS users a lot!
   // 'preview_library' => 'socialbase/color.preview',
-  // 'preview_html' => 'color/preview.html',
+   'preview_html' => '',
 
   // Attachments.
   '#attached' => [
