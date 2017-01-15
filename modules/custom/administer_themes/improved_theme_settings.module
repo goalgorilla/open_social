@@ -1,0 +1,35 @@
+<?php
+/**
+ * @file
+ * Improved theme settings module file.
+ */
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // If user has the improved settings, we don't alter nothing!
+  if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
+    return;
+  }
+
+  // Our form contains all the correct id's so we can start the alteration!
+  if (!empty($form['open_social_settings']) && !empty($form['os_color_settings']) && !empty($form['color'])) {
+    // Unset theme updates
+    $form['update']['#access'] = FALSE;
+
+    // Unset Bootstrap settings, we don't need it.
+    $form['bootstrap']['#access'] = FALSE;
+
+    // Unset all the settings that are part of the bootstrap group.
+    foreach ($form as $setting => $settings) {
+      if (!empty($settings['#group']) && $settings['#group'] == "bootstrap") {
+        $form[$setting]['#access'] = FALSE;
+      }
+    }
+
+    // We want color to be rendered under open social settings in a tab.
+    $form['color']['#group'] = "open_social_settings";
+  }
+}

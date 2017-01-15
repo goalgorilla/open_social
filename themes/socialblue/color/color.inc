@@ -7,26 +7,25 @@
 
 $info = array(
   // Available colors and color labels used in theme.
-  // @TODO Make sure you use these as class names.
   'fields' => array(
-    'bg-primary' => t('Primary color'),
-    'brand-secondary' => t('Secondary color'),
-    'brand-accent' => t('Accent color'),
-    'text-primary' => t('Text primary color'),
-    'text-info' => t('Text secondary color'),
-    'text-accent' => t('Text accent color'),
+    'brand-bg-primary' => t('Primary color for your brand'),
+    'brand-bg-secondary' => t('Secondary color for your brand'),
+    'brand-bg-accent' => t('Accent color'),
+    'brand-text-primary' => t('Text primary color'),
+    'brand-text-secondary' => t('Text secondary color'),
+    'brand-text-accent' => t('Text accent color'),
   ),
   // Pre-defined color schemes.
   'schemes' => array(
     'default' => array(
       'title' => t('Social Blue (default)'),
       'colors' => array(
-        'bg-primary' => '#29abe2',
-        'brand-secondary' => '#1f80aa',
-        'brand-accent' => '#ffc142',
-        'text-primary' => '#29abe2',
-        'text-info' => '#31708f',
-        'text-accent' => '#ffc142',
+        'brand-bg-primary' => '#29abe2',
+        'brand-bg-secondary' => '#1f80aa',
+        'brand-bg-accent' => '#ffc142',
+        'brand-text-primary' => '#29abe2',
+        'brand-text-secondary' => '#31708f',
+        'brand-text-accent' => '#ffc142',
       ),
     ),
   ),

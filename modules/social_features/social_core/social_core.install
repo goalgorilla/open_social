@@ -456,6 +456,13 @@ function social_core_update_8009() {
     \Drupal::service('theme.manager')->resetActiveTheme();
 
     drupal_set_message('Installed socialblue theme and made this the default. Please check release notes.');
+
+    // Also install improved theme settings, because it improves the social blue theme settings page.
+    $modules = array(
+      'improved_theme_settings',
+    );
+    \Drupal::service('module_installer')->install($modules);
+
   }
   else {
     drupal_set_message('Skipped installing socialblue theme. Please check release notes.');

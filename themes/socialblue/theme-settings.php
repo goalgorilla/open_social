@@ -19,7 +19,7 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
   $form['os_color_settings'] = array(
     '#type' => 'details',
     '#group' => 'open_social_settings',
-    '#title' => t('Colors'),
+    '#title' => t('Border radius'),
     '#weight' => 20,
     '#collapsible' => true,
     '#collapsed' => true,
