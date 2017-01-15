@@ -8,10 +8,8 @@ id: social-event
 label: 'Event functionality.'
 module: social_tour
 routes:
-  -
-    route_name: view.user_information.user_information
+  - route_name: entity.node.canonical
 tips:
-  # route = any event visited for the 1st time
   welcome_event:
     id: welcome_event
     plugin: text
@@ -20,11 +18,3 @@ tips:
     weight: 1
     attributes:
       backdrop: 1
-  filter_tooltip:
-    id: filter_tooltip
-    plugin: text
-    location: 'right'
-    body: 'Select here if you want to see upcoming or finished events'
-    weight: 2
-    attributes:
-     data_id: views-exposed-form-upcoming-events-page-community-events

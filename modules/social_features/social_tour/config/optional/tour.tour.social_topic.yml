@@ -8,8 +8,7 @@ id: social-topic
 label: 'Topic functionality.'
 module: social_tour
 routes:
-  -
-    route_name: view.user_information.user_information #any topic visited for the first time.
+  - route_name: entity.node.canonical
 tips:
   welcome_topic:
     id: welcome_topic
@@ -19,11 +18,3 @@ tips:
     weight: 1
     attributes:
       backdrop: 1
-  filter_tooltip2:
-    id: filter_tooltip2
-    plugin: text
-    location: 'right'
-    body: 'Here you can select a topic type'
-    weight: 2
-    attributes:
-      data_class: select-wrapper
