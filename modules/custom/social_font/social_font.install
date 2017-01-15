@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Contains social_font.install.
+ */
+
+function social_font_install() {
+
+  $font = \Drupal\social_font\Entity\Font::create([
+    'name' => 'Montserrat',
+    'user_id' => 1,
+    'created' => REQUEST_TIME,
+    'field_fallback' => '0'
+  ]);
+
+  $font->save();
+}

@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.font.field_fonts
+  module:
+    - file
+    - social_font
+id: font.font.field_fonts
+field_name: field_fonts
+entity_type: font
+bundle: font
+label: Fonts
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: fonts
+  file_extensions: 'eot svg ttf woff woff2'
+  max_filesize: ''
+  description_field: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file
