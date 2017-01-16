@@ -37,13 +37,15 @@ class AccountHeaderBlock extends BlockBase {
           'below' => array(),
         ),
         'groups' => array(
-          'classes' => '',
-          'link_attributes' => '',
-          'icon_classes' => 'icon-group',
-          'title' => $this->t('My Groups'),
-          'label' => $this->t('My Groups'),
-          'title_classes' => 'sr-only',
-          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => $this->t('Create New Group'),
+            'label' => $this->t('New group'),
+            'title_classes' => '',
+            'url' => Url::fromUserInput('/group/add/open_group'),
         ),
       ];
 
