@@ -47,7 +47,7 @@ class AccountHeaderBlock extends BlockBase {
         ),
       ];
 
-      // Check is the User is allowd to create Events
+      // Check if the current user is allowed to create Events
       if($account->hasPermission('create event content')){
          $links['add']['below']['add_event'] = array(
            'classes' => '',
@@ -62,7 +62,7 @@ class AccountHeaderBlock extends BlockBase {
          );
       }
 
-      // Check is the User is allowd to create Topics
+      // Check if the current user is allowed to create Topics
       if($account->hasPermission('create topic content')){
         $links['add']['below']['add_topic'] = array(
           'classes' => '',
@@ -78,7 +78,7 @@ class AccountHeaderBlock extends BlockBase {
       }
 
 
-      // Check if the user is allowed to create new Groups
+      // Check if the current user is allowed to create new Groups
       if($account->hasPermission('create open_group group')){
         $links['add']['below']['add_group'] = array(
           'classes' => '',
@@ -121,7 +121,7 @@ class AccountHeaderBlock extends BlockBase {
         );
       }
 
-      // Check if user can add anything if not remove add link
+      // Check if user can create anything of the above if not remove add link
       if(count($links['add']['below']) == 0){
         unset($links['add']);
       }
