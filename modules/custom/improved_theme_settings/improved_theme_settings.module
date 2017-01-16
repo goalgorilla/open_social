@@ -48,64 +48,100 @@ function _improved_theme_settings_update_palette($colors = '') {
   $secondary = $colors['brand-bg-secondary'];
   $accent = $colors['brand-bg-accent'];
 
-  $css = "/* Radios
-    * primary #29abe2: red
-    * secondary #1f80aa: green
-    * accent : pink
-    */
-    [type=\"radio\"]:checked + label:before {
-      border-color: green !important;
+  $css = "[type=\"radio\"]:checked + label:before {
+      border-color: $secondary !important;
     }
+
     [type=\"radio\"]:checked + label:after {
-      border-color: green !important;
-      background-color: green !important;
+      border-color: $secondary !important;
+      background-color: $secondary !important;
     }
+
     [type=\"radio\"]:checked + label {
-      color: green !important;
+      color: $secondary !important;
     }
+
     .dropdown-toggle.btn-primary:hover {
-      background-color: red !important;
-      border-color: red !important;
+      background-color: $primary !important;
+      border-color: $primary !important;
     }
+
     .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
-      color: red !important;
+      color: $primary !important;
     }
+
     .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
-      border-right-color: red !important;
+      border-right-color: $primary !important;
     }
+
     .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-      background-color: red !important;
+      background-color: $primary !important;
     }
+
     #navbar-search.is-open .search-icon, .no-js #navbar-search .search-icon {
-      fill: red !important;
+      fill: $primary !important;
     }
+
     .form-control:focus {
-      border-color: red !important;
-      border-bottom-color: red !important;
-      box-shadow: 0 2px 0 0 red !important;
+      border-color: $primary !important;
+      border-bottom-color: $primary !important;
+      box-shadow: 0 2px 0 0 $primary !important;
     }
+
     .brand-secondary {
-      background-color: green !important;
-      border-color: green !important;
+      background-color: $secondary !important;
+      border-color: $secondary !important;
     }
+
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
     }
+
     .btn-primary {
-      background-color: red !important;
-      border-color: red !important;
+      background-color: $primary !important;
+      border-color: $primary !important;
     }
+
+    .btn-flat {
+      color: $primary !important;
+      fill: $primary !important;
+    }
+
+    .btn-flat:hover {
+      color: inherit !important;
+    }
+
     .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
-      background-color: green !important;
-      border-color: green !important;
+      background-color: $secondary !important;
+      border-color: $secondary !important;
     }
+
     [type=\"checkbox\"]:checked + label:after {
-      border-color: green !important;
-      background-color: green !important;
+      border-color: $secondary !important;
+      background-color: $secondary !important;
     }
+
     .stream-icon-new {
-      background: green !important;
-    }";
+      background: $secondary !important;
+    }
+
+    .comment__reply-btn {
+      color: $primary !important;
+    }
+
+    .btn-accent {
+      background-color: $accent !important;
+      border-color: $accent !important;
+    }
+
+    .body-text a {
+      color: $primary !important;
+    }
+
+    .body-text a:hover {
+      color: $primary !important;
+    }
+  ";
 
   return $css;
 }
@@ -141,7 +177,7 @@ function improved_theme_settings_page_attachments(array &$page) {
     if (count(array_diff($colors, $default)) > 0) {
       //@TODO Peter make sure the below function returns the CSS that we need
       // to override.
-      // $style_to_add .= _improved_theme_settings_update_palette($colors);
+      $style_to_add .= _improved_theme_settings_update_palette($colors);
     }
 
     if (!empty($style_to_add)) {
