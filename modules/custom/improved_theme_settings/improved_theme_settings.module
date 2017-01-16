@@ -163,7 +163,7 @@ function improved_theme_settings_page_attachments(array &$page) {
       $style_to_add .= social_font_render();
     }
 
-    $border_radius = theme_get_setting('border_radius', $system_theme_settings);
+    $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
     if (!empty($border_radius)) {
       $style_to_add .= '.brand-border-radius { border-radius: ' . $border_radius . 'px; }';
     }
