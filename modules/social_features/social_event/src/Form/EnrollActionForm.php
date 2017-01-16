@@ -149,10 +149,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form['enroll_for_this_event']['#attributes'] = array(
         'class' => array(
           'btn',
-          'btn-accent',
+          'btn-accent brand-bg-accent',
           'btn-lg btn-raised',
           'dropdown-toggle',
-          'brand-bg-accent',
         ),
         'autocomplete' => 'off',
         'data-toggle' => 'dropdown',
