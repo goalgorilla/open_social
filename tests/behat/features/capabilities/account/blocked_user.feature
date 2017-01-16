@@ -9,8 +9,7 @@ Feature: Notification that account is blocked
       | name      | status | pass |
       | User Case |      0 | UseCase123 |
     And I am on the homepage
-    When I click "User menu"
-    And I click "Log in"
+    When I click "Log in"
     And I fill in the following:
       | Username or email address | User Case |
       | Password | UseCase123 |
@@ -23,8 +22,7 @@ Feature: Notification that account is blocked
       | name      | status | pass |
       | User Case |      0 | wrongpassword |
     And I am on the homepage
-    When I click "User menu"
-    And I click "Log in"
+    When I click "Log in"
     And I fill in the following:
       | Username or email address | User Case |
       | Password | UseCase123 |
