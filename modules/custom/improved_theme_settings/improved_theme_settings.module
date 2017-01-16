@@ -78,6 +78,12 @@ function _improved_theme_settings_update_palette($colors = '') {
       background-color: $primary !important;
     }
 
+    @media(max-width: 900px) {
+      .navbar-form[role='search'] .search-icon {
+        fill: $primary !important;
+      }
+    }
+
     #navbar-search.is-open .search-icon, .no-js #navbar-search .search-icon {
       fill: $primary !important;
     }
@@ -95,6 +101,10 @@ function _improved_theme_settings_update_palette($colors = '') {
 
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
+    }
+
+    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+      background-color: $primary !important;
     }
 
     .btn-primary {
@@ -141,6 +151,10 @@ function _improved_theme_settings_update_palette($colors = '') {
     .body-text a:hover {
       color: $primary !important;
     }
+
+    blockquote {
+        border-left-color: $primary !important;
+    }
   ";
 
   return $css;
@@ -164,8 +178,13 @@ function improved_theme_settings_page_attachments(array &$page) {
     }
 
     $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
-    if (!empty($border_radius)) {
-      $style_to_add .= '.brand-border-radius { border-radius: ' . $border_radius . 'px; }';
+    if (!empty($border_radius) || $border_radius == 0) {
+      $style_to_add .= '
+      .brand-border-radius { border-radius: ' . $border_radius . 'px !important; }
+      .tabs-left .vertical-tabs-list { border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important; }
+      .card--teaser.card--teaser-stream:last-child { border-bottom-left-radius: ' . $border_radius . ' !important; border-bottom-right-radius: ' . $border_radius . ' !important; }
+      .card--teaser.card--teaser-stream:last-child .card-image { border-bottom-left-radius: ' . $border_radius . ' !important; }
+      .btn { border-radius: ' . $border_radius . ' !important; }';
     }
 
     // Get the color palette saved for custom social blue
