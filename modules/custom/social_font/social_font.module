@@ -55,7 +55,7 @@ function social_font_render($font_id) {
         $fonts[] = $url;
       }
       $css .= social_font_fontfiles_render($fonts);
-      $css .= '}';
+      $css .= "} body { font-family: '" . $fontname . "', ". $fallback . "; }";
     }
   }
 
