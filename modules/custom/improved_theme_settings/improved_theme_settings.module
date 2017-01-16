@@ -33,3 +33,41 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupa
     $form['color']['#group'] = "open_social_settings";
   }
 }
+
+
+/**
+ * Implements hook_page_attachments().
+ */
+function improved_theme_settings_page_attachments(array &$page) {
+
+  // If socialblue is our default theme.
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+
+  // We render our color & font settings in the head.
+  if ($system_theme_settings === 'socialblue') {
+
+    $border_radius = theme_get_setting('border_radius', $system_theme_settings);
+
+    if (\Drupal::moduleHandler()->moduleExists('social_font')) {
+      // Render font value here.
+      $font_rendered = social_font_render();
+      dpm($font_rendered);
+    }
+    // Get the color palette saved for custom social blue
+    $colors = color_get_palette('socialblue');
+
+    $custom_style = '';
+
+    if (!empty($font_rendered)) {
+      $page['#attached']['html_head'][] = [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'style',
+          '#value' => $font_rendered,
+        ],
+        // A key, to make it possible to recognize this HTML element when altering.
+        'social_theme_preprocess'
+      ];
+    }
+  }
+}
