@@ -1,0 +1,61 @@
+@import 'settings';
+//
+// Jumbotron
+// --------------------------------------------------
+$jumbotron-padding:              30px !default;
+$jumbotron-color:                inherit !default;
+$jumbotron-bg:                   #fff !default;
+$jumbotron-heading-color:        inherit !default;
+$jumbotron-font-size:            ceil((16px * 1.5)) !default;
+$jumbotron-heading-font-size:    ceil((16px * 4.5)) !default;
+
+.jumbotron {
+  background-color: $jumbotron-bg;
+  color: $jumbotron-color;
+  margin-bottom: $jumbotron-padding;
+  padding-bottom: $jumbotron-padding;
+  padding-top:    $jumbotron-padding;
+  
+
+  h1,
+  .h1 {
+    color: $jumbotron-heading-color;
+  }
+
+  p {
+    margin-bottom: ($jumbotron-padding / 2);
+    font-size: $jumbotron-font-size;
+    font-weight: 200;
+  }
+
+  > hr {
+    border-top-color: darken($jumbotron-bg, 10%);
+  }
+
+  .container &,
+  .container-fluid & {
+    border-radius: $border-radius-large; // Only round corners at higher resolutions if contained in a container
+    padding-left:  (1.875rem / 2);
+    padding-right: (1.875rem / 2);
+  }
+
+  .container {
+    max-width: 100%;
+  }
+
+  @media screen and (min-width: $medium) {
+    padding-top:    ($jumbotron-padding * 1.6);
+    padding-bottom: ($jumbotron-padding * 1.6);
+
+    .container &,
+    .container-fluid & {
+      padding-left:  ($jumbotron-padding * 2);
+      padding-right: ($jumbotron-padding * 2);
+    }
+
+    h1,
+    .h1 {
+      font-size: $jumbotron-heading-font-size;
+    }
+  }
+}

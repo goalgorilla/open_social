@@ -19,6 +19,7 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/teaser')}}
 <div class="card card--teaser card-with-actionbar">
     <a href="{{ profile_stream_url }}" class="card-image">
       {% if content.field_profile_image %}
@@ -26,11 +27,11 @@
       {% endif %}
     </a>
     <div class="card-body">
-        <h2 class="h3 card-title">
-            <a href="{{ profile_stream_url }}">
-                {{ profile_name|render }}
-            </a>
-        </h2>
+      <h4 class="card-title">
+        <a href="{{ profile_stream_url }}">
+            {{ profile_name|render }}
+        </a>
+      </h4>
         {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="text-gray-dark text-truncate">
           <svg class="teaser-icon">
@@ -54,7 +55,7 @@
 
         <div class="card-actionbar">
             {#@todo: replace contact url#}
-            <a href="{{ profile_contact_url }}" class="btn btn-flat hidden-xs">
+            <a href="{{ profile_contact_url }}" class="btn btn-flat hidden-for-phone-only">
                 {% trans %}Contact me {% endtrans %}
             </a>
             <a href="{{ profile_stream_url }}" class="btn btn-flat pull-right">

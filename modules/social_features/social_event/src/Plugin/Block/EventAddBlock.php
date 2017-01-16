@@ -45,15 +45,13 @@ class EventAddBlock extends BlockBase {
           'btn',
           'btn-primary',
           'btn-raised',
-          'btn-block',
           'waves-effect',
-          'waves-light',
         ),
       ),
     );
     $url->setOptions($link_options);
 
-    $build['content'] = Link::fromTextAndUrl(t('Create Event'), $url)
+    $build['content'] = Link::fromTextAndUrl($this->t('Create Event'), $url)
       ->toRenderable();
 
     return $build;

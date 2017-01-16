@@ -1,74 +1,76 @@
-name: Social base theme
+# The display name for this theme. The name will appear on the Appearance page.
+name: Social Base theme
+# A brief description of the theme. The description will appear on the
+# Appearance page.
+description: Base theme for Open social installations. Create your own subtheme or enable Social Blue
+# The screenshot is the image used on the appearance page. The setting is
+# optional, and if not specified, Drupal will automatically look for a file
+# called 'screenshot.png' in the root of the theme's folder. If a different file
+# name or type is wanted, the screenshot setting must be used.
+#
+# If the theme does not supply a screenshot, and uses a base theme that does,
+# the screenshot will be inheritted from the base theme.
+screenshot: screenshot.png
+
+# The type defines the extension type (module, theme, etc.)
+# This is required and should always be set to 'theme' for a theme.
 type: theme
+
+# The base theme setting specifies another theme to use as a "parent" theme.
+# Templates, CSS, and other properties are inherited from the base theme. If a
+# base theme is not specified, Stable will automatically be used as the base
+# theme. To op-out of using Stable, set base theme to 'false'.
+#
+# base theme: false
+#
+# socialbase uses bootstrap as its base theme
 base theme: bootstrap
-description: Theme layer for drupal social.
+
+
+# The supported Drupal version.
 core: 8.x
 
-# The "libraries:" section will add a library to _all_ pages.
-# The order here is determined first by SMACSS category and after that you can determine the order here.
-libraries:
-  - socialbase/print
-  - socialbase/normalize
-  - socialbase/fonts
-  - socialbase/buttons
-  - socialbase/forms
-  - socialbase/scaffolding
-  - socialbase/tables
-  - socialbase/type
-  - socialbase/utilities
-  - socialbase/alerts
-  - socialbase/badges
-  - socialbase/cards
-  - socialbase/dropdowns
-  - socialbase/hero
-  - socialbase/grid
-  - socialbase/icons
-  - socialbase/input-groups
-  - socialbase/layout
-  - socialbase/labels
-  - socialbase/list-group
-  - socialbase/media
-  - socialbase/modals
-  - socialbase/navbar
-  - socialbase/stream
-  - socialbase/tabs
-  - socialbase/wells
+# The version number for the theme is optional. Quotes are needed because the
+# format is intepreted as a number and the trailing zero is lost when displayed.
+version: '2.0'
 
-# Add the type css to be loaded by the ckeditor iframe.
-ckeditor_stylesheets:
-  - components/asset-builds/css/ckeditor.css
-
+# Libraries-extend is used to attach libraries to other libraries. If the
+# original library is conditionally included, the library it is extended with
+# will be included under the same conditions.
 libraries-extend:
   core/drupal.ajax:
-    - socialbase/drupal.ajax
+    - socialbase/form--autocomplete
   core/drupal.tabledrag:
-    - socialbase/drupal.tabledrag
-
+    - socialbase/tabledrag
   # attach the timepicker library to all date fields
   core/drupal.date:
-    - socialbase/jquery.timepicker
-
+    - socialbase/form--datepicker
   #extend the core datepicker with a stylesheet and attach the listener
   core/jquery.ui.datepicker:
-    - socialbase/jquery.datepicker
-
+    - socialbase/form--timepicker
   # attach the bootstrap library script and css component
   bootstrap/popover:
     - socialbase/popover
 
 
 
-# The "libraries-override:" section will allow you to:
-# - Replace an entire library.
-# - Remove an entire library.
-# - Replace an asset in a library with another asset.
-# - Remove an asset from a library.
+# Libraries-override is used to override any of the assets defined by a library.
+# Use it to remove files, replace files with your own, replace a library with
+# your own library, or remove the library completely.
+# See https://www.drupal.org/node/2497313.
 libraries-override:
+  # The library name.
   core/normalize: false
   # Remove jQuery UI datepicker
   core/jquery.ui.datepicker:
+    # CSS files are always labeled as such. This format is required.
     css:
+      # The SMACSS category is required. See https://www.drupal.org/node/1887922
       component:
+        # The path to the file. It is not a path relative to your theme. This
+        # should be the same as the path specified in the library file where it
+        # was defined. Setting to 'false' prevents the file from being
+        # included.
         assets/vendor/jquery.ui/themes/base/datepicker.css: false
   core/jquery.ui:
     css:
@@ -80,6 +82,63 @@ libraries-override:
   system/base: false
   views/views.module: false
   classy/file: false
+
+# Libraries contain CSS and JavaScript files. The libraries setting is used to
+# globally add libraries, which means they will appear on every page. Libraries
+# are not limited to ones defined in the the theme. Ones from other themes and
+# modules can be included as long as they are installed.
+#
+# Libraries are defined in [theme name].libraries.yml. To conditionally include
+# libraries see https://www.drupal.org/theme-guide/8/assets.
+
+# The "libraries:" section will add a library to _all_ pages.
+# The order here is determined first by SMACSS category and after that you can determine the order here.
+libraries:
+# The following are libraries defined by Social base in socialbase.libraries.yml.
+  - socialbase/print
+  - socialbase/base
+  # Atoms
+  - socialbase/alerts
+  - socialbase/badges
+  - socialbase/button
+  - socialbase/cards
+  - socialbase/close-icon
+  - socialbase/form-controls
+  - socialbase/labels
+  - socialbase/list-group
+  # Molecules
+  - socialbase/dropdown
+  - socialbase/form-elements
+  - socialbase/form-input-groups
+  - socialbase/media
+  - socialbase/navbar
+  - socialbase/tour
+
+# This section is used by the contrib module, Component Libraries. It allows you
+# to reference .twig files in your components/ directory.
+component-libraries:
+  base:
+    paths:
+      - components/01-base
+  atoms:
+    paths:
+      - components/02-atoms
+  molecules:
+    paths:
+      - components/03-molecules
+  organisms:
+    paths:
+      - components/04-organisms
+  templates:
+    paths:
+      - components/05-templates
+  pages:
+    paths:
+      - components/06-pages
+
+# Special stylesheets for CKEditor to use while editing.
+ckeditor_stylesheets:
+  - assets/css/ckeditor.css
 
 regions:
   hidden: Hidden
@@ -94,8 +153,8 @@ regions:
   complementary_bottom: Complementary bottom
   content_bottom: Content bottom
   footer: Footer
-# Comment (remove) regions_hidden part in your subtheme.
-# Hidden regions should be visible when you enable new theme due to core bug.
+# Remove regions_hidden part in your subtheme.
+# The Hidden region should be visible when you enable a sub theme due to core bug.
 regions_hidden:
   - hidden
 

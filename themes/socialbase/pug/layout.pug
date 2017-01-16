@@ -9,7 +9,7 @@ html(lang="en")
   body
     include ./layout/_gtm.pug
     include ./layout/_header-styleguide.pug
-    include ../images/icons.svg
+    include ../assets/icons/icons.svg
 
     .docsheader
       .container
@@ -19,7 +19,7 @@ html(lang="en")
     main.main-container.styleguide-container(role='main')
       .container
         .row
-          .col-xs-12.col-sm-9
+          .col-xs-12.col-md-9
 
             #regions.scrollspy
               h2.page-header Regions
@@ -37,8 +37,8 @@ html(lang="en")
                   p.list-group-item-text Pathway navigation for large screen and 'go back' navigation for mobile
                 .list-group-item.avatar
                   span.circle(style='background-color: #9575CD')
-                  h6.list-group-item-heading Hero
-                  p.list-group-item-text Provides a summary of the main content of this page, for example a person, a group or an event.
+                  h6.list-group-item-heading Headline (Hero)
+                  p.list-group-item-text The most prominent region of a page that tells users which page, event, topic user or group they are looking at. The region should only contain the text information that is sufficient to identify this page, event, topic, user or group. It is possible to add background image to this region and profile picture when it is a user profile. There are two types of buttons should be put in this region: 1) the actions that change the relationship between the user and this page, event, topic, user or group, such as 'enroll' for events or 'join' for groups. 2) Button with which users can edit this page, event, topic, user or group.
                 .list-group-item.avatar
                   span.circle(style='background-color: #FFE082')
                   h6.list-group-item-heading Secondary navigation
@@ -49,16 +49,16 @@ html(lang="en")
                   p.list-group-item-text Region to place content blocks above the main content. There are no blocks placed here by default.
                 .list-group-item.avatar
                   span.circle(style='background-color: #4DB6AC')
-                  h6.list-group-item-heading Main content
-                  p.list-group-item-text Content about this section
+                  h6.list-group-item-heading Content (Main content)
+                  p.list-group-item-text Content region contains the main content of a page or sub-section. When the content is the information detail of an event or topic, the content region also includes the options to react to the content, such as comment, like or social sharing. The reaction options should be placed below the information detail.
                 .list-group-item.avatar
                   span.circle(style='background-color: #4DD0E1')
-                  h6.list-group-item-heading Complementary top
-                  p.list-group-item-text Complementary content, filters, actions, quick navigations that is specific to the section. On mobile this region will be placed on top of the Main content, possibly in a different appearance such as with an off-canvas component.
+                  h6.list-group-item-heading Sidebar top
+                  p.list-group-item-text The sidebar top region is used for the function to add and filter content as well as an important preview of a type of content (such as enrolments block on event detail page). On mobile devices, the sidebar top region will be placed above the content region.
                 .list-group-item.avatar
                   span.circle(style='background-color: #81C784')
-                  h6.list-group-item-heading Complementary bottom
-                  p.list-group-item-text Complementary content like blocks that is specific to the section. On mobile this region will be placed below the Main content, or it can be hidden. For placing the block we use a script that relocates the this region inside the Complementary top. The script is loaded via the <strong>responsive-dom</strong> library.
+                  h6.list-group-item-heading Sidebar bottom
+                  p.list-group-item-text The sidebar bottom region is used for a unimportant preview of a type of content. On mobile devices, the sidebar top region will be placed below the content region or hidden.
                 .list-group-item.avatar
                   span.circle(style='background-color: #DCE775')
                   h6.list-group-item-heading Content bottom
@@ -102,12 +102,12 @@ html(lang="en")
                       p.flat-text.inline25
                       p.flat-text.inline25
                   .row
-                    .col-xs-12.col-sm-4.col-sm-last.complementary-top(style='background-color:#4DD0E1; min-height: 150px;')
+                    .col-xs-12.col-md-4.col-md-last.complementary-top(style='background-color:#4DD0E1; min-height: 150px;')
                       p Complementary top
                       p.flat-text.small
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.col-sm-8(style='background-color:#4DB6AC; min-height: 400px;')
+                    .col-xs-12.col-md-8(style='background-color:#4DB6AC; min-height: 400px;')
                       p Page title
                       p Main content
                       p.flat-text-header
@@ -115,7 +115,7 @@ html(lang="en")
                       p.flat-text
                       p.flat-text
                       p.flat-text
-                    .col-xs-12.hidden-sm.hidden-md.hidden-lg(style='background-color:#81C784; min-height: 200px;')
+                    .col-xs-12.hidden-md.hidden-lg(style='background-color:#81C784; min-height: 200px;')
                       .complementary-bottom
                         p Complementary bottom
                         p.flat-text.small

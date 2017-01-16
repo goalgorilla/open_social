@@ -20,6 +20,29 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
   if (isset($form['account']['notify']) && $form['account']['notify']['#access'] === TRUE) {
     $form['account']['notify']['#default_value'] = 1;
   }
+
+  // Add an extra validation option, to check for existing data.
+  $form['#validate'][] = 'social_user_register_validate';
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function social_user_register_validate(&$form, FormStateInterface $form_state) {
+
+  // Fetch input.
+  $input = $form_state->getValues();
+
+  // Check if mail or username already exist.
+  if (user_load_by_mail($input['mail']) || user_load_by_name($input['name'])) {
+    // If either the username or mail already exists in the DB, we clear ALL
+    // existing messages, making sure nothing about this is being disclosed.
+    $form_state->clearErrors();
+    // Set a new more general error.
+    $form_state->setErrorByName('mail', t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses or usernames. However, if you entered an email address or username that already exists, you will not be able to continue.
+    Please try again, or request a new password. Contact the site administrator if there are any problems.'));
+  }
 }
 
 /**
@@ -30,10 +53,50 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 function social_user_form_user_form_alter(&$form, FormStateInterface $form_state) {
   // Add forcing of changing password, message to user
   // if they logged in via a one-time login link.
+  // See AccountForm.php this is where user_pass_reset gets set. Only when user
+  // uses a one time login link it's true.
   if ($form_state->get('user_pass_reset')) {
     $form['#attached']['library'][] = 'social_user/user_form_protection';
+    // We prepend it because a user first has to be saved :) and the profile
+    // user save needs to fire first!
+    $form['actions']['submit']['#submit'][] = '_social_user_pass_reset_submit';
+
+    // We have to pass some values, because at this point the user is still
+    // unsaved and the createdTime and the changedTime are still the same!
+    // So it's actually the first time the user logs in and we can do our
+    // redirect.
+    $user = \Drupal::routeMatch()->getParameter('user');
+    if ($user->getCreatedTime() == $user->getChangedTime()) {
+      $form_state->set('first_time_login', TRUE);
+    }
   }
 }
+
+function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
+  $storage = $form_state->getValues();
+  $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
+
+  // Only when there is actual user, and the actual user is changing his own account.
+  // we redirect. When you're editting others you don't want this ofcourse.
+  if (!empty($submitted_user_id) && \Drupal::currentUser()->id() == $submitted_user_id) {
+    $first_time_login = $form_state->get('first_time_login');
+
+    // If created & changed user time are the same, the user has never submitted
+    // the user save form before. Which means we can redirect to user profile.
+    if ($first_time_login) {
+      $form_state->setRedirect(
+        'entity.profile.type.profile.user_profile_form',
+        array('user' => $submitted_user_id, 'profile_type' => 'profile', array())
+      );
+      $form_state->set('first_time_login', FALSE);
+    }
+    else {
+      // We redirect them to the home page stream.
+      $form_state->setRedirect('social_core.homepage');
+    }
+  }
+}
+
 
 /**
  * Check if an users with the input field for name or mail field is blocked.
@@ -151,21 +214,20 @@ function _social_user_search_content_pre_render(array $build) {
  */
 function social_user_user_format_name_alter(&$name, $account) {
 
+  $accountname = '';
   // Let's get the First name Last name.
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   if (!empty($storage)) {
     // Returns false.
-    $user_profile = $storage->loadByUser($account, 'profile', TRUE);
-    if ($user_profile) {
-      if (!empty($user_profile->get('field_profile_first_name')->value) && !empty($user_profile->get('field_profile_last_name')->value)) {
-        $name = t('@first @last', array(
-          '@first' => $user_profile->get('field_profile_first_name')->value,
-          '@last' => $user_profile->get('field_profile_last_name')->value
-        ));
-      }
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $accountname = trim(t('@first @last', array(
+        '@first' => $user_profile->get('field_profile_first_name')->value,
+        '@last' => $user_profile->get('field_profile_last_name')->value
+      )));
     }
   }
+  $name = ($accountname !== '') ? $accountname : $name;
 }
 
 /**

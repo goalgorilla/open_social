@@ -10,6 +10,20 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
 
 /**
+ * Implements hook_update_dependencies().
+ *
+ * @return array
+ */
+function social_group_update_dependencies() {
+  // Necessary because in system_update_8200 all the configuration files are
+  // updated and we delete some modules.
+  $dependencies['system'][8200] = array(
+    'social_group' => 8005,
+  );
+  return $dependencies;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_group.
@@ -95,7 +109,7 @@ function _social_group_create_menu_links() {
 
   if (!is_null($parent)) {
     MenuLinkContent::create([
-      'title' => 'All groups',
+      'title' => t('All groups'),
       'link' => ['uri' => 'internal:/all-groups'],
       'menu_name' => 'main',
       'expanded' => FALSE,

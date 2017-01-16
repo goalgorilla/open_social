@@ -11,7 +11,6 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_theme().
@@ -21,18 +20,11 @@ function social_core_theme() {
     'page_hero_data' => array(
       'variables' => array(
         'title' => NULL,
-        'author_name' => NULL,
-        'created_date' => NULL,
-        'created_date_formatted' => NULL,
-        'topic_type' => NULL,
-        'group_link' => NULL,
         'hero_node' => NULL,
         'node' => NULL,
         'node_type' => NULL,
         'section_class' => NULL,
         'event_enrollment' => NULL,
-        'visibility_icon' => NULL,
-        'visibility_label' => NULL,
         'hero_styled_image_url' => NULL,
       ),
     ),
@@ -54,9 +46,6 @@ function social_core_theme() {
  *   - hero_node: Rendered hero display of the current active node or NULL.
  */
 function template_preprocess_page_hero_data(&$variables) {
-  // @todo create $variables['author_formatted']?
-  // @todo Pass in all the page_title variables?
-
   // Get current user.
   $account = \Drupal::currentUser();
 
@@ -85,25 +74,12 @@ function template_preprocess_page_hero_data(&$variables) {
 
     // Add node edit url for management.
     if ($node instanceof Node) {
-      if ($node->access('update', $account)) {
-        $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
-      }
-    }
-
-    // Content visibility.
-    if ((isset($node->field_content_visibility)) && !$account->isAnonymous()) {
-      $node_visibility_value = $node->field_content_visibility->getValue();
-      $content_visibility = reset($node_visibility_value);
-      switch ($content_visibility['value']) {
-        case 'community':
-          $variables['visibility_icon'] = 'group';
-          $variables['visibility_label'] = t('community');
-          break;
-
-        case 'public':
-          $variables['visibility_icon'] = 'public';
-          $variables['visibility_label'] = t('public');
-          break;
+      // Get the current route name to check if the user is on the edit or delete page.
+      $route = \Drupal::routeMatch()->getRouteName();
+      if (!in_array($route, array('entity.node.edit_form','entity.node.delete_form'))) {
+        if ($node->access('update',$account)) {
+          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+        }
       }
     }
 
@@ -114,26 +90,6 @@ function template_preprocess_page_hero_data(&$variables) {
         ->buildUrl($node->{$image_field}->entity->getFileUri());
     }
 
-  }
-
-  if (isset($variables['created_date']) && !isset($variables['created_date_formatted'])) {
-    $variables['created_date_formatted'] = \Drupal::service('date.formatter')
-      ->format($variables['created_date'], 'social_long_date');
-  }
-
-  if (isset($variables['topic_type'])) {
-    $topic_type_entities = $variables['topic_type']->referencedEntities();
-    if (count($topic_type_entities) === 1) {
-      foreach ($topic_type_entities as $topic) {
-        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', array('field_topic_type_target_id' => $topic->id()));
-        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
-          ->toString();
-        $variables['topic_type'] = $topic_type_link;
-      }
-    }
-    else {
-      $variables['topic_type'] = NULL;
-    }
   }
 }
 
@@ -255,6 +211,20 @@ function social_core_preprocess_block(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_core_menu_local_tasks_alter(&$data, $route_name) {
+
+  if (\Drupal::currentUser()->isAnonymous()) {
+    // Anonymous user so we unset the user tabs on login register etc.
+    if (isset($data['tabs'][0]['user.register'])) {
+      unset($data['tabs'][0]['user.register']);
+    }
+    if (isset($data['tabs'][0]['user.pass'])) {
+      unset($data['tabs'][0]['user.pass']);
+    }
+    if (isset($data['tabs'][0]['user.login'])) {
+      unset($data['tabs'][0]['user.login']);
+    }
+  }
+
   $node = \Drupal::service('current_route_match')->getParameter('node');
 
   if (!is_null($node) && !is_object($node)) {
@@ -328,4 +298,14 @@ function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $fo
     $fieldname = $formfield[$form_id];
     $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function social_core_preprocess_breadcrumb(&$variables) {
+  // Get the user.
+  $user = \Drupal::currentUser();
+  // Add cache tag for the user.
+  $variables['#cache']['tags'][] = 'user:breadcrumb:' . $user->id();
 }

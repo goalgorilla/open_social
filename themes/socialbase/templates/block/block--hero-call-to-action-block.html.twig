@@ -46,6 +46,8 @@
  */
 #}
 
+{{ attach_library('socialbase/hero')}}
+
 {%
 set classes = [
   'cover',
@@ -62,14 +64,10 @@ set classes = [
 
   {% if content %}
     <div class="cover-wrap">
-      <div class="row">
-        <div class="col-xs-12 col-sm-8">
-          <div class="hero-canvas padding-md">
-            {% block content %}
-                {{ content }}
-            {% endblock %}
-          </div>
-        </div>
+      <div class="hero-canvas">
+        {% block content %}
+          {{ content }}
+        {% endblock %}
       </div>
     </div>
   {% endif %}

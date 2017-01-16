@@ -9,7 +9,8 @@ use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-
+use Behat\Mink\Driver\Selenium2Driver;
+use Behat\Behat\Hook\Scope\AfterStepScope;
 
 /**
  * Defines application features from the specific context.
@@ -52,7 +53,23 @@ class SocialMinkContext extends MinkContext{
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    $file_and_path = '/root/travis_artifacts/' . $filename . '.jpg';
+    $file_and_path = '/var/www/travis_artifacts/' . $filename . '.jpg';
     file_put_contents($file_and_path, $screenshot);
+  }
+
+
+  /**
+   * @AfterStep
+   */
+  public function takeScreenShotAfterFailedStep(afterStepScope $scope)
+  {
+    if (99 === $scope->getTestResult()->getResultCode()) {
+      $driver = $this->getSession()->getDriver();
+      if (!($driver instanceof Selenium2Driver)) {
+        return;
+      }
+      $today = date("H_i_s");
+      $this->iMakeAScreenshotWithFileName($today . '-error');
+    }
   }
 }

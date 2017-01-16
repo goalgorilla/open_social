@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 
 /**
@@ -51,7 +52,11 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
     $status = $items->status;
     $access_comments_in_group = FALSE;
 
-    $group_contents = GroupContent::loadByEntity($entity);
+    //exclude entities without the set id.
+    if (!empty($entity->id())) {
+      $group_contents = GroupContent::loadByEntity($entity);
+    }
+
     if (!empty($group_contents)) {
       // Add cache contexts.
       $elements['#cache']['contexts'][] = 'group.type';
@@ -101,18 +106,38 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
         // Prepare the show all comments link.
         $t_args = array(':num_comments' => $comment_count);
+
+        // set link classes to be added to the button
+        $more_link_options = array(
+          'attributes' => array(
+            'class' => array(
+              'btn',
+              'btn-flat',
+            ),
+          ),
+        );
+
+        // set path to node
+        $link_url = $entity->urlInfo('canonical');
+
+        // attach the attributes
+        $link_url->setOptions($more_link_options);
+
         if ($comment_count == 0) {
           $more_link = $this->t(':num_comments comments', $t_args);
           $output['more_link'] = $more_link;
-        }
-        else {
+        } elseif ($comment_count == 1) {
+          $more_link = $this->t(':num_comments comment', $t_args);
+          $output['more_link'] = $more_link;
+        } else {
           $more_link = $this->t('Show all :num_comments comments', $t_args);
         }
 
-        $more_button = Link::fromTextAndUrl($more_link, $entity->urlInfo('canonical'));
+        // build the link
+        $more_button = Link::fromTextAndUrl($more_link, $link_url);
 
         $always_show_all_comments = $this->getSetting('always_show_all_comments');
-        if ($always_show_all_comments && $comment_count != 0) {
+        if ($always_show_all_comments && $comment_count > 1) {
           $output['more_link'] = $more_button;
         }
         elseif ($comments_per_page && $comment_count > $comments_per_page) {

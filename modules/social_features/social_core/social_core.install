@@ -25,6 +25,8 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items
   _social_core_create_menu_links();
+  //Set jpeg quality
+  _social_core_set_image_quality();
 }
 
 /**
@@ -165,11 +167,11 @@ function _social_core_create_an_homepage_block() {
   $action_links = array(
     array(
       'uri' => 'internal:/user/register',
-      'title' => 'Sign up',
+      'title' => t('Sign up'),
     ),
     array(
       'uri' => 'internal:/user/login',
-      'title' => 'Login',
+      'title' => t('Login'),
     ),
   );
   $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
@@ -185,7 +187,7 @@ function _social_core_create_an_homepage_block() {
 function _social_core_create_menu_links() {
   // Home.
   MenuLinkContent::create([
-    'title' => 'Home',
+    'title' => t('Home'),
     'link' => ['uri' => 'internal:/'],
     'menu_name' => 'main',
     'expanded' => FALSE,
@@ -194,7 +196,7 @@ function _social_core_create_menu_links() {
 
   // Explore.
   MenuLinkContent::create([
-    'title' => 'Explore',
+    'title' => t('Explore'),
     // This way we get an empty link.
     'link' => ['uri' => 'internal:'],
     'menu_name' => 'main',
@@ -394,4 +396,69 @@ function social_core_update_8005(&$sandbox) {
 
   $sandbox['progress']++;
   $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}
+
+/**
+ * Install social_follow_content module.
+ */
+function social_core_update_8006(&$sandbox) {
+  $modules = array(
+    'social_follow_content',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Set higher jpeg quality instead of default 75%.
+ */
+function social_core_update_8007() {
+  _social_core_set_image_quality();
+}
+
+/**
+ * Set image quality.
+ */
+function _social_core_set_image_quality() {
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+
+  $config->set('jpeg_quality', 90)->save();
+}
+
+/**
+ * Install social_mentions module.
+ */
+function social_core_update_8008() {
+  $modules = array(
+    'social_mentions',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Enable socialblue theme and make default if socialbase is current default.
+ */
+function social_core_update_8009() {
+
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+
+  if ($system_theme_settings === 'socialbase') {
+
+    $themes = ['socialblue'];
+    \Drupal::service('theme_handler')->install($themes);
+
+    \Drupal::configFactory()
+      ->getEditable('system.theme')
+      ->set('default', 'socialblue')
+      ->save();
+
+    // Ensure that the install profile's theme is used.
+    // @see _drupal_maintenance_theme()
+    \Drupal::service('theme.manager')->resetActiveTheme();
+
+    drupal_set_message('Installed socialblue theme and made this the default. Please check release notes.');
+  }
+  else {
+    drupal_set_message('Skipped installing socialblue theme. Please check release notes.');
+  }
+
 }

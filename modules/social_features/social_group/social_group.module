@@ -15,6 +15,8 @@ use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\user\Entity\User;
+use Drupal\profile\Entity\Profile;
 
 /**
  * @file
@@ -100,10 +102,32 @@ function social_group_preprocess_group(&$variables) {
 
   // Add group edit url for management.
   if ($group instanceof Group) {
-    if ($group->access('update', $account)) {
-      $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+    // Get the current route name to check if the user is on the edit or delete page.
+    $route = \Drupal::routeMatch()->getRouteName();
+    if (!in_array($route, array('entity.group.edit_form', 'entity.group.delete_form'))) {
+      if ($group->access('update', $account)) {
+        $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
+        $variables['#cache']['contexts'][] = 'route.name';
+      }
     }
   }
+  // Count number of group members.
+  $members = $group->getMembers();
+  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+  $members_count = 0;
+  if ($members && $profile_storage) {
+    foreach ($members as $member) {
+      $member_account = $member->getUser();
+      if ($member_account instanceof User) {
+        $member_profile = $profile_storage->loadByUser($member_account, 'profile');
+        if ($member_profile instanceof Profile) {
+          $members_count++;
+        }
+      }
+    }
+  }
+  $variables['group_members'] = $members_count;
 }
 
 /**
@@ -152,7 +176,7 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
       $build['#cache']['contexts'][] = 'group.type';
       $build['#cache']['contexts'][] = 'group_membership.roles.permissions';
       $build['#cache']['contexts'][] = 'group_membership.audience';
-
+      $build['#cache']['tags'][] = 'group_block:' . $entity->id();
     }
   }
 }
@@ -166,6 +190,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
   );
+
+  // Perform alterations on joining / leaving groups.
+  if ($form_id == 'group_content_open_group-group_membership_delete_form') {
+    $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
+  }
+
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
@@ -209,6 +239,21 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Add custom submit handler just for redirect purposes. We don't want to
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+  }
+}
+
+/**
+ * Form submit for removing members from a group so we can clear caches.
+ */
+function _social_membership_delete_form_submit($form, FormStateInterface $form_state) {
+  $group = _social_group_get_current_group();
+
+  if (is_object($group)) {
+    // Invalidate cache tags.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags(array($cache_tag));
+    }
   }
 }
 
@@ -489,6 +534,8 @@ function _social_group_cache_tags(GroupInterface $group) {
 
   // Add cachetags that are based on id.
   $tags[] = 'group_hero:' . $group->id();
+  // Add cache tags for the blocks.
+  $tags[] = 'group_block:' . $group->id();
 
   $current_user = \Drupal::currentUser();
   if ($group_membership = $group->getMember($current_user)) {

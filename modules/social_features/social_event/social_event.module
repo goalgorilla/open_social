@@ -87,7 +87,12 @@ function social_event_block_view_alter(array &$build, BlockPluginInterface $bloc
  */
 function social_event_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_enrollments_link = FALSE;
-  if ($route_name === "view.event_enrollments.view_enrollments" || $route_name === 'entity.node.canonical') {
+  $routes_to_check = [
+    'view.event_enrollments.view_enrollments',
+    'entity.node.canonical',
+    'view.managers.view_managers',
+  ];
+  if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
@@ -118,6 +123,10 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
     $build['#cache']['tags'][] = $enrollmenttag;
     $build['#cache']['contexts'][] = 'user';
 
+    if (empty($nid)) {
+      return;
+    }
+
     $conditions = array(
       'field_account' => $uid,
       'field_event' => $nid,
@@ -132,7 +141,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       if ($current_enrollment_status === '1') {
         $build['enrolled'] = array(
           '#type' => '#text_field',
-          '#markup' => 'Enrolled',
+          '#markup' => t('Enrolled'),
         );
       }
     }
@@ -164,9 +173,17 @@ function social_event_views_data_alter(array &$data) {
     'title' => t('Event enrolled or created'),
     'filter' => array(
       'title' => t('Event enrolled or created'),
-      'help' => t('Enable events for on the user profles.'),
+      'help' => t('Enable events for on the user profiles.'),
       'field' => 'field_event',
       'id' => 'event_enrolled_or_created',
+    ),
+  );
+  $data['node']['event_passed_upcoming_sort'] = array(
+    'title' => t('Event sorting (passed and upcoming)'),
+    'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
+    'sort' => array(
+      'field' => 'field_event_date_value',
+      'id' => 'event_passed_upcoming_sort',
     ),
   );
 }

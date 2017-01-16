@@ -39,6 +39,7 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/teaser')}}
 <div class="card card--teaser card-with-actionbar">
     <div class='card-image'>
         {{ content.field_group_image }}
@@ -58,7 +59,7 @@
           <span class="inline-center">
             {% trans %}
               1 member
-            {% plural group.getMembers()|length %}
+            {% plural group_members %}
               @count members
             {% endtrans %}
             &nbsp;

@@ -1,0 +1,54 @@
+@import "settings";
+
+// Used on a hero block that can hold a background image.
+.cover {
+  color: white;
+  background-color: $brand-primary;
+}
+
+.page-title {
+	color: white;
+}
+
+.hero-avatar {
+  border-radius: 50%;
+  border: 2px solid white;
+
+  @include for-tablet-portrait-up {
+    border-width: 3px;
+  }
+
+}
+
+.hero-canvas {
+  border-radius: $border-radius-base;
+  background-color: rgba($gray-dark, 0.8);
+  color: white;
+}
+
+.hero-form[role='search'] {
+
+  .form-control {
+    border-radius: $input-border-radius;
+
+    &:focus,
+    &:active,
+    &:focus ~ .search-icon,
+    &:active ~ .search-icon {
+      border-bottom: 1px solid $brand-secondary;
+      box-shadow: 0 2px 0 0 $brand-secondary;
+    }
+
+  }
+
+  .form-submit,
+  .search-icon {
+    border-radius: 0 $input-border-radius $input-border-radius 0;
+  }
+
+  .search-icon {
+    fill: $brand-primary;
+    background: white;
+  }
+
+}

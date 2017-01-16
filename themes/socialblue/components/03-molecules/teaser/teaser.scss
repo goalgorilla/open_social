@@ -1,0 +1,27 @@
+@import 'settings';
+
+.card--teaser {
+
+  .card-image {
+
+    @include for-tablet-portrait-up {
+      border-radius: $card-border-radius 0 0 $card-border-radius;
+      background: $gray-lighter;
+    }
+  }
+
+  .teaser-type {
+    background-color: $gray-light-1;
+    border-radius: 0 0 ($card-border-radius - 2px) ($card-border-radius - 2px);
+
+    .teaser-type-icon {
+      fill: white;
+    }
+
+    @include for-tablet-portrait-up {
+      background-color: rgba(black, 0.5);
+      border-radius: 0 0 $card-border-radius 0;
+    }
+  }
+
+}

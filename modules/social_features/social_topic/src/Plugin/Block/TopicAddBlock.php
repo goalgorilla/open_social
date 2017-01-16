@@ -45,15 +45,13 @@ class TopicAddBlock extends BlockBase {
           'btn',
           'btn-primary',
           'btn-raised',
-          'btn-block',
           'waves-effect',
-          'waves-light',
         ),
       ),
     );
     $url->setOptions($link_options);
 
-    $build['content'] = Link::fromTextAndUrl(t('Create Topic'), $url)
+    $build['content'] = Link::fromTextAndUrl($this->t('Create Topic'), $url)
       ->toRenderable();
 
     return $build;

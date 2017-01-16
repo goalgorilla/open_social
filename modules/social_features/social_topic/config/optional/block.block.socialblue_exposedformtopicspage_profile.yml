@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.topics
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - socialblue
+id: socialblue_exposedformtopicspage_profile
+theme: socialblue
+region: complementary_top
+weight: 3
+provider: null
+plugin: 'views_exposed_filter_block:topics-page_profile'
+settings:
+  id: 'views_exposed_filter_block:topics-page_profile'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+  request_path:
+    id: request_path
+    pages: '/user/*/topics'
+    negate: false
+    context_mapping: {  }

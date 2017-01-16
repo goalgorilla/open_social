@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialDemoUser implements ContainerInjectionInterface {
 
-  private $accounts;
+  protected $accounts;
 
   /**
    * The user storage.
@@ -89,6 +89,13 @@ class SocialDemoUser implements ContainerInjectionInterface {
           $media_id = $file->id();
         }
       }
+      $roles = [];
+      if (isset($account['roles'])) {
+        $roles = array_filter($account['roles']);
+      }
+      if (empty($roles)) {
+        $roles = array(DRUPAL_AUTHENTICATED_RID);
+      }
 
       // Let's create some accounts.
       $user = User::create([
@@ -100,6 +107,7 @@ class SocialDemoUser implements ContainerInjectionInterface {
         'status' => $account['status'],
         'created' => REQUEST_TIME,
         'changed' => REQUEST_TIME,
+        'roles' => array_values($roles),
       ]);
       $user->setPassword($account['name']);
       $user->enforceIsNew();

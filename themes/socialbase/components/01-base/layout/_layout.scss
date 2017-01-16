@@ -1,0 +1,59 @@
+@import "settings";
+
+
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include for-tablet-landscape-up {
+    max-width: 1200px;
+  }
+}
+
+.row {
+
+  @include for-tablet-landscape-up {
+    display: flex;
+  }
+}
+
+.main-container {
+  overflow: hidden;
+  min-height: 100%;
+  min-height: calc(100vh - 50px);
+  padding-top: 50px;
+  padding-bottom: 100px;
+  position: relative;
+  z-index: 0;
+}
+
+.region--main-content {
+  padding-left: 1em;
+  padding-right: 1em;
+
+  @include for-tablet-landscape-up {
+    flex: 0 0 (100%/1.5);
+    max-width: (100%/1.5);
+  }
+}
+
+.region--complementary {
+  padding-left: 1em;
+  padding-right: 1em;
+
+  @include for-tablet-landscape-up {
+    flex: 0 0 (100%/3);
+    order: 2;
+    max-width: (100%/3);
+  }
+
+}
+
+@include for-tablet-landscape-up {
+
+  .complementary-top {
+    // line-height * section-title font size + padding top + padding bottom
+    margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
+  }
+}

@@ -1,10 +1,11 @@
 <?php
+
 /**
  * @file
  * The Social activity install.
  */
-
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\message\Entity\MessageTemplate;
 use \Drupal\block\Entity\Block;
 
 function social_activity_install() {
@@ -22,7 +23,6 @@ function social_activity_install() {
   _social_activity_create_activity_homepage_block();
 }
 
-
 /**
  * Function to create some menu items.
  */
@@ -38,7 +38,7 @@ function _social_activity_create_menu_links() {
 
   if (!is_null($parent)) {
     MenuLinkContent::create([
-      'title' => 'Community',
+      'title' => t('Community'),
       'link' => ['uri' => 'internal:/explore'],
       'menu_name' => 'main',
       'expanded' => FALSE,
@@ -94,7 +94,7 @@ function _social_activity_create_activity_homepage_block() {
       $values['visibility'][$id]['id'] = $id;
     }
 
-    $settings = array (
+    $settings = array(
       'id' => 'views_block:activity_stream-block_stream_homepage',
       'label' => '',
       'provider' => 'views',
@@ -107,4 +107,104 @@ function _social_activity_create_activity_homepage_block() {
 
     $block->save();
   }
+}
+
+/**
+ * Update all existing Message Templates to work with newest Message version.
+ */
+function social_activity_update_8002() {
+  $templates = MessageTemplate::loadMultiple();
+
+  if (!empty($templates)) {
+    foreach ($templates as $name => $template) {
+      $new_text = [];
+
+      //check if text is in the wrong format
+      if (!empty($text_array = $template->get('text'))) {
+
+        foreach ($text_array as $text) {
+          if (is_string($text)) {
+            $new_text[] = [
+              'format' => 'full_html',
+              'value' => $text,
+            ];
+          }
+        }
+
+        //if all text was ok this would be empty, no need to update in that case
+        if (!empty($new_text)) {
+          $templates[$name]->set('text', $new_text);
+          $templates[$name]->save();
+
+          $config_name = "message.template.{$template->getConfigTarget()}";
+          $config = \Drupal::service('config.factory')->getEditable($config_name);
+
+          if (!empty($config)) {
+            $config->set('text', $new_text);
+            $config->save();
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Update Dynamic Entity Reference related configs to work with latest version of DER.
+ */
+function social_activity_update_8003() {
+  $config = \Drupal::service('config.factory')->getEditable('core.entity_view_display.activity.activity.default');
+
+  //only update if config exists and this is not a fresh install
+  if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
+    if (!empty($settings['view_mode'])) {
+      $config->clear('content.field_activity_entity.settings');
+
+      $config->set('content.field_activity_entity.settings', social_activity_get_der_settings());
+      $config->save();
+    }
+  }
+}
+
+/**
+ * Get entity view mode settings for Dynamic Entity Reference update.
+ *
+ * @return array View mode settings, keyed by entity machine name
+ */
+function social_activity_get_der_settings() {
+  $result = [];
+
+  $settings = [
+    'activity' => [
+      'comment',
+      'node',
+      'post',
+    ],
+    'stream' => [
+      'group',
+    ],
+    'default' => [
+      'crop',
+      'event_enrollment',
+      'flagging',
+      'message',
+      'search_api_task',
+      'activity',
+      'block_content',
+      'menu_link_content',
+      'file',
+      'group_content',
+      'profile',
+      'taxonomy_term',
+      'user',
+    ],
+  ];
+
+  foreach ($settings as $view_mode => $entities) {
+    foreach ($entities as $entity) {
+      $result[$entity]['view_mode'] = $view_mode;
+    }
+  }
+
+  return $result;
 }

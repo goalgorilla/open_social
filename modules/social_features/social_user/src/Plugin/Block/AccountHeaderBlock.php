@@ -15,35 +15,37 @@ use Drupal\Core\Url;
  */
 class AccountHeaderBlock extends BlockBase {
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build() {
-        $account = \Drupal::currentUser();
-        if ($account->id() !== 0) {
-            $account_name = $account->getAccountName();
-            $account_uid = $account->id();
+  /**
+   * {@inheritdoc}
+   */
+  public function build() {
+    $account = \Drupal::currentUser();
+    if ($account->id() !== 0) {
+      $account_name = $account->getAccountName();
+      $account_uid = $account->id();
 
-            $links = [
-                'add' => array(
-                    'classes' => 'dropdown',
-                    'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-                    'link_classes' => 'dropdown-toggle clearfix',
-                    'icon_classes' => 'icon-add_box',
-                    'title' => t('Add content'),
-                    'title_classes' => 'sr-only',
-                    'url' => '#',
-                    'below' => array(),
-                ),
-                'groups' => array(
-                    'classes' => '',
-                    'link_attributes' => '',
-                    'icon_classes' => 'icon-group',
-                    'title' => t('My groups'),
-                    'title_classes' => 'sr-only',
-                    'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
-                ),
-            ];
+      $links = [
+        'add' => array(
+          'classes' => 'dropdown',
+          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
+          'link_classes' => 'dropdown-toggle clearfix',
+          'icon_classes' => 'icon-add_box',
+          'title' => $this->t('Create New Content'),
+          'label' => $this->t('New content'),
+          'title_classes' => 'sr-only',
+          'url' => '#',
+          'below' => array(),
+        ),
+        'groups' => array(
+          'classes' => '',
+          'link_attributes' => '',
+          'icon_classes' => 'icon-group',
+          'title' => $this->t('My Groups'),
+          'label' => $this->t('My Groups'),
+          'title_classes' => 'sr-only',
+          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
+        ),
+      ];
 
       // Check is the User is allowd to create Events
       if($account->hasPermission('create event content')){
@@ -53,7 +55,8 @@ class AccountHeaderBlock extends BlockBase {
            'link_classes' => '',
            'icon_classes' => '',
            'icon_label' => '',
-           'title' => t('New Event'),
+           'title' => $this->t('Create New Event'),
+           'label' => $this->t('New event'),
            'title_classes' => '',
            'url' => Url::fromUserInput('/node/add/event'),
          );
@@ -67,7 +70,8 @@ class AccountHeaderBlock extends BlockBase {
           'link_classes' => '',
           'icon_classes' => '',
           'icon_label' => '',
-          'title' => t('New Topic'),
+          'title' => $this->t('Create New Topic'),
+          'label' => $this->t('New topic'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/topic'),
         );
@@ -77,15 +81,14 @@ class AccountHeaderBlock extends BlockBase {
       // Check if the user is allowed to create new Groups
       if($account->hasPermission('create open_group group')){
         $links['add']['below']['add_group'] = array(
-           'classes' => '',
-           'link_attributes' => '',
-           'link_classes' => '',
-           'icon_classes' => '',
-           'icon_label' => '',
-           'title' => t('New Group'),
-           'title_classes' => '',
-           'url' => Url::fromUserInput('/group/add/open_group'),
-           );
+          'classes' => '',
+          'link_attributes' => '',
+          'icon_classes' => 'icon-group',
+          'title' => $this->t('My Groups'),
+          'label' => $this->t('My Groups'),
+          'title_classes' => 'sr-only',
+          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
+        );
       }
 
       // Check if the current user is allowed to create new books.
@@ -96,7 +99,8 @@ class AccountHeaderBlock extends BlockBase {
           'link_classes' => '',
           'icon_classes' => '',
           'icon_label' => '',
-          'title' => t('New Book page'),
+          'title' => $this->t('Create New Book page'),
+          'label' => $this->t('New Book Page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/book'),
         );
@@ -110,13 +114,14 @@ class AccountHeaderBlock extends BlockBase {
           'link_classes' => '',
           'icon_classes' => '',
           'icon_label' => '',
-          'title' => t('New Page'),
+          'title' => $this->t('Create New Page'),
+          'label' => $this->t('New Page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/page'),
         );
       }
 
-      // Check if user cann add anything if nor remove add link
+      // Check if user can add anything if nor remove add link
       if(count($links['add']['below']) == 0){
         unset($links['add']);
       }
@@ -147,7 +152,8 @@ class AccountHeaderBlock extends BlockBase {
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
           'icon_classes' => $notifications_icon,
-          'title' => (string) $num_notifications,
+          'title' => $this->t('Notification Centre'),
+          'label' => (string) $num_notifications,
           'title_classes' => $label_classes,
           'url' => '#',
           'below' => $notifications,
@@ -159,13 +165,14 @@ class AccountHeaderBlock extends BlockBase {
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-account_circle',
-        'title' => $account_name,
+        'title' => $this->t('Profile of @account', array('@account' => $account_name)),
+        'label' => $account_name,
         'title_classes' => 'sr-only',
         'url' => '#',
         'below' => array(
           'signed_in_as' => array(
             'classes' => 'dropdown-header header-nav-current-user',
-            'tagline' => 'Signed in as',
+            'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
           ),
           'divide_profile' => array(
@@ -179,7 +186,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('My profile'),
+            'title' => $this->t('View my profile'),
+            'label' => $this->t('My profile'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user'),
           ),
@@ -189,7 +197,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('My events'),
+            'title' => $this->t('View my events'),
+            'label' => $this->t('My events'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/' . $account_uid . '/events'),
           ),
@@ -199,7 +208,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('My topics'),
+            'title' => $this->t('View my topics'),
+            'label' => $this->t('My topics'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/' . $account_uid . '/topics'),
           ),
@@ -209,7 +219,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('My groups'),
+            'title' => $this->t('View my groups'),
+            'label' => $this->t('My groups'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
           ),
@@ -224,7 +235,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('Edit account'),
+            'title' => $this->t('Edit account'),
+            'label' => $this->t('Edit account'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/' . $account_uid . '/edit'),
           ),
@@ -234,7 +246,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('Edit profile'),
+            'title' => $this->t('Edit profile'),
+            'label' => $this->t('Edit profile'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/' . $account_uid . '/profile'),
           ),
@@ -249,7 +262,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => t('Logout'),
+            'title' => $this->t('Logout'),
+            'label' => $this->t('Logout'),
             'title_classes' => '',
             'url' => Url::fromUserInput('/user/logout'),
           ),
@@ -277,7 +291,8 @@ class AccountHeaderBlock extends BlockBase {
           'link_attributes' => '',
           'icon_classes' => '',
           'icon_label' => 'Home',
-          'title' => 'Home',
+          'title' => $this->t('Home'),
+          'label' => $this->t('Home'),
           'title_classes' => '',
           'url' => Url::fromRoute('<front>'),
         ),

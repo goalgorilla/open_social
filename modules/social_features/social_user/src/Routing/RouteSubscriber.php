@@ -21,18 +21,24 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('user.login')) {
       $route->setDefaults(array(
         '_form' => '\Drupal\social_user\Form\SocialUserLoginForm',
-        '_title' => 'Log in',
+        '_title' => t('Log in')->render(),
       ));
     }
     if ($route = $collection->get('user.pass')) {
       $route->setDefaults(array(
         '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
-        '_title' => 'Reset your password',
+        '_title' => t('Reset your password')->render(),
       ));
+    }
+    if ($route = $collection->get('user.reset.form')) {
+      $route->setDefault('_title', t('Set your password')->render());
     }
     // Route the user view page to user/{uid}/timeline.
     if ($route = $collection->get('entity.user.canonical')) {
       $route->setPath('/user/{user}/stream');
+      $defaults = $route->getDefaults();
+      $defaults['_title_callback'] = '\Drupal\social_user\Controller\SocialUserController::setUserStreamTitle';
+      $route->setDefaults($defaults);
     }
   }
 

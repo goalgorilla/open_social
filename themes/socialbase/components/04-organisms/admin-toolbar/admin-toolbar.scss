@@ -1,0 +1,46 @@
+@import 'settings';
+
+// make sure the site doesn't get pushed by the admin toolbar
+.toolbar-tray-open.toolbar-vertical {
+  .navbar-default,
+  .main-container {
+    margin-left: -15rem;
+  }
+
+}
+
+// make sure to take the admin into account when opening a off-canvas sidebar
+.toolbar-vertical .off-canvas-right {
+  transform: translateY(39px) translateX(280px);
+
+  @include for-tablet-portrait-up {
+    transform: none;
+  }
+}
+
+.toolbar-vertical .off-canvas-right.is-open {
+  transform: translateY(39px) translateX(0);
+
+  @include for-tablet-portrait-up {
+    transform: none;
+  }
+
+}
+
+// make sure we can see both menu's
+.toolbar-fixed .navbar-default {
+  position: relative;
+  z-index: 10;
+}
+
+.toolbar-fixed .main-container {
+  padding-top: 0;
+}
+
+
+@include for-phone-only {
+	.toolbar-vertical .navbar-default {
+    position: relative;
+		z-index: 1;
+	}
+}

@@ -1,3 +1,4 @@
+@dev-helpers @fail
 Feature: Failing test
 
   Scenario: Drupal not available

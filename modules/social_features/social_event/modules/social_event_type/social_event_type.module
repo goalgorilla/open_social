@@ -1,0 +1,83 @@
+<?php
+
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+
+/**
+ * @file
+ * The Social event type module.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_type_form_node_event_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  social_event_type_widget_alter($form);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_type_form_node_event_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  social_event_type_widget_alter($form);
+}
+
+
+/**
+ * Function that does some magic to the event type field.
+ * @param $form
+ */
+function social_event_type_widget_alter(&$form) {
+  /** @var \Drupal\Core\Config\ConfigFactory $config */
+  $config = \Drupal::service('config.factory')->getEditable('social_event_type.settings');
+
+  // Check if the field is set to mandatory.
+  if ($config->get('social_event_type_required') == TRUE) {
+    $form['field_event_type']['widget']['#required'] = TRUE;
+  }
+
+  // Set the event type label for none.
+  if (isset($form['field_event_type']['widget']['#options']['_none'])) {
+    // If the field was set to mandatory, remove the _none option.
+    if ($config->get('social_event_type_required') == TRUE) {
+      unset($form['field_event_type']['widget']['#options']['_none']);
+    }
+  }
+
+  // Change the widget if more than X.
+  if (count($form['field_event_type']['widget']['#options']) >= $config->get('social_event_type_select_changer')) {
+    $form['field_event_type']['widget']['#type'] = 'select';
+  }
+}
+
+function social_event_type_preprocess_node(&$variables) {
+  /* @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+  if ($node->getType() === 'event') {
+    $event_type = $node->get('field_event_type');
+    $event_type_entities = $event_type->referencedEntities();
+    if (count($event_type_entities) === 1) {
+      /** @var \Drupal\node\Entity\Node $event */
+      foreach ($event_type_entities as $event) {
+        $variables['metadata'] = t('in @event', array('@event' => $event->link()));
+        // Set event type link.
+        $now = strtotime("now");
+        $end = strtotime($node->get('field_event_date_end')->getString());
+        // 1 are upcoming events.
+        // 2 are ones that have started or are finshed
+        $datetype = ($now > $end) ? 2 : 1;
+
+        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
+          'field_event_date_value' => $datetype,
+          'event_type_id' => $event->id()));
+        $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
+          ->toString();
+        $variables['event_type'] = $event_type_link;
+      }
+    }
+    else {
+      $variables['metadata'] = NULL;
+      $variables['event_type'] = NULL;
+    }
+  }
+}
