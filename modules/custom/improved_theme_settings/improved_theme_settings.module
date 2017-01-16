@@ -175,8 +175,6 @@ function improved_theme_settings_page_attachments(array &$page) {
     // Check if there are differences between socialblue default scheme and the
     // saved palette. If yes we render our extra's in the head too.
     if (count(array_diff($colors, $default)) > 0) {
-      //@TODO Peter make sure the below function returns the CSS that we need
-      // to override.
       $style_to_add .= _improved_theme_settings_update_palette($colors);
     }
 
@@ -185,8 +183,9 @@ function improved_theme_settings_page_attachments(array &$page) {
         [
           '#type' => 'html_tag',
           '#tag' => 'style',
-          '#value' => $style_to_add,
+          '#value' => Drupal\Core\Render\Markup::create($style_to_add),
         ],
+
         // A key, to make it possible to recognize this HTML element when altering.
         'social_theme_preprocess'
       ];
