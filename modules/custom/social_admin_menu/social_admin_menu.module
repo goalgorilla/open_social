@@ -1,0 +1,41 @@
+<?php
+/**
+ * @file
+ * The Social Admin Menu module.
+ */
+
+/**
+ * Implements hook_toolbar_alter().
+ */
+function social_admin_menu_toolbar_alter(&$items) {
+  $items['administration']['tray']['toolbar_administration']['#pre_render'] = array('social_admin_menu_prerender_toolbar_administration_tray');
+}
+
+/**
+ * Renders the toolbar's administration tray.
+ * This is a clone of core's toolbar_prerender_toolbar_administration_tray()
+ * function, which uses setMaxDepth(4) instead of setTopLevelOnly()
+ * @param array $element
+ *   A renderable array.
+ *
+ * @return array
+ *   The updated renderable array.
+ *
+ * @see admin_toolbar_prerender_toolbar_administration_tray()
+ */
+function social_admin_menu_prerender_toolbar_administration_tray(array $element) {
+  $menu_tree = \Drupal::service('toolbar.menu_tree');
+  $parameters = new \Drupal\Core\Menu\MenuTreeParameters();
+  $parameters->setRoot('system.admin')->excludeRoot()->setMaxDepth(4)->onlyEnabledLinks();
+  $tree = $menu_tree->load(NULL, $parameters);
+  $manipulators = array(
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+    array('callable' => 'toolbar_tools_menu_navigation_links'),
+    array('callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess')
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $element['administration_menu'] = $menu_tree->build($tree);
+  $element['administration_menu']['#cache']['contexts'][] = 'user.roles';
+  return $element;
+}
