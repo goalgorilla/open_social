@@ -78,6 +78,12 @@ function _improved_theme_settings_update_palette($colors = '') {
       background-color: $primary !important;
     }
 
+    @media(max-width: 900px) {
+      .navbar-form[role='search'] .search-icon {
+        fill: $primary !important;
+      }
+    }
+
     #navbar-search.is-open .search-icon, .no-js #navbar-search .search-icon {
       fill: $primary !important;
     }
@@ -95,6 +101,10 @@ function _improved_theme_settings_update_palette($colors = '') {
 
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
+    }
+
+    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+      background-color: $primary !important;
     }
 
     .btn-primary {
