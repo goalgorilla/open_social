@@ -31,8 +31,16 @@ function social_font_help($route_name, RouteMatchInterface $route_match) {
  * @param $font_id
  * @return string
  */
-function social_font_render($font_id) {
+function social_font_render($font_id = NULL) {
+
+  if ($font_id == NULL) {
+    $config = \Drupal::config('socialblue.settings');
+    $font_id  = $config->get('font_primary');
+  }
+
   $font = \Drupal\social_font\Entity\Font::load($font_id);
+  $css = '';
+
   if ($font instanceof \Drupal\social_font\Entity\Font) {
     // Fontname.
     $fontname = $font->getName();
@@ -43,7 +51,7 @@ function social_font_render($font_id) {
 
     // Amount of files 0.
     if (count($font->get('field_fonts')) === 0) {
-      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; }";
+      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; } body { font-family: '" . $fontname . "', ". $fallback . "; }";
     }
     else {
       $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; ";
