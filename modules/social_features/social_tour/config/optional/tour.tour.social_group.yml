@@ -9,21 +9,13 @@ label: 'Group functionality.'
 module: social_tour
 routes:
   -
-    route_name: social_core.homepage
+    route_name: entity.group.canonical
 tips:
-  welcome_homepage:
-    id: welcome_homepage
+  welcome_group:
+    id: welcome_group
     plugin: text
-    label: 'Welcome on the home page stream!'
-    body: 'On this page you see a stream with all the content you joined or follow!'
+    label: 'Welcome on this group page!'
+    body: 'Here you can find all the activities that find place in the group. You can also join it!'
     weight: 1
     attributes:
       backdrop: 1
-  content_tooltip:
-    id: content_tooltip
-    plugin: text
-    location: 'bottom'
-    body: 'Here you can create your own group or another type of content!'
-    weight: 2
-    attributes:
-      data-class: navbar-right .icon-add_box

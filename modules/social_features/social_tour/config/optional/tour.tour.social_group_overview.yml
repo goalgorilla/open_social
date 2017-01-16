@@ -1,0 +1,21 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_group
+id: social-group
+label: 'Group functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.newest_groups.page_all_groups
+tips:
+  content_tooltip:
+    id: content_tooltip
+    plugin: text
+    location: 'bottom'
+    body: 'Here you can create your own group or another type of content!'
+    weight: 2
+    attributes:
+      data-class: navbar-right .icon-add_box
