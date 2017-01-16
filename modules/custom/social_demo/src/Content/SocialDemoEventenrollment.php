@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class SocialDemoEventenrollment implements ContainerInjectionInterface {
 
-  private $eventenrollments;
+  protected $eventenrollments;
 
   /**
    * The user storage.

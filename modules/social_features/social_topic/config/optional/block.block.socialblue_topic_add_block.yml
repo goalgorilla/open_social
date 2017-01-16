@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_topic
+    - system
+  theme:
+    - socialblue
+id: socialblue_topic_add_block
+theme: socialblue
+region: complementary_top
+weight: -98
+provider: null
+plugin: topic_add_block
+settings:
+  id: topic_add_block
+  label: 'Topic add block'
+  provider: social_topic
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*/topics'
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,30 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_event
+    - social_topic
+id: social-node-view
+label: 'Node view functionality.'
+module: social_tour
+routes:
+  - route_name: entity.node.canonical
+tips:
+  welcome_node:
+    id: welcome_node
+    plugin: text
+    label: 'Welcome at the information page!'
+    body: 'Here you can see all information about the content.'
+    weight: 1
+    attributes:
+      backdrop: 1
+  follow:
+    id: follow
+    plugin: text
+    label: ''
+    body: 'Follow it to be always up to date!'
+    location: 'bottom'
+    weight: 1
+    attributes:
+      data-class: flag-follow_content

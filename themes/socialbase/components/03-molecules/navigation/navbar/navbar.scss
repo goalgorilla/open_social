@@ -1,0 +1,567 @@
+@import 'settings';
+
+
+// Base class
+// --------------------------------------------------
+
+.nav {
+  margin-bottom: 0;
+  padding-left: 0; // Override default ul/ol
+  list-style: none;
+  @include clearfix;
+
+  > li {
+    position: relative;
+    display: block;
+
+    > a {
+      position: relative;
+      display: block;
+      padding: $nav-link-padding;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+
+    // Disabled state sets text to gray and nukes hover/tab effects
+    &.disabled > a {
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        background-color: transparent;
+        cursor: $cursor-disabled;
+      }
+    }
+  }
+
+}
+
+
+//
+// Navbars
+// --------------------------------------------------
+
+
+// Wrapper and base class
+//
+// Provide a static navbar from which we expand to create full-width, fixed, and
+// other navbar variations.
+
+.navbar {
+  position: relative;
+  min-height: $navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
+  margin-bottom: $navbar-margin-bottom;
+  font-size: $navbar-font-size;
+
+  // Prevent floats from breaking the navbar
+  @include clearfix;
+
+}
+
+
+// Navbar heading
+//
+// Groups `.navbar-brand` and `.navbar-toggle` into a single component for easy
+// styling of responsive aspects.
+
+.navbar-header {
+
+  @include for-tablet-landscape-up {
+    float: left;
+  }
+}
+
+
+// Navbar collapse (body)
+//
+// Group your navbar content into this for easy collapsing and expanding across
+// various device sizes. By default, this content is collapsed when <768px, but
+// will expand past that for a horizontal display.
+//
+// To start (on mobile devices) the navbar links, forms, and buttons are stacked
+// vertically and include a `max-height` to overflow in case you have too much
+// content for the user's viewport.
+
+.navbar-collapse {
+  overflow-x: visible;
+  border-top: 1px solid transparent;
+  @include clearfix;
+  -webkit-overflow-scrolling: touch;
+
+  &.in {
+    overflow-y: auto;
+  }
+
+  @include for-tablet-landscape-up {
+    width: auto;
+    border-top: 0;
+
+    &.collapse {
+      display: block !important;
+      height: auto !important;
+      padding-bottom: 0; // Override default setting
+      overflow: visible !important;
+    }
+
+    &.in {
+      overflow-y: visible;
+    }
+
+    // Undo the collapse side padding for navbars with containers to ensure
+    // alignment of right-aligned contents.
+    .navbar-fixed-top &,
+    .navbar-static-top &,
+    .navbar-fixed-bottom & {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
+.navbar-fixed-top {
+  .navbar-collapse {
+    max-height: $navbar-collapse-max-height;
+
+    @media screen and (max-height: 480px) {
+      max-height: 200px;
+    }
+  }
+}
+
+
+
+//
+// Navbar alignment options
+//
+// Display the navbar across the entirety of the page or fixed it to the top or
+// bottom of the page.
+
+
+// Fix the top/bottom navbars when screen real estate supports it
+.navbar-fixed-top {
+  @include z-depth-2;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: $zindex-navbar-fixed;
+
+  @include for-tablet-landscape-up {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+  }
+}
+
+// Brand/project name
+
+.navbar-brand {
+  display: inline-block;
+  vertical-align: top;
+  height: $navbar-height;
+  max-width: 200px;
+  overflow: hidden;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+
+  > img {
+    display: block;
+    pointer-events: none;
+    width: auto;
+    height: 50px;
+  }
+
+}
+
+
+// Navbar toggle
+//
+// Custom button for toggling the `.navbar-collapse`, powered by the collapse
+// JavaScript plugin.
+
+.navbar-toggle {
+  position: relative;
+  background-color: transparent;
+  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+  border: 0;
+  color: white;
+  font-weight: 500;
+  padding: 8px 10px;
+  height: 50px;
+  min-width: 50px;
+
+  // We remove the `outline` here, but later compensate by attaching `:hover`
+  // styles to `:focus`.
+  &:focus {
+    outline: 0;
+  }
+
+  @include for-tablet-landscape-up {
+    display: none;
+  }
+}
+
+
+// Navbar nav links
+//
+// Builds on top of the `.nav` components with its own modifier class to make
+// the nav the full height of the horizontal nav (above 768px).
+
+.navbar-nav {
+
+  > li > a {
+    padding-top:    10px;
+    padding-bottom: 10px;
+    line-height: $line-height-computed;
+  }
+
+  @include for-phone-only {
+    // Dropdowns get custom display when collapsed
+    .open .dropdown-menu {
+      position: static;
+      float: none;
+      width: auto;
+      margin-top: 0;
+      background-color: transparent;
+      border: 0;
+      box-shadow: none;
+      > li > a,
+      .dropdown-header {
+        padding: 5px 15px 5px 25px;
+      }
+      > li > a {
+        line-height: $line-height-computed;
+        &:hover,
+        &:focus {
+          background-image: none;
+        }
+      }
+    }
+  }
+
+  // Uncollapse the nav
+  @include for-tablet-landscape-up {
+    float: left;
+    margin: 0;
+
+    > li {
+      float: left;
+      > a {
+        padding-top:    $navbar-padding-vertical;
+        padding-bottom: $navbar-padding-vertical;
+      }
+    }
+  }
+}
+
+
+// Navbar form
+//
+// Extension of the `.form-inline` with some extra flavor for optimum display in
+// our navbars.
+
+.navbar-form {
+  padding: $nav-link-padding;
+  border: 0;
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  // Undo 100% width for pull classes
+  @include for-tablet-landscape-up {
+    width: auto;
+    margin: 6px 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+
+// Dropdown menus
+
+// Menu position
+.navbar-nav > .dropdown > .dropdown-menu {
+  margin-top: 0;
+}
+
+.navbar-nav > .dropup > .dropdown-menu {
+  margin-bottom: 0;
+}
+
+
+
+// Component alignment
+//
+// Repurpose the pull utilities as their own navbar utilities to avoid specificity
+// issues with parents and chaining. Only do this when the navbar is uncollapsed
+// though so that navbar contents properly stack and align in mobile.
+//
+// Declared after the navbar components to ensure more specificity on the margins.
+
+@include for-tablet-landscape-up {
+  .navbar-left {
+    float: left !important;
+  }
+  .navbar-right {
+    float: right !important;
+  }
+}
+
+
+// Layout and behaviour overrides
+
+.navbar-fixed-top {
+
+  .navbar-right .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+
+  @include for-tablet-landscape-up {
+
+    .navbar-nav {
+      margin-left: 10px;
+    }
+
+  }
+
+}
+
+//
+
+@include for-tablet-landscape-down {
+  // Dropdowns get same display when collapsed
+  // This is an override of bootstrap navbar line 241
+  .navbar-fixed-top .navbar-nav .open .dropdown-menu {
+    background-color: $dropdown-bg;
+    border: 0;
+    @include z-depth-3;
+    position: fixed;
+    top: auto;
+    margin: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 100%;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    backface-visibility: hidden;
+  }
+
+  .navbar-collapse {
+
+    .navbar-nav {
+      margin: ($navbar-padding-vertical / 2) 0;
+      order: 1;
+    }
+
+    .navbar-collapse-order {
+      display: flex;
+      flex-flow: column;
+    }
+
+    .navbar-nav > li > a {
+      padding: 5px 15px;
+
+      &.dropdown-toggle {
+        pointer-events: none;
+      }
+    }
+
+    .dropdown-menu {
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: transparent;
+      float: none;
+      max-width: none;
+      padding-top: 0;
+      box-shadow: none;
+
+      li a {
+        padding: 5px 15px 5px 30px;
+      }
+
+    }
+
+  }
+
+}
+
+// Style overrides
+
+.profile .dropdown-toggle img {
+  border: 2px solid white;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+  transition: color .2s ease, background-color .2s ease;
+}
+
+// Display profile dropdown links inline when larger than tab portrait
+@include for-tablet-landscape-up {
+
+  .not-logged-in.dropdown.profile .dropdown-toggle {
+    display: none;
+  }
+
+}
+
+// Hacking into responsive bootstrap behaviour
+.navbar-fixed-top .navbar-right {
+  margin-top: 0;
+  margin-bottom: 0;
+  float: right;
+
+  > li {
+    float: left;
+
+    > a {
+      padding: 13px 10px 8px;
+      height: 50px;
+    }
+  }
+
+
+  @include for-desktop-up {
+    margin-right: 0;
+  }
+
+}
+
+@include for-tablet-landscape-up {
+
+  .navbar-search {
+    float: right;
+  }
+
+  .navbar-collapse {
+    float: left;
+  }
+
+  .navbar-right {
+    margin-right: 0;
+  }
+}
+
+.navbar .dropdown .badge {
+  position: absolute;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 0.625em;
+  top: 8px;
+  left: 25px;
+  border-radius: 50%;
+}
+
+
+.navbar-form[role='search'] {
+
+  .form-group {
+    position: relative;
+  }
+
+  .form-control {
+    padding: $padding-base-vertical 38px $padding-base-vertical $padding-base-horizontal;
+    max-width: none;
+    border: 0;
+  }
+
+  .form-submit,
+  .search-icon {
+    width: 38px;
+    height: 38px;
+    display: block;
+    position: absolute;
+    overflow: hidden;
+    right: 0;
+    top: 0;
+    line-height: 38px;
+    cursor: pointer;
+    text-align: center;
+	}
+
+  .search-icon {
+    line-height: 38px;
+    speak: none;
+    pointer-events: none;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+
+  }
+
+  @include for-tablet-landscape-up {
+
+    .form-group {
+      width: 0%;
+      min-width: 38px;
+      height: 38px;
+      transition: width 0.3s;
+      -webkit-backface-visibility: hidden;
+    }
+
+		.form-control {
+      position: absolute;
+      right: 0;
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 38px;
+      margin: 0;
+      z-index: 10;
+      padding-left: 0;
+      transition: padding 0.3s;
+		}
+
+    .form-submit {
+      opacity: 0;
+    	color: transparent;
+    	border: none;
+    	outline: none;
+    	z-index: -1;
+    }
+
+    .search-icon {
+      z-index: 90;
+      pointer-events: initial;
+      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
+    }
+
+  }
+
+}
+
+
+// Open state
+#navbar-search.is-open,
+.no-js #navbar-search {
+	width: 180px;
+
+  .form-control {
+    padding-left: $padding-base-horizontal;
+  }
+
+  .search-icon {
+  	z-index: 11;
+  }
+
+  .form-submit {
+  	z-index: 90;
+  }
+
+}

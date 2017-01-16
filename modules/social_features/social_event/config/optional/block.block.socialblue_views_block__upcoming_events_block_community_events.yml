@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.upcoming_events
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_views_block__upcoming_events_block_community_events
+theme: socialblue
+region: complementary_bottom
+weight: 2
+provider: null
+plugin: 'views_block:upcoming_events-block_community_events'
+settings:
+  id: 'views_block:upcoming_events-block_community_events'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    pages: "/stream\r\n/explore"
+    negate: false
+    context_mapping: {  }

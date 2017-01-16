@@ -1,0 +1,38 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the mentions module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of mentions.
+ */
+function mentions_install() {
+  // Set default configurations.
+  _mentions_set_default_config();
+}
+
+/**
+ * Set default settings.
+ */
+function _mentions_set_default_config() {
+  $config = \Drupal::configFactory()->getEditable('mentions.settings');
+
+  $supported_entity_types = ['node', 'comment', 'taxonomy_term', 'user'];
+  $supported_entity_types = array_combine($supported_entity_types, $supported_entity_types);
+
+  $config->set('supported_entity_types', $supported_entity_types);
+  $config->save();
+
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function mentions_uninstall() {
+  \Drupal::service('config.factory')
+    ->getEditable('mentions.settings')
+    ->delete();
+}

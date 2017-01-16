@@ -1,0 +1,13 @@
+social_user_export.export_user_confirm:
+  path: '/admin/people/export'
+  defaults:
+    _form: '\Drupal\social_user_export\Form\ExportUserConfirm'
+  requirements:
+    _permission: 'administer users'
+social_user_export.export_user_download:
+  path: '/admin/people/export/download/{name}'
+  defaults:
+    _controller:
+      '\Drupal\social_user_export\Controller\DownloadController::download'
+  requirements:
+    _permission: 'administer users'
