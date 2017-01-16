@@ -11,7 +11,6 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
-use Drupal\filter\Entity\FilterFormat;
 
 /**
  * Implements hook_theme().
@@ -208,7 +207,7 @@ function social_core_preprocess_block(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_core_menu_local_tasks_alter(&$data, $route_name) {
-  
+
   if (\Drupal::currentUser()->isAnonymous()) {
     // Anonymous user so we unset the user tabs on login register etc.
     if (isset($data['tabs'][0]['user.register'])) {
@@ -295,55 +294,4 @@ function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $fo
     $fieldname = $formfield[$form_id];
     $form[$fieldname]['widget'][0]['#description'] = t('Crop your image to select which part of your image to show on display.');
   }
-}
-
-/**
- * Implements hook_element_info_alter().
- */
-function social_core_element_info_alter(array &$info) {
-  if (isset($info['text_format']['#process'])) {
-    $info['text_format']['#process'][] = 'social_core_filter_process_format';
-  }
-}
-
-/**
- * Remove ability of selecting format if full_html is available.
- * @todo Instead of defining the list of fields it would be better to add a separate
- * setting to all text_format fields, allowing to select wether to show format selector or not
- */
-function social_core_filter_process_format($element) {
-
-  // Only fields listed here will have text format settings disabled
-  $full_html_field_ids = [
-    'edit-body-0',
-    'edit-field-profile-self-introduction-0',
-    'edit-field-group-description-0'
-  ];
-
-  $full_html = FilterFormat::load('full_html');
-  $permission_name = $full_html->getPermissionName();
-  $account = \Drupal::currentUser();
-  if ($element['#type'] == 'text_format' && $element['#format'] == 'full_html' && !$account->hasPermission($permission_name)) {
-    $element['#format'] = 'basic_html';
-    $element['value']['#format'] = 'basic_html';
-    $element['format']['format']['#default_value'] = 'basic_html';
-    $element['format']['format']['#value'] = 'basic_html';
-    $element['value']['#disabled'] = FALSE;
-    $element['format']['format']['#access'] = FALSE;
-    $element['format']['#access'] = TRUE;
-    $key = array_search('filter_form_access_denied', $element['value']['#pre_render']);
-
-    if (isset($element['value']['#pre_render'][$key])) {
-      unset($element['value']['#pre_render'][$key]);
-    }
-  }
-  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name) && in_array($element['#id'], $full_html_field_ids)) {
-    $element['#format'] = 'full_html';
-    $element['format']['format']['#access'] = FALSE;
-    $element['format']['format']['#value'] = 'full_html';
-    $element['format']['help']['#access'] = FALSE;
-    $element['format']['format']['#options'] = ['full_html' => 'Full HTML'];
-  }
-
-  return $element;
 }
