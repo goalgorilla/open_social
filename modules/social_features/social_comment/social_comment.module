@@ -39,6 +39,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
     $form['#attributes']['class'][] = 'card-nested-section';
     $form['actions']['submit']['#value'] = t('Reply');
     $form['actions']['submit']['#attributes']['class'][] = 'btn-flat';
+    $form['actions']['submit']['#attributes']['class'][] = 'brand-text-primary';
 
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
@@ -190,7 +191,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
           'fragment' => 'comment-form',
           'attributes' => array(
             'class' => array(
-              'btn btn-block btn-link',
+              'btn btn-block btn-link brand-text-primary',
             ),
           ),
         );
@@ -210,6 +211,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
             'class' => array(
               'btn',
               'btn-flat',
+              'brand-text-primary',
             ),
           ),
         );
