@@ -123,7 +123,7 @@ class AccountHeaderBlock extends BlockBase {
         );
       }
 
-      // Check if user can add anything if nor remove add link
+      // Check if user can add anything if not remove add link
       if(count($links['add']['below']) == 0){
         unset($links['add']);
       }
