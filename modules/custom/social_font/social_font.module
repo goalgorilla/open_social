@@ -51,7 +51,7 @@ function social_font_render($font_id = NULL) {
 
     // Amount of files 0.
     if (count($font->get('field_fonts')) === 0) {
-      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; } body { font-family: '" . $fontname . "', ". $fallback . "; }";
+      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; } body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
     }
     else {
       $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; ";
@@ -63,7 +63,7 @@ function social_font_render($font_id = NULL) {
         $fonts[] = $url;
       }
       $css .= social_font_fontfiles_render($fonts);
-      $css .= "} body { font-family: '" . $fontname . "', ". $fallback . "; }";
+      $css .= "} body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
     }
   }
 
