@@ -58,9 +58,10 @@ function social_font_render($font_id = NULL) {
       // Loop through the font files.
       foreach ($font->get('field_fonts')->getValue() as $files) {
         /** @var \Drupal\file\Entity\File $file */
-        $file = \Drupal\file\Entity\File::load($files['target_id']);
-        $url = file_create_url($file->get('uri')->value);
-        $fonts[] = $url;
+        if ($file = \Drupal\file\Entity\File::load($files['target_id'])) {
+          $url = file_create_url($file->get('uri')->value);
+          $fonts[] = $url;
+        }
       }
       $css .= social_font_fontfiles_render($fonts);
       $css .= "} body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
