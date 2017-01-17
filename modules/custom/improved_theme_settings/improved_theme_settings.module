@@ -172,8 +172,10 @@ function improved_theme_settings_page_attachments(array &$page) {
 
   // Check for the current active theme.
   $active_theme = \Drupal::theme()->getActiveTheme()->getName();
-
-  if ($active_theme == 'seven') {
+  // Determine the admin theme from config.
+  $config = \Drupal::config('system.theme');
+  // If we're in the admin theme we need to add alibrary.
+  if ($active_theme == $config->get('admin')) {
     $page['#attached']['library'][] = 'improved_theme_settings/color.admin';
   }
 
