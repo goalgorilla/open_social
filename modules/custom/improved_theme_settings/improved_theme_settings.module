@@ -49,6 +49,7 @@ function _improved_theme_settings_update_palette($colors = '') {
   $primary = $colors['brand-bg-primary'];
   $secondary = $colors['brand-bg-secondary'];
   $accent = $colors['brand-bg-accent'];
+  $link = $colors['brand-text-primary'];
 
   $css = "[type=\"radio\"]:checked + label:before {
       border-color: $secondary !important;
@@ -69,7 +70,7 @@ function _improved_theme_settings_update_palette($colors = '') {
     }
 
     .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
-      color: $primary !important;
+      color: $link !important;
     }
 
     .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
@@ -115,8 +116,8 @@ function _improved_theme_settings_update_palette($colors = '') {
     }
 
     .btn-flat {
-      color: $primary !important;
-      fill: $primary !important;
+      color: $link !important;
+      fill: $link !important;
     }
 
     .btn-flat:hover {
@@ -138,7 +139,7 @@ function _improved_theme_settings_update_palette($colors = '') {
     }
 
     .comment__reply-btn {
-      color: $primary !important;
+      color: $link !important;
     }
 
     .btn-accent {
@@ -147,15 +148,15 @@ function _improved_theme_settings_update_palette($colors = '') {
     }
 
     .body-text a {
-      color: $primary !important;
+      color: $link !important;
     }
 
     .body-text a:hover {
-      color: $primary !important;
+      color: $link !important;
     }
 
     blockquote {
-        border-left-color: $primary !important;
+      border-left-color: $link !important;
     }
   ";
 
