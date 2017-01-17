@@ -174,9 +174,7 @@ function improved_theme_settings_page_attachments(array &$page) {
   $active_theme = \Drupal::theme()->getActiveTheme()->getName();
 
   if ($active_theme == 'seven') {
-    $page['#attached']['library'][] = 'improved_theme_settings/improved_theme_settings.color';
-
-    var_dump($page['#attached']['library']);
+    $page['#attached']['library'][] = 'improved_theme_settings/color.admin';
   }
 
   // If socialblue is our default theme.
