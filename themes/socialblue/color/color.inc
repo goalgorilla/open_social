@@ -8,12 +8,10 @@
 $info = array(
   // Available colors and color labels used in theme.
   'fields' => array(
-    'brand-bg-primary' => t('Primary background color'),
-    'brand-bg-secondary' => t('Secondary background color'),
-    'brand-bg-accent' => t('Accent backround color'),
-    'brand-text-primary' => t('Primary text color'),
-    'brand-text-secondary' => t('Secondary text color'),
-    'brand-text-accent' => t('Accent text color'),
+    'brand-bg-primary' => t('Primary color'),
+    'brand-bg-secondary' => t('Secondary color'),
+    'brand-bg-accent' => t('Accent color'),
+    'brand-text-primary' => t('Link color'),
   ),
   // Pre-defined color schemes.
   'schemes' => array(
@@ -24,8 +22,6 @@ $info = array(
         'brand-bg-secondary' => '#1f80aa',
         'brand-bg-accent' => '#ffc142',
         'brand-text-primary' => '#29abe2',
-        'brand-text-secondary' => '#31708f',
-        'brand-text-accent' => '#ffc142',
       ),
     ),
   ),
@@ -37,9 +33,9 @@ $info = array(
   ),
 
   // Files to copy.
-    'copy' => array(
-      'logo.svg',
-    ),
+  'copy' => array(
+    'logo.svg',
+  ),
 
   // Gradient definitions.
   //  'gradients' => array(
@@ -57,7 +53,7 @@ $info = array(
   // @todo Make sure we update the preview it will help
   // Distro users / SaaS users a lot!
   // 'preview_library' => 'socialbase/color.preview',
-   'preview_html' => '',
+  'preview_html' => '',
 
   // Attachments.
   '#attached' => [
