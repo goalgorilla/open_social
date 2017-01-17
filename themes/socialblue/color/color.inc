@@ -21,7 +21,7 @@ $info = array(
         'brand-bg-primary' => '#29abe2',
         'brand-bg-secondary' => '#1f80aa',
         'brand-bg-accent' => '#ffc142',
-        'brand-text-primary' => '#29abe2',
+        'brand-text-primary' => '#33b5e5',
       ),
     ),
   ),
