@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - social_font
+id: font.field_fallback
+field_name: field_fallback
+entity_type: font
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: '0'
+      label: serif
+    -
+      value: '1'
+      label: sans-serif
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

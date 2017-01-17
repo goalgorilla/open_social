@@ -1,0 +1,110 @@
+<?php
+
+/**
+ * @file
+ * Contains social_font.module.
+ */
+
+use \Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ * @param $route_name
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ * @return string
+ */
+function social_font_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+
+    case 'help.page.social_font':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Social font module.') . '</p>';
+
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * @param $font_id
+ * @return string
+ */
+function social_font_render($font_id = NULL) {
+
+  if ($font_id == NULL) {
+    $config = \Drupal::config('socialblue.settings');
+    $font_id  = $config->get('font_primary');
+  }
+
+  $font = \Drupal\social_font\Entity\Font::load($font_id);
+  $css = '';
+
+  if ($font instanceof \Drupal\social_font\Entity\Font) {
+    // Fontname.
+    $fontname = $font->getName();
+    // Fallback.
+    $fallback = social_font_fallback_render($font->get('field_fallback')->getString());
+    // Defaults.
+    $fonts = [];
+
+    // Amount of files 0.
+    if (count($font->get('field_fonts')) === 0) {
+      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; } body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
+    }
+    else {
+      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; ";
+      // Loop through the font files.
+      foreach ($font->get('field_fonts')->getValue() as $files) {
+        /** @var \Drupal\file\Entity\File $file */
+        if ($file = \Drupal\file\Entity\File::load($files['target_id'])) {
+          $url = file_create_url($file->get('uri')->value);
+          $fonts[] = $url;
+        }
+      }
+      $css .= social_font_fontfiles_render($fonts);
+      $css .= "} body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
+    }
+  }
+
+  return $css;
+}
+
+
+/**
+ * @param $fallback_value
+ * @return string
+ */
+function social_font_fallback_render($fallback_value) {
+  if ($fallback_value === '0') {
+    return 'serif';
+  }
+  return 'sans-serif';
+}
+
+/**
+ * @param $fonts
+ * @return string
+ */
+function social_font_fontfiles_render($fonts) {
+  $fontstring = '';
+  foreach ($fonts as $key => $font) {
+    if (pathinfo($font, PATHINFO_EXTENSION) == 'eot') {
+      $fontstring .= "src: url('" . $font . "'), url('" . $font . "#iefix') format('embedded-opentype');";
+      // Remove EOT.
+      unset($fonts[$key]);
+    }
+  }
+
+  // Loop 2.
+  foreach ($fonts as $key => $font) {
+    $format = pathinfo($font, PATHINFO_EXTENSION);
+    if (pathinfo($font, PATHINFO_EXTENSION) == 'ttf') {
+        $format = 'truetype';
+    }
+    $fontstring .= "src: url('" . $font . "') format('" . $format . "');";
+  }
+  return $fontstring;
+
+}

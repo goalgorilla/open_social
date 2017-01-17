@@ -113,6 +113,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
             'class' => array(
               'btn',
               'btn-flat',
+              'brand-text-primary',
             ),
           ),
         );
