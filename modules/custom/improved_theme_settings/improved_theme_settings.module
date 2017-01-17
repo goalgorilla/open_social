@@ -37,6 +37,8 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupa
 /**
  * Function that returns the updated color pallete colors with the generated
  * CSS for in the head.
+ * @param string $colors
+ * @return string
  */
 function _improved_theme_settings_update_palette($colors = '') {
 
@@ -163,6 +165,7 @@ function _improved_theme_settings_update_palette($colors = '') {
 
 /**
  * Implements hook_page_attachments().
+ * @param array $page
  */
 function improved_theme_settings_page_attachments(array &$page) {
 
