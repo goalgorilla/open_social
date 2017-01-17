@@ -37,9 +37,9 @@ $info = array(
   ),
 
   // Files to copy.
-  //  'copy' => array(
-  //    'logo.svg',
-  //  ),
+    'copy' => array(
+      'logo.svg',
+    ),
 
   // Gradient definitions.
   //  'gradients' => array(
