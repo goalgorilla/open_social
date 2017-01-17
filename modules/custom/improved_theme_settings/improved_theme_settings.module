@@ -169,11 +169,16 @@ function _improved_theme_settings_update_palette($colors = '') {
  */
 function improved_theme_settings_page_attachments(array &$page) {
 
+  // Check for the current active theme.
+  $active_theme = \Drupal::theme()->getActiveTheme()->getName();
+
   // If socialblue is our default theme.
   $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
 
-  // We render our color & font settings in the head.
-  if ($system_theme_settings === 'socialblue') {
+  // We render our color & font settings in the head. Only if socialblue is
+  // the default theme. And only if the current active theme is socialblue.
+  // Otherwise we also render it on all admin pages.
+  if ($system_theme_settings === 'socialblue' && $active_theme == $system_theme_settings) {
     $style_to_add = '';
     if (\Drupal::moduleHandler()->moduleExists('social_font')) {
       // Render font value here.
