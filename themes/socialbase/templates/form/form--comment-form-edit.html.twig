@@ -19,19 +19,20 @@
     <article{{ attributes.addClass('js-comment comment') }}>
       <div class="comment__avatar"> {{ author_picture }} </div>
 
-      <div class="comment__content">
+      <div class="comment__content media-middle align-center">
         <span class="comment_author"> {{ author }} </span>
         <span class="comment__metadata">&bullet; {{ submitted }} </span>
-        <div class="comment__text">
-          <form{{ attributes }}>
-            <div class="form-group">
-              {{ children }}
-            </div>
-          </form>
-        </div>
       </div>
 
     </article>
+
+    <div class="comment">
+      <form{{ attributes }}>
+        <div class="form-group-inline">
+          {{ children }}
+        </div>
+      </form>
+    </div>
 
   </div>
 </div>

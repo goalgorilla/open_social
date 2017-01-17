@@ -1,0 +1,21 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_core
+id: social-explore
+label: 'Explore functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.user_information.user_information
+tips:
+  explore_tooltip:
+    id: explore_tooltip
+    plugin: text
+    location: 'bottom'
+    body: 'Click here to explore all the content in the community'
+    weight: 1
+    attributes:
+      data-class: navbar-collapse .dropdown-toggle

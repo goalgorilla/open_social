@@ -39,19 +39,18 @@
 
   {% if (content.field_profile_function|render or content.field_profile_organization|render) %}
     <div class="hero-footer">
-      <div class="row row-md-center">
-        <div class="col-xs-12 col-md-6 col-md-offset-3">
-          {% if content.field_profile_function|render %}
-            <strong>{{ content.field_profile_function|render }}</strong>
-          {% endif %}
-          {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
-          &nbsp;-&nbsp;
-          {% endif %}
-          {% if content.field_profile_organization|render %}
-            {{ content.field_profile_organization|render }}
-          {% endif %}
-        </div>
+      <div class="hero-footer__text">
+        {% if content.field_profile_function|render %}
+          <strong>{{ content.field_profile_function|render }}</strong>
+        {% endif %}
+        {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+        &nbsp;-&nbsp;
+        {% endif %}
+        {% if content.field_profile_organization|render %}
+          {{ content.field_profile_organization|render }}
+        {% endif %}
       </div>
+
     </div>
   {% endif %}
 

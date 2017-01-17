@@ -1,0 +1,100 @@
+//
+// Utility classes
+// --------------------------------------------------
+
+
+// Floats
+// -------------------------
+
+.clearfix {
+  @include clearfix;
+}
+.center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.pull-right {
+  float: right !important;
+}
+.pull-left {
+  float: left !important;
+}
+
+
+// Toggling content
+// -------------------------
+
+// Note: Deprecated .hide in favor of .hidden or .sr-only (as appropriate) in v3.0.1
+.js .js-hide,
+.js-show,
+.hide {
+  display: none !important;
+}
+
+.js .js-show,
+.show {
+  display: block !important;
+}
+.invisible {
+  visibility: hidden;
+}
+
+.text-hide {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  word-wrap: normal;
+}
+
+
+// Hide from screenreaders and browsers
+//
+// Credit: HTML5 Boilerplate
+
+.hidden {
+  display: none !important;
+}
+
+
+.hidden-for-phone-only {
+  @include for-phone-only {
+    display: none;
+  }
+}
+
+//
+// Responsive: Utility classes
+// --------------------------------------------------
+
+
+// IE10 in Windows (Phone) 8
+//
+// Support for responsive views via media queries is kind of borked in IE10, for
+// Surface/desktop in split view and for Windows Phone 8. This particular fix
+// must be accompanied by a snippet of JavaScript to sniff the user agent and
+// apply some conditional CSS to *only* the Surface/desktop Windows 8. Look at
+// our Getting Started page for more information on this bug.
+//
+// For more information, see the following:
+//
+// Issue: https://github.com/twbs/bootstrap/issues/10497
+// Docs: http://getbootstrap.com/getting-started/#support-ie10-width
+// Source: http://timkadlec.com/2013/01/windows-phone-8-and-device-width/
+// Source: http://timkadlec.com/2012/10/ie10-snap-mode-and-responsive-design/
+
+@at-root {
+  @-ms-viewport {
+    width: device-width;
+  }
+}

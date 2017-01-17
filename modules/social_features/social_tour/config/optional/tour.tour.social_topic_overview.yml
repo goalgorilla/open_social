@@ -1,0 +1,20 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_topic
+id: social-topic-overview
+label: 'Topic Overview functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.latest_topics.page_latest_topics
+tips:
+  filter_tooltip_topic:
+    id: filter_tooltip_topic
+    plugin: text
+    location: 'left'
+    body: 'Here you can select a topic type'
+    attributes:
+      data-id: block-socialblue-exposedformlatest-topicspage-latest-topics
