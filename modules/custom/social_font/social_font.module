@@ -51,10 +51,10 @@ function social_font_render($font_id = NULL) {
 
     // Amount of files 0.
     if (count($font->get('field_fonts')) === 0) {
-      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; } body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
+      $css = "@font-face { font-family: '" . $fontname . "'; } body { font-family: '" . $fontname . "', ". $fallback . " !important; }";
     }
     else {
-      $css = "@font-face { font-family: '" . $fontname . "', ". $fallback . "; ";
+      $css = "@font-face { font-family: '" . $fontname . "'; ";
       // Loop through the font files.
       foreach ($font->get('field_fonts')->getValue() as $files) {
         /** @var \Drupal\file\Entity\File $file */
