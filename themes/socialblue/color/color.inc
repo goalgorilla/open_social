@@ -8,12 +8,12 @@
 $info = array(
   // Available colors and color labels used in theme.
   'fields' => array(
-    'brand-bg-primary' => t('Primary color for your brand'),
-    'brand-bg-secondary' => t('Secondary color for your brand'),
-    'brand-bg-accent' => t('Accent color'),
-    'brand-text-primary' => t('Text primary color'),
-    'brand-text-secondary' => t('Text secondary color'),
-    'brand-text-accent' => t('Text accent color'),
+    'brand-bg-primary' => t('Primary background color'),
+    'brand-bg-secondary' => t('Secondary background color'),
+    'brand-bg-accent' => t('Accent backround color'),
+    'brand-text-primary' => t('Primary text color'),
+    'brand-text-secondary' => t('Secondary text color'),
+    'brand-text-accent' => t('Accent text color'),
   ),
   // Pre-defined color schemes.
   'schemes' => array(
