@@ -441,13 +441,6 @@ function social_core_update_8009() {
 
   $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
 
-  $modules = array(
-    'color',
-    'improved_theme_settings',
-  );
-  \Drupal::service('module_installer')->install($modules);
-
-
   if ($system_theme_settings === 'socialbase') {
 
     $themes = ['socialblue'];
@@ -475,6 +468,17 @@ function social_core_update_8009() {
 function social_core_update_8010() {
   $modules = array(
     'social_font',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install color & improved theme settings module.
+ */
+function social_core_update_8011() {
+  $modules = array(
+    'color',
+    'improved_theme_settings',
   );
   \Drupal::service('module_installer')->install($modules);
 }
