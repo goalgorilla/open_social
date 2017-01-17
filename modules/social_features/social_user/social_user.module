@@ -67,6 +67,24 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
     // redirect.
     $user = \Drupal::routeMatch()->getParameter('user');
     if ($user->getCreatedTime() == $user->getChangedTime()) {
+
+      // Remove unwanted message.
+      $message = 'You have just used your one-time login link. It is no longer necessary to use this link to log in. Please change your password.';
+      if (isset($_SESSION['messages'])) {
+        foreach ($_SESSION['messages'] as $type => $messages) {
+          if ($type == 'status') {
+            $key = array_search($message, $messages);
+            if ($key !== FALSE) {
+              unset($_SESSION['messages'][$type][$key]);
+            }
+          }
+        }
+
+        if (empty($_SESSION['messages']['status'])) {
+          unset($_SESSION['messages']['status']);
+        }
+      }
+
       $form_state->set('first_time_login', TRUE);
     }
   }
