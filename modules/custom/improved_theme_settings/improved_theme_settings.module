@@ -51,7 +51,8 @@ function _improved_theme_settings_update_palette($colors = '') {
   $accent = $colors['brand-bg-accent'];
   $link = $colors['brand-text-primary'];
 
-  $css = "[type=\"radio\"]:checked + label:before {
+  $css = "
+    [type=\"radio\"]:checked + label:before {
       border-color: $secondary !important;
     }
 
@@ -69,7 +70,7 @@ function _improved_theme_settings_update_palette($colors = '') {
       border-color: $primary !important;
     }
 
-    .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
+    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
       color: $link !important;
     }
 
@@ -77,8 +78,18 @@ function _improved_theme_settings_update_palette($colors = '') {
       border-right-color: $primary !important;
     }
 
+    .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
+      border-bottom-color: transparent !important;
+    }
+
     .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
       background-color: $primary !important;
+    }
+
+    @media (max-width: 959px) {
+      .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus {
+        background-color: $primary !important;
+      }
     }
 
     @media(max-width: 900px) {
@@ -158,6 +169,16 @@ function _improved_theme_settings_update_palette($colors = '') {
     blockquote {
       border-left-color: $link !important;
     }
+
+    .book-menu .list-item--active-trail > a {
+      color: $link !important;
+    }
+
+    .input-group .form-control:focus ~ .input-group-addon {
+      border-color: $primary !important;
+      box-shadow: 0 2px 0 0 $primary !important;
+    }
+
   ";
 
   return $css;
@@ -197,9 +218,18 @@ function improved_theme_settings_page_attachments(array &$page) {
       $style_to_add .= '
       .brand-border-radius { border-radius: ' . $border_radius . 'px !important; }
       .tabs-left .vertical-tabs-list { border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important; }
-      .card--teaser.card--teaser-stream:last-child { border-bottom-left-radius: ' . $border_radius . ' !important; border-bottom-right-radius: ' . $border_radius . ' !important; }
-      .card--teaser.card--teaser-stream:last-child .card-image { border-bottom-left-radius: ' . $border_radius . ' !important; }
-      .btn { border-radius: ' . $border_radius . ' !important; }';
+      .btn { border-radius: ' . $border_radius . 'px !important; }
+      .card--teaser.card--teaser-stream:last-child { border-bottom-left-radius: ' . $border_radius . 'px !important; border-bottom-right-radius: ' . $border_radius . 'px !important; }
+      .card--teaser.card--teaser-stream:last-child .card-image { border-bottom-left-radius: ' . $border_radius . 'px !important; }
+      .card-nested-section:last-child { border-bottom-left-radius: ' . $border_radius . 'px !important; border-bottom-right-radius: ' . $border_radius . 'px !important; }
+      .off-canvas-xs-only { border-radius: ' . $border_radius . 'px !important; }
+
+      @media (min-width: 600px) {
+        .card--teaser .card-image { border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important; }
+        .card--teaser .teaser-type { border-radius: 0 0 ' . $border_radius . 'px 0 !important; }
+      }
+
+      ';
     }
 
     // Get the color palette saved for custom social blue
