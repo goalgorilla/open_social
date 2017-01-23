@@ -29,6 +29,12 @@ class SocialDemoLikes implements ContainerInjectionInterface {
    * @var \Drupal\Core\entity\EntityStorageInterface
    */
   protected $entityStorage;
+  /**
+   * The vote storage.
+   *
+   * @var \Drupal\Core\entity\EntityStorageInterface
+   */
+  protected $voteStorage;
 
   /**
    * The node storage.
@@ -49,12 +55,14 @@ class SocialDemoLikes implements ContainerInjectionInterface {
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
    * @param \Drupal\node\NodeStorageInterface $node_storage
    * @param \Drupal\user\UserStorageInterface $user_storage
+   * @param \Drupal\Core\Entity\EntityStorageInterface $vote_storage
    */
-  public function __construct(EntityStorageInterface $entity_storage, NodeStorageInterface $node_storage, UserStorageInterface $user_storage) {
+  public function __construct(EntityStorageInterface $entity_storage, NodeStorageInterface $node_storage, UserStorageInterface $user_storage, EntityStorageInterface $vote_storage) {
 
     $this->entityStorage = $entity_storage;
     $this->nodeStorage = $node_storage;
     $this->userStorage = $user_storage;
+    $this->voteStorage = $vote_storage;
 
     $yml_data = new SocialDemoParser();
     $this->votes = $yml_data->parseFile('entity/likes.yml');
@@ -67,7 +75,8 @@ class SocialDemoLikes implements ContainerInjectionInterface {
     return new static(
       $container->get('entity.manager')->getStorage('post'),
       $container->get('entity.manager')->getStorage('node'),
-      $container->get('entity.manager')->getStorage('user')
+      $container->get('entity.manager')->getStorage('user'),
+      $container->get('entity.manager')->getStorage('vote')
     );
   }
 
@@ -106,6 +115,7 @@ class SocialDemoLikes implements ContainerInjectionInterface {
         $user_id = $user->id();
       }
 
+      // If we have both an entity_id and a user_id we can continue
       if (!empty($entity_id) && !empty($user_id)) {
         // What have we got.
         echo $uuid . "\r\n";
@@ -116,7 +126,7 @@ class SocialDemoLikes implements ContainerInjectionInterface {
         // Create likes.
         $like = Vote::create([
           'type' => 'like',
-          //    'uuid'
+          'uuid' => $uuid,
           'entity_type' => 'node',
           'entity_id' => $entity_id,
           'value' => 1,
@@ -125,6 +135,9 @@ class SocialDemoLikes implements ContainerInjectionInterface {
           'timestamp' => REQUEST_TIME,
           'vote_source' => 'localhost'
         ]);
+        $like->save();
+
+        $content_counter++;
       }
     }
     return $content_counter;
@@ -134,6 +147,19 @@ class SocialDemoLikes implements ContainerInjectionInterface {
    * Function to remove content.
    */
   public function removeContent() {
-
+    // Loop through the content and try to create new entries.
+    foreach ($this->votes as $uuid => $vote) {
+      // Must have uuid and same key value.
+      if ($uuid !== $vote['uuid']) {
+        continue;
+      }
+      // Load the nodes from the uuid.
+      $entities = $this->voteStorage->loadByProperties(['uuid' => $uuid]);
+      // Loop through the nodes.
+      foreach ($entities as $key => $entity) {
+        // And delete them.
+        $entity->delete();
+      }
+    }
   }
 }
