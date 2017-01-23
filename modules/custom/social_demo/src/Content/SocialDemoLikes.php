@@ -88,6 +88,17 @@ class SocialDemoLikes implements ContainerInjectionInterface {
     $content_counter = 0;
     // Loop through the content and try to create new entries.
     foreach ($this->votes as $uuid => $vote) {
+
+      // Check for existing votes.
+      $check_votes = $this->voteStorage->loadByProperties(['uuid' => $uuid]);
+      $check_vote = reset($check_votes);
+
+      // If it already exists, leave it.
+      if ($check_vote) {
+        var_dump('Vote with uuid: ' . $uuid . ' already exists.');
+        continue;
+      }
+
       switch ($vote['entity_type']) {
         case 'post':
           $entity = $this->entityStorage->loadByProperties(['uuid' => $vote['entity_id']]);
@@ -127,7 +138,7 @@ class SocialDemoLikes implements ContainerInjectionInterface {
         $like = Vote::create([
           'type' => 'like',
           'uuid' => $uuid,
-          'entity_type' => 'node',
+          'entity_type' => $vote['entity_type'],
           'entity_id' => $entity_id,
           'value' => 1,
           'value_type' => 'points',
@@ -147,6 +158,7 @@ class SocialDemoLikes implements ContainerInjectionInterface {
    * Function to remove content.
    */
   public function removeContent() {
+    $content_counter = 0;
     // Loop through the content and try to create new entries.
     foreach ($this->votes as $uuid => $vote) {
       // Must have uuid and same key value.
@@ -159,7 +171,9 @@ class SocialDemoLikes implements ContainerInjectionInterface {
       foreach ($entities as $key => $entity) {
         // And delete them.
         $entity->delete();
+        $content_counter++;
       }
     }
+    return $content_counter;
   }
 }
