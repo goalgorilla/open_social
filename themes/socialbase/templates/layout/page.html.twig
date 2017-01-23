@@ -33,6 +33,12 @@
  */
 #}
 
+{%
+  set main_content_classes = [
+    'region--main-content',
+  ]
+%}
+
 <nav class="navbar navbar-default navbar-fixed-top" role="banner">
   <div class="container">{{ page.header }}</div>
 </nav>
@@ -67,12 +73,12 @@
     <div class="row margin-top-l">
 
       {% if page.complementary_top or page.complementary_bottom %}
-        <aside{{ attributes.addClass('region--complementary complementary-top').setAttribute('role', 'complementary') }}>
+        <aside class="region--complementary complementary-top" role="complementary">
           {{ page.complementary_top }}
         </aside>
       {% endif %}
 
-      <div class="region--main-content">
+      <div{{ attributes.addClass(main_content_classes) }}">
         {% if page.title and display_page_title %}
           {{ page.title }}
         {% endif %}

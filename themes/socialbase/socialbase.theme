@@ -188,10 +188,12 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
   }
   if(isset($form['actions']['publish'])) {
     $form['actions']['publish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['publish']['#attributes']['class'][] =  'brand-bg-primary';
     $form['actions']['publish']['#attributes']['class'][] =  'btn-raised';
   }
   if(isset($form['actions']['unpublish'])) {
     $form['actions']['unpublish']['#attributes']['class'][] =  'btn-primary';
+    $form['actions']['unpublish']['#attributes']['class'][] =  'brand-bg-primary';
     $form['actions']['unpublish']['#attributes']['class'][] =  'btn-raised';
   }
 }
@@ -679,7 +681,7 @@ function socialbase_preprocess_field(&$variables) {
       'fragment' => 'comment-form',
       'attributes' => array(
         'class' => array(
-          'btn btn-flat',
+          'btn btn-flat brand-text-primary',
         ),
       ),
     );
@@ -1359,7 +1361,7 @@ function socialbase_preprocess_menu_local_action (&$variables) {
         unset($link_classes[$delta]);
       }
     }
-    $variables['link']['#options']['attributes']['class'] = $link_classes + array('waves-effect', 'waves-light', 'btn-sm', 'btn-primary', 'btn-raised');
+    $variables['link']['#options']['attributes']['class'] = $link_classes + array('waves-effect', 'waves-light', 'btn-sm', 'btn-primary', 'brand-bg-primary', 'btn-raised');
 
     $variables['attributes']['class'][] = 'margin-bottom-l';
     $variables['attributes']['class'][] = 'margin-left-l';
@@ -1372,7 +1374,8 @@ function socialbase_preprocess_menu_local_action (&$variables) {
 function socialbase_preprocess_views_exposed_form(&$variables) {
   if(isset($variables['theme_hook_original']) && $variables['theme_hook_original'] === 'views_exposed_form') {
     $variables['form']['actions']['submit']['#attributes']['class'][] = 'pull-right';
-    $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat';
+    $variables['form']['actions']['reset']['#attributes']['class'][] = 'btn-flat brand-text-primary';
+    $variables['form']['actions']['reset']['#attributes']['class'][] = 'brand-text-primary';
   }
 }
 
@@ -1394,7 +1397,7 @@ function socialbase_preprocess_html(&$variables) {
  */
 function socialbase_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
   if (isset($javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js'])) {
-    $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = drupal_get_path('theme','socialbase') . '/js/custom/imageWidgetCrop.js';
+    $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = drupal_get_path('theme','socialbase') . '/assets/js/imageWidgetCrop.min.js';
   }
 
   if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {

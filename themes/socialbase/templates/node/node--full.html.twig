@@ -69,6 +69,7 @@
 {%
   set classes = [
     'card',
+    'brand-border-radius',
     node.isPromoted() ? 'node--promoted',
     not node.isPublished() ? 'node--unpublished',
   ]
@@ -125,7 +126,7 @@
         <div class="metainfo__brief">
 
           {% if node.isSticky() %}
-            <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
+            <span class="label label-featured brand-bg-accent">{% trans %}Featured{% endtrans %}</span>
           {% endif %}
 
           {% if comment_field_status is not empty %}

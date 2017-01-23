@@ -86,6 +86,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
                 'class' => array(
                   'btn',
                   'btn-flat',
+                  'brand-text-primary',
                 ),
               ),
             );

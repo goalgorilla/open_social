@@ -8,6 +8,10 @@ base theme: socialbase
 core: 8.x
 version: '1.0'
 
+libraries:
+  - socialblue/brand
+  - socialblue/site-footer
+
 libraries-extend:
   socialbase/base:
     - socialblue/base
@@ -54,6 +58,8 @@ libraries-extend:
     - socialblue/navbar
   socialbase/teaser:
     - socialblue/teaser
+  socialbase/tour:
+    - socialblue/tour
   # Extend Organisms
   socialbase/comment:
     - socialblue/comment
@@ -61,13 +67,12 @@ libraries-extend:
     - socialblue/hero
   socialbase/meta:
     - socialblue/meta
+  socialbase/offcanvas:
+    - socialblue/offcanvas
   socialbase/stream:
     - socialblue/stream
   socialbase/page-node:
     - socialblue/page-node
-
-libraries:
-  - socialblue/site-footer
 
 ckeditor_stylesheets:
   - assets/css/ckeditor.css

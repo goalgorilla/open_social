@@ -20,7 +20,7 @@
  */
 #}
 {{ attach_library('socialbase/teaser')}}
-<div class="card card--teaser card-with-actionbar">
+<div class="card card--teaser card-with-actionbar brand-border-radius">
     <a href="{{ profile_stream_url }}" class="card-image">
       {% if content.field_profile_image %}
           {{ content.field_profile_image }}
@@ -55,10 +55,10 @@
 
         <div class="card-actionbar">
             {#@todo: replace contact url#}
-            <a href="{{ profile_contact_url }}" class="btn btn-flat hidden-for-phone-only">
+            <a href="{{ profile_contact_url }}" class="btn btn-flat brand-text-primary hidden-for-phone-only">
                 {% trans %}Contact me {% endtrans %}
             </a>
-            <a href="{{ profile_stream_url }}" class="btn btn-flat pull-right">
+            <a href="{{ profile_stream_url }}" class="btn btn-flat brand-text-primary pull-right">
                 {% trans %}View profile {% endtrans %}
             </a>
         </div>

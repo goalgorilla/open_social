@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.font.font.field_fallback
+    - field.field.font.font.field_fonts
+  module:
+    - file
+    - social_font
+id: font.font.default
+targetEntityType: font
+bundle: font
+mode: default
+content:
+  field_fallback:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_fonts:
+    weight: 2
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+  name:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  user_id: true
