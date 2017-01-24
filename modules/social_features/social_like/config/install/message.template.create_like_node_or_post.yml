@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      vote-like: vote-like
+    activity_action: create_entitiy_action
+    activity_context: vote_activity_context
+    activity_destinations:
+      notifications: notifications
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: ''
+template: create_like_node_or_post
+label: 'Create like on node or post'
+description: 'A person likes a post, topic or event created by me'
+text:
+  -
+    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"absolute]\">content</a></p>\r\n"
+    format: basic_html
+  -
+    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"absolute]\">content</a></p>\r\n"
+    format: basic_html
+  -
+    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"[message:field_message_related_object:entity:url:absolute]\">content</a></p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
