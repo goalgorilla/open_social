@@ -19,14 +19,14 @@ label: 'Create like on node or post'
 description: 'A person likes a post, topic or event created by me'
 text:
   -
-    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"absolute]\">content</a></p>\r\n"
-    format: basic_html
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
+    format: full_html
   -
-    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"absolute]\">content</a></p>\r\n"
-    format: basic_html
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
+    format: full_html
   -
-    value: "<p><a href=\"\\\">[message:author:display-name]</a> likes your <a href=\"[message:field_message_related_object:entity:url:absolute]\">content</a></p>\r\n"
-    format: basic_html
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[message:field_message_related_object:entity:url:absolute]">content</a></p>'
+    format: full_html
 settings:
   'token options':
     clear: false
