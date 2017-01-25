@@ -1,0 +1,35 @@
+@import "settings";
+
+.vote-like {
+  background-color: $gray-lighter;
+
+  a[title="Like"] {
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+
+    .icon-gray {
+      fill: transparent;
+      stroke: $text-color;
+      stroke-width: 15px;
+
+      &:hover {
+        fill: $text-color;
+        stroke: $text-color;
+      }
+
+    }
+
+    &:not(.voted-like) .icon-gray:hover {
+      stroke: red;
+      fill: transparent;
+    }
+
+    &.voted-like .icon-gray {
+      fill: red;
+      stroke: red;
+    }
+
+  }
+
+}

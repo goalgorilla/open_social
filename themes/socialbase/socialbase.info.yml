@@ -52,7 +52,8 @@ libraries-extend:
   bootstrap/popover:
     - socialbase/popover
 
-
+stylesheets-remove:
+  - like_and_dislike.icons.css
 
 # Libraries-override is used to override any of the assets defined by a library.
 # Use it to remove files, replace files with your own, replace a library with
@@ -82,6 +83,7 @@ libraries-override:
   system/base: false
   views/views.module: false
   classy/file: false
+  like_and_dislike/icons: false
 
 # Libraries contain CSS and JavaScript files. The libraries setting is used to
 # globally add libraries, which means they will appear on every page. Libraries
@@ -113,6 +115,7 @@ libraries:
   - socialbase/media
   - socialbase/navbar
   - socialbase/tour
+  - socialbase/like
 
 # This section is used by the contrib module, Component Libraries. It allows you
 # to reference .twig files in your components/ directory.

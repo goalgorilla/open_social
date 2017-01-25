@@ -1,0 +1,30 @@
+.vote-like {
+  background-color: #e6e6e6;
+}
+
+.vote-like a[title="Like"] {
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.vote-like a[title="Like"] .icon-gray {
+  fill: transparent;
+  stroke: #4d4d4d;
+  stroke-width: 15px;
+}
+
+.vote-like a[title="Like"] .icon-gray:hover {
+  fill: #4d4d4d;
+  stroke: #4d4d4d;
+}
+
+.vote-like a[title="Like"]:not(.voted-like) .icon-gray:hover {
+  stroke: red;
+  fill: transparent;
+}
+
+.vote-like a[title="Like"].voted-like .icon-gray {
+  fill: red;
+  stroke: red;
+}
