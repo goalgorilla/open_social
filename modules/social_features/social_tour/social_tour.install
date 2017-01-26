@@ -41,11 +41,12 @@ function _social_tour_get_permissions($role) {
 
   // Anonymous.
   $permissions['anonymous'] = [
-    'access tour'
   ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'access tour'
+  ]);
 
 
   // Content manager.

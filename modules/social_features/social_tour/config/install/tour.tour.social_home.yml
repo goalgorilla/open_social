@@ -1,0 +1,20 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_core
+id: social-home
+label: 'Home page stream functionality.'
+module: social_tour
+routes:
+  - route_name: social_core.homepage
+tips:
+  welcome_homepage:
+    id: welcome_homepage
+    plugin: text
+    label: 'Welcome on the home page stream!'
+    body: 'Here you can stay up to date for activity in all groups, events and topics!'
+    weight: 1
+    attributes:
+      backdrop: 1
