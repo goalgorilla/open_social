@@ -8,10 +8,15 @@
     display: inline-block;
     text-decoration: none;
 
+    &:focus {
+      outline: 2px solid blue;
+    }
+
     .icon-gray {
       fill: transparent;
       stroke: $text-color;
       stroke-width: 15px;
+      transition: .2s all ease;
 
       &:hover {
         fill: $text-color;
@@ -28,6 +33,11 @@
     &.voted-like .icon-gray {
       fill: red;
       stroke: red;
+    }
+
+    &.voted-like .icon-gray:hover {
+      fill: $text-color;
+      stroke: $text-color;
     }
 
   }

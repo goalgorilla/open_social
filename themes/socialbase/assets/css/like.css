@@ -8,10 +8,16 @@
   text-decoration: none;
 }
 
+.vote-like a[title="Like"]:focus {
+  outline: 2px solid blue;
+}
+
 .vote-like a[title="Like"] .icon-gray {
   fill: transparent;
   stroke: #4d4d4d;
   stroke-width: 15px;
+  -webkit-transition: .2s all ease;
+  transition: .2s all ease;
 }
 
 .vote-like a[title="Like"] .icon-gray:hover {
@@ -27,4 +33,9 @@
 .vote-like a[title="Like"].voted-like .icon-gray {
   fill: red;
   stroke: red;
+}
+
+.vote-like a[title="Like"].voted-like .icon-gray:hover {
+  fill: #4d4d4d;
+  stroke: #4d4d4d;
 }
