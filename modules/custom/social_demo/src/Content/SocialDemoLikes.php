@@ -128,12 +128,6 @@ class SocialDemoLikes implements ContainerInjectionInterface {
 
       // If we have both an entity_id and a user_id we can continue
       if (!empty($entity_id) && !empty($user_id)) {
-        // What have we got.
-        echo $uuid . "\r\n";
-        echo $vote['entity_type'] . "\r\n";
-        echo $entity_id . "\r\n";
-        echo $user_id . "\r\n";
-        echo "---\r\n";
         // Create likes.
         $like = Vote::create([
           'type' => 'like',
