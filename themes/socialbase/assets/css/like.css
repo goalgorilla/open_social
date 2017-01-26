@@ -1,18 +1,28 @@
-.vote-like {
-  background-color: #e6e6e6;
+.vote-widget {
+  display: inline-block;
+  margin-top: 10px;
 }
 
-.vote-like a[title="Like"] {
+.vote-widget .badge {
+  background-color: #e6e6e6;
+  margin: 0;
+  font-size: 14px;
+}
+
+.vote-widget .count {
+  color: #4d4d4d;
+  font-size: 14px;
+}
+
+.vote-widget a {
   cursor: pointer;
   display: inline-block;
-  text-decoration: none;
+  text-decoration: none !important;
+  color: #4d4d4d !important;
+  text-transform: uppercase;
 }
 
-.vote-like a[title="Like"]:focus {
-  outline: 2px solid blue;
-}
-
-.vote-like a[title="Like"] .icon-gray {
+.vote-widget a .icon-gray {
   fill: transparent;
   stroke: #4d4d4d;
   stroke-width: 15px;
@@ -20,22 +30,23 @@
   transition: .2s all ease;
 }
 
-.vote-like a[title="Like"] .icon-gray:hover {
+.vote-widget a:hover .icon-gray {
   fill: #4d4d4d;
   stroke: #4d4d4d;
 }
 
-.vote-like a[title="Like"]:not(.voted-like) .icon-gray:hover {
-  stroke: red;
+.vote-widget a:not(.voted-like):focus .icon-gray,
+.vote-widget a:not(.voted-like):hover .icon-gray {
+  stroke: black;
   fill: transparent;
 }
 
-.vote-like a[title="Like"].voted-like .icon-gray {
-  fill: red;
-  stroke: red;
+.vote-widget a.voted-like .icon-gray {
+  fill: black;
+  stroke: black;
 }
 
-.vote-like a[title="Like"].voted-like .icon-gray:hover {
+.vote-widget a.voted-like:hover .icon-gray {
   fill: #4d4d4d;
   stroke: #4d4d4d;
 }

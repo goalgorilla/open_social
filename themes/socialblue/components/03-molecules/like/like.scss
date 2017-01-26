@@ -1,20 +1,16 @@
 @import "settings";
 
-.vote-like {
-  background-color: $gray-lighter;
+.vote-widget {
 
-  a[title="Like"] {
+  a:not(.voted-like):focus .icon-gray,
+  a:not(.voted-like):hover .icon-gray {
+    stroke: $brand-danger;
+    fill: transparent;
+  }
 
-    &:not(.voted-like) .icon-gray:hover {
-      stroke: $brand-danger;
-      fill: transparent;
-    }
-
-    &.voted-like .icon-gray {
-      fill: $brand-danger;
-      stroke: $brand-danger;
-    }
-
+  a.voted-like .icon-gray {
+    fill: $brand-danger;
+    stroke: $brand-danger;
   }
 
 }

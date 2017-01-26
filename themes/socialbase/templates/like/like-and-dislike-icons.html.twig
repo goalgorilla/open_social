@@ -16,13 +16,16 @@
  */
 #}
 <div class="vote-widget vote-widget--like-and-dislike">
-  <div class="badge badge--large vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ like_attributes }}>
-      <svg class="icon-gray icon-small">
-        <use xlink:href="#icon-like"></use>
-      </svg>
-      <span class="sr-only">Like</span>
-    </a>
-    <span class="count">{{ likes }}</span>
+  <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
+
+    <span class="badge badge--large">
+      <a href="javascript:void(0);" {{ like_attributes }}>
+        <svg class="icon-gray icon-small">
+          <use xlink:href="#icon-like"></use>
+        </svg>
+        <span class="count">{{ likes }}</span>
+      </a>
+    </span>
+
   </div>
 </div>

@@ -1,41 +1,51 @@
 @import "settings";
 
-.vote-like {
-  background-color: $gray-lighter;
+.vote-widget {
+  display: inline-block;
+  margin-top: 10px;
 
-  a[title="Like"] {
+  .badge {
+    background-color: $gray-lighter;
+    margin: 0;
+    font-size: $font-size-small;
+  }
+
+  .count {
+    color: $text-color;
+    font-size: $font-size-small;
+  }
+
+  a {
     cursor: pointer;
     display: inline-block;
-    text-decoration: none;
-
-    &:focus {
-      outline: 2px solid blue;
-    }
+    text-decoration: none !important;
+    color: $text-color !important;
+    text-transform: uppercase;
 
     .icon-gray {
       fill: transparent;
       stroke: $text-color;
       stroke-width: 15px;
       transition: .2s all ease;
-
-      &:hover {
-        fill: $text-color;
-        stroke: $text-color;
-      }
-
     }
 
-    &:not(.voted-like) .icon-gray:hover {
-      stroke: $text-color;
-      fill: transparent;
-    }
-
-    &.voted-like .icon-gray {
+    &:hover .icon-gray {
       fill: $text-color;
       stroke: $text-color;
     }
 
-    &.voted-like .icon-gray:hover {
+    &:not(.voted-like):focus .icon-gray,
+    &:not(.voted-like):hover .icon-gray {
+      stroke: black;
+      fill: transparent;
+    }
+
+    &.voted-like .icon-gray {
+      fill: black;
+      stroke: black;
+    }
+
+    &.voted-like:hover .icon-gray {
       fill: $text-color;
       stroke: $text-color;
     }
