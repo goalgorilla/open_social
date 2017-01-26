@@ -104,7 +104,10 @@ function _social_core_get_permissions($role) {
     'administer blocks',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**
