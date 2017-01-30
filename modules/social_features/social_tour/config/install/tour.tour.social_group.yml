@@ -1,0 +1,21 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_group
+id: social-group
+label: 'Group functionality.'
+module: social_tour
+routes:
+  -
+    route_name: entity.group.canonical
+tips:
+  welcome_group:
+    id: welcome_group
+    plugin: text
+    label: 'Welcome on this group page!'
+    body: 'Here you can find all the activities that find place in the group. You can also join it!'
+    weight: 1
+    attributes:
+      backdrop: 1

@@ -1,0 +1,116 @@
+name: Social Blue theme
+description: Demo theme for Open social installations.
+screenshot: screenshot.png
+type: theme
+
+base theme: socialbase
+
+core: 8.x
+version: '1.0'
+
+libraries:
+  - socialblue/brand
+  - socialblue/site-footer
+
+libraries-extend:
+  socialbase/base:
+    - socialblue/base
+  socialbase/alerts:
+    - socialblue/alerts
+  socialbase/badges:
+    - socialblue/badges
+  socialbase/button:
+    - socialblue/button
+  socialbase/cards:
+    - socialblue/cards
+  socialbase/form-controls:
+    - socialblue/form-controls
+  socialbase/labels:
+    - socialblue/labels
+  socialbase/list-group:
+    - socialblue/list-group
+  # Extend molecules
+  socialbase/breadcrumb:
+    - socialblue/breadcrumb
+  socialbase/dropdown:
+    - socialblue/dropdown
+  socialbase/form-elements:
+    - socialblue/form-elements
+  socialbase/form--input-groups:
+    - socialblue/form--input-groups
+  # attach the datepicker stylesheet to all date fields
+  core/drupal.date:
+    - socialblue/form--datepicker
+  # extend the core datepicker with a stylesheet
+  core/jquery.ui.datepicker:
+    - socialblue/form--timepicker
+  socialbase/form--password:
+    - socialblue/form--password
+  socialbase/pagination:
+    - socialblue/pagination
+  socialbase/popover:
+    - socialblue/popover
+  socialbase/nav-book:
+    - socialblue/nav-book
+  socialbase/nav-tabs:
+    - socialblue/nav-tabs
+  socialbase/navbar:
+    - socialblue/navbar
+  socialbase/teaser:
+    - socialblue/teaser
+  socialbase/tour:
+    - socialblue/tour
+  # Extend Organisms
+  socialbase/comment:
+    - socialblue/comment
+  socialbase/hero:
+    - socialblue/hero
+  socialbase/meta:
+    - socialblue/meta
+  socialbase/offcanvas:
+    - socialblue/offcanvas
+  socialbase/stream:
+    - socialblue/stream
+  socialbase/page-node:
+    - socialblue/page-node
+
+ckeditor_stylesheets:
+  - assets/css/ckeditor.css
+
+# This section is used by the contrib module, Component Libraries. It allows you
+# to reference .twig files in your components/ directory.
+component-libraries:
+  base:
+    paths:
+      - components/01-base
+  atoms:
+    paths:
+      - components/02-atoms
+  molecules:
+    paths:
+      - components/03-molecules
+  organisms:
+    paths:
+      - components/04-organisms
+  templates:
+    paths:
+      - components/05-templates
+  pages:
+    paths:
+      - components/06-pages
+
+regions:
+  hidden: Hidden
+  header: Header
+  breadcrumb: Breadcrumb
+  hero: Hero
+  secondary_navigation: Secondary navigation
+  content_top: Content top
+  title: Page title
+  content: Content
+  complementary_top: Complementary top
+  complementary_bottom: Complementary bottom
+  content_bottom: Content bottom
+  footer: Footer
+
+debug: false

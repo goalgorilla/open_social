@@ -1,0 +1,23 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_event
+    - social_topic
+id: social-node-view
+label: 'Follow functionality.'
+module: social_tour
+routes:
+  - route_name: entity.node.canonical
+tips:
+  follow:
+    id: follow
+    plugin: text
+    label: ''
+    body: 'Follow it to be always up to date!'
+    location: 'bottom'
+    weight: 1
+    attributes:
+      data-class: flag-follow_content
+      backdrop: 1
