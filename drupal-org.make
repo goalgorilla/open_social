@@ -39,6 +39,7 @@ projects[libraries][download][revision] = dcd717dc541293ae5c4003f304921cca920072
 projects[libraries][download][branch] = 8.x-3.x
 projects[like_and_dislike][type] = module
 projects[like_and_dislike][version] = 1.0-alpha2
+projects[like_and_dislike][patch][] = "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
 projects[message][type] = module
 projects[message][version] = 1.0-alpha4
 projects[override_node_options][type] = module
