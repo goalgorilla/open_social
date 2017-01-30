@@ -2,54 +2,54 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_display.comment.comment.default
     - field.field.node.topic.body
     - field.field.node.topic.field_content_visibility
     - field.field.node.topic.field_files
     - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
-    - image.style.social_x_large
     - node.type.topic
   module:
-    - image
-    - options
+    - file
+    - group_core_comments
+    - text
     - user
-id: node.topic.teaser
+id: node.topic.default
 targetEntityType: node
 bundle: topic
-mode: teaser
+mode: default
 content:
-  field_content_visibility:
-    type: list_default
-    weight: 4
+  body:
     label: hidden
+    type: text_default
+    weight: 0
     settings: {  }
     third_party_settings: {  }
-  field_topic_image:
-    type: image
-    weight: 0
-    label: hidden
-    settings:
-      image_style: social_x_large
-      image_link: content
+  field_files:
+    weight: 2
+    label: above
+    settings: {  }
     third_party_settings: {  }
-  field_topic_type:
-    type: entity_reference_label
-    weight: 3
-    label: hidden
+    type: file_default
+  field_topic_comments:
+    weight: 1
+    label: above
     settings:
-      link: false
+      pager_id: 0
+      view_mode: default
+    third_party_settings: {  }
+    type: comment_group_content
+  flag_follow_content:
+    weight: 3
+    settings: {  }
     third_party_settings: {  }
   like_and_dislike:
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-  links:
-    weight: 2
+    weight: 4
     settings: {  }
     third_party_settings: {  }
 hidden:
-  body: true
-  field_files: true
-  field_topic_comments: true
+  field_content_visibility: true
+  field_topic_image: true
+  field_topic_type: true
+  links: true

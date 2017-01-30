@@ -485,3 +485,13 @@ function social_core_update_8011() {
   );
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Install social_like module.
+ */
+function social_core_update_8012() {
+  $modules = array(
+    'social_like',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
