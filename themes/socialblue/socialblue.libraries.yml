@@ -4,6 +4,11 @@ base:
     base:
       assets/css/base.css: {}
 
+brand:
+  css:
+    brand:
+      assets/css/brand.css: {}
+      
 ## 2. The SMACSS category Component — discrete, reusable UI elements
 
 ### 2.1 Atoms
@@ -157,3 +162,13 @@ page-node:
   css:
     component:
       assets/css/page-node.css: {}
+
+color.preview:
+  version: VERSION
+  css:
+    theme:
+      color/preview.css: {}
+  js:
+    color/preview.js: {}
+  dependencies:
+    - color/drupal.color
