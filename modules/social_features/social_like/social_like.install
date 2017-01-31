@@ -46,6 +46,7 @@ function _social_like_get_permissions($role) {
     'add or remove like votes on comment of comment',
     'add or remove like votes on post_comment of comment',
     'add or remove like votes on topic of node',
+    'add or remove like votes on event of node',
   ];
 
   // Content manager.
@@ -54,5 +55,9 @@ function _social_like_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = [];
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+
+  return [];
 }
