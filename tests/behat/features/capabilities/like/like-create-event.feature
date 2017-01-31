@@ -16,7 +16,7 @@ Feature: Create event like
 
     When I fill in the following:
       | Title | Event for likes |
-      | Date | 2000-01-01 |
+      | Date | 2025-01-01 |
       | Time | 11:00:00 |
       | Location name | GG HQ |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
@@ -24,7 +24,7 @@ Feature: Create event like
     Then I should see "Event for likes has been created."
 
    Given I am logged in as "user_2"
-     And I am at "community-events?field_event_date_value=2"
+     And I open the "event" node with title "Event for likes"
     Then I should see "Event for likes"
      And I should see "Albert Einstein"
     When I click "Event for likes"
