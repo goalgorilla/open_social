@@ -24,6 +24,7 @@ Feature: Create event like
     Then I should see "Event for likes has been created."
 
    Given I am logged in as "user_2"
+     And I am at "community-events"
     Then I should see "Event for likes"
      And I should see "Albert Einstein"
     When I click "Event for likes"
