@@ -33,6 +33,7 @@ projects[group][version] = 1.0-beta4
 projects[group][patch][] = "https://www.drupal.org/files/issues/error-when-uploading-files-2793621-5.patch"
 projects[image_widget_crop][type] = module
 projects[image_widget_crop][version] = 1.4
+projects[image_widget_crop][patch][] = "https://www.drupal.org/files/issues/always_expand_crop_area-2826494-6.patch"
 projects[libraries][type] = module
 projects[libraries][download][type] = git
 projects[libraries][download][revision] = dcd717dc541293ae5c4003f304921cca9200728c
