@@ -51,7 +51,10 @@ function _group_core_comments_get_permissions($role) {
     'delete all comments'
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**

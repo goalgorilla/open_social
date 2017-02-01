@@ -67,5 +67,8 @@ function _social_font_get_permissions($role) {
     'view unpublished font entities'
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }

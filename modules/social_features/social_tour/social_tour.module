@@ -7,6 +7,34 @@
 
 use Drupal\tour\Entity\Tour;
 
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_tour_preprocess_container(&$variables) {
+  // In TourViewBuilder.php a container is rendered, this container has
+  // children attribute with the total count. If the count of these children
+  // is 1, we can unset it. We don't want to show 1 of 1 count.
+  if (!empty($variables['attributes']['class'])) {
+    foreach ($variables['attributes']['class'] as $key => $class_name) {
+      if ($class_name == 'tour-progress') {
+        $child_arguments = $variables['children']->getArguments();
+        // So we found arguments for tour_progress. This is an array consisting of
+        // [ '@tour_item' => integer 1, '@total' => integer 1 ]. If we have a total
+        // of one. We can unset it, we don't need a 1 of 1 count.
+        if (!empty($child_arguments)) {
+          if (!empty($child_arguments['@total']) && $child_arguments['@total'] == 1) {
+            unset($variables['children']);
+          }
+        }
+        // We found a tour-progress container and did our magic.
+        // We can break out the foreach.
+        break;
+      }
+    }
+  }
+}
+
 /**
  * Implements hook_page_attachments().
  *
