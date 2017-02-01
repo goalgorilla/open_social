@@ -76,7 +76,10 @@ function _social_event_get_permissions($role) {
     'administer visibility settings',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**

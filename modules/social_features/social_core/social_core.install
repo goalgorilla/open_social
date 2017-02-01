@@ -104,7 +104,10 @@ function _social_core_get_permissions($role) {
     'administer blocks',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**
@@ -479,6 +482,16 @@ function social_core_update_8011() {
   $modules = array(
     'color',
     'improved_theme_settings',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install social_like module.
+ */
+function social_core_update_8012() {
+  $modules = array(
+    'social_like',
   );
   \Drupal::service('module_installer')->install($modules);
 }

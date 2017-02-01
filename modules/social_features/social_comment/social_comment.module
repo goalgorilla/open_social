@@ -135,6 +135,11 @@ function social_comment_preprocess_comment(&$variables) {
     }
   }
 
+  // Add node ID attribute for comment "new" indicator.
+  if(\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node'){
+    $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
+  }
+
 }
 
 /**
