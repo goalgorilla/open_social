@@ -10,7 +10,8 @@ version: '1.0'
 
 libraries:
   - socialblue/brand
-  
+  - socialblue/site-footer
+
 libraries-extend:
   socialbase/base:
     - socialblue/base
@@ -37,6 +38,8 @@ libraries-extend:
     - socialblue/form-elements
   socialbase/form--input-groups:
     - socialblue/form--input-groups
+  socialbase/like:
+    - socialblue/like
   # attach the datepicker stylesheet to all date fields
   core/drupal.date:
     - socialblue/form--datepicker
@@ -72,9 +75,6 @@ libraries-extend:
     - socialblue/stream
   socialbase/page-node:
     - socialblue/page-node
-
-libraries:
-  - socialblue/site-footer
 
 ckeditor_stylesheets:
   - assets/css/ckeditor.css

@@ -16,7 +16,7 @@
   */
   #}
 
-<div class="card">
+<div class="card brand-border-radius">
   <div class="card-body extra-padding">
     <div class="media">
       <div class="media-left">
@@ -40,6 +40,10 @@
 
       {% if content.field_post %}
         {{ content.field_post }}
+      {% endif %}
+
+      {% if content.like_and_dislike %}
+        {{ content.like_and_dislike }}
       {% endif %}
     </div>
 

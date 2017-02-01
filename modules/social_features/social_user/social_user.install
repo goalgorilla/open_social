@@ -60,5 +60,8 @@ function _social_user_get_permissions($role) {
 
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
