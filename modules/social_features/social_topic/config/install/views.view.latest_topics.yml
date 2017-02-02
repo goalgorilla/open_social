@@ -10,6 +10,7 @@ dependencies:
     - group
     - node
     - taxonomy
+    - user
 id: latest_topics
 label: 'Latest topics'
 module: views
@@ -26,9 +27,9 @@ display:
     position: 0
     display_options:
       access:
-        type: group_permission
+        type: perm
         options:
-          group_permission: 'view group_node:topic content'
+          perm: 'access content'
       cache:
         type: tag
         options: {  }
@@ -204,10 +205,10 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
+        - user.permissions
       tags: {  }
   block_latest_topics:
     display_plugin: block
@@ -221,10 +222,10 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
+        - user.permissions
       tags: {  }
   group_topics_block:
     display_plugin: block
@@ -251,6 +252,7 @@ display:
         empty: false
         relationships: false
         arguments: false
+        access: false
       relationships:
         group_content:
           id: group_content
@@ -302,6 +304,10 @@ display:
           entity_type: group_content
           entity_field: gid
           plugin_id: numeric
+      access:
+        type: group_permission
+        options:
+          group_permission: 'view group_node:topic content'
     cache_metadata:
       max-age: -1
       contexts:
@@ -466,11 +472,11 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - user
         - 'user.node_grants:view'
+        - user.permissions
       tags: {  }
