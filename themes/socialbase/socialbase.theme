@@ -44,6 +44,10 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
   $form['actions']['submit']['#prefix'] = '<div class="media-right">';
   $form['actions']['submit']['#suffix'] = '</div>';
 
+  // Set a variable to be read by preprocess container
+  // The use is to strip the container wrapping `div`.
+  $form['actions']['#bare'] = TRUE;
+
   unset($form['actions']['delete']);
 }
 
@@ -65,6 +69,11 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
  */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
+
+  // Set a variable to be read by preprocess container
+  // The use is to strip the container wrapping `div`.
+  $form['actions']['#bare'] = TRUE;
+
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'primary';
   }
@@ -116,41 +125,26 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   if (in_array($form_id, $forms)) {
     if(isset($form['actions']['delete'])) {
-      $form['actions']['delete']['#attributes']['class'][] =  'btn btn-default btn-raised';
+      $form['actions']['delete']['#attributes']['class'][] =  'btn btn-flat';
     }
     if(isset($form['actions']['submit'])) {
       $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
     }
     if(isset($form['actions']['cancel'])) {
-      $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-default btn-raised';
+      $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-flat';
     }
   }
 
   if($form['form_id']['#id'] == 'edit-user-form') {
-    $form['actions']['cancel']['#attributes']['class'] = 'btn btn-default btn-raised';
+    $form['actions']['cancel']['#attributes']['class'] = 'btn btn-flat';
   }
 
-  /**
-  * List all the confirmation forms here. We need to close the card before showing the actions.
-  */
-
-  $confirm_forms = array (
-    'user_cancel_form',
-    'post_delete_form',
-    'node_event_delete_form',
-    'node_topic_delete_form',
-    'group_open_group_delete_form',
-    'comment_comment_delete_form',
-    'comment_post_comment_delete_form',
-    'group_content_open_group-group_membership_group-leave_form',
-  );
-
-  if (in_array($form_id, $confirm_forms)) {
-    $form['description']['#prefix'] = '<div class="clearfix">';
-    $form['description']['#suffix'] = '</div></div></div>';
+  if ($form['#theme'] == 'confirm_form' || in_array('group_content_form', $form['#theme']) ) {
+    $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-flat';
+    $form['actions']['submit']['#attributes']['class'][] = 'btn btn-raised';
   }
 
-  if ($form_id == 'group_content_open_group-group_membership_group-join_form' || $form_id == 'user_register_form' || $form_id == 'social_user_login_form' ||  $form_id == 'social_user_password_form' ) {
+  if ($form_id == 'user_register_form' || $form_id == 'social_user_login_form' ||  $form_id == 'social_user_password_form' ) {
     $form['#attributes']['class'][] = 'card';
     $form['actions']['#prefix'] = '</div></div>';
   }
@@ -178,10 +172,10 @@ function socialbase_datetime_set_format($element) {
  */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if(isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#attributes']['class'][] = 'btn btn-default btn-raised';
+    $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
   }
   if(isset($form['actions']['preview'])) {
-    $form['actions']['preview']['#attributes']['class'][] =  'btn-raised';
+    $form['actions']['preview']['#attributes']['class'][] =  'btn-flat';
   }
   if(isset($form['actions']['submit'])) {
     $form['actions']['submit']['#attributes']['class'][] =  'btn-raised';
@@ -394,6 +388,12 @@ function socialbase_preprocess_details(&$variables) {
 function socialbase_preprocess_container(&$variables) {
   $variables['search_context'] = FALSE;
   $variables['has_floats'] = FALSE;
+  $variables['bare'] = FALSE;
+
+  // The bare variable is set in the corresponding form id.
+  if (isset($variables['element']['#bare'])) {
+    $variables['bare'] = TRUE;
+  }
 
   // For pages in search we would like to render containers without divs.
   $routename = \Drupal::request()
@@ -471,6 +471,10 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
+
+  if (isset($variables['element']['#social_linkitem'])) {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'social_linking');
+  }
 }
 
 /**
@@ -493,7 +497,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     $suggestions[] = $variables['theme_hook_original'] . '__' . 'user_anonymous';
   }
 
-  /* TODO: distinguish edit comment form from normal comment form in stream */
+  // TODO: distinguish edit comment form from normal comment form in stream
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__post_comment';
   }
@@ -501,6 +505,7 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'comment_post_comment_delete_form' || $variables['element']['#form_id'] == 'comment_comment_delete_form') {
     $suggestions[] = $variables['theme_hook_original'] . '__comment_edit';
   }
+
   // Add templates for post add/edit forms.
   if ($variables['element']['#form_id'] == 'social_post_entity_form') {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
@@ -509,6 +514,11 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
     else {
       $suggestions[] = $variables['theme_hook_original'] . '__post_add';
     }
+  }
+
+  // Custom template for confirmation of join group
+  if (is_array($variables['element']['#theme']) && in_array('group_content_form', $variables['element']['#theme'])) {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'join_confirm');
   }
 }
 
@@ -524,7 +534,17 @@ function socialbase_theme_suggestions_fieldset_alter(array &$suggestions, array 
         $suggestions[] = 'fieldset__' . $variables['element']['#type'];
         break;
       case 'fieldset':
-        $suggestions[] = 'bootstrap_panel';
+
+        if (isset($variables['element']['#id'])) {
+
+          // The fieldset SSO should not be a card, but plain fieldset
+          if ($variables['element']['#id'] == 'edit-social-sso') {
+            $suggestions[] = $variables['theme_hook_original'];
+          }
+
+        } else {
+          $suggestions[] = 'bootstrap_panel';
+        }
         break;
 
       default:
@@ -978,6 +998,10 @@ function socialbase_preprocess_form_element(&$variables) {
   // Use cards for the vertical tabs component
   if ($variables['element']['#type'] === 'vertical_tabs') {
     $variables['attributes']['class'][] = 'card';
+  }
+
+  if (isset($variables['element']['#social_linkitem'])) {
+    $variables['#attached']['library'][] = 'socialbase/social-linking';
   }
 
 }

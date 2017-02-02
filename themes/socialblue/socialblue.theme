@@ -18,7 +18,17 @@ function socialblue_theme_suggestions_fieldset_alter(array &$suggestions, array 
        $suggestions[] = 'fieldset__' . $variables['element']['#type'];
        break;
      case 'fieldset':
-       $suggestions[] = 'bootstrap_panel';
+
+       if (isset($variables['element']['#id'])) {
+
+         // The fieldset SSO should not be a card, but plain fieldset
+         if ($variables['element']['#id'] == 'edit-social-sso') {
+           $suggestions[] = $variables['theme_hook_original'];
+         }
+
+       } else {
+         $suggestions[] = 'bootstrap_panel';
+       }
        break;
 
      default:

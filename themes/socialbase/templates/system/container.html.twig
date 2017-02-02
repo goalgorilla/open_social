@@ -21,24 +21,18 @@
 {%
   set classes = [
     not attributes.hasClass('toolbar-menu-administration') ? 'form-group',
-    has_parent ? 'js-form-wrapper',
-    has_parent ? 'form-wrapper',
-    has_floats ? 'clearfix margin-top-xxl',
+    has_floats ? 'clearfix margin-top-xl',
     attributes.hasClass('field--name-field-comment-body') ? 'media-body',
   ]
 %}
 
-{% if search_context %}
+{% if search_context or bare %}
   {{ children }}
 {% else %}
   {% if attributes.hasClass('more-link') %}
     <div{{ attributes.addClass('btn btn-block btn-flat brand-text-primary') }}>{{ children }}</div>
-  {%- elseif attributes.hasClass('crop-preview-wrapper') -%}
-    <div{{ attributes.addClass(classes) }}>
-      {{ children }}
-    </div>
-  {%- elseif attributes.hasClass('crop-preview-wrapper__value') -%}
-    <div{{ attributes.addClass(classes) }}>
+  {% elseif attributes.hasClass('crop-preview-wrapper') or attributes.hasClass('crop-preview-wrapper__value') or attributes.hasClass('form-actions') %}
+    <div{{ attributes.addClass(classes).removeClass('form-group') }}>
       {{ children }}
     </div>
   {% else %}
