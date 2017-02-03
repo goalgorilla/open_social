@@ -18,7 +18,8 @@ Feature: Like post stream
 
     Given I am logged in as "user_2"
     And I am on "/user"
-    Then I should see "What's on your mind?"
+    Then I should see "This is a post by Albert Einstein for Isaac Newton."
+    And I break
     And I click the xth "0" element with the css ".vote-like a"
     And I wait for AJAX to finish
 
@@ -26,5 +27,7 @@ Feature: Like post stream
     And I click the xth "0" element with the css ".notification-bell a"
     Then I should see "Notification centre"
     And I should see "Isaac Newton likes your content"
+    And I click "Isaac Newton likes your content"
+
 
 
