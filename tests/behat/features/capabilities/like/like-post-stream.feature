@@ -11,7 +11,7 @@ Feature: Like post stream
       | user_2   | mail_2@example.com | 1      | Isaac                    | Newton                  |
 
     Given I am logged in as "user_1"
-    And I am on the profile of "Isaac Newton"
+    And I am on the profile of "user_2"
     And I fill in "What's on your mind?" with "This is a post by Albert Einstein for Isaac Newton."
     And I press "Post"
     Then I should see the success message "Your post has been posted."
