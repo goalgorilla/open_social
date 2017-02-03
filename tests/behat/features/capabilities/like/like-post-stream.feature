@@ -4,7 +4,7 @@ Feature: Like post stream
   Role: As a LU
   Goal/desire: I want to be able to like a post in the stream
 
-  Scenario: Successfully create mention in a post
+  Scenario: Like a post in the stream
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name |
       | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
