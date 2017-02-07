@@ -29,7 +29,7 @@ function hook_social_auth_extra_user_presave(\Drupal\user\UserInterface $account
  * @param \Drupal\social_auth_extra\AuthManagerInterface $auth_manager
  * @param \Drupal\social_auth_extra\UserManagerInterface $user_manager
  */
-function social_auth_extra_profile_presave(\Drupal\user\UserInterface $account, \Drupal\profile\Entity\ProfileInterface $profile, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
+function hook_social_auth_extra_profile_presave(\Drupal\user\UserInterface $account, \Drupal\profile\Entity\ProfileInterface $profile, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
 
 }
 
