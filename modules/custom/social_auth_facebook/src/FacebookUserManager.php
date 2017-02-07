@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_facebook;
 
-use Drupal\social_sso\UserManager;
+use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
 
 /**

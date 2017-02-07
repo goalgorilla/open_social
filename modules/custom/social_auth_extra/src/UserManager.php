@@ -1,9 +1,10 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Utility\Token;
@@ -14,7 +15,7 @@ use Drupal\user\UserInterface;
 
 /**
  * Class UserManager
- * @package Drupal\social_sso
+ * @package Drupal\social_auth_extra
  */
 abstract class UserManager implements UserManagerInterface {
 
@@ -31,6 +32,20 @@ abstract class UserManager implements UserManagerInterface {
    * @var \Drupal\profile\Entity\ProfileInterface
    */
   protected $profile;
+
+  /**
+   * Contains the field definition with a profile picture.
+   *
+   * @var \Drupal\Core\Field\FieldDefinitionInterface
+   */
+  protected $fieldPicture;
+
+  /**
+   * Contains the profile type.
+   *
+   * @var string
+   */
+  protected $profileType = 'profile';
 
   protected $configFactory;
   protected $entityTypeManager;
@@ -89,7 +104,7 @@ abstract class UserManager implements UserManagerInterface {
   public function createProfile($values = []) {
     $values = array_merge([
       'uid' => $this->account ? $this->account->id() : NULL,
-      'type' => 'profile',
+      'type' => $this->profileType,
     ], $values);
     $this->profile = $this->entityTypeManager
       ->getStorage('profile')
@@ -105,7 +120,8 @@ abstract class UserManager implements UserManagerInterface {
     if ($this->profile && ($file = $this->downloadProfilePicture($url, $account_id))) {
       !$this->account ?: $file->setOwner($this->account);
       $file->save();
-      $this->profile->get('field_profile_image')->setValue($file->id());
+      $field_name = $this->fieldPicture->getName();
+      $this->profile->get($field_name)->setValue($file->id());
 
       return TRUE;
     }
@@ -157,15 +173,13 @@ abstract class UserManager implements UserManagerInterface {
    * {@inheritdoc}
    */
   public function getPictureDirectory() {
-    $field_definitions = $this->entityFieldManager->getFieldDefinitions('profile', 'profile');
-
-    if (isset($field_definitions['field_profile_image'])) {
+    if ($this->fieldPicture instanceof FieldDefinitionInterface) {
       // Prepare directory where downloaded image will be saved.
       $scheme = $this->configFactory
         ->get('system.file')
         ->get('default_scheme');
 
-      $directory = $field_definitions['field_profile_image']->getSetting('file_directory');
+      $directory = $this->fieldPicture->getSetting('file_directory');
       $directory = "{$scheme}://{$directory}";
       $directory = $this->token->replace($directory);
       $directory = $this->transliteration->transliterate($directory, 'en', '_', 50);
@@ -188,6 +202,20 @@ abstract class UserManager implements UserManagerInterface {
    */
   public function setAccount(UserInterface $account) {
     $this->account = $account;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFieldPicture(FieldDefinitionInterface $field) {
+    $this->fieldPicture = $field;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setProfileType($profile_type) {
+    $this->profileType = $profile_type;
   }
 
 }

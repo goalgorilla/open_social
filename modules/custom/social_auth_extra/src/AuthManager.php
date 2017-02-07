@@ -1,14 +1,15 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
 
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
  * Class AuthManager
- * @package Drupal\social_sso
+ * @package Drupal\social_auth_extra
  */
 abstract class AuthManager implements AuthManagerInterface {
 
@@ -23,7 +24,19 @@ abstract class AuthManager implements AuthManagerInterface {
    */
   protected $sdk;
 
+  /**
+   * Contains object of a profile received from a social network.
+   *
+   * @var mixed
+   */
   protected $profile;
+
+  /**
+   * Contains the field definition with a profile picture.
+   *
+   * @var \Drupal\Core\Field\FieldDefinitionInterface
+   */
+  protected $fieldPicture;
 
   /**
    * AuthManager constructor.
@@ -52,15 +65,13 @@ abstract class AuthManager implements AuthManagerInterface {
    * {@inheritdoc}
    */
   public function getPreferredResolution() {
-    $field_definitions = $this->entityFieldManager->getFieldDefinitions('profile', 'profile');
-
     // Check whether field is exists.
-    if (!isset($field_definitions['field_profile_image'])) {
+    if (!$this->fieldPicture instanceof FieldDefinitionInterface) {
       return FALSE;
     }
 
-    $max_resolution = $field_definitions['field_profile_image']->getSetting('max_resolution');
-    $min_resolution = $field_definitions['field_profile_image']->getSetting('min_resolution');
+    $max_resolution = $this->fieldPicture->getSetting('max_resolution');
+    $min_resolution = $this->fieldPicture->getSetting('min_resolution');
 
     // Return order: max resolution, min resolution, FALSE.
     if ($max_resolution) {
@@ -83,6 +94,13 @@ abstract class AuthManager implements AuthManagerInterface {
    */
   public function getUsername() {
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFieldPicture(FieldDefinitionInterface $field) {
+    $this->fieldPicture = $field;
   }
 
 }

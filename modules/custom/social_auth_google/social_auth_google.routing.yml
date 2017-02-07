@@ -28,7 +28,7 @@ social_auth_google.user_login_notice:
   path: '/user/login/google/notice'
   defaults:
     _title: 'Login'
-    _form: '\Drupal\social_sso\Form\AuthLoginNoticeForm'
+    _form: '\Drupal\social_auth_extra\Form\AuthLoginNoticeForm'
     network: 'google'
   requirements:
     _role: 'anonymous'
@@ -73,7 +73,7 @@ social_auth_google.user_unlink:
   path: '/social-api/unlink/google'
   defaults:
     _title: 'Unlink Google'
-    _form: '\Drupal\social_sso\Form\AuthUnlinkForm'
+    _form: '\Drupal\social_auth_extra\Form\AuthUnlinkForm'
     network: 'google'
   requirements:
     _role: 'authenticated'

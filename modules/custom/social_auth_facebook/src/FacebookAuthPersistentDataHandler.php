@@ -3,7 +3,7 @@
 namespace Drupal\social_auth_facebook;
 
 use Facebook\PersistentData\PersistentDataInterface;
-use Drupal\social_sso\AuthSessionDataHandler;
+use Drupal\social_auth_extra\AuthSessionDataHandler;
 
 /**
  * Variables are written to and read from session via this class.

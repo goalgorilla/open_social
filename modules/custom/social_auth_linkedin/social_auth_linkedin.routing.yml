@@ -28,7 +28,7 @@ social_auth_linkedin.user_login_notice:
   path: '/user/login/linkedin/notice'
   defaults:
     _title: 'Login'
-    _form: '\Drupal\social_sso\Form\AuthLoginNoticeForm'
+    _form: '\Drupal\social_auth_extra\Form\AuthLoginNoticeForm'
     network: 'linkedin'
   requirements:
     _role: 'anonymous'
@@ -73,7 +73,7 @@ social_auth_linkedin.user_unlink:
   path: '/social-api/unlink/linkedin'
   defaults:
     _title: 'Unlink LinkedIn'
-    _form: '\Drupal\social_sso\Form\AuthUnlinkForm'
+    _form: '\Drupal\social_auth_extra\Form\AuthUnlinkForm'
     network: 'linkedin'
   requirements:
     _role: 'authenticated'

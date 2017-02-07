@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
 
 interface AuthDataHandlerInterface {
 

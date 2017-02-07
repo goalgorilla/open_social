@@ -1,13 +1,14 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
 
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
  * Interface UserManagerInterface
- * @package Drupal\social_sso
+ * @package Drupal\social_auth_extra
  */
 interface UserManagerInterface {
 
@@ -103,5 +104,20 @@ interface UserManagerInterface {
    * @return null
    */
   public function setAccount(UserInterface $account);
+
+  /**
+   * Set an instance of a field definition that contains picture.
+   *
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field
+   * @return null
+   */
+  public function setFieldPicture(FieldDefinitionInterface $field);
+
+  /**
+   * Set the profile type.
+   *
+   * @param string $profile_type
+   */
+  public function setProfileType($profile_type);
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_sso\Form;
+namespace Drupal\social_auth_extra\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Url;
 
 /**
  * Class AuthLoginNoticeForm
- * @package Drupal\social_sso\Form
+ * @package Drupal\social_auth_extra\Form
  */
 class AuthLoginNoticeForm extends ConfirmFormBase {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_sso\Form;
+namespace Drupal\social_auth_extra\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -9,7 +9,7 @@ use Drupal\user\Entity\User;
 
 /**
  * Class AuthUnlinkForm
- * @package Drupal\social_sso\Form
+ * @package Drupal\social_auth_extra\Form
  */
 class AuthUnlinkForm extends ConfirmFormBase {
 
@@ -70,7 +70,7 @@ class AuthUnlinkForm extends ConfirmFormBase {
     $is_connected = FALSE;
 
     foreach ($network_manager->getDefinitions() as $key => $definition) {
-      /** @var \Drupal\social_sso\UserManagerInterface $user_manager */
+      /** @var \Drupal\social_auth_extra\UserManagerInterface $user_manager */
       $user_manager = \Drupal::service($definition['id'] . '.user_manager');
       $user_manager->setAccount($account);
 

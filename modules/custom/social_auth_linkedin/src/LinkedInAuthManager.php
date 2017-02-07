@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_linkedin;
 
-use Drupal\social_sso\AuthManager;
+use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Happyr\LinkedIn\LinkedIn;
 use Happyr\LinkedIn\Exception\LinkedInException;

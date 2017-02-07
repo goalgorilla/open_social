@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_twitter;
 
-use Drupal\social_sso\UserManager;
+use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
 
 /**

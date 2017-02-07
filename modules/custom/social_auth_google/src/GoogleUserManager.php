@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_google;
 
-use Drupal\social_sso\UserManager;
+use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 
 /**

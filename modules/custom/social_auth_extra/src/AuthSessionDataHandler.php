@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class AuthSessionDataHandler
- * @package Drupal\social_sso
+ * @package Drupal\social_auth_extra
  */
 class AuthSessionDataHandler implements AuthDataHandlerInterface  {
 

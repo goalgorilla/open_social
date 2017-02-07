@@ -116,7 +116,7 @@ class TwitterAuth extends SocialAuthNetwork {
    * @return object
    */
   public function getDataHandler() {
-    $data_handler = \Drupal::service('social_sso.session_persistent_data_handler');
+    $data_handler = \Drupal::service('social_auth_extra.session_persistent_data_handler');
     $data_handler->setPrefix('social_auth_twitter_');
 
     return $data_handler;

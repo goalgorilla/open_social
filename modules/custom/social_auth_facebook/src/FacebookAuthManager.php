@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_facebook;
 
-use Drupal\social_sso\AuthManager;
+use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Facebook\Facebook;
 use Facebook\Exceptions\FacebookResponseException;

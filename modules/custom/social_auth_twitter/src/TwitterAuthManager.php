@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_twitter;
 
-use Drupal\social_sso\AuthManager;
+use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Abraham\TwitterOAuth\TwitterOAuthException;

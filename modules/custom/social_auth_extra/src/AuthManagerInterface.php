@@ -1,10 +1,12 @@
 <?php
 
-namespace Drupal\social_sso;
+namespace Drupal\social_auth_extra;
+
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
  * Interface AuthManagerInterface
- * @package Drupal\social_sso
+ * @package Drupal\social_auth_extra
  */
 interface AuthManagerInterface {
 
@@ -121,5 +123,13 @@ interface AuthManagerInterface {
    * @return string|false
    */
   public function getUsername();
+
+  /**
+   * Set an instance of a field definition that contains picture.
+   *
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field
+   * @return null
+   */
+  public function setFieldPicture(FieldDefinitionInterface $field);
 
 }
