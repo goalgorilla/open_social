@@ -30,9 +30,22 @@ Feature: Like post stream
     And I click "Isaac Newton likes your content"
 
   @AN
-  Scenario: As an anonymous user I want to see the amount of likes
+  Scenario: As an anonymous user I want to see the amount of likes of public content
+    Given users:
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
+      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
+    Given I am logged in as "user_1"
+    And I am on the homepage
+    When I fill in "What's on your mind?" with "This is a public post."
+    And I select post visibility "Public"
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a public post."
+    And I should be on "/stream"
+
     Given I am an anonymous user
-    And I am on "/node/21"
-    Then I should see "Meetup: Internet of Things"
+    And I am on "/stream"
+    Then I should see "This is a public post."
     And I click the xth "0" element with the css ".vote-like a"
-    And the ".count" element should not contain "1"
+    Then the ".count" element should not contain "1"
+    And the ".count" element should contain "0"
