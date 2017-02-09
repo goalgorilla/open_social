@@ -4,6 +4,7 @@ Feature: Like post stream
   Role: As a LU
   Goal/desire: I want to be able to like a post in the stream
 
+  @LU
   Scenario: Like a post in the stream
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name |
@@ -28,5 +29,10 @@ Feature: Like post stream
     And I should see "Isaac Newton likes your content"
     And I click "Isaac Newton likes your content"
 
-
-
+  @AN
+  Scenario: As an anonymous user I want to see the amount of likes
+    Given I am an anonymous user
+    And I am on "/node/21"
+    Then I should see "Meetup: Internet of Things"
+    And I click the xth "0" element with the css ".vote-like a"
+    And the ".count" element should not contain "1"
