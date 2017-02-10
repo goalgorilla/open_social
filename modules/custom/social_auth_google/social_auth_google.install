@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for the Google Login module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function social_auth_google_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'install') {
+    if (!class_exists('\Google_Client', TRUE)) {
+      $requirements['social_auth_google'] = [
+        'description' => t('Social Auth Google requires Google_Client PHP Library. Make sure the library is installed via Composer.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+
+  return $requirements;
+}

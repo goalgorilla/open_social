@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for the LinkedIn Login module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function social_auth_linkedin_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'install') {
+    if (!class_exists('\Happyr\LinkedIn\LinkedIn', TRUE)) {
+      $requirements['social_auth_linkedin'] = [
+        'description' => t('Social Auth LinkedIn requires LinkedIn PHP Library. Make sure the library is installed via Composer.'),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+  }
+
+  return $requirements;
+}
