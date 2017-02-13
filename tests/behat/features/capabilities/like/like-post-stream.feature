@@ -43,8 +43,6 @@ Feature: Like post stream
     And I should see "This is a public post."
     And I should be on "/stream"
 
-    And I break
-
     Given I am an anonymous user
     And I am on "/stream"
     Then I should see "This is a public post."
