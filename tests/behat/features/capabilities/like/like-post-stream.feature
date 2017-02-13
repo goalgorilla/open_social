@@ -20,7 +20,7 @@ Feature: Like post stream
     Given I am logged in as "user_2"
     And I am on "/user"
     Then I should see "This is a post by Albert Einstein for Isaac Newton."
-    And I click the xth "0" element with the css ".vote-widget .vote-like a"
+    And I click the xth "0" element with the css ".vote-like a"
     And I wait for AJAX to finish
 
     Given I am logged in as "user_1"
@@ -42,6 +42,8 @@ Feature: Like post stream
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
     And I should be on "/stream"
+
+    And I break
 
     Given I am an anonymous user
     And I am on "/stream"
