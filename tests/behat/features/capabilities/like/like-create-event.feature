@@ -27,7 +27,7 @@ Feature: Create event like
      And I open the "event" node with title "Event for likes"
     Then I should see "Event for likes"
      And I should see "Albert Einstein"
-     And I click the xth "0" element with the css ".vote-like a"
+     And I click the xth "0" element with the css ".vote-widget .vote-like a"
      And I wait for AJAX to finish
 
     Given I am logged in as "user_1"
