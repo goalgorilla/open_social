@@ -16,6 +16,14 @@ function social_like_install() {
 }
 
 /**
+ * Re-set permissions for viewing the like widget.
+ */
+function social_like_update_8001() {
+  // Set some default permissions.
+  _social_like_set_permissions();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_like_set_permissions() {
@@ -38,22 +46,28 @@ function _social_like_set_permissions() {
  */
 function _social_like_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = array(
+    'view like widget'
+  );
 
   // Authenticated.
-  $permissions['authenticated'] = [
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'add or remove like votes on post',
     'add or remove like votes on comment of comment',
     'add or remove like votes on post_comment of comment',
     'add or remove like votes on topic of node',
     'add or remove like votes on event of node',
-  ];
+  ));
 
   // Content manager.
-  $permissions['contentmanager'] = [];
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+
+  ));
 
   // Site manager.
-  $permissions['sitemanager'] = [];
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+
+  ));
 
   if (isset($permissions[$role])) {
     return $permissions[$role];

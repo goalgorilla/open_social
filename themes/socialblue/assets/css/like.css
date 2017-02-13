@@ -1,10 +1,22 @@
-.vote-widget a:not(.voted-like):focus .icon-gray,
-.vote-widget a:not(.voted-like):hover .icon-gray {
+.vote-widget a.voted-like .icon-gray {
+  fill: #d9534f;
+  stroke: #d9534f;
+}
+
+.vote-widget a:active.voted-like .icon-gray {
+  fill: #4d4d4d;
+  stroke: #4d4d4d;
+}
+
+.vote-widget a:active:not(.voted-like) .icon-gray {
   stroke: #d9534f;
   fill: transparent;
 }
 
-.vote-widget a.voted-like .icon-gray {
-  fill: #d9534f;
-  stroke: #d9534f;
+@media (min-width: 600px) {
+
+  .vote-widget a:hover:not(.voted-like) .icon-gray {
+    stroke: #d9534f;
+    fill: transparent;
+  }
 }

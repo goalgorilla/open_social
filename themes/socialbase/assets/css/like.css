@@ -26,6 +26,15 @@
   text-transform: uppercase;
 }
 
+.vote-widget a.disable-status {
+  cursor: default;
+}
+
+.vote-widget a.disable-status .icon-gray {
+  fill: #4d4d4d !important;
+  stroke: #4d4d4d !important;
+}
+
 .vote-widget a .icon-gray {
   fill: transparent;
   stroke: #4d4d4d;
@@ -34,23 +43,30 @@
   transition: .2s all ease;
 }
 
-.vote-widget a:hover .icon-gray {
-  fill: #4d4d4d;
-  stroke: #4d4d4d;
-}
-
-.vote-widget a:not(.voted-like):focus .icon-gray,
-.vote-widget a:not(.voted-like):hover .icon-gray {
-  stroke: black;
-  fill: transparent;
-}
-
 .vote-widget a.voted-like .icon-gray {
   fill: black;
   stroke: black;
 }
 
-.vote-widget a.voted-like:hover .icon-gray {
-  fill: #4d4d4d;
-  stroke: #4d4d4d;
+.vote-widget a:active.voted-like .icon-gray {
+  fill: black;
+  stroke: black;
+}
+
+.vote-widget a:active:not(.voted-like) .icon-gray {
+  stroke: black;
+  fill: transparent;
+}
+
+@media (min-width: 600px) {
+
+  .vote-widget a:hover:not(.voted-like) .icon-gray {
+    stroke: black;
+    fill: transparent;
+  }
+
+  .vote-widget a:hover.voted-like .icon-gray {
+    fill: #4d4d4d;
+    stroke: #4d4d4d;
+  }
 }
