@@ -36,6 +36,11 @@
     flex: 0 0 (100%/1.5);
     max-width: (100%/1.5);
   }
+
+  @include for-desktop-up {
+    padding-left: 0;
+  }
+
 }
 
 .region--complementary {
@@ -46,6 +51,10 @@
     flex: 0 0 (100%/3);
     order: 2;
     max-width: (100%/3);
+  }
+
+  @include for-desktop-up {
+    padding-right: 0;
   }
 
 }
