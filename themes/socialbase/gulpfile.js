@@ -5,12 +5,15 @@
 // ===================================================
 
 var importOnce    = require('node-sass-import-once'),
-    path          = require('path');
+    path          = require('path'),
+    notify        = require("gulp-notify"),
+    bower         = require("gulp-bower");
 
 var options = {};
 
 options.basetheme = {
   root       : __dirname,
+  bowerDir   : __dirname + '/libraries/',
   components : __dirname + '/components/',
   build      : __dirname + '/assets/',
   css        : __dirname + '/assets/css/',
@@ -51,6 +54,7 @@ options.icons = {
   src   : options.basetheme.components + '01-base/icons/source/',
   dest  : options.basetheme.build + 'icons/'
 };
+
 
 // ===================================================
 // Build CSS.
@@ -97,12 +101,24 @@ gulp.task('styles:production', ['clean:css'], function () {
     .pipe(gulp.dest(options.basetheme.css));
 });
 
+// ===================================================
+// Run bower
+// ===================================================
+gulp.task('bower', function () {
+  return bower()
+    .pipe(gulp.dest(options.basetheme.bowerDir))
+});
 
 // ===================================================
 // Move and minify JS.
 // ===================================================
 gulp.task('minify-scripts', ['clean:js'], function () {
-  return gulp.src(options.basetheme.components + '**/*.js')
+  return gulp.src([
+    options.basetheme.components + '**/*.js',
+    options.basetheme.bowerDir + '**/raphael.js',
+    options.basetheme.bowerDir + '**/morris.js'
+    ]
+  )
     .pipe($.uglify())
     .pipe($.flatten())
     .pipe($.rename({

@@ -8,24 +8,6 @@
   // No need to set list-style: none; since .list-group-item is block level
   margin-bottom: 20px;
   padding-left: 0; // reset padding because ul and ol
-
-  .avatar {
-    min-height: 62px;
-    padding-left: 72px;
-    position: relative;
-
-    .circle {
-      position: absolute;
-      width: 42px;
-      height: 42px;
-      overflow: hidden;
-      left: 15px;
-      display: inline-block;
-      vertical-align: middle;
-      border-radius: 50%;
-    }
-  }
-
 }
 
 
@@ -109,12 +91,23 @@ a.list-group-item {
 
 }
 
-.card-body .list-group {
+.card__body .list-group {
   margin-bottom: 0;
 
   .list-group-item {
     padding-left: 0;
     padding-right: 0;
+    border-left: 0;
+    border-right: 0;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  .form-group,
+  .alert {
+    margin-bottom: 0;
   }
 
 }
@@ -144,7 +137,7 @@ a.list-group-item {
 
 @include for-tablet-portrait-up {
 
-  .card-body .list-group {
+  .card__body .list-group {
 
     .list-group-item:not(.media) {
       display: table;
@@ -163,11 +156,4 @@ a.list-group-item {
 
   }
 
-}
-
-.card-body {
-  .list-group-item {
-    border-left: 0;
-    border-right: 0;
-  }
 }

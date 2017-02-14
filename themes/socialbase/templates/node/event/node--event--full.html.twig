@@ -9,15 +9,14 @@
       <span class="sr-only">{% trans %}Event date {% endtrans %}</span>
       <span class="inline-center">{{event_date}}</span>
     </div>
-    {% if content.field_event_location|render is not empty %}
+    {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %}
       <div>
         <svg class="article__special-fields-icon"><use xlink:href="#icon-location"></use></svg>
         <span class="sr-only">{% trans %}Event location {% endtrans %}</span>
         <span class="inline-center">
           {{content.field_event_location}}
-          {% if content.field_event_address|render is not empty %}
-            <br />{{content.field_event_address}}
-          {% endif %}
+          {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
+          {{content.field_event_address}}
         </span>
       </div>
     {% endif %}

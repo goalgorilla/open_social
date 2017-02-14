@@ -50,15 +50,14 @@
     </p>
     <div class="hero-footer">
       <div class="hero-footer__text">
-        {% if content.field_group_location|render or content.field_group_address|render  %}
-          <br />
+        {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %}
           <svg class="hero-footer-icon">
             <use xlink:href="#icon-location"></use>
           </svg>
         {% endif %}
         <span class="inline-center">
-          {% if content.field_group_location|render %}
-            {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
+          {{ content.field_group_location }}
+          {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
           {{ content.field_group_address }} </span>
       </div>
 
