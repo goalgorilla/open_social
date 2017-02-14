@@ -71,20 +71,13 @@
 
 .page-title {
   font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
   text-align: center;
-  margin: 0;
+  margin: 1em auto 0.5em;
+  width: 80%;
 
-  .cover-img & {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
-  }
-
-  .cover-wrap & {
-    margin: 1em 0 0.5em;
-
-    @include for-tablet-portrait-up {
-      margin-bottom: 0;
-    }
-
+  @include for-tablet-portrait-up {
+    max-width: 900px;
   }
 
 }
