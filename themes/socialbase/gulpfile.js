@@ -74,14 +74,12 @@ var sassProcessors = [
 
 gulp.task('styles', ['clean:css'], function () {
   return gulp.src(sassFiles)
-    .pipe($.sourcemaps.init() )
     .pipe($.sass(options.sass).on('error', sass.logError))
     .pipe($.plumber({ errorHandler: onError }) )
     .pipe($.postcss(sassProcessors) )
     .pipe($.rucksack() )
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
-    .pipe($.sourcemaps.write('./'))
     .pipe(gulp.dest(options.basetheme.css))
     .pipe($.if(browserSync.active, browserSync.stream({match: '**/*.css'})));
 });
