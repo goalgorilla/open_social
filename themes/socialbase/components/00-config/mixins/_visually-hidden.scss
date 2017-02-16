@@ -3,16 +3,21 @@
 // visually-hidden()
 //
 // Make an element visually hidden, but accessible to screen readers, etc.
-// @see http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+// @see: http://a11yproject.com/posts/how-to-hide-content
+//
+// Weight:
 //
 
 @mixin visually-hidden {
-  position: absolute !important;
+  position: absolute;
   height: 1px;
   width: 1px;
   overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
   word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0,0,0,0);
+  border: 0;
 }
 
 // visually-hidden--off()
@@ -21,11 +26,12 @@
 //
 
 @mixin visually-hidden--off {
-  position: static !important;
+  position: static;
   clip: auto;
   height: auto;
   width: auto;
   overflow: visible;
+  margin: 0;
 }
 
 // visually-hidden--focusable()
@@ -33,6 +39,9 @@
 // Makes an element visually hidden by default, but visible when receiving
 // focus.
 //
+// Use in conjunction with visually-hidden to only display content when it's focused.
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+// Credit: HTML5 Boilerplate
 
 @mixin visually-hidden--focusable {
   @include visually-hidden;

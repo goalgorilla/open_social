@@ -48,7 +48,7 @@ options.basetheme = {
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
 //options.drupalURL = '';
-options.drupalURL = 'http://social.dev:32769';
+options.drupalURL = 'http://social.dev:32791';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
@@ -259,12 +259,12 @@ gulp.task('styles:production', ['clean:css'], function () {
 // ##################
 // Build style guide.
 // ##################
-gulp.task('styleguide', ['clean:styleguide', 'scripts-drupal'], function () {
+gulp.task('styleguide', ['clean:styleguide'], function () {
   return kss(options.styleGuide);
 });
 
 // Debug the generation of the style guide with the --verbose flag.
-gulp.task('styleguide:debug', ['clean:styleguide'], function () {
+gulp.task('styleguide:debug', ['clean:styleguide', 'scripts-drupal'], function () {
   options.styleGuide.verbose = true;
   return kss(options.styleGuide);
 });
@@ -341,7 +341,7 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:lint-and-styleguide', ['styleguide'], function () {
+gulp.task('watch:lint-and-styleguide', ['styleguide:debug'], function () {
   return gulp.watch([
     options.basetheme.components + '**/*.scss',
     options.theme.components + '**/*.scss',

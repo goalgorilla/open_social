@@ -11,12 +11,17 @@ h1, h2, h3, h4, h5, h6,
   font-family: $headings-font-family;
   font-weight: $headings-font-weight;
   line-height: $headings-line-height;
-  color: $headings-color;
-  margin: 1em 0 0.5em;
+  margin: 1rem 0 0.5rem;
   transition: 0.3s;
 
   a {
     font-weight: inherit;
+    color: inherit;
+
+    &:focus,
+    &:hover {
+      color: inherit;
+    }
   }
 
   small,
@@ -86,5 +91,5 @@ h5, .h5{
 }
 
 h6, .h6 {
-  font-size: 0.875rem;;
+  font-size: 0.875rem;
 }
