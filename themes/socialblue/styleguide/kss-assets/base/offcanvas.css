@@ -1,0 +1,136 @@
+#block-filter:target {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.45);
+}
+
+.off-canvas-xs-only {
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  position: relative;
+  margin-bottom: 0.75rem;
+  background-clip: padding-box;
+  background-color: white;
+}
+
+.block-group-add-event-block,
+.block-group-add-topic-block,
+.block-event-add-block,
+.block-topic-add-block,
+.block-group-add-block {
+  display: inline-block;
+}
+
+.block-group-add-event-block .btn,
+.block-group-add-topic-block .btn,
+.block-event-add-block .btn,
+.block-topic-add-block .btn,
+.block-group-add-block .btn {
+  margin-bottom: 0.75rem;
+}
+
+.views-exposed-form {
+  display: inline-block;
+  float: right;
+}
+
+.offcanvas-head {
+  position: relative;
+}
+
+.offcanvas-head .complementary-title {
+  font-size: 1.25rem;
+}
+
+.offcanvas-tools {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.offcanvas-body {
+  margin-top: 30px;
+}
+
+@media (min-width: 900px) {
+
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block {
+    display: block;
+  }
+
+  .block-group-add-event-block .btn,
+  .block-group-add-topic-block .btn,
+  .block-event-add-block .btn,
+  .block-topic-add-block .btn,
+  .block-group-add-block .btn {
+    width: 100%;
+  }
+
+  .views-exposed-form {
+    display: block;
+    float: none;
+  }
+
+  .btn--offcanvas-trigger {
+    display: none;
+  }
+
+  .offcanvas-head {
+    padding: 15px 20px 0;
+    color: #777777;
+    line-height: 1;
+  }
+
+  .offcanvas-head .complementary-title {
+    vertical-align: middle;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .offcanvas-tools {
+    display: none;
+  }
+
+  .offcanvas-body {
+    margin-top: 0;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 899px) {
+
+  .off-canvas {
+    position: fixed;
+    top: 50px;
+    overflow: auto;
+    width: 280px;
+    height: 100%;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 8px 17px 0 transparent, 0 6px 20px 0 transparent;
+    z-index: 4;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transition: box-shadow 0.3s, -webkit-transform 0.5s;
+    transition: box-shadow 0.3s, -webkit-transform 0.5s;
+    transition: transform 0.5s, box-shadow 0.3s;
+    transition: transform 0.5s, box-shadow 0.3s, -webkit-transform 0.5s;
+  }
+
+  .off-canvas-right {
+    -webkit-transform: translateX(280px);
+    transform: translateX(280px);
+    right: 0;
+  }
+
+  .off-canvas-xs-only {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.45);
+    position: fixed;
+  }
+}
