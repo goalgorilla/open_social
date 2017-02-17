@@ -2,8 +2,26 @@
   margin: 0;
 }
 
+#kss-node .lead,
+#kss-node .kss-nav__ref {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
 #kss-node .kss-nav__ref:after {
   content: ' ';
+}
+
+#kss-node .kss-nav__ref-child + .kss-nav__name {
+  margin-left: 0.5rem;
+  font-weight: 300;
 }
 
 #kss-node .kss-section {
