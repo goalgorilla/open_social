@@ -41,29 +41,27 @@
  * @ingroup templates
  */
 #}
+
 {%
   set classes = [
     'card',
     'brand-border-radius',
-    'card-underline',
-    'panel',
-    errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
+    collapsible ? 'panel',
+    collapsible and errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
   ]
 %}
-<div{{ attributes.addClass(classes) }}>
+<fieldset {{ attributes.addClass(classes) }}>
 
   {# Heading #}
   {% if heading %}
     {% block heading %}
-      <div class="card-head">
-        <header>
+      <h4 class="card__title card__title--underline">
           {% if collapsible %}
             <a{{ heading_attributes }} href="{{ target }}">{{ heading }}</a>
           {% else %}
             <div{{ heading_attributes }}>{{ heading }}</div>
           {% endif %}
-        </header>
-      </div>
+      </h4>
     {% endblock %}
   {% endif %}
 
@@ -71,7 +69,7 @@
   {% block body %}
     {%
       set body_classes = [
-      'card-body',
+      'card__body',
       collapsible ? 'panel-collapse',
       collapsible ? 'collapse',
       collapsible ? 'fade',
@@ -107,11 +105,11 @@
     {% block footer %}
       {%
         set footer_classes = [
-          'panel-footer',
+          'card__actionbar',
         ]
       %}
       <div{{ footer_attributes.addClass(footer_classes) }}>{{ footer }}</div>
     {% endblock %}
   {% endif %}
 
-</div>
+</fieldset>

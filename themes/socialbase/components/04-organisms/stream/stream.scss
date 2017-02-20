@@ -51,7 +51,7 @@
   }
 }
 
-.stream-card {
+.card--stream {
   margin: 0 0 $card-padding $card-padding;
   font-size: 0.875rem;
 
@@ -92,11 +92,11 @@
     }
   }
 
-  > .card-body {
+  .card__body {
     padding: 15px;
+    z-index: initial; //prevents post visibility dropdown from showing under next card in stream
 
-    > .card-nested-section,
-    > .media-wrapper > .card-nested-section {
+    .card__nested-section {
       margin: 10px -15px -15px;
       padding: 15px;
     }
@@ -117,7 +117,7 @@
 }
 
 
-.card--teaser.card--teaser-stream {
+.teaser--stream {
   margin: 10px -15px 10px;
   background: $gray-lighter;
 
@@ -129,12 +129,11 @@
     margin-bottom: -15px;
   }
 
-  .card-image {
+  .teaser__image {
 
     @include for-tablet-portrait-up {
       height: 200px;
       flex: 0 0 200px;
-      border-radius: 0;
     }
 
   }

@@ -17,17 +17,17 @@
  */
 #}
 <details{{ attributes }}>
-    {%- if title -%}
-        <summary{{ summary_attributes.addClass('btn btn-flat brand-text-primary') }}>{{ title }}</summary>
-    {%- endif -%}
+  {%- if title -%}
+    <summary{{ summary_attributes.addClass('btn btn-flat brand-text-primary') }}>{{ title }}</summary>
+  {%- endif -%}
 
-    {% if errors %}
-        <div>
-            {{ errors }}
-        </div>
-    {% endif %}
+  {% if errors %}
+    <div>
+      {{ errors }}
+    </div>
+  {% endif %}
 
-    {{ description }}
-    {{ children }}
-    {{ value }}
+  {{ description }}
+  {{ children }}
+  {{ value }}
 </details>

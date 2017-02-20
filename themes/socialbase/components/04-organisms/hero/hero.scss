@@ -9,7 +9,8 @@
   }
 
   .card {
-    margin: 0.75rem 0;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
   }
 
 }
@@ -18,7 +19,7 @@
 .cover {
   position: relative; // keep hero-footer contained
   text-align: center;
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 .cover-img {
@@ -39,12 +40,6 @@
     z-index: 1;
   }
 
-  @include for-tablet-landscape-up {
-
-    .cover-wrap {
-      min-height: 335px;
-    }
-  }
 }
 
 .cover-with-canvas {
@@ -68,10 +63,12 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
+  min-height: 300px;
+  
+  @include for-tablet-portrait-up {
+    min-height: 410px;
+  }
+
 }
 
 .node-unpublished .status:before {
@@ -87,18 +84,10 @@
   font-weight: 700;
   text-align: center;
   margin: 0;
+  padding: 2rem 0;
 
   .cover-img & {
     text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
-  }
-
-  .cover-wrap & {
-    margin: 1em 0 0.5em;
-
-    @include for-tablet-portrait-up {
-      margin-bottom: 0;
-    }
-
   }
 
 }
@@ -119,7 +108,10 @@
 }
 
 .hero-footer {
-  padding-top: 20px;
+  padding: 1rem 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 
   @include for-tablet-landscape-up {
     display: flex;
@@ -128,6 +120,7 @@
 }
 
 .hero-footer__text {
+  margin-top: 10px;
 
   @include for-tablet-landscape-up {
     padding-right: 1rem;

@@ -1,5 +1,157 @@
 @import 'settings';
 
+
+// Button
+//
+// In addition to the default styling of `<button>` and
+// `<input type="submit|image|reset|button">` elements, the `.btn` class and
+// its variants can apply buttons styles to various elements (like an `<a>`
+// link).
+//
+// Use logical elements for your buttons. If it is not a link do not use an a
+// but a `<button>` tag instead. If the `<a>` elements are used to act as buttons –
+// triggering in-page functionality, rather than navigating to another document
+// or section within the current page – they should also be given an appropriate `role="button"`.
+//
+//
+// Weight: 1
+//
+// Style guide: atoms.button
+
+
+// Button types
+//
+// There are different types of buttons that can be used.
+// * __Default button:__ Rectangular shaped buttons that is used in most cases.
+// Does not lift (on same layer as the parent element) and should be placed cards.
+// * __Flat button:__ Are text-only buttons. They should always have a color to
+// distinguish them from normal text. They can be used to put less emphasis
+// or visual attraction to the action. They may be used in dialogs, toolbars,
+// or inline. They do not lift, but fill with color on press.
+// * __Raised button:__ Rectangular-shaped buttons that behave like a piece of
+// material resting on another sheet – they lift and fill with color on press.
+// Raised buttons add dimension to mostly flat layouts. They emphasize functions
+// on busy or wide spaces. They may be used inline. They lift and display
+// ink reactions on press.
+//
+// .btn-default - Default button
+// .btn-link - Link button
+// .btn-default.btn-raised - Raised button
+//
+// Markup: button.twig
+//
+// Weight: 3
+//
+// Style guide: atoms.button.type
+
+
+
+// Button styles
+//
+// There are different types of buttons that can be used.
+// * __Default button:__ Rectangular shaped buttons that is used in most cases.
+// Does not lift (on same layer as the parent element) and should be placed cards.
+// * __Flat button:__ Are text-only buttons. They should always have a color to
+// distinguish them from normal text. They can be used to put less emphasis
+// or visual attraction to the action. They may be used in dialogs, toolbars,
+// or inline. They do not lift, but fill with color on press.
+// * __Raised button:__ Rectangular-shaped buttons that behave like a piece of
+// material resting on another sheet – they lift and fill with color on press.
+// Raised buttons add dimension to mostly flat layouts. They emphasize functions
+// on busy or wide spaces. They may be used inline. They lift and display
+// ink reactions on press.
+// * __Floating action button:__ A circular button that lifts.
+// A floating action button is used for page-wide actions.
+// ### Guidelines
+//
+// In the overview above we have listed many options which
+// you can use to style a button. For consistency we recommend the following:
+//
+// * Start with a default button style and type.
+// * Is your button next (left, right, below) to a card? Consider making it a raised button to put it on the same elevation level as the card.
+// * Does the button need to be one level higher then card content in terms of elevation?
+// Then make it a floating button. This usually means that there is no direct relationship
+// with a specific card or section, but the page as a whole. An example for this would be
+// to edit a node, where this button to do this is put in a block,
+// but you are not only editing the block but the whole node.
+// * Only when a button needs more emphasis use the primary style,
+// or even the accent style. Per form or set of buttons you only
+// want one emphasized button and this should be the preferred action
+// in any context.
+// * If you want to button to be less visible/prominent you can use a flat button style.
+// You can combine this with a smaller size of course. This is mostly used when buttons
+// are repeated on a page or you have limited space and other elements need more attention.
+// * The succes, warning and danger buttons are inhereted from the bootstrap framework
+// and aren't used in the default style. You can use them however if you indicate positive action,
+// negative action or caution when interaction with the button.
+//
+// .btn-primary - Primary style
+// .btn-accent - Accent style
+// .btn-default - Default style
+// .btn-flat - Flat style
+//
+// Markup: button.twig
+//
+// Weight: 4
+//
+// Style guide: atoms.button.style
+
+
+// Button sizes
+//
+// Define a different button size with .btn-lg, .btn-sm, or .btn-xs.
+//
+// By default use the default size. You can choose to use a large button
+// if the action really needs to catch the user`s attention. Combine this
+// with a primary or accent style as well to get maximum exposure. Do not mix
+// different button sizes in a set of buttons. If the information density in a
+// block or section is high and you need to make up space you can choose a
+// smaller button size. An example of this are buttons that appear in repetetive blocks.
+//
+// .btn-primary.btn-xs - Extra ssmall size
+// .btn-primary.btn-sm - Small size
+// .btn-primary.btn-lg - Large size
+// .btn-primary.btn-block - Block level size
+//
+// Markup: button.twig
+//
+// Weight: 5
+//
+// Style guide: atoms.button.sizes
+
+
+// Button states
+//
+// In the examples below you can see how styling is applied when a button
+// is active or disabled compared to the default state. For devices that have
+// mouse interaction you can hover and find that state as well.
+// These aren't available for touch devices of course.
+//
+// .btn-default - Default state
+// .btn-default:hover - Hover state
+// .btn-default.active - Active state
+// .btn-default.disabled - Disabled state
+//
+// Markup: button.twig
+//
+// Style guide: Atoms.button.states
+//
+// Weight: 7
+
+// Floating action button
+//
+// A circular button that lifts. It is used for page-wide actions.
+//
+// .btn-default.btn-floating.waves-circle - Floating button
+//
+// Markup: button--floating.twig
+//
+// Weight: 6
+//
+// Style guide: atoms.button.floating
+
+
+
 .btn {
   border-radius: $btn-border-radius-base;
 
@@ -30,7 +182,7 @@
   .open .dropdown-toggle & {
     background-color: rgba(0, 0, 0, 0.12);
     border-color: transparent;
-    color: inherit;
+    color: $brand-primary;
     fill: darken($brand-primary, 10%);
 
     .icon-inline {
@@ -49,7 +201,6 @@
 
 .btn-link {
   @include button-variant($brand-primary, transparent, transparent);
-  fill: $brand-primary;
 
   &:hover,
   &:focus {
