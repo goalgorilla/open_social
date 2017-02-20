@@ -40,12 +40,6 @@
     z-index: 1;
   }
 
-  @include for-tablet-landscape-up {
-
-    .cover-wrap {
-      min-height: 410px;
-    }
-  }
 }
 
 .cover-with-canvas {
@@ -69,6 +63,12 @@
   width: 100%;
   position: relative;
   z-index: 2;
+  min-height: 300px;
+  
+  @include for-tablet-portrait-up {
+    min-height: 410px;
+  }
+
 }
 
 .node-unpublished .status:before {

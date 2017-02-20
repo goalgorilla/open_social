@@ -86,6 +86,11 @@ function _improved_theme_settings_update_palette($colors = '') {
       background-color: $primary !important;
     }
 
+    .navbar-default .navbar-brand:hover,
+    .navbar-default .navbar-brand:focus {
+      background-color: $primary !important;
+    }
+
     @media (max-width: 959px) {
       .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus {
         background-color: $primary !important;
@@ -179,6 +184,16 @@ function _improved_theme_settings_update_palette($colors = '') {
       box-shadow: 0 2px 0 0 $primary !important;
     }
 
+    .navbar-default .dropdown-menu > .active > a,
+    .navbar-default .dropdown-menu > .active > a:hover,
+    .navbar-default .dropdown-menu > .active > a:focus {
+      background-color: $primary !important;
+    }
+
+    .cover.brand-bg-primary {
+      background-color: $primary !important;
+    }
+
   ";
 
   return $css;
@@ -216,17 +231,40 @@ function improved_theme_settings_page_attachments(array &$page) {
     $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
     if (!empty($border_radius) || $border_radius == 0) {
       $style_to_add .= '
-      .brand-border-radius { border-radius: ' . $border_radius . 'px !important; }
-      .tabs-left .vertical-tabs-list { border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important; }
-      .btn { border-radius: ' . $border_radius . 'px !important; }
-      .teaser--stream:last-child { border-bottom-left-radius: ' . $border_radius . 'px !important; border-bottom-right-radius: ' . $border_radius . 'px !important; }
-      .teaser--stream:last-child .teaser__image { border-bottom-left-radius: ' . $border_radius . 'px !important; }
-      .card__nested-section:last-child { border-bottom-left-radius: ' . $border_radius . 'px !important; border-bottom-right-radius: ' . $border_radius . 'px !important; }
-      .off-canvas-xs-only { border-radius: ' . $border_radius . 'px !important; }
+      .brand-border-radius {
+        border-radius: ' . $border_radius . 'px !important;
+      }
+
+      .tabs-left .vertical-tabs-list {
+        border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
+      }
+
+      .btn {
+        border-radius: ' . $border_radius . 'px !important;
+      }
+
+      .teaser--stream:last-child {
+        border-bottom-left-radius: ' . $border_radius . 'px !important;
+        border-bottom-right-radius: ' . $border_radius . 'px !important;
+      }
+
+      .teaser--stream:last-child .teaser__image {
+        border-bottom-left-radius: ' . $border_radius . 'px !important;
+      }
+
+      .card__nested-section:last-child {
+        border-bottom-left-radius: ' . $border_radius . 'px !important;
+        border-bottom-right-radius: ' . $border_radius . 'px !important;
+      }
+
+      .off-canvas-xs-only {
+        border-radius: ' . $border_radius . 'px !important;
+      }
 
       @media (min-width: 600px) {
-        .teaser__image { border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important; }
-        .teaser__teaser-type { border-radius: 0 0 ' . $border_radius . 'px 0 !important; }
+        .teaser__teaser-type {
+          border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+        }
       }
 
       ';
