@@ -1,0 +1,114 @@
+@import 'settings';
+
+// Morris.js
+//
+// Morris.js is used to visualise good-looking charts. Morris.js provides documntation
+// on their [website](http://morrisjs.github.io/morris.js/).
+//
+// Weight: 1
+//
+// Style guide: javascript.morrisjs
+
+// Line Chart
+//
+// Create an area chart using `Morris.Line(options)`.
+// Line charts takes in many options which are listed [here](http://morrisjs.github.io/morris.js/lines.html)
+//
+//
+// <div class="card"><div class="card-body">
+// <div id="morris-line-graph" style="height: 400px" data-colors="#29abe2,#ffc142"></div>
+// </div></div>
+//
+//<script>
+// Morris.Line({
+// 	element: 'morris-line-graph',
+// 	data: [
+//    { y: '2006', a: 100, b: 50 },
+//    { y: '2007', a: 75,  b: 65 },
+//    { y: '2008', a: 50,  b: 40 },
+//    { y: '2009', a: 75,  b: 75 },
+//    { y: '2010', a: 50,  b: 30 },
+//    { y: '2011', a: 75,  b: 65 },
+//    { y: '2012', a: 100, b: 90 },
+//    { y: '2013', a: 110, b: 100 },
+//    { y: '2014', a: 130, b: 103 },
+//    { y: '2015', a: 134, b: 106 },
+//    { y: '2016', a: 146, b: 120 }
+//  ],
+//  xkey: 'y',
+//  ykeys: ['a', 'b'],
+//  ymax: '160',
+//  labels: ['No. of visitors', 'No. of Unique visitors'],
+// 	lineColors: jQuery('#morris-line-graph').data('colors').split(',')
+// });
+//</script>
+//
+// markup: morrisjs-linechart.twig
+//
+// Weight: 1
+//
+// Style guide: javascript.morrisjs.linechart
+
+// Area Chart
+//
+// Create an area chart using `Morris.Area(options)`.
+// Area charts take all the same options as line charts,
+// and the following extras: `behaveLikeLine`.
+//
+// <div class="card"><div class="card-body">
+// <div id="morris-area-graph" style="height: 200px" data-colors="#29abe2,#ffc142"></div>
+// </div></div>
+//
+//<script>
+// var labelColor = jQuery('#morris-area-graph').css('color');
+// Morris.Area({
+//  element: 'morris-area-graph',
+//  behaveLikeLine: true,
+//  data: [
+//    {x: '2017 Q1', y: 3, z: 3},
+//    {x: '2017 Q2', y: 2, z: 1},
+//    {x: '2017 Q3', y: 2, z: 4},
+//    {x: '2017 Q4', y: 3, z: 3}
+//  ],
+//  xkey: 'x',
+//  ykeys: ['y', 'z'],
+//  ymax: '5',
+//  labels: ['Y', 'Z'],
+//  gridTextColor: labelColor,
+//  lineColors: jQuery('#morris-area-graph').data('colors').split(',')
+// });
+//</script>
+//
+// markup: morrisjs-areachart.twig
+//
+// Weight: 2
+//
+// Style guide: javascript.morrisjs.areachart
+
+.morris-hover {
+  position: absolute;
+  z-index: 1000;
+
+  &.morris-default-style {
+    border-radius: 10px;
+    padding: 6px;
+    color: #666;
+    background: rgba(255, 255, 255, 0.8);
+    border: solid 2px rgba(230, 230, 230, 0.8);
+
+    font-family: sans-serif;
+    font-size: 12px;
+    text-align: center;
+
+    .morris-hover-row-label {
+      font-weight: bold;
+      margin: 0.25em 0;
+    }
+
+    .morris-hover-point {
+      white-space: nowrap;
+      margin: 0.1em 0;
+    }
+  }
+
+}

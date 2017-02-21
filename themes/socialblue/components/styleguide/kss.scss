@@ -1,0 +1,412 @@
+$kss-colors-foreground    : #444;
+$kss-colors-heading       : #111;
+$kss-colors-quotes        : #666;
+
+$kss-colors-link          : #0645ad;
+$kss-colors-link-visited  : #0645ad;
+$kss-colors-link-hover    : lighten($kss-colors-link, 20%);
+$kss-colors-link-active   : #faa700;
+
+$kss-font-body            : Helvetica, 'Helvetica Neue', Arial, sans-serif;
+$kss-font-code            : Menlo, 'Ubuntu Mono', 'Lucida Console', 'Courier New', Courier, monospace;
+
+$kss-font-size            : 16px;
+$kss-vertical-rhythm      : $kss-font-size * 1.5;
+
+@import 'settings';
+
+// ------------------------------------------------------------------------------
+// Sidebar-area components
+// ------------------------------------------------------------------------------
+
+#kss-node {
+
+  .kss-doc-title {
+    margin: 0;
+
+    @media screen and (min-width: 769px) {
+      font-size: 1.5em;
+    }
+  }
+
+  .kss-header,
+  .kss-nav {
+    @media screen and (min-width: 769px) {
+      margin-top: 2em;
+    }
+  }
+
+
+  .kss-nav__ref:after {
+    content: ' ';
+  }
+
+}
+
+// ------------------------------------------------------------------------------
+// Content-area components
+// ------------------------------------------------------------------------------
+
+#kss-node {
+
+  .kss-section {
+    max-width: 48em;
+    margin-bottom: ($kss-vertical-rhythm * 2);
+
+    // "fullscreen" styles copied from Mozilla's default stylesheet.
+    &.is-fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      box-sizing: border-box !important;
+      object-fit: contain !important;
+      transform: none !important;
+      // Turn on scrolling if needed.
+      overflow: auto !important;
+      padding: 20px;
+    }
+  }
+
+  .kss-title {
+    padding-bottom: 11px;
+    margin: 48px 0 6px;
+    border-bottom: 1px solid rgba(119, 119, 119, 0.2);
+  }
+
+  .is-fullscreen .kss-title {
+    margin-top: 0;
+  }
+
+  .kss-title__ref {
+    display: block;
+    font-size: $kss-font-size;
+    line-height: $kss-font-size;
+    color: #666;
+
+    &:before {
+      content: 'Section ';
+    }
+  }
+  .kss-title__permalink {
+    display: block;
+    color: #000;
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: $kss-colors-link;
+
+      @media screen and (min-width: 607px) {
+        .kss-title__permalink-hash {
+          display: inline;
+        }
+      }
+    }
+  }
+  .kss-title__permalink-hash {
+    display: none;
+    color: #ccc;
+  }
+
+  .kss-toolbar {
+    margin: 6px 0 24px;
+    display: inline-block;
+    border: 1px solid #eee;
+    background-color: #f9f9f9;
+    border-right-color: #e0e0e0;
+    border-bottom-color: #e0e0e0;
+    line-height: 1;
+    padding: 3px;
+    a {
+      box-sizing: content-box;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      padding: 3px;
+      vertical-align: top;
+      // Tooltip wrapper styles:
+      position: relative;
+      overflow: visible;
+      + a {
+        margin-left: 6px;
+      }
+      .kss-toolbar__icon-fill {
+        fill: #ccc;
+      }
+      svg.on {
+        display: none;
+      }
+      &:focus,
+      &:hover {
+        border-color: #000;
+        .kss-toolbar__icon-fill {
+          fill: #000;
+        }
+      }
+    }
+  }
+  .kss-toolbar__tooltip {
+    position: absolute;
+    z-index: 1;
+    display: inline-block;
+    bottom: 100%;
+    left: -10px;
+    margin-bottom: 5px;
+    border: solid 1px #666;
+    padding: 8px 10px 6px;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, .25);
+    white-space: nowrap;
+    color: #000;
+    background: #fff;
+    cursor: help;
+    opacity: 0;
+    transition: opacity 0.25s;
+    // Visually hidden
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    word-wrap: normal;
+    // Solid grey triangle.
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 15px;
+      width: 0;
+      height: 0;
+      border-width: 7px 5px 0;
+      border-color: #666 transparent;
+      border-style: solid;
+    }
+    // White triangle knock-out.
+    &:after {
+      bottom: -6px;
+      border-top-color: #fff;
+    }
+  }
+  a:focus,
+  a:hover {
+    > .kss-toolbar__tooltip {
+      opacity: 1;
+      // Visually hidden off
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: visible;
+    }
+  }
+  .is-fullscreen .kss-toolbar a[data-kss-fullscreen],
+  &.kss-guides-mode .kss-toolbar a[data-kss-guides],
+  &.kss-markup-mode .kss-toolbar a[data-kss-markup] {
+    border-color: #666;
+    background-color: #666;
+    .kss-toolbar__icon-fill {
+      fill: #fff;
+    }
+    svg.on {
+      display: block;
+    }
+    svg.off {
+      display: none;
+    }
+  }
+
+  .kss-parameters {
+    display: table;
+    list-style-type: none;
+    margin-top: 0;
+    margin-left: 0;
+    padding-left: 0;
+  }
+  .kss-parameters__title {
+    font-weight: bold;
+  }
+  .kss-parameters__item {
+    display: table-row;
+  }
+  .kss-parameters__name {
+    display: table-cell;
+    padding-right: 20px;
+    white-space: nowrap;
+  }
+  .kss-parameters__description {
+    display: table-cell;
+  }
+  .kss-parameters__default-value code {
+    white-space: nowrap;
+  }
+
+  .kss-modifier__wrapper {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  .is-fullscreen .kss-modifier__wrapper {
+    // Un-do padding on .kss-section.
+    margin-left: -20px;
+    margin-right: -20px;
+    // Remove all padding on the wrapper
+    padding-left: 0;
+    padding-right: 0;
+    border: none;
+  }
+  .kss-modifier__heading {
+    margin: -10px -10px 10px -10px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
+    font-weight: bold;
+  }
+  .is-fullscreen .kss-modifier__heading {
+    margin: 0 20px 10px;
+    border: 1px solid #ccc;
+  }
+  .kss-modifier__default-name {
+    font-weight: bold;
+    margin-bottom: ($kss-vertical-rhythm / 2);
+  }
+  .is-fullscreen .kss-modifier__default-name {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  .kss-modifier__name {
+    float: left;
+    padding-right: 10px;
+    font-weight: bold;
+  }
+
+  .kss-modifier__description {
+    margin-bottom: ($kss-vertical-rhythm / 2);
+  }
+  .is-fullscreen .kss-modifier__description {
+    margin-right: 20px;
+  }
+
+  .kss-modifier__example {
+    clear: left;
+    border: 2px dashed transparent;
+    z-index: 0;
+    position: relative; // Contain the example's absolute positioning.
+    margin: -2px -2px ($kss-vertical-rhythm - 2px);
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+
+  &.kss-guides-mode .kss-modifier__example,
+  &.kss-guides-mode .kss-modifier__example-footer {
+    &:before,
+    &:after {
+      z-index: -1;
+      box-sizing: border-box;
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border: 2px solid #000;
+    }
+  }
+  &.kss-guides-mode .kss-modifier__example {
+    border-color: #000;
+    &:before {
+      top: -5px;
+      left: -5px;
+      border-top: 0;
+      border-left: 0;
+    }
+    &:after {
+      top: -5px;
+      right: -5px;
+      border-top: 0;
+      border-right: 0;
+    }
+  }
+  &.kss-guides-mode.kss-fullscreen-mode .kss-modifier__example {
+    &:before {
+      left: auto;
+      right: 0;
+    }
+    &:after {
+      right: auto;
+      left: 0;
+    }
+  }
+  .kss-modifier__example-footer {
+    clear: both;
+  }
+  &.kss-guides-mode .kss-modifier__example-footer {
+    &:before {
+      bottom: -5px;
+      left: -5px;
+      border-bottom: 0;
+      border-left: 0;
+    }
+    &:after {
+      bottom: -5px;
+      right: -5px;
+      border-right: 0;
+      border-bottom: 0;
+    }
+  }
+  &.kss-guides-mode.kss-fullscreen-mode .kss-modifier__example-footer {
+    &:before {
+      left: auto;
+      right: 0;
+    }
+    &:after {
+      right: auto;
+      left: 0;
+    }
+  }
+
+  &.kss-markup-mode .kss-markup pre {
+    background-color: #fbfbe5;
+  }
+
+  .kss-markup {
+    margin: $kss-vertical-rhythm 0;
+    border: 1px solid #ccc;
+    &[open] summary {
+      border-bottom: 1px solid #ccc;
+    }
+    summary {
+      padding-left: 10px;
+    }
+    pre {
+      margin: 0;
+      border-radius: 0 0 $border-radius-base $border-radius-base;
+    }
+  }
+
+  .kss-source {
+    font-size: 80%;
+  }
+
+  .kss-github {
+    display: none;
+
+    @media screen and (min-width: 501px) {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    img {
+      border: 0;
+    }
+  }
+
+}

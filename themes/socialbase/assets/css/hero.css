@@ -1,7 +1,7 @@
 .cover {
   position: relative;
   text-align: center;
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 .cover-img {
@@ -45,19 +45,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
+  min-height: 300px;
 }
 
 .node-unpublished .status:before {
@@ -85,7 +73,14 @@
 }
 
 .hero-footer {
-  padding-top: 20px;
+  padding: 1rem 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.hero-footer__text {
+  margin-top: 10px;
 }
 
 .hero-footer-icon {
@@ -155,6 +150,10 @@
 
 @media (min-width: 600px) {
 
+  .cover-wrap {
+    min-height: 410px;
+  }
+
   .page-title {
     max-width: 900px;
   }
@@ -167,10 +166,6 @@
 }
 
 @media (min-width: 900px) {
-
-  .cover-img .cover-wrap {
-    min-height: 335px;
-  }
 
   .hero-footer {
     display: -webkit-box;

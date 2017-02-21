@@ -1,143 +1,34 @@
 @import "settings";
 
-.styleguide-container {
-  padding-top: 0;
-}
+.card__body .list-group .list-group-item {
+  border: 1px solid #ddd;
 
-.docssection {
-  margin: 2rem 0;
-}
 
-.docsheader {
-  padding: 50px 15px 2rem;
-  margin-bottom: 1.5rem;
-  color: mix(white, $brand-primary, 80%);
-  text-align: center;
-  background-color: $brand-primary;
-}
+  &.avatar {
+    min-height: 62px;
+    padding-left: 72px;
+    position: relative;
 
-.docsheader h1 {
-  font-size: 3rem;
-  color: #fff;
-}
-
-.docsheader p {
-  font-size: 1.25rem;
-}
-
-@include for-tablet-portrait-up {
-  .docsheader {
-    text-align: left;
-
-    h1 {
-      font-size: 4rem;
+    .circle {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      left: 15px;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 50%;
     }
+  }
 
-    p {
-      font-size: 1.5rem;
-    }
+}
 
-
+@media (max-width: 767px) {
+  .hidden-xs {
+    display: none !important;
   }
 }
 
-@include for-desktop-up {
-  .docsheader p {
-    margin-right: 235px;
-  }
-}
-
-
-/* All levels of nav */
-.docs-sidebar .nav > li > a {
-  display: block;
-  padding: 4px 20px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #767676;
-}
-.docs-sidebar .nav > li > a:hover,
-.docs-sidebar .nav > li > a:focus {
-  padding-left: 19px;
-  color: $brand-primary;
-  text-decoration: none;
-  background-color: transparent;
-  border-left: 1px solid $brand-primary;
-}
-.docs-sidebar .nav > .active > a,
-.docs-sidebar .nav > .active:hover > a,
-.docs-sidebar .nav > .active:focus > a {
-  padding-left: 18px;
-  font-weight: bold;
-  color: $brand-primary;
-  background-color: transparent;
-  border-left: 2px solid $brand-primary;
-}
-
-/* Nav: second level (shown on .active) */
-.docs-sidebar .nav .nav {
-  display: none; /* Hide by default, but at >768px, show it */
-  padding-bottom: 10px;
-}
-.docs-sidebar .nav .nav > li > a {
-  padding-top: 1px;
-  padding-bottom: 1px;
-  padding-left: 30px;
-  font-size: 12px;
-  font-weight: normal;
-}
-.docs-sidebar .nav .nav > li > a:hover,
-.docs-sidebar .nav .nav > li > a:focus {
-  padding-left: 29px;
-}
-.docs-sidebar .nav .nav > .active > a,
-.docs-sidebar .nav .nav > .active:hover > a,
-.docs-sidebar .nav .nav > .active:focus > a {
-  padding-left: 28px;
-  font-weight: 500;
-}
-
-/* Show and affix the side nav when space allows it */
-@include for-tablet-landscape-up {
-  .docs-sidebar .nav > .active > ul {
-    display: block;
-  }
-}
-
-
-.footer-copyright {
-  overflow: hidden;
-  height: 50px;
-  line-height: 50px;
-  color: rgba(255,255,255,0.8);
-  background-color: rgba(51,51,51,0.15);
-}
-
-
-.repo-link {
-  padding: 14px 0;
-  height: 64px;
-  line-height: 36px;
-  background-color: #5c5757;
-  color: #e6e6e6;
-  font-size: .9em;
-  margin-bottom: 20px;
-
-  .sha {
-    color: #f0f0f0;
-    margin: 0 6px 0 6px;
-  }
-}
-
-#github-button {
-  background-color: #6f6d6d;
-  transition: .25s ease;
-  color: #fafafa;
-
-  &:hover {
-    background-color: #797777;
-  }
-}
 
 /*****************
   Chrome Browser
@@ -256,3 +147,7 @@ $topColor: $gray-lightest;
 .bs-example>.btn-group {
   margin: 5px 0;
 }
+
+@import 'kss';
+@import 'toc';
+@import 'prism';

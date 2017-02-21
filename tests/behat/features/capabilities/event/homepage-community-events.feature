@@ -39,7 +39,7 @@ Feature: See upcoming events in the community
 
     When I click radio button "Upcoming events"
     And I press "Filter"
-    And "Behat Event 1" should precede "Behat Event 2" for the query ".card-title"
+    And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"
 
     Given event content:
       | title         | field_event_date | status | field_content_visibility |
@@ -47,4 +47,4 @@ Feature: See upcoming events in the community
       | Behat Event 2 | -20 minutes      | 1      | public                   |
 
     When I click radio button "Events that have started or are finished"
-    And "Behat Event 1" should precede "Behat Event 2" for the query ".card-title"
+    And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"

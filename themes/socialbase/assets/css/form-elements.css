@@ -20,6 +20,43 @@ label {
   cursor: text;
 }
 
+.form-group-inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.form-group-inline .form-group {
+  margin-bottom: 0;
+}
+
+.form-group-inline .form-item {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.form-group-inline .btn {
+  margin-left: 8px;
+  margin-bottom: 5px;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.form-group-inline--right {
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+}
+
+.form-group-inline--right .button--primary {
+  -webkit-box-ordinal-group: 11;
+      -ms-flex-order: 10;
+          order: 10;
+}
+
 .form-no-label label + .form-required {
   display: none;
 }
@@ -49,6 +86,49 @@ span.form-required {
 
 .form-actions .btn {
   margin-bottom: 5px;
+}
+
+.views-exposed-form__actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin-bottom: 0;
+}
+
+.views-exposed-form__actions .btn-default {
+  -webkit-box-ordinal-group: 11;
+      -ms-flex-order: 10;
+          order: 10;
+}
+
+.views-exposed-form__actions .btn-flat {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.form--default .form-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.form--default .form-actions .btn-group--primary,
+.form--default .form-actions .btn-primary {
+  margin-left: auto;
+  margin-right: 0;
+  -webkit-box-ordinal-group: 11;
+      -ms-flex-order: 10;
+          order: 10;
 }
 
 .form-control-static {
@@ -93,31 +173,6 @@ span.form-required {
 }
 
 @media (min-width: 600px) {
-
-  .form-group-inline {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    align-items: flex-start;
-  }
-
-  .form-group-inline .form-group {
-    margin-bottom: 0;
-  }
-
-  .form-group-inline .form-item {
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-  }
-
-  .form-group-inline .btn {
-    margin-left: 8px;
-    -ms-flex-negative: 0;
-    flex-shrink: 0;
-  }
 
   .form-inline .form-group {
     display: inline-block;

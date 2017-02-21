@@ -5,7 +5,7 @@
 'use strict';
 
 var importOnce = require('node-sass-import-once'),
-  path = require('path');
+    path = require('path');
 
 var options = {};
 
@@ -21,11 +21,13 @@ var options = {};
 options.rootPath = {
   project     : __dirname + '/',
   styleGuide  : __dirname + '/styleguide/',
-  theme       : __dirname + '/'
+  theme       : __dirname + '/',
+  basetheme   : __dirname + '/../socialbase/',
+  drupal      : __dirname + '/../../../../../core/'
 };
 
 options.theme = {
-  name       : 'social_blue',
+  name       : 'socialblue',
   root       : options.rootPath.theme,
   components : options.rootPath.theme + 'components/',
   build      : options.rootPath.theme + 'assets/',
@@ -33,10 +35,20 @@ options.theme = {
   js         : options.rootPath.theme + 'assets/js/'
 };
 
+options.basetheme = {
+  name       : 'socialbase',
+  root       : options.rootPath.basetheme,
+  components : options.rootPath.basetheme + 'components/',
+  build      : options.rootPath.basetheme + 'assets/',
+  css        : options.rootPath.basetheme + 'assets/css/',
+  js         : options.rootPath.basetheme + 'assets/js/'
+};
+
+
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
-options.drupalURL = '';
-// options.drupalURL = 'http://social.dev';
+//options.drupalURL = '';
+options.drupalURL = 'http://social.dev:32769';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
@@ -73,12 +85,13 @@ options.icons = {
 // Define the style guide paths and options.
 options.styleGuide = {
   source: [
-    options.theme.components
+    options.theme.components,
+    options.basetheme.components
   ],
   mask: /\.less|\.sass|\.scss|\.styl|\.stylus/,
   destination: options.rootPath.styleGuide,
 
-  builder: 'builder/twig',
+  builder: 'os-builder',
   namespace: options.theme.name + ':' + options.theme.components,
   'extend-drupal8': true,
 
@@ -86,60 +99,103 @@ options.styleGuide = {
   // The following paths are relative to the generated style guide.
   css: [
     // Base stylesheets
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'base.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'base.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'layouts.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'chroma-kss-styles.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'kss-only.css'),
     // Atom stylesheets
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'box.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'clearfix.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'comment.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'footer.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'header.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'hidden.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'highlight-mark.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'inline-links.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'inline-sibling.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'messages.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'print-none.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'responsive-video.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'visually-hidden.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'watermark.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'wireframe.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'alerts.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'alerts.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'badges.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'badges.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'button.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'button.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'cards.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'cards.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'form-controls.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'form-controls.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'labels.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'list-group.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'list-group.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'labels.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'close-icon.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'waves.css'),
     // Molecule stylesheets
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'autocomplete.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'collapsible-fieldset.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'form-item.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'form-table.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'progress-bar.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'progress-throbber.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'resizable-textarea.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'table-drag.css'),
-    // Organisms stylesheets
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'dropdown.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'dropdown.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'file.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'file.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'form-elements.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'form-elements.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'datepicker.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'datepicker.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'input-groups.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'input-groups.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'password.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'password.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'timepicker.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'timepicker.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'media.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'mention.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'mention.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'breadcrumb.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'breadcrumb.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'more-link.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'nav-menu.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'nav-book.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'nav-book.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'nav-tabs.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'nav-tabs.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'navbar.css'),
     path.relative(options.rootPath.styleGuide, options.theme.css + 'navbar.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'pagination.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'pagination.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'popover.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'popover.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'teaser.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'teaser.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'tour.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'tour.css'),
+    // Organisms stylesheets
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'comment.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'comment.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'hero.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'hero.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'meta.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'meta.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'offcanvas.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'offcanvas.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'site-footer.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'stream.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'stream.css'),
     // Template stylesheets
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'pager.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'skip-link.css'),
-    path.relative(options.rootPath.styleGuide, options.theme.css + 'tabs.css')
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'layout.css'),
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'page-node.css'),
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'page-node.css'),
+    // Javascript stylesheets
+    path.relative(options.rootPath.styleGuide, options.basetheme.css + 'morrisjs.css'),
+    // Styleguide stylesheets
+    path.relative(options.rootPath.styleGuide, options.theme.css + 'styleguide.css'),
+
   ],
   js: [
+    path.relative(options.rootPath.styleGuide, options.theme.js + 'waves.min.js')
   ],
-
   homepage: 'homepage.md',
-  title: 'Open Social Blue Style Guide'
+  title: 'Style Guide for Open Social Blue'
 };
+
 
 // Define the paths to the JS files to lint.
 options.eslint = {
   files  : [
     options.rootPath.project + 'gulpfile.js',
     options.theme.components + '**/*.js',
-    '!' + options.theme.components + '**/*.min.js'
+    '!' + options.theme.components + '**/*.min.js',
+    '!' + options.theme.build + '**/*.js'
   ]
 };
+
+// If your files are on a network share, you may want to turn on polling for
+// Gulp watch. Since polling is less efficient, we disable polling by default.
+options.gulpWatchOptions = {};
+// options.gulpWatchOptions = {interval: 1000, mode: 'poll'};
 
 
 // ################################
@@ -152,15 +208,17 @@ var gulp      = require('gulp'),
   // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-sass'),
   kss         = require('kss'),
-  postcss       = require('gulp-postcss'),
-  autoprefixer  = require('autoprefixer'),
-  mqpacker      = require('css-mqpacker');
+  postcss     = require('gulp-postcss'),
+  autoprefixer= require('autoprefixer'),
+  mqpacker    = require('css-mqpacker'),
+  concat      = require('gulp-concat');
 
 // Must be defined after plugins are called.
 var sassProcessors = [
   autoprefixer({browsers: ['> 1%', 'last 2 versions']}),
   mqpacker({sort: true})
 ];
+
 
 // The default task.
 gulp.task('default', ['build']);
@@ -197,24 +255,11 @@ gulp.task('styles:production', ['clean:css'], function () {
 });
 
 
-// ===================================================
-// Move and minify JS.
-// ===================================================
-gulp.task('minify-scripts', function () {
-  return gulp.src(options.theme.components + '**/*.js')
-    .pipe($.uglify())
-    .pipe($.flatten())
-    .pipe($.rename({
-      suffix: ".min"
-    }))
-    .pipe(gulp.dest(options.theme.js));
-});
-
 
 // ##################
 // Build style guide.
 // ##################
-gulp.task('styleguide', ['clean:styleguide'], function () {
+gulp.task('styleguide', ['clean:styleguide', 'scripts-drupal'], function () {
   return kss(options.styleGuide);
 });
 
@@ -222,6 +267,24 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 gulp.task('styleguide:debug', ['clean:styleguide'], function () {
   options.styleGuide.verbose = true;
   return kss(options.styleGuide);
+});
+
+// Copy drupal scripts from drupal to make them available for the styleguide
+gulp.task('scripts-drupal', function() {
+  return gulp.src([
+    options.rootPath.drupal + 'assets/vendor/domready/ready.min.js',
+    options.rootPath.drupal + 'assets/vendor/jquery/jquery.min.js',
+    options.rootPath.drupal + 'assets/vendor/jquery-once/jquery.once.min.js',
+    options.rootPath.drupal + '/misc/drupalSettingsLoader.js',
+    options.rootPath.drupal + '/misc/drupal.js',
+    options.rootPath.drupal + '/misc/debounce.js',
+    options.rootPath.drupal + '/misc/forms.js',
+    options.rootPath.drupal + '/misc/tabledrag.js',
+    options.rootPath.drupal + '/modules/user/user.js',
+    options.rootPath.drupal + '/modules/file/file.js'
+  ])
+    .pipe( concat('drupal-core.js') )
+    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/') );
 });
 
 // #########################
@@ -278,15 +341,24 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:lint-and-styleguide', ['styleguide', 'lint:sass'], function () {
+gulp.task('watch:lint-and-styleguide', ['styleguide'], function () {
   return gulp.watch([
+    options.basetheme.components + '**/*.scss',
     options.theme.components + '**/*.scss',
-    options.theme.components + '**/*.twig'
-  ], options.gulpWatchOptions, ['styleguide', 'lint:sass']);
+    options.basetheme.components + '**/*.twig',
+    options.theme.components + '**/*.twig',
+    options.theme.components + '**/*.md'
+  ], options.gulpWatchOptions, ['styleguide']);
 });
 
-gulp.task('watch:js', ['lint:js'], function () {
-  return gulp.watch(options.eslint.files, ['lint:js']);
+gulp.task('watch:js', function () {
+  return gulp.src(options.theme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest(options.theme.js));
 });
 
 // ######################
@@ -313,7 +385,4 @@ gulp.task('clean:css', function () {
 });
 
 
-// Resources used to create this gulpfile.js:
-// - https://github.com/google/web-starter-kit/blob/master/gulpfile.babel.js
-// - https://github.com/dlmanning/gulp-sass/blob/master/README.md
-// - http://www.browsersync.io/docs/gulp/
+// This gulpfile is based on the Drupal 8 Zen theme starterkit

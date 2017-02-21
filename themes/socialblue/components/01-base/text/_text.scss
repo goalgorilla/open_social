@@ -1,3 +1,12 @@
+// Typography
+//
+// Headings, paragraphs, blockquotes, lists, and more have some global resets.
+//
+// Weight: 1
+//
+// Style guide: base.type
+
+
 // Blockquote
 blockquote {
   border-left: 3px solid $brand-primary;
@@ -19,25 +28,30 @@ strong {
 @include text-emphasis-variant('.text-gray-lightest', $gray-lighter);
 @include text-emphasis-variant('.text-accent', $brand-accent);
 
-// Contextual backgrounds
-// For now we'll leave these alongside the text classes until v4 when we can
-// safely shift things around (per SemVer rules).
-.bg-primary {
-  // Given the contrast here, this is the only class to have its color inverted
-  // automatically.
-  color: #fff;
-}
-@include bg-variant('.bg-primary', $brand-primary);
-@include bg-variant('.bg-success', $state-success-bg);
-@include bg-variant('.bg-info', $state-info-bg);
-@include bg-variant('.bg-warning', $state-warning-bg);
-@include bg-variant('.bg-danger', $state-danger-bg);
+// Brand colors
+.bg-primary { background-color: $brand-primary;}
+.bg-secondary { background-color: $brand-secondary;}
+.bg-accent { background-color: $brand-accent;}
 
-@include bg-variant('.bg-gray', $gray);
-@include bg-variant('.bg-gray-light', $gray-light);
-@include bg-variant('.bg-gray-lighter', $gray-lighter);
-@include bg-variant('.bg-gray-lightest', $gray-lightest);
-@include bg-variant('.bg-white', white);
+// States
+.bg-success { background-color: $state-success-bg;}
+.bg-warning { background-color: $state-warning-bg;}
+.bg-danger { background-color: $state-danger-bg;}
+.bg-info { background-color: $state-info-bg;}
+
+
+// Grayscale
+.bg-gray-base { background-color: $gray-base;}
+.bg-gray-darker { background-color: $gray-darker;}
+.bg-gray-dark { background-color: $gray-dark;}
+.bg-gray { background-color: $gray;}
+.bg-gray-light { background-color: $gray-light;}
+.bg-gray-light-1 { background-color: $gray-light-1;}
+.bg-gray-lighter { background-color: $gray-lighter;}
+.bg-gray-lighter-1 { background-color: $gray-lighter-1;}
+.bg-gray-lightest { background-color: $gray-lightest;}
+.bg-white { background-color: white;}
+
 
 @include style-variant('.brand-primary', $brand-primary, white);
 @include style-variant('.brand-secondary', $brand-secondary, white);

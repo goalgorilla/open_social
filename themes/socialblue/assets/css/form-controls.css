@@ -1,6 +1,6 @@
 .form-control {
   color: #555555;
-  background-color: white;
+  background-color: #fff;
   border: 1px solid #adadad;
   border-radius: 5px;
 }
@@ -26,8 +26,23 @@
 
 .form-control[disabled], .form-control[readonly],
 fieldset[disabled] .form-control {
-  background-color: white;
+  background-color: #fff;
   opacity: 1;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  background: #1d789e;
+  border: 2px solid #1d789e;
+}
+
+input[type='range']::-ms-thumb {
+  background: #1d789e;
+  border: 2px solid #1d789e;
+}
+
+input[type='range']::-moz-range-thumb {
+  background: #1d789e;
+  border: 2px solid #1d789e;
 }
 
 [type="radio"]:checked + label {

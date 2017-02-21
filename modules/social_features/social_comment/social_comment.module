@@ -36,7 +36,6 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
 
   // Comment reply form.
   if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
-    $form['#attributes']['class'][] = 'card-nested-section';
     $form['actions']['submit']['#value'] = t('Reply');
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
@@ -44,7 +43,6 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
     $form['actions']['submit']['#value'] = t('Submit');
     $form['#title'] = t('Edit comment');
-    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
   }
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 }

@@ -1,3 +1,37 @@
+// Card
+//
+// The card is a very basic element that we see a lot in Open social.
+// It is the most basic way of structuring content into sections.
+// A card is elevated (through `box-shadow` property) one level from the canvas.
+// It will also have a `background-color` and `border-radius`.
+//
+// **Card title**
+//
+// A card can have a title to display what the card is about.
+// Add `.card__title--underline` for a border on the head.
+// Add a child `<div class="card__subtitle">` for a subtitle.
+//
+// **Card body**
+//
+// Add `.card__body--fat` to double the padding of the card.
+//
+// .card__body - Default body card
+// .card__body--fat - Fat body card
+//
+// **Card footer**
+//
+// The footer is reserved for actions the user can perform in the card.
+// In most cases there will be buttons, but there can also be labels in here.
+//
+// .card__body - Default body card
+// .card__body--fat - Fat body card
+//
+// markup: card.twig
+//
+// Weight: 3
+//
+// Style guide: atoms.card
+
 @import 'settings';
 
 .card {
@@ -10,58 +44,59 @@
   img {
     max-width: 100%;
   }
+
 }
 
-.card-head {
+.card__title {
   position: relative;
   vertical-align: middle;
+  margin: 0;
   padding: 15px $card-padding 0;
   line-height: 1;
+  font-size: 0.875rem;
+}
+
+.card__subtitle {
+  font-size: 0.75rem;
+  display: block;
 }
 
 // This style can be used to separate the card title from the card body.
-.card-underline .card-head {
+.card__title--underline {
   border-bottom: 1px solid $gray-lighter;
   padding-bottom: 15px;
 }
 
-.card-body {
+.card__body {
   position: relative;
   padding: $card-padding;
+  z-index: 1; // make sure the card__actionbar is over the body padding-bottom.
 
-  &.extra-padding {
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
 
-    @include for-tablet-portrait-up {
-      padding: $card-padding-large;
-    }
+// class to add more white space inside the card
+.card__body--fat {
 
+  @include for-tablet-portrait-up {
+    padding: $card-padding-large;
   }
 
 }
 
-.card-with-actionbar .card-body {
-  padding-bottom: 48px;
-  overflow: hidden;
-}
-
-.card-head header {
-  vertical-align: middle;
-  font-size: 0.875rem;
-}
-
-.card__label {
-  text-transform: uppercase;
-  font-size: 14px;
-  color: $default-color;
-}
-
-.card-nested-section {
-  margin: 10px -20px -20px;
+// a new section inside card, such as comments
+.card__nested-section {
+  margin-top: ($card-padding/2);
+  margin-right: -$card-padding;
+  margin-bottom: -$card-padding;
+  margin-left: -$card-padding;
   padding: $card-padding;
   background: $gray-lighter-1;
   border-top: 1px solid $gray-lighter;
 
-  .extra-padding & {
+  .card__body--fat & {
     @include for-tablet-portrait-up {
       margin-left: -$card-padding-large;
       margin-right: -$card-padding-large;
@@ -69,76 +104,37 @@
     }
   }
 
-  &.indented {
-    margin: -20px;
-    background: transparent;
-    border-top: 0;
-
-  }
-
-  &:last-child {
-    margin-bottom: -$card-padding;
-    border-bottom: 0;
-
-    .extra-padding & {
-      @include for-tablet-portrait-up {
-        margin-bottom: -$card-padding-large;
-      }
-    }
-
-  }
 }
 
-
-.card {
-  p:first-child {
-    margin-top: 0;
-  }
-
-  p:last-child {
-    margin-bottom: 0;
-  }
-
-}
-
-.card-actionbar {
-  @include clearfix; // buttons inside can float
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  background-color: inherit;
-  padding: 6px $card-padding 6px ($card-padding - 4);
-
-  .actionbar {
-    position: absolute;
-    z-index: 1;
-  }
-
-}
-
-.card-actionbar--with-border {
-  border-top: 1px solid $gray-lighter;
-}
-
-.card-buttonbar {
-  padding: 6px 0;
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid $gray-lighter;
+.card__body--fat .card__nested-section:last-child {
 
   @include for-tablet-portrait-up {
-    justify-content: flex-start;
+    margin-bottom: -$card-padding-large;
   }
 
-  .btn-link {
-    padding: 6px;
+}
+
+
+.card__actionbar {
+  @include clearfix; // links inside float
+  margin-top: -$card-padding;
+  padding: $card-padding $card-padding ($card-padding - 4) ($card-padding - 4);
+  position: relative;
+  z-index:2;
+}
+
+.card__link {
+  font-size: 0.875rem;
+  margin-left: 24px;
+  float: right;
+  transition: color .3s ease;
+  text-transform: uppercase;
+}
+
+.card__body--fat + .card__actionbar {
+
+  @include for-tablet-portrait-up {
+    margin-top: -$card-padding-large;
   }
 
-  .justify-end {
-    margin-left: auto;
-    text-align: right;
-    flex: 1;
-  }
 }
