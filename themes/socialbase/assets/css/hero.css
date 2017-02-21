@@ -1,5 +1,6 @@
 .hero-container.container .card {
-  margin: 0.75rem 0;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
 }
 
 .cover {
@@ -49,6 +50,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
+  min-height: 300px;
 }
 
 .node-unpublished .status:before {
@@ -156,6 +158,10 @@
 
 @media (min-width: 600px) {
 
+  .cover-wrap {
+    min-height: 410px;
+  }
+
   .hero-avatar {
     width: 128px;
     height: 128px;
@@ -168,10 +174,6 @@
   .hero-container.container {
     padding-left: 1em;
     padding-right: 1em;
-  }
-
-  .cover-img .cover-wrap {
-    min-height: 410px;
   }
 
   .hero-footer {
