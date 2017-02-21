@@ -164,7 +164,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Add markup for the button so it will be a dropdown.
       $form['feedback_user_has_enrolled'] = array(
-        '#markup' => '<ul class="dropdown-menu"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
+        '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
       );
 
       $form['#attached']['library'][] = 'social_event/form_submit';
