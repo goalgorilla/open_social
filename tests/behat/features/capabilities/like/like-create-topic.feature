@@ -1,10 +1,10 @@
 @api @like @stability @DS-2969
-Feature: Create event like
-  Benefit: In order to like an event
+Feature: Create topic like
+  Benefit: In order to like a topic
   Role: As a LU
-  Goal/desire: I want to be able to like an event
+  Goal/desire: I want to be able to like a topic
 
-  Scenario: Successfully create mention in a post
+  Scenario: Successfully like a topic
    Given users:
      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
      | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   |
@@ -33,4 +33,4 @@ Feature: Create event like
     Given I am logged in as "user_1"
       And I click the xth "0" element with the css ".notification-bell a"
      Then I should see "Notification centre"
-      And I should see "Charles Darwin likes your content"
+      And I should see "Charles Darwin likes your topic"

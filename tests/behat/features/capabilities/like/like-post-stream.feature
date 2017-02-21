@@ -26,8 +26,8 @@ Feature: Like post stream
     Given I am logged in as "user_1"
     And I click the xth "0" element with the css ".notification-bell a"
     Then I should see "Notification centre"
-    And I should see "Isaac Newton likes your content"
-    And I click "Isaac Newton likes your content"
+    And I should see "Isaac Newton likes your post"
+    And I click "Isaac Newton likes your post"
 
   @AN
   Scenario: As an anonymous user I want to see the amount of likes of public content
