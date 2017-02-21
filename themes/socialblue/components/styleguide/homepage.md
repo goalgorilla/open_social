@@ -10,11 +10,9 @@ The goals for creating this style guide are:
 2. Maintain a consistency of the theme styles and components
 3. Create a focal point for our Design and User Experience work, both for ourselves and for the community
 
-This theme is built upon [Drupal Bootstrap](https://www.drupal.org/project/bootstrap), which means Bootstrap is used as the base theme. Furthermore it is enhanced with a default brand styling and extra components. For the extra components [Material Design](https://www.google.com/design/spec/material-design/introduction.html) principles are used.
+This theme is built upon [Drupal Bootstrap](https://www.drupal.org/project/bootstrap), which means Bootstrap is used as the base theme. Furthermore it is enhanced with a default brand styling and extra components. For the extra components mostly [Material Design](https://www.google.com/design/spec/material-design/introduction.html) principles are used.
 
-__Status:__ We are currently in beta phase.
-
-## Organisation
+### Organisation
 
 Design components are reusable designs that can be applied using just the CSS class names specified in the component. We categorize our components to make them easy to find.
 
@@ -28,9 +26,9 @@ Design components are reusable designs that can be applied using just the CSS cl
 <dt>**Organisms**</dt>
 <dd>`components/04-organisms` — Organisms are larger blocks to can be placed in a template and do now rely on other components.</dd>
 <dt>**Templates**</dt>
-<dd>`components/05-templates` — Templates consist mostly of groups of organisms stitched together to form pages.</dd>
-<dt>**Javascript**</dt>
-<dd>`components/06-javascript` — External libraries that can be used across components.</dd>
+<dd>`components/05-templates` — Templates consist mostly of groups of organisms put together.</dd>
+<dt>**Libraries**</dt>
+<dd>`components/06-libraries` — External libraries that can be used by the other components.</dd>
 </dl>
 
 In addition to the components, our component library also contains these folders:
@@ -41,5 +39,5 @@ In addition to the components, our component library also contains these folders
 <dt>**Style guide helper files**</dt>
 <dd>`components/styleguide` — The files needed to build this style guide; includes some CSS overrides for the default KSS style guide</dd>
 <dt>**Generated files**</dt>
-<dd>`assets` — location of the generated CSS, images and javascript; don't alter these files</dd>
+<dd>`assets` — location of the generated CSS, images and javascript; don't alter these files directly</dd>
 </dl>

@@ -1,3 +1,8 @@
+### v1.1.1 -- Feb 2017
+* Listed all mixins and base components in style guide
+* Update readme file
+* update gulp tasks for correct deployment of style guide
+
 ### v1.1.0 -- Feb 2017
 
 Inserted KSS based styleguide

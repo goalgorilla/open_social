@@ -147,7 +147,7 @@
 
 // Fix the top/bottom navbars when screen real estate supports it
 .navbar-fixed-top {
-  @include z-depth-2;
+  @include z-depth-3;
   position: fixed;
   top: 0;
   right: 0;
@@ -218,30 +218,6 @@
     padding-top:    10px;
     padding-bottom: 10px;
     line-height: $line-height-computed;
-  }
-
-  @include for-phone-only {
-    // Dropdowns get custom display when collapsed
-    .open .dropdown-menu {
-      position: static;
-      float: none;
-      width: auto;
-      margin-top: 0;
-      background-color: transparent;
-      border: 0;
-      box-shadow: none;
-      > li > a,
-      .dropdown-header {
-        padding: 5px 15px 5px 25px;
-      }
-      > li > a {
-        line-height: $line-height-computed;
-        &:hover,
-        &:focus {
-          background-image: none;
-        }
-      }
-    }
   }
 
   // Uncollapse the nav
@@ -341,7 +317,7 @@
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
     background-color: $dropdown-bg;
     border: 0;
-    @include z-depth-3;
+    @include z-depth-4;
     position: fixed;
     top: auto;
     margin: 0;
@@ -499,6 +475,7 @@
     svg {
       width: 24px;
       height: 24px;
+      vertical-align: middle;
     }
 
   }

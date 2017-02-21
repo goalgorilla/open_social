@@ -8,10 +8,10 @@
   <title>{{ options.title }}</title>
   <meta name="description" content="">
   <meta name="generator" content="kss-node">
+  <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   {{ styles|raw }}
-
-
 </head>
+
 <body id="kss-node" {% if template.isItem %}class="kss-fullscreen-mode"{% endif %}>
 
   <a href="#main-content" class="sr-only sr-only-focusable"> Skip to main content </a>
@@ -21,7 +21,7 @@
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="./" title="Home" rel="home">
-          <img src="../logo.svg" alt="{{ options.title }}" />
+          <img src="kss-assets/logo.svg" alt="{{ options.title }}" />
         </a>
         <button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
           <span> Menu</span>
