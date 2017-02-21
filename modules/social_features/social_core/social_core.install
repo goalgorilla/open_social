@@ -495,3 +495,19 @@ function social_core_update_8012() {
   );
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Change socialbase and socialblue theme settings config.
+ */
+function social_core_update_8013() {
+  $config_factory = \Drupal::service('config.factory');
+  $config = $config_factory->getEditable('socialbase.settings');
+  $config->set('button_colorize', 0);
+  $config->set('button_iconize', 0);
+  $config->save();
+
+  $config = $config_factory->getEditable('socialblue.settings');
+  $config->set('button_colorize', 0);
+  $config->set('button_iconize', 0);
+  $config->save();
+}

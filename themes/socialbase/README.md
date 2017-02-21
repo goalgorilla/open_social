@@ -32,8 +32,10 @@ This is working folder. The folder is categorised following atomic design princi
 Drupal installation files
 ### Content
 Images that are used in our style guide, not used by Drupal.
-### JS
+### JS - deprecated
 Old javascript folder, needs to cleaned up (all JS should be in components are generated to assets folder)
+### Libraries
+External libraries. Install via Gulp Bower task.
 ### Pug
 Holds our current style guide. This one is published at http://styleguide.getopensocial.com/
 ### Template

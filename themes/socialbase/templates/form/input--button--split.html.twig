@@ -23,13 +23,6 @@
  */
 #}
 {% spaceless %}
-  {%
-    set classes = [
-      'btn',
-      type == 'submit' ? 'js-form-submit',
-      icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
-    ]
-  %}
   {% block input %}
     {% if icon_only %}
       <button{{ attributes.addClass(classes, 'icon-only') }}>
@@ -48,13 +41,12 @@
         'btn',
         theme.settings.button_size ? theme.settings.button_size,
         'dropdown-toggle',
-        'brand-bg-primary',
+        button_type == 'default' ? 'btn-default',
+        button_type == 'flat' ? 'btn-flat brand-text-primary',
+        button_type == 'primary' ? 'btn-primary brand-bg-primary',
+        button_level == 'raised' ? 'btn-raised',
       ]
     %}
-
-    {% if(attributes.hasClass('btn-raised')) %}
-      {% set classes = classes|merge(['btn-raised']) %}
-    {% endif %}
 
     <button{{ split_button_attributes.addClass(classes) }} type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="caret"></span>

@@ -16,26 +16,30 @@
   */
   #}
 
+{{ attach_library('socialbase/comment') }}
 <div class="card brand-border-radius">
-  <div class="card-body extra-padding">
-    <div class="media">
-      <div class="media-left">
-        {% if author_picture %}
-          {{ author_picture }}
-        {% endif %}
-      </div>
-      <div class="media-body">
-        {% if content.links %}
-          {{ content.links }}
-        {% endif %}
-        <div class="media-heading text-m">
-          {% if content.user_id %}
-            {{ content.user_id }}
+  <div class="card__body">
+
+    <div class="media-wrapper">
+      <div class="media">
+        <div class="media-left">
+          {% if author_picture %}
+            {{ author_picture }}
           {% endif %}
-          <div class="post-date">{{ date }}</div>
+        </div>
+        <div class="media-body">
+          <div class="media-heading text-m">
+            {% if content.user_id %}
+              {{ content.user_id }}
+            {% endif %}
+            <div class="post-date">{{ date }}</div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {{ content.links }}
+  </div>
+
     <div class="margin-top-s">
 
       {% if content.field_post %}
@@ -47,7 +51,7 @@
       {% endif %}
     </div>
 
-    <div class="card-nested-section">
+    <div class="card__nested-section">
       {% if content.field_post_comments %}
         {{ content.field_post_comments }}
       {% endif %}

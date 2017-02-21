@@ -1,91 +1,130 @@
+// Teaser
+//
+// A teaser is a concept in  Drupal.
+//
+// > A teaser is a short piece of text, usually the first paragraph
+// > or two of an article. This text is then displayed in most lists,
+// > including the default home page (/node). Many modules (including Views)
+// > are designed to work with node teasers, and the concept of a "teaser"
+// > vs the node "body" is integral to the workings of Drupal core and the Drupal UI.
+//
+// The teaser can have image but it is not mandatory.
+// Teasers can have one or two buttons (of type flat) which are in the actionbar.
+// Content hierarchy is achieved by the order of fields and the use of typography.
+// Try to limit the amount of information and actions in a teaser.
+// On mobile the image field is not displayed. On tablet and wider
+// the maximum height of the teaser should match the heigth of the `image_style`.
+//
+// markup: teaser.twig
+//
+// Weight: 3
+//
+// Style guide: molecules.teaser
+
+// Teaser unpublished
+//
+// markup: teaser-unpublished.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.teaser.unpublished
+
+
 @import 'settings';
 
-.card--teaser {
+
+// teaser item in an overview
+.teaser {
   display: flex;
   flex-wrap: wrap;
+
   @include for-tablet-portrait-up {
     flex-wrap: nowrap;
     height: 220px; // matches width of image
   }
 
-  .card-image {
-    width: 100%;
-    > img, > a, .status {
-      display: none;
-    }
+}
 
-    @include for-tablet-portrait-up {
-      display: block;
-      height: 220px;
-      flex: 0 0 220px;
-      position: relative;
-      overflow: hidden;
-      width: auto;
-      padding-top: 0;
+// parent of the <img> element
+.teaser__image {
+  width: 100%;
+  display: none;
 
-      img, .status {
-        display: block;
-      }
-
-      a {
-        display: block;
-      }
-
-    }
-  }
-
-  .card-image-avatars {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-
-    img {
-      flex: 0 1 110px;
-      width: 110px;
-    }
-  }
-
-  .teaser-type {
-    top: 0;
-    height: auto;
-    pointer-events: none;
-    width: 30px;
-    height: 30px;
-    padding: 6px;
-    left: 20px;
+  @include for-tablet-portrait-up {
+    display: block;
+    height: 220px;
+    flex: 0 0 220px;
     position: relative;
-    margin-bottom: -10px;
-
-    .teaser-type-icon {
-      width: 18px;
-      height: 18px;
-      display: table;
-    }
-
-    @include for-tablet-portrait-up {
-      position: absolute;
-      margin-bottom: 0;
-      left: 0;
-      width: 44px;
-      height: 44px;
-      padding: 12px;
-    }
-  }
-
-  .card-title {
-    margin-top: 0;
-    margin-bottom: 20px;
-    max-height: 2.2em;
     overflow: hidden;
+    width: auto;
+    padding-top: 0;
   }
+}
 
-  .card-body {
-    flex: 1 1 auto;
+// Icon parent to recognise type of teaser in for example the search results
+.teaser__teaser-type {
+  top: 0;
+  pointer-events: none;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  left: 20px;
+  position: relative;
+  margin-bottom: -10px;
+
+  @include for-tablet-portrait-up {
+    position: absolute;
+    margin-bottom: 0;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    padding: 12px;
   }
 
 }
 
-.teaser-icon {
+// Icon to recognise type of teaser in for example the search results
+.teaser__teaser-type-icon {
+  width: 18px;
+  height: 18px;
+  display: table;
+}
+
+
+// Title of the teaser
+.teaser__title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  max-height: 2.2em;
+  overflow: hidden;
+}
+
+// Body of the teaser, contains the content and the actionbar. Shown on the right side next to the image
+.teaser__body {
+  flex: 1;
+  display: flex;
+  overflow: hidden; // makes sure content doesn't continue outside of teaser
+  flex-direction: column;
+}
+
+// Content of the teaser
+.teaser__content {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+}
+
+// A line of content giving information about the content. Will always be cut off after one line
+.teaser__content-line {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+// Describes the type of content such as a blog, news, group or user icon.
+.teaser__content-type-icon {
   width: 14px;
   height: 14px;
   line-height: 16px;
@@ -95,11 +134,45 @@
   margin-right: 12px;
 }
 
-// Unpublished teaser states
+// text displaying next to the icon
+.teaser__content-text {
+  vertical-align: middle;
+  line-height: 1;
+  margin-right: 5px;
+  display: inline;
+}
 
+// Custom styling for publication info of a node, because it needs to be combined at one line next to the content type icon
+.teaser__published {
+  display: inline-flex;
+  width: calc(100% - 30px);
+}
+
+// The author name should be able to truncate when the space is limited: flex-grow: 0
+.teaser__published-author {
+  flex: 0 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-right: 4px;
+}
+
+// The published date should be shown completely when the space is limited: flex-grow: 1
+.teaser__published-date {
+  flex: 1 1 auto;
+}
+
+// Reset margin so the items in the actionbar are vertically aligned.
+.teaser__badge {
+  margin-bottom: 0;
+  vertical-align: text-bottom;
+}
+
+
+// Unpublished teaser states
 @include for-tablet-portrait-up {
 
-  .unpublished .status {
+  .teaser--unpublished .teaser__status {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -109,7 +182,9 @@
     padding-top: 185px;
     left: 0;
     z-index: 2;
-    font-weight: 300;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 
     &:before {
       display: block;
@@ -128,19 +203,4 @@
 
 }
 
-.teaser-published {
-  display: inline-flex;
-  width: calc(100% - 30px);
-}
 
-.teaser-published__author {
-  flex: 0 1 auto;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  margin-right: 4px;
-}
-
-.teaser-published__date {
-  flex: 1 1 auto;
-}
