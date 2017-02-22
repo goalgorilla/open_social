@@ -4,6 +4,31 @@
 // is required to ensure optimum display with or without those classes to better
 // address browser inconsistencies.
 
+// Input
+//
+// The `<input>` element is mostly used for text-based inputs that include the
+// HTML5 types: `text`, `search`, `tel`, `url`, `email`, `password`, `date`,
+// `time`, `number`, `range`, `color`, and `file`.
+//
+// ### Styling
+// The border should light up simply and clearly indicating which field the user is currently editing.
+//
+// ### Requirements
+// Element should have a .form-control class.
+//
+// text - Type text
+// email - Type email
+// password - Type password
+// color - Type color
+// file - Type file
+// time - Type time
+//
+// markup: form-input.twig
+//
+// Weight: 0
+//
+// Style guide: atoms.form-controls.input
+
 // Override content-box in Normalize (* isn't specific enough)
 input[type="search"] {
   box-sizing: border-box;
@@ -21,12 +46,6 @@ input[type="file"] {
   display: block;
 }
 
-// Make range inputs behave like textual form controls
-input[type="range"] {
-  display: block;
-  width: 100%;
-}
-
 // Make multiple select elements height not fixed
 select[multiple],
 select[size] {
@@ -37,75 +56,8 @@ select[size] {
 input[type="file"]:focus,
 input[type="radio"]:focus,
 input[type="checkbox"]:focus {
-  @include tab-focus;
-}
-
-
-// Common form controls
-//
-// Shared size and type resets for form controls. Apply `.form-control` to any
-// of the following form controls:
-//
-// select
-// textarea
-// input[type="text"]
-// input[type="password"]
-// input[type="datetime"]
-// input[type="datetime-local"]
-// input[type="date"]
-// input[type="month"]
-// input[type="time"]
-// input[type="week"]
-// input[type="number"]
-// input[type="email"]
-// input[type="url"]
-// input[type="search"]
-// input[type="tel"]
-// input[type="color"]
-
-.form-control {
-  display: block;
-  width: 100%;
-  max-width: $form-control-max-width;
-  height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
-  padding: $padding-base-vertical $padding-base-horizontal;
-  font-size: inherit;
-  line-height: $line-height-base;
-  appearance: none;
-  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-
-  // Placeholder
-  // Firefox
-  &::-moz-placeholder {
-    opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
-  }
-
-  // Unstyle the caret on `<select>`s in IE10+.
-  &::-ms-expand {
-    border: 0;
-    background-color: transparent;
-  }
-
-  @media screen and (-webkit-min-device-pixel-ratio:0) {
-    font-size: $font-size-base;
-  }
-
-  @include for-tablet-landscape-up {
-    font-size: $font-size-base;
-  }
-
-  &[disabled],
-  fieldset[disabled] & {
-    cursor: $cursor-disabled;
-  }
-
-  // [converter] extracted textarea& to textarea.form-control
-}
-
-// Reset height for `textarea`s
-textarea.form-control {
-  height: auto;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
 }
 
 
@@ -119,6 +71,7 @@ textarea.form-control {
 input[type="search"] {
   -webkit-appearance: none;
 }
+
 
 
 // Special styles for iOS temporal inputs
@@ -137,23 +90,5 @@ input[type="search"] {
     &.form-control {
       line-height: $line-height-computed;
     }
-
-    &.input-sm,
-    .input-group-sm & {
-      line-height: floor($font-size-small * $line-height-small);
-    }
-
-    &.input-lg,
-    .input-group-lg & {
-      line-height: ceil($font-size-large * $line-height-large);
-    }
   }
-}
-
-// ***************
-// Managed file input
-// ***************
-
-.form-managed-file {
-  font-size: 0.875rem;
 }

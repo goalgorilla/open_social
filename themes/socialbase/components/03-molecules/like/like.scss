@@ -26,6 +26,17 @@
     color: $text-color !important;
     text-transform: uppercase;
 
+
+    &.disable-status {
+      cursor: default;
+
+      .icon-gray {
+        fill: $text-color !important;
+        stroke: $text-color !important;
+      }
+
+    }
+
     .icon-gray {
       fill: transparent;
       stroke: $text-color;
@@ -33,25 +44,45 @@
       transition: .2s all ease;
     }
 
-    &:hover .icon-gray {
-      fill: $text-color;
-      stroke: $text-color;
-    }
-
-    &:not(.voted-like):focus .icon-gray,
-    &:not(.voted-like):hover .icon-gray {
-      stroke: black;
-      fill: transparent;
-    }
-
+    // Added like
     &.voted-like .icon-gray {
       fill: black;
       stroke: black;
     }
 
-    &.voted-like:hover .icon-gray {
-      fill: $text-color;
-      stroke: $text-color;
+    &:active {
+
+      // Voted like focus
+      &.voted-like .icon-gray {
+        fill: black;
+        stroke: black;
+      }
+
+      // Not voted like focus
+      &:not(.voted-like) .icon-gray {
+        stroke: black;
+        fill: transparent;
+      }
+
+    }
+
+    @include for-tablet-portrait-up {
+      &:hover {
+
+        // Not voted like hover
+        &:not(.voted-like) .icon-gray {
+          stroke: black;
+          fill: transparent;
+        }
+
+        // Voted like hover
+        &.voted-like .icon-gray {
+          fill: $text-color;
+          stroke: $text-color;
+        }
+
+      }
+
     }
 
   }

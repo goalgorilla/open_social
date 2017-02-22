@@ -1,25 +1,5 @@
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 
-//
-// 1. Set default font family to sans-serif.
-// 2. Prevent iOS and IE text size adjust after device orientation change,
-//    without disabling user zoom.
-//
-
-html {
-  font-family: sans-serif; // 1
-  -ms-text-size-adjust: 100%; // 2
-  -webkit-text-size-adjust: 100%; // 2
-}
-
-//
-// Remove default margin.
-//
-
-body {
-  margin: 0;
-}
-
 // HTML5 display definitions
 // ==========================================================================
 
@@ -79,106 +59,7 @@ template {
   display: none;
 }
 
-// Links
-// ==========================================================================
 
-//
-// Remove the gray background color from active links in IE 10.
-//
-
-a {
-  background-color: transparent;
-}
-
-//
-// Improve readability of focused elements when they are also in an
-// active/hover state.
-//
-
-a:active,
-a:hover {
-  outline: 0;
-}
-
-// Text-level semantics
-// ==========================================================================
-
-//
-// Address styling not present in IE 8/9/10/11, Safari, and Chrome.
-//
-
-abbr[title] {
-  border-bottom: 1px dotted;
-}
-
-//
-// Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
-//
-
-b,
-strong {
-  font-weight: bold;
-}
-
-//
-// Address styling not present in Safari and Chrome.
-//
-
-dfn {
-  font-style: italic;
-}
-
-//
-// Address styling not present in IE 8/9.
-//
-
-mark {
-  background: #ff0;
-  color: #000;
-}
-
-//
-// Prevent `sub` and `sup` affecting `line-height` in all browsers.
-//
-
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-
-sup {
-  top: -0.5em;
-}
-
-sub {
-  bottom: -0.25em;
-}
-
-// Embedded content
-// ==========================================================================
-
-
-//
-// Correct overflow not hidden in IE 9/10/11.
-//
-
-svg:not(:root) {
-  overflow: hidden;
-}
-
-// Grouping content
-// ==========================================================================
-
-//
-// Address margin not present in IE 8/9 and Safari.
-//
-
-figure {
-  margin: 1em 40px;
-}
 
 //
 // Contain overflow in all browsers.
@@ -214,6 +95,7 @@ textarea {
   font: inherit; // 2
   margin: 0; // 3
   box-shadow: none; // 4
+  line-height: inherit;
 }
 
 //
@@ -327,13 +209,13 @@ input[type="search"]::-webkit-search-decoration {
 }
 
 //
-// Define consistent border, margin, and padding.
+// Remove border, margin, and padding, so we can them based on classes.
 //
 
 fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
 
 //

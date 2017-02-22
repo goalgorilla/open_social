@@ -52,7 +52,7 @@ Feature: Comment on a Post
     And I press "Comment"
    Then I should see the success message "Your comment has been posted."
     And I should see "Comment #3"
-        #in the ".stream-card" element
+        #in the ".card--stream" element
     And I should see "Comment #2"
-        #in the ".stream-card" element
-  #@TODO And I should not see "Comment #1" in the ".stream-card" element
+        #in the ".card--stream" element
+  #@TODO And I should not see "Comment #1" in the ".card--stream" element

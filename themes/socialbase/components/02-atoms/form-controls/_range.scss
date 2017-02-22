@@ -1,0 +1,102 @@
+// Input range
+//
+// The range input can be themed cross-browser very well.
+// There is no extra markup needed, just update the scss variables in the variables forms file.
+//
+// markup: form-input-range.twig
+//
+// Weight: 7
+//
+// Style guide: atoms.form-controls.input-range
+
+// Based on:
+// Styling Cross-Browser Compatible Range Inputs with Sass
+// Github: https://github.com/darlanrod/input-range-sass
+// Author: Darlan Rod https://github.com/darlanrod
+
+@mixin track {
+  cursor: pointer;
+  height: $range-track-height;
+  transition: all .2s ease;
+  width: $range-track-width;
+}
+
+@mixin thumb {
+  @include z-depth-1;
+  border-radius: $range-thumb-radius;
+  cursor: pointer;
+  height: $range-thumb-height;
+  width: $range-thumb-width;
+}
+
+[type='range'] {
+  -webkit-appearance: none;
+  width: $range-track-width;
+  border: 0;
+
+  &:focus {
+    outline: 0;
+
+    &::-webkit-slider-thumb {
+      @include z-depth-3;
+    }
+
+    &::-moz-range-thumb {
+      @include z-depth-3;
+    }
+
+    &::-ms-thumb {
+      @include z-depth-3;
+    }
+
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+    background: $range-track-color;
+    border: $range-track-border-width solid $range-track-border-color;
+    border-radius: $range-track-radius;
+  }
+
+  &::-webkit-slider-thumb {
+    @include thumb;
+    -webkit-appearance: none;
+    margin-top: ((-$range-track-border-width * 2 + $range-track-height) / 2) - ($range-thumb-height / 2);
+  }
+
+  &::-moz-range-track {
+    @include track;
+    background: $range-track-color;
+    border: $range-track-border-width solid $range-track-border-color;
+    border-radius: $range-track-radius;
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &::-ms-track {
+    @include track;
+    background: transparent;
+    border-color: transparent;
+    border-width: ($range-thumb-height / 2) 0;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower {
+    background: darken($range-track-color, $range-contrast);
+    border: $range-track-border-width solid $range-track-border-color;
+    border-radius: $range-track-radius * 2;
+  }
+
+  &::-ms-fill-upper {
+    background: $range-track-color;
+    border: $range-track-border-width solid $range-track-border-color;
+    border-radius: $range-track-radius * 2;
+  }
+
+  &::-ms-thumb {
+    @include thumb;
+    margin-top: 0;
+  }
+}

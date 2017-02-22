@@ -47,7 +47,7 @@
   {{ page.breadcrumb }}
 
   {% if (page.hero or page.secondary_navigation) %}
-    <div class="container hero-container">
+    <div id="hero" class="container">
 
       {{ page.hero }}
 
@@ -73,9 +73,11 @@
     <div class="row margin-top-l">
 
       {% if page.complementary_top or page.complementary_bottom %}
-        <aside class="region--complementary complementary-top" role="complementary">
+      <aside role="complementary" class="region--complementary">
+        <div class="complementary-top" role="complementary">
           {{ page.complementary_top }}
-        </aside>
+        </div>
+      </aside>
       {% endif %}
 
       <div{{ attributes.addClass(main_content_classes) }}">
@@ -91,11 +93,11 @@
 
       {% if page.complementary_bottom %}
       {{ attach_library('socialbase/responsive-dom') }}
-        <div role="complementary" class="region--complementary">
+        <aside role="complementary" class="region--complementary-bottom">
           <div class="complementary-bottom">
             {{ page.complementary_bottom }}
           </div>
-        </div>
+        </aside>
       {% endif %}
 
       {% if page.content_bottom %}

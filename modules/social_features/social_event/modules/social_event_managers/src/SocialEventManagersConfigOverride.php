@@ -34,7 +34,7 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
         'format_settings' => [
           'label' => 'Event managers',
           'id' => 'event-managers',
-          'classes' => 'card card-underline scrollspy',
+          'classes' => 'card',
           'required_fields' => FALSE,
         ],
       ];
