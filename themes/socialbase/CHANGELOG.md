@@ -1,3 +1,11 @@
+### v2.1.1 -- Feb 2017
+* Removed pug style guide files
+* Removed content folder which contained assets for the old style guide
+* Updated readme file
+* Updated gulpfile and added more documentation
+* Revised and updated all base components
+* Revised and updated all mixins
+
 ### v2.1.0 -- Feb 2017
 
 Complete overhaul of theme_hooks and clean up of templates

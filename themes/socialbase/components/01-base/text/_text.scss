@@ -1,36 +1,64 @@
-// Text elements
+// Typography
 //
-// Body text and styling for common inline HTML5 elements.
-//
-// markup: text.twig
+// Headings, paragraphs, blockquotes, lists, and more have some global resets.
 //
 // Weight: 2
 //
-// Style guide: base.type.text
+// Style guide: base.type
 
-// Lists
+// Text elements
 //
-// ### Unordered
-// A list of items in which the order *__does not__* explicitly matter.
+// The elements in this section give semantics to inline text.
 //
-// ### Ordered
-// A list of items in whic h the order *__does__* explicitly matter.
-//
-// markup: lists.twig
+// markup: text.twig
 //
 // Weight: 3
 //
-// Style guide: base.type.lists
+// Style guide: base.type.text
+
+// Addresses
+//
+// Present contact information for the nearest ancestor or the
+// entire body of work. Preserve formatting by ending all lines with `<br>`.
+//
+// markup: address.twig
+//
+// Weight: 4
+//
+// Style guide: base.type.address
 
 // Blockquotes
 //
-// Wrap `<blockquote>` around any __HTML__ as the quote. For straight quotes, we recommend a `<p>`.
+// Wrap `<blockquote>` around any __HTML__ as the quote.
+// For straight quotes, we recommend a `<p>`.
 //
 // markup: blockquote.twig
 //
 // Weight: 5
 //
 // Style guide: base.type.blockquotes
+
+// Horizontal rule
+//
+// The `<hr>` element represents a paragraph-level thematic break,
+// e.g. a scene change in a story, or a transition to another topic
+// within a section of a reference book.
+//
+// markup: hr.twig
+//
+// Weight: 6
+//
+// Style guide: base.type.h-rule
+
+
+//
+// Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
+//
+
+b,
+strong {
+  font-weight: bold;
+}
 
 p {
   margin: 0 0 0.75rem;
@@ -134,9 +162,6 @@ small,
 .text-xxxxl {	font-size: 3rem; }
 
 
-// Misc
-// -------------------------
-
 // Abbreviations and acronyms
 abbr[title],
 // Add data-* attribute to help out our tooltip plugin, per https://github.com/twbs/bootstrap/issues/5257
@@ -160,47 +185,58 @@ blockquote {
     }
   }
 
-  // Note: Deprecated small and .small as of v3.1.0
-  // Context: https://github.com/twbs/bootstrap/issues/11660
-  footer,
-  small,
-  .small {
-    display: block;
-    font-size: 80%; // back to default font-size
-    line-height: $line-height-base;
-    color: $blockquote-small-color;
-
-    &:before {
-      content: '\2014 \00A0'; // em dash, nbsp
-    }
-  }
 }
 
-// Opposite alignment of blockquote
-//
-// Heads up: `blockquote.pull-right` has been deprecated as of v3.1.0.
-.blockquote-reverse,
-blockquote.pull-right {
-  padding-right: 15px;
-  padding-left: 0;
-  border-right: 5px solid $blockquote-border-color;
-  border-left: 0;
-  text-align: right;
-
-  // Account for citation
-  footer,
-  small,
-  .small {
-    &:before { content: ''; }
-    &:after {
-      content: '\00A0 \2014'; // nbsp, em dash
-    }
-  }
-}
 
 // Addresses
 address {
   margin-bottom: $line-height-computed;
   font-style: normal;
   line-height: $line-height-base;
+}
+
+// Horizontal rules
+hr {
+  margin-top:    $line-height-computed;
+  margin-bottom: $line-height-computed;
+  border: 0;
+  border-top: 1px solid $hr-border;
+}
+
+//
+// Address styling not present in Safari and Chrome.
+//
+
+dfn {
+  font-style: italic;
+}
+
+//
+// Address styling not present in IE 8/9.
+//
+
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+
+//
+// Prevent `sub` and `sup` affecting `line-height` in all browsers.
+//
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
 }

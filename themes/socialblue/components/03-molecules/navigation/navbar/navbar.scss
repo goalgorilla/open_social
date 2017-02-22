@@ -132,7 +132,7 @@
       }
     }
 
-    @media (max-width: $grid-float-breakpoint-max) {
+    @include for-phone-only {
       // Dropdowns get custom display when collapsed
       .open .dropdown-menu {
         > li > a {
@@ -165,7 +165,7 @@
 
 }
 
-@media (max-width: $grid-float-breakpoint-max) {
+@include for-tablet-landscape-down {
   .navbar-collapse .dropdown-menu li a {
     color: white;
 
