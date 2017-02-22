@@ -540,3 +540,119 @@
   }
 
 }
+
+
+// Navbar secondary
+//
+// Make navbar scrollable on phones by wrapping `.nav` in `.navbar-scrollable`.
+//
+// markup: navbar-scrollable.twig
+//
+// Weight: 2
+//
+// Style guide: molecules.navigation.nav-tabs
+
+.navbar-secondary {
+  min-height: 46px;
+
+  // Centers the navbar items
+  .navbar-nav {
+    text-align: center;
+    float: none;
+    font-size: $font-size-base;
+
+    & > li {
+      display: inline-block;
+      float: none;
+      margin-right: 10px;
+
+      a {
+        transition: all 0.3s;
+        color: white;
+        opacity: 0.75;
+        border-bottom: 2px solid transparent;
+
+        &:hover,
+        &:focus {
+          outline: none;
+        }
+
+      }
+
+      &.active a {
+        border-bottom: 2px solid #fff;
+        opacity: 1;
+
+        &:hover,
+        &:focus {
+          cursor: default;
+        }
+      }
+    }
+
+  }
+
+}
+
+
+// Navbar scrollable
+// -------------------------
+.navbar-scrollable {
+
+  @include for-phone-only {
+
+    // Wrapper for hiding the FF scrollbar.
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 46px;
+
+    // Absolute positioning tabs element so it hides the scrollbar for FF.
+    .navbar-nav {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      display: flex; // Contents inline and expand the with of this element.
+
+      li {
+        float: none;
+        margin-bottom: 0;
+
+        &.active a {
+          border-bottom: 0;
+        }
+      }
+
+      // Hiding the Chrome and Safari scrollbar
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+    }
+
+    // Visual indication that there is more content.
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 1em;
+      height: 100%;
+      top: 0;
+      z-index: 1;
+    }
+
+    &:before {
+      left: 0;
+    }
+
+    &:after {
+      right: 0;
+    }
+
+  }
+
+}

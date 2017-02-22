@@ -237,6 +237,43 @@
   z-index: 90;
 }
 
+.navbar-secondary {
+  min-height: 46px;
+}
+
+.navbar-secondary .navbar-nav {
+  text-align: center;
+  float: none;
+  font-size: 16px;
+}
+
+.navbar-secondary .navbar-nav > li {
+  display: inline-block;
+  float: none;
+  margin-right: 10px;
+}
+
+.navbar-secondary .navbar-nav > li a {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  color: white;
+  opacity: 0.75;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar-secondary .navbar-nav > li a:hover, .navbar-secondary .navbar-nav > li a:focus {
+  outline: none;
+}
+
+.navbar-secondary .navbar-nav > li.active a {
+  border-bottom: 2px solid #fff;
+  opacity: 1;
+}
+
+.navbar-secondary .navbar-nav > li.active a:hover, .navbar-secondary .navbar-nav > li.active a:focus {
+  cursor: default;
+}
+
 @media (min-width: 900px) {
 
   .navbar-header {
@@ -429,5 +466,58 @@
 
   .navbar-collapse .dropdown-menu li a {
     padding: 5px 15px 5px 30px;
+  }
+}
+
+@media (max-width: 599px) {
+
+  .navbar-scrollable {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 46px;
+  }
+
+  .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .navbar-scrollable .navbar-nav li {
+    float: none;
+    margin-bottom: 0;
+  }
+
+  .navbar-scrollable .navbar-nav li.active a {
+    border-bottom: 0;
+  }
+
+  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navbar-scrollable:before, .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 1em;
+    height: 100%;
+    top: 0;
+    z-index: 1;
+  }
+
+  .navbar-scrollable:before {
+    left: 0;
+  }
+
+  .navbar-scrollable:after {
+    right: 0;
   }
 }

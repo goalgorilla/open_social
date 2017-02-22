@@ -1,8 +1,6 @@
 // Nav tabs
 //
-// Make nav tabs scrollable on phones by wrapping `.nav-tabs` in `.nav-scrollable`.
-//
-// markup: nav-tabs.twig
+// Needs a description.
 //
 // Weight: 2
 //
@@ -66,65 +64,6 @@
   &.card-head {
     padding: 0;
     overflow: hidden;
-  }
-
-}
-
-
-// Scrollable tabs
-// -------------------------
-.tabs-scrollable {
-
-  @include for-phone-only {
-
-    // Wrapper for hiding the FF scrollbar.
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    height: 37px;
-
-    // Absolute positioning tabs element so it hides the scrollbar for FF.
-    .nav-tabs {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      overflow-x: scroll;
-      overflow-y: hidden;
-      display: flex; // Contents inline and expand the with of this element.
-
-      li {
-        float: none;
-        margin-bottom: 0;
-      }
-
-      // Hiding the Chrome and Safari scrollbar
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-    }
-
-    // Visual indication that there is more content.
-    &:before,
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      width: 1em;
-      height: 100%;
-      top: 0;
-      z-index: 1;
-    }
-
-    &:before {
-      left: 0;
-    }
-
-    &:after {
-      right: 0;
-    }
-
   }
 
 }

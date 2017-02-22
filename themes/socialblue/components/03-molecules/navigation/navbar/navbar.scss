@@ -262,3 +262,28 @@
   }
 
 }
+
+// Navbar secondary
+// -------------------------
+.navbar-secondary .navbar-nav {
+  & > li:not(.active) a:hover,
+  & > li:not(.active) a:focus {
+    outline: none;
+    background-color: darken($brand-secondary, 10%);
+    border-bottom-color: darken($brand-secondary, 10%);
+  }
+}
+
+// Navbar scrollable
+// -------------------------
+.navbar-scrollable {
+
+  &:before {
+    background: linear-gradient(90deg, $brand-secondary, transparent);
+  }
+
+  &:after {
+    background: linear-gradient(-90deg, $brand-secondary, transparent);
+  }
+
+}

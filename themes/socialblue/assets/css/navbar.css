@@ -124,6 +124,23 @@
   border-radius: 0 5px 5px 0;
 }
 
+.navbar-secondary .navbar-nav > li:not(.active) a:hover,
+.navbar-secondary .navbar-nav > li:not(.active) a:focus {
+  outline: none;
+  background-color: #17607f;
+  border-bottom-color: #17607f;
+}
+
+.navbar-scrollable:before {
+  background: -webkit-linear-gradient(left, #1f80aa, transparent);
+  background: linear-gradient(90deg, #1f80aa, transparent);
+}
+
+.navbar-scrollable:after {
+  background: -webkit-linear-gradient(right, #1f80aa, transparent);
+  background: linear-gradient(-90deg, #1f80aa, transparent);
+}
+
 @media (min-width: 900px) {
 
   .navbar-form[role='search'] .form-control {
