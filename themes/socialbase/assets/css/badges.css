@@ -96,6 +96,49 @@ a.badge--comment-count label:hover {
   display: none;
 }
 
+.badge--toggle {
+  padding: 0;
+  background-color: transparent;
+  -webkit-transition: width 0.3s ease;
+  transition: width 0.3s ease;
+}
+
+.badge--toggle,
+.badge--toggle * {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.js .badge--toggle .badge--toggle__label {
+  width: 0;
+  opacity: 0;
+  display: inline-block;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .icon-badge-toggle,
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #4d4d4d;
+}
+
+.js .badge--toggle .badge--toggle__label {
+  border-radius: 0 8px 8px 0;
+}
+
+.js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
+  width: auto;
+  padding: 4px 12px 4px 6px;
+  opacity: 1;
+}
+
+.js .badge--toggle label {
+  cursor: pointer;
+}
+
 @media (min-width: 600px) {
 
   .badge--likes-count__text,

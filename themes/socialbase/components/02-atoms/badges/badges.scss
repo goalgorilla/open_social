@@ -100,3 +100,46 @@ a.badge--comment-count label:hover {
     display: block;
   }
 }
+
+.badge--toggle {
+  padding: 0;
+  background-color: transparent;
+  transition: width 0.3s ease;
+}
+
+.badge--toggle,
+.badge--toggle * {
+  user-select: none;
+}
+
+// custom badge modifier
+.js .badge--toggle {
+
+  .badge--toggle__label {
+    width: 0;
+    opacity: 0;
+    display: inline-block;
+    transition: opacity 0.3s ease;
+  }
+
+  input[type=checkbox]:checked ~ .icon-badge-toggle,
+  input[type=checkbox]:checked ~ .badge--toggle__label {
+    background-color: rgba(black,0.1); // by using transparency it will also work on gray backgrounds
+    color: $default-color;
+  }
+
+  .badge--toggle__label {
+    border-radius: 0 8px 8px 0;
+  }
+
+  input[type=checkbox]:checked ~ .badge--toggle__label {
+    width: auto;
+    padding: 4px $badge-font-size 4px ($badge-font-size/2);
+    opacity: 1;
+  }
+
+  label {
+    cursor: pointer;
+  }
+
+}
