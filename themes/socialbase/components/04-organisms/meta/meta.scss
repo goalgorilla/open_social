@@ -4,18 +4,22 @@
   display: flex;
   flex-wrap: wrap;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   line-height: 1.4;
 }
 
 .metainfo__follow {
-  margin-top: 0.5em;
   flex-basis: 100%;
   align-self: flex-start;
+  padding-bottom: 30px;
+
+  .flag {
+    display: block;
+  }
 
   @include for-tablet-portrait-up {
-    flex-basis: auto;
-    margin-top: 0;
+    float: right;
+    padding-bottom: 0;
   }
 }
 
@@ -61,9 +65,10 @@
 }
 
 .metainfo__brief {
-  margin-top: 10px;
+  padding-bottom: 30px;
   flex-basis: 100%;
 
+  .badge--visibility,
   .badge--comment-count {
     margin-right: 3px;
   }
@@ -71,17 +76,24 @@
 }
 
 .article__special-fields {
-  padding: 20px 0;
-  margin-bottom: 20px;
-  border-bottom: 1px solid $gray-lighter;
+  padding: 30px 0;
+  border-top: 1px solid $gray-lighter;
+
+  .article__special-field {
+    margin-bottom: 15px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 
   .article__special-fields-icon {
-    width: 14px;
-    height: 14px;
-    line-height: 16px;
+    width: 18px;
+    height: 18px;
+    line-height: 20px;
     display: inline-block;
     vertical-align: middle;
-    fill: $gray;
+    fill: $gray-darker;
     margin-right: 12px;
   }
 }
