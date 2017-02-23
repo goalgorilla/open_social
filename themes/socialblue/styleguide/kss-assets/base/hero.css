@@ -1,7 +1,3 @@
-.hero-container.container .card {
-  margin: 0.75rem 0;
-}
-
 .cover {
   position: relative;
   text-align: center;
@@ -49,6 +45,7 @@
   width: 100%;
   position: relative;
   z-index: 2;
+  min-height: 300px;
 }
 
 .node-unpublished .status:before {
@@ -62,13 +59,10 @@
 
 .page-title {
   font-weight: 700;
-  text-align: center;
-  margin: 0;
-  padding: 2rem 0;
-}
-
-.cover-img .page-title {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  margin: 1em auto 0.5em;
+  width: 80%;
 }
 
 .hero-avatar {
@@ -156,6 +150,14 @@
 
 @media (min-width: 600px) {
 
+  .cover-wrap {
+    min-height: 410px;
+  }
+
+  .page-title {
+    max-width: 900px;
+  }
+
   .hero-avatar {
     width: 128px;
     height: 128px;
@@ -164,15 +166,6 @@
 }
 
 @media (min-width: 900px) {
-
-  .hero-container.container {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
-  .cover-img .cover-wrap {
-    min-height: 410px;
-  }
 
   .hero-footer {
     display: -webkit-box;
