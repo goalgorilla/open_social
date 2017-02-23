@@ -19,13 +19,13 @@ label: 'Create like on node or post'
 description: 'A person likes a post, topic or event created by me'
 text:
   -
-    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">content</a></p>'
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">[vote:liked_content_type]</a></p>'
     format: full_html
   -
-    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">content</a></p>'
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">[vote:liked_content_type]</a></p>'
     format: full_html
   -
-    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">content</a></p>'
+    value: '<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> likes your <a href="[vote:liked_entity]">[vote:liked_content_type]</a></p>'
     format: full_html
 settings:
   'token options':
@@ -33,3 +33,4 @@ settings:
     'token replace': true
   purge_override: false
   purge_methods: {  }
+

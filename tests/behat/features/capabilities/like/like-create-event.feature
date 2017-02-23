@@ -4,7 +4,7 @@ Feature: Create event like
   Role: As a LU
   Goal/desire: I want to be able to like an event
 
-  Scenario: Successfully create mention in a post
+  Scenario: Successfully like an event
    Given users:
      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
@@ -33,4 +33,4 @@ Feature: Create event like
     Given I am logged in as "user_1"
       And I click the xth "0" element with the css ".notification-bell a"
      Then I should see "Notification centre"
-      And I should see "Isaac Newton likes your content"
+      And I should see "Isaac Newton likes your event"

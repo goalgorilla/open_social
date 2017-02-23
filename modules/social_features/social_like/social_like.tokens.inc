@@ -22,6 +22,11 @@ function social_like_token_info() {
     'description' => t('URL of the entity the like was created for'),
   ];
 
+  $social_like['liked_content_type'] = [
+    'name' => t('The liked content type.'),
+    'description' => t('The type of the content that was liked'),
+  ];
+
   return [
     'types' => ['social_like' => $type],
     'tokens' => [
@@ -42,11 +47,25 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
     if ($vote = \Drupal\votingapi\Entity\Vote::load($message->field_message_related_object->target_id)) {
       foreach ($tokens as $name => $original) {
         switch ($name) {
+
           case 'liked_entity':
             $storage = \Drupal::entityManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
             $replacements[$original] = $entity->toUrl()->toString();
             break;
+
+          case 'liked_content_type':
+            $storage = \Drupal::entityManager()->getStorage($vote->getVotedEntityType());
+            $entity = $storage->load($vote->getVotedEntityId());
+            $content_type = $entity->getEntityTypeId();
+            // Check if the content type is node
+            if ($content_type === 'node') {
+              // Then get the bundle name
+              $content_type = $entity->bundle();
+            }
+            $replacements[$original] = $entity->bundle();
+            break;
+
         }
       }
     }
