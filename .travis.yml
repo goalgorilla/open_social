@@ -35,8 +35,9 @@ before_install:
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
-  - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, TRAVIS_COMMIT=$TRAVIS_COMMIT"
+  - composer remove goalgorilla/open_social --no-update
+  - composer require ${TRAVIS_REPO_SLUG}:dev-${BRANCH}#${TRAVIS_COMMIT}
   # Lets install via docker-compose.
   - sudo rm /usr/local/bin/docker-compose || true
   - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
