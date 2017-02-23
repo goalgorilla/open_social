@@ -238,6 +238,8 @@
 }
 
 .navbar-secondary {
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  z-index: 1;
   min-height: 46px;
 }
 
@@ -247,13 +249,12 @@
   font-size: 16px;
 }
 
-.navbar-secondary .navbar-nav > li {
+.navbar-secondary .navbar-nav li {
   display: inline-block;
-  float: none;
-  margin-right: 10px;
+  white-space: nowrap;
 }
 
-.navbar-secondary .navbar-nav > li a {
+.navbar-secondary .navbar-nav li a {
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
   color: white;
@@ -261,16 +262,12 @@
   border-bottom: 2px solid transparent;
 }
 
-.navbar-secondary .navbar-nav > li a:hover, .navbar-secondary .navbar-nav > li a:focus {
-  outline: none;
-}
-
-.navbar-secondary .navbar-nav > li.active a {
+.navbar-secondary .navbar-nav li.active a {
   border-bottom: 2px solid #fff;
   opacity: 1;
 }
 
-.navbar-secondary .navbar-nav > li.active a:hover, .navbar-secondary .navbar-nav > li.active a:focus {
+.navbar-secondary .navbar-nav li.active a:hover, .navbar-secondary .navbar-nav li.active a:focus {
   cursor: default;
 }
 
@@ -393,6 +390,10 @@
     -webkit-transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
     transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
   }
+
+  .navbar-secondary .navbar-nav li {
+    float: none;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -483,6 +484,11 @@
     left: 0;
     top: 0;
     width: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     overflow-x: scroll;
     overflow-y: hidden;
     display: -webkit-box;
@@ -490,34 +496,18 @@
     display: flex;
   }
 
-  .navbar-scrollable .navbar-nav li {
-    float: none;
-    margin-bottom: 0;
-  }
-
-  .navbar-scrollable .navbar-nav li.active a {
-    border-bottom: 0;
-  }
-
   .navbar-scrollable .navbar-nav::-webkit-scrollbar {
     display: none;
   }
 
-  .navbar-scrollable:before, .navbar-scrollable:after {
+  .navbar-scrollable:after {
     content: '';
     display: block;
     position: absolute;
-    width: 1em;
+    width: 24px;
     height: 100%;
     top: 0;
-    z-index: 1;
-  }
-
-  .navbar-scrollable:before {
-    left: 0;
-  }
-
-  .navbar-scrollable:after {
     right: 0;
+    z-index: 2;
   }
 }
