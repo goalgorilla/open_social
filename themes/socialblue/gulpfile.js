@@ -63,8 +63,8 @@ options.basetheme = {
 
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
-options.drupalURL = '';
-// options.drupalURL = 'http://social.dev:32799';
+//options.drupalURL = '';
+options.drupalURL = 'http://social.dev:32769';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
@@ -95,20 +95,20 @@ var onError = function(err) {
 
 // Define the style guide paths and options.
 options.styleGuide = {
-  source: [
+  'source': [
     options.theme.components,
     options.basetheme.components
   ],
-  mask: /\.less|\.sass|\.scss|\.styl|\.stylus/,
+  'mask': /\.less|\.sass|\.scss|\.styl|\.stylus/,
   destination: options.rootPath.styleGuide,
 
-  builder: 'os-builder',
-  namespace: options.theme.name + ':' + options.theme.components,
+  'builder': 'os-builder',
+  'namespace': options.theme.name + ':' + options.theme.components,
   'extend-drupal8': true,
 
   // The css and js paths are URLs, like '/misc/jquery.js'.
   // The following paths are relative to the generated style guide.
-  css: [
+  'css': [
     // Base stylesheets
     'kss-assets/base/base.css',
     'kss-assets/css/base.css',
@@ -184,11 +184,11 @@ options.styleGuide = {
     // Styleguide stylesheets
     'kss-assets/css/styleguide.css'
   ],
-  js: [
+  'js': [
     'kss-assets/js/waves.min.js'
   ],
-  homepage: 'homepage.md',
-  title: 'Style Guide for Open Social Blue'
+  'homepage': 'homepage.md',
+  'title': 'Style Guide for Open Social Blue'
 };
 
 
@@ -256,15 +256,9 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 
 // Before deploying create a fresh build
 gulp.task('build-styleguide', function(done) {
-  runSequence('styleguide',
+  runSequence('clean:styleguide', 'scripts-drupal', 'styleguide',
     ['styleguide-assets-base', 'styleguide-assets'],
     done);
-});
-
-// Debug the generation of the style guide with the --verbose flag.
-gulp.task('styleguide:debug', ['clean:styleguide', 'scripts-drupal'], function () {
-  options.styleGuide.verbose = true;
-  return kss(options.styleGuide);
 });
 
 // Copy drupal scripts from drupal to make them available for the styleguide
@@ -347,14 +341,14 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:styleguide', ['styleguide:debug', 'build-styleguide'], function () {
+gulp.task('watch:styleguide', ['build-styleguide'], function () {
   return gulp.watch([
     options.basetheme.components + '**/*.scss',
     options.theme.components + '**/*.scss',
     options.basetheme.components + '**/*.twig',
     options.theme.components + '**/*.twig',
     options.theme.components + '**/*.md'
-  ], options.gulpWatchOptions, 'build-styleguide');
+  ], options.gulpWatchOptions, ['build-styleguide']);
 });
 
 // #################
