@@ -194,6 +194,14 @@ function _improved_theme_settings_update_palette($colors = '') {
       background-color: $primary !important;
     }
 
+    .navbar-scrollable:before {
+      background: linear-gradient(90deg, $secondary, transparent) !important;
+    }
+
+    .navbar-scrollable:after {
+      background: linear-gradient(-90deg, $secondary, transparent) !important;
+    }
+
   ";
 
   return $css;

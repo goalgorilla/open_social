@@ -237,6 +237,40 @@
   z-index: 90;
 }
 
+.navbar-secondary {
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  z-index: 1;
+  min-height: 46px;
+}
+
+.navbar-secondary .navbar-nav {
+  text-align: center;
+  float: none;
+  font-size: 16px;
+}
+
+.navbar-secondary .navbar-nav li {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.navbar-secondary .navbar-nav li a {
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  color: white;
+  opacity: 0.75;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar-secondary .navbar-nav li.active a {
+  border-bottom: 2px solid #fff;
+  opacity: 1;
+}
+
+.navbar-secondary .navbar-nav li.active a:hover, .navbar-secondary .navbar-nav li.active a:focus {
+  cursor: default;
+}
+
 @media (min-width: 900px) {
 
   .navbar-header {
@@ -264,11 +298,6 @@
   .navbar-fixed-bottom .navbar-collapse {
     padding-left: 0;
     padding-right: 0;
-  }
-
-  .navbar-fixed-top .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
 
   .navbar-toggle {
@@ -361,6 +390,10 @@
     -webkit-transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
     transition: border-radius 0.3s, background-color 0.3s, color 0.3s;
   }
+
+  .navbar-secondary .navbar-nav li {
+    float: none;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -434,5 +467,47 @@
 
   .navbar-collapse .dropdown-menu li a {
     padding: 5px 15px 5px 30px;
+  }
+}
+
+@media (max-width: 599px) {
+
+  .navbar-scrollable {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 46px;
+  }
+
+  .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+
+  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 2;
   }
 }
