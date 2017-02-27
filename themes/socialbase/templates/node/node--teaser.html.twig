@@ -117,7 +117,7 @@
     <div class="card__actionbar">
 
         {% if comment_count > 0 %}
-          <a href="{{ url }}#section-comments" class="badge badge--comment-count teaser__badge">
+          <a href="{{ url }}#section-comments" class="badge badge-pill badge-default badge--comment-count teaser__badge">
             <label>
               <svg class="icon-small icon-badge teaser__badge">
                 <use xlink:href="#icon-comment"></use>
@@ -140,7 +140,7 @@
         {% endif %}
 
         {% if content.enrolled %}
-          <span class="label label-default">
+          <span class="badge badge-secondary teaser__badge">
             {%- trans -%} Enrolled {%- endtrans -%}
           </span>
         {% endif %}

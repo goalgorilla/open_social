@@ -1,15 +1,16 @@
 .badge {
   display: inline-block;
-  min-width: 10px;
-  max-width: 100%;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  padding: 0.25em 0.4em;
+  font-size: 0.75rem;
   font-weight: 500;
   line-height: 1;
-  vertical-align: middle;
-  white-space: nowrap;
   text-align: center;
-  padding: 4px 8px;
-  margin-bottom: 5px;
-  font-size: 12px;
+  white-space: nowrap;
+  vertical-align: baseline;
+  min-width: 10px;
+  max-width: 100%;
 }
 
 .badge:empty {
@@ -21,24 +22,15 @@
   top: -1px;
 }
 
-.btn-xs .badge,
-.btn-group-xs > .btn .badge {
-  top: 0;
-  padding: 1px 5px;
-}
-
-.list-group-item > .badge {
-  float: right;
-}
-
-.list-group-item > .badge + .badge {
-  margin-right: 5px;
+.badge--pill {
+  padding-right: 0.6em;
+  padding-left: 0.6em;
 }
 
 .badge--large {
-  padding-left: 1em;
-  padding-right: 1em;
+  padding: 0 1em;
   font-size: 0.875rem;
+  line-height: 2;
 }
 
 .badge label {
@@ -52,6 +44,7 @@
           align-items: center;
   border-radius: 8px;
   overflow: hidden;
+  font-weight: inherit;
 }
 
 .badge--toggle {
@@ -89,7 +82,7 @@
 
 .js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
   width: auto;
-  padding: 4px 12px 4px 6px;
+  padding: 4px 0.75rem 4px 0.375rem;
   opacity: 1;
 }
 

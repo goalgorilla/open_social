@@ -1,61 +1,63 @@
 @import 'settings';
 
+// Available variations
+//
+// Add any of the below mentioned modifier classes to change the appearance of a badge.
+//
+// .badge-default - Default
+// .badge-primary - Primary
+// .badge-secondary - Secondary
+// .badge-featured - Featured
+// .badge-success - Success
+// .badge-info - Info
+// .badge-warning - Warning
+// .badge-danger - Danger
+//
+// Markup: badge-variation.twig
+//
+// style guide: atoms.badge.variations
+
 .badge {
   border-radius: $badge-border-radius;
-
-  label {
-    font-weight: 300;
-  }
+  color: $badge-color;
 }
 
-a.badge--comment-count {
-  background-color: $gray-lighter;
-  color: $default-color;
-
-  .icon-badge {
-    fill: $default-color;
-  }
-
-}
-
-// Account for badges in navs
-.list-group-item.active > .badge {
-  color: $badge-active-color;
-  background-color: $badge-active-bg;
+.badge-pill {
+  @include border-radius($badge-pill-border-radius);
 }
 
 .badge-default {
-  color: $badge-color;
-  background-color: $badge-bg;
-}
+  @include badge-variant($badge-default-bg, $default-color);
 
-.badge-accent {
-  background-color: $brand-accent;
-  color: $default-color;
-
-  &:hover {
-    color: $default-color;
+  svg {
+    fill: $default-color;
   }
-
 }
 
 .badge-primary {
-  background-color: $brand-primary;
+  @include badge-variant($badge-primary-bg, #fff);
 }
 
 .badge-secondary {
-  background-color: $brand-secondary;
+  @include badge-variant($badge-secondary-bg, #fff);
 }
 
-.badge-gray-lighter {
-  background-color: $gray-lighter;
-  color: $gray-light;
-
-  .icon-badge-toggle {
-    background-color: white;
-  }
+.badge-accent {
+  @include badge-variant($badge-accent-bg, $default-color);
 }
 
-.badge-gray-dark {
-  background-color: $gray-dark;
+.badge-success {
+  @include badge-variant($badge-success-bg, #fff);
+}
+
+.badge-info {
+  @include badge-variant($badge-info-bg, #fff);
+}
+
+.badge-warning {
+  @include badge-variant($badge-warning-bg, #fff);
+}
+
+.badge-danger {
+  @include badge-variant($badge-danger-bg, #fff);
 }
