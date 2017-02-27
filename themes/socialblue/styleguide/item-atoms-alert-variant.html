@@ -149,35 +149,174 @@
 
             
             
-                                    <div id="kssref-sass-visually-hidden" class="kss-section kss-section--depth-2 is-fullscreen">
+                                    <div id="kssref-atoms-alert-variant" class="kss-section kss-section--depth-3 is-fullscreen">
 
               
-                            <h2 class="kss-title kss-title--level-2">
-              <a href="#kssref-sass-visually-hidden">
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-alert-variant">
                 <span class="lead">
-                  1.8
+                  3.1.2
                   <span class="visually-hidden">
-                      sass.visually-hidden
+                      atoms.alert.variant
                     </span>
                 </span>
-                Visually hidden
+                Alert variants
               </a>
-            </h2>
+            </h3>
 
+                          <p class="kss-toolbar">
+                                <a href="#kssref-atoms-alert-variant" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-alert-variant" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
             
 
                           <div class="kss-description">
-                <p>Make an element visually hidden, but accessible to screen readers, etc.
-@see: <a href="http://a11yproject.com/posts/how-to-hide-content">http://a11yproject.com/posts/how-to-hide-content</a> <br />
-<code>@mixin visually-hidden</code></p>
+                <p>Alerts don&#39;t have default classes, only base and modifier classes.
+A default gray alert doesn&#39;t make too much sense, so you&#39;re required
+to specify a type via contextual class. Choose from <code>success</code>, <code>info</code>, <code>warning</code>, or <code>danger</code>.</p>
 
               </div>
             
             
 
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Examples                </header>
+                <div class="card__body">
+
+                                      <!--<div class="kss-modifier__default-name kss-style">
+                      Default styling
+                    </div>-->
+                  
+                  
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-success
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Success
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-success" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-info
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Information
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-info" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-warning
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Warning
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-warning" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-danger
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Danger
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-danger" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/alerts/alert.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;alert alert-dismissible fade in {{ modifier_class }}&quot; role=&quot;alert&quot;&gt;
+
+  &lt;button type=&quot;button&quot; class=&quot;close&quot; data-dismiss=&quot;alert&quot; aria-label=&quot;{{ &quot;Close&quot;|t }}&quot;&gt;
+    &lt;span aria-hidden=&quot;true&quot;&gt;×&lt;/span&gt;
+  &lt;/button&gt;
+
+  &lt;strong&gt;{{ title }}&lt;/strong&gt;
+  {{ content }}
+
+&lt;/div&gt;
+</code></pre>
+
+                </details>
+              
             
                           <div class="kss-source kss-style">
-                Source: <code>00-config/mixins/_visually-hidden.scss</code>, line 3
+                Source: <code>02-atoms/alerts/alert.scss</code>, line 3
               </div>
                       </div>
                     
