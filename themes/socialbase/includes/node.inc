@@ -207,10 +207,13 @@ function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
 function _socialbase_node_get_like_count($type, $id) {
   $count = 0;
 
+  // The result function service needs entity type and entity id in order
+  // to get proper results.
   if (!empty($type) && !empty($id)) {
     $manager = Drupal::service('plugin.manager.votingapi.resultfunction');
     $results = $manager->getResults($type, $id);
 
+    // Lets see if our results carry the sum of all votes.
     if (!empty($results['like']['vote_sum'])) {
       $count = $results['like']['vote_sum'];
     }
