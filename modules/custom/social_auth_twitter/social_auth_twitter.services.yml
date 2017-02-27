@@ -1,0 +1,18 @@
+services:
+  social_auth_twitter.auth_manager:
+    class: '\Drupal\social_auth_twitter\TwitterAuthManager'
+    arguments:
+      - '@url_generator.non_bubbling'
+      - '@entity_field.manager'
+      - '@logger.factory'
+
+  social_auth_twitter.user_manager:
+    class: '\Drupal\social_auth_twitter\TwitterUserManager'
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+      - '@language_manager'
+      - '@entity_field.manager'
+      - '@token'
+      - '@transliteration'
+      - '@logger.factory'

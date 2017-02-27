@@ -23,7 +23,7 @@
     errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
   ]
 %}
-<div{{ attributes.addClass(classes) }}>
+<div{{ attributes.addClass(classes).removeClass('form-wrapper') }}>
   {# Heading #}
 
   {% if heading %}
