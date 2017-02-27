@@ -10,23 +10,17 @@
  * @see template_preprocess_dropdown()
  */
 #}
-<div{{ attributes.addClass('dropdown pull-right') }}> {# 'pull-right' #}
+<div{{ attributes.addClass('dropdown') }}>
     {# See PostForm.php we set edit_mode to true so people can't actually change the dropdown button for edit mode. #}
-    {% if edit_mode %}
-        <button id="post-visibility" type="button" disabled data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-default dropdown-toggle disabled icon-before">
-          <svg class="icon-black icon-small btn-icon">
+        <button id="post-visibility" type="button" {% if edit_mode %}disabled{% endif %} data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-default dropdown-toggle  icon-before">
+          <svg class="icon-black icon-small">
             <use id="btnicon" xlink:href="#icon-{{ selected_material_icon }}"></use>
           </svg>
-          <span class="text">{{ selected }} </span></button>
-    {% else %}
-      <button id="post-visibility" type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-default dropdown-toggle icon-before">
-      <svg class="icon-black icon-small btn-icon">
-        <use id="btnicon" xlink:href="#icon-{{ selected_material_icon }}"></use>
-      </svg>
-      <span class="text">{{ selected }} </span>
-      <span class="caret"></span>
-  </button>
-    <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-md">
+          <span class="text">{{ selected }} </span>
+          {% if not edit_mode %}<span class="caret"></span>{% endif %}
+        </button>
+  {% if not edit_mode %}
+    <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-menu--post">
       <li class="dropdown-header">{{ label }}</li>
       {% for key, child in items %}
           {% if key == active %}

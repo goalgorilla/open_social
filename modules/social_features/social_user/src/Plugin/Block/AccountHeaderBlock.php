@@ -90,7 +90,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_classes' => '',
           'icon_label' => '',
           'title' => $this->t('Create New Book page'),
-          'label' => $this->t('New Book Page'),
+          'label' => $this->t('New book page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/book'),
         );
@@ -105,7 +105,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_classes' => '',
           'icon_label' => '',
           'title' => $this->t('Create New Page'),
-          'label' => $this->t('New Page'),
+          'label' => $this->t('New page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/page'),
         );

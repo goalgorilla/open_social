@@ -25,25 +25,24 @@
 %}
 <div{{ attributes.addClass(classes).removeClass('form-wrapper') }}>
   {# Heading #}
-  {% if not hide_header %}
-    {% if heading %}
-      {% block heading %}
-        <div class="panel-heading">
-          <header>
-            {%
-              set heading_classes = [
-                'panel-title',
-              ]
-            %}
-            {% if collapsible %}
-              <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
-            {% else %}
-              <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
-            {% endif %}
-          </header>
-        </div>
-      {% endblock %}
-    {% endif %}
+
+  {% if heading %}
+    {% block heading %}
+      <div class="panel-heading">
+        <header>
+          {%
+            set heading_classes = [
+              'panel-title',
+            ]
+          %}
+          {% if collapsible %}
+            <a{{ heading_attributes.addClass(heading_classes) }} href="{{ target }}">{{ heading }}</a>
+          {% else %}
+            <div{{ heading_attributes.addClass(heading_classes) }}>{{ heading }}</div>
+          {% endif %}
+        </header>
+      </div>
+    {% endblock %}
   {% endif %}
 
   {# Body #}

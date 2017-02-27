@@ -1,3 +1,4 @@
+
 {#
 /**
  * @file
@@ -21,21 +22,17 @@
 {%
   set classes = [
     not attributes.hasClass('toolbar-menu-administration') ? 'form-group',
-    has_floats ? 'clearfix margin-top-xl',
+    has_parent ? 'js-form-wrapper form-wrapper',
+    exposed_form ? 'views-exposed-form__actions',
     attributes.hasClass('field--name-field-comment-body') ? 'media-body',
+    attributes.hasClass('more-link') ? 'btn btn-block btn-flat brand-text-primary',
   ]
 %}
 
-{% if search_context or bare %}
+{% if bare %}
   {{ children }}
 {% else %}
-  {% if attributes.hasClass('more-link') %}
-    <div{{ attributes.addClass('btn btn-block btn-flat brand-text-primary') }}>{{ children }}</div>
-  {% elseif attributes.hasClass('crop-preview-wrapper') or attributes.hasClass('crop-preview-wrapper__value') or attributes.hasClass('form-actions') %}
-    <div{{ attributes.addClass(classes).removeClass('form-group') }}>
-      {{ children }}
-    </div>
-  {% else %}
-    {{ children }}
-  {% endif %}
+  <div{{ attributes.addClass(classes) }}>
+   {{ children }}
+  </div>
 {% endif %}

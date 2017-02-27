@@ -39,10 +39,6 @@
   margin-left: 3px;
 }
 
-.btn, .btn:active, .btn.active {
-  box-shadow: none;
-}
-
 .btn:hover, .btn:focus, .btn.focus {
   text-decoration: none;
   outline: 0;
@@ -59,8 +55,11 @@ fieldset[disabled] .btn {
   box-shadow: none;
 }
 
+.btn-non-clickable.disabled,
+fieldset[disabled] .btn-non-clickable,
 a.btn.disabled,
-fieldset[disabled] a.btn {
+fieldset[disabled]
+a.btn {
   pointer-events: none;
 }
 
@@ -79,131 +78,6 @@ fieldset[disabled] .btn-link {
 fieldset[disabled] .btn-link:hover,
 fieldset[disabled] .btn-link:focus {
   text-decoration: none;
-}
-
-.btn-lg, .btn-group-lg > .btn {
-  padding: 10px 16px;
-  font-size: 1rem;
-  line-height: 1.33333;
-}
-
-.btn-sm, .btn-group-sm > .btn {
-  padding: 5px 10px;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-.btn-sm .glyphicon:before, .btn-group-sm > .btn .glyphicon:before {
-  width: 13px;
-  height: 13px;
-}
-
-.btn-xs, .btn-group-xs > .btn {
-  padding: 2px 10px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.btn-block {
-  display: block;
-  width: 100%;
-}
-
-.btn-block + .btn-block {
-  margin-top: 5px;
-}
-
-input[type="submit"].btn-block,
-input[type="reset"].btn-block,
-input[type="button"].btn-block {
-  width: 100%;
-}
-
-.btn.pull-right + .btn {
-  margin-left: 0;
-}
-
-.btn-raised {
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
-  -webkit-transition: box-shadow, .15s ease-out;
-  transition: box-shadow, .15s ease-out;
-}
-
-.btn-raised:active, .btn-raised.active, .btn-raised:hover {
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
-}
-
-.btn-raised.disabled, .btn-raised[disabled] {
-  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
-}
-
-.btn-flat {
-  box-shadow: none;
-  background-color: transparent;
-  border-color: transparent;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn-flat:hover, .btn-flat:focus,
-.open .dropdown-toggle .btn-flat {
-  box-shadow: none;
-}
-
-.btn-icon-toggle {
-  background-color: transparent;
-  border-radius: 50% !important;
-  padding: 4px;
-}
-
-.btn-icon-toggle:hover, .btn-icon-toggle:focus {
-  background-color: rgba(0, 0, 0, 0.07);
-  border-color: transparent;
-}
-
-.btn-icon-toggle:active, .btn-icon-toggle.active {
-  background-color: rgba(12, 12, 12, 0.25);
-  border-color: transparent;
-}
-
-.btn-floating {
-  width: 38px;
-  height: 38px;
-  padding: 7px;
-  border-radius: 50%;
-  border: 0;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-}
-
-.btn-floating:active, .btn-floating.active, .btn-floating:hover {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.36);
-}
-
-.btn-floating.btn-lg, .btn-group-lg > .btn-floating.btn {
-  width: 52px;
-  height: 52px;
-}
-
-.btn-floating.disabled, .btn-floating[disabled] {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-}
-
-.btn-icon {
-  font-size: 1.00012rem;
-  line-height: 21px;
-  height: 21px;
-  width: 21px;
-  vertical-align: bottom;
-}
-
-.btn-iconized {
-  line-height: 12px;
-}
-
-.btn-iconized .icon-inline {
-  fill: inherit;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
 }
 
 .btn--with-bgicon {
@@ -233,8 +107,121 @@ input[type="button"].btn-block {
   margin: 5px 5px 5px 0;
 }
 
-.btn-non-clickable {
-  pointer-events: none;
+.btn-lg, .btn-group-lg > .btn {
+  padding: 10px 16px;
+  font-size: 1rem;
+  line-height: 1.33333;
+}
+
+.btn-sm, .btn-group-sm > .btn {
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.btn-sm .glyphicon:before, .btn-group-sm > .btn .glyphicon:before {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-xs, .btn-group-xs > .btn {
+  padding: 1px 5px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+.btn-block + .btn-block {
+  margin-top: 5px;
+}
+
+input[type="submit"].btn-block,
+input[type="reset"].btn-block,
+input[type="button"].btn-block {
+  width: 100%;
+}
+
+.btn.pull-right + .btn {
+  margin-left: 0;
+}
+
+.btn-raised {
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  -webkit-transition: box-shadow, .15s ease-out;
+  transition: box-shadow, .15s ease-out;
+}
+
+.btn-raised.btn-default {
+  border: 0;
+}
+
+.btn-raised:active, .btn-raised.active, .btn-raised:hover {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+}
+
+.btn-raised.disabled, .btn-raised[disabled] {
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+}
+
+.btn-icon-toggle {
+  background-color: transparent;
+  border-radius: 50% !important;
+  padding: 4px;
+}
+
+.btn-icon-toggle:hover, .btn-icon-toggle:focus {
+  background-color: rgba(0, 0, 0, 0.07);
+  border-color: transparent;
+}
+
+.btn-icon-toggle:active, .btn-icon-toggle.active {
+  background-color: rgba(12, 12, 12, 0.25);
+  border-color: transparent;
+}
+
+.btn-icon {
+  font-size: 1.00012rem;
+  line-height: 21px;
+  height: 21px;
+  width: 21px;
+  vertical-align: bottom;
+}
+
+.btn-iconized {
+  line-height: 12px;
+}
+
+.btn-iconized .icon-inline {
+  fill: inherit;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.btn-floating {
+  width: 38px;
+  height: 38px;
+  padding: 7px;
+  border-radius: 50%;
+  border: 0;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+}
+
+.btn-floating:active, .btn-floating.active, .btn-floating:hover {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+}
+
+.btn-floating.btn-lg, .btn-group-lg > .btn-floating.btn {
+  width: 52px;
+  height: 52px;
+}
+
+.btn-floating.disabled, .btn-floating[disabled] {
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 .btn-group,
@@ -341,6 +328,16 @@ input[type="button"].btn-block {
 .btn-group > .btn-lg + .dropdown-toggle, .btn-group-lg.btn-group > .btn + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.btn-group > .btn-sm + .dropdown-toggle, .btn-group-sm.btn-group > .btn + .dropdown-toggle {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.btn-group > .btn-xs + .dropdown-toggle, .btn-group-xs.btn-group > .btn + .dropdown-toggle {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .btn-group.open .dropdown-toggle.btn-link {

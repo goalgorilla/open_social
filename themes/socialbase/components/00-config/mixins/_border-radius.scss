@@ -1,10 +1,17 @@
-// Single side border-radius
-
-@mixin border-radius($radius: $border-radius) {
-  @if $enable-rounded {
-    border-radius: $radius;
-  }
-}
+// Rounded corners
+//
+// Today all modern browsers support the non-prefixed border-radius property.
+// This mixin can be used a shortcut for quickly rounding two corners on
+// a particular side of an object.
+//
+// `@mixin border-top-radius($radius)`<br />
+// `@mixin border-right-radius($radius)`<br />
+// `@mixin border-bottom-radius($radius)`<br />
+// `@mixin border-left-radius($radius)`
+//
+// Weight: 6
+//
+// Style guide: sass.roundedcorners
 
 @mixin border-top-radius($radius) {
   @if $enable-rounded {

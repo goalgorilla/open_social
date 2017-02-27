@@ -29,25 +29,26 @@
  * @ingroup themeable
  */
 #}
-<div{{ attributes.addClass('card brand-border-radius card-with-actionbar teaser--small') }}>
-  <div class="card-head">
-    <header>{{ title_prefix }} {{ label }} {{ title_suffix }}</header>
+
+<section{{ attributes.addClass('card card--list brand-border-radius') }}>
+  <h4 class="card__title">
+    {{ title_prefix }} {{ label }} {{ title_suffix }}
     {% if subtitle %}
-    <div class="subtitle">
+    <div class="card__subtitle">
         {{ subtitle }}
     </div>
     {% endif %}
-  </div>
-  <div class="card-body">
+  </h4>
+  <div class="card__body">
     <div class="list-group list-group-divider">
       {{ content }}
     </div>
-    <div class="card-actionbar">
+  </div>
+    <footer class="card__actionbar">
       {% if view_all_path %}
       <a href="{{ view_all_path }}" class="btn btn-flat brand-text-primary">
         {% trans %} All {% endtrans %} {{ label }}
       </a>
       {% endif %}
-    </div>
-  </div>
-</div>
+  </footer>
+</section>

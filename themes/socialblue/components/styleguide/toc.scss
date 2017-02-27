@@ -1,0 +1,102 @@
+@import "settings";
+
+/*
+ * Side navigation
+ *
+ * Scrollspy and affixed enhanced navigation to highlight sections and secondary
+ * sections of docs content.
+ */
+
+// By default it's not affixed in mobile views, so undo that */
+.toc-wrapper.affix {
+  position: static;
+}
+
+// All levels of nav
+.toc-wrapper .nav {
+
+  li {
+
+    a {
+      position: relative;
+      display: inline-block;
+      font-size: $font-size-small;
+      color: $gray;
+      transition: color 0.5s;
+      padding-top: 0;
+      padding-bottom: 0;
+
+      &:before {
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        background-color: $body-bg;
+        transition: background-color .3s, width .3s;
+      }
+
+      &:hover,
+      &:focus {
+        color: $brand-primary;
+        font-weight: 500;
+      }
+
+    }
+
+    &.active a {
+      color: $brand-primary;
+      font-weight: 500;
+
+      &:before {
+        background-color: $brand-primary;
+      }
+
+    }
+
+  }
+
+}
+
+.back-to-top {
+  display: none;
+  color: $gray-light;
+  margin-top: 1rem;
+}
+
+
+
+
+/* Show and affix the side nav when space allows it */
+@include for-tablet-landscape-up {
+
+  .toc-wrapper {
+    padding-left: 40px;
+  }
+
+  .toc-wrapper .nav > .active > ul {
+    display: block;
+  }
+  /* Widen the fixed sidebar */
+  .toc-wrapper.affix,
+  .toc-wrapper.affix-bottom {
+    width: 320px;
+  }
+  .toc-wrapper.affix {
+    position: fixed; /* Undo the static from mobile first approach */
+    top: 74px;
+  }
+  .toc-wrapper.affix-bottom {
+    position: absolute; /* Undo the static from mobile first approach */
+  }
+  .toc-wrapper.affix-bottom .table-of-contents,
+  .toc-wrapper.affix .table-of-contents {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .back-to-top {
+    display: block;
+  }
+}

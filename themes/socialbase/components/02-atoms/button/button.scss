@@ -26,7 +26,9 @@
   background-image: none; // Reset unusual Firefox-on-Android default style;
   border: 1px solid transparent;
   white-space: nowrap;
-  @include button-size($padding-base-vertical, $padding-base-horizontal, $button-font-size, $line-height-base);
+  padding: $padding-base-vertical $padding-base-horizontal;
+  font-size: $button-font-size;
+  line-height: $line-height-base;
   user-select: none;
   text-transform: uppercase;
   transition: .3s ease-out;
@@ -42,12 +44,6 @@
 
   .caret {
     margin-left: 3px;
-  }
-
-  &,
-  &:active,
-  &.active {
-    box-shadow: none;
   }
 
   &:hover,
@@ -70,9 +66,9 @@
     box-shadow: none;
   }
 
-  // [converter] extracted a& to a.btn
 }
 
+.btn-non-clickable,
 a.btn {
   &.disabled,
   fieldset[disabled] & {
@@ -108,17 +104,48 @@ a.btn {
   }
 }
 
+// Social button styles
+// --------------------------------------------------
+.btn--with-bgicon {
+  padding-left: 32px;
+  background-size: 16px 16px;
+  background-position: 10px 8px;
+  background-repeat: no-repeat;
+}
+
+.btn--facebook {
+  background-image: url('../images/icons/icon-facebook.svg');
+}
+
+.btn--linkedin {
+  background-image: url('../images/icons/icon-linkedin.svg');
+}
+
+.btn--google {
+  background-image: url('../images/icons/icon-google.svg');
+}
+
+.btn--twitter {
+  background-image: url('../images/icons/icon-twitter.svg');
+}
+
+.fieldset-wrapper > .btn {
+  margin: 5px 5px 5px 0;
+}
+
 
 // Button Sizes
 // --------------------------------------------------
 
 .btn-lg {
-  // line-height: ensure even-numbered height of button next to large input
-  @include button-size($padding-large-vertical, $padding-large-horizontal, $button-font-size-large, $line-height-large);
+  padding: $padding-large-vertical $padding-large-horizontal;
+  font-size: $button-font-size-large;
+  line-height: $line-height-large;
 }
 .btn-sm {
-  // line-height: ensure proper height of button next to small input
-  @include button-size($padding-small-vertical, $padding-small-horizontal, $button-font-size-small, $line-height-small);
+  padding: $padding-small-vertical $padding-small-horizontal;
+  font-size: $button-font-size-small;
+  line-height: $line-height-small;
 
   .glyphicon:before {
     width: 13px;
@@ -127,7 +154,9 @@ a.btn {
 }
 
 .btn-xs {
-  @include button-size(2px, 10px, $font-size-small, $line-height-small);
+  padding: $padding-xs-vertical $padding-xs-horizontal;
+  font-size: $button-font-size-extrasmall;
+  line-height: $line-height-small;
 }
 
 
@@ -162,39 +191,29 @@ input[type="button"] {
 // --------------------------------------------------
 
 .btn-raised {
-  // z-depth-1 will give a small gray border which doesn't look good with colored buttons
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 	transition: box-shadow, .15s ease-out;
+
+  // When a button is raised the bg-color is different which means we do not need an extra border
+  &.btn-default {
+    border: 0;
+  }
 
   &:active,
   &.active,
   &:hover {
-    @include z-depth-3;
+    @include z-depth-4;
   }
 
   &.disabled,
   &[disabled] {
-    @include z-depth-1;
+    @include z-depth-2;
   }
 
 }
 
-// Flat button & icon toggle button
+// Buttons that only have an icon (no text)
 // --------------------------------------------------
-
-.btn-flat {
-  @include z-depth-0;
-	background-color: transparent;
-	border-color: transparent;
-  -webkit-tap-highlight-color: transparent;
-
-	&:hover,
-  &:focus,
-  .open .dropdown-toggle & {
-		@include z-depth-0;
-	}
-
-}
 
 .btn-icon-toggle {
   background-color: transparent;
@@ -215,6 +234,31 @@ input[type="button"] {
 
 }
 
+// Icons inside buttons, usually SVG
+
+.btn-icon {
+  font-size: $button-font-size * 1.143;
+  line-height: 33px - ($padding-base-vertical * 2);
+  height: 33px - ($padding-base-vertical * 2);
+  width: 33px - ($padding-base-vertical * 2);
+  vertical-align: bottom;
+}
+
+// @todo see if we can merge this with the options we have above
+// Special styles for book pagers
+.btn-iconized {
+  line-height: 12px;
+
+  .icon-inline {
+    fill: inherit;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+
+}
+
+
 // Floating button
 // --------------------------------------------------
 
@@ -224,7 +268,7 @@ input[type="button"] {
   padding: 7px; //assuming the icon is 24px / medium
   border-radius: $button-floating-radius;
   border: 0;
-  @include z-depth-2;
+  @include z-depth-3;
 
   &:active,
   &.active,
@@ -239,62 +283,9 @@ input[type="button"] {
 
   &.disabled,
   &[disabled] {
-    @include z-depth-2;
+    @include z-depth-3;
   }
 
-}
-
-// Icons in buttons
-
-.btn-icon {
-  font-size: $button-font-size * 1.143;
-  line-height: 33px - ($padding-base-vertical * 2);
-  height: 33px - ($padding-base-vertical * 2);
-  width: 33px - ($padding-base-vertical * 2);
-  vertical-align: bottom;
-}
-
-.btn-iconized {
-  line-height: 12px;
-
-  .icon-inline {
-    fill: inherit;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-  }
-
-}
-
-.btn--with-bgicon {
-  padding-left: 32px;
-  background-size: 16px 16px;
-  background-position: 10px 8px;
-  background-repeat: no-repeat;
-}
-
-.btn--facebook {
-  background-image: url('../images/icons/icon-facebook.svg');
-}
-
-.btn--linkedin {
-  background-image: url('../images/icons/icon-linkedin.svg');
-}
-
-.btn--google {
-  background-image: url('../images/icons/icon-google.svg');
-}
-
-.btn--twitter {
-  background-image: url('../images/icons/icon-twitter.svg');
-}
-
-.fieldset-wrapper > .btn {
-  margin: 5px 5px 5px 0;
-}
-
-.btn-non-clickable {
-  pointer-events: none;
 }
 
 //
@@ -408,6 +399,16 @@ input[type="button"] {
 .btn-group > .btn-lg + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.btn-group > .btn-sm + .dropdown-toggle {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.btn-group > .btn-xs + .dropdown-toggle {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 // The clickable button for toggling the menu

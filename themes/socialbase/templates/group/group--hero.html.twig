@@ -29,7 +29,7 @@
   ]
 %}
 
-<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}" {% endif %}>
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
   {% if group_edit_url %}
     <div class="hero-action-button">
       <a href="{{ group_edit_url }}"  title="Edit group" class="btn btn-default btn-floating waves-effect waves-circle">
@@ -50,15 +50,14 @@
     </p>
     <div class="hero-footer">
       <div class="hero-footer__text">
-        {% if content.field_group_location|render or content.field_group_address|render  %}
-          <br />
+        {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %}
           <svg class="hero-footer-icon">
             <use xlink:href="#icon-location"></use>
           </svg>
         {% endif %}
         <span class="inline-center">
-          {% if content.field_group_location|render %}
-            {{- content.field_group_location -}}{% if content.field_group_address|render and content.field_group_location|render %} &bullet;{% endif %}{% endif %}
+          {{ content.field_group_location }}
+          {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
           {{ content.field_group_address }} </span>
       </div>
 

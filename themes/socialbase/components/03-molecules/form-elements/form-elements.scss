@@ -28,40 +28,35 @@ label {
 
 }
 
-.form-wrapper__label {
-  margin-bottom: 1em;
-}
-
-.form-wrapper {
-  border: 1px solid $gray-lighter;
-  margin: 0 0 2rem;
-  padding: 0.625em 0.75em;
-}
-
-
 .form-group-inline {
+  display: flex;
+  flex-wrap: wrap;
 
-  @include for-tablet-portrait-up {
-    display: flex;
-    align-items: flex-start;
-
-    .form-group {
-      margin-bottom: 0;
-    }
-
-    .form-item {
-      flex: 1;
-    }
-
-    .btn {
-      margin-left: 8px;
-
-      // Safari fix
-      flex-shrink: 0;
-    }
-
+  .form-group {
+    margin-bottom: 0;
   }
 
+  .form-item {
+    flex: 1;
+  }
+
+  .btn {
+    margin-left: 8px;
+    margin-bottom: 5px;
+
+    // Safari fix
+    flex-shrink: 0;
+  }
+
+}
+
+.form-group-inline--right {
+  justify-content: flex-end;
+
+  // This class identifies the primary button set by Drupal, is has nothing to do with the button style. We want this button to be positioned last.
+  .button--primary {
+    order: 10;
+  }
 }
 
 .form-no-label label + .form-required {
@@ -101,6 +96,42 @@ span.form-required {
 
 .form-actions .btn {
   margin-bottom: 5px;
+}
+
+// Views exposed forms are placed next to views. An example is a filter block
+// in overviews. We want to make sure the buttons in this forms have a consistent
+// layout
+
+.views-exposed-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-bottom: 0;
+
+  // The primary button will align right
+  .btn-default {
+    order: 10;
+  }
+
+  // the flat button (reset button) will align left
+  .btn-flat {
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
+
+// For forms that cover the whole page, we can assume the primary button should align right
+.form--default .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
+  .btn-group--primary,
+  .btn-primary {
+    margin-left: auto;
+    margin-right: 0;
+    order: 10;
+  }
 }
 
 // Static form control text

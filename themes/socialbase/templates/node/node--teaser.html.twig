@@ -70,21 +70,20 @@
 
 {%
   set classes = [
-    view_mode == 'teaser' ? 'card',
+    'teaser',
     'brand-border-radius',
-    'card--teaser',
-    'card-with-actionbar',
-    view_mode == 'activity' ? 'card--teaser-stream',
-    view_mode == 'activity_comment' ? 'card--teaser-stream',
+    view_mode == 'teaser' ? 'card',
+    view_mode == 'activity' ? 'teaser--stream',
+    view_mode == 'activity_comment' ? 'teaser--stream',
     node.isPromoted() ? 'promoted',
     node.isSticky() ? 'sticky',
-    not node.isPublished() ? 'unpublished',
+    not node.isPublished() ? 'teaser--unpublished',
   ]
 %}
 
 <div {{ attributes.addClass(classes) }}>
 
-  <div class='card-image'>
+  <div class='teaser__image'>
 
     {% if view_mode == 'teaser' %}
       {% block card_teaser_type %} {% endblock %}
@@ -100,26 +99,27 @@
 
   </div>
 
-  <div class='card-body'>
-    {{ title_prefix }}
-    {% if not page %}
-      <h4{{ title_attributes }} class="card-title">
-          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      </h4>
-    {% endif %}
-    {{ title_suffix }}
+  <div class='teaser__body'>
+    <div class="teaser__content">
+      {{ title_prefix }}
+      {% if not page %}
+        <h4{{ title_attributes }} class="teaser__title">
+            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h4>
+      {% endif %}
+      {{ title_suffix }}
 
-    {% block card_body %}
-      {{ content }}
-    {% endblock %}
+      {% block card_body %}
+        {{ content }}
+      {% endblock %}
+    </div>
 
-    <div class="card-actionbar">
-      <div class="actionbar">
+    <div class="card__actionbar">
 
         {% if comment_count > 0 %}
-          <a href="{{ url }}#section-comments" class="badge badge--comment-count">
+          <a href="{{ url }}#section-comments" class="badge badge--comment-count teaser__badge">
             <label>
-              <svg class="icon-small icon-badge">
+              <svg class="icon-small icon-badge teaser__badge">
                 <use xlink:href="#icon-comment"></use>
               </svg>
               <span class="badge--comment-count__number">{{ comment_count }}</span>
@@ -128,7 +128,7 @@
         {% endif %}
 
         {% if visibility_icon and visibility_label %}
-          <div class="badge badge--toggle">
+          <div class="badge badge--toggle teaser__badge">
             <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
               <input type="checkbox">
               <svg class="icon-gray icon-badge-toggle">
@@ -144,7 +144,7 @@
             {%- trans -%} Enrolled {%- endtrans -%}
           </span>
         {% endif %}
-      </div>
+
       {{ content.links }}
     </div>
 

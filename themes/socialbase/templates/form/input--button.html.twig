@@ -23,18 +23,6 @@
  */
 #}
 {% spaceless %}
-
-  {%
-    set classes = [
-      'btn',
-      type == 'submit' ? 'js-form-submit',
-      float_right ? 'pull-right brand-bg-primary',
-      button_type == 'flat' ? 'btn-flat brand-text-primary',
-      button_type == 'primary' ? 'btn-primary brand-bg-primary',
-      icon and icon_position and not icon_only ? 'icon-' ~ icon_position,
-    ]
-  %}
-
   {% block input %}
     {% if icon_only %}
       <button{{ attributes.addClass(classes, 'icon-only') }}>
@@ -43,13 +31,9 @@
       </button>
     {% else %}
       {% if icon_position == 'after' %}
-        <button{{ attributes.addClass(classes).removeClass('btn-danger') }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
+        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}{{ element.caret }}</button>{{ children }}
       {% else %}
-        {% if attributes.hasClass('btn-primary') %}
-          <button{{ attributes.addClass(classes).addClass('pull-right') }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
-        {% else %}
-          <button{{ attributes.addClass(classes).removeClass('btn-danger') }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
-        {% endif %}
+        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}{{ element.caret }}</button>{{ children }}
       {% endif %}
     {% endif %}
     {% if add_search_icon %}
