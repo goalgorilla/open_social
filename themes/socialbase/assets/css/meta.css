@@ -5,16 +5,20 @@
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   line-height: 1.4;
 }
 
 .metainfo__follow {
-  margin-top: 0.5em;
   -ms-flex-preferred-size: 100%;
       flex-basis: 100%;
   -ms-flex-item-align: start;
       align-self: flex-start;
+  padding-bottom: 30px;
+}
+
+.metainfo__follow .flag {
+  display: block;
 }
 
 .metainfo__avatar {
@@ -61,28 +65,37 @@
 }
 
 .metainfo__brief {
-  margin-top: 10px;
+  padding-bottom: 30px;
   -ms-flex-preferred-size: 100%;
       flex-basis: 100%;
 }
 
+.metainfo__brief .badge--likes-count,
+.metainfo__brief .badge--visibility,
 .metainfo__brief .badge--comment-count {
   margin-right: 3px;
 }
 
 .article__special-fields {
-  padding: 20px 0;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e6e6e6;
+  padding: 30px 0;
+  border-top: 1px solid #e6e6e6;
+}
+
+.article__special-fields .article__special-field {
+  margin-bottom: 15px;
+}
+
+.article__special-fields .article__special-field:last-child {
+  margin-bottom: 0;
 }
 
 .article__special-fields .article__special-fields-icon {
-  width: 14px;
-  height: 14px;
-  line-height: 16px;
+  width: 18px;
+  height: 18px;
+  line-height: 20px;
   display: inline-block;
   vertical-align: middle;
-  fill: #555555;
+  fill: #222222;
   margin-right: 12px;
 }
 
@@ -99,8 +112,7 @@
 @media (min-width: 600px) {
 
   .metainfo__follow {
-    -ms-flex-preferred-size: auto;
-    flex-basis: auto;
-    margin-top: 0;
+    float: right;
+    padding-bottom: 0;
   }
 }

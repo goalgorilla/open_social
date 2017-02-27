@@ -49,11 +49,53 @@
 
 .badge label {
   margin-bottom: 0;
-  cursor: pointer;
   display: flex;
   align-items: center;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.badge--likes-count,
+.badge--visibility,
+a.badge--comment-count {
+  padding: 0;
+
+  .icon-badge {
+    width: 23px;
+    height: 18px;
+    padding-left: 8px;
+  }
+
+}
+
+.badge--likes-count .icon-badge {
+  margin-top: 2px;
+}
+
+a.badge--comment-count label:hover {
+  cursor: pointer;
+}
+
+.badge--likes-count__number,
+.badge--visibility__label,
+.badge--comment-count__number {
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.badge--likes-count__text,
+.badge--comment-count__text {
+  padding-right: 10px;
+}
+
+.badge--likes-count__text,
+.badge--comment-count__text {
+  display: none;
+
+  @include for-tablet-portrait-up {
+    display: block;
+  }
 }
 
 .badge--toggle {
@@ -93,19 +135,8 @@
     opacity: 1;
   }
 
-}
-
-a.badge--comment-count {
-  padding: 0;
-
-  .icon-badge {
-    width: 22px;
-    height: 18px;
-    padding-left: 8px;
+  label {
+    cursor: pointer;
   }
 
-}
-
-.badge--comment-count__number {
-  padding: 4px 8px 4px 4px;
 }
