@@ -22,9 +22,9 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: group_permission
         options:
-          perm: 'access content'
+          group_permission: 'view group_membership content'
       cache:
         type: tag
         options: {  }
@@ -213,12 +213,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
         - url.query_args
-        - user.permissions
       tags: {  }
   block_newest_members:
     display_plugin: block
@@ -269,11 +269,11 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
-        - user.permissions
       tags: {  }
   page_group_members:
     display_plugin: page
@@ -286,10 +286,10 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
         - url.query_args
-        - user.permissions
       tags: {  }
