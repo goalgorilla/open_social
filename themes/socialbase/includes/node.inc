@@ -164,9 +164,11 @@ function socialbase_preprocess_node(&$variables) {
     }
   }
 
-  // If we have the like and dislike widget, lets try and get the count in our
-  // node.
-  if (!empty($variables['content']['like_and_dislike'])) {
+  // If we have the like and dislike widget available for this node, we can
+  // print the count even for Anonymous.
+  $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
+  $variables['likes_count'] = NULL;
+  if (in_array($variables['node']->getType(), $enabled_types['node'])) {
     $variables['likes_count'] = _socialbase_node_get_like_count($variables['node']->getEntityTypeId(), $variables['node']->id());
   }
 
