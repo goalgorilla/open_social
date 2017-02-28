@@ -24,6 +24,14 @@ function social_like_update_8001() {
 }
 
 /**
+ * Re-set permissions for viewing the like widget.
+ */
+function social_like_update_8002() {
+  // revoke permission for AN like widget.
+  user_role_revoke_permissions('anonymous', ['view like widget']);
+}
+
+/**
  * Function to set permissions.
  */
 function _social_like_set_permissions() {
