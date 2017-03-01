@@ -5,8 +5,6 @@
 // Provide contextual feedback messages for typical user actions
 // with the handful of available and flexible alert messages.
 //
-// Weight: 1
-//
 // style guide: atoms.alert
 
 // Dismissible alerts
@@ -26,7 +24,7 @@
 // style guide: atoms.alert.dismissable
 
 .alert {
-  padding: $alert-padding;
+  padding: $alert-padding-y $alert-padding-x;
   margin-bottom: $line-height-computed;
   border: 1px solid transparent;
 
@@ -35,11 +33,6 @@
     margin-top: 0;
     // Specified for the h4 to prevent conflicts of changing $headings-color
     color: inherit;
-  }
-
-  // Provide class for links that match alerts
-  .alert-link {
-    font-weight: $alert-link-font-weight;
   }
 
   // Improve alignment and spacing of inner content
@@ -57,15 +50,15 @@
 //
 // Expand the right padding and account for the close button's positioning.
 
-.alert-dismissable, // The misspelled .alert-dismissable was deprecated in 3.2.0.
 .alert-dismissible {
-  padding-right: ($alert-padding + 20);
+
 
   // Adjust close link position
   .close {
     position: relative;
-    top: -2px;
-    right: -21px;
+    top: -$alert-padding-y;
+    right: -$alert-padding-x;
+    padding: $alert-padding-y $alert-padding-x;
     color: inherit;
   }
 }

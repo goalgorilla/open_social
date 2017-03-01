@@ -39,16 +39,12 @@
     </div>
     {% endif %}
   </h4>
-  <div class="card__body">
-    <div class="list-group list-group-divider">
-      {{ content }}
-    </div>
-  </div>
-    <footer class="card__actionbar">
-      {% if view_all_path %}
-      <a href="{{ view_all_path }}" class="btn btn-flat brand-text-primary">
-        {% trans %} All {% endtrans %} {{ label }}
-      </a>
-      {% endif %}
+  {{ content }}
+  <footer class="card__actionbar">
+    {% if view_all_path %}
+    <a href="{{ view_all_path }}" class="btn btn-flat brand-text-primary">
+      {% trans %} All {% endtrans %} {{ label }}
+    </a>
+    {% endif %}
   </footer>
 </section>

@@ -1,6 +1,13 @@
 .card {
   box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   margin-bottom: 0.75rem;
   background-clip: padding-box;
 }
@@ -14,15 +21,11 @@
   clear: both;
 }
 
-.card img {
-  max-width: 100%;
-}
-
 .card__title {
   position: relative;
   vertical-align: middle;
   margin: 0;
-  padding: 15px 20px 0;
+  padding: 15px 1.25rem 0;
   line-height: 1;
   font-size: 0.875rem;
 }
@@ -37,29 +40,45 @@
   padding-bottom: 15px;
 }
 
-.card__body {
+.card__block {
   position: relative;
-  padding: 20px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  padding: 1.25rem;
   z-index: 1;
 }
 
-.card__body p:last-child {
-  margin-bottom: 0;
+.card__block + .card__block {
+  padding-top: 0;
+}
+
+.card__block--list:not(:first-child) {
+  padding-top: 0;
+}
+
+.card__block--list:not(:last-child) {
+  padding-bottom: 0;
+}
+
+.card__body {
+  position: relative;
+  padding: 1.25rem;
 }
 
 .card__nested-section {
-  margin-top: 10px;
-  margin-right: -20px;
-  margin-bottom: -20px;
-  margin-left: -20px;
-  padding: 20px;
+  margin-top: 0.625rem;
+  margin-right: -1.25rem;
+  margin-bottom: -1.25rem;
+  margin-left: -1.25rem;
+  padding: 1.25rem;
   background: #f7f7f7;
   border-top: 1px solid #e6e6e6;
 }
 
 .card__actionbar {
-  margin-top: -20px;
-  padding: 20px 20px 16px 16px;
+  margin-top: -1.25rem;
+  padding: 1.25rem;
   position: relative;
   z-index: 2;
 }
@@ -82,23 +101,17 @@
   text-transform: uppercase;
 }
 
-@media (min-width: 600px) {
+.card__text {
+  margin-top: 0;
+}
 
-  .card__body--fat {
-    padding: 48px;
-  }
+.card__text:last-child {
+  margin-bottom: 0;
+}
 
-  .card__body--fat .card__nested-section {
-    margin-left: -48px;
-    margin-right: -48px;
-    padding: 20px 48px;
-  }
+@media (min-width: 900px) {
 
-  .card__body--fat .card__nested-section:last-child {
-    margin-bottom: -48px;
-  }
-
-  .card__body--fat + .card__actionbar {
-    margin-top: -48px;
+  .card__body {
+    padding: 2.5rem;
   }
 }

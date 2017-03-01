@@ -252,10 +252,11 @@
 
 }
 
-.dropdown-menu--post {
+.dropdown-menu--visibility {
   min-width: 240px;
   left: auto;
   right: -70px;
+  padding: 0;
 
   @include for-tablet-portrait-up {
     right: 0;
@@ -268,48 +269,6 @@
     padding: 4px 15px 0;
   }
 
-  .list-group-item {
-
-    &:hover {
-      background-color: $gray-light;
-      border-color: $gray-light;
-      cursor: pointer;
-      color: white;
-
-      .help-block {
-        color: white;
-      }
-
-    }
-
-    label {
-      cursor: pointer;
-      font-weight: 500;
-
-      .help-block {
-        font-weight: 300;
-      }
-
-    }
-
-    .help-block {
-      margin: 0;
-    }
-
-    &.active {
-      pointer-events: none;
-
-      .help-block {
-        color: white;
-      }
-    }
-
-  }
-
-  .form-group {
-    margin: 0;
-  }
-
 }
 
 
@@ -318,9 +277,6 @@
   background: $dropdown-header-bg;
 }
 
-.dropdown-toggle + ul > li > svg {
-  margin-right: 10px;
-}
 
 .scrollable-menu {
 

@@ -3,7 +3,7 @@
 .vote-widget {
 
   // Added like
-  a.voted-like .icon-gray {
+  a.voted-like .icon-vote {
     fill: $brand-danger;
     stroke: $brand-danger;
   }
@@ -11,13 +11,13 @@
   a:active {
 
     // Voted like focus
-    &.voted-like .icon-gray {
+    &.voted-like .icon-vote {
       fill: $text-color;
       stroke: $text-color;
     }
 
     // Not voted like focus
-    &:not(.voted-like) .icon-gray {
+    &:not(.voted-like) .icon-vote {
       stroke: $brand-danger;
       fill: transparent;
     }
@@ -28,7 +28,7 @@
     a:hover {
 
       // Not voted like hover
-      &:not(.voted-like) .icon-gray {
+      &:not(.voted-like) .icon-vote {
         stroke: $brand-danger;
         fill: transparent;
       }

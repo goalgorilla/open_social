@@ -71,8 +71,7 @@
 {%
   set classes = [
     'teaser',
-    'brand-border-radius',
-    view_mode == 'teaser' ? 'card',
+    view_mode == 'teaser' ? 'card brand-border-radius',
     view_mode == 'activity' ? 'teaser--stream',
     view_mode == 'activity_comment' ? 'teaser--stream',
     node.isPromoted() ? 'promoted',
@@ -117,9 +116,9 @@
     <div class="card__actionbar">
 
         {% if comment_count > 0 %}
-          <a href="{{ url }}#section-comments" class="badge badge-pill badge-default badge--comment-count teaser__badge">
+          <a href="{{ url }}#section-comments" class="badge badge--pill badge-default badge--comment-count teaser__badge">
             <label>
-              <svg class="icon-small icon-badge teaser__badge">
+              <svg class="icon-badge">
                 <use xlink:href="#icon-comment"></use>
               </svg>
               <span class="badge--comment-count__number">{{ comment_count }}</span>
@@ -131,7 +130,7 @@
           <div class="badge badge--toggle teaser__badge">
             <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
               <input type="checkbox">
-              <svg class="icon-gray icon-badge-toggle">
+              <svg class="icon-badge icon-badge-toggle">
                 <use xlink:href="#icon-{{ visibility_icon }}"></use>
               </svg>
               <span class="badge--toggle__label">{{ visibility_label }}</span>

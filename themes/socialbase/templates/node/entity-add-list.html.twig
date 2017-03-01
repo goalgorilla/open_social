@@ -17,14 +17,16 @@
  */
 #}
 {% if bundles is not empty %}
-  <div class="list-group">
-    {% for bundle in bundles %}
-      <dl class="list-group-item">
-        <dt>{{ bundle.add_link }}</dt>
-        <dd>{{ bundle.description }}</dd>
-      </dl>
-    {% endfor %}
+  <div class="card">
+    <div class="card__block">
+      {% for bundle in bundles %}
+        <dl class="list-item">
+          <dt class="list-item__label"><span class="btn btn-link">{{ bundle.add_link }}</span></dt>
+          <dd class="list-item__text">{{ bundle.description }}</dd>
+        </dl>
+      {% endfor %}
+    </div>
   </div>
 {% elseif add_bundle_message is not empty %}
-  <div class="list-group-item"> {{ add_bundle_message }} </div>
+  <div class="list-item"> {{ add_bundle_message }} </div>
 {% endif %}

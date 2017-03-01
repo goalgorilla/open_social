@@ -9,14 +9,12 @@
 //
 // Markup: badge.twig
 //
-// Weight: 2
-//
 // style guide: atoms.badge
 
 .badge {
   display: inline-block;
-  margin-bottom: 5px;
-  margin-right: 5px;
+  margin-bottom: 3px;
+  margin-right: 3px;
   padding: $badge-padding-y $badge-padding-x;
   font-size: $badge-font-size;
   font-weight: $badge-font-weight;
@@ -32,17 +30,45 @@
     display: none;
   }
 
+  small &,
+  .small & {
+    font-size: 90%;
+    position: relative;
+    top: -1px;
+    margin: 0;
+  }
+
 }
 
 // Quick fix for badges in buttons
 .btn .badge {
   position: relative;
   top: -1px;
+  text-transform: none;
+  margin: 0;
+
 }
 
 // Pill badges
 //
-// Make them extra rounded with a modifier to replace v3's badges.
+// Use the `.badge--pill` modifier class to make badges more
+// rounded (with a larger `border-radius` and additional `horizontal padding`).
+//
+// Markup: badge-pill.twig
+//
+// Weight: 2
+//
+// style guide: atoms.badge.pill
+
+// Badge size
+//
+// Use the `.badge--large` modifier class to make badges larger.
+//
+// Markup: badge-size.twig
+//
+// Weight: 3
+//
+// style guide: atoms.badge.size
 
 .badge--pill {
   padding-right: $badge-pill-padding-x;
@@ -60,7 +86,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 1em;
   overflow: hidden;
   font-weight: inherit;
 }
@@ -86,35 +112,44 @@
     transition: opacity 0.3s ease;
   }
 
+  .icon-badge {
+    fill: $default-color;
+  }
+
   input[type=checkbox]:checked ~ .icon-badge-toggle,
   input[type=checkbox]:checked ~ .badge--toggle__label {
     background-color: rgba(black,0.1); // by using transparency it will also work on gray backgrounds
     color: $default-color;
   }
 
-  .badge--toggle__label {
-    border-radius: 0 8px 8px 0;
-  }
-
   input[type=checkbox]:checked ~ .badge--toggle__label {
     width: auto;
-    padding: 4px $badge-font-size 4px ($badge-font-size/2);
+    padding: 0 0.6em 0 2px;
+    border-radius: 0 1em 1em 0;
     opacity: 1;
+    height: 20px;
+    line-height: 20px;
   }
 
 }
 
-a.badge--comment-count {
+.icon-badge {
+  width: 20px;
+  height: 20px;
+  padding: 1px 1px 1px 7px;
+}
+
+.icon-badge-toggle {
+  width: 21px;
+}
+
+.badge--comment-count {
   padding: 0;
-
-  .icon-badge {
-    width: 22px;
-    height: 18px;
-    padding-left: 8px;
-  }
-
 }
 
 .badge--comment-count__number {
-  padding: 4px 8px 4px 4px;
+  padding: 0 0.6em 0 4px;
+  height: 20px;
+  line-height: 20px;
 }
+

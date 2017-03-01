@@ -65,24 +65,29 @@
  * @ingroup themeable
  */
 #}
-<div class="list-group-item">
+<div class="card__block">
 
-  {{ title_prefix }}
-
-  {% if not page %}
-    <h6{{ title_attributes }} class="list-group-item-heading">
+  {% block text %}
+    {{ title_prefix }}
+    <div{{ title_attributes }} class="card__text">
       <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-    </h6>
-  {% endif %}
+    </div>
+    {{ title_suffix }}
+  {% endblock %}
 
-  {{ title_suffix }}
+  {% block extra_text %}
 
-  <small class="text-gray-lighter list-group-item-text">{{ event_date }}
-    {% if content.enrolled %}
-      <span class="label label-primary brand-bg-secondary">
-        {{  content.enrolled }}
-      </span>
-    {% endif %}
-  </small>
+    <div class="card__text">
+      <small class="text-muted">
+        {{ event_date }}
+        {% if content.enrolled %}
+          <span class="badge badge-secondary brand-bg-secondary">
+            {{  content.enrolled }}
+          </span>
+        {% endif %}
+      </small>
+    </div>
+
+  {% endblock %}
 
 </div>

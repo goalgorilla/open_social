@@ -7,13 +7,15 @@
 // .badge-default - Default
 // .badge-primary - Primary
 // .badge-secondary - Secondary
-// .badge-featured - Featured
+// .badge-accent - Accent
 // .badge-success - Success
 // .badge-info - Info
 // .badge-warning - Warning
 // .badge-danger - Danger
 //
 // Markup: badge-variation.twig
+//
+// Weight: 1
 //
 // style guide: atoms.badge.variations
 
@@ -22,7 +24,7 @@
   color: $badge-color;
 }
 
-.badge-pill {
+.badge--pill {
   @include border-radius($badge-pill-border-radius);
 }
 
@@ -60,4 +62,14 @@
 
 .badge-danger {
   @include badge-variant($badge-danger-bg, #fff);
+}
+
+.badge a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    color: inherit;
+  }
 }

@@ -63,8 +63,8 @@ options.basetheme = {
 
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
-//options.drupalURL = '';
-options.drupalURL = 'http://social.dev:32769';
+options.drupalURL = '';
+//options.drupalURL = 'http://social.dev:32780';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
@@ -123,10 +123,8 @@ options.styleGuide = {
     'kss-assets/css/cards.css',
     'kss-assets/base/form-controls.css',
     'kss-assets/css/form-controls.css',
-    'kss-assets/base/label.css',
-    'kss-assets/css/label.css',
-    'kss-assets/css/list-group.css',
-    'kss-assets/base/list-group.css',
+    'kss-assets/css/list.css',
+    'kss-assets/base/list.css',
     'kss-assets/css/waves.css',
     // Molecule stylesheets
     'kss-assets/base/dropdown.css',
@@ -346,6 +344,8 @@ gulp.task('watch:styleguide', ['build-styleguide'], function () {
     options.theme.components + '**/*.scss',
     options.basetheme.components + '**/*.twig',
     options.theme.components + '**/*.twig',
+    options.basetheme.components + '**/*.json',
+    options.theme.components + '**/*.json',
     options.theme.components + '**/*.md'
   ], options.gulpWatchOptions, ['build-styleguide']);
 });

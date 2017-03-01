@@ -21,10 +21,8 @@
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/label.css">
-<link rel="stylesheet" href="kss-assets/css/label.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -154,7 +152,7 @@
                             <h2 class="kss-title kss-title--level-2">
               <a href="#kssref-atoms-card">
                 <span class="lead">
-                  3.5
+                  3.4
                   <span class="visually-hidden">
                       atoms.card
                     </span>
@@ -204,13 +202,15 @@ It will also have a <code>background-color</code> and <code>border-radius</code>
 <p>A card can have a title to display what the card is about.
 Add <code>.card__title--underline</code> for a border on the head.
 Add a child <code>&lt;div class=&quot;card__subtitle&quot;&gt;</code> for a subtitle.</p>
+<p><strong>Card block</strong></p>
+<p>The default way of structuring content in a card is by placing
+it in a <code>.card__block</code>.</p>
 <p><strong>Card body</strong></p>
-<p>Add <code>.card__body--fat</code> to double the padding of the card.</p>
-<p>.card<strong>body - Default body card
-.card</strong>body--fat - Fat body card</p>
-<p><strong>Card footer</strong></p>
-<p>The footer is reserved for actions the user can perform in the card.
-In most cases there will be buttons, but there can also be labels in here.</p>
+<p>Add <code>.card__body</code> to double the padding of the card. This is
+primarily used for articles.</p>
+<p><strong>Card actionbar</strong></p>
+<p>The actionbar is reserved for actions the user can perform in the card.
+In most cases there will be buttons, but there can also be badges in here.</p>
 
               </div>
             
@@ -227,10 +227,10 @@ In most cases there will be buttons, but there can also be labels in here.</p>
                   
                   
                                       <div class="kss-modifier__name kss-style">
-                      .card__body
+                      .card__block
                     </div>
                     <div class="kss-modifier__description kss-style">
-                      Default body card
+                      Card block
                     </div>
                     <div class="kss-modifier__example">
                       <section class="card">
@@ -240,8 +240,8 @@ In most cases there will be buttons, but there can also be labels in here.</p>
       optional subtitle
     </span>
   </h2>
-  <div class="card__body card__body">
-    <p>Body can contain element</p>
+  <div class="card__block">
+    <p>Content can be anything</p>
   </div>
 
   <footer class="card__actionbar">
@@ -251,10 +251,10 @@ In most cases there will be buttons, but there can also be labels in here.</p>
 </section>
                     </div>
                                       <div class="kss-modifier__name kss-style">
-                      .card__body--fat
+                      .card__body
                     </div>
                     <div class="kss-modifier__description kss-style">
-                      Fat body card
+                      Card body
                     </div>
                     <div class="kss-modifier__example">
                       <section class="card">
@@ -264,8 +264,8 @@ In most cases there will be buttons, but there can also be labels in here.</p>
       optional subtitle
     </span>
   </h2>
-  <div class="card__body card__body--fat">
-    <p>Body can contain element</p>
+  <div class="card__body">
+    <p>Content can be anything</p>
   </div>
 
   <footer class="card__actionbar">
@@ -290,8 +290,8 @@ In most cases there will be buttons, but there can also be labels in here.</p>
       optional subtitle
     &lt;/span&gt;
   &lt;/h2&gt;
-  &lt;div class=&quot;card__body {{ modifier_class }}&quot;&gt;
-    &lt;p&gt;Body can contain element&lt;/p&gt;
+  &lt;div class=&quot;{{ modifier_class }}&quot;&gt;
+    &lt;p&gt;Content can be anything&lt;/p&gt;
   &lt;/div&gt;
 
   &lt;footer class=&quot;card__actionbar&quot;&gt;

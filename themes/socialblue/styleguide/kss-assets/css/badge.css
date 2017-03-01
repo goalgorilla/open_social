@@ -3,7 +3,7 @@
   color: #fff;
 }
 
-.badge-pill {
+.badge--pill {
   border-radius: 1em;
 }
 
@@ -12,13 +12,25 @@
   color: #4d4d4d;
 }
 
+.badge-default svg {
+  fill: #4d4d4d;
+}
+
 .badge-default[href]:hover, .badge-default[href]:focus {
   background-color: #cdcdcd;
+}
+
+.badge-default svg {
+  fill: #4d4d4d;
 }
 
 .badge-primary {
   background-color: #29abe2;
   color: #fff;
+}
+
+.badge-primary svg {
+  fill: #fff;
 }
 
 .badge-primary[href]:hover, .badge-primary[href]:focus {
@@ -30,6 +42,10 @@
   color: #fff;
 }
 
+.badge-secondary svg {
+  fill: #fff;
+}
+
 .badge-secondary[href]:hover, .badge-secondary[href]:focus {
   background-color: #17607f;
 }
@@ -37,6 +53,10 @@
 .badge-accent {
   background-color: #ffc142;
   color: #4d4d4d;
+}
+
+.badge-accent svg {
+  fill: #4d4d4d;
 }
 
 .badge-accent[href]:hover, .badge-accent[href]:focus {
@@ -48,6 +68,10 @@
   color: #fff;
 }
 
+.badge-success svg {
+  fill: #fff;
+}
+
 .badge-success[href]:hover, .badge-success[href]:focus {
   background-color: #449d44;
 }
@@ -55,6 +79,10 @@
 .badge-info {
   background-color: #33b5e5;
   color: #fff;
+}
+
+.badge-info svg {
+  fill: #fff;
 }
 
 .badge-info[href]:hover, .badge-info[href]:focus {
@@ -66,6 +94,10 @@
   color: #fff;
 }
 
+.badge-warning svg {
+  fill: #fff;
+}
+
 .badge-warning[href]:hover, .badge-warning[href]:focus {
   background-color: #cc6d00;
 }
@@ -75,10 +107,20 @@
   color: #fff;
 }
 
+.badge-danger svg {
+  fill: #fff;
+}
+
 .badge-danger[href]:hover, .badge-danger[href]:focus {
   background-color: #c9302c;
 }
 
-a.badge--comment-count .icon-badge {
-  fill: #4d4d4d;
+.badge a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.badge a:hover {
+  color: inherit;
 }

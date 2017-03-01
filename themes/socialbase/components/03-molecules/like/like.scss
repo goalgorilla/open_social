@@ -1,88 +1,67 @@
 @import "settings";
 
 .vote-widget {
-  display: inline-block;
-  margin-top: 10px;
 
   .vote-dislike {
     display: none;
   }
 
-  .badge {
-    background-color: $gray-lighter;
-    margin: 0;
-    font-size: $font-size-small;
+}
+
+.badge a.disable-status {
+  cursor: default;
+
+  .icon-vote {
+    fill: $text-color;
+    stroke: $text-color;
   }
 
-  .count {
-    color: $text-color;
-    font-size: $font-size-small;
+}
+
+.badge .icon-vote {
+  width: 16px;
+  height: 16px;
+  fill: transparent;
+  stroke: $text-color;
+  stroke-width: 15px;
+  transition: .2s all ease;
+}
+
+// Added like
+.voted-like .icon-vote {
+  fill: black;
+  stroke: black;
+}
+
+.badge a:active {
+
+  // Voted like focus
+  &.voted-like .icon-vote {
+    fill: black;
+    stroke: black;
   }
 
-  a {
-    cursor: pointer;
-    display: inline-block;
-    text-decoration: none !important;
-    color: $text-color !important;
-    text-transform: uppercase;
+  // Not voted like focus
+  &:not(.voted-like) .icon-vote {
+    stroke: black;
+    fill: transparent;
+  }
 
+}
 
-    &.disable-status {
-      cursor: default;
+@include for-tablet-portrait-up {
+  .badge a:hover {
 
-      .icon-gray {
-        fill: $text-color !important;
-        stroke: $text-color !important;
-      }
-
-    }
-
-    .icon-gray {
-      fill: transparent;
-      stroke: $text-color;
-      stroke-width: 15px;
-      transition: .2s all ease;
-    }
-
-    // Added like
-    &.voted-like .icon-gray {
-      fill: black;
+    // Not voted like hover
+    &:not(.voted-like) .icon-vote {
       stroke: black;
+      fill: transparent;
     }
 
-    &:active {
-
-      // Voted like focus
-      &.voted-like .icon-gray {
-        fill: black;
-        stroke: black;
-      }
-
-      // Not voted like focus
-      &:not(.voted-like) .icon-gray {
-        stroke: black;
-        fill: transparent;
-      }
-
-    }
-
-    @include for-tablet-portrait-up {
-      &:hover {
-
-        // Not voted like hover
-        &:not(.voted-like) .icon-gray {
-          stroke: black;
-          fill: transparent;
-        }
-
-        // Voted like hover
-        &.voted-like .icon-gray {
-          fill: $text-color;
-          stroke: $text-color;
-        }
-
-      }
-
+    // Voted like hover
+    &.voted-like .icon-vote {
+      fill: $text-color;
+      stroke: $text-color;
     }
 
   }
