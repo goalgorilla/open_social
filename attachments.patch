@@ -1,0 +1,2370 @@
+diff --git a/themes/socialbase/assets/css/ckeditor.css b/themes/socialbase/assets/css/ckeditor.css
+index c383066..605b552 100644
+--- a/themes/socialbase/assets/css/ckeditor.css
++++ b/themes/socialbase/assets/css/ckeditor.css
+@@ -745,6 +745,10 @@ img.align-center {
+   position: relative;
+ }
+ 
++body {
++  margin: 10px;
++}
++
+ @media (min-width: 600px) {
+ 
+   body {
+diff --git a/themes/socialbase/assets/css/file.css b/themes/socialbase/assets/css/file.css
+index ee50698..f0f3a0d 100644
+--- a/themes/socialbase/assets/css/file.css
++++ b/themes/socialbase/assets/css/file.css
+@@ -1,26 +1,120 @@
+-.file {
+-  display: table;
++.node__files {
++  margin-top: 40px;
++}
++
++.files__grid {
++  padding-left: 0;
++  list-style: none;
++  margin-bottom: 0;
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  -ms-flex-wrap: wrap;
++      flex-wrap: wrap;
++  -webkit-box-pack: justify;
++      -ms-flex-pack: justify;
++          justify-content: space-between;
++}
++
++.files__title {
++  margin-bottom: 20px;
++}
++
++.node-file {
++  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
++  -webkit-box-flex: 0;
++      -ms-flex: 0 0 47.5%;
++          flex: 0 0 47.5%;
++  margin-bottom: 13px;
+   font-size: 0.75rem;
+-  margin: 10px 0 1rem;
+-  width: 100%;
++  background: #f3f3f3;
+ }
+ 
+-.file > span {
+-  background: #fff;
+-  border-bottom: 1px solid #e6e6e6;
+-  border-top: 1px solid #e6e6e6;
++.node-file:hover {
++  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+ }
+ 
+-.file > span:first-child {
+-  border-left: 1px solid #e6e6e6;
++.node-file__link {
++  display: block;
++  position: relative;
++  height: 100px;
++  padding: 12px;
++  color: inherit;
++  text-decoration: none;
+ }
+ 
+-.file > span:last-child {
+-  border-right: 1px solid #e6e6e6;
++.node-file__title {
++  overflow: hidden;
++  position: relative;
++  line-height: 1.35em;
++  max-height: 4.05em;
++  padding-right: 1em;
++  display: block;
++  word-break: break-word;
++  word-wrap: normal;
++}
++
++.node-file__title:before {
++  content: '...';
++  position: absolute;
++  right: 0;
++  bottom: 0;
++}
++
++.node-file__title:after {
++  content: '';
++  position: absolute;
++  right: 0;
++  width: 1em;
++  height: 1em;
++  margin-top: 0.2em;
++  background: #f3f3f3;
++}
++
++.node-file__type {
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++  margin-top: 4px;
++  position: absolute;
++  bottom: 12px;
++  width: calc(100% - (2 * 12px));
++}
++
++.node-file__icon {
++  margin-right: 8px;
++  -webkit-user-select: none;
++     -moz-user-select: none;
++      -ms-user-select: none;
++          user-select: none;
++  width: 16px;
++  height: 16px;
+ }
+ 
+-.file > span:not(.text-primary) {
+-  color: #777777;
++.node-file__size {
++  text-overflow: ellipsis;
++  overflow: hidden;
++  line-height: 1rem;
++}
++
++.file {
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  font-size: 0.75rem;
++  margin: 10px 0 1rem;
++  width: 100%;
++  background: #fff;
++  border: 1px solid #e6e6e6;
++  padding: 0.5em 0;
++}
++
++.file > span {
++  padding-left: 0.5em;
++  padding-right: 0.5em;
+ }
+ 
+ .file > .tabledrag-changed {
+@@ -32,16 +126,23 @@
+ }
+ 
+ .file-icon {
+-  display: table-cell;
+-  padding: .25em .5em;
+-  text-align: center;
+-  vertical-align: top;
++  -webkit-user-select: none;
++     -moz-user-select: none;
++      -ms-user-select: none;
++          user-select: none;
++  -webkit-box-flex: 0;
++      -ms-flex: 0 0 32px;
++          flex: 0 0 32px;
++}
++
++.file-icon .node-file__icon {
++  display: block;
+ }
+ 
+ .file-link {
+-  display: table-cell;
+-  vertical-align: middle;
+-  width: 100%;
++  -webkit-box-flex: 1;
++      -ms-flex: 1;
++          flex: 1;
+   white-space: normal;
+   word-break: break-word;
+ }
+@@ -49,32 +150,37 @@
+ .file-link a, .file-link a:hover, .file-link a:focus, .file-link a:active {
+   text-decoration: none;
+   color: inherit;
++  font-weight: 300;
+ }
+ 
+ .file-size {
+-  display: table-cell;
+-  padding: 0.5em 1em;
+   text-align: right;
+   white-space: pre;
+   vertical-align: middle;
+ }
+ 
+-.image-widget.row {
+-  overflow: hidden;
+-}
++@media (min-width: 600px) {
+ 
+-.file-widget .file {
+-  margin-bottom: 0;
+-  font-size: 0.85rem;
++  .file {
++    margin-top: 0;
++  }
+ }
+ 
+-.file-widget + .form-managed-file {
+-  margin-top: 1rem;
+-}
++@media (min-width: 900px) {
+ 
+-@media (min-width: 600px) {
++  .files__grid {
++    -webkit-box-pack: start;
++    -ms-flex-pack: start;
++    justify-content: flex-start;
++  }
+ 
+-  .file {
+-    margin-top: 0;
++  .node-file {
++    -ms-flex-preferred-size: 23%;
++    flex-basis: 23%;
++    margin-right: 2%;
++  }
++
++  .node-file:nth-child(4n+4) {
++    margin-right: 0;
+   }
+ }
+diff --git a/themes/socialbase/assets/css/popover.css b/themes/socialbase/assets/css/popover.css
+index 584abdc..a595059 100644
+--- a/themes/socialbase/assets/css/popover.css
++++ b/themes/socialbase/assets/css/popover.css
+@@ -2,7 +2,6 @@
+   position: absolute;
+   z-index: 1070;
+   display: block;
+-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-style: normal;
+   font-weight: normal;
+   letter-spacing: normal;
+@@ -95,7 +94,6 @@
+   display: none;
+   max-width: 276px;
+   padding: 0;
+-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-style: normal;
+   font-weight: normal;
+   letter-spacing: normal;
+diff --git a/themes/socialbase/assets/css/tablesaw.css b/themes/socialbase/assets/css/tablesaw.css
+index 2782106..110c409 100644
+--- a/themes/socialbase/assets/css/tablesaw.css
++++ b/themes/socialbase/assets/css/tablesaw.css
+@@ -7,7 +7,6 @@
+ .tablesaw-bar {
+   width: 100%;
+   clear: both;
+-  height: 50px;
+   text-align: right;
+ }
+ 
+@@ -71,6 +70,7 @@
+ 
+ .tablesaw-advance {
+   float: right;
++  height: 50px;
+ }
+ 
+ .tablesaw-advance.minimap {
+diff --git a/themes/socialbase/assets/images/icons/icon-open_in_new.svg b/themes/socialbase/assets/images/icons/icon-open_in_new.svg
+new file mode 100644
+index 0000000..9c9297e
+--- /dev/null
++++ b/themes/socialbase/assets/images/icons/icon-open_in_new.svg
+@@ -0,0 +1 @@
++<svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+\ No newline at end of file
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_archive_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x16.png
+new file mode 100644
+index 0000000..d312e19
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_archive_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x32.png
+new file mode 100644
+index 0000000..35c9063
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_archive_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x64.png
+new file mode 100644
+index 0000000..2c55603
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_archive_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_audio_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x16.png
+new file mode 100644
+index 0000000..8a8c84c
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_audio_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x32.png
+new file mode 100644
+index 0000000..acd9133
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_audio_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x64.png
+new file mode 100644
+index 0000000..af407c0
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_audio_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_document_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_document_x16.png
+new file mode 100644
+index 0000000..048640f
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_document_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_document_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_document_x32.png
+new file mode 100644
+index 0000000..df59b10
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_document_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_document_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_document_x64.png
+new file mode 100644
+index 0000000..218454e
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_document_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x16.png
+new file mode 100644
+index 0000000..af57ba1
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x32.png
+new file mode 100644
+index 0000000..50972cb
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x64.png
+new file mode 100644
+index 0000000..c2f0f85
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_drawing_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_excel_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x16.png
+new file mode 100644
+index 0000000..6019339
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_excel_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x32.png
+new file mode 100644
+index 0000000..8ddb075
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_excel_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x64.png
+new file mode 100644
+index 0000000..ff33792
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_excel_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_image_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_image_x16.png
+new file mode 100644
+index 0000000..5d47a5a
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_image_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_image_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_image_x32.png
+new file mode 100644
+index 0000000..8646f05
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_image_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_image_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_image_x64.png
+new file mode 100644
+index 0000000..1dfbc0a
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_image_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x16.png
+new file mode 100644
+index 0000000..cb2a40e
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x32.png
+new file mode 100644
+index 0000000..8ef8b97
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x64.png
+new file mode 100644
+index 0000000..c9042da
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_pdf_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x16.png
+new file mode 100644
+index 0000000..a54cb94
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x32.png
+new file mode 100644
+index 0000000..ecf48a3
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x64.png
+new file mode 100644
+index 0000000..b75fec5
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_presentation_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x16.png
+new file mode 100644
+index 0000000..7a9d26d
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x32.png
+new file mode 100644
+index 0000000..d8fe103
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x64.png
+new file mode 100644
+index 0000000..5907aa0
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_spreadsheet_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_text_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_text_x16.png
+new file mode 100644
+index 0000000..71c533a
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_text_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_text_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_text_x32.png
+new file mode 100644
+index 0000000..e5791b8
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_text_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_text_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_text_x64.png
+new file mode 100644
+index 0000000..6e775a9
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_text_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_video_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_video_x16.png
+new file mode 100644
+index 0000000..8c1d26e
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_video_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_video_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_video_x32.png
+new file mode 100644
+index 0000000..6dd19c1
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_video_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_video_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_video_x64.png
+new file mode 100644
+index 0000000..60fbbe2
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_video_x64.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_word_x16.png b/themes/socialbase/assets/images/mime-icons/icon_1_word_x16.png
+new file mode 100644
+index 0000000..0f1e99c
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_word_x16.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_word_x32.png b/themes/socialbase/assets/images/mime-icons/icon_1_word_x32.png
+new file mode 100644
+index 0000000..c04af5d
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_word_x32.png differ
+diff --git a/themes/socialbase/assets/images/mime-icons/icon_1_word_x64.png b/themes/socialbase/assets/images/mime-icons/icon_1_word_x64.png
+new file mode 100644
+index 0000000..b2e9e36
+Binary files /dev/null and b/themes/socialbase/assets/images/mime-icons/icon_1_word_x64.png differ
+diff --git a/themes/socialbase/components/00-config/_mixins.scss b/themes/socialbase/components/00-config/_mixins.scss
+index 51cf7e0..09211f9 100644
+--- a/themes/socialbase/components/00-config/_mixins.scss
++++ b/themes/socialbase/components/00-config/_mixins.scss
+@@ -3,6 +3,8 @@
+ @import "mixins/border-radius";
+ @import "mixins/elevation";
+ @import "mixins/image";
++@import "mixins/list-unstyled";
++@import "mixins/multiline-ellipsis";
+ @import "mixins/nav-divider";
+ @import "mixins/reset-text";
+ @import "mixins/visually-hidden";
+diff --git a/themes/socialbase/components/00-config/mixins/_list-unstyled.scss b/themes/socialbase/components/00-config/mixins/_list-unstyled.scss
+new file mode 100644
+index 0000000..60cfe9e
+--- /dev/null
++++ b/themes/socialbase/components/00-config/mixins/_list-unstyled.scss
+@@ -0,0 +1,14 @@
++// Unstyled list
++//
++// Remove the default list-style and left margin on list items (immediate children only). This only applies to immediate children list items, meaning you will need to add the class for any nested lists as well.
++// `@mixin list-unstyled`
++//
++// Weight: 7
++//
++// Style guide: sass.list-unstyled
++
++@mixin list-unstyled {
++  padding-left: 0;
++  list-style: none;
++  margin-bottom: 0;
++}
+\ No newline at end of file
+diff --git a/themes/socialbase/components/00-config/mixins/_multiline-ellipsis.scss b/themes/socialbase/components/00-config/mixins/_multiline-ellipsis.scss
+new file mode 100644
+index 0000000..53f8bb4
+--- /dev/null
++++ b/themes/socialbase/components/00-config/mixins/_multiline-ellipsis.scss
+@@ -0,0 +1,33 @@
++// Multiline ellipsis
++//
++// Allows an text to be truncated and get '...' at the end when it exceeds the
++// maximum amount of lines.
++// `@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white)`
++//
++// Weight: 6
++//
++// Style guide: sass.multiline-ellipsis
++
++@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white){
++  overflow: hidden;
++  position: relative;
++  line-height: $lineHeight;
++  max-height: $lineHeight * $lineCount;
++  padding-right: 1em;
++
++  &:before {
++    content: '...';
++    position: absolute;
++    right: 0;
++    bottom: 0;
++  }
++  &:after {
++    content: '';
++    position: absolute;
++    right: 0;
++    width: 1em;
++    height: 1em;
++    margin-top: 0.2em;
++    background: $bgColor;
++  }
++}
+\ No newline at end of file
+diff --git a/themes/socialbase/components/00-config/mixins/_reset-text.scss b/themes/socialbase/components/00-config/mixins/_reset-text.scss
+index f629355..b929b52 100644
+--- a/themes/socialbase/components/00-config/mixins/_reset-text.scss
++++ b/themes/socialbase/components/00-config/mixins/_reset-text.scss
+@@ -8,7 +8,6 @@
+ // Style guide: sass.resettext
+ 
+ @mixin reset-text() {
+-  font-family: $font-family-base;
+   // We deliberately do NOT reset font-size.
+   font-style: normal;
+   font-weight: normal;
+diff --git a/themes/socialbase/components/00-config/variables/_type.scss b/themes/socialbase/components/00-config/variables/_type.scss
+index f5670dc..33e39be 100644
+--- a/themes/socialbase/components/00-config/variables/_type.scss
++++ b/themes/socialbase/components/00-config/variables/_type.scss
+@@ -1,5 +1,5 @@
+ //** Disabled cursor for form controls and buttons.
+-$cursor-disabled:            not-allowed;
++$cursor-disabled:         not-allowed;
+ 
+ 
+ $font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+diff --git a/themes/socialbase/components/03-molecules/file/file-form.twig b/themes/socialbase/components/03-molecules/file/file-form.twig
+new file mode 100644
+index 0000000..12ec267
+--- /dev/null
++++ b/themes/socialbase/components/03-molecules/file/file-form.twig
+@@ -0,0 +1,6 @@
++<span class="file">
++  <span class="file-icon">
++    <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="{{ node_icon }}" /></span>
++  <span class="file-link"><a href="#" title="{{ 'Open file in a new window'|t }}" target="_blank">Vestibulum id ligula porta felis euismod semper.pdf</a></span>
++  <span class="file-size">40.14 KB</span>
++</span>
+\ No newline at end of file
+diff --git a/themes/socialbase/components/03-molecules/file/file-node.twig b/themes/socialbase/components/03-molecules/file/file-node.twig
+new file mode 100644
+index 0000000..bc68e2b
+--- /dev/null
++++ b/themes/socialbase/components/03-molecules/file/file-node.twig
+@@ -0,0 +1,11 @@
++<ul class="files__grid">
++<li class="node-file">
++  <a class="node-file__link" href="#" title="{{ 'Open file in a new window'|t }}" target="_blank">
++    <span class="node-file__title">Vestibulum id ligula porta felis euismod semper.pdf</span>
++    <span class="node-file__type">
++        <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="{{ node_icon }}" />
++        <span class="node-file__size">40.14 KB</span>
++      </span>
++  </a>
++</li>
++</ul>
+\ No newline at end of file
+diff --git a/themes/socialbase/components/03-molecules/file/file.scss b/themes/socialbase/components/03-molecules/file/file.scss
+index c3fa57e..5b3311f 100644
+--- a/themes/socialbase/components/03-molecules/file/file.scss
++++ b/themes/socialbase/components/03-molecules/file/file.scss
+@@ -1,33 +1,148 @@
++// File styles
+ //
+-// File (and Image Widget) styles.
++// There are two styles of displaying files. One style is showing files
++// as attachments with articles. The other style is when files are in forms (edit mode).
+ //
++// Weight: 6
++//
++// Style guide: molecules.files
++
++// File in node
++//
++// The display of files in nodes is done with small cards (emphasis layer).
++// The cards must be placed in a grid `.files__grid`. The element consists of the file name (max 3 lines truncated), the file type and file size.
++//
++// markup: file-node.twig
++//
++// Weight: 1
++//
++// Style guide: molecules.files.node
++
++// File in form
++//
++// Files in forms need to be able to changed easily. For example for images their is
++// a preview shown when editing content. For file attachments the file molecule is part of
++// the multiple file upload widget where multiple rows can be added.
++//
++// markup: file-form.twig
++//
++// Weight: 2
++//
++// Style guide: molecules.files.form
++
+ @import 'settings';
+ 
++
++// Display of attachments in nodes
++
++.node__files {
++  margin-top: 40px;
++}
++
++.files__grid {
++  @include list-unstyled;
++  display: flex;
++  flex-wrap: wrap;
++  justify-content: space-between;
++
++  @include for-tablet-landscape-up {
++    justify-content: flex-start;
++  }
++
++}
++
++.files__title {
++  margin-bottom: 20px;
++}
++
++.node-file {
++  @include z-depth-1;
++  flex: 0 0 47.5%;
++  margin-bottom: 13px;
++  font-size: 0.75rem;
++  background: $gray-lightest;
++
++  @include for-tablet-landscape-up {
++    flex-basis: 23%;
++    margin-right: 2%;
++
++    &:nth-child(4n+4) {
++      margin-right: 0;
++    }
++  }
++
++  &:hover {
++    @include z-depth-2;
++
++    &:after {
++
++    }
++
++  }
++}
++
++.node-file__link {
++  display: block;
++  position: relative;
++  height: 100px;
++  padding: $padding-base-horizontal;
++  color: inherit;
++  text-decoration: none;
++}
++
++.node-file__title {
++  @include multiLineEllipsis(1.35em, 3, $gray-lightest);
++  display: block;
++  word-break: break-word;
++  word-wrap: normal;
++}
++
++.node-file__type {
++  display: flex;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++  margin-top: 4px;
++  position: absolute;
++  bottom: $padding-base-horizontal;
++  width: calc(100% - (2 * #{$padding-base-horizontal}) );
++}
++
++.node-file__icon {
++  margin-right: 8px;
++  user-select: none;
++  width: 16px;
++  height: 16px;
++}
++
++.node-file__size {
++  text-overflow: ellipsis;
++  overflow: hidden;
++
++  line-height: 1rem;
++}
++
++
++// Edit files, drupal default display
++
+ .file {
+-  display: table;
++  display: flex;
+   font-size: 0.75rem;
+   margin: 10px 0 1rem;
+   width: 100%;
++  background: #fff;
++  border: 1px solid $gray-lighter;
++  padding: 0.5em 0;
+ 
+   @include for-tablet-portrait-up {
+     margin-top: 0;
+   }
+ 
+   > span {
+-    background: #fff;
+-    border-bottom: 1px solid $gray-lighter;
+-    border-top: 1px solid $gray-lighter;
+-    &:first-child {
+-      border-left: 1px solid $gray-lighter;
+-    }
+-    &:last-child {
+-      border-right: 1px solid $gray-lighter;
+-    }
+-    &:not(.text-primary) {
+-      color: $gray-light;
+-    }
++    padding-left:0.5em;
++    padding-right: 0.5em;
+   }
+-  
++
+   > .tabledrag-changed {
+     display: table-cell;
+     padding: 0 1em;
+@@ -38,45 +153,29 @@
+ }
+ 
+ .file-icon {
+-  display: table-cell;
+-  padding: .25em .5em;
+-  text-align: center;
+-  vertical-align: top;
++  user-select: none;
++  flex: 0 0 32px;
++
++  .node-file__icon {
++    display: block;
++  }
+ }
+ 
+ .file-link {
+-  display: table-cell;
+-  vertical-align: middle;
+-  width: 100%;
++  flex: 1;
+   white-space: normal;
+   word-break: break-word;
+ 
+   a, a:hover, a:focus, a:active {
+     text-decoration: none;
+     color: inherit;
++    font-weight: 300;
+   }
+ 
+ }
+ 
+ .file-size {
+-  display: table-cell;
+-  padding: 0.5em 1em;
+   text-align: right;
+   white-space: pre;
+   vertical-align: middle;
+ }
+-
+-.image-widget.row {
+-  overflow: hidden;
+-}
+-
+-.file-widget {
+-  .file {
+-    margin-bottom: 0;
+-    font-size: 0.85rem;
+-  }
+-
+-  + .form-managed-file {
+-    margin-top: 1rem;
+-  }
+-}
+diff --git a/themes/socialbase/components/03-molecules/tablesaw/tablesaw.scss b/themes/socialbase/components/03-molecules/tablesaw/tablesaw.scss
+index 2a3c1e8..33cf866 100644
+--- a/themes/socialbase/components/03-molecules/tablesaw/tablesaw.scss
++++ b/themes/socialbase/components/03-molecules/tablesaw/tablesaw.scss
+@@ -9,7 +9,6 @@
+ .tablesaw-bar {
+   width: 100%;
+   clear: both;
+-  height: 50px;
+   text-align: right;
+ 
+   &.tablesaw-all-cols-visible {
+@@ -77,6 +76,7 @@
+ 
+ .tablesaw-advance {
+   float: right;
++  height: 50px;
+ 
+   &.minimap {
+     float: none;
+diff --git a/themes/socialbase/components/03-molecules/teaser/teaser-unpublished.twig b/themes/socialbase/components/03-molecules/teaser/teaser-unpublished.twig
+index a8465bf..32478cb 100644
+--- a/themes/socialbase/components/03-molecules/teaser/teaser-unpublished.twig
++++ b/themes/socialbase/components/03-molecules/teaser/teaser-unpublished.twig
+@@ -9,7 +9,7 @@
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/animals1-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/animals1-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+     <!-- diff -->
+diff --git a/themes/socialbase/components/03-molecules/teaser/teaser.twig b/themes/socialbase/components/03-molecules/teaser/teaser.twig
+index db5d950..0cf140c 100644
+--- a/themes/socialbase/components/03-molecules/teaser/teaser.twig
++++ b/themes/socialbase/components/03-molecules/teaser/teaser.twig
+@@ -9,7 +9,7 @@
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/people3-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/people3-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+   </div>
+diff --git a/themes/socialbase/components/03-molecules/wysiwyg/ckeditor.scss b/themes/socialbase/components/03-molecules/wysiwyg/ckeditor.scss
+index 2189688..1a6b5d9 100644
+--- a/themes/socialbase/components/03-molecules/wysiwyg/ckeditor.scss
++++ b/themes/socialbase/components/03-molecules/wysiwyg/ckeditor.scss
+@@ -16,3 +16,6 @@
+ .textarea--cke .cke {
+   position: relative;
+ }
++
++// extra margin for white space in editor
++body {margin: 10px;}
+diff --git a/themes/socialbase/components/06-libraries/icons/source/icon-open_in_new.svg b/themes/socialbase/components/06-libraries/icons/source/icon-open_in_new.svg
+new file mode 100644
+index 0000000..ca89ba8
+--- /dev/null
++++ b/themes/socialbase/components/06-libraries/icons/source/icon-open_in_new.svg
+@@ -0,0 +1,4 @@
++<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
++    <path d="M0 0h24v24H0z" fill="none"/>
++    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
++</svg>
+\ No newline at end of file
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x16.png
+new file mode 100644
+index 0000000..d312e19
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x32.png
+new file mode 100644
+index 0000000..35c9063
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x64.png
+new file mode 100644
+index 0000000..2c55603
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_archive_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x16.png
+new file mode 100644
+index 0000000..8a8c84c
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x32.png
+new file mode 100644
+index 0000000..acd9133
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x64.png
+new file mode 100644
+index 0000000..af407c0
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_audio_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x16.png
+new file mode 100644
+index 0000000..048640f
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x32.png
+new file mode 100644
+index 0000000..df59b10
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x64.png
+new file mode 100644
+index 0000000..218454e
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_document_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x16.png
+new file mode 100644
+index 0000000..af57ba1
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x32.png
+new file mode 100644
+index 0000000..50972cb
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x64.png
+new file mode 100644
+index 0000000..c2f0f85
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_drawing_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x16.png
+new file mode 100644
+index 0000000..6019339
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x32.png
+new file mode 100644
+index 0000000..8ddb075
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x64.png
+new file mode 100644
+index 0000000..ff33792
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_excel_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x16.png
+new file mode 100644
+index 0000000..5d47a5a
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x32.png
+new file mode 100644
+index 0000000..8646f05
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x64.png
+new file mode 100644
+index 0000000..1dfbc0a
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_image_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x16.png
+new file mode 100644
+index 0000000..cb2a40e
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x32.png
+new file mode 100644
+index 0000000..8ef8b97
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x64.png
+new file mode 100644
+index 0000000..c9042da
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_pdf_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x16.png
+new file mode 100644
+index 0000000..a54cb94
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x32.png
+new file mode 100644
+index 0000000..ecf48a3
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x64.png
+new file mode 100644
+index 0000000..b75fec5
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_presentation_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x16.png
+new file mode 100644
+index 0000000..7a9d26d
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x32.png
+new file mode 100644
+index 0000000..d8fe103
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x64.png
+new file mode 100644
+index 0000000..5907aa0
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_spreadsheet_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x16.png
+new file mode 100644
+index 0000000..71c533a
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x32.png
+new file mode 100644
+index 0000000..e5791b8
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x64.png
+new file mode 100644
+index 0000000..6e775a9
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_text_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x16.png
+new file mode 100644
+index 0000000..8c1d26e
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x32.png
+new file mode 100644
+index 0000000..6dd19c1
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x64.png
+new file mode 100644
+index 0000000..60fbbe2
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_video_x64.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x16.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x16.png
+new file mode 100644
+index 0000000..0f1e99c
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x16.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x32.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x32.png
+new file mode 100644
+index 0000000..c04af5d
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x32.png differ
+diff --git a/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x64.png b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x64.png
+new file mode 100644
+index 0000000..b2e9e36
+Binary files /dev/null and b/themes/socialbase/components/06-libraries/icons/source/mime-icons/icon_1_word_x64.png differ
+diff --git a/themes/socialbase/gulpfile.js b/themes/socialbase/gulpfile.js
+index 2d40ce4..adaeec9 100644
+--- a/themes/socialbase/gulpfile.js
++++ b/themes/socialbase/gulpfile.js
+@@ -187,7 +187,7 @@ gulp.task('sprite-icons', function () {
+ //
+ // #################
+ //
+-// Becsides the sprite we somtimes still need the individual svg files
++// Besides the sprite we sometimes still need the individual svg files
+ // to load as a css background image. This task optimises and copies
+ // the icons to the assets folder.
+ // ===================================================
+@@ -198,6 +198,20 @@ gulp.task('image-icons', function () {
+     .pipe(gulp.dest(options.basetheme.build + 'images/icons/'))
+ });
+ 
++// #################
++//
++// Image mime icons
++//
++// #################
++//
++// Copy the mime icons from the components folder to the assets folder (manual task)
++// ===================================================
++
++gulp.task('mime-image-icons', function () {
++  return gulp.src(options.icons.src + 'mime-icons/*.png')
++    .pipe(gulp.dest(options.basetheme.build + 'images/mime-icons/'))
++});
++
+ 
+ 
+ // ##############################
+diff --git a/themes/socialbase/src/Plugin/Alter/ThemeSuggestions.php b/themes/socialbase/src/Plugin/Alter/ThemeSuggestions.php
+index 0291150..276c629 100644
+--- a/themes/socialbase/src/Plugin/Alter/ThemeSuggestions.php
++++ b/themes/socialbase/src/Plugin/Alter/ThemeSuggestions.php
+@@ -25,15 +25,31 @@ public function alter(&$suggestions, &$context1 = NULL, &$hook = NULL) {
+ 
+     $variables = Variables::create($context1);
+ 
+-    if ($hook == 'details') {
+-      $suggestions[] = 'details__plain';
++    switch ($hook) {
+ 
+-      if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class'])) {
+-        $suggestions[] = 'details__crop';
+-      }
++      case 'details':
++        $suggestions[] = 'details__plain';
++
++        if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class'])) {
++          $suggestions[] = 'details__crop';
++        }
++        break;
++
++      case 'file_link':
++
++        // Gget the route name for file links
++        $route_name = \Drupal::routeMatch()->getRouteName();
++
++        // If the file link is on the node full page, suggest another template
++        if ($route_name == 'entity.node.canonical') {
++          $suggestions[] = 'file_link__node';
++        }
++        break;
+ 
+     }
+ 
++
++
+   }
+ 
+ }
+\ No newline at end of file
+diff --git a/themes/socialbase/src/Plugin/Preprocess/FileLink.php b/themes/socialbase/src/Plugin/Preprocess/FileLink.php
+new file mode 100644
+index 0000000..133e24f
+--- /dev/null
++++ b/themes/socialbase/src/Plugin/Preprocess/FileLink.php
+@@ -0,0 +1,95 @@
++<?php
++
++/**
++ * @file
++ * Contains \Drupal\socialbase\Plugin\Preprocess\FileLink.
++ */
++
++namespace Drupal\socialbase\Plugin\Preprocess;
++
++use Drupal\file\Entity\File;
++
++/**
++ * Pre-processes variables for the "file_link" theme hook.
++ *
++ * @ingroup plugins_preprocess
++ *
++ * @BootstrapPreprocess("file_link",
++ *   replace = "template_preprocess_file_link"
++ * )
++ */
++class FileLink extends \Drupal\bootstrap\Plugin\Preprocess\FileLink {
++
++  /**
++   * {@inheritdoc}
++   */
++  public function preprocess(array &$variables, $hook, array $info) {
++    parent::preprocess($variables, $hook, $info);
++
++    // Find out what the active theme is first.
++    $theme = \Drupal::theme()->getActiveTheme();
++
++    // Check if socialbase is one of the base themes.
++    // Then get the path to socialbase theme and provide a variable
++    // that can be used in the template for a path to the icons.
++
++    if (array_key_exists('socialbase', $theme->getBaseThemes())) {
++      $basethemes = $theme->getBaseThemes();
++      $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
++    }
++
++    $file = ($variables['file'] instanceof File) ? $variables['file'] : File::load($variables['file']->fid);
++
++    $mime_type = $file->getMimeType();
++    $generic_mime_type = file_icon_class($mime_type);
++
++
++    if (isset($generic_mime_type)) {
++
++      // Set new icons for the mime types.
++      switch ($generic_mime_type) {
++
++        case 'application-pdf':
++          $node_icon = 'pdf';
++          break;
++
++        case 'x-office-document':
++          $node_icon = 'document';
++          break;
++
++        case 'x-office-presentation':
++          $node_icon = 'presentation';
++          break;
++
++        case 'x-office-spreadsheet':
++          $node_icon = 'spreadsheet';
++          break;
++
++        case 'package-x-generic':
++          $node_icon = 'archive';
++          break;
++
++        case 'audio':
++          $node_icon = 'audio';
++          break;
++
++        case 'video':
++          $node_icon = 'video';
++          break;
++
++        case 'image':
++          $node_icon = 'image';
++          break;
++
++        default:
++          $node_icon = 'text';
++      }
++
++    }
++
++    // set a new variable to be used in the template file.
++    $variables['node_icon'] = $node_icon;
++
++  }
++
++}
+diff --git a/themes/socialbase/templates/file/file-link--node.html.twig b/themes/socialbase/templates/file/file-link--node.html.twig
+new file mode 100644
+index 0000000..4e9899b
+--- /dev/null
++++ b/themes/socialbase/templates/file/file-link--node.html.twig
+@@ -0,0 +1,29 @@
++{#
++/**
++* @file
++* Theme override for a link to a file for nodes.
++*
++* Available variables:
++* - attributes: The HTML attributes for the containing element.
++* - link: A link to the file.
++* - node_icon: An icon.
++*
++* @ingroup templates
++*
++* @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
++*/
++#}
++{{ attach_library('socialbase/file') }}
++{% spaceless %}
++
++  <li class="node-file">
++    <a class="node-file__link" href="{{ link.url.uri }}" title="{{ 'Open file in a new window'|t }}" target="_blank">
++      <span class="node-file__title">{{ link.text|replace({'_': ' '}) }}</span>
++      <span class="node-file__type">
++        <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
++        <span class="node-file__size">{{ file_size }}</span>
++      </span>
++    </a>
++  </li>
++
++{% endspaceless %}
+\ No newline at end of file
+diff --git a/themes/socialbase/templates/file/file-link.html.twig b/themes/socialbase/templates/file/file-link.html.twig
+index 0ed0e4e..b11ca60 100644
+--- a/themes/socialbase/templates/file/file-link.html.twig
++++ b/themes/socialbase/templates/file/file-link.html.twig
+@@ -1,53 +1,35 @@
+ {#
+ /**
+- * @file
+- * Theme override for a link to a file.
+- *
+- * Available variables:
+- * - attributes: The HTML attributes for the containing element.
+- * - link: A link to the file.
+- * - icon: An icon.
+- * - icon_only: Flag to display only the icon and not the label.
+- * - icon_position: Where an icon should be displayed.
+- *
+- * @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
+- */
++* @file
++* Theme override for a link to a file for forms (default).
++*
++* Available variables:
++* - attributes: The HTML attributes for the containing element.
++* - link: A link to the file.
++* - node_icon: An icon.
++*
++* @ingroup templates
++*
++* @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
++*/
+ #}
+ {{ attach_library('socialbase/file') }}
+ {% spaceless %}
+-  {%
+-    set classes = [
+-      icon_only ? 'icon-only',
+-      not icon_only ? 'icon-' ~ icon_position|clean_class
+-    ]
+-  %}
++  <span{{ attributes }}>
+ 
++  {% if icon_only %}
++    <span class="file-icon"><img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" /></span>
++    <span class="sr-only">
++      <span class="file-link">{{ link }}</span>
++      <span class="file-size">{{ file_size }}</span>
++    </span>
++  {% else %}
++
++      <span class="file-icon"><img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" /></span><span class="file-link">{{ link }}</span><span class="file-size">{{ file_size }}</span>
++
++  {% endif %}
+ 
+-  <span{{ attributes.addClass(classes).removeClass('icon-before') }}>
+-    {% if icon_only %}
+-      <span class="file-icon">{{ icon }}</span>
+-      <span class="sr-only">
+-        <span class="file-link">{{ link }}</span>
+-        <span class="file-size">{{ file_size }}</span>
+-      </span>
+-    {% else %}
+-      {% if icon_position == 'after' %}
+-        <span class="file-link">{{ link }}</span><span class="file-size">{{ file_size }}</span><span class="file-icon">{{ icon }}</span>
+-      {% else %}
+-        <span class="file-icon">
+-          {% if attributes.hasClass('file--image') %}
+-          <svg class="icon-gray icon-small">
+-            <use xlink:href="#icon-photo"></use>
+-          </svg>
+-          {% else %}
+-          <svg class="icon-gray icon-small">
+-            <use xlink:href="#icon-insert_drive_file"></use>
+-          </svg>
+-          {% endif %}
+-        </span>
+-        <span class="file-link">{{ link }}</span>
+-        <span class="file-size">{{ file_size }}</span>
+-      {% endif %}
+-    {% endif %}
+   </span>
+-{% endspaceless %}
++
++
++{% endspaceless %}
+\ No newline at end of file
+diff --git a/themes/socialbase/templates/node/field--node--body.html.twig b/themes/socialbase/templates/node/field--node--body.html.twig
+index 81a5fb1..6abe5d8 100644
+--- a/themes/socialbase/templates/node/field--node--body.html.twig
++++ b/themes/socialbase/templates/node/field--node--body.html.twig
+@@ -6,7 +6,7 @@
+ 
+ {% else %}
+ 
+-  <div class="clearfix">
++  <div class="body-text clearfix">
+     {% for item in items %}
+       {{ item.content }}
+     {% endfor %}
+diff --git a/themes/socialbase/templates/node/field--node--field-files.html.twig b/themes/socialbase/templates/node/field--node--field-files.html.twig
+index ca4a9a5..eee010a 100644
+--- a/themes/socialbase/templates/node/field--node--field-files.html.twig
++++ b/themes/socialbase/templates/node/field--node--field-files.html.twig
+@@ -1,6 +1,8 @@
+-<div class="card-nested-section">
+-  <h5> {% trans %}Files{% endtrans %} </h5>
+-  {% for item in items %}
+-    {{ item.content }}
+-  {% endfor %}
+-</div>
++<section class="node__files">
++  <h5 class="files__title">{{ "Files"|t }}</h5>
++  <ul class="files__grid">
++    {% for item in items %}
++      {{ item.content }}
++    {% endfor %}
++  </ul>
++</section>
+diff --git a/themes/socialbase/templates/node/node--full.html.twig b/themes/socialbase/templates/node/node--full.html.twig
+index e54ccef..ab3f42d 100644
+--- a/themes/socialbase/templates/node/node--full.html.twig
++++ b/themes/socialbase/templates/node/node--full.html.twig
+@@ -159,11 +159,10 @@
+       </header>
+     {% endblock %}
+ 
+-    <div class="body-text">
+-      {% block nodefull_body %}
+-        {{ content|without('flag_follow_content') }}
+-      {% endblock %}
+-    </div>
++    {% block nodefull_body %}
++      {{ content|without('flag_follow_content') }}
++    {% endblock %}
++
+ 
+   </div>
+ 
+diff --git a/themes/socialblue/assets/css/file.css b/themes/socialblue/assets/css/file.css
+index 6f5d272..ea51c37 100644
+--- a/themes/socialblue/assets/css/file.css
++++ b/themes/socialblue/assets/css/file.css
+@@ -1,3 +1,7 @@
++.node-file {
++  border-radius: 5px;
++}
++
+ .file > .tabledrag-changed {
+   background: #fcf8e3;
+   border-radius: 0;
+diff --git a/themes/socialblue/components/03-molecules/file/file.scss b/themes/socialblue/components/03-molecules/file/file.scss
+index 46777c4..cf121ba 100644
+--- a/themes/socialblue/components/03-molecules/file/file.scss
++++ b/themes/socialblue/components/03-molecules/file/file.scss
+@@ -1,5 +1,9 @@
+ @import 'settings';
+ 
++.node-file {
++  border-radius: $border-radius-extrasmall;
++}
++
+ .file {
+ 
+   > .tabledrag-changed {
+diff --git a/themes/socialblue/os-builder/kss-assets/animals1-square.jpg b/themes/socialblue/os-builder/kss-assets/animals1-square.jpg
+new file mode 100644
+index 0000000..fecf9c2
+Binary files /dev/null and b/themes/socialblue/os-builder/kss-assets/animals1-square.jpg differ
+diff --git a/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x16.png b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x16.png
+new file mode 100644
+index 0000000..cb2a40e
+Binary files /dev/null and b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x16.png differ
+diff --git a/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x32.png b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x32.png
+new file mode 100644
+index 0000000..8ef8b97
+Binary files /dev/null and b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x32.png differ
+diff --git a/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x64.png b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x64.png
+new file mode 100644
+index 0000000..c9042da
+Binary files /dev/null and b/themes/socialblue/os-builder/kss-assets/icon_1_pdf_x64.png differ
+diff --git a/themes/socialblue/os-builder/kss-assets/people3-square.jpg b/themes/socialblue/os-builder/kss-assets/people3-square.jpg
+new file mode 100644
+index 0000000..022cc64
+Binary files /dev/null and b/themes/socialblue/os-builder/kss-assets/people3-square.jpg differ
+diff --git a/themes/socialblue/socialblue.info.yml b/themes/socialblue/socialblue.info.yml
+index 3ca2977..6bb74d2 100644
+--- a/themes/socialblue/socialblue.info.yml
++++ b/themes/socialblue/socialblue.info.yml
+@@ -34,6 +34,8 @@ libraries-extend:
+     - socialblue/breadcrumb
+   socialbase/dropdown:
+     - socialblue/dropdown
++  socialbase/file:
++      - socialblue/file
+   socialbase/form-elements:
+     - socialblue/form-elements
+   socialbase/form--input-groups:
+diff --git a/themes/socialblue/styleguide/kss-assets/animals1-square.jpg b/themes/socialblue/styleguide/kss-assets/animals1-square.jpg
+new file mode 100644
+index 0000000..fecf9c2
+Binary files /dev/null and b/themes/socialblue/styleguide/kss-assets/animals1-square.jpg differ
+diff --git a/themes/socialblue/styleguide/kss-assets/base/block--introtext.css b/themes/socialblue/styleguide/kss-assets/base/block--introtext.css
+index 0ead33a..51351e3 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/block--introtext.css
++++ b/themes/socialblue/styleguide/kss-assets/base/block--introtext.css
+@@ -1,5 +1,16 @@
+-.block--intro-text__content {
+-  max-width: 520px;
+-  position: relative;
+-  margin: auto;
++.block--intro-text {
++  padding-left: calc(1rem + 15px);
++  margin-left: 1rem;
++  margin-right: 1rem;
++}
++@media (min-width: 900px) {
++  .block--intro-text {
++    margin-left: 0;
++    margin-right: 0;
++    margin-top: 1.5rem;
++  }
++  .block--intro-text__title,
++  .block--intro-text__content {
++    max-width: calc((100% / 1.5) - 15px);
++  }
+ }
+diff --git a/themes/socialblue/styleguide/kss-assets/base/ckeditor.css b/themes/socialblue/styleguide/kss-assets/base/ckeditor.css
+index c383066..605b552 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/ckeditor.css
++++ b/themes/socialblue/styleguide/kss-assets/base/ckeditor.css
+@@ -745,6 +745,10 @@ img.align-center {
+   position: relative;
+ }
+ 
++body {
++  margin: 10px;
++}
++
+ @media (min-width: 600px) {
+ 
+   body {
+diff --git a/themes/socialblue/styleguide/kss-assets/base/file.css b/themes/socialblue/styleguide/kss-assets/base/file.css
+index ee50698..ea237b3 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/file.css
++++ b/themes/socialblue/styleguide/kss-assets/base/file.css
+@@ -1,26 +1,120 @@
+-.file {
+-  display: table;
++.node__files {
++  margin-top: 40px;
++}
++
++.files__grid {
++  padding-left: 0;
++  list-style: none;
++  margin-bottom: 0;
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  -ms-flex-wrap: wrap;
++      flex-wrap: wrap;
++  -webkit-box-pack: justify;
++      -ms-flex-pack: justify;
++          justify-content: space-between;
++}
++
++.files__title {
++  margin-bottom: 20px;
++}
++
++.node-file {
++  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
++  -webkit-box-flex: 0;
++      -ms-flex: 0 0 47.5%;
++          flex: 0 0 47.5%;
++  margin-bottom: 13px;
+   font-size: 0.75rem;
+-  margin: 10px 0 1rem;
+-  width: 100%;
++  background: #f3f3f3;
+ }
+ 
+-.file > span {
+-  background: #fff;
+-  border-bottom: 1px solid #e6e6e6;
+-  border-top: 1px solid #e6e6e6;
++.node-file:hover {
++  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
++}
++
++.node-file__link {
++  display: block;
++  position: relative;
++  height: 100px;
++  padding: 12px;
++  color: inherit;
++  text-decoration: none;
++}
++
++.node-file__title {
++  overflow: hidden;
++  position: relative;
++  line-height: 1.35em;
++  max-height: 4.05em;
++  padding-right: 1em;
++  display: block;
++  word-break: break-word;
++  word-wrap: normal;
+ }
+ 
+-.file > span:first-child {
+-  border-left: 1px solid #e6e6e6;
++.node-file__title:before {
++  content: '...';
++  position: absolute;
++  right: 0;
++  bottom: 0;
+ }
+ 
+-.file > span:last-child {
+-  border-right: 1px solid #e6e6e6;
++.node-file__title:after {
++  content: '';
++  position: absolute;
++  right: 0;
++  width: 1em;
++  height: 1em;
++  margin-top: 0.2em;
++  background: #f3f3f3;
+ }
+ 
+-.file > span:not(.text-primary) {
+-  color: #777777;
++.node-file__type {
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  overflow: hidden;
++  text-overflow: ellipsis;
++  white-space: nowrap;
++  margin-top: 4px;
++  position: absolute;
++  bottom: 12px;
++  width: calc(100% - (2 * 12px));
++}
++
++.node-file__icon {
++  margin-right: 8px;
++  -webkit-user-select: none;
++     -moz-user-select: none;
++      -ms-user-select: none;
++          user-select: none;
++  width: 16px;
++  height: 16px;
++}
++
++.node-file__size {
++  text-overflow: ellipsis;
++  overflow: hidden;
++  line-height: 1rem;
++}
++
++.file {
++  display: -webkit-box;
++  display: -ms-flexbox;
++  display: flex;
++  font-size: 0.75rem;
++  margin: 10px 0 1rem;
++  width: 100%;
++  background: #fff;
++  border: 1px solid #e6e6e6;
++  padding: 0.5em 0;
++}
++
++.file > span {
++  padding-left: 0.5em;
++  padding-right: 0.5em;
+ }
+ 
+ .file > .tabledrag-changed {
+@@ -32,16 +126,23 @@
+ }
+ 
+ .file-icon {
+-  display: table-cell;
+-  padding: .25em .5em;
+-  text-align: center;
+-  vertical-align: top;
++  -webkit-user-select: none;
++     -moz-user-select: none;
++      -ms-user-select: none;
++          user-select: none;
++  -webkit-box-flex: 0;
++      -ms-flex: 0 0 32px;
++          flex: 0 0 32px;
++}
++
++.file-icon .node-file__icon {
++  display: block;
+ }
+ 
+ .file-link {
+-  display: table-cell;
+-  vertical-align: middle;
+-  width: 100%;
++  -webkit-box-flex: 1;
++      -ms-flex: 1;
++          flex: 1;
+   white-space: normal;
+   word-break: break-word;
+ }
+@@ -49,11 +150,10 @@
+ .file-link a, .file-link a:hover, .file-link a:focus, .file-link a:active {
+   text-decoration: none;
+   color: inherit;
++  font-weight: 300;
+ }
+ 
+ .file-size {
+-  display: table-cell;
+-  padding: 0.5em 1em;
+   text-align: right;
+   white-space: pre;
+   vertical-align: middle;
+@@ -78,3 +178,22 @@
+     margin-top: 0;
+   }
+ }
++
++@media (min-width: 900px) {
++
++  .files__grid {
++    -webkit-box-pack: start;
++    -ms-flex-pack: start;
++    justify-content: flex-start;
++  }
++
++  .node-file {
++    -ms-flex-preferred-size: 23%;
++    flex-basis: 23%;
++    margin-right: 2%;
++  }
++
++  .node-file:nth-child(4n+4) {
++    margin-right: 0;
++  }
++}
+diff --git a/themes/socialblue/styleguide/kss-assets/base/hero.css b/themes/socialblue/styleguide/kss-assets/base/hero.css
+index 7149e74..f371df1 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/hero.css
++++ b/themes/socialblue/styleguide/kss-assets/base/hero.css
+@@ -1,7 +1,3 @@
+-.hero-container.container .card {
+-  margin: 0.75rem 0;
+-}
+-
+ .cover {
+   position: relative;
+   text-align: center;
+@@ -49,6 +45,7 @@
+   width: 100%;
+   position: relative;
+   z-index: 2;
++  min-height: 300px;
+ }
+ 
+ .node-unpublished .status:before {
+@@ -62,13 +59,10 @@
+ 
+ .page-title {
+   font-weight: 700;
+-  text-align: center;
+-  margin: 0;
+-  padding: 2rem 0;
+-}
+-
+-.cover-img .page-title {
+   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
++  text-align: center;
++  margin: 1em auto 0.5em;
++  width: 80%;
+ }
+ 
+ .hero-avatar {
+@@ -156,6 +150,14 @@
+ 
+ @media (min-width: 600px) {
+ 
++  .cover-wrap {
++    min-height: 410px;
++  }
++
++  .page-title {
++    max-width: 900px;
++  }
++
+   .hero-avatar {
+     width: 128px;
+     height: 128px;
+@@ -165,15 +167,6 @@
+ 
+ @media (min-width: 900px) {
+ 
+-  .hero-container.container {
+-    padding-left: 1em;
+-    padding-right: 1em;
+-  }
+-
+-  .cover-img .cover-wrap {
+-    min-height: 410px;
+-  }
+-
+   .hero-footer {
+     display: -webkit-box;
+     display: -ms-flexbox;
+diff --git a/themes/socialblue/styleguide/kss-assets/base/layout.css b/themes/socialblue/styleguide/kss-assets/base/layout.css
+index 9ba035a..1ac77ab 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/layout.css
++++ b/themes/socialblue/styleguide/kss-assets/base/layout.css
+@@ -61,3 +61,14 @@
+     display: none;
+   }
+ }
++
++@media (min-width: 1200px) {
++
++  .region--main-content {
++    padding-left: 0;
++  }
++
++  .region--complementary {
++    padding-right: 0;
++  }
++}
+diff --git a/themes/socialblue/styleguide/kss-assets/base/navbar.css b/themes/socialblue/styleguide/kss-assets/base/navbar.css
+index 0593f4d..bfe0c4f 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/navbar.css
++++ b/themes/socialblue/styleguide/kss-assets/base/navbar.css
+@@ -266,11 +266,6 @@
+     padding-right: 0;
+   }
+ 
+-  .navbar-fixed-top .container {
+-    padding-left: 1rem;
+-    padding-right: 1rem;
+-  }
+-
+   .navbar-toggle {
+     display: none;
+   }
+diff --git a/themes/socialblue/styleguide/kss-assets/base/popover.css b/themes/socialblue/styleguide/kss-assets/base/popover.css
+index 584abdc..a595059 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/popover.css
++++ b/themes/socialblue/styleguide/kss-assets/base/popover.css
+@@ -2,7 +2,6 @@
+   position: absolute;
+   z-index: 1070;
+   display: block;
+-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-style: normal;
+   font-weight: normal;
+   letter-spacing: normal;
+@@ -95,7 +94,6 @@
+   display: none;
+   max-width: 276px;
+   padding: 0;
+-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-style: normal;
+   font-weight: normal;
+   letter-spacing: normal;
+diff --git a/themes/socialblue/styleguide/kss-assets/base/stream.css b/themes/socialblue/styleguide/kss-assets/base/stream.css
+index e091e10..c8cbf69 100644
+--- a/themes/socialblue/styleguide/kss-assets/base/stream.css
++++ b/themes/socialblue/styleguide/kss-assets/base/stream.css
+@@ -96,12 +96,11 @@
+   }
+ 
+   .stream:before {
+-    left: 14px;
+     top: 42px;
+   }
+ 
+   .stream-icon {
+-    left: 7px;
++    left: 0;
+     top: 36px;
+     width: 16px;
+     height: 16px;
+@@ -109,7 +108,7 @@
+   }
+ 
+   .card--stream {
+-    margin-left: 40px;
++    margin-left: 30px;
+   }
+ 
+   .card--stream:before {
+diff --git a/themes/socialblue/styleguide/kss-assets/css/cards.css b/themes/socialblue/styleguide/kss-assets/css/cards.css
+index 7d4ab0b..c259285 100644
+--- a/themes/socialblue/styleguide/kss-assets/css/cards.css
++++ b/themes/socialblue/styleguide/kss-assets/css/cards.css
+@@ -1,5 +1,8 @@
+ .card {
+-  border-radius: 10px;
++  border-top-left-radius: 10px;
++  border-bottom-left-radius: 10px;
++  border-top-right-radius: 10px;
++  border-bottom-right-radius: 10px;
+   background-color: white;
+ }
+ 
+diff --git a/themes/socialblue/styleguide/kss-assets/css/file.css b/themes/socialblue/styleguide/kss-assets/css/file.css
+index 6f5d272..ea51c37 100644
+--- a/themes/socialblue/styleguide/kss-assets/css/file.css
++++ b/themes/socialblue/styleguide/kss-assets/css/file.css
+@@ -1,3 +1,7 @@
++.node-file {
++  border-radius: 5px;
++}
++
+ .file > .tabledrag-changed {
+   background: #fcf8e3;
+   border-radius: 0;
+diff --git a/themes/socialblue/styleguide/kss-assets/css/teaser.css b/themes/socialblue/styleguide/kss-assets/css/teaser.css
+index a95bd0c..0f69b5d 100644
+--- a/themes/socialblue/styleguide/kss-assets/css/teaser.css
++++ b/themes/socialblue/styleguide/kss-assets/css/teaser.css
+@@ -10,7 +10,8 @@
+ @media (min-width: 600px) {
+ 
+   .teaser__image {
+-    border-radius: 10px 0 0 10px;
++    border-top-left-radius: inherit;
++    border-bottom-left-radius: inherit;
+     background: #e6e6e6;
+   }
+ 
+diff --git a/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x16.png b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x16.png
+new file mode 100644
+index 0000000..cb2a40e
+Binary files /dev/null and b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x16.png differ
+diff --git a/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x32.png b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x32.png
+new file mode 100644
+index 0000000..8ef8b97
+Binary files /dev/null and b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x32.png differ
+diff --git a/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x64.png b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x64.png
+new file mode 100644
+index 0000000..c9042da
+Binary files /dev/null and b/themes/socialblue/styleguide/kss-assets/icon_1_pdf_x64.png differ
+diff --git a/themes/socialblue/styleguide/kss-assets/people3-square.jpg b/themes/socialblue/styleguide/kss-assets/people3-square.jpg
+new file mode 100644
+index 0000000..022cc64
+Binary files /dev/null and b/themes/socialblue/styleguide/kss-assets/people3-square.jpg differ
+diff --git a/themes/socialblue/styleguide/section-molecules.html b/themes/socialblue/styleguide/section-molecules.html
+index 6fb9272..5d05f68 100644
+--- a/themes/socialblue/styleguide/section-molecules.html
++++ b/themes/socialblue/styleguide/section-molecules.html
+@@ -165,6 +165,24 @@ <h6 class="text-primary"><span class="kss-nav_ref" 4</span><span class="kss-nav_
+                 ><span class="kss-nav__name">Teaser unpublished</span>
+                         </a>
+                       </li>
++                                          <li>
++                        <a class="kss-nav__menu-link" href="#kssref-molecules-files">
++                <span class="kss-nav__ref ">4.3</span
++                ><span class="kss-nav__name">File styles</span>
++                        </a>
++                      </li>
++                                          <li>
++                        <a class="kss-nav__menu-link" href="#kssref-molecules-files-node">
++                <span class="kss-nav__ref kss-nav__ref-child">4.3.1</span
++                ><span class="kss-nav__name">File in node</span>
++                        </a>
++                      </li>
++                                          <li>
++                        <a class="kss-nav__menu-link" href="#kssref-molecules-files-form">
++                <span class="kss-nav__ref kss-nav__ref-child">4.3.2</span
++                ><span class="kss-nav__name">File in form</span>
++                        </a>
++                      </li>
+                                       <li>
+                     <a href="#main-content" class="back-to-top">
+                       <span>Back to top</span>
+@@ -674,7 +692,7 @@ <h2 class="kss-title kss-title--level-2">
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/people3-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/people3-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+   </div>
+@@ -764,7 +782,7 @@ <h4 class="teaser__title"> <a href="#">Teaser title</a></h4>
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/people3-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/people3-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+   </div>
+@@ -927,7 +945,7 @@ <h3 class="kss-title kss-title--level-3">
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/animals1-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/animals1-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+     <!-- diff -->
+@@ -1021,7 +1039,7 @@ <h4 class="teaser__title"> <a href="#">Teaser title</a></h4>
+     </div>
+ 
+     <a href="#">
+-      <img src="kss-assets/content/images/animals1-square.jpg" alt="" class="img-responsive">
++      <img src="kss-assets/animals1-square.jpg" alt="" class="img-responsive">
+     </a>
+ 
+     <!-- diff -->
+@@ -1100,6 +1118,275 @@ <h4 class="teaser__title"> <a href="#">Teaser title</a></h4>
+                 Source: <code>03-molecules/teaser/teaser.scss</code>, line 24
+               </div>
+                       </section>
++                                  <section id="kssref-molecules-files" class="kss-section kss-section--depth-2">
++
++              
++                            <h2 class="kss-title kss-title--level-2">
++              <a href="#kssref-molecules-files">
++                <span class="lead">
++                  4.3
++                  <span class="visually-hidden">
++                      molecules.files
++                    </span>
++                </span>
++                File styles
++              </a>
++            </h2>
++
++            
++
++                          <div class="kss-description">
++                <p>There are two styles of displaying files. One is with node where they are shown
++as attachments. The other styles is when files are in forms.</p>
++
++              </div>
++            
++            
++
++            
++                          <div class="kss-source kss-style">
++                Source: <code>03-molecules/file/file.scss</code>, line 1
++              </div>
++                      </section>
++                                  <section id="kssref-molecules-files-node" class="kss-section kss-section--depth-3">
++
++              
++                            <h3 class="kss-title kss-title--level-3">
++              <a href="#kssref-molecules-files-node">
++                <span class="lead">
++                  4.3.1
++                  <span class="visually-hidden">
++                      molecules.files.node
++                    </span>
++                </span>
++                File in node
++              </a>
++            </h3>
++
++                          <p class="kss-toolbar">
++                                  <!--<a href="#kssref-molecules-files-node" data-kss-fullscreen="kssref-molecules-files-node">
++                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
++                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
++                    </svg>
++                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
++                    </svg>
++                  </a>
++                  <a href="item-molecules-files-node.html" target="_blank">
++                    <span class="kss-toolbar__tooltip">Open in new window</span>
++                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
++                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
++                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
++                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
++                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
++                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
++                    </svg>
++                  </a>-->
++                                <a href="#kssref-molecules-files-node" data-kss-guides="true">
++                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
++                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
++                  </svg>
++                </a>
++                <a href="#kssref-molecules-files-node" data-kss-markup="true">
++                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
++                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
++                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
++                  </svg>
++                </a>
++              </p>
++            
++
++                          <div class="kss-description">
++                <p>The display of files in nodes is done with small cards (emphasis layer).
++The cards must be placed in a grid <code>.files__grid</code>. The element consists of the file name (max 3 lines truncated), the file type and file size.</p>
++
++              </div>
++            
++            
++
++                          <div class="card">
++                <header class="card__title card__title--underline">
++                  Example                </header>
++                <div class="card__body">
++
++                  
++                                      <div class="kss-modifier__example">
++                      <ul class="files__grid">
++<li class="node-file">
++  <a class="node-file__link" href="#" title="Open file in a new window" target="_blank">
++    <span class="node-file__title">Vestibulum id ligula porta felis euismod semper.pdf</span>
++    <span class="node-file__type">
++        <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" />
++        <span class="node-file__size">40.14 KB</span>
++      </span>
++  </a>
++</li>
++</ul>
++                      <div class="kss-modifier__example-footer"></div>
++                    </div>
++                  
++                  
++                </div>
++
++              </div>
++
++                              <details class="card kss-markup kss-style">
++                  <summary style="padding: 5px 20px; cursor: pointer;">
++                                          Markup
++                                      </summary>
++                   <pre class="language-markup"><code class="language-markup" data-language="html"><ul class="files__grid">
++<li class="node-file">
++  <a class="node-file__link" href="#" title="Open file in a new window" target="_blank">
++    <span class="node-file__title">Vestibulum id ligula porta felis euismod semper.pdf</span>
++    <span class="node-file__type">
++        <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" />
++        <span class="node-file__size">40.14 KB</span>
++      </span>
++  </a>
++</li>
++</ul></code></pre>
++
++                </details>
++              
++            
++                          <div class="kss-source kss-style">
++                Source: <code>03-molecules/file/file.scss</code>, line 10
++              </div>
++                      </section>
++                                  <section id="kssref-molecules-files-form" class="kss-section kss-section--depth-3">
++
++              
++                            <h3 class="kss-title kss-title--level-3">
++              <a href="#kssref-molecules-files-form">
++                <span class="lead">
++                  4.3.2
++                  <span class="visually-hidden">
++                      molecules.files.form
++                    </span>
++                </span>
++                File in form
++              </a>
++            </h3>
++
++                          <p class="kss-toolbar">
++                                  <!--<a href="#kssref-molecules-files-form" data-kss-fullscreen="kssref-molecules-files-form">
++                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
++                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
++                    </svg>
++                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
++                    </svg>
++                  </a>
++                  <a href="item-molecules-files-form.html" target="_blank">
++                    <span class="kss-toolbar__tooltip">Open in new window</span>
++                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
++                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
++                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
++                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
++                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
++                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
++                    </svg>
++                  </a>-->
++                                <a href="#kssref-molecules-files-form" data-kss-guides="true">
++                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
++                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
++                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
++                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
++                  </svg>
++                </a>
++                <a href="#kssref-molecules-files-form" data-kss-markup="true">
++                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
++                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
++                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
++                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
++                  </svg>
++                </a>
++              </p>
++            
++
++                          <div class="kss-description">
++                <p>Files in forms need to be able to changed easily. For example for images their is
++shown a preview when editing nodes. For file attachments the file molecule is part of
++the file upload widget where multiple rows can be added.</p>
++
++              </div>
++            
++            
++
++                          <div class="card">
++                <header class="card__title card__title--underline">
++                  Example                </header>
++                <div class="card__body">
++
++                  
++                                      <div class="kss-modifier__example">
++                      <span class="file">
++  <span class="file-icon">
++    <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" /></span>
++  <span class="file-link"><a href="#" title="Open file in a new window" target="_blank">Vestibulum id ligula porta felis euismod semper.pdf</a></span>
++  <span class="file-size">40.14 KB</span>
++</span>
++                      <div class="kss-modifier__example-footer"></div>
++                    </div>
++                  
++                  
++                </div>
++
++              </div>
++
++                              <details class="card kss-markup kss-style">
++                  <summary style="padding: 5px 20px; cursor: pointer;">
++                                          Markup
++                                      </summary>
++                   <pre class="language-markup"><code class="language-markup" data-language="html"><span class="file">
++  <span class="file-icon">
++    <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" /></span>
++  <span class="file-link"><a href="#" title="Open file in a new window" target="_blank">Vestibulum id ligula porta felis euismod semper.pdf</a></span>
++  <span class="file-size">40.14 KB</span>
++</span></code></pre>
++
++                </details>
++              
++            
++                          <div class="kss-source kss-style">
++                Source: <code>03-molecules/file/file.scss</code>, line 21
++              </div>
++                      </section>
+                     
+         </div>
+ 
+diff --git a/themes/socialblue/styleguide/section-sass.html b/themes/socialblue/styleguide/section-sass.html
+index d04e2ec..d8c74c7 100644
+--- a/themes/socialblue/styleguide/section-sass.html
++++ b/themes/socialblue/styleguide/section-sass.html
+@@ -166,32 +166,44 @@ <h6 class="text-primary"><span class="kss-nav_ref" 1</span><span class="kss-nav_
+                         </a>
+                       </li>
+                                           <li>
+-                        <a class="kss-nav__menu-link" href="#kssref-sass-roundedcorners">
++                        <a class="kss-nav__menu-link" href="#kssref-sass-multiline-ellipsis">
+                 <span class="kss-nav__ref ">1.7</span
++                ><span class="kss-nav__name">Multiline ellipsis</span>
++                        </a>
++                      </li>
++                                          <li>
++                        <a class="kss-nav__menu-link" href="#kssref-sass-roundedcorners">
++                <span class="kss-nav__ref ">1.8</span
+                 ><span class="kss-nav__name">Rounded corners</span>
+                         </a>
+                       </li>
+                                           <li>
++                        <a class="kss-nav__menu-link" href="#kssref-sass-list-unstyled">
++                <span class="kss-nav__ref ">1.9</span
++                ><span class="kss-nav__name">Unstyled list</span>
++                        </a>
++                      </li>
++                                          <li>
+                         <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden">
+-                <span class="kss-nav__ref ">1.8</span
++                <span class="kss-nav__ref ">1.10</span
+                 ><span class="kss-nav__name">Visually hidden</span>
+                         </a>
+                       </li>
+                                           <li>
+                         <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--off">
+-                <span class="kss-nav__ref ">1.9</span
++                <span class="kss-nav__ref ">1.11</span
+                 ><span class="kss-nav__name">Visually-hidden--off</span>
+                         </a>
+                       </li>
+                                           <li>
+                         <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--focusable">
+-                <span class="kss-nav__ref ">1.10</span
++                <span class="kss-nav__ref ">1.12</span
+                 ><span class="kss-nav__name">Visually-hidden--focusable</span>
+                         </a>
+                       </li>
+                                           <li>
+                         <a class="kss-nav__menu-link" href="#kssref-sass-responsive-img">
+-                <span class="kss-nav__ref ">1.11</span
++                <span class="kss-nav__ref ">1.13</span
+                 ><span class="kss-nav__name">Responsive image</span>
+                         </a>
+                       </li>
+@@ -512,13 +524,44 @@ <h2 class="kss-title kss-title--level-2">
+                 Source: <code>00-config/mixins/_reset-text.scss</code>, line 1
+               </div>
+                       </section>
++                                  <section id="kssref-sass-multiline-ellipsis" class="kss-section kss-section--depth-2">
++
++              
++                            <h2 class="kss-title kss-title--level-2">
++              <a href="#kssref-sass-multiline-ellipsis">
++                <span class="lead">
++                  1.7
++                  <span class="visually-hidden">
++                      sass.multiline-ellipsis
++                    </span>
++                </span>
++                Multiline ellipsis
++              </a>
++            </h2>
++
++            
++
++                          <div class="kss-description">
++                <p>Allows an text to be truncated and get &#39;...&#39; at the end when it exceeds the
++maximum amount of lines.
++<code>@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white)</code></p>
++
++              </div>
++            
++            
++
++            
++                          <div class="kss-source kss-style">
++                Source: <code>00-config/mixins/_multiline-ellipsis.scss</code>, line 1
++              </div>
++                      </section>
+                                   <section id="kssref-sass-roundedcorners" class="kss-section kss-section--depth-2">
+ 
+               
+                             <h2 class="kss-title kss-title--level-2">
+               <a href="#kssref-sass-roundedcorners">
+                 <span class="lead">
+-                  1.7
++                  1.8
+                   <span class="visually-hidden">
+                       sass.roundedcorners
+                     </span>
+@@ -547,13 +590,43 @@ <h2 class="kss-title kss-title--level-2">
+                 Source: <code>00-config/mixins/_border-radius.scss</code>, line 1
+               </div>
+                       </section>
++                                  <section id="kssref-sass-list-unstyled" class="kss-section kss-section--depth-2">
++
++              
++                            <h2 class="kss-title kss-title--level-2">
++              <a href="#kssref-sass-list-unstyled">
++                <span class="lead">
++                  1.9
++                  <span class="visually-hidden">
++                      sass.list-unstyled
++                    </span>
++                </span>
++                Unstyled list
++              </a>
++            </h2>
++
++            
++
++                          <div class="kss-description">
++                <p>Remove the default list-style and left margin on list items (immediate children only). This only applies to immediate children list items, meaning you will need to add the class for any nested lists as well.
++<code>@mixin list-unstyled</code></p>
++
++              </div>
++            
++            
++
++            
++                          <div class="kss-source kss-style">
++                Source: <code>00-config/mixins/_list-unstyled.scss</code>, line 1
++              </div>
++                      </section>
+                                   <section id="kssref-sass-visually-hidden" class="kss-section kss-section--depth-2">
+ 
+               
+                             <h2 class="kss-title kss-title--level-2">
+               <a href="#kssref-sass-visually-hidden">
+                 <span class="lead">
+-                  1.8
++                  1.10
+                   <span class="visually-hidden">
+                       sass.visually-hidden
+                     </span>
+@@ -584,7 +657,7 @@ <h2 class="kss-title kss-title--level-2">
+                             <h2 class="kss-title kss-title--level-2">
+               <a href="#kssref-sass-visually-hidden--off">
+                 <span class="lead">
+-                  1.9
++                  1.11
+                   <span class="visually-hidden">
+                       sass.visually-hidden--off
+                     </span>
+@@ -614,7 +687,7 @@ <h2 class="kss-title kss-title--level-2">
+                             <h2 class="kss-title kss-title--level-2">
+               <a href="#kssref-sass-visually-hidden--focusable">
+                 <span class="lead">
+-                  1.10
++                  1.12
+                   <span class="visually-hidden">
+                       sass.visually-hidden--focusable
+                     </span>
+@@ -649,7 +722,7 @@ <h2 class="kss-title kss-title--level-2">
+                             <h2 class="kss-title kss-title--level-2">
+               <a href="#kssref-sass-responsive-img">
+                 <span class="lead">
+-                  1.11
++                  1.13
+                   <span class="visually-hidden">
+                       sass.responsive-img
+                     </span>

@@ -188,11 +188,10 @@
       </div>
     {% endif %}
 
-    <div class="body-text">
-      {% block nodefull_body %}
-        {{ content|without('flag_follow_content') }}
-      {% endblock %}
-    </div>
+    {% block nodefull_body %}
+      {{ content|without('flag_follow_content') }}
+    {% endblock %}
+
 
   </div>
 
