@@ -125,7 +125,7 @@ class AccountHeaderBlock extends BlockBase {
         }
         else {
           $notifications_icon = 'icon-notifications';
-          $label_classes = 'badge';
+          $label_classes = 'badge badge-accent badge--pill';
 
           if ($num_notifications > 99) {
             $num_notifications = '99+';
