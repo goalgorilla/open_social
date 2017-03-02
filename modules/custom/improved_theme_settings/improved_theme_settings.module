@@ -37,13 +37,14 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupa
 /**
  * Function that returns the updated color pallete colors with the generated
  * CSS for in the head.
- * @param string $colors
+ * @param string $colors colors from the active theme
+ * @param string $system_theme_settings active theme
  * @return string
  */
-function _improved_theme_settings_update_palette($colors = '') {
+function _improved_theme_settings_update_palette($colors = '', $system_theme_settings = 'socialblue') {
 
   if (empty($colors)) {
-    $colors = color_get_palette('socialblue');
+    $colors = color_get_palette($system_theme_settings);
   }
 
   $primary = $colors['brand-bg-primary'];
@@ -229,76 +230,78 @@ function improved_theme_settings_page_attachments(array &$page) {
   // We render our color & font settings in the head. Only if socialblue is
   // the default theme. And only if the current active theme is socialblue.
   // Otherwise we also render it on all admin pages.
-  if ($system_theme_settings === 'socialblue' && $active_theme == $system_theme_settings) {
-    $style_to_add = '';
-    if (\Drupal::moduleHandler()->moduleExists('social_font')) {
-      // Render font value here.
-      $style_to_add .= social_font_render();
-    }
-
-    $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
-    if (!empty($border_radius) || $border_radius == 0) {
-      $style_to_add .= '
-      .brand-border-radius {
-        border-radius: ' . $border_radius . 'px !important;
+  if ($system_theme_settings === 'socialblue' || $system_theme_settings === 'socialsaas') {
+    if ($active_theme == $system_theme_settings) {
+      $style_to_add = '';
+      if (\Drupal::moduleHandler()->moduleExists('social_font')) {
+        // Render font value here.
+        $style_to_add .= social_font_render();
       }
 
-      .tabs-left .vertical-tabs-list {
-        border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
-      }
-
-      .btn {
-        border-radius: ' . $border_radius . 'px !important;
-      }
-
-      .teaser--stream:last-child {
-        border-bottom-left-radius: ' . $border_radius . 'px !important;
-        border-bottom-right-radius: ' . $border_radius . 'px !important;
-      }
-
-      .teaser--stream:last-child .teaser__image {
-        border-bottom-left-radius: ' . $border_radius . 'px !important;
-      }
-
-      .card__nested-section:last-child {
-        border-bottom-left-radius: ' . $border_radius . 'px !important;
-        border-bottom-right-radius: ' . $border_radius . 'px !important;
-      }
-
-      .off-canvas-xs-only {
-        border-radius: ' . $border_radius . 'px !important;
-      }
-
-      @media (min-width: 600px) {
-        .teaser__teaser-type {
-          border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+      $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
+      if (!empty($border_radius) || $border_radius == 0) {
+        $style_to_add .= '
+        .brand-border-radius {
+          border-radius: ' . $border_radius . 'px !important;
         }
+
+        .tabs-left .vertical-tabs-list {
+          border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
+        }
+
+        .btn {
+          border-radius: ' . $border_radius . 'px !important;
+        }
+
+        .teaser--stream:last-child {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+          border-bottom-right-radius: ' . $border_radius . 'px !important;
+        }
+
+        .teaser--stream:last-child .teaser__image {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+        }
+
+        .card__nested-section:last-child {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+          border-bottom-right-radius: ' . $border_radius . 'px !important;
+        }
+
+        .off-canvas-xs-only {
+          border-radius: ' . $border_radius . 'px !important;
+        }
+
+        @media (min-width: 600px) {
+          .teaser__teaser-type {
+            border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+          }
+        }
+
+        ';
       }
 
-      ';
-    }
+      // Get the color palette saved for custom social blue
+      $colors = color_get_palette($system_theme_settings);
+      $default = color_get_palette($system_theme_settings, TRUE);
 
-    // Get the color palette saved for custom social blue
-    $colors = color_get_palette('socialblue');
-    $default = color_get_palette('socialblue', TRUE);
+      // Check if there are differences between socialblue default scheme and the
+      // saved palette. If yes we render our extra's in the head too.
+      if (count(array_diff($colors, $default)) > 0) {
+        $style_to_add .= _improved_theme_settings_update_palette($colors, $system_theme_settings);
+      }
 
-    // Check if there are differences between socialblue default scheme and the
-    // saved palette. If yes we render our extra's in the head too.
-    if (count(array_diff($colors, $default)) > 0) {
-      $style_to_add .= _improved_theme_settings_update_palette($colors);
-    }
+      if (!empty($style_to_add)) {
+        $page['#attached']['html_head'][] = [
+          [
+            '#type' => 'html_tag',
+            '#tag' => 'style',
+            '#value' => Drupal\Core\Render\Markup::create($style_to_add),
+          ],
 
-    if (!empty($style_to_add)) {
-      $page['#attached']['html_head'][] = [
-        [
-          '#type' => 'html_tag',
-          '#tag' => 'style',
-          '#value' => Drupal\Core\Render\Markup::create($style_to_add),
-        ],
-
-        // A key, to make it possible to recognize this HTML element when altering.
-        'social_theme_preprocess'
-      ];
+          // A key, to make it possible to recognize this HTML element when altering.
+          'social_theme_preprocess'
+        ];
+      }
     }
   }
 }
