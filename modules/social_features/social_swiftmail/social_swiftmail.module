@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * Implements hook_mail_alter().
+ * @param $message
+ */
+function social_swiftmail_mail_alter(&$message) {
+  print_r($message);
+}
+
+function social_swiftmail_test() {
+  \Drupal\social_post\Entity\Post::create([
+    'langcode' => 'en',
+    'field_post' => 'Hi [~paulharris], you good?',
+    'field_visibility' => 1,
+    'user_id' => 6,
+    'uid' => 6,
+    'created' => 1487855820,
+    'changed' => 1487855820,
+  ])->save();
+}
