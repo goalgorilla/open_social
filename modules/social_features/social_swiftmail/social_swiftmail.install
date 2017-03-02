@@ -1,0 +1,13 @@
+<?php
+
+function social_swiftmailer_install() {
+  // Get swift and mailsystem config
+  $swift_settings = \Drupal::configFactory()->getEditable('swiftmailer.message');
+  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+  // Alter swift settings.
+  $swift_settings->set('format', 'text/html')->save();
+  $swift_settings->set('respect_format', FALSE)->save();
+  // Alter mailsystem settings.
+  $mailsystem_settings->set('defaults.sender', 'swiftmailer')->save();
+  $mailsystem_settings->set('defaults.formatter', 'swiftmailer')->save();
+}
