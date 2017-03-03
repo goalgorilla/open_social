@@ -111,6 +111,35 @@ class AccountHeaderBlock extends BlockBase {
         );
       }
 
+      // Get all group types
+      $group_types = \Drupal::entityQuery('group_type')->execute();
+      // Check if there are more group_types and alter the url.
+      if (count($group_types) >= 2) {
+        $links['add']['below']['add_group'] = array(
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => $this->t('Create New Group'),
+          'label' => $this->t('New group'),
+          'title_classes' => '',
+          'url' => Url::fromUserInput('/group/add/'),
+        );
+      } else {
+        $links['add']['below']['add_group'] = array(
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => $this->t('Create New Group'),
+          'label' => $this->t('New group'),
+          'title_classes' => '',
+          'url' => Url::fromUserInput('/group/add/open_group'),
+        );
+      }
+
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
         $notifications = \Drupal::service('renderer')->render($notifications_view);
