@@ -36,11 +36,6 @@ function activity_creator_token_info() {
 function activity_creator_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
-  dpm($type);
-  if ($type == 'activity') {
-    dpm($data);
-  }
-
   if ($type == 'activity' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
