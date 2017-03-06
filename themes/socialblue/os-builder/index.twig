@@ -62,41 +62,41 @@
 
     <div class="container">
 
-      <div class="row">
+      <div class="row layout--with-complementary">
 
-
-        <aside class="region--complementary complementary-top" role="complementary">
-          <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
-            {% for menu_item in menu %}
-              {% if menu_item.isActive and menu_item.children is not empty %}
-                <h6 class="text-primary"><span class="kss-nav_ref" {{ menu_item.referenceNumber }}</span><span class="kss-nav__name">{{ menu_item.header }}</h6>
-                <ul class="nav table-of-contents docs-sidebar">
-                    {% for menu_child in menu_item.children %}
-                      <li>
-                        <a class="kss-nav__menu-link" href="#kssref-{{ menu_child.referenceURI }}">
-                <span class="kss-nav__ref {% if menu_child.isGrandChild %}kss-nav__ref-child{% endif %}">{{ menu_child.referenceNumber }}</span
-                ><span class="kss-nav__name">{{ menu_child.header }}</span>
-                        </a>
-                      </li>
-                    {% endfor %}
-                  <li>
-                    <a href="#main-content" class="back-to-top">
-                      <span>Back to top</span>
-                      <svg class="icon-small icon-gray">
-                      <use xlink:href="#icon-expand-less"></use>
-                      </svg>
-                    </a>
-                  </li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          </nav>
-
+        <aside class="region--complementary">
+          <div class="complementary-top" role="complementary">
+            <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
+              {% for menu_item in menu %}
+                {% if menu_item.isActive and menu_item.children is not empty %}
+                  <h6 class="text-primary"><span class="kss-nav_ref" {{ menu_item.referenceNumber }}</span><span class="kss-nav__name">{{ menu_item.header }}</h6>
+                  <ul class="nav table-of-contents docs-sidebar">
+                      {% for menu_child in menu_item.children %}
+                        <li>
+                          <a class="kss-nav__menu-link" href="#kssref-{{ menu_child.referenceURI }}">
+                  <span class="kss-nav__ref {% if menu_child.isGrandChild %}kss-nav__ref-child{% endif %}">{{ menu_child.referenceNumber }}</span
+                  ><span class="kss-nav__name">{{ menu_child.header }}</span>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    <li>
+                      <a href="#main-content" class="back-to-top">
+                        <span>Back to top</span>
+                        <svg class="icon-small icon-gray">
+                        <use xlink:href="#icon-expand-less"></use>
+                        </svg>
+                      </a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </nav>
+          </div>
         </aside>
 
 
 
-        <div class="region--main-content">
+        <div class="region--content">
 
             {% if homepage %}
             <div id="kssref-0" class="kss-section kss-section--depth-0 kss-overview kss-style">

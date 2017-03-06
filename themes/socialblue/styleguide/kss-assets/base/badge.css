@@ -1,8 +1,8 @@
 .badge {
   display: inline-block;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  padding: 0.25em 0.4em;
+  margin-bottom: 3px;
+  margin-right: 3px;
+  padding: 4px 0.4em;
   font-size: 75%;
   font-weight: 500;
   line-height: 1;
@@ -15,6 +15,14 @@
 
 .badge:empty {
   display: none;
+}
+
+small .badge,
+.small .badge {
+  font-size: 90%;
+  position: relative;
+  top: -1px;
+  margin: 0;
 }
 
 .btn .badge {
@@ -84,14 +92,16 @@
 
 .js .badge--toggle input[type=checkbox]:checked ~ .badge--toggle__label {
   width: auto;
-  padding: 0.25em 0.6em 0.25em 2px;
+  padding: 0 0.6em 0 2px;
   border-radius: 0 1em 1em 0;
   opacity: 1;
+  height: 20px;
+  line-height: 20px;
 }
 
 .icon-badge {
   width: 20px;
-  height: 18px;
+  height: 20px;
   padding: 1px 1px 1px 7px;
 }
 
@@ -104,5 +114,7 @@
 }
 
 .badge--comment-count__number {
-  padding: 0.25em 0.6em 0.25em 4px;
+  padding: 0 0.6em 0 4px;
+  height: 20px;
+  line-height: 20px;
 }

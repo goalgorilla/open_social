@@ -8,8 +8,6 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
   width: 100%;
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
@@ -19,8 +17,8 @@
   width: 24px;
   height: 24px;
   -webkit-box-flex: 0;
-      -ms-flex: none;
-          flex: none;
+      -ms-flex: 0 0 24px;
+          flex: 0 0 24px;
   margin-right: 10px;
   border-radius: 50%;
 }
@@ -28,6 +26,8 @@
 .list-item__avatar--medium {
   width: 44px;
   height: 44px;
+  -ms-flex-preferred-size: 44px;
+      flex-basis: 44px;
 }
 
 .list-item__label {
