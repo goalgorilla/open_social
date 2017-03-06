@@ -34,41 +34,7 @@ class AccountHeaderBlock extends BlockBase {
           'label' => $this->t('New content'),
           'title_classes' => 'sr-only',
           'url' => '#',
-          'below' => array(
-            'add_event' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Event'),
-              'label' => $this->t('New event'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/node/add/event'),
-            ),
-            'add_topic' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Topic'),
-              'label' => $this->t('New topic'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/node/add/topic'),
-            ),
-            'add_group' => array(
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Group'),
-              'label' => $this->t('New group'),
-              'title_classes' => '',
-              'url' => Url::fromUserInput('/group/add/open_group'),
-            ),
-          ),
+          'below' => array(),
         ),
         'groups' => array(
           'classes' => '',
@@ -80,6 +46,50 @@ class AccountHeaderBlock extends BlockBase {
           'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
         ),
       ];
+
+      // Check if the current user is allowed to create Events
+      if($account->hasPermission('create event content')){
+         $links['add']['below']['add_event'] = array(
+           'classes' => '',
+           'link_attributes' => '',
+           'link_classes' => '',
+           'icon_classes' => '',
+           'icon_label' => '',
+           'title' => $this->t('Create New Event'),
+           'label' => $this->t('New event'),
+           'title_classes' => '',
+           'url' => Url::fromUserInput('/node/add/event'),
+         );
+      }
+
+      // Check if the current user is allowed to create Topics
+      if($account->hasPermission('create topic content')){
+        $links['add']['below']['add_topic'] = array(
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => $this->t('Create New Topic'),
+          'label' => $this->t('New topic'),
+          'title_classes' => '',
+          'url' => Url::fromUserInput('/node/add/topic'),
+        );
+      }
+
+
+      // Check if the current user is allowed to create new Groups
+      if($account->hasPermission('create open_group group')){
+        $links['add']['below']['add_group'] = array(
+          'classes' => '',
+          'link_attributes' => '',
+          'icon_classes' => 'icon-group',
+          'title' => $this->t('My Groups'),
+          'label' => $this->t('My Groups'),
+          'title_classes' => 'sr-only',
+          'url' => Url::fromUserInput('/user/' . $account_uid . '/groups'),
+        );
+      }
 
       // Check if the current user is allowed to create new books.
       if (\Drupal::moduleHandler()->moduleExists('social_book') && $account->hasPermission('create new books')) {
@@ -109,6 +119,11 @@ class AccountHeaderBlock extends BlockBase {
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/page'),
         );
+      }
+
+      // Check if user can create anything of the above if not remove add link
+      if(count($links['add']['below']) == 0){
+        unset($links['add']);
       }
 
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
