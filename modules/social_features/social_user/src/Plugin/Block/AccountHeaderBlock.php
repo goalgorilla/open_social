@@ -113,32 +113,25 @@ class AccountHeaderBlock extends BlockBase {
 
       // Get all group types
       $group_types = \Drupal::entityQuery('group_type')->execute();
-      // Check if there are more group_types and alter the url.
+
+      // Check if there are more group_types and alter the url. Permission check is not needed since group module handles it for us!
       if (count($group_types) >= 2) {
-        $links['add']['below']['add_group'] = array(
-          'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
-          'icon_classes' => '',
-          'icon_label' => '',
-          'title' => $this->t('Create New Group'),
-          'label' => $this->t('New group'),
-          'title_classes' => '',
-          'url' => Url::fromUserInput('/group/add/'),
-        );
+        $url = Url::fromUserInput('/group/add/');
       } else {
-        $links['add']['below']['add_group'] = array(
-          'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
-          'icon_classes' => '',
-          'icon_label' => '',
-          'title' => $this->t('Create New Group'),
-          'label' => $this->t('New group'),
-          'title_classes' => '',
-          'url' => Url::fromUserInput('/group/add/open_group'),
-        );
+        $url = Url::fromUserInput('/group/add/' . $group_types);
       }
+
+      $links['add']['below']['add_group'] = array(
+        'classes' => '',
+        'link_attributes' => '',
+        'link_classes' => '',
+        'icon_classes' => '',
+        'icon_label' => '',
+        'title' => $this->t('Create New Group'),
+        'label' => $this->t('New group'),
+        'title_classes' => '',
+        'url' => $url,
+      );
 
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
