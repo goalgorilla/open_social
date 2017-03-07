@@ -63,7 +63,8 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
               // Then get the bundle name
               $content_type = $entity->bundle();
             }
-            $replacements[$original] = $entity->bundle();
+
+            $replacements[$original] = $content_type;
             break;
 
         }
