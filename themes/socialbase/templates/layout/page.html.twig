@@ -62,7 +62,8 @@
       page.complementary_top or page.complementary_bottom ? 'layout--with-complementary',
       page.sidebar_first is empty and page.sidebar_second is empty ? 'layout--with-complementary',
       page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first and page.sidebar_second ? 'layout--with-three-columns',
-  page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_second and page.sidebar_first is empty ? 'layout--with-two-columns',
+      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_second is empty and page.sidebar_first ? 'layout--with-two-columns',
+      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first is empty and page.sidebar_second ? 'layout--with-two-columns',
     ]
   %}
 
@@ -89,16 +90,16 @@
     {% endblock %}
 
     {# an extra check for complementary regions to be empty #}
-    {% if page.sidebar_second and not page.complementary_top and not page.complementary_bottom %}
-      {% block sidebar_second %}
-        {{ page.sidebar_second }}
+    {% if page.sidebar_first and not page.complementary_top and not page.complementary_bottom %}
+      {% block sidebar_first %}
+        {{ page.sidebar_first }}
       {% endblock %}
     {% endif %}
 
     {# an extra check for complementary regions to be empty #}
-    {% if page.sidebar_first and not page.complementary_top and not page.complementary_bottom %}
-      {% block sidebar_first %}
-        {{ page.sidebar_first }}
+    {% if page.sidebar_second and not page.complementary_top and not page.complementary_bottom %}
+      {% block sidebar_second %}
+        {{ page.sidebar_second }}
       {% endblock %}
     {% endif %}
 
