@@ -36,25 +36,33 @@ function social_comment_token_info() {
 function social_comment_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
-  if ($type == 'comment' && !empty($data['message'])) {
+  if ($type == 'social_comment' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
-          case 'liked_entity':
+          case 'commented_content_type':
 
             if($name == 'commented_content_type') {
               if(isset($message->field_message_related_object)) {
+
                 $target_type = $message->field_message_related_object->target_type;
                 $target_id = $message->field_message_related_object->target_id;
-                $entity = \Drupal::entityTypeManager()
+                $comment = \Drupal::entityTypeManager()
                   ->getStorage($target_type)
                   ->load($target_id);
 
-                if ($entity->getEntityTypeId() === 'comment') {
+                if ($comment->getEntityTypeId() == 'comment') {
+                  if (!empty($comment->getCommentedEntity())) {
+                    $node = $comment->getCommentedEntity();
+                    $bundle = $node->bundle();
 
+                    if (!empty($bundle)) {
+                      $replacements[$original] = $bundle;
+                    }
+                  }
                 }
               }
             }
