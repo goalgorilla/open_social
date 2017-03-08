@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      mentions-mentions: mentions-mentions
+    activity_action: create_entitiy_action
+    activity_context: mention_activity_context
+    activity_destinations:
+      stream_profile: stream_profile
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: mention_post
+template: create_mention_post_stream
+label: 'Create mention in a post (stream: profile)'
+description: 'A person mentioned me in a post (stream: profile)'
+text:
+  -
+    value: "<p><a href=\"relative]\">[message:author:display-name]</a> mentioned <a href=\"\">[social_mentions:mentioned_user]</a> in a post</p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

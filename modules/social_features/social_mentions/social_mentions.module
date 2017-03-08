@@ -194,16 +194,3 @@ function social_mentions_form_mentions_settings_form_submit($form, FormStateInte
   $config->set('suggestions_format', $form_state->getValue('suggestions_format'));
   $config->save();
 }
-
-/**
- * Implements hook_preprocess().
- */
-function social_mentions_preprocess_page(&$variables, $hook) {
-
-  $mention = \Drupal::entityTypeManager()
-    ->getStorage('mentions')
-    ->load('14');
-
-  dpm($mention);
-
-}
