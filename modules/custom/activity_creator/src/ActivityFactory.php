@@ -278,10 +278,12 @@ class ActivityFactory extends ControllerBase {
       $comment = $comment_storage->load($related_object['target_id']);
       if($comment){
         $commented_entity = $comment->getCommentedEntity();
-        $related_object = [
-          'target_type' => $commented_entity->getEntityTypeId(),
-          'target_id' => $commented_entity->id(),
-        ];
+        if(!empty($commented_entity)) {
+          $related_object = [
+            'target_type' => $commented_entity->getEntityTypeId(),
+            'target_id' => $commented_entity->id(),
+          ];
+        }
       }
     }
     return $related_object;
