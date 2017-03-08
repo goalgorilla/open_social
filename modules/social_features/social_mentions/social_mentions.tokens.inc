@@ -17,6 +17,11 @@ function social_mentions_token_info() {
     'needs-data' => 'profile',
   ];
 
+  $social_mentions['mentioned_user'] = [
+    'name' => t('Get the mentioned user'),
+    'description' => t('Display the mentioned user in a post'),
+  ];
+
   $social_mentions['user_name'] = [
     'name' => t('User name'),
     'description' => t('First and last name or username, depends on settings.'),
@@ -60,6 +65,35 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
           }
 
           $replacements[$original] = $user_name;
+          break;
+
+      }
+    }
+  }
+
+  if ($type == 'social_mentions' && !empty($data['message'])) {
+    /** @var \Drupal\message\Entity\Message $message */
+    $message = $data['message'];
+
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+
+        case 'mentioned_user':
+
+          if($name === 'mentioned_user') {
+            if (isset($message->field_message_related_object)) {
+              $target_type = $message->field_message_related_object->target_type;
+              $target_id = $message->field_message_related_object->target_id;
+              $mention = \Drupal::entityTypeManager()
+                ->getStorage($target_type)
+                ->load($target_id);
+
+              if ($mention->getEntityTypeId() == 'mentions') {
+//                $replacements[$original] = $mention;
+              }
+            }
+          }
+
           break;
       }
     }
