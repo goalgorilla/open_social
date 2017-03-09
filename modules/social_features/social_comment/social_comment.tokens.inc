@@ -58,15 +58,17 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   ->getStorage($target_type)
                   ->load($target_id);
 
-                // Or special handling for post entities.
-                if ($comment->getEntityTypeId() == 'comment') {
-                  if (!empty($comment->getCommentedEntity())) {
-                    $node = $comment->getCommentedEntity();
-                    $owner = $node->getOwner();
-                    $name = $owner->getDisplayName();
+                // Or special handling for post entities. \Drupal::logger('commented_content_type')->notice(var_dump($comment));
+                if (!empty($comment)) {
+                  if ($comment->getEntityTypeId() == 'comment') {
+                    if (!empty($comment->getCommentedEntity())) {
+                      $node = $comment->getCommentedEntity();
+                      $owner = $node->getOwner();
+                      $name = $owner->getDisplayName();
 
-                    if (!empty($name)) {
-                      $replacements[$original] = $name;
+                      if (!empty($name)) {
+                        $replacements[$original] = $name;
+                      }
                     }
                   }
                 }
@@ -85,13 +87,15 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   ->getStorage($target_type)
                   ->load($target_id);
 
-                if ($comment->getEntityTypeId() == 'comment') {
-                  if (!empty($comment->getCommentedEntity())) {
-                    $node = $comment->getCommentedEntity();
-                    $bundle = $node->bundle();
+                if (!empty($comment)) {
+                  if ($comment->getEntityTypeId() == 'comment') {
+                    if (!empty($comment->getCommentedEntity())) {
+                      $node = $comment->getCommentedEntity();
+                      $bundle = $node->bundle();
 
-                    if (!empty($bundle)) {
-                      $replacements[$original] = $bundle;
+                      if (!empty($bundle)) {
+                        $replacements[$original] = $bundle;
+                      }
                     }
                   }
                 }
