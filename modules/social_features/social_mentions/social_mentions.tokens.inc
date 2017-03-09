@@ -89,7 +89,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                 ->load($target_id);
 
               if ($mention->getEntityTypeId() == 'mentions') {
-                $loadUserId = \Drupal\user\Entity\User::load($mention->get('uid')->target_id);
+                $loadUserId = \Drupal\user\Entity\User::load($mention->getMentionedUserID());
                 $user = $loadUserId->getDisplayName();
 
                 $replacements[$original] = $user;
