@@ -18,5 +18,5 @@ Feature: Create Mention in a Comment
     And I should see "user_2, user_3, see my comment." in the "Main content"
     And I should see the link "user_2"
     When I click "user_3"
-    Then I should see "Albert Einstein mentioned you in a comment"
+    Then I should see "Albert Einstein mentioned Stephen Hawking in a comment"
     And I should see "user_2, user_3, see my comment."
