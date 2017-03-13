@@ -7,20 +7,19 @@ third_party_settings:
   activity_logger:
     activity_context: profile_activity_context
     activity_destinations:
-      notifications: notifications
-      email: email
+      stream_profile: stream_profile
     activity_create_direct: 1
     activity_bundle_entities:
       post-post: post-post
     activity_action: create_entitiy_action
     activity_aggregate: 0
-template: create_post_profile
-label: 'Create post on profile'
-description: 'A person created a post on my profile'
+template: create_post_profile_stream
+label: 'Create post on profile stream output'
+description: 'A person created a post on my profile and I see it on the stream'
 text:
   -
     format: full_html
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> &gt; <a href=\"[message:recipient-user-url]\">[activity:field_activity_recipient_user_display_name]</a></p>\r\n"
   -
     format: full_html
     value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> posted on your profile</p>\r\n"

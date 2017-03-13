@@ -18,5 +18,5 @@ Feature: Create Mention in a Post
     And I should see "Hello user_2, user_3!"
     And I should see the link "user_3"
     When I click "user_2"
-    Then I should see "Albert Einstein mentioned you in a post"
+    Then I should see "Albert Einstein mentioned Isaac Newton in a post"
     And I should see "Hello user_2, user_3!"
