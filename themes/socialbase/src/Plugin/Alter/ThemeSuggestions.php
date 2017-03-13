@@ -25,14 +25,30 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
 
     $variables = Variables::create($context1);
 
-    if ($hook == 'details') {
-      $suggestions[] = 'details__plain';
+    switch ($hook) {
 
-      if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class'])) {
-        $suggestions[] = 'details__crop';
-      }
+      case 'details':
+        $suggestions[] = 'details__plain';
+
+        if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class'])) {
+          $suggestions[] = 'details__crop';
+        }
+        break;
+
+      case 'file_link':
+
+        // Get the route name for file links
+        $route_name = \Drupal::routeMatch()->getRouteName();
+
+        // If the file link is on the node full page, suggest another template
+        if ($route_name == 'entity.node.canonical') {
+          $suggestions[] = 'file_link__node';
+        }
+        break;
 
     }
+
+
 
   }
 
