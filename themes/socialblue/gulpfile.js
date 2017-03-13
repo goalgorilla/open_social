@@ -249,6 +249,12 @@ gulp.task('styleguide-assets', function () {
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
 });
 
+// Copy the mime icons from the components folder to the styleguide assets folder (manual task)
+gulp.task('styleguide-mime-image-icons', function () {
+  return gulp.src(options.basetheme.components + '06-libraries/icons/source/mime-icons/*.png')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
+});
+
 // Main styleguide task
 gulp.task('styleguide', ['clean:styleguide'], function () {
   return kss(options.styleGuide);
@@ -257,7 +263,7 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 // Before deploying create a fresh build
 gulp.task('build-styleguide', function(done) {
   runSequence('styleguide',
-    ['styleguide-assets-base', 'styleguide-assets'],
+    ['styleguide-assets-base', 'styleguide-assets', 'styleguide-mime-image-icons'],
     done);
 });
 
