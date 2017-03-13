@@ -66,7 +66,7 @@ class AccountHeaderBlock extends BlockBase {
               'title' => $this->t('Create New Group'),
               'label' => $this->t('New group'),
               'title_classes' => '',
-              'url' => Url::fromUserInput('/group/add/open_group'),
+              'url' => Url::fromUserInput('/group/add'),
             ),
           ),
         ),
@@ -110,7 +110,7 @@ class AccountHeaderBlock extends BlockBase {
           'url' => Url::fromUserInput('/node/add/page'),
         );
       }
-
+      
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
         $notifications = \Drupal::service('renderer')->render($notifications_view);
