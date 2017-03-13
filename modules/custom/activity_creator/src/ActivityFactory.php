@@ -241,6 +241,7 @@ class ActivityFactory extends ControllerBase {
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
           // We exclude activities with email destination from aggregation.
           $activity_query->condition('field_activity_destinations.value', 'email', '!=');
+          $activity_query->condition('field_activity_destinations.value', 'notifications', '!=');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
