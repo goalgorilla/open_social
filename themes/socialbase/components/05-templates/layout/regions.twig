@@ -30,7 +30,7 @@
     </div>
     <div class="list-group-item avatar"><span class="circle" style="background-color: #81C784"></span>
       <h6 class="list-group-item-heading">Complementary bottom</h6>
-      <p class="list-group-item-text">Complementary content like blocks that is specific to the section. On mobile this region will be placed below the Main content, or it can be hidden. For placing the block we use a script that relocates the this region inside the Complementary top. The script is loaded via the <strong>responsive-dom</strong> library.</p>
+      <p class="list-group-item-text">Complementary content that is less important than the contents of the complementary top part. The contents of this block will be hidden on non-mobile screens.</p>
     </div>
     <div class="list-group-item avatar"><span class="circle" style="background-color: #DCE775"></span>
       <h6 class="list-group-item-heading">Content bottom</h6>
@@ -84,11 +84,19 @@
         </div>
       </div>
       <div class="row">
-        <div class="region--complementary complementary-top" style="background-color:#4DD0E1; min-height: 150px">
-          <p>Complementary top</p>
-          <p class="flat-text small"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
+        <div class="region--complementary" style="background-color:#4DD0E1; min-height: 150px">
+          <div class="complementary-top">
+            <p>Complementary top</p>
+            <p class="flat-text small"></p>
+            <p class="flat-text"></p>
+            <p class="flat-text"></p>
+          </div>
+          <div class="complementary-bottom" style="background-color:#81C784; min-height: 200px">
+            <p>Complementary bottom</p>
+            <p class="flat-text small"></p>
+            <p class="flat-text"></p>
+            <p class="flat-text"></p>
+          </div>
         </div>
         <div class="region--main-content" style="background-color:#4DB6AC; min-height: 400px">
           <p>Page title</p>
@@ -98,14 +106,6 @@
           <p class="flat-text"></p>
           <p class="flat-text"></p>
           <p class="flat-text"></p>
-        </div>
-        <div class="region--complementary-bottom" style="background-color:#81C784; min-height: 200px">
-          <div class="complementary-bottom">
-            <p>Complementary bottom</p>
-            <p class="flat-text small"></p>
-            <p class="flat-text"></p>
-            <p class="flat-text"></p>
-          </div>
         </div>
       </div>
       <div>
