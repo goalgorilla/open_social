@@ -72,9 +72,14 @@
 
       {% if page.complementary_top or page.complementary_bottom %}
       <aside role="complementary" class="region--complementary">
-        <div class="complementary-top" role="complementary">
+        <div class="complementary-top">
           {{ page.complementary_top }}
         </div>
+        {% if page.complementary_bottom %}
+          <div class="complementary-bottom">
+            {{ page.complementary_bottom }}
+          </div>
+        {% endif %}
       </aside>
       {% endif %}
 
@@ -88,15 +93,6 @@
         {% endblock %}
 
       </div>
-
-      {% if page.complementary_bottom %}
-      {{ attach_library('socialbase/responsive-dom') }}
-        <aside role="complementary" class="region--complementary-bottom">
-          <div class="complementary-bottom">
-            {{ page.complementary_bottom }}
-          </div>
-        </aside>
-      {% endif %}
 
       {% if page.content_bottom %}
         <div class="row margin-top-sm">

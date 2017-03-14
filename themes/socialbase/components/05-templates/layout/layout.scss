@@ -4,6 +4,8 @@
 // we can assign blocks to these regions. Each region can contain different
 // views/blocks/elements, based on the context of the node or page.
 //
+// `<i>`The complementary_bottom region will be hidden on small screens.`</i>`
+//
 // Markup: regions.twig
 //
 // Weight: 1
@@ -71,15 +73,19 @@
 
 }
 
+.complementary-bottom {
+  display: none;
+}
+
 @include for-tablet-landscape-up {
 
-  .complementary-top {
+  body:not(.path-frontpage) .complementary-top {
     // line-height * section-title font size + padding top + padding bottom
     margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
   }
 
-  // prevent layout from changing during page load
-  .region--complementary-bottom {
-    display: none;
+  // Show region on bigger screens
+  .complementary-bottom {
+    display: block;
   }
 }
