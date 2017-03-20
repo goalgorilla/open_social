@@ -13,7 +13,7 @@ Feature: Create Post on Group
       | Open group | open_group | PostUser1 | This is an open group | en       |
     Given I am logged in as "PostUser1"
       And I am on the stream of group "Open group"
-      And I fill in "What's on your mind?" with "This is a community post in a group."
+      And I fill in "Say something to the group" with "This is a community post in a group."
       And I press "Post"
      Then I should see the success message "Your post has been posted."
       And I should see "This is a community post in a group."
