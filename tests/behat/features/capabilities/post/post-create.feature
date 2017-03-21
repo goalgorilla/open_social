@@ -12,7 +12,7 @@ Feature: Create Post
     And I am logged in as "PostCreateUser1"
     And I am on the homepage
   And I should not see "PostCreateUser1" in the "Main content front"
-  When I fill in "Say something to the community" with "This is a public post."
+  When I fill in "Say something to the Community" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
    Then I should see the success message "Your post has been posted."
@@ -21,7 +21,7 @@ Feature: Create Post
     And I should be on "/stream"
 
         # Scenario: Succesfully create a private post
-   When I fill in "Say something to the community" with "This is a community post."
+   When I fill in "Say something to the Community" with "This is a community post."
     And I select post visibility "Community"
     And I press "Post"
    Then I should see the success message "Your post has been posted."
@@ -32,7 +32,7 @@ Feature: Create Post
         # Scenario: edit the post
    When I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Edit"
-    And I fill in "Say something to the community" with "This is a community post edited."
+    And I fill in "Say something to the Community" with "This is a community post edited."
     And I press "Post"
    Then I should see the success message "Your post has been saved."
 

@@ -13,7 +13,7 @@ Feature: Like post stream
 
     Given I am logged in as "user_1"
     And I am on the profile of "user_2"
-    And I fill in "Leave a message to Albert Einstein" with "This is a post by Albert Einstein for Isaac Newton."
+    And I fill in "Leave a message to Isaac Newton" with "This is a post by Albert Einstein for Isaac Newton."
     And I press "Post"
     Then I should see the success message "Your post has been posted."
 
@@ -36,7 +36,7 @@ Feature: Like post stream
       | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
     Given I am logged in as "user_1"
     And I am on the homepage
-    When I fill in "Say something to the community" with "This is a public post."
+    When I fill in "Say something to the Community" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
     Then I should see the success message "Your post has been posted."
