@@ -1,3 +1,13 @@
+### v2.1.2 -- Mar 2017
+* Replaced Bootstrap list-group component with custom list component
+* Merge label component with badges and extend badge modifiers
+* Improve card documentation with seperation of `card__block` and `card__body`
+* Document and rename alert, badge, list in style guide
+* Add Bar chart and Donut chart to MorrisJs documentation
+* Optimise small teaser templates
+* Add two columns and three columns layout, with sidebar_first and sidebar_second regions.
+* Renamed in page-full twig block nodefull_header to metainfo and added twig block metaengage.
+
 ### v2.1.1 -- Feb 2017
 * Removed pug style guide files
 * Removed content folder which contained assets for the old style guide

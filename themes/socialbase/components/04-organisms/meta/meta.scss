@@ -8,21 +8,6 @@
   line-height: 1.4;
 }
 
-.metainfo__follow {
-  flex-basis: 100%;
-  align-self: flex-start;
-  padding-bottom: 30px;
-
-  .flag {
-    display: block;
-  }
-
-  @include for-tablet-portrait-up {
-    float: right;
-    padding-bottom: 0;
-  }
-}
-
 .metainfo__avatar {
   margin-right: 12px;
 
@@ -64,16 +49,24 @@
   margin: 20px 0 40px;
 }
 
-.metainfo__brief {
-  padding-bottom: 30px;
-  flex-basis: 100%;
+.meta-engage {
+  display: flex;
+  margin-bottom: 1rem;
 
-  .badge--likes-count,
-  .badge--visibility,
-  .badge--comment-count {
-    margin-right: 3px;
+  .badge {
+    margin-right: 5px;
   }
 
+  @include for-tablet-portrait-up {
+    margin-bottom: 2rem;
+  }
+}
+
+// put the button on the right side
+.btn-follow {
+  margin-right: 0;
+  margin-left: auto;
+  order: 10;
 }
 
 .article__special-fields {

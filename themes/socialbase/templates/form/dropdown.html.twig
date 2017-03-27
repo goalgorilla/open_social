@@ -20,13 +20,13 @@
           {% if not edit_mode %}<span class="caret"></span>{% endif %}
         </button>
   {% if not edit_mode %}
-    <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-menu--post">
+    <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-menu--visibility">
       <li class="dropdown-header">{{ label }}</li>
       {% for key, child in items %}
           {% if key == active %}
-              <li class="list-group-item active">
+              <li class="list-item list-item--visibility list-item--active">
           {% else %}
-              <li class="list-group-item">
+              <li class="list-item list-item--visibility">
           {% endif %}
                   {{ child }}
               </li>

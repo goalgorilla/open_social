@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -80,7 +77,18 @@
 </head>
 
 <body id="kss-node" >
-
+<!-- Google Tag Manager-->
+<noscript>
+  <iframe src="//www.googletagmanager.com/ns.html?id=GTM-5BGZV3" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5BGZV3');
+</script>
+<!-- End Google Tag Manager-->
   <a href="#main-content" class="sr-only sr-only-focusable"> Skip to main content </a>
 
 
@@ -122,117 +130,183 @@
 
     <div class="container">
 
-      <div class="row">
+      <div class="row layout--with-complementary">
 
-
-        <aside class="region--complementary complementary-top" role="complementary">
-          <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
-                                                                                                  <h6 class="text-primary"><span class="kss-nav_ref" 3</span><span class="kss-nav__name">Atoms</h6>
-                <ul class="nav table-of-contents docs-sidebar">
+        <aside class="region--complementary">
+          <div class="complementary-top" role="complementary">
+            <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
+                                                                                                                <h6 class="text-primary"><span class="kss-nav_ref" 3</span><span class="kss-nav__name">Atoms</h6>
+                  <ul class="nav table-of-contents docs-sidebar">
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-alert">
+                  <span class="kss-nav__ref ">3.1</span
+                  ><span class="kss-nav__name">Alert</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-alert-dismissable">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.1.1</span
+                  ><span class="kss-nav__name">Dismissible alerts</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-alert-variant">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.1.2</span
+                  ><span class="kss-nav__name">Alert variants</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-badge">
+                  <span class="kss-nav__ref ">3.2</span
+                  ><span class="kss-nav__name">Badge</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-badge-variations">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.2.1</span
+                  ><span class="kss-nav__name">Available variations</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-badge-pill">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.2.2</span
+                  ><span class="kss-nav__name">Pill badges</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-badge-size">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.2.3</span
+                  ><span class="kss-nav__name">Badge size</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-button">
+                  <span class="kss-nav__ref ">3.3</span
+                  ><span class="kss-nav__name">Button</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-button-type">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.3.1</span
+                  ><span class="kss-nav__name">Button types</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-button-style">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.3.2</span
+                  ><span class="kss-nav__name">Button styles</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-button-sizes">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.3.3</span
+                  ><span class="kss-nav__name">Button sizes</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-button-floating">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.3.4</span
+                  ><span class="kss-nav__name">Floating action button</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-card">
+                  <span class="kss-nav__ref ">3.4</span
+                  ><span class="kss-nav__name">Card</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-card-nest-section">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.4.1</span
+                  ><span class="kss-nav__name">Card nested section</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls">
+                  <span class="kss-nav__ref ">3.5</span
+                  ><span class="kss-nav__name">Form controls</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.1</span
+                  ><span class="kss-nav__name">Input</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-textarea">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.2</span
+                  ><span class="kss-nav__name">Textarea</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-select">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.3</span
+                  ><span class="kss-nav__name">Select list</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-radio">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.4</span
+                  ><span class="kss-nav__name">Input radio</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-checkbox">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.5</span
+                  ><span class="kss-nav__name">Input checkbox</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-switch">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.6</span
+                  ><span class="kss-nav__name">Input switch</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-range">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.5.7</span
+                  ><span class="kss-nav__name">Input range</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-list">
+                  <span class="kss-nav__ref ">3.6</span
+                  ><span class="kss-nav__name">List</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-list-avatar">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.6.1</span
+                  ><span class="kss-nav__name">List with avatar</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-atoms-list-label">
+                  <span class="kss-nav__ref kss-nav__ref-child">3.6.2</span
+                  ><span class="kss-nav__name">List with label</span>
+                          </a>
+                        </li>
                                           <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-button">
-                <span class="kss-nav__ref ">3.1</span
-                ><span class="kss-nav__name">Button</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-button-type">
-                <span class="kss-nav__ref kss-nav__ref-child">3.1.1</span
-                ><span class="kss-nav__name">Button types</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-button-style">
-                <span class="kss-nav__ref kss-nav__ref-child">3.1.2</span
-                ><span class="kss-nav__name">Button styles</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-button-sizes">
-                <span class="kss-nav__ref kss-nav__ref-child">3.1.3</span
-                ><span class="kss-nav__name">Button sizes</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-button-floating">
-                <span class="kss-nav__ref kss-nav__ref-child">3.1.4</span
-                ><span class="kss-nav__name">Floating action button</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls">
-                <span class="kss-nav__ref ">3.2</span
-                ><span class="kss-nav__name">Form controls</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.1</span
-                ><span class="kss-nav__name">Input</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-textarea">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.2</span
-                ><span class="kss-nav__name">Textarea</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-select">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.3</span
-                ><span class="kss-nav__name">Select list</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-radio">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.4</span
-                ><span class="kss-nav__name">Input radio</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-checkbox">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.5</span
-                ><span class="kss-nav__name">Input checkbox</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-switch">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.6</span
-                ><span class="kss-nav__name">Input switch</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-form-controls-input-range">
-                <span class="kss-nav__ref kss-nav__ref-child">3.2.7</span
-                ><span class="kss-nav__name">Input range</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-atoms-card">
-                <span class="kss-nav__ref ">3.3</span
-                ><span class="kss-nav__name">Card</span>
-                        </a>
-                      </li>
-                                      <li>
-                    <a href="#main-content" class="back-to-top">
-                      <span>Back to top</span>
-                      <svg class="icon-small icon-gray">
-                      <use xlink:href="#icon-expand-less"></use>
-                      </svg>
-                    </a>
-                  </li>
-                                                                                                                                                          </ul>
-          </nav>
-
+                      <a href="#main-content" class="back-to-top">
+                        <span>Back to top</span>
+                        <svg class="icon-small icon-gray">
+                        <use xlink:href="#icon-expand-less"></use>
+                        </svg>
+                      </a>
+                    </li>
+                                                                                                                                                                                </ul>
+            </nav>
+          </div>
         </aside>
 
 
 
-        <div class="region--main-content">
+        <div class="region--content">
 
             
             
-                                    <div id="kssref-atoms" class="kss-section kss-section--depth-1">
+                                    <div id="kssref-atoms" class="kss-section kss-section--depth-1 ">
 
               
                             <h1 class="kss-title kss-title--level-1">
@@ -257,13 +331,762 @@
                 Source: <code>00-config/_variables.scss</code>, line 15
               </div>
                       </div>
-                                  <section id="kssref-atoms-button" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-atoms-alert" class="kss-section kss-section--depth-2 ">
+
+              
+                            <h2 class="kss-title kss-title--level-2">
+              <a href="#kssref-atoms-alert">
+                <span class="lead">
+                  3.1
+                  <span class="visually-hidden">
+                      atoms.alert
+                    </span>
+                </span>
+                Alert
+              </a>
+            </h2>
+
+            
+
+                          <div class="kss-description">
+                <p>Provide contextual feedback messages for typical user actions
+with the handful of available and flexible alert messages.</p>
+
+              </div>
+            
+            
+
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/alerts/alert.scss</code>, line 3
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-alert-dismissable" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-alert-dismissable">
+                <span class="lead">
+                  3.1.1
+                  <span class="visually-hidden">
+                      atoms.alert.dismissable
+                    </span>
+                </span>
+                Dismissible alerts
+              </a>
+            </h3>
+
+            
+
+                          <div class="kss-description">
+                <p>Build on any alert by adding an optional .alert-dismissible and close button.
+For fully functioning, dismissible alerts, you must use the alerts JavaScript plugin.
+This plugin is part of the alert library.</p>
+<p>Just add <code>data-dismiss=&quot;alert&quot;</code> to your close button to
+automatically give an alert close functionality. Closing an alert removes it from the DOM.</p>
+<p>To have your alerts use animation when closing,
+make sure they have the <code>.fade</code> and <code>.in</code> classes already applied to them.</p>
+
+              </div>
+            
+            
+
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/alerts/alert.scss</code>, line 10
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-alert-variant" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-alert-variant">
+                <span class="lead">
+                  3.1.2
+                  <span class="visually-hidden">
+                      atoms.alert.variant
+                    </span>
+                </span>
+                Alert variants
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-alert-variant" data-kss-fullscreen="kssref-atoms-alert-variant">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-alert-variant.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-alert-variant" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-alert-variant" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Alerts don&#39;t have default classes, only base and modifier classes.
+A default gray alert doesn&#39;t make too much sense, so you&#39;re required
+to specify a type via contextual class. Choose from <code>success</code>, <code>info</code>, <code>warning</code>, or <code>danger</code>.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Examples                </header>
+                <div class="card__body">
+
+                                      <!--<div class="kss-modifier__default-name kss-style">
+                      Default styling
+                    </div>-->
+                  
+                  
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-success
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Success
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-success" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-info
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Information
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-info" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-warning
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Warning
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-warning" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .alert-danger
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Danger
+                    </div>
+                    <div class="kss-modifier__example">
+                      <div class="alert alert-dismissible fade in alert-danger" role="alert">
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+
+  <strong>Alert title</strong>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+</div>
+
+                    </div>
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/alerts/alert.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;alert alert-dismissible fade in {{ modifier_class }}&quot; role=&quot;alert&quot;&gt;
+
+  &lt;button type=&quot;button&quot; class=&quot;close&quot; data-dismiss=&quot;alert&quot; aria-label=&quot;{{ &quot;Close&quot;|t }}&quot;&gt;
+    &lt;span aria-hidden=&quot;true&quot;&gt;×&lt;/span&gt;
+  &lt;/button&gt;
+
+  &lt;strong&gt;{{ title }}&lt;/strong&gt;
+  {{ content }}
+
+&lt;/div&gt;
+</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/alert/alert.scss</code>, line 3
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-badge" class="kss-section kss-section--depth-2 ">
+
+              
+                            <h2 class="kss-title kss-title--level-2">
+              <a href="#kssref-atoms-badge">
+                <span class="lead">
+                  3.2
+                  <span class="visually-hidden">
+                      atoms.badge
+                    </span>
+                </span>
+                Badge
+              </a>
+            </h2>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-badge" data-kss-fullscreen="kssref-atoms-badge">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-badge.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-badge" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-badge" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Small and adaptive tag for adding context to just about any content.</p>
+<p>Badges scale to match the size of the immediate parent
+element by using relative font sizing and em units.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Example                </header>
+                <div class="card__body">
+
+                  
+                                      <div class="kss-modifier__example">
+                      <h2>Example heading <span class="badge badge-default">New</span></h2>
+<h4>Example heading <span class="badge badge-secondary">Enrolled</span></h4>
+
+                      <div class="kss-modifier__example-footer"></div>
+                    </div>
+                  
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/badge/badge.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;h2&gt;Example heading &lt;span class=&quot;badge badge-default&quot;&gt;New&lt;/span&gt;&lt;/h2&gt;
+&lt;h4&gt;Example heading &lt;span class=&quot;badge badge-secondary&quot;&gt;Enrolled&lt;/span&gt;&lt;/h4&gt;
+</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/badge/badge.scss</code>, line 3
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-badge-variations" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-badge-variations">
+                <span class="lead">
+                  3.2.1
+                  <span class="visually-hidden">
+                      atoms.badge.variations
+                    </span>
+                </span>
+                Available variations
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-badge-variations" data-kss-fullscreen="kssref-atoms-badge-variations">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-badge-variations.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-badge-variations" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-badge-variations" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Add any of the below mentioned modifier classes to change the appearance of a badge.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Examples                </header>
+                <div class="card__body">
+
+                                      <!--<div class="kss-modifier__default-name kss-style">
+                      Default styling
+                    </div>-->
+                  
+                  
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-default
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Default
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-default">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-primary
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Primary
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-primary">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-secondary
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Secondary
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-secondary">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-accent
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Accent
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-accent">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-success
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Success
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-success">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-info
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Info
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-info">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-warning
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Warning
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-warning">Enrolled</span>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .badge-danger
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Danger
+                    </div>
+                    <div class="kss-modifier__example">
+                      <span class="badge badge-danger">Enrolled</span>
+                    </div>
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/badge/badge-variation.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;span class=&quot;badge {{ modifier_class }}&quot;&gt;Enrolled&lt;/span&gt;</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/badge/badge.scss</code>, line 3
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-badge-pill" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-badge-pill">
+                <span class="lead">
+                  3.2.2
+                  <span class="visually-hidden">
+                      atoms.badge.pill
+                    </span>
+                </span>
+                Pill badges
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-badge-pill" data-kss-fullscreen="kssref-atoms-badge-pill">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-badge-pill.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-badge-pill" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-badge-pill" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Use the <code>.badge--pill</code> modifier class to make badges more
+rounded (with a larger <code>border-radius</code> and additional <code>horizontal padding</code>).</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Example                </header>
+                <div class="card__body">
+
+                  
+                                      <div class="kss-modifier__example">
+                      <span class="badge badge--pill badge-primary">Primary pill badge</span>
+
+                      <div class="kss-modifier__example-footer"></div>
+                    </div>
+                  
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/badge/badge-pill.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;span class=&quot;badge badge--pill badge-primary&quot;&gt;Primary pill badge&lt;/span&gt;
+</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/badge/badge.scss</code>, line 56
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-badge-size" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-badge-size">
+                <span class="lead">
+                  3.2.3
+                  <span class="visually-hidden">
+                      atoms.badge.size
+                    </span>
+                </span>
+                Badge size
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-badge-size" data-kss-fullscreen="kssref-atoms-badge-size">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-badge-size.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-badge-size" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-badge-size" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Use the <code>.badge--large</code> modifier class to make badges larger.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Example                </header>
+                <div class="card__body">
+
+                  
+                                      <div class="kss-modifier__example">
+                      <span class="badge badge--pill badge--large badge-primary">Large primary pill badge</span>
+
+                      <div class="kss-modifier__example-footer"></div>
+                    </div>
+                  
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/badge/badge-size.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;span class=&quot;badge badge--pill badge--large badge-primary&quot;&gt;Large primary pill badge&lt;/span&gt;
+</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/badge/badge.scss</code>, line 67
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-button" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
               <a href="#kssref-atoms-button">
                 <span class="lead">
-                  3.1
+                  3.3
                   <span class="visually-hidden">
                       atoms.button
                     </span>
@@ -293,13 +1116,13 @@ or section within the current page – they should also be given an appropriate 
                 Source: <code>02-atoms/button/button.scss</code>, line 4
               </div>
                       </section>
-                                  <section id="kssref-atoms-button-type" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-button-type" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-button-type">
                 <span class="lead">
-                  3.1.1
+                  3.3.1
                   <span class="visually-hidden">
                       atoms.button.type
                     </span>
@@ -309,7 +1132,7 @@ or section within the current page – they should also be given an appropriate 
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-button-type" data-kss-fullscreen="kssref-atoms-button-type">
+                                  <a href="#kssref-atoms-button-type" data-kss-fullscreen="kssref-atoms-button-type">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -328,7 +1151,7 @@ or section within the current page – they should also be given an appropriate 
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-button-type" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -427,25 +1250,25 @@ ink reactions on press.</li>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/button/button.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><button class="btn waves-effect [modifier class]">Button</button>
+                   <pre><code class="language-markup" data-language="html">&lt;button class=&quot;btn waves-effect {{modifier_class}}&quot;&gt;Button&lt;/button&gt;
 </code></pre>
 
                 </details>
               
             
                           <div class="kss-source kss-style">
-                Source: <code>02-atoms/button/button.scss</code>, line 22
+                Source: <code>02-atoms/button/button.scss</code>, line 19
               </div>
                       </section>
-                                  <section id="kssref-atoms-button-style" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-button-style" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-button-style">
                 <span class="lead">
-                  3.1.2
+                  3.3.2
                   <span class="visually-hidden">
                       atoms.button.style
                     </span>
@@ -455,7 +1278,7 @@ ink reactions on press.</li>
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-button-style" data-kss-fullscreen="kssref-atoms-button-style">
+                                  <a href="#kssref-atoms-button-style" data-kss-fullscreen="kssref-atoms-button-style">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -474,7 +1297,7 @@ ink reactions on press.</li>
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-button-style" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -607,25 +1430,25 @@ negative action or caution when interaction with the button.</li>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/button/button.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><button class="btn waves-effect [modifier class]">Button</button>
+                   <pre><code class="language-markup" data-language="html">&lt;button class=&quot;btn waves-effect {{modifier_class}}&quot;&gt;Button&lt;/button&gt;
 </code></pre>
 
                 </details>
               
             
                           <div class="kss-source kss-style">
-                Source: <code>02-atoms/button/button.scss</code>, line 49
+                Source: <code>02-atoms/button/button.scss</code>, line 3
               </div>
                       </section>
-                                  <section id="kssref-atoms-button-sizes" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-button-sizes" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-button-sizes">
                 <span class="lead">
-                  3.1.3
+                  3.3.3
                   <span class="visually-hidden">
                       atoms.button.sizes
                     </span>
@@ -635,7 +1458,7 @@ negative action or caution when interaction with the button.</li>
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-button-sizes" data-kss-fullscreen="kssref-atoms-button-sizes">
+                                  <a href="#kssref-atoms-button-sizes" data-kss-fullscreen="kssref-atoms-button-sizes">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -654,7 +1477,7 @@ negative action or caution when interaction with the button.</li>
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-button-sizes" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -756,25 +1579,25 @@ smaller button size. An example of this are buttons that appear in repetetive bl
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/button/button.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><button class="btn waves-effect [modifier class]">Button</button>
+                   <pre><code class="language-markup" data-language="html">&lt;button class=&quot;btn waves-effect {{modifier_class}}&quot;&gt;Button&lt;/button&gt;
 </code></pre>
 
                 </details>
               
             
                           <div class="kss-source kss-style">
-                Source: <code>02-atoms/button/button.scss</code>, line 100
+                Source: <code>02-atoms/button/button.scss</code>, line 44
               </div>
                       </section>
-                                  <section id="kssref-atoms-button-floating" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-button-floating" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-button-floating">
                 <span class="lead">
-                  3.1.4
+                  3.3.4
                   <span class="visually-hidden">
                       atoms.button.floating
                     </span>
@@ -784,7 +1607,7 @@ smaller button size. An example of this are buttons that appear in repetetive bl
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-button-floating" data-kss-fullscreen="kssref-atoms-button-floating">
+                                  <a href="#kssref-atoms-button-floating" data-kss-fullscreen="kssref-atoms-button-floating">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -803,7 +1626,7 @@ smaller button size. An example of this are buttons that appear in repetetive bl
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-button-floating" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -870,26 +1693,330 @@ smaller button size. An example of this are buttons that appear in repetetive bl
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/button/button--floating.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><button class="btn waves-effect [modifier class]">
-  <svg class="icon-gray icon-medium" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
-</button></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;button class=&quot;btn waves-effect {{modifier_class}}&quot;&gt;
+  &lt;svg class=&quot;icon-gray icon-medium&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;24&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;&lt;path d=&quot;M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z&quot;/&gt;&lt;path d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/&gt;&lt;/svg&gt;
+&lt;/button&gt;</code></pre>
 
                 </details>
               
             
                           <div class="kss-source kss-style">
-                Source: <code>02-atoms/button/button.scss</code>, line 141
+                Source: <code>02-atoms/button/button.scss</code>, line 66
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-atoms-card" class="kss-section kss-section--depth-2 ">
+
+              
+                            <h2 class="kss-title kss-title--level-2">
+              <a href="#kssref-atoms-card">
+                <span class="lead">
+                  3.4
+                  <span class="visually-hidden">
+                      atoms.card
+                    </span>
+                </span>
+                Card
+              </a>
+            </h2>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-card" data-kss-fullscreen="kssref-atoms-card">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-card.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-card" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-card" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>The card is a very basic element that we see a lot in Open social.
+It is the most basic way of structuring content into sections.
+A card is elevated (through <code>box-shadow</code> property) one level from the canvas.
+It will also have a <code>background-color</code> and <code>border-radius</code>.</p>
+<p><strong>Card title</strong></p>
+<p>A card can have a title to display what the card is about.
+Add <code>.card__title--underline</code> for a border on the head.
+Add a child <code>&lt;div class=&quot;card__subtitle&quot;&gt;</code> for a subtitle.</p>
+<p><strong>Card block</strong></p>
+<p>The default way of structuring content in a card is by placing
+it in a <code>.card__block</code>.</p>
+<p><strong>Card body</strong></p>
+<p>Add <code>.card__body</code> to double the padding of the card. This is
+primarily used for articles.</p>
+<p><strong>Card actionbar</strong></p>
+<p>The actionbar is reserved for actions the user can perform in the card.
+In most cases there will be buttons, but there can also be badges in here.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Examples                </header>
+                <div class="card__body">
+
+                                      <!--<div class="kss-modifier__default-name kss-style">
+                      Default styling
+                    </div>-->
+                  
+                  
+                                      <div class="kss-modifier__name kss-style">
+                      .card__block
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Card block
+                    </div>
+                    <div class="kss-modifier__example">
+                      <section class="card">
+  <h2 class="card__title card__title--underline">
+    Card title
+    <span class="card__subtitle">
+      optional subtitle
+    </span>
+  </h2>
+  <div class="card__block">
+    <p>Content can be anything</p>
+  </div>
+
+  <footer class="card__actionbar">
+    <a href="#" class="card__link"> Read more </a>
+  </footer>
+
+</section>
+                    </div>
+                                      <div class="kss-modifier__name kss-style">
+                      .card__body
+                    </div>
+                    <div class="kss-modifier__description kss-style">
+                      Card body
+                    </div>
+                    <div class="kss-modifier__example">
+                      <section class="card">
+  <h2 class="card__title card__title--underline">
+    Card title
+    <span class="card__subtitle">
+      optional subtitle
+    </span>
+  </h2>
+  <div class="card__body">
+    <p>Content can be anything</p>
+  </div>
+
+  <footer class="card__actionbar">
+    <a href="#" class="card__link"> Read more </a>
+  </footer>
+
+</section>
+                    </div>
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/cards/card.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;section class=&quot;card&quot;&gt;
+  &lt;h2 class=&quot;card__title card__title--underline&quot;&gt;
+    Card title
+    &lt;span class=&quot;card__subtitle&quot;&gt;
+      optional subtitle
+    &lt;/span&gt;
+  &lt;/h2&gt;
+  &lt;div class=&quot;{{ modifier_class }}&quot;&gt;
+    &lt;p&gt;Content can be anything&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;footer class=&quot;card__actionbar&quot;&gt;
+    &lt;a href=&quot;#&quot; class=&quot;card__link&quot;&gt; Read more &lt;/a&gt;
+  &lt;/footer&gt;
+
+&lt;/section&gt;</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/cards/cards.scss</code>, line 1
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-card-nest-section" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-card-nest-section">
+                <span class="lead">
+                  3.4.1
+                  <span class="visually-hidden">
+                      atoms.card.nest-section
+                    </span>
+                </span>
+                Card nested section
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-card-nest-section" data-kss-fullscreen="kssref-atoms-card-nest-section">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-card-nest-section.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-card-nest-section" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-card-nest-section" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>To display a distinguished section in a card, you can used a inner wrapper
+with <code>.card__nested-section</code>. This will undo the padding and there is a
+subtle gray background color added.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Example                </header>
+                <div class="card__body">
+
+                  
+                                      <div class="kss-modifier__example">
+                      <section class="card">
+  <div class="card__block">
+    <p>Content can be anything</p>
+
+    <div class="card__nested-section">
+     <p>Nested section content</p>
+    </div>
+  </div>
+
+</section>
+                      <div class="kss-modifier__example-footer"></div>
+                    </div>
+                  
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/cards/card-nested-section.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">&lt;section class=&quot;card&quot;&gt;
+  &lt;div class=&quot;card__block&quot;&gt;
+    &lt;p&gt;Content can be anything&lt;/p&gt;
+
+    &lt;div class=&quot;card__nested-section&quot;&gt;
+     &lt;p&gt;Nested section content&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/section&gt;</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/cards/cards.scss</code>, line 37
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-form-controls" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
               <a href="#kssref-atoms-form-controls">
                 <span class="lead">
-                  3.2
+                  3.5
                   <span class="visually-hidden">
                       atoms.form-controls
                     </span>
@@ -933,13 +2060,13 @@ of the following form controls:</p>
                 Source: <code>02-atoms/form-controls/form-controls.scss</code>, line 3
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-input" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-input" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-input">
                 <span class="lead">
-                  3.2.1
+                  3.5.1
                   <span class="visually-hidden">
                       atoms.form-controls.input
                     </span>
@@ -949,7 +2076,7 @@ of the following form controls:</p>
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-input" data-kss-fullscreen="kssref-atoms-form-controls-input">
+                                  <a href="#kssref-atoms-form-controls-input" data-kss-fullscreen="kssref-atoms-form-controls-input">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -968,7 +2095,7 @@ of the following form controls:</p>
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-input" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1102,11 +2229,11 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-input.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="form-group">
-  <input type="[modifier class]" class="form-control" placeholder="[modifier class]">
-</div>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;form-group&quot;&gt;
+  &lt;input type=&quot;{{ modifier_class }}&quot; class=&quot;form-control&quot; placeholder=&quot;{{ modifier_class }}&quot;&gt;
+&lt;/div&gt;
 </code></pre>
 
                 </details>
@@ -1116,13 +2243,13 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
                 Source: <code>02-atoms/form-controls/_input.scss</code>, line 7
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-textarea" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-textarea" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-textarea">
                 <span class="lead">
-                  3.2.2
+                  3.5.2
                   <span class="visually-hidden">
                       atoms.form-controls.textarea
                     </span>
@@ -1132,7 +2259,7 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-textarea" data-kss-fullscreen="kssref-atoms-form-controls-textarea">
+                                  <a href="#kssref-atoms-form-controls-textarea" data-kss-fullscreen="kssref-atoms-form-controls-textarea">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1151,7 +2278,7 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-textarea" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1212,9 +2339,9 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-textarea.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><textarea class="form-control" rows="5"> Default textarea </textarea></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;textarea class=&quot;form-control&quot; rows=&quot;5&quot;&gt; Default textarea &lt;/textarea&gt;</code></pre>
 
                 </details>
               
@@ -1223,13 +2350,13 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
                 Source: <code>02-atoms/form-controls/_textarea.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-textarea-textarea-autogrow" class="kss-section kss-section--depth-4">
+                                  <section id="kssref-atoms-form-controls-textarea-textarea-autogrow" class="kss-section kss-section--depth-4 ">
 
               
                             <h4 class="kss-title kss-title--level-4">
               <a href="#kssref-atoms-form-controls-textarea-textarea-autogrow">
                 <span class="lead">
-                  3.2.2.1
+                  3.5.2.1
                   <span class="visually-hidden">
                       atoms.form-controls.textarea.textarea-autogrow
                     </span>
@@ -1239,7 +2366,7 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
             </h4>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-textarea-textarea-autogrow" data-kss-fullscreen="kssref-atoms-form-controls-textarea-textarea-autogrow">
+                                  <a href="#kssref-atoms-form-controls-textarea-textarea-autogrow" data-kss-fullscreen="kssref-atoms-form-controls-textarea-textarea-autogrow">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1258,7 +2385,7 @@ HTML5 types: <code>text</code>, <code>search</code>, <code>tel</code>, <code>url
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-textarea-textarea-autogrow" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1318,9 +2445,9 @@ it with a <code>data-min-rows</code> attribute. The value should be a number jus
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-textarea-autogrow.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><textarea class="form-control form-control--autogrow js-textarea-autogrow" data-min-rows="2">Textarea with autogrow behavior</textarea></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;textarea class=&quot;form-control form-control--autogrow js-textarea-autogrow&quot; data-min-rows=&quot;2&quot;&gt;Textarea with autogrow behavior&lt;/textarea&gt;</code></pre>
 
                 </details>
               
@@ -1329,13 +2456,13 @@ it with a <code>data-min-rows</code> attribute. The value should be a number jus
                 Source: <code>02-atoms/form-controls/_textarea.scss</code>, line 17
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-select" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-select" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-select">
                 <span class="lead">
-                  3.2.3
+                  3.5.3
                   <span class="visually-hidden">
                       atoms.form-controls.select
                     </span>
@@ -1345,7 +2472,7 @@ it with a <code>data-min-rows</code> attribute. The value should be a number jus
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-select" data-kss-fullscreen="kssref-atoms-form-controls-select">
+                                  <a href="#kssref-atoms-form-controls-select" data-kss-fullscreen="kssref-atoms-form-controls-select">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1364,7 +2491,7 @@ it with a <code>data-min-rows</code> attribute. The value should be a number jus
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-select" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1440,22 +2567,22 @@ options.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-select.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="form-group">
-  <label for="selectDropdown">A standard select</label>
-  <div class="select-wrapper">
-    <select class="form-control" id="selectDropdown">
-      <option>Option 1</option>
-      <option>Option 2</option>
-      <option>Option 3</option>
-      <optgroup label="More options">
-        <option>Option 4</option>
-        <option>Option 5</option>
-      </optgroup>
-    </select>
-  </div>
-</div></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;form-group&quot;&gt;
+  &lt;label for=&quot;selectDropdown&quot;&gt;A standard select&lt;/label&gt;
+  &lt;div class=&quot;select-wrapper&quot;&gt;
+    &lt;select class=&quot;form-control&quot; id=&quot;selectDropdown&quot;&gt;
+      &lt;option&gt;Option 1&lt;/option&gt;
+      &lt;option&gt;Option 2&lt;/option&gt;
+      &lt;option&gt;Option 3&lt;/option&gt;
+      &lt;optgroup label=&quot;More options&quot;&gt;
+        &lt;option&gt;Option 4&lt;/option&gt;
+        &lt;option&gt;Option 5&lt;/option&gt;
+      &lt;/optgroup&gt;
+    &lt;/select&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
                 </details>
               
@@ -1464,13 +2591,13 @@ options.</p>
                 Source: <code>02-atoms/form-controls/_select.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-input-radio" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-input-radio" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-input-radio">
                 <span class="lead">
-                  3.2.4
+                  3.5.4
                   <span class="visually-hidden">
                       atoms.form-controls.input-radio
                     </span>
@@ -1480,7 +2607,7 @@ options.</p>
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-input-radio" data-kss-fullscreen="kssref-atoms-form-controls-input-radio">
+                                  <a href="#kssref-atoms-form-controls-input-radio" data-kss-fullscreen="kssref-atoms-form-controls-input-radio">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1499,7 +2626,7 @@ options.</p>
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-input-radio" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1579,26 +2706,26 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-input-radio.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="form-group">
-  <div class="radio">
-    <input name="group1" type="radio" id="test1">
-    <label for="test1">Red</label>
-  </div>
-  <div class="radio">
-    <input name="group1" type="radio" id="test2">
-    <label for="test2">Yellow</label>
-  </div>
-  <div class="radio">
-    <input class="with-gap" name="group1" type="radio" id="test3">
-    <label for="test3">Green</label>
-  </div>
-  <div class="radio">
-    <input name="group1" type="radio" id="test4" disabled="disabled">
-    <label for="test4">Brown</label>
-  </div>
-</div></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;form-group&quot;&gt;
+  &lt;div class=&quot;radio&quot;&gt;
+    &lt;input name=&quot;group1&quot; type=&quot;radio&quot; id=&quot;test1&quot;&gt;
+    &lt;label for=&quot;test1&quot;&gt;Red&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;radio&quot;&gt;
+    &lt;input name=&quot;group1&quot; type=&quot;radio&quot; id=&quot;test2&quot;&gt;
+    &lt;label for=&quot;test2&quot;&gt;Yellow&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;radio&quot;&gt;
+    &lt;input class=&quot;with-gap&quot; name=&quot;group1&quot; type=&quot;radio&quot; id=&quot;test3&quot;&gt;
+    &lt;label for=&quot;test3&quot;&gt;Green&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;radio&quot;&gt;
+    &lt;input name=&quot;group1&quot; type=&quot;radio&quot; id=&quot;test4&quot; disabled=&quot;disabled&quot;&gt;
+    &lt;label for=&quot;test4&quot;&gt;Brown&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
                 </details>
               
@@ -1607,13 +2734,13 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
                 Source: <code>02-atoms/form-controls/_radio-checkbox.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-input-checkbox" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-input-checkbox" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-input-checkbox">
                 <span class="lead">
-                  3.2.5
+                  3.5.5
                   <span class="visually-hidden">
                       atoms.form-controls.input-checkbox
                     </span>
@@ -1623,7 +2750,7 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-input-checkbox" data-kss-fullscreen="kssref-atoms-form-controls-input-checkbox">
+                                  <a href="#kssref-atoms-form-controls-input-checkbox" data-kss-fullscreen="kssref-atoms-form-controls-input-checkbox">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1642,7 +2769,7 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-input-checkbox" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1722,26 +2849,26 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-input-checkbox.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="form-group">
-  <div class="checkbox">
-    <input type="checkbox" id="test5">
-    <label for="test5">Red</label>
-  </div>
-  <div class="checkbox">
-    <input type="checkbox" id="test6" checked="">
-    <label for="test6">Yellow</label>
-  </div>
-  <div class="checkbox">
-    <input type="checkbox" id="test7" checked="" disabled="disabled">
-    <label for="test7">Green</label>
-  </div>
-  <div class="checkbox">
-    <input type="checkbox" id="test8" disabled="disabled">
-    <label for="test8">Brown</label>
-  </div>
-</div></code></pre>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;form-group&quot;&gt;
+  &lt;div class=&quot;checkbox&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;test5&quot;&gt;
+    &lt;label for=&quot;test5&quot;&gt;Red&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;checkbox&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;test6&quot; checked=&quot;&quot;&gt;
+    &lt;label for=&quot;test6&quot;&gt;Yellow&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;checkbox&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;test7&quot; checked=&quot;&quot; disabled=&quot;disabled&quot;&gt;
+    &lt;label for=&quot;test7&quot;&gt;Green&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;checkbox&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; id=&quot;test8&quot; disabled=&quot;disabled&quot;&gt;
+    &lt;label for=&quot;test8&quot;&gt;Brown&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
 
                 </details>
               
@@ -1750,13 +2877,13 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
                 Source: <code>02-atoms/form-controls/_radio-checkbox.scss</code>, line 18
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-input-switch" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-input-switch" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-input-switch">
                 <span class="lead">
-                  3.2.6
+                  3.5.6
                   <span class="visually-hidden">
                       atoms.form-controls.input-switch
                     </span>
@@ -1766,7 +2893,7 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-input-switch" data-kss-fullscreen="kssref-atoms-form-controls-input-switch">
+                                  <a href="#kssref-atoms-form-controls-input-switch" data-kss-fullscreen="kssref-atoms-form-controls-input-switch">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1785,7 +2912,7 @@ with the input. Add the input&#39;s <code>id</code> as the value of the <code>fo
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-input-switch" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1862,27 +2989,27 @@ input element. Now you can put your labels at the beginning and end of the label
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-input-switch.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><!-- Switch -->
-<div class="switch">
-  <label>
+                   <pre><code class="language-markup" data-language="html">&lt;!-- Switch --&gt;
+&lt;div class=&quot;switch&quot;&gt;
+  &lt;label&gt;
     Off
-    <input type="checkbox" checked>
-    <span class="lever"></span>
+    &lt;input type=&quot;checkbox&quot; checked&gt;
+    &lt;span class=&quot;lever&quot;&gt;&lt;/span&gt;
     On
-  </label>
-</div>
+  &lt;/label&gt;
+&lt;/div&gt;
 
-<!-- Disabled Switch -->
-<div class="switch">
-  <label>
+&lt;!-- Disabled Switch --&gt;
+&lt;div class=&quot;switch&quot;&gt;
+  &lt;label&gt;
     Off
-    <input disabled="" type="checkbox">
-    <span class="lever"></span>
+    &lt;input disabled=&quot;&quot; type=&quot;checkbox&quot;&gt;
+    &lt;span class=&quot;lever&quot;&gt;&lt;/span&gt;
     On
-  </label>
-</div></code></pre>
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
 
                 </details>
               
@@ -1891,13 +3018,13 @@ input element. Now you can put your labels at the beginning and end of the label
                 Source: <code>02-atoms/form-controls/_switch.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-atoms-form-controls-input-range" class="kss-section kss-section--depth-3">
+                                  <section id="kssref-atoms-form-controls-input-range" class="kss-section kss-section--depth-3 ">
 
               
                             <h3 class="kss-title kss-title--level-3">
               <a href="#kssref-atoms-form-controls-input-range">
                 <span class="lead">
-                  3.2.7
+                  3.5.7
                   <span class="visually-hidden">
                       atoms.form-controls.input-range
                     </span>
@@ -1907,7 +3034,7 @@ input element. Now you can put your labels at the beginning and end of the label
             </h3>
 
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-form-controls-input-range" data-kss-fullscreen="kssref-atoms-form-controls-input-range">
+                                  <a href="#kssref-atoms-form-controls-input-range" data-kss-fullscreen="kssref-atoms-form-controls-input-range">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -1926,7 +3053,7 @@ input element. Now you can put your labels at the beginning and end of the label
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
+                  </a>
                                 <a href="#kssref-atoms-form-controls-input-range" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
@@ -1987,11 +3114,11 @@ There is no extra markup needed, just update the scss variables in the variables
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/form-controls/form-input-range.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="form-group">
-  <input type="range" />
-</div>
+                   <pre><code class="language-markup" data-language="html">&lt;div class=&quot;form-group&quot;&gt;
+  &lt;input type=&quot;range&quot; /&gt;
+&lt;/div&gt;
 </code></pre>
 
                 </details>
@@ -2001,23 +3128,58 @@ There is no extra markup needed, just update the scss variables in the variables
                 Source: <code>02-atoms/form-controls/_range.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-atoms-card" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-atoms-list" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
-              <a href="#kssref-atoms-card">
+              <a href="#kssref-atoms-list">
                 <span class="lead">
-                  3.3
+                  3.6
                   <span class="visually-hidden">
-                      atoms.card
+                      atoms.list
                     </span>
                 </span>
-                Card
+                List
               </a>
             </h2>
 
+            
+
+                          <div class="kss-description">
+                <p>Lists present multiple line items in a vertical arrangement as a single continuous element.</p>
+<p>We intentionally keep our list atom simple, because it is used sparsely in Open Social. Also
+it is good to know this atom replaces the original bootstrap list-group component.</p>
+<p>It doesn&#39;t matter which HTML tag you use to create a list, it may be a <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code>,
+but it is not required. All that is required is the <code>.list-item</code> class on the element.
+When you need to display elements in a row, like an avatar plus
+a user&#39;s name, or you want to present a list with labels and values use the examples below.</p>
+
+              </div>
+            
+            
+
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/list/list.scss</code>, line 3
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-list-avatar" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-list-avatar">
+                <span class="lead">
+                  3.6.1
+                  <span class="visually-hidden">
+                      atoms.list.avatar
+                    </span>
+                </span>
+                List with avatar
+              </a>
+            </h3>
+
                           <p class="kss-toolbar">
-                                  <!--<a href="#kssref-atoms-card" data-kss-fullscreen="kssref-atoms-card">
+                                  <a href="#kssref-atoms-list-avatar" data-kss-fullscreen="kssref-atoms-list-avatar">
                     <span class="kss-toolbar__tooltip">Toggle full screen</span>
                     <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
@@ -2026,7 +3188,7 @@ There is no extra markup needed, just update the scss variables in the variables
                       <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
                     </svg>
                   </a>
-                  <a href="item-atoms-card.html" target="_blank">
+                  <a href="item-atoms-list-avatar.html" target="_blank">
                     <span class="kss-toolbar__tooltip">Open in new window</span>
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                       <rect x="0" y="20" width="40" height="44" fill="#fff"/>
@@ -2036,8 +3198,8 @@ There is no extra markup needed, just update the scss variables in the variables
                       <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
                       <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
                     </svg>
-                  </a>-->
-                                <a href="#kssref-atoms-card" data-kss-guides="true">
+                  </a>
+                                <a href="#kssref-atoms-list-avatar" data-kss-guides="true">
                   <span class="kss-toolbar__tooltip">Toggle example guides</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                     <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
@@ -2058,7 +3220,7 @@ There is no extra markup needed, just update the scss variables in the variables
                     <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
                   </svg>
                 </a>
-                <a href="#kssref-atoms-card" data-kss-markup="true">
+                <a href="#kssref-atoms-list-avatar" data-kss-markup="true">
                   <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
                     <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
@@ -2069,21 +3231,7 @@ There is no extra markup needed, just update the scss variables in the variables
             
 
                           <div class="kss-description">
-                <p>The card is a very basic element that we see a lot in Open social.
-It is the most basic way of structuring content into sections.
-A card is elevated (through <code>box-shadow</code> property) one level from the canvas.
-It will also have a <code>background-color</code> and <code>border-radius</code>.</p>
-<p><strong>Card title</strong></p>
-<p>A card can have a title to display what the card is about.
-Add <code>.card__title--underline</code> for a border on the head.
-Add a child <code>&lt;div class=&quot;card__subtitle&quot;&gt;</code> for a subtitle.</p>
-<p><strong>Card body</strong></p>
-<p>Add <code>.card__body--fat</code> to double the padding of the card.</p>
-<p>.card<strong>body - Default body card
-.card</strong>body--fat - Fat body card</p>
-<p><strong>Card footer</strong></p>
-<p>The footer is reserved for actions the user can perform in the card.
-In most cases there will be buttons, but there can also be labels in here.</p>
+                <p>Simple way for showing a list of users.</p>
 
               </div>
             
@@ -2091,62 +3239,48 @@ In most cases there will be buttons, but there can also be labels in here.</p>
 
                           <div class="card">
                 <header class="card__title card__title--underline">
-                  Examples                </header>
+                  Example                </header>
                 <div class="card__body">
 
-                                      <!--<div class="kss-modifier__default-name kss-style">
-                      Default styling
-                    </div>-->
                   
-                  
-                                      <div class="kss-modifier__name kss-style">
-                      .card__body
-                    </div>
-                    <div class="kss-modifier__description kss-style">
-                      Default body card
-                    </div>
-                    <div class="kss-modifier__example">
-                      <section class="card">
-  <h2 class="card__title card__title--underline">
-    Card title
-    <span class="card__subtitle">
-      optional subtitle
+                                      <div class="kss-modifier__example">
+                        <div class="list-item">
+    <span class="list-item__avatar">
+      <img src="kss-assets/avatar-1.jpg" alt="" class="img-responsive img-avatar"/>
     </span>
-  </h2>
-  <div class="card__body card__body">
-    <p>Body can contain element</p>
+
+    <span class="list-item__text">
+     Chris Hall
+    </span>
+
   </div>
 
-  <footer class="card__actionbar">
-    <a href="#" class="card__link"> Read more </a>
-  </footer>
-
-</section>
-                    </div>
-                                      <div class="kss-modifier__name kss-style">
-                      .card__body--fat
-                    </div>
-                    <div class="kss-modifier__description kss-style">
-                      Fat body card
-                    </div>
-                    <div class="kss-modifier__example">
-                      <section class="card">
-  <h2 class="card__title card__title--underline">
-    Card title
-    <span class="card__subtitle">
-      optional subtitle
+  <div class="list-item">
+    <span class="list-item__avatar">
+      <img src="kss-assets/avatar-2.jpg" alt="" class="img-responsive img-avatar"/>
     </span>
-  </h2>
-  <div class="card__body card__body--fat">
-    <p>Body can contain element</p>
+
+    <span class="list-item__text">
+     Michele Clark
+    </span>
+
   </div>
 
-  <footer class="card__actionbar">
-    <a href="#" class="card__link"> Read more </a>
-  </footer>
+  <div class="list-item">
+    <span class="list-item__avatar">
+      <img src="kss-assets/avatar-3.jpg" alt="" class="img-responsive img-avatar"/>
+    </span>
 
-</section>
+    <span class="list-item__text">
+     Paul Harris
+    </span>
+
+  </div>
+
+
+                      <div class="kss-modifier__example-footer"></div>
                     </div>
+                  
                   
                 </div>
 
@@ -2154,30 +3288,197 @@ In most cases there will be buttons, but there can also be labels in here.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>02-atoms/list/list-avatar.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><section class="card">
-  <h2 class="card__title card__title--underline">
-    Card title
-    <span class="card__subtitle">
-      optional subtitle
-    </span>
-  </h2>
-  <div class="card__body [modifier class]">
-    <p>Body can contain element</p>
-  </div>
+                   <pre><code class="language-markup" data-language="html">{% for key, name in users %}
+  &lt;div class=&quot;list-item&quot;&gt;
+    &lt;span class=&quot;list-item__avatar&quot;&gt;
+      &lt;img src=&quot;kss-assets/avatar-{{ key }}.jpg&quot; alt=&quot;&quot; class=&quot;img-responsive img-avatar&quot;/&gt;
+    &lt;/span&gt;
 
-  <footer class="card__actionbar">
-    <a href="#" class="card__link"> Read more </a>
-  </footer>
+    &lt;span class=&quot;list-item__text&quot;&gt;
+     {{ name }}
+    &lt;/span&gt;
 
-</section></code></pre>
+  &lt;/div&gt;
+
+{% endfor %}</code></pre>
 
                 </details>
               
             
                           <div class="kss-source kss-style">
-                Source: <code>02-atoms/cards/cards.scss</code>, line 1
+                Source: <code>02-atoms/list/list.scss</code>, line 17
+              </div>
+                      </section>
+                                  <section id="kssref-atoms-list-label" class="kss-section kss-section--depth-3 ">
+
+              
+                            <h3 class="kss-title kss-title--level-3">
+              <a href="#kssref-atoms-list-label">
+                <span class="lead">
+                  3.6.2
+                  <span class="visually-hidden">
+                      atoms.list.label
+                    </span>
+                </span>
+                List with label
+              </a>
+            </h3>
+
+                          <p class="kss-toolbar">
+                                  <a href="#kssref-atoms-list-label" data-kss-fullscreen="kssref-atoms-list-label">
+                    <span class="kss-toolbar__tooltip">Toggle full screen</span>
+                    <svg class="off" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M64 0v26l-10-10-12 12-6-6 12-12-10-10zM28 42l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                    <svg class="on" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <path class="kss-toolbar__icon-fill" d="M28 36v26l-10-10-12 12-6-6 12-12-10-10zM64 6l-12 12 10 10h-26v-26l10 10 12-12z"></path>
+                    </svg>
+                  </a>
+                  <a href="item-atoms-list-label.html" target="_blank">
+                    <span class="kss-toolbar__tooltip">Open in new window</span>
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                      <rect x="0" y="20" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M40,64l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="0" y="20" width="40" height="10"/>
+                      <rect x="24" y="0" width="40" height="44" fill="#fff"/>
+                      <path class="kss-toolbar__icon-fill" d="M64,44l-40,0l0,-44l40,0l0,44Zm-36,-40l0,36l32,0l0,-36l-32,0Z"/>
+                      <rect class="kss-toolbar__icon-fill" x="24" y="0" width="40" height="10"/>
+                    </svg>
+                  </a>
+                                <a href="#kssref-atoms-list-label" data-kss-guides="true">
+                  <span class="kss-toolbar__tooltip">Toggle example guides</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <rect class="kss-toolbar__icon-fill" x="5" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="35" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="21" width="5" height="9"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="5" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="0" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="5" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="54" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="49" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="5" y="49" width="5" height="15"/>
+                    <rect class="kss-toolbar__icon-fill" x="0" y="54" width="15" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="35" y="54" width="9" height="5"/>
+                    <rect class="kss-toolbar__icon-fill" x="20" y="54" width="9" height="5"/>
+                  </svg>
+                </a>
+                <a href="#kssref-atoms-list-label" data-kss-markup="true">
+                  <span class="kss-toolbar__tooltip">Toggle HTML markup</span>
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 64 64">
+                    <path class="kss-toolbar__icon-fill" d="M37.555,46.239l6.103,6.103l20.342,-20.342l-20.342,-20.342l-6.103,6.103l14.24,14.239l-14.24,14.239Z"/>
+                    <path class="kss-toolbar__icon-fill" d="M26.445,17.761l-6.103,-6.103l-20.342,20.342l20.342,20.342l6.103,-6.103l-14.24,-14.239l14.24,-14.239Z"/>
+                  </svg>
+                </a>
+              </p>
+            
+
+                          <div class="kss-description">
+                <p>Simple way for showing a list of labels and values.</p>
+
+              </div>
+            
+            
+
+                          <div class="card">
+                <header class="card__title card__title--underline">
+                  Example                </header>
+                <div class="card__body">
+
+                  
+                                      <div class="kss-modifier__example">
+                        <div class="list-item">
+    <span class="list-item__label">
+      Name
+    </span>
+
+    <span class="list-item__text">
+     Chris Hall
+    </span>
+
+  </div>
+
+  <div class="list-item">
+    <span class="list-item__label">
+      Address
+    </span>
+
+    <span class="list-item__text">
+     Singel 542 <br /> 1017 AZ Amsterdam<br /> The Netherlands
+    </span>
+
+  </div>
+
+  <div class="list-item">
+    <span class="list-item__label">
+      Email
+    </span>
+
+    <span class="list-item__text">
+     paul_harris_example@opensocial.com
+    </span>
+
+  </div>
+
+  <div class="list-item">
+    <span class="list-item__label">
+      Function
+    </span>
+
+    <span class="list-item__text">
+     Marketing Consultant
+    </span>
+
+  </div>
+
+  <div class="list-item">
+    <span class="list-item__label">
+      Organisation
+    </span>
+
+    <span class="list-item__text">
+     Open Social
+    </span>
+
+  </div>
+
+
+                      <div class="kss-modifier__example-footer"></div>
+                    </div>
+                  
+                  
+                </div>
+
+              </div>
+
+                              <details class="card kss-markup kss-style">
+                  <summary style="padding: 5px 20px; cursor: pointer;">
+                                          Markup: <code>02-atoms/list/list-label.twig</code>
+                                      </summary>
+                   <pre><code class="language-markup" data-language="html">{% for label, value in data %}
+  &lt;div class=&quot;list-item&quot;&gt;
+    &lt;span class=&quot;list-item__label&quot;&gt;
+      {{ label }}
+    &lt;/span&gt;
+
+    &lt;span class=&quot;list-item__text&quot;&gt;
+     {{ value }}
+    &lt;/span&gt;
+
+  &lt;/div&gt;
+
+{% endfor %}</code></pre>
+
+                </details>
+              
+            
+                          <div class="kss-source kss-style">
+                Source: <code>02-atoms/list/list.scss</code>, line 25
               </div>
                       </section>
                     
@@ -2225,7 +3526,7 @@ In most cases there will be buttons, but there can also be labels in here.</p>
     // Escape code
     // ============================================================
 
-    var $lang_markup       = document.querySelectorAll('pre code.language-markup'),
+    var $lang_markup       = document.querySelectorAll('pre.language-html code'),
         $lang_js           = document.querySelectorAll('script.atomic-js'),
         $lang_jscode       = document.querySelectorAll('pre code.language-javascript'),
         lang_markupsnippet = [],
