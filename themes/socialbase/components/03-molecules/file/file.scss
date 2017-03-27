@@ -91,7 +91,7 @@
 }
 
 .node-file__title {
-  @include multiLineEllipsis(1.35em, 3, $gray-lightest);
+  @include multiLineEllipsis(1.35em, 2, $gray-lightest);
   display: block;
   word-break: break-word;
   word-wrap: normal;
@@ -99,6 +99,7 @@
 
 .node-file__type {
   display: flex;
+  flex-wrap: wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -115,11 +116,17 @@
   height: 16px;
 }
 
-.node-file__size {
+.node-file__size,
+.node-file__count {
   text-overflow: ellipsis;
   overflow: hidden;
-
   line-height: 1rem;
+}
+
+.node-file__count {
+  flex: 1 0 100%;
+  white-space: nowrap;
+  margin: 5px 0 0 24px;
 }
 
 
