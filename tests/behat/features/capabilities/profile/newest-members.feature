@@ -1,4 +1,4 @@
-@api @profile @user @members @stability @perfect @community @newest @overview @block @LU @critical @1337
+@api @profile @user @members @stability @perfect @community @newest @overview @block @LU @critical
 Feature: See newest users in the community
   Benefit: In order to discover new people
   Role: LU
