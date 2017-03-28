@@ -159,50 +159,74 @@ function social_core_preprocess_block(&$variables) {
   /** @var \Drupal\group\Entity\Group $group */
   $group = \Drupal::routeMatch()->getParameter('group');
 
+  if(!empty($variables['elements']['content']['#view'])) {
+    $view = $variables['elements']['content']['#view'];
+    if(!empty($view->getDisplay())) {
+      $link = $view->getDisplay();
+      if(!empty($link->useMoreText())) {
+        $more_link = $link->useMoreText();
+      }
+    }
+  }
+
   // Add variables to sidebar blocks
   switch ($variables['elements']['#derivative_plugin_id']) {
     case 'upcoming_events-block_my_upcoming_events':
       $variables['view_all_path'] = 'my-events';
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'community-events';
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'latest_topics-block_latest_topics':
       $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'newest-topics';
+      $variables['view_all_path'] = 'all-topics';
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
     case 'newest_groups-block_newest_groups':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'all-groups';
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
     case 'newest_users-block_newest_users':
       $variables['subtitle'] = t('in the community');
-      $variables['view_all_path'] = 'newest-members';
+      $variables['view_all_path'] = 'all-members';
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
     case 'events-block_events_on_profile':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'topics-block_user_topics':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'groups-block_user_groups':
       $variables['subtitle'] = t('for this user');
       $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/members');
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'upcoming_events-upcoming_events_group':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/events');
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
     case 'latest_topics-group_topics_block':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
+      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
       break;
   }
 }
