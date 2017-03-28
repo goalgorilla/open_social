@@ -18,11 +18,11 @@ Feature: See newest topics in the community
 
     Given I am on the homepage
 
-    Then I should see "Newest topics"
+    Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click "All Newest topics"
+    When I click "All topics"
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
     And I should see "Newest topics"
@@ -32,7 +32,7 @@ Feature: See newest topics in the community
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click "All Newest topics"
-    Then I should see "Newest topics"
+    When I click "All topics"
+    Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
