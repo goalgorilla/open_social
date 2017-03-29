@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -229,9 +226,6 @@
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>00-config/_variables.scss</code>, line 21
-              </div>
                       </div>
                                   <section id="kssref-molecules-navigation" class="kss-section kss-section--depth-2">
 
@@ -254,9 +248,6 @@
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/navigation/navbar/navbar.scss</code>, line 3
-              </div>
                       </section>
                                   <section id="kssref-molecules-navigation-breadcrumb" class="kss-section kss-section--depth-3">
 
@@ -368,33 +359,30 @@ This is usually used when you have multiple layers of content. They are hidden o
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/navigation/breadcrumb/breadcrumb.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><nav role="navigation" class="breadcrumbs">
-  <h2 id="system-breadcrumb" class="visually-hidden">Breadcrumb</h2>
-  <ol class="breadcrumb container">
-    <li>
-      <a href="#">Home</a>
-      <svg class="icon-gray icon-small">
-        <use xlink:href="#icon-navigate_next"></use>
-      </svg>
-    </li>
-    <li>
-      <a href="#">Overview</a>
-      <svg class="icon-gray icon-small">
-        <use xlink:href="#icon-navigate_next"></use>
-      </svg>
-    </li>
-    <li class="active"> Detail page</li>
-  </ol>
-</nav></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;nav role=&quot;navigation&quot; class=&quot;breadcrumbs&quot;&gt;
+  &lt;h2 id=&quot;system-breadcrumb&quot; class=&quot;visually-hidden&quot;&gt;{{ &#039;Breadcrumb&#039;|t }}&lt;/h2&gt;
+  &lt;ol class=&quot;breadcrumb container&quot;&gt;
+    &lt;li&gt;
+      &lt;a href=&quot;#&quot;&gt;Home&lt;/a&gt;
+      &lt;svg class=&quot;icon-gray icon-small&quot;&gt;
+        &lt;use xlink:href=&quot;#icon-navigate_next&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href=&quot;#&quot;&gt;Overview&lt;/a&gt;
+      &lt;svg class=&quot;icon-gray icon-small&quot;&gt;
+        &lt;use xlink:href=&quot;#icon-navigate_next&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;active&quot;&gt; Detail page&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/nav&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/navigation/breadcrumb/breadcrumb.scss</code>, line 3
-              </div>
                       </section>
                                   <section id="kssref-molecules-navigation-nav-tabs" class="kss-section kss-section--depth-3">
 
@@ -421,9 +409,6 @@ This is usually used when you have multiple layers of content. They are hidden o
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/navigation/nav-tabs/nav-tabs.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-molecules-navigation-nav-tabs" class="kss-section kss-section--depth-3">
 
@@ -528,27 +513,24 @@ This is usually used when you have multiple layers of content. They are hidden o
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/navigation/navbar/navbar-scrollable.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><nav class="navbar navbar-secondary" role="navigation" >
-  <div class="navbar-scrollable">
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Stream</a></li>
-      <li><a href="#">Events</a></li>
-      <li><a href="#">Topics</a></li>
-      <li><a href="#">Groups</a></li>
-      <li><a href="#">Information</a></li>
-    </ul>
-  </div>
-</nav>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;nav class=&quot;navbar navbar-secondary&quot; role=&quot;navigation&quot; &gt;
+  &lt;div class=&quot;navbar-scrollable&quot;&gt;
+    &lt;ul class=&quot;nav navbar-nav&quot;&gt;
+      &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;#&quot;&gt;Stream&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Events&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Topics&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Groups&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Information&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
 </code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/navigation/navbar/navbar.scss</code>, line 545
-              </div>
                       </section>
                                   <section id="kssref-molecules-navigation-pagination" class="kss-section kss-section--depth-3">
 
@@ -676,47 +658,44 @@ links and <code>.active</code> to indicate the current page.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/navigation/pagination/pagination.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><nav role="navigation" aria-labelledby="pagination-heading" class="pager-nav text-center">
-  <h4 id="pagination-heading" class="visually-hidden">Pagination</h4>
-  <ul class="pagination">
-    <li class="disabled pager__item--previous">
-      <a href="#" aria-label="Previous">
-        <span aria-hidden="true">
-         <svg class="icon-small icon-gray">
-           <use xlink:href="#icon-navigate_before"></use>
-         </svg>
-        </span>
-      </a>
-    </li>
-    <li class="active">
-      <a href="#">1
-        <span class="sr-only"> (current) </span>
-      </a>
-    </li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li class="pager__item--next">
-      <a href="#" aria-label="Next">
-        <span aria-hidden="true">
-          <svg class="icon-small icon-gray">
-           <use xlink:href="#icon-navigate_next"></use>
-         </svg>
-        </span>
-      </a>
-    </li>
-  </ul>
-</nav></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;nav role=&quot;navigation&quot; aria-labelledby=&quot;pagination-heading&quot; class=&quot;pager-nav text-center&quot;&gt;
+  &lt;h4 id=&quot;pagination-heading&quot; class=&quot;visually-hidden&quot;&gt;Pagination&lt;/h4&gt;
+  &lt;ul class=&quot;pagination&quot;&gt;
+    &lt;li class=&quot;disabled pager__item--previous&quot;&gt;
+      &lt;a href=&quot;#&quot; aria-label=&quot;Previous&quot;&gt;
+        &lt;span aria-hidden=&quot;true&quot;&gt;
+         &lt;svg class=&quot;icon-small icon-gray&quot;&gt;
+           &lt;use xlink:href=&quot;#icon-navigate_before&quot;&gt;&lt;/use&gt;
+         &lt;/svg&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;active&quot;&gt;
+      &lt;a href=&quot;#&quot;&gt;1
+        &lt;span class=&quot;sr-only&quot;&gt; (current) &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;2&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;3&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;4&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;#&quot;&gt;5&lt;/a&gt;&lt;/li&gt;
+    &lt;li class=&quot;pager__item--next&quot;&gt;
+      &lt;a href=&quot;#&quot; aria-label=&quot;Next&quot;&gt;
+        &lt;span aria-hidden=&quot;true&quot;&gt;
+          &lt;svg class=&quot;icon-small icon-gray&quot;&gt;
+           &lt;use xlink:href=&quot;#icon-navigate_next&quot;&gt;&lt;/use&gt;
+         &lt;/svg&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/navigation/pagination/pagination.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-molecules-teaser" class="kss-section kss-section--depth-2">
 
@@ -900,93 +879,90 @@ the maximum height of the teaser should match the heigth of the <code>image_styl
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/teaser/teaser.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="card teaser">
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;div class=&quot;card teaser&quot;&gt;
 
-  <div class="teaser__image" >
+  &lt;div class=&quot;teaser__image&quot; &gt;
 
-    <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon">
-        <use xlink:href="#icon-topic"></use>
-      </svg>
-    </div>
+    &lt;div class=&quot;teaser__teaser-type&quot;&gt;
+      &lt;svg class=&quot;teaser__teaser-type-icon&quot;&gt;
+        &lt;use xlink:href=&quot;#icon-topic&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+    &lt;/div&gt;
 
-    <a href="#">
-      <img src="kss-assets/people3-square.jpg" alt="" class="img-responsive">
-    </a>
+    &lt;a href=&quot;#&quot;&gt;
+      &lt;img src=&quot;kss-assets/people3-square.jpg&quot; alt=&quot;&quot; class=&quot;img-responsive&quot;&gt;
+    &lt;/a&gt;
 
-  </div>
+  &lt;/div&gt;
 
-  <div class="teaser__body">
-    <div class="teaser__content">
+  &lt;div class=&quot;teaser__body&quot;&gt;
+    &lt;div class=&quot;teaser__content&quot;&gt;
 
-      <h4 class="teaser__title"> <a href="#">Teaser title</a></h4>
+      &lt;h4 class=&quot;teaser__title&quot;&gt; &lt;a href=&quot;#&quot;&gt;Teaser title&lt;/a&gt;&lt;/h4&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-account_circle"></use>
-        </svg>
-        <div class="teaser__content-text">
-          <div class="teaser__published">
-            <div class="teaser__published-author">
-              <a title="View user profile." href="#">Michelle Clark </a>
-            </div>
-            <div class="teaser__published-date"> &bullet; 29 Jan 2017 </div>
-          </div>
-        </div>
-      </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-account_circle&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;
+          &lt;div class=&quot;teaser__published&quot;&gt;
+            &lt;div class=&quot;teaser__published-author&quot;&gt;
+              &lt;a title=&quot;View user profile.&quot; href=&quot;#&quot;&gt;Michelle Clark &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;teaser__published-date&quot;&gt; &amp;bullet; 29 Jan 2017 &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-event"></use>
-        </svg>
-        <div class="teaser__content-text">Blog</div>
-      </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-event&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;Blog&lt;/div&gt;
+      &lt;/div&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-group"></use>
-        </svg>
-        <div class="teaser__content-text">Open Social Developers</div>
-      </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-group&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;Open Social Developers&lt;/div&gt;
+      &lt;/div&gt;
 
-    </div>
+    &lt;/div&gt;
 
-    <div class="card__actionbar">
+    &lt;div class=&quot;card__actionbar&quot;&gt;
 
-      <a href="#" class="badge badge--comment-count teaser__badge">
-        <label>
-          <svg class="icon-small icon-badge">
-            <use xlink:href="#icon-comment"></use>
-          </svg>
-          <span class="badge--comment-count__number">6</span>
-        </label>
-      </a>
+      &lt;a href=&quot;#&quot; class=&quot;badge badge--comment-count teaser__badge&quot;&gt;
+        &lt;label&gt;
+          &lt;svg class=&quot;icon-small icon-badge&quot;&gt;
+            &lt;use xlink:href=&quot;#icon-comment&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;
+          &lt;span class=&quot;badge--comment-count__number&quot;&gt;6&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/a&gt;
 
-      <div class="badge badge--toggle teaser__badge">
-        <label title="The visibility of this content is set to public">
-          <input type="checkbox">
-          <svg class="icon-gray icon-badge-toggle">
-            <use xlink:href="#icon-public"></use>
-          </svg><span class="badge--toggle__label">public</span>
-        </label>
-      </div>
+      &lt;div class=&quot;badge badge--toggle teaser__badge&quot;&gt;
+        &lt;label title=&quot;The visibility of this content is set to public&quot;&gt;
+          &lt;input type=&quot;checkbox&quot;&gt;
+          &lt;svg class=&quot;icon-gray icon-badge-toggle&quot;&gt;
+            &lt;use xlink:href=&quot;#icon-public&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;&lt;span class=&quot;badge--toggle__label&quot;&gt;public&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
 
-      <a href="#" class="card__link">Read more</a>
-    </div>
+      &lt;a href=&quot;#&quot; class=&quot;card__link&quot;&gt;Read more&lt;/a&gt;
+    &lt;/div&gt;
 
-  </div>
+  &lt;/div&gt;
 
 
-</div></code></pre>
+&lt;/div&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/teaser/teaser.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-molecules-teaser-unpublished" class="kss-section kss-section--depth-3">
 
@@ -1157,97 +1133,94 @@ the maximum height of the teaser should match the heigth of the <code>image_styl
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/teaser/teaser-unpublished.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><div class="card teaser teaser--unpublished">
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;div class=&quot;card teaser teaser--unpublished&quot;&gt;
 
-  <div class="teaser__image" >
+  &lt;div class=&quot;teaser__image&quot; &gt;
 
-    <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon">
-        <use xlink:href="#icon-topic"></use>
-      </svg>
-    </div>
+    &lt;div class=&quot;teaser__teaser-type&quot;&gt;
+      &lt;svg class=&quot;teaser__teaser-type-icon&quot;&gt;
+        &lt;use xlink:href=&quot;#icon-topic&quot;&gt;&lt;/use&gt;
+      &lt;/svg&gt;
+    &lt;/div&gt;
 
-    <a href="#">
-      <img src="kss-assets/animals1-square.jpg" alt="" class="img-responsive">
-    </a>
+    &lt;a href=&quot;#&quot;&gt;
+      &lt;img src=&quot;kss-assets/animals1-square.jpg&quot; alt=&quot;&quot; class=&quot;img-responsive&quot;&gt;
+    &lt;/a&gt;
 
-    <!-- diff -->
-    <div class="teaser__status">unpublished</div>
+    &lt;!-- diff --&gt;
+    &lt;div class=&quot;teaser__status&quot;&gt;unpublished&lt;/div&gt;
 
-  </div>
+  &lt;/div&gt;
 
-  <div class="teaser__body">
-    <div class="teaser__content">
+  &lt;div class=&quot;teaser__body&quot;&gt;
+    &lt;div class=&quot;teaser__content&quot;&gt;
 
-      <h4 class="teaser__title"> <a href="#">Teaser title</a></h4>
+      &lt;h4 class=&quot;teaser__title&quot;&gt; &lt;a href=&quot;#&quot;&gt;Teaser title&lt;/a&gt;&lt;/h4&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-account_circle"></use>
-        </svg>
-        <div class="teaser__content-text">
-          <div class="teaser__published">
-            <div class="teaser__published-author">
-              <a title="View user profile." href="#">Michelle Clark </a>
-            </div>
-            <div class="teaser__published-date"> &bullet; 29 Jan 2017 </div>
-          </div>
-        </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-account_circle&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;
+          &lt;div class=&quot;teaser__published&quot;&gt;
+            &lt;div class=&quot;teaser__published-author&quot;&gt;
+              &lt;a title=&quot;View user profile.&quot; href=&quot;#&quot;&gt;Michelle Clark &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;teaser__published-date&quot;&gt; &amp;bullet; 29 Jan 2017 &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
 
-      </div>
+      &lt;/div&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-event"></use>
-        </svg>
-        <div class="teaser__content-text">Blog</div>
-      </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-event&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;Blog&lt;/div&gt;
+      &lt;/div&gt;
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-group"></use>
-        </svg>
-        <div class="teaser__content-text">Open Social Developers</div>
-      </div>
+      &lt;div class=&quot;teaser__content-line&quot;&gt;
+        &lt;svg class=&quot;teaser__content-type-icon&quot;&gt;
+          &lt;use xlink:href=&quot;#icon-group&quot;&gt;&lt;/use&gt;
+        &lt;/svg&gt;
+        &lt;div class=&quot;teaser__content-text&quot;&gt;Open Social Developers&lt;/div&gt;
+      &lt;/div&gt;
 
-    </div>
+    &lt;/div&gt;
 
-    <div class="card__actionbar teaser__actionbar">
+    &lt;div class=&quot;card__actionbar teaser__actionbar&quot;&gt;
 
-      <a href="#" class="badge badge--comment-count teaser__badge">
-        <label>
-          <svg class="icon-small icon-badge">
-            <use xlink:href="#icon-comment"></use>
-          </svg>
-          <span class="badge--comment-count__number">6</span>
-        </label>
-      </a>
+      &lt;a href=&quot;#&quot; class=&quot;badge badge--comment-count teaser__badge&quot;&gt;
+        &lt;label&gt;
+          &lt;svg class=&quot;icon-small icon-badge&quot;&gt;
+            &lt;use xlink:href=&quot;#icon-comment&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;
+          &lt;span class=&quot;badge--comment-count__number&quot;&gt;6&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/a&gt;
 
-      <div class="badge badge--toggle teaser__badge">
-        <label title="The visibility of this content is set to public">
-          <input type="checkbox">
-          <svg class="icon-gray icon-badge-toggle">
-            <use xlink:href="#icon-public"></use>
-          </svg><span class="badge--toggle__label">public</span>
-        </label>
-      </div>
+      &lt;div class=&quot;badge badge--toggle teaser__badge&quot;&gt;
+        &lt;label title=&quot;The visibility of this content is set to public&quot;&gt;
+          &lt;input type=&quot;checkbox&quot;&gt;
+          &lt;svg class=&quot;icon-gray icon-badge-toggle&quot;&gt;
+            &lt;use xlink:href=&quot;#icon-public&quot;&gt;&lt;/use&gt;
+          &lt;/svg&gt;&lt;span class=&quot;badge--toggle__label&quot;&gt;public&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
 
-      <a href="#" class="card__link">Read more</a>
-    </div>
+      &lt;a href=&quot;#&quot; class=&quot;card__link&quot;&gt;Read more&lt;/a&gt;
+    &lt;/div&gt;
 
-  </div>
+  &lt;/div&gt;
 
 
-</div></code></pre>
+&lt;/div&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/teaser/teaser.scss</code>, line 24
-              </div>
                       </section>
                                   <section id="kssref-molecules-files" class="kss-section kss-section--depth-2">
 
@@ -1275,9 +1248,6 @@ as attachments with articles. The other style is when files are in forms (edit m
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/file/file.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-molecules-files-node" class="kss-section kss-section--depth-3">
 
@@ -1382,26 +1352,23 @@ The cards must be placed in a grid <code>.files__grid</code>. The element consis
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/file/file-node.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><ul class="files__grid">
-<li class="node-file">
-  <a class="node-file__link" href="#" title="Open file in a new window" target="_blank">
-    <span class="node-file__title">Vestibulum id ligula porta felis euismod semper.pdf</span>
-    <span class="node-file__type">
-        <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" />
-        <span class="node-file__size">40.14 KB</span>
-      </span>
-  </a>
-</li>
-</ul></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;ul class=&quot;files__grid&quot;&gt;
+&lt;li class=&quot;node-file&quot;&gt;
+  &lt;a class=&quot;node-file__link&quot; href=&quot;#&quot; title=&quot;{{ &#039;Open file in a new window&#039;|t }}&quot; target=&quot;_blank&quot;&gt;
+    &lt;span class=&quot;node-file__title&quot;&gt;Vestibulum id ligula porta felis euismod semper.pdf&lt;/span&gt;
+    &lt;span class=&quot;node-file__type&quot;&gt;
+        &lt;img class=&quot;node-file__icon&quot; src=&quot;kss-assets/icon_1_pdf_x16.png&quot; srcset=&quot;kss-assets/icon_1_pdf_x32.png 2x&quot; alt=&quot;{{ node_icon }}&quot; /&gt;
+        &lt;span class=&quot;node-file__size&quot;&gt;40.14 KB&lt;/span&gt;
+      &lt;/span&gt;
+  &lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/file/file.scss</code>, line 10
-              </div>
                       </section>
                                   <section id="kssref-molecules-files-form" class="kss-section kss-section--depth-3">
 
@@ -1502,21 +1469,18 @@ the multiple file upload widget where multiple rows can be added.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>03-molecules/file/file-form.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><span class="file">
-  <span class="file-icon">
-    <img class="node-file__icon" src="kss-assets/icon_1_pdf_x16.png" srcset="kss-assets/icon_1_pdf_x32.png 2x" alt="" /></span>
-  <span class="file-link"><a href="#" title="Open file in a new window" target="_blank">Vestibulum id ligula porta felis euismod semper.pdf</a></span>
-  <span class="file-size">40.14 KB</span>
-</span></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;span class=&quot;file&quot;&gt;
+  &lt;span class=&quot;file-icon&quot;&gt;
+    &lt;img class=&quot;node-file__icon&quot; src=&quot;kss-assets/icon_1_pdf_x16.png&quot; srcset=&quot;kss-assets/icon_1_pdf_x32.png 2x&quot; alt=&quot;{{ node_icon }}&quot; /&gt;&lt;/span&gt;
+  &lt;span class=&quot;file-link&quot;&gt;&lt;a href=&quot;#&quot; title=&quot;{{ &#039;Open file in a new window&#039;|t }}&quot; target=&quot;_blank&quot;&gt;Vestibulum id ligula porta felis euismod semper.pdf&lt;/a&gt;&lt;/span&gt;
+  &lt;span class=&quot;file-size&quot;&gt;40.14 KB&lt;/span&gt;
+&lt;/span&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>03-molecules/file/file.scss</code>, line 21
-              </div>
                       </section>
                     
         </div>

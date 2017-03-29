@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -277,9 +274,6 @@
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>00-config/_variables.scss</code>, line 9
-              </div>
                       </div>
                                   <section id="kssref-base-root" class="kss-section kss-section--depth-2">
 
@@ -308,9 +302,6 @@ universal selector.</p>
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/root/_root.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-type" class="kss-section kss-section--depth-2">
 
@@ -337,9 +328,6 @@ universal selector.</p>
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_text.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-type-font" class="kss-section kss-section--depth-3">
 
@@ -372,9 +360,6 @@ We bundle our theme with 3 different font weights you can use: 300, 500 and 700<
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_fonts.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-type-headings" class="kss-section kss-section--depth-3">
 
@@ -475,27 +460,24 @@ We bundle our theme with 3 different font weights you can use: 300, 500 and 700<
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/headings/headings.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><h1 class="">A Heading Level 1 (h1) with enough text to wrap to another line</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
-<h2 class="">Heading Level 2 (h2) with enough text to wrap to another line; Heading Level 2 (h2) with enough text to wrap to another line</h2>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
-<h3 class="">Heading Level 3 (h3) with enough text to wrap to another line; Heading Level 3 (h3) with enough text to wrap to another line</h3>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
-<h4 class="">Heading Level 4 (h4) with enough text to wrap to another line; Heading Level 4 (h4) with enough text to wrap to another line; Heading Level 4 (h4) with enough text to wrap to another line</h4>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
-<h5 class="">Heading Level 5 (h5) with enough text to wrap to another line; Heading Level 5 (h5) with enough text to wrap to another line; Heading Level 5 (h5) with enough text to wrap to another line</h5>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p>
-<h6 class="">Heading Level 6 (h6) with enough text to wrap to another line; Heading Level 6 (h6) with enough text to wrap to another line; Heading Level 6 (h6) with enough text to wrap to another line</h6>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.</p></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;h1 class=&quot;{{modifier_class}}&quot;&gt;A Heading Level 1 (h1) with enough text to wrap to another line&lt;/h1&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;
+&lt;h2 class=&quot;{{modifier_class}}&quot;&gt;Heading Level 2 (h2) with enough text to wrap to another line; Heading Level 2 (h2) with enough text to wrap to another line&lt;/h2&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;
+&lt;h3 class=&quot;{{modifier_class}}&quot;&gt;Heading Level 3 (h3) with enough text to wrap to another line; Heading Level 3 (h3) with enough text to wrap to another line&lt;/h3&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;
+&lt;h4 class=&quot;{{modifier_class}}&quot;&gt;Heading Level 4 (h4) with enough text to wrap to another line; Heading Level 4 (h4) with enough text to wrap to another line; Heading Level 4 (h4) with enough text to wrap to another line&lt;/h4&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;
+&lt;h5 class=&quot;{{modifier_class}}&quot;&gt;Heading Level 5 (h5) with enough text to wrap to another line; Heading Level 5 (h5) with enough text to wrap to another line; Heading Level 5 (h5) with enough text to wrap to another line&lt;/h5&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;
+&lt;h6 class=&quot;{{modifier_class}}&quot;&gt;Heading Level 6 (h6) with enough text to wrap to another line; Heading Level 6 (h6) with enough text to wrap to another line; Heading Level 6 (h6) with enough text to wrap to another line&lt;/h6&gt;
+&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.&lt;/p&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/headings/_headings.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-type-links" class="kss-section kss-section--depth-3">
 
@@ -589,16 +571,13 @@ We bundle our theme with 3 different font weights you can use: 300, 500 and 700<
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/links/links.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>This is a <a href="#">link to another web page</a></p></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;This is a &lt;a href=&quot;#&quot;&gt;link to another web page&lt;/a&gt;&lt;/p&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/links/_links.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-type-text" class="kss-section kss-section--depth-3">
 
@@ -707,31 +686,28 @@ We bundle our theme with 3 different font weights you can use: 300, 500 and 700<
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/text/text.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>The default font-size and line-height properties are applied to the <code>&lt;body&gt;</code> element and all paragraphs. In addition, <code>&lt;p&gt;</code> (paragraphs) receive a bottom margin.</p>
-<p>You can use the mark tag to <mark>highlight</mark> text.</p>
-<p><del>This line of text is meant to be treated as deleted text.</del></p>
-<p><s>This line of text is meant to be treated as no longer accurate.</s></p>
-<p><ins>This line of text is meant to be treated as an addition to the document.</ins></p>
-<p><u>This line of text will render as underlined</u></p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following snippets of text are <strong class="">rendered</strong> as <b class="">bold
-    text</b>. Bold text nested inside <i>italic text <b>should</b></i> <em>still be
-    <strong>bold</strong></em>.</p>
-<p>The following snippets of text are <em class="">rendered</em> as <i class="">italic text</i>.
-  Italic text nested inside <b>bold text <i>should</i></b> <strong>still be
-    <em>italic</em></strong></p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.
-  And <abbr title="HyperText Markup Language">HTML</abbr> is an acroynm.</p>
-<p><abbr>M<sup>lle</sup></abbr> Gwendoline wrote the equation <code>f(x, n) = log<sub>4</sub>x<sup class="">n</sup></code>.</p></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;The default font-size and line-height properties are applied to the &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt; element and all paragraphs. In addition, &lt;code&gt;&amp;lt;p&amp;gt;&lt;/code&gt; (paragraphs) receive a bottom margin.&lt;/p&gt;
+&lt;p&gt;You can use the mark tag to &lt;mark&gt;highlight&lt;/mark&gt; text.&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;This line of text is meant to be treated as deleted text.&lt;/del&gt;&lt;/p&gt;
+&lt;p&gt;&lt;s&gt;This line of text is meant to be treated as no longer accurate.&lt;/s&gt;&lt;/p&gt;
+&lt;p&gt;&lt;ins&gt;This line of text is meant to be treated as an addition to the document.&lt;/ins&gt;&lt;/p&gt;
+&lt;p&gt;&lt;u&gt;This line of text will render as underlined&lt;/u&gt;&lt;/p&gt;
+&lt;p&gt;&lt;small&gt;This line of text is meant to be treated as fine print.&lt;/small&gt;&lt;/p&gt;
+&lt;p&gt;The following snippets of text are &lt;strong class=&quot;&quot;&gt;rendered&lt;/strong&gt; as &lt;b class=&quot;&quot;&gt;bold
+    text&lt;/b&gt;. Bold text nested inside &lt;i&gt;italic text &lt;b&gt;should&lt;/b&gt;&lt;/i&gt; &lt;em&gt;still be
+    &lt;strong&gt;bold&lt;/strong&gt;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;The following snippets of text are &lt;em class=&quot;&quot;&gt;rendered&lt;/em&gt; as &lt;i class=&quot;&quot;&gt;italic text&lt;/i&gt;.
+  Italic text nested inside &lt;b&gt;bold text &lt;i&gt;should&lt;/i&gt;&lt;/b&gt; &lt;strong&gt;still be
+    &lt;em&gt;italic&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;An abbreviation of the word attribute is &lt;abbr title=&quot;attribute&quot;&gt;attr&lt;/abbr&gt;.
+  And &lt;abbr title=&quot;HyperText Markup Language&quot;&gt;HTML&lt;/abbr&gt; is an acroynm.&lt;/p&gt;
+&lt;p&gt;&lt;abbr&gt;M&lt;sup&gt;lle&lt;/sup&gt;&lt;/abbr&gt; Gwendoline wrote the equation &lt;code&gt;f(x, n) = log&lt;sub&gt;4&lt;/sub&gt;x&lt;sup class=&quot;&quot;&gt;n&lt;/sup&gt;&lt;/code&gt;.&lt;/p&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_text.scss</code>, line 9
-              </div>
                       </section>
                                   <section id="kssref-base-type-address" class="kss-section kss-section--depth-3">
 
@@ -836,26 +812,23 @@ entire body of work. Preserve formatting by ending all lines with <code>&lt;br&g
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/text/address.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><address>
-  <strong>Open Social HQ</strong><br>
-  Singel 542<br>
-  1017 AZ Amsterdam<br>
-  <abbr title="Phone">P:</abbr> (123) 456-7890
-</address>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;address&gt;
+  &lt;strong&gt;Open Social HQ&lt;/strong&gt;&lt;br&gt;
+  Singel 542&lt;br&gt;
+  1017 AZ Amsterdam&lt;br&gt;
+  &lt;abbr title=&quot;Phone&quot;&gt;P:&lt;/abbr&gt; (123) 456-7890
+&lt;/address&gt;
 
-<address>
-  <strong>Full Name</strong><br>
-  <a href="mailto:#">first.last@example.com</a>
-</address></code></pre>
+&lt;address&gt;
+  &lt;strong&gt;Full Name&lt;/strong&gt;&lt;br&gt;
+  &lt;a href=&quot;mailto:#&quot;&gt;first.last@example.com&lt;/a&gt;
+&lt;/address&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_text.scss</code>, line 19
-              </div>
                       </section>
                                   <section id="kssref-base-type-blockquotes" class="kss-section kss-section--depth-3">
 
@@ -952,18 +925,15 @@ For straight quotes, we recommend a <code>&lt;p&gt;</code>.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/text/blockquote.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><blockquote>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-</blockquote></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;blockquote&gt;
+  &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.&lt;/p&gt;
+&lt;/blockquote&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_text.scss</code>, line 30
-              </div>
                       </section>
                                   <section id="kssref-base-type-h-rule" class="kss-section kss-section--depth-3">
 
@@ -1064,21 +1034,18 @@ within a section of a reference book.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/text/hr.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque
   penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id
-  dolor id nibh ultricies vehicula.</p>
-<hr>
-<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-  ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla.</p></code></pre>
+  dolor id nibh ultricies vehicula.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
+  ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla.&lt;/p&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/text/_text.scss</code>, line 41
-              </div>
                       </section>
                                   <section id="kssref-base-code" class="kss-section kss-section--depth-2">
 
@@ -1179,20 +1146,17 @@ The <code>&lt;kbd&gt;</code> element represents user input (typically keyboard i
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/code/code.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>The <code>code</code> element represents a fragment of computer code.</p>
-<p>There are <var><var>y</var> = <var>m</var><var>x</var> + <var>b</var></var> flavors of ice cream to be available for purchase!</p>
-<p><samp>This text is meant to be treated as sample output from a computer program.</samp></p>
-<p>To switch directories, type <kbd>cd</kbd> followed by the name of the directory.<br>
-  To edit settings, press <kbd><kbd>ctrl</kbd> + <kbd>,</kbd></kbd></p></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;The &lt;code&gt;code&lt;/code&gt; element represents a fragment of computer code.&lt;/p&gt;
+&lt;p&gt;There are &lt;var&gt;&lt;var&gt;y&lt;/var&gt; = &lt;var&gt;m&lt;/var&gt;&lt;var&gt;x&lt;/var&gt; + &lt;var&gt;b&lt;/var&gt;&lt;/var&gt; flavors of ice cream to be available for purchase!&lt;/p&gt;
+&lt;p&gt;&lt;samp&gt;This text is meant to be treated as sample output from a computer program.&lt;/samp&gt;&lt;/p&gt;
+&lt;p&gt;To switch directories, type &lt;kbd&gt;cd&lt;/kbd&gt; followed by the name of the directory.&lt;br&gt;
+  To edit settings, press &lt;kbd&gt;&lt;kbd&gt;ctrl&lt;/kbd&gt; + &lt;kbd&gt;,&lt;/kbd&gt;&lt;/kbd&gt;&lt;/p&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/code/_code.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-lists" class="kss-section kss-section--depth-2">
 
@@ -1215,9 +1179,6 @@ The <code>&lt;kbd&gt;</code> element represents user input (typically keyboard i
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/lists/_lists.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-lists-ul" class="kss-section kss-section--depth-3">
 
@@ -1326,30 +1287,27 @@ explicitly matter.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/lists/ul.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><ul>
-  <li>Sit Ullamcorper Ultricies</li>
-  <li>Tortor</li>
-  <li>Mollis</li>
-  <li>Dolor
-    <ul>
-      <li>Cursus</li>
-      <li>Cras</li>
-      <li>Pellentesque</li>
-      <li>Egestas Sem</li>
-    </ul>
-  </li>
-  <li>Cursus Malesuada</li>
-  <li>Fermentum Tellus</li>
-</ul></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;ul&gt;
+  &lt;li&gt;Sit Ullamcorper Ultricies&lt;/li&gt;
+  &lt;li&gt;Tortor&lt;/li&gt;
+  &lt;li&gt;Mollis&lt;/li&gt;
+  &lt;li&gt;Dolor
+    &lt;ul&gt;
+      &lt;li&gt;Cursus&lt;/li&gt;
+      &lt;li&gt;Cras&lt;/li&gt;
+      &lt;li&gt;Pellentesque&lt;/li&gt;
+      &lt;li&gt;Egestas Sem&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Cursus Malesuada&lt;/li&gt;
+  &lt;li&gt;Fermentum Tellus&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/lists/_lists.scss</code>, line 7
-              </div>
                       </section>
                                   <section id="kssref-base-lists-ol" class="kss-section kss-section--depth-3">
 
@@ -1459,31 +1417,28 @@ explicitly matter.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/lists/ol.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><ol>
-  <li>Sit Ullamcorper Ultricies</li>
-  <li>Tortor</li>
-  <li>Mollis</li>
-  <li>Dolor
-    <ol>
-      <li>Cursus</li>
-      <li>Cras</li>
-      <li>Pellentesque</li>
-      <li>Egestas Sem</li>
-    </ol>
-  </li>
-  <li>Cursus Malesuada</li>
-  <li>Fermentum Tellus</li>
-</ol>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;ol&gt;
+  &lt;li&gt;Sit Ullamcorper Ultricies&lt;/li&gt;
+  &lt;li&gt;Tortor&lt;/li&gt;
+  &lt;li&gt;Mollis&lt;/li&gt;
+  &lt;li&gt;Dolor
+    &lt;ol&gt;
+      &lt;li&gt;Cursus&lt;/li&gt;
+      &lt;li&gt;Cras&lt;/li&gt;
+      &lt;li&gt;Pellentesque&lt;/li&gt;
+      &lt;li&gt;Egestas Sem&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Cursus Malesuada&lt;/li&gt;
+  &lt;li&gt;Fermentum Tellus&lt;/li&gt;
+&lt;/ol&gt;
 </code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/lists/_lists.scss</code>, line 16
-              </div>
                       </section>
                                   <section id="kssref-base-lists-dl" class="kss-section kss-section--depth-3">
 
@@ -1585,24 +1540,21 @@ explicitly matter.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/lists/dl.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><dl>
-  <dt>Description lists</dt>
-  <dd>A description list is perfect for defining terms.</dd>
-  <dt>Euismod</dt>
-  <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>
-  <dd>Donec id elit non mi porta gravida at eget metus.</dd>
-  <dt>Malesuada porta</dt>
-  <dd>Etiam porta sem malesuada magna mollis euismod.</dd>
-</dl></code></pre>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;dl&gt;
+  &lt;dt&gt;Description lists&lt;/dt&gt;
+  &lt;dd&gt;A description list is perfect for defining terms.&lt;/dd&gt;
+  &lt;dt&gt;Euismod&lt;/dt&gt;
+  &lt;dd&gt;Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.&lt;/dd&gt;
+  &lt;dd&gt;Donec id elit non mi porta gravida at eget metus.&lt;/dd&gt;
+  &lt;dt&gt;Malesuada porta&lt;/dt&gt;
+  &lt;dd&gt;Etiam porta sem malesuada magna mollis euismod.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/lists/_lists.scss</code>, line 27
-              </div>
                       </section>
                                   <section id="kssref-base-tables" class="kss-section kss-section--depth-2">
 
@@ -1751,71 +1703,68 @@ explicitly matter.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/tables/table.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><table>
-  <caption>Optional table caption.</caption>
-  <thead>
-    <tr>
-      <th>Member</th>
-      <th>Organisation</th>
-      <th>Role</th>
-      <th>Action</th>
-    </tr>
-  </thead>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;table&gt;
+  &lt;caption&gt;Optional table caption.&lt;/caption&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Member&lt;/th&gt;
+      &lt;th&gt;Organisation&lt;/th&gt;
+      &lt;th&gt;Role&lt;/th&gt;
+      &lt;th&gt;Action&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
 
-  <tbody>
-  <tr>
-    <td><a href="#">Chris Hall</a></td>
-    <td>Receptionist at Bastion Hotels</td>
-    <td>Member</td>
-    <td>
-      <div class="btn-group">
-        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-sm btn-raised dropdown-toggle">Manage<span class="caret"></span></button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li><a href="#">Edit</a></li>
-          <li><a href="#">Remove</a></li>
-        </ul>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="#">Michelle Williams</a></td>
-    <td>Community manager at Open Social</td>
-    <td>Group organiser</td>
-    <td>
-      <div class="btn-group">
-        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-sm btn-raised dropdown-toggle">Manage<span class="caret"></span></button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li><a href="#">Edit</a></li>
-          <li><a href="#">Remove</a></li>
-        </ul>
-      </div>
-    </td>
-  </tr>
-  <tr>
-    <td><a href="#">Jim Oyster</a></td>
-    <td>Plumber at Forgottoflush </td>
-    <td>Member</td>
-    <td>
-      <div class="btn-group">
-        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-sm btn-raised dropdown-toggle">Manage<span class="caret"></span></button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li><a href="#">Edit</a></li>
-          <li><a href="#">Remove</a></li>
-        </ul>
-      </div>
-    </td>
-  </tr>
-  </tbody>
-</table></code></pre>
+  &lt;tbody&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;a href=&quot;#&quot;&gt;Chris Hall&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;Receptionist at Bastion Hotels&lt;/td&gt;
+    &lt;td&gt;Member&lt;/td&gt;
+    &lt;td&gt;
+      &lt;div class=&quot;btn-group&quot;&gt;
+        &lt;button type=&quot;button&quot; autocomplete=&quot;off&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; class=&quot;btn btn-primary btn-sm btn-raised dropdown-toggle&quot;&gt;Manage&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+        &lt;ul class=&quot;dropdown-menu dropdown-menu-right&quot;&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Edit&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Remove&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;a href=&quot;#&quot;&gt;Michelle Williams&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;Community manager at Open Social&lt;/td&gt;
+    &lt;td&gt;Group organiser&lt;/td&gt;
+    &lt;td&gt;
+      &lt;div class=&quot;btn-group&quot;&gt;
+        &lt;button type=&quot;button&quot; autocomplete=&quot;off&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; class=&quot;btn btn-primary btn-sm btn-raised dropdown-toggle&quot;&gt;Manage&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+        &lt;ul class=&quot;dropdown-menu dropdown-menu-right&quot;&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Edit&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Remove&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;a href=&quot;#&quot;&gt;Jim Oyster&lt;/a&gt;&lt;/td&gt;
+    &lt;td&gt;Plumber at Forgottoflush &lt;/td&gt;
+    &lt;td&gt;Member&lt;/td&gt;
+    &lt;td&gt;
+      &lt;div class=&quot;btn-group&quot;&gt;
+        &lt;button type=&quot;button&quot; autocomplete=&quot;off&quot; data-toggle=&quot;dropdown&quot; aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; class=&quot;btn btn-primary btn-sm btn-raised dropdown-toggle&quot;&gt;Manage&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;&lt;/button&gt;
+        &lt;ul class=&quot;dropdown-menu dropdown-menu-right&quot;&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Edit&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Remove&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/tables/_tables.scss</code>, line 3
-              </div>
                       </section>
                                   <section id="kssref-base-embedded" class="kss-section kss-section--depth-2">
 
@@ -1838,9 +1787,6 @@ explicitly matter.</p>
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/embedded/_embedded.scss</code>, line 1
-              </div>
                       </section>
                                   <section id="kssref-base-embedded-img" class="kss-section kss-section--depth-3">
 
@@ -1985,22 +1931,19 @@ We are using the following image styles in Drupal. You can use devtools to inspe
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/embedded/embedded-img.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>An image <img src="kss-assets/sample-inline.png"> that is inline with other text.</p>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;An image &lt;img src=&quot;kss-assets/sample-inline.png&quot;&gt; that is inline with other text.&lt;/p&gt;
 
-<figure style="width: 50%; max-width: 300px;">
-  <figcaption>An image inside a figure.</figcaption>
-  <img src="kss-assets/sample.png">
-</figure>
+&lt;figure style=&quot;width: 50%; max-width: 300px;&quot;&gt;
+  &lt;figcaption&gt;An image inside a figure.&lt;/figcaption&gt;
+  &lt;img src=&quot;kss-assets/sample.png&quot;&gt;
+&lt;/figure&gt;
 </code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/embedded/_embedded.scss</code>, line 7
-              </div>
                       </section>
                                   <section id="kssref-base-embedded-svg" class="kss-section kss-section--depth-3">
 
@@ -2119,41 +2062,38 @@ We are using the following image styles in Drupal. You can use devtools to inspe
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>01-base/embedded/embedded-svg.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><p>A svg image <svg fill="#000000" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-    <path d="M0 0h24v24H0z" fill="none"/>
-  </svg> that is inline with other text.</p>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;p&gt;A svg image &lt;svg fill=&quot;#000000&quot; height=&quot;14&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;14&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+    &lt;path d=&quot;M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z&quot;/&gt;
+    &lt;path d=&quot;M0 0h24v24H0z&quot; fill=&quot;none&quot;/&gt;
+  &lt;/svg&gt; that is inline with other text.&lt;/p&gt;
 
-<figure style="width: 50%; max-width: 300px;">
-  <figcaption>A svg inside a figure.</figcaption>
-  <svg width="300px" height="250px" viewBox="0 0 60 50" xmlns="http://www.w3.org/2000/svg">
-    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-      <rect x="0" y="0" width="60" height="50"></rect>
-      <g transform="translate(15.000000, 10.000000)" fill="#29abe2">
-        <g>
-          <path d="M17.5625,15.9375 C17.0625,15.9375 16.8125,15.9375 16.75,16 L16.0625,16.0625 L16,16.75 C16,16.9375 15.625,20.8125 17.875,23.125 C19.375,24.625 21.1875,25.5 22.6875,25.5 C23.5,25.5 24.1875,25.25 24.6875,24.75 C26.125,23.3125 25.4375,20.25 23.0625,17.875 C21.4375,16.1875 18.9375,15.9375 17.5625,15.9375 L17.5625,15.9375 Z M23.5625,23.5 C23.375,23.6875 23.0625,23.75 22.6875,23.75 L22.6875,23.75 C21.875,23.75 20.4375,23.25 19.0625,21.8125 C17.875,20.625 17.625,18.5625 17.625,17.5 C18.75,17.5 20.6875,17.75 21.9375,18.9375 C22.8125,19.8125 23.4375,20.8125 23.6875,21.6875 C23.9375,22.5625 23.875,23.1875 23.5625,23.5 L23.5625,23.5 Z" id="Shape"></path>
-          <path d="M7.125,12.3125 C8.8125,14 11.3125,14.25 12.6875,14.25 C13.125,14.25 13.4375,14.25 13.5,14.1875 L14.1875,14.125 L14.25,13.4375 C14.25,13.25 14.625,9.375 12.375,7.0625 C10.875,5.5625 9.0625,4.6875 7.5625,4.6875 C6.75,4.6875 6.0625,4.9375 5.5625,5.4375 C4.8125,6.1875 4.625,7.3125 4.9375,8.5625 C5.25,9.875 6,11.1875 7.125,12.3125 L7.125,12.3125 Z M6.6875,6.625 C6.875,6.4375 7.1875,6.375 7.5625,6.375 C8.375,6.375 9.8125,6.875 11.1875,8.3125 C12.375,9.5 12.625,11.5625 12.625,12.625 C11.5,12.625 9.5625,12.375 8.3125,11.1875 C7.4375,10.3125 6.8125,9.3125 6.5625,8.4375 C6.3125,7.5625 6.375,6.9375 6.6875,6.625 L6.6875,6.625 Z"></path>
-          <path d="M14.25,16.6875 L14.1875,16 L13.5,15.9375 C13.4375,15.9375 13.1875,15.875 12.6875,15.875 C11.3125,15.875 8.8125,16.125 7.125,17.8125 C4.75,20.1875 4,23.1875 5.5,24.6875 C6,25.1875 6.6875,25.4375 7.5,25.4375 C9,25.4375 10.8125,24.5625 12.3125,23.0625 C14.625,20.75 14.25,16.875 14.25,16.6875 L14.25,16.6875 Z M12.625,17.5625 C12.625,18.625 12.4375,20.625 11.1875,21.875 C9.75,23.3125 8.375,23.8125 7.5625,23.8125 L7.5625,23.8125 C7.1875,23.8125 6.875,23.6875 6.6875,23.5625 C6.125,23 6.375,21.0625 8.3125,19.0625 C9.5,17.8125 11.5,17.625 12.625,17.5625 L12.625,17.5625 Z"></path>
-          <path d="M16,13.4375 L16.0625,14.125 L16.75,14.1875 C16.8125,14.1875 17.125,14.25 17.5625,14.25 C18.9375,14.25 21.4375,14 23.125,12.3125 C24.25,11.1875 25.0625,9.875 25.375,8.625 C25.6875,7.3125 25.5,6.1875 24.75,5.5 C24.25,5 23.5625,4.75 22.75,4.75 C21.25,4.75 19.4375,5.625 17.9375,7.125 C15.625,9.375 16,13.25 16,13.4375 L16,13.4375 Z M17.625,12.5625 C17.625,11.5 17.8125,9.5 19.0625,8.25 C20.5,6.8125 21.875,6.3125 22.6875,6.3125 C23.0625,6.3125 23.375,6.4375 23.5625,6.5625 C23.875,6.875 23.9375,7.5 23.6875,8.3125 C23.4375,9.25 22.8125,10.1875 21.9375,11.0625 C20.75,12.3125 18.75,12.5625 17.625,12.5625 L17.625,12.5625 Z"></path>
-          <path d="M26,11.5625 L25.8125,11.5 L25.6875,11.6875 C25.4375,12 25.25,12.3125 24.9375,12.625 L24.5625,13.0625 L25.125,13.125 C27.125,13.375 28.3125,14.3125 28.3125,15.0625 C28.3125,15.8125 27.125,16.75 25.125,17 L24.5625,17.0625 L24.9375,17.5 C25.1875,17.8125 25.4375,18.125 25.6875,18.4375 L25.8125,18.625 L26,18.5625 C28.4375,18.0625 30,16.6875 30,15.0625 C30,13.4375 28.4375,12.0625 26,11.5625 L26,11.5625 Z"></path>
-          <path d="M4.5,18.625 L4.625,18.4375 C4.8125,18.125 5.0625,17.8125 5.375,17.5 L5.75,17.0625 L5.1875,17 C3.1875,16.75 2,15.8125 2,15.0625 C2,14.3125 3.1875,13.375 5.1875,13.125 L5.75,13.0625 L5.375,12.625 C5.125,12.3125 4.875,12 4.625,11.6875 L4.5,11.5 L4.3125,11.5625 C1.875,12.0625 0.3125,13.4375 0.3125,15.0625 C0.3125,16.6875 1.875,18.0625 4.3125,18.5625 L4.5,18.625 L4.5,18.625 Z"></path>
-          <path d="M17.5625,24.875 L17.125,24.5 L17.0625,25.0625 C16.8125,27.0625 15.875,28.25 15.125,28.25 C14.375,28.25 13.4375,27.0625 13.1875,25.0625 L13.125,24.5 L12.6875,24.875 C12.375,25.125 12.0625,25.375 11.75,25.625 L11.5625,25.75 L11.625,25.9375 C12.125,28.375 13.5,29.9375 15.125,29.9375 C16.75,29.9375 18.125,28.375 18.625,25.9375 L18.6875,25.75 L18.5,25.625 C18.1875,25.375 17.875,25.125 17.5625,24.875 L17.5625,24.875 Z"></path>
-          <path d="M12.6875,5.3125 L13.125,5.6875 L13.1875,5.125 C13.4375,3.0625 14.375,1.875 15.125,1.875 C15.875,1.875 16.8125,3.0625 17.0625,5.0625 L17.125,5.625 L17.5625,5.25 C17.875,5 18.1875,4.75 18.5,4.5 L18.6875,4.375 L18.625,4.1875 C18.125,1.75 16.75,0.1875 15.125,0.1875 C13.5,0.1875 12.125,1.75 11.625,4.1875 L11.5625,4.375 L11.75,4.5 C12.0625,4.75 12.375,5 12.6875,5.3125 L12.6875,5.3125 Z"></path>
-        </g>
-      </g>
-    </g>
-  </svg>
+&lt;figure style=&quot;width: 50%; max-width: 300px;&quot;&gt;
+  &lt;figcaption&gt;A svg inside a figure.&lt;/figcaption&gt;
+  &lt;svg width=&quot;300px&quot; height=&quot;250px&quot; viewBox=&quot;0 0 60 50&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&gt;
+    &lt;g stroke=&quot;none&quot; stroke-width=&quot;1&quot; fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;&gt;
+      &lt;rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;60&quot; height=&quot;50&quot;&gt;&lt;/rect&gt;
+      &lt;g transform=&quot;translate(15.000000, 10.000000)&quot; fill=&quot;#29abe2&quot;&gt;
+        &lt;g&gt;
+          &lt;path d=&quot;M17.5625,15.9375 C17.0625,15.9375 16.8125,15.9375 16.75,16 L16.0625,16.0625 L16,16.75 C16,16.9375 15.625,20.8125 17.875,23.125 C19.375,24.625 21.1875,25.5 22.6875,25.5 C23.5,25.5 24.1875,25.25 24.6875,24.75 C26.125,23.3125 25.4375,20.25 23.0625,17.875 C21.4375,16.1875 18.9375,15.9375 17.5625,15.9375 L17.5625,15.9375 Z M23.5625,23.5 C23.375,23.6875 23.0625,23.75 22.6875,23.75 L22.6875,23.75 C21.875,23.75 20.4375,23.25 19.0625,21.8125 C17.875,20.625 17.625,18.5625 17.625,17.5 C18.75,17.5 20.6875,17.75 21.9375,18.9375 C22.8125,19.8125 23.4375,20.8125 23.6875,21.6875 C23.9375,22.5625 23.875,23.1875 23.5625,23.5 L23.5625,23.5 Z&quot; id=&quot;Shape&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M7.125,12.3125 C8.8125,14 11.3125,14.25 12.6875,14.25 C13.125,14.25 13.4375,14.25 13.5,14.1875 L14.1875,14.125 L14.25,13.4375 C14.25,13.25 14.625,9.375 12.375,7.0625 C10.875,5.5625 9.0625,4.6875 7.5625,4.6875 C6.75,4.6875 6.0625,4.9375 5.5625,5.4375 C4.8125,6.1875 4.625,7.3125 4.9375,8.5625 C5.25,9.875 6,11.1875 7.125,12.3125 L7.125,12.3125 Z M6.6875,6.625 C6.875,6.4375 7.1875,6.375 7.5625,6.375 C8.375,6.375 9.8125,6.875 11.1875,8.3125 C12.375,9.5 12.625,11.5625 12.625,12.625 C11.5,12.625 9.5625,12.375 8.3125,11.1875 C7.4375,10.3125 6.8125,9.3125 6.5625,8.4375 C6.3125,7.5625 6.375,6.9375 6.6875,6.625 L6.6875,6.625 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M14.25,16.6875 L14.1875,16 L13.5,15.9375 C13.4375,15.9375 13.1875,15.875 12.6875,15.875 C11.3125,15.875 8.8125,16.125 7.125,17.8125 C4.75,20.1875 4,23.1875 5.5,24.6875 C6,25.1875 6.6875,25.4375 7.5,25.4375 C9,25.4375 10.8125,24.5625 12.3125,23.0625 C14.625,20.75 14.25,16.875 14.25,16.6875 L14.25,16.6875 Z M12.625,17.5625 C12.625,18.625 12.4375,20.625 11.1875,21.875 C9.75,23.3125 8.375,23.8125 7.5625,23.8125 L7.5625,23.8125 C7.1875,23.8125 6.875,23.6875 6.6875,23.5625 C6.125,23 6.375,21.0625 8.3125,19.0625 C9.5,17.8125 11.5,17.625 12.625,17.5625 L12.625,17.5625 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M16,13.4375 L16.0625,14.125 L16.75,14.1875 C16.8125,14.1875 17.125,14.25 17.5625,14.25 C18.9375,14.25 21.4375,14 23.125,12.3125 C24.25,11.1875 25.0625,9.875 25.375,8.625 C25.6875,7.3125 25.5,6.1875 24.75,5.5 C24.25,5 23.5625,4.75 22.75,4.75 C21.25,4.75 19.4375,5.625 17.9375,7.125 C15.625,9.375 16,13.25 16,13.4375 L16,13.4375 Z M17.625,12.5625 C17.625,11.5 17.8125,9.5 19.0625,8.25 C20.5,6.8125 21.875,6.3125 22.6875,6.3125 C23.0625,6.3125 23.375,6.4375 23.5625,6.5625 C23.875,6.875 23.9375,7.5 23.6875,8.3125 C23.4375,9.25 22.8125,10.1875 21.9375,11.0625 C20.75,12.3125 18.75,12.5625 17.625,12.5625 L17.625,12.5625 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M26,11.5625 L25.8125,11.5 L25.6875,11.6875 C25.4375,12 25.25,12.3125 24.9375,12.625 L24.5625,13.0625 L25.125,13.125 C27.125,13.375 28.3125,14.3125 28.3125,15.0625 C28.3125,15.8125 27.125,16.75 25.125,17 L24.5625,17.0625 L24.9375,17.5 C25.1875,17.8125 25.4375,18.125 25.6875,18.4375 L25.8125,18.625 L26,18.5625 C28.4375,18.0625 30,16.6875 30,15.0625 C30,13.4375 28.4375,12.0625 26,11.5625 L26,11.5625 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M4.5,18.625 L4.625,18.4375 C4.8125,18.125 5.0625,17.8125 5.375,17.5 L5.75,17.0625 L5.1875,17 C3.1875,16.75 2,15.8125 2,15.0625 C2,14.3125 3.1875,13.375 5.1875,13.125 L5.75,13.0625 L5.375,12.625 C5.125,12.3125 4.875,12 4.625,11.6875 L4.5,11.5 L4.3125,11.5625 C1.875,12.0625 0.3125,13.4375 0.3125,15.0625 C0.3125,16.6875 1.875,18.0625 4.3125,18.5625 L4.5,18.625 L4.5,18.625 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M17.5625,24.875 L17.125,24.5 L17.0625,25.0625 C16.8125,27.0625 15.875,28.25 15.125,28.25 C14.375,28.25 13.4375,27.0625 13.1875,25.0625 L13.125,24.5 L12.6875,24.875 C12.375,25.125 12.0625,25.375 11.75,25.625 L11.5625,25.75 L11.625,25.9375 C12.125,28.375 13.5,29.9375 15.125,29.9375 C16.75,29.9375 18.125,28.375 18.625,25.9375 L18.6875,25.75 L18.5,25.625 C18.1875,25.375 17.875,25.125 17.5625,24.875 L17.5625,24.875 Z&quot;&gt;&lt;/path&gt;
+          &lt;path d=&quot;M12.6875,5.3125 L13.125,5.6875 L13.1875,5.125 C13.4375,3.0625 14.375,1.875 15.125,1.875 C15.875,1.875 16.8125,3.0625 17.0625,5.0625 L17.125,5.625 L17.5625,5.25 C17.875,5 18.1875,4.75 18.5,4.5 L18.6875,4.375 L18.625,4.1875 C18.125,1.75 16.75,0.1875 15.125,0.1875 C13.5,0.1875 12.125,1.75 11.625,4.1875 L11.5625,4.375 L11.75,4.5 C12.0625,4.75 12.375,5 12.6875,5.3125 L12.6875,5.3125 Z&quot;&gt;&lt;/path&gt;
+        &lt;/g&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+  &lt;/svg&gt;
 
-</figure></code></pre>
+&lt;/figure&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>01-base/embedded/_embedded.scss</code>, line 27
-              </div>
                       </section>
                     
         </div>

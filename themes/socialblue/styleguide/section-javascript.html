@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -187,9 +184,6 @@
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>00-config/_variables.scss</code>, line 39
-              </div>
                       </div>
                                   <section id="kssref-javascript-morrisjs" class="kss-section kss-section--depth-2">
 
@@ -220,9 +214,6 @@ on their <a href="http://morrisjs.github.io/morris.js/">website</a>.</p>
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>06-libraries/morrisjs/morrisjs.scss</code>, line 3
-              </div>
                       </section>
                                   <section id="kssref-javascript-morrisjs-linechart" class="kss-section kss-section--depth-3">
 
@@ -374,47 +365,44 @@ Morris.Line({
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>06-libraries/morrisjs/morrisjs-linechart.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><pre>
-  <code class="language-markup">
-    <div id="morris-line-graph" style="height: 200px" data-colors="#29abe2,#ffc142"></div>
-  </code>
-</pre>
-<pre>
-  <code class="language-javascript">
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;pre&gt;
+  &lt;code class=&quot;language-markup&quot;&gt;
+    &lt;div id=&quot;morris-line-graph&quot; style=&quot;height: 200px&quot; data-colors=&quot;#29abe2,#ffc142&quot;&gt;&lt;/div&gt;
+  &lt;/code&gt;
+&lt;/pre&gt;
+&lt;pre&gt;
+  &lt;code class=&quot;language-javascript&quot;&gt;
     var decimal_data = [];
-			for (var x = 0; x <= 360; x += 10) {
+			for (var x = 0; x &lt;= 360; x += 10) {
 				decimal_data.push({
 					x: x,
 					y: 1.5 + 1.5 * Math.sin(Math.PI * x / 180).toFixed(4)
 				});
 			}
 			window.m = Morris.Line({
-				element: 'morris-line-graph',
+				element: &#039;morris-line-graph&#039;,
 				data: decimal_data,
-				xkey: 'x',
-				ykeys: ['y'],
-				labels: ['sin(x)'],
+				xkey: &#039;x&#039;,
+				ykeys: [&#039;y&#039;],
+				labels: [&#039;sin(x)&#039;],
 				parseTime: false,
 				resize: true,
-				lineColors: jQuery('#morris-line-graph').data('colors').split(','),
+				lineColors: jQuery(&#039;#morris-line-graph&#039;).data(&#039;colors&#039;).split(&#039;,&#039;),
 				hoverCallback: function (index, options, default_content) {
 					var row = options.data[index];
-					return default_content.replace("sin(x)", "1.5 + 1.5 sin(" + row.x + ")");
+					return default_content.replace(&quot;sin(x)&quot;, &quot;1.5 + 1.5 sin(&quot; + row.x + &quot;)&quot;);
 				},
 				xLabelMargin: 10,
 				integerYLabels: true
 			});
-  </code>
-</pre></code></pre>
+  &lt;/code&gt;
+&lt;/pre&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>06-libraries/morrisjs/morrisjs.scss</code>, line 12
-              </div>
                       </section>
                                   <section id="kssref-javascript-morrisjs-areachart" class="kss-section kss-section--depth-3">
 
@@ -556,40 +544,37 @@ Morris.Area({
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>06-libraries/morrisjs/morrisjs-areachart.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html"><pre>
-  <code class="language-markup">
-    <div id="morris-area-graph" style="height: 200px" data-colors="#29abe2,#ffc142"></div>
-  </code>
-</pre>
-<pre>
-  <code class="language-javascript">
-    var labelColor = jQuery('#morris-area-graph').css('color');
+                   <pre class="language-markup"><code class="language-markup" data-language="html">&lt;pre&gt;
+  &lt;code class=&quot;language-markup&quot;&gt;
+    &lt;div id=&quot;morris-area-graph&quot; style=&quot;height: 200px&quot; data-colors=&quot;#29abe2,#ffc142&quot;&gt;&lt;/div&gt;
+  &lt;/code&gt;
+&lt;/pre&gt;
+&lt;pre&gt;
+  &lt;code class=&quot;language-javascript&quot;&gt;
+    var labelColor = jQuery(&#039;#morris-area-graph&#039;).css(&#039;color&#039;);
       Morris.Area({
-        element: 'morris-area-graph',
+        element: &#039;morris-area-graph&#039;,
         behaveLikeLine: true,
         data: [
-          {x: '2017 Q1', y: 3, z: 3},
-          {x: '2017 Q2', y: 2, z: 1},
-          {x: '2017 Q3', y: 2, z: 4},
-          {x: '2017 Q4', y: 3, z: 3}
+          {x: &#039;2017 Q1&#039;, y: 3, z: 3},
+          {x: &#039;2017 Q2&#039;, y: 2, z: 1},
+          {x: &#039;2017 Q3&#039;, y: 2, z: 4},
+          {x: &#039;2017 Q4&#039;, y: 3, z: 3}
         ],
-        xkey: 'x',
-        ykeys: ['y', 'z'],
-        labels: ['Y', 'Z'],
+        xkey: &#039;x&#039;,
+        ykeys: [&#039;y&#039;, &#039;z&#039;],
+        labels: [&#039;Y&#039;, &#039;Z&#039;],
         gridTextColor: labelColor,
-        lineColors: jQuery('#morris-area-graph').data('colors').split(',')
+        lineColors: jQuery(&#039;#morris-area-graph&#039;).data(&#039;colors&#039;).split(&#039;,&#039;)
       });
-  </code>
-</pre></code></pre>
+  &lt;/code&gt;
+&lt;/pre&gt;</code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>06-libraries/morrisjs/morrisjs.scss</code>, line 52
-              </div>
                       </section>
                     
         </div>

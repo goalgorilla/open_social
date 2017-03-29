@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -175,9 +172,6 @@
             
 
             
-                          <div class="kss-source kss-style">
-                Source: <code>00-config/_variables.scss</code>, line 33
-              </div>
                       </div>
                                   <section id="kssref-templates-regions" class="kss-section kss-section--depth-2">
 
@@ -250,6 +244,7 @@
                 <p>We have split up the layout of the interface into regions. In Drupal
 we can assign blocks to these regions. Each region can contain different
 views/blocks/elements, based on the context of the node or page.</p>
+<p><code>&lt;i&gt;</code>The complementary_bottom region will be hidden on small screens.<code>&lt;/i&gt;</code></p>
 
               </div>
             
@@ -294,7 +289,7 @@ views/blocks/elements, based on the context of the node or page.</p>
     </div>
     <div class="list-group-item avatar"><span class="circle" style="background-color: #81C784"></span>
       <h6 class="list-group-item-heading">Complementary bottom</h6>
-      <p class="list-group-item-text">Complementary content like blocks that is specific to the section. On mobile this region will be placed below the Main content, or it can be hidden. For placing the block we use a script that relocates the this region inside the Complementary top. The script is loaded via the <strong>responsive-dom</strong> library.</p>
+      <p class="list-group-item-text">Complementary content that is less important than the contents of the complementary top part. The contents of this block will be hidden on non-mobile screens.</p>
     </div>
     <div class="list-group-item avatar"><span class="circle" style="background-color: #DCE775"></span>
       <h6 class="list-group-item-heading">Content bottom</h6>
@@ -348,11 +343,19 @@ views/blocks/elements, based on the context of the node or page.</p>
         </div>
       </div>
       <div class="row">
-        <div class="region--complementary complementary-top" style="background-color:#4DD0E1; min-height: 150px">
-          <p>Complementary top</p>
-          <p class="flat-text small"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
+        <div class="region--complementary" style="background-color:#4DD0E1; min-height: 150px">
+          <div class="complementary-top">
+            <p>Complementary top</p>
+            <p class="flat-text small"></p>
+            <p class="flat-text"></p>
+            <p class="flat-text"></p>
+          </div>
+          <div class="complementary-bottom" style="background-color:#81C784; min-height: 200px">
+            <p>Complementary bottom</p>
+            <p class="flat-text small"></p>
+            <p class="flat-text"></p>
+            <p class="flat-text"></p>
+          </div>
         </div>
         <div class="region--main-content" style="background-color:#4DB6AC; min-height: 400px">
           <p>Page title</p>
@@ -362,14 +365,6 @@ views/blocks/elements, based on the context of the node or page.</p>
           <p class="flat-text"></p>
           <p class="flat-text"></p>
           <p class="flat-text"></p>
-        </div>
-        <div class="region--complementary-bottom" style="background-color:#81C784; min-height: 200px">
-          <div class="complementary-bottom">
-            <p>Complementary bottom</p>
-            <p class="flat-text small"></p>
-            <p class="flat-text"></p>
-            <p class="flat-text"></p>
-          </div>
         </div>
       </div>
       <div>
@@ -398,141 +393,138 @@ views/blocks/elements, based on the context of the node or page.</p>
 
                               <details class="card kss-markup kss-style">
                   <summary style="padding: 5px 20px; cursor: pointer;">
-                                          Markup
+                                          Markup: <code>05-templates/layout/regions.twig</code>
                                       </summary>
-                   <pre class="language-markup"><code class="language-markup" data-language="html">  <div class="list-group">
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #E57373"></span>
-      <h6 class="list-group-item-heading">Header</h6>
-      <p class="list-group-item-text">Blocks: Primary navigation, user navigation, site search</p>
-      <p class="list-group-item-text">The header is always present. It holds a navbar component and the logo.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #E6EE9C"></span>
-      <h6 class="list-group-item-heading">Breadcrumbs</h6>
-      <p class="list-group-item-text">Pathway navigation for large screen and 'go back' navigation for mobile</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #9575CD"></span>
-      <h6 class="list-group-item-heading">Hero</h6>
-      <p class="list-group-item-text">Provides a summary of the main content of this page, for example a person, a group or an event.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #FFE082"></span>
-      <h6 class="list-group-item-heading">Secondary navigation</h6>
-      <p class="list-group-item-text">Navigation options to the sub contents of a main content.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #FF8A65"></span>
-      <h6 class="list-group-item-heading">Content top</h6>
-      <p class="list-group-item-text">Region to place content blocks above the main content. There are no blocks placed here by default.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #4DB6AC"></span>
-      <h6 class="list-group-item-heading">Main content</h6>
-      <p class="list-group-item-text">Content about this section</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #4DD0E1"></span>
-      <h6 class="list-group-item-heading">Complementary top</h6>
-      <p class="list-group-item-text">Complementary content, filters, actions, quick navigations that is specific to the section. On mobile this region will be placed on top of the Main content, possibly in a different appearance such as with an off-canvas component.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #81C784"></span>
-      <h6 class="list-group-item-heading">Complementary bottom</h6>
-      <p class="list-group-item-text">Complementary content like blocks that is specific to the section. On mobile this region will be placed below the Main content, or it can be hidden. For placing the block we use a script that relocates the this region inside the Complementary top. The script is loaded via the <strong>responsive-dom</strong> library.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #DCE775"></span>
-      <h6 class="list-group-item-heading">Content bottom</h6>
-      <p class="list-group-item-text">Region to place content blocks below the main content. There are no blocks placed here by default.</p>
-    </div>
-    <div class="list-group-item avatar"><span class="circle" style="background-color: #64b5f6"></span>
-      <h6 class="list-group-item-heading">Footer</h6>
-      <p class="list-group-item-text">It is static and contains information about the whole application.</p>
-    </div>
-  </div>
-  <div class="browser-window">
-    <div class="top-bar">
-      <div class="circles">
-        <div class="circle" id="close-circle"></div>
-        <div class="circle" id="minimize-circle"></div>
-        <div class="circle" id="maximize-circle"></div>
-      </div>
-    </div>
-    <div class="content">
-      <div>
-        <div style="background-color:#E57373; min-height: 80px">
-          <p>Header</p>
-        </div>
-      </div>
-      <div class="hidden-xs">
-        <div style="background-color:#E6EE9C; min-height: 30px">
-          <p>Breadcrumbs</p>
-        </div>
-      </div>
-      <div>
-        <div style="background-color:#9575CD; min-height: 220px">
-          <p>Hero</p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-        </div>
-      </div>
-      <div>
-        <div style="background-color:#FFE082; min-height: 40px">
-          <p>Secondary navigation</p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-        </div>
-      </div>
-      <div>
-        <div style="background-color:#FF8A65; min-height: 100px">
-          <p>Content top</p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="region--complementary complementary-top" style="background-color:#4DD0E1; min-height: 150px">
-          <p>Complementary top</p>
-          <p class="flat-text small"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
-        </div>
-        <div class="region--main-content" style="background-color:#4DB6AC; min-height: 400px">
-          <p>Page title</p>
-          <p>Main content</p>
-          <p class="flat-text-header"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
-          <p class="flat-text"></p>
-        </div>
-        <div class="region--complementary-bottom" style="background-color:#81C784; min-height: 200px">
-          <div class="complementary-bottom">
-            <p>Complementary bottom</p>
-            <p class="flat-text small"></p>
-            <p class="flat-text"></p>
-            <p class="flat-text"></p>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div style="background-color:#DCE775; min-height: 100px">
-          <p>Content bottom</p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-          <p class="flat-text inline25"></p>
-        </div>
-      </div>
-      <div>
-        <div style="background-color:#64b5f6; min-height: 50px">
-          <p>Footer</p>
-        </div>
-      </div>
-    </div>
-  </div>
+                   <pre class="language-markup"><code class="language-markup" data-language="html">  &lt;div class=&quot;list-group&quot;&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #E57373&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Header&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Blocks: Primary navigation, user navigation, site search&lt;/p&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;The header is always present. It holds a navbar component and the logo.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #E6EE9C&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Breadcrumbs&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Pathway navigation for large screen and &#039;go back&#039; navigation for mobile&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #9575CD&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Hero&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Provides a summary of the main content of this page, for example a person, a group or an event.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #FFE082&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Secondary navigation&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Navigation options to the sub contents of a main content.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #FF8A65&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Content top&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Region to place content blocks above the main content. There are no blocks placed here by default.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #4DB6AC&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Main content&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Content about this section&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #4DD0E1&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Complementary top&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Complementary content, filters, actions, quick navigations that is specific to the section. On mobile this region will be placed on top of the Main content, possibly in a different appearance such as with an off-canvas component.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #81C784&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Complementary bottom&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Complementary content that is less important than the contents of the complementary top part. The contents of this block will be hidden on non-mobile screens.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #DCE775&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Content bottom&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;Region to place content blocks below the main content. There are no blocks placed here by default.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;list-group-item avatar&quot;&gt;&lt;span class=&quot;circle&quot; style=&quot;background-color: #64b5f6&quot;&gt;&lt;/span&gt;
+      &lt;h6 class=&quot;list-group-item-heading&quot;&gt;Footer&lt;/h6&gt;
+      &lt;p class=&quot;list-group-item-text&quot;&gt;It is static and contains information about the whole application.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;browser-window&quot;&gt;
+    &lt;div class=&quot;top-bar&quot;&gt;
+      &lt;div class=&quot;circles&quot;&gt;
+        &lt;div class=&quot;circle&quot; id=&quot;close-circle&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;circle&quot; id=&quot;minimize-circle&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;circle&quot; id=&quot;maximize-circle&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;content&quot;&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#E57373; min-height: 80px&quot;&gt;
+          &lt;p&gt;Header&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;hidden-xs&quot;&gt;
+        &lt;div style=&quot;background-color:#E6EE9C; min-height: 30px&quot;&gt;
+          &lt;p&gt;Breadcrumbs&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#9575CD; min-height: 220px&quot;&gt;
+          &lt;p&gt;Hero&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#FFE082; min-height: 40px&quot;&gt;
+          &lt;p&gt;Secondary navigation&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#FF8A65; min-height: 100px&quot;&gt;
+          &lt;p&gt;Content top&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;row&quot;&gt;
+        &lt;div class=&quot;region--complementary&quot; style=&quot;background-color:#4DD0E1; min-height: 150px&quot;&gt;
+          &lt;div class=&quot;complementary-top&quot;&gt;
+            &lt;p&gt;Complementary top&lt;/p&gt;
+            &lt;p class=&quot;flat-text small&quot;&gt;&lt;/p&gt;
+            &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+            &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;complementary-bottom&quot; style=&quot;background-color:#81C784; min-height: 200px&quot;&gt;
+            &lt;p&gt;Complementary bottom&lt;/p&gt;
+            &lt;p class=&quot;flat-text small&quot;&gt;&lt;/p&gt;
+            &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+            &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;region--main-content&quot; style=&quot;background-color:#4DB6AC; min-height: 400px&quot;&gt;
+          &lt;p&gt;Page title&lt;/p&gt;
+          &lt;p&gt;Main content&lt;/p&gt;
+          &lt;p class=&quot;flat-text-header&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text&quot;&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#DCE775; min-height: 100px&quot;&gt;
+          &lt;p&gt;Content bottom&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+          &lt;p class=&quot;flat-text inline25&quot;&gt;&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;div style=&quot;background-color:#64b5f6; min-height: 50px&quot;&gt;
+          &lt;p&gt;Footer&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
 </code></pre>
 
                 </details>
               
             
-                          <div class="kss-source kss-style">
-                Source: <code>05-templates/layout/layout.scss</code>, line 1
-              </div>
                       </section>
                     
         </div>
