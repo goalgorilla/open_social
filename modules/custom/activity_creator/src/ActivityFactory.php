@@ -10,6 +10,7 @@ use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\message\Entity\Message;
+use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 
 /**
  * Class ActivityFactory to create Activity items based on ActivityLogs.
@@ -17,6 +18,15 @@ use Drupal\message\Entity\Message;
  * @package Drupal\activity_creator
  */
 class ActivityFactory extends ControllerBase {
+
+  /**
+   * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
+   */
+  private $activityDestinationManager;
+
+  public function __construct(ActivityDestinationManager $activityDestinationManager) {
+    $this->activityDestinationManager = $activityDestinationManager;
+  }
 
   /**
    * Create the activities based on a data array.
@@ -171,8 +181,8 @@ class ActivityFactory extends ControllerBase {
    */
   private function buildAggregatedActivites($data, $activity_fields) {
     $activities = [];
-    $common_destinations = ['stream_group', 'stream_home', 'stream_explore'];
-    $personal_destinations = ['stream_profile', 'notifications', 'email'];
+    $common_destinations = $this->activityDestinationManager->getListByProperties('is_common', TRUE);
+    $personal_destinations = $this->activityDestinationManager->getListByProperties('is_common', FALSE);
 
     // Get related activities.
     $related_activities = $this->getAggregationRelatedActivities($data);
@@ -223,7 +233,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related activities for activity aggregation.
    */
-  public static function getAggregationRelatedActivities($data) {
+  private function getAggregationRelatedActivities($data) {
     $activities = array();
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
@@ -244,9 +254,8 @@ class ActivityFactory extends ControllerBase {
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
           // We exclude activities with email, platform_email and notifications
           // destinations from aggregation.
-          $activity_query->condition('field_activity_destinations.value', 'email', '!=');
-          $activity_query->condition('field_activity_destinations.value', 'notifications', '!=');
-          $activity_query->condition('field_activity_destinations.value', 'platform_email', '!=');
+          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('is_aggregatable', TRUE);
+          $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
