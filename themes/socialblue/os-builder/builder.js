@@ -50,7 +50,7 @@ class KssBuilderTwig extends KssBuilderBaseTwig {
 
     // Then tell kss which Yargs-like options this builder adds.
     this.addOptionDefinitions({
-      title: {
+      'title': {
         group: 'Style guide:',
         string: true,
         multiple: false,

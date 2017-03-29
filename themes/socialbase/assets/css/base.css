@@ -532,14 +532,6 @@ em.placeholder {
   line-height: 1.25;
 }
 
-small {
-  font-size: 80%;
-}
-
-small .label {
-  font-size: 90%;
-}
-
 .text-align-left {
   text-align: left;
 }
@@ -929,6 +921,19 @@ img.align-center {
   display: none !important;
 }
 
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+}
+
+.list-inline-item {
+  display: inline-block;
+}
+
+.list-inline-item:not(:last-child) {
+  margin-right: 5px;
+}
+
 @-ms-viewport {
   width: device-width;
 }
@@ -972,12 +977,6 @@ svg[class^="icon-"] {
   height: 18px;
   display: inline-block;
   vertical-align: middle;
-}
-
-.icon-badge-toggle {
-  width: 20px;
-  height: 20px;
-  padding: 1px 1px 1px 4px;
 }
 
 .icon-responsive {
@@ -1042,6 +1041,30 @@ a.icon-after .glyphicon {
 .btn.icon-after .btn-icon {
   margin-left: .25em;
   margin-right: -.25em;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.5;
+}
+
+.close:hover, .close:focus {
+  color: #000;
+  text-decoration: none;
+  opacity: .75;
+}
+
+button.close {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
 }
 
 @media (min-width: 600px) {

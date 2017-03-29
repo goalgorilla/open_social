@@ -25,6 +25,7 @@
 'btn',
 'btn-default',
 'btn-sm',
+'btn-follow',
 'flag',
 'flag-' ~ flag.id(),
 'flag-' ~ flag.id() ~ '-' ~ flaggable.id(),
@@ -32,7 +33,6 @@ action_class
 ] %}
 {% set attributes = attributes.addClass(classes) %}
 
-<div class="clearfix">
-  <a role="button"{{ attributes }}>{{ title }}</a>
-</div>
+<a role="button"{{ attributes }}>{{ title }}</a>
+
 {% endspaceless %}

@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -80,7 +77,18 @@
 </head>
 
 <body id="kss-node" >
-
+<!-- Google Tag Manager-->
+<noscript>
+  <iframe src="//www.googletagmanager.com/ns.html?id=GTM-5BGZV3" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5BGZV3');
+</script>
+<!-- End Google Tag Manager-->
   <a href="#main-content" class="sr-only sr-only-focusable"> Skip to main content </a>
 
 
@@ -122,111 +130,111 @@
 
     <div class="container">
 
-      <div class="row">
+      <div class="row layout--with-complementary">
 
-
-        <aside class="region--complementary complementary-top" role="complementary">
-          <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
-                                          <h6 class="text-primary"><span class="kss-nav_ref" 1</span><span class="kss-nav__name">Sass</h6>
-                <ul class="nav table-of-contents docs-sidebar">
+        <aside class="region--complementary">
+          <div class="complementary-top" role="complementary">
+            <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
+                                                <h6 class="text-primary"><span class="kss-nav_ref" 1</span><span class="kss-nav__name">Sass</h6>
+                  <ul class="nav table-of-contents docs-sidebar">
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-settings">
+                  <span class="kss-nav__ref ">1.1</span
+                  ><span class="kss-nav__name">Initialization partial</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-colors">
+                  <span class="kss-nav__ref ">1.2</span
+                  ><span class="kss-nav__name">Colors</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-breakpoints">
+                  <span class="kss-nav__ref ">1.3</span
+                  ><span class="kss-nav__name">Media queries</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-elevation">
+                  <span class="kss-nav__ref ">1.4</span
+                  ><span class="kss-nav__name">Elevation</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-clearfix">
+                  <span class="kss-nav__ref ">1.5</span
+                  ><span class="kss-nav__name">Clearfix</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-resettext">
+                  <span class="kss-nav__ref ">1.6</span
+                  ><span class="kss-nav__name">Reset text</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-multiline-ellipsis">
+                  <span class="kss-nav__ref ">1.7</span
+                  ><span class="kss-nav__name">Multiline ellipsis</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-roundedcorners">
+                  <span class="kss-nav__ref ">1.8</span
+                  ><span class="kss-nav__name">Rounded corners</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-list-unstyled">
+                  <span class="kss-nav__ref ">1.9</span
+                  ><span class="kss-nav__name">Unstyled list</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden">
+                  <span class="kss-nav__ref ">1.10</span
+                  ><span class="kss-nav__name">Visually hidden</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--off">
+                  <span class="kss-nav__ref ">1.11</span
+                  ><span class="kss-nav__name">Visually-hidden--off</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--focusable">
+                  <span class="kss-nav__ref ">1.12</span
+                  ><span class="kss-nav__name">Visually-hidden--focusable</span>
+                          </a>
+                        </li>
+                                              <li>
+                          <a class="kss-nav__menu-link" href="#kssref-sass-responsive-img">
+                  <span class="kss-nav__ref ">1.13</span
+                  ><span class="kss-nav__name">Responsive image</span>
+                          </a>
+                        </li>
                                           <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-settings">
-                <span class="kss-nav__ref ">1.1</span
-                ><span class="kss-nav__name">Initialization partial</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-colors">
-                <span class="kss-nav__ref ">1.2</span
-                ><span class="kss-nav__name">Colors</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-breakpoints">
-                <span class="kss-nav__ref ">1.3</span
-                ><span class="kss-nav__name">Media queries</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-elevation">
-                <span class="kss-nav__ref ">1.4</span
-                ><span class="kss-nav__name">Elevation</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-clearfix">
-                <span class="kss-nav__ref ">1.5</span
-                ><span class="kss-nav__name">Clearfix</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-resettext">
-                <span class="kss-nav__ref ">1.6</span
-                ><span class="kss-nav__name">Reset text</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-multiline-ellipsis">
-                <span class="kss-nav__ref ">1.7</span
-                ><span class="kss-nav__name">Multiline ellipsis</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-roundedcorners">
-                <span class="kss-nav__ref ">1.8</span
-                ><span class="kss-nav__name">Rounded corners</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-list-unstyled">
-                <span class="kss-nav__ref ">1.9</span
-                ><span class="kss-nav__name">Unstyled list</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden">
-                <span class="kss-nav__ref ">1.10</span
-                ><span class="kss-nav__name">Visually hidden</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--off">
-                <span class="kss-nav__ref ">1.11</span
-                ><span class="kss-nav__name">Visually-hidden--off</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-visually-hidden--focusable">
-                <span class="kss-nav__ref ">1.12</span
-                ><span class="kss-nav__name">Visually-hidden--focusable</span>
-                        </a>
-                      </li>
-                                          <li>
-                        <a class="kss-nav__menu-link" href="#kssref-sass-responsive-img">
-                <span class="kss-nav__ref ">1.13</span
-                ><span class="kss-nav__name">Responsive image</span>
-                        </a>
-                      </li>
-                                      <li>
-                    <a href="#main-content" class="back-to-top">
-                      <span>Back to top</span>
-                      <svg class="icon-small icon-gray">
-                      <use xlink:href="#icon-expand-less"></use>
-                      </svg>
-                    </a>
-                  </li>
-                                                                                                                                                                                                                  </ul>
-          </nav>
-
+                      <a href="#main-content" class="back-to-top">
+                        <span>Back to top</span>
+                        <svg class="icon-small icon-gray">
+                        <use xlink:href="#icon-expand-less"></use>
+                        </svg>
+                      </a>
+                    </li>
+                                                                                                                                                                                                                                                </ul>
+            </nav>
+          </div>
         </aside>
 
 
 
-        <div class="region--main-content">
+        <div class="region--content">
 
             
             
-                                    <div id="kssref-sass" class="kss-section kss-section--depth-1">
+                                    <div id="kssref-sass" class="kss-section kss-section--depth-1 ">
 
               
                             <h1 class="kss-title kss-title--level-1">
@@ -251,7 +259,7 @@
                 Source: <code>00-config/_variables.scss</code>, line 3
               </div>
                       </div>
-                                  <section id="kssref-sass-settings" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-settings" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -283,7 +291,7 @@ project.</p>
                 Source: <code>_settings.scss</code>, line 5
               </div>
                       </section>
-                                  <section id="kssref-sass-colors" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-colors" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -357,7 +365,7 @@ border-radius: .25rem;" class=" brand-accent"></div>
                 Source: <code>00-config/variables/_colors.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-breakpoints" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-breakpoints" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -397,7 +405,7 @@ so you can see if it is a min of max value, based on the mixin name.</p>
                 Source: <code>00-config/mixins/_media-queries.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-elevation" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-elevation" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -463,7 +471,7 @@ usually only show after a user performs an action.</p>
                 Source: <code>00-config/mixins/_elevation.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-clearfix" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-clearfix" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -494,7 +502,7 @@ children elements. @see <a href="http://nicolasgallagher.com/micro-clearfix-hack
                 Source: <code>00-config/mixins/_clearfix.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-resettext" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-resettext" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -524,7 +532,7 @@ children elements. @see <a href="http://nicolasgallagher.com/micro-clearfix-hack
                 Source: <code>00-config/mixins/_reset-text.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-multiline-ellipsis" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-multiline-ellipsis" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -555,7 +563,7 @@ maximum amount of lines.
                 Source: <code>00-config/mixins/_multiline-ellipsis.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-roundedcorners" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-roundedcorners" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -590,7 +598,7 @@ a particular side of an object.</p>
                 Source: <code>00-config/mixins/_border-radius.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-list-unstyled" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-list-unstyled" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -620,7 +628,7 @@ a particular side of an object.</p>
                 Source: <code>00-config/mixins/_list-unstyled.scss</code>, line 1
               </div>
                       </section>
-                                  <section id="kssref-sass-visually-hidden" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-visually-hidden" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -651,7 +659,7 @@ a particular side of an object.</p>
                 Source: <code>00-config/mixins/_visually-hidden.scss</code>, line 3
               </div>
                       </section>
-                                  <section id="kssref-sass-visually-hidden--off" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-visually-hidden--off" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -681,7 +689,7 @@ a particular side of an object.</p>
                 Source: <code>00-config/mixins/_visually-hidden.scss</code>, line 25
               </div>
                       </section>
-                                  <section id="kssref-sass-visually-hidden--focusable" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-visually-hidden--focusable" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -716,7 +724,7 @@ Credit: HTML5 Boilerplate <br />
                 Source: <code>00-config/mixins/_visually-hidden.scss</code>, line 43
               </div>
                       </section>
-                                  <section id="kssref-sass-responsive-img" class="kss-section kss-section--depth-2">
+                                  <section id="kssref-sass-responsive-img" class="kss-section kss-section--depth-2 ">
 
               
                             <h2 class="kss-title kss-title--level-2">
@@ -791,7 +799,7 @@ Credit: HTML5 Boilerplate <br />
     // Escape code
     // ============================================================
 
-    var $lang_markup       = document.querySelectorAll('pre code.language-markup'),
+    var $lang_markup       = document.querySelectorAll('pre.language-html code'),
         $lang_js           = document.querySelectorAll('script.atomic-js'),
         $lang_jscode       = document.querySelectorAll('pre code.language-javascript'),
         lang_markupsnippet = [],

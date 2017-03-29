@@ -11,21 +11,18 @@
   <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
   <link rel="stylesheet" href="kss-assets/base/base.css">
 <link rel="stylesheet" href="kss-assets/css/base.css">
-<link rel="stylesheet" href="kss-assets/base/alerts.css">
-<link rel="stylesheet" href="kss-assets/css/alerts.css">
-<link rel="stylesheet" href="kss-assets/base/badges.css">
-<link rel="stylesheet" href="kss-assets/css/badges.css">
+<link rel="stylesheet" href="kss-assets/base/alert.css">
+<link rel="stylesheet" href="kss-assets/css/alert.css">
+<link rel="stylesheet" href="kss-assets/base/badge.css">
+<link rel="stylesheet" href="kss-assets/css/badge.css">
 <link rel="stylesheet" href="kss-assets/base/button.css">
 <link rel="stylesheet" href="kss-assets/css/button.css">
 <link rel="stylesheet" href="kss-assets/base/cards.css">
 <link rel="stylesheet" href="kss-assets/css/cards.css">
 <link rel="stylesheet" href="kss-assets/base/form-controls.css">
 <link rel="stylesheet" href="kss-assets/css/form-controls.css">
-<link rel="stylesheet" href="kss-assets/base/labels.css">
-<link rel="stylesheet" href="kss-assets/css/list-group.css">
-<link rel="stylesheet" href="kss-assets/base/list-group.css">
-<link rel="stylesheet" href="kss-assets/css/labels.css">
-<link rel="stylesheet" href="kss-assets/base/close-icon.css">
+<link rel="stylesheet" href="kss-assets/css/list.css">
+<link rel="stylesheet" href="kss-assets/base/list.css">
 <link rel="stylesheet" href="kss-assets/css/waves.css">
 <link rel="stylesheet" href="kss-assets/base/dropdown.css">
 <link rel="stylesheet" href="kss-assets/css/dropdown.css">
@@ -80,7 +77,18 @@
 </head>
 
 <body id="kss-node" >
-
+<!-- Google Tag Manager-->
+<noscript>
+  <iframe src="//www.googletagmanager.com/ns.html?id=GTM-5BGZV3" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-5BGZV3');
+</script>
+<!-- End Google Tag Manager-->
   <a href="#main-content" class="sr-only sr-only-focusable"> Skip to main content </a>
 
 
@@ -122,19 +130,19 @@
 
     <div class="container">
 
-      <div class="row">
+      <div class="row layout--with-complementary">
 
-
-        <aside class="region--complementary complementary-top" role="complementary">
-          <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
-                                                                                                                                                                                                                            </ul>
-          </nav>
-
+        <aside class="region--complementary">
+          <div class="complementary-top" role="complementary">
+            <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
+                                                                                                                                                                                                                                                            </ul>
+            </nav>
+          </div>
         </aside>
 
 
 
-        <div class="region--main-content">
+        <div class="region--content">
 
                         <div id="kssref-0" class="kss-section kss-section--depth-0 kss-overview kss-style">
               <h1 id="style-guide-for-the-open-social-span-class-text-primary-blue-span-theme">Style Guide for the Open Social <span class="text-primary">Blue</span> theme</h1>
@@ -220,7 +228,7 @@
     // Escape code
     // ============================================================
 
-    var $lang_markup       = document.querySelectorAll('pre code.language-markup'),
+    var $lang_markup       = document.querySelectorAll('pre.language-html code'),
         $lang_js           = document.querySelectorAll('script.atomic-js'),
         $lang_jscode       = document.querySelectorAll('pre code.language-javascript'),
         lang_markupsnippet = [],
