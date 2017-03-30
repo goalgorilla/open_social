@@ -69,7 +69,7 @@
             <nav id="scrollspy" class="docs-sidebar hidden-print toc-wrapper">
               {% for menu_item in menu %}
                 {% if menu_item.isActive and menu_item.children is not empty %}
-                  <h6 class="text-primary"><span class="kss-nav_ref" {{ menu_item.referenceNumber }}</span><span class="kss-nav__name">{{ menu_item.header }}</h6>
+              <h6 class="text-primary"><span class="kss-nav__name">{{ menu_item.header }}</span></h6>
                   <ul class="nav table-of-contents docs-sidebar">
                       {% for menu_child in menu_item.children %}
                         <li>
@@ -94,10 +94,7 @@
           </div>
         </aside>
 
-
-
         <div class="region--content">
-
             {% if homepage %}
             <div id="kssref-0" class="kss-section kss-section--depth-0 kss-overview kss-style">
               {{ homepage|raw }}
