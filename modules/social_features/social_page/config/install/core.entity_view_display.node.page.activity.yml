@@ -1,0 +1,50 @@
+uuid: 709cbdb5-c9ab-4976-87e9-1a46a79a0c12
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.activity
+    - field.field.node.page.body
+    - field.field.node.page.field_content_visibility
+    - field.field.node.page.field_files
+    - field.field.node.page.field_page_comments
+    - field.field.node.page.field_page_image
+    - image.style.social_x_large
+    - node.type.page
+  module:
+    - image
+    - social_core
+    - user
+_core:
+  default_config_hash: zhiYTAeMpGlcD_PVU1hn6ZuAxoVgnd-YFel53-gyUZ4
+id: node.page.activity
+targetEntityType: node
+bundle: page
+mode: activity
+content:
+  field_page_comments:
+    weight: 3
+    label: above
+    settings:
+      num_comments: 2
+      always_show_all_comments: false
+    third_party_settings: {  }
+    type: comment_node
+  field_page_image:
+    type: image
+    weight: 0
+    label: above
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  links:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true
+  body: true
+  field_content_visibility: true
+  field_files: true
+  flag_follow_content: true
