@@ -237,6 +237,9 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
         '#title_display' => 'before',
         '#title' => t('Show my email on my profile'),
         '#default_value' => $show_email,
+        '#attributes' => [
+          'data-switch' => TRUE
+        ]
       );
       $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
