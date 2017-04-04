@@ -1,3 +1,7 @@
+### v2.1.3 -- Apr 2017
+* Changed wave-effect styles.
+* Changed book navigation styles.
+
 ### v2.1.2 -- Mar 2017
 * Replaced Bootstrap list-group component with custom list component
 * Merge label component with badges and extend badge modifiers
@@ -35,5 +39,5 @@ Complete overhaul of theme_hooks and clean up of templates
 * Updated the way we override the bootstrap panel implementation for details and fieldsets. Updated corresponding template files
 * Merged container templates
 * Merged views templates
-* Merged form templates 
+* Merged form templates
 * Updated teaser templates
