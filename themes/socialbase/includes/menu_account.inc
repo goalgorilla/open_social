@@ -1,22 +1,9 @@
 <?php
-
 /**
- * Implements hook_theme_suggestions_comment_alter().
- * @param array $suggestions
- * @param array $variables
+ * Implements hook_preprocess_menu().
+ * @param $variables
  */
-function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
-  $comment = $variables['elements']['#comment'];
-  if ($comment->hasParentComment()) {
-    $suggestions[] = 'comment__child';
-  }
-}
-
-/**
- * Implements hook_preprocess_links__comment().
- * @param array $variables
- */
-function socialbase_preprocess_links(&$variables) {
+function socialbase_preprocess_menu(&$variables) {
   // Find out what the active theme is first.
   $theme = \Drupal::theme()->getActiveTheme();
 
@@ -27,4 +14,5 @@ function socialbase_preprocess_links(&$variables) {
     $basethemes = $theme->getBaseThemes();
     $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
   }
+
 }

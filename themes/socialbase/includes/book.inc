@@ -1,22 +1,11 @@
 <?php
-
 /**
- * Implements hook_theme_suggestions_comment_alter().
- * @param array $suggestions
- * @param array $variables
+ * Implements hook_preprocess_book_navigation().
+ * @param $variables
  */
-function socialbase_theme_suggestions_comment_alter(array &$suggestions, array $variables) {
-  $comment = $variables['elements']['#comment'];
-  if ($comment->hasParentComment()) {
-    $suggestions[] = 'comment__child';
-  }
-}
+function socialbase_preprocess_book_navigation(&$variables) {
+  $variables['tree'] = ''; // Disables the menu tree below the content on a book node in full display mode.
 
-/**
- * Implements hook_preprocess_links__comment().
- * @param array $variables
- */
-function socialbase_preprocess_links(&$variables) {
   // Find out what the active theme is first.
   $theme = \Drupal::theme()->getActiveTheme();
 
@@ -27,4 +16,5 @@ function socialbase_preprocess_links(&$variables) {
     $basethemes = $theme->getBaseThemes();
     $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
   }
+
 }

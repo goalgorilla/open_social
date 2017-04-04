@@ -119,7 +119,7 @@
           <a href="{{ url }}#section-comments" class="badge badge--pill badge-default teaser__badge">
             <span class="badge__container">
               <svg class="badge__icon">
-                <use xlink:href="#icon-comment"></use>
+                <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-comment"></use>
               </svg>
               <span class="badge__label">{{ comment_count }}</span>
             </span>
@@ -129,7 +129,7 @@
         {% if visibility_icon and visibility_label %}
           <div class="badge teaser__badge" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
               <svg class="badge__icon">
-                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-{{ visibility_icon }}"></use>
               </svg>
           </div>
         {% endif %}

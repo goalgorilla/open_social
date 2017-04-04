@@ -18,15 +18,16 @@
  *   - in_active_trail: TRUE if the link is in the active trail.
  */
 #}
+
 {% import _self as menus %}
 
 {#
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
-{{ menus.menu_links(items, attributes, 0) }}
+{{ menus.menu_links(items, attributes, 0, path_to_socialbase) }}
 
-{% macro menu_links(items, attributes, menu_level) %}
+{% macro menu_links(items, attributes, menu_level, path_to_socialbase) %}
   {% import _self as menus %}
   {% if items %}
 
@@ -36,7 +37,7 @@
     <li class="dropdown profile not-logged-in">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" aria-haspopup="true" role="button" title="{% trans %} User menu {% endtrans %}">
         <svg class="icon-white icon-medium">
-          <use xlink:href="#icon-account_circle"></use>
+          <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-account_circle"></use>
         </svg>
         <span class="sr-only">{% trans %} User menu {% endtrans %}</span>
       </a>
