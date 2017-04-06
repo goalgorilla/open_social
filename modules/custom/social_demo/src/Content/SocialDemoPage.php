@@ -11,6 +11,7 @@ use Drupal\node\NodeStorageInterface;
 use Drupal\social_demo\Yaml\SocialDemoParser;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements Demo content for Pages.
@@ -87,6 +88,23 @@ class SocialDemoPage implements ContainerInjectionInterface {
         $uid = $accountClass->loadUserFromUuid($uid);
       }
 
+      // Try and fetch the image.
+      $media_id = '';
+      if (!empty($page['field_page_image'])) {
+        $fileClass = new SocialDemoFile();
+        $fid = $fileClass->loadByUuid($page['field_page_image']);
+        if ($file = File::load($fid)) {
+          $media_id = $file->id();
+        }
+      }
+
+      $image = array();
+      if (!empty($media_id)) {
+        $image = array (
+          'target_id' => $media_id,
+        );
+      }
+
       if (isset($page['field_content_visibility'])) {
         $content_visibility = $page['field_content_visibility'];
       }
@@ -105,6 +123,7 @@ class SocialDemoPage implements ContainerInjectionInterface {
           'value' => $page['body'],
           'format' => 'basic_html',
         ],
+        'field_page_image' => $image,
         'field_content_visibility' => [
           [
             'value' => $content_visibility,
