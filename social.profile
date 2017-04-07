@@ -214,6 +214,7 @@ function social_install_profile_modules(&$install_state) {
     'social_event' => 'social_event',
     'social_topic' => 'social_topic',
     'social_profile' => 'social_profile',
+    'social_profile_privacy' => 'social_profile_privacy',
     'social_editor' => 'social_editor',
     'social_comment' => 'social_comment',
     'social_post' => 'social_post',

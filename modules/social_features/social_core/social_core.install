@@ -537,3 +537,13 @@ function social_core_update_8015(&$sandbox) {
     $link->save();
   }
 }
+
+/**
+ * Install social_profile_privacy module.
+ */
+function social_core_update_8016(&$sandbox) {
+  $modules = array(
+    'social_profile_privacy',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}

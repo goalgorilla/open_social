@@ -1,0 +1,288 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Returns array keyed with form display id and form mode label.
+ *
+ * @param string $entity_type_id
+ *   Entity type id.
+ * @param $bundle
+ *   Entity bundle.
+ *
+ * @return array
+ *   Array with options prepared to use in the "select" form element.
+ */
+function social_profile_privacy_form_display_options($entity_type_id, $bundle) {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $options = [
+    "{$entity_type_id}.{$bundle}.default" => t('Default'),
+  ];
+
+  $form_displays = $entity_type_manager
+    ->getStorage('entity_form_display')
+    ->loadByProperties([
+      'targetEntityType' => $entity_type_id,
+      'bundle' => $bundle,
+      'status' => TRUE,
+    ]);
+
+  foreach ($form_displays as $id => $form_display) {
+    $form_modes = $entity_type_manager
+      ->getStorage('entity_form_mode')
+      ->loadByProperties([
+        'id' => $entity_type_id . '.' . $form_display->getMode(),
+        'status' => TRUE,
+      ]);
+
+    if ($form_mode = current($form_modes)) {
+      $options[$id] = $form_mode->label();
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_privacy_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  switch ($form_id) {
+    case 'social_profile_admin_settings_form':
+      $entity_type_id = $bundle = 'profile';
+      $config = \Drupal::config('social_profile_privacy.settings');
+      $options = social_profile_privacy_form_display_options($entity_type_id, $bundle);
+      $form_display_id = $form_state->getValue('form_display', $config->get('form_display'));
+
+      $form['privacy'] += [
+        '#prefix' => '<div id="privacy-settings">',
+        '#suffix' => '</div>',
+      ];
+
+      $form['privacy']['form_display'] = [
+        '#type' => 'select',
+        '#title' => t('Default Profile form display'),
+        '#description' => t('Form mode, on which users will be able to hide some groups of profile fields.'),
+        '#options' => $options,
+        '#empty_option' => t('- None -'),
+        '#ajax' => [
+          'callback' => 'social_profile_privacy_admin_settings_form_ajax',
+          'wrapper' => 'privacy-settings',
+        ],
+        '#default_value' => $form_display_id,
+      ];
+
+      $form['privacy']['field_groups']['groups'] = [
+        '#type' => 'fieldset',
+        '#title' => t('Field groups'),
+        '#description' => t(' Profile field groups, which users will be able to hide.'),
+        '#tree' => TRUE,
+        '#access' => !empty($form_display_id),
+      ];
+
+      if ($form_display_id) {
+        /** @var \Drupal\Core\Entity\Entity\EntityFormDisplay $form_mode */
+        $form_display = \Drupal::entityTypeManager()
+          ->getStorage('entity_form_display')
+          ->load($form_display_id);
+
+        if ($form_display && ($third_party_settings = $form_display->get('third_party_settings')) && !empty($third_party_settings['field_group'])) {
+          $options = array_map(function ($group) {
+            return $group['label'];
+          }, $third_party_settings['field_group']);
+
+          $form['privacy']['field_groups']['groups'][$form_display_id] = [
+            '#type' => 'checkboxes',
+            '#options' => $options,
+            '#default_value' => $form_display_id === $config->get('form_display') ? $config->get('field_groups') : [],
+          ];
+        }
+        else {
+          $form['privacy']['field_groups']['groups']['empty'] = [
+            '#type' => 'item',
+            '#markup' => t("This form mode doesn't contain any field groups"),
+          ];
+        }
+
+        $form['privacy']['disclaimer'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Disclaimer'),
+          '#description' => t('Fieldset with this title and text will be displayed in the profile form.'),
+          '#tree' => TRUE,
+        ];
+
+        $form['privacy']['disclaimer']['title'] = [
+          '#type' => 'textfield',
+          '#title' => t('Title'),
+          '#default_value' => $config->get('disclaimer.title'),
+        ];
+
+        $form['privacy']['disclaimer']['text'] = [
+          '#type' => 'text_format',
+          '#default_value' => $config->get('disclaimer.text.value'),
+          '#format' => $config->get('disclaimer.text.format'),
+        ];
+      }
+
+      $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
+      break;
+  }
+
+  // Check with preg_match because of the form id might be different for adding or editing profile.
+  if (preg_match('/^profile_profile_\w+_form$/', $form_id)) {
+    $config = \Drupal::config('social_profile_privacy.settings');
+    $storage = $form_state->getStorage();
+    $profile = $form_state->getFormObject()->getEntity();
+
+    if (!$profile instanceof ProfileInterface) {
+      return;
+    }
+
+    if (($uid = $profile->get('uid')->target_id) && $storage['form_display']->id() === $config->get('form_display')) {
+      $user_data = \Drupal::service('user.data');
+      $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
+
+      foreach ($config->get('field_groups') as $id) {
+        $form[$id . '_visible'] = [
+          '#type' => 'checkbox',
+          '#title' => t('Show on my profile'),
+          '#weight' => -100,
+          '#default_value' => isset($values[$id]) ? $values[$id] : TRUE,
+          '#attributes' => [
+            'data-switch' => TRUE
+          ]
+        ];
+
+        $form['#group_children'][$id . '_visible'] = $id;
+      }
+
+      if ($value = $config->get('disclaimer.text.value')) {
+        $form['actions']['#weight'] = 100;
+        $form['disclaimer'] = [
+          '#type' => 'fieldset',
+          '#title' => $config->get('disclaimer.title'),
+          '#weight' => $form['actions']['#weight'] - 1,
+        ];
+
+        $form['disclaimer']['text'] = [
+          '#type' => 'markup',
+          '#markup' => check_markup($value, $config->get('disclaimer.text.format')),
+        ];
+      }
+
+      $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
+    }
+  }
+}
+
+/**
+ * Ajax callback for social_profile_admin_settings_form().
+ */
+function social_profile_privacy_admin_settings_form_ajax($form, FormStateInterface $form_state) {
+  return $form['privacy'];
+}
+
+/**
+ * The submit function for social_profile_admin_settings_form() to save configuration of
+ * fields groups available to hiding.
+ */
+function social_profile_privacy_admin_settings_form_submit($form, FormStateInterface $form_state) {
+  $form_display = $form_state->getValue('form_display');
+  $field_groups = $form_state->getValue('groups');
+  $field_groups = array_filter($field_groups[$form_display]);
+  $data = [
+    'form_display' => $form_state->getValue('form_display'),
+    'field_groups' => array_keys($field_groups),
+    'disclaimer' => $form_state->getValue('disclaimer'),
+  ];
+
+  \Drupal::configFactory()
+    ->getEditable('social_profile_privacy.settings')
+    ->setData($data)
+    ->save();
+}
+
+/**
+ * Additional submit function for profile form to save settings of hidden fields.
+ */
+function social_profile_privacy_profile_form_submit($form, FormStateInterface $form_state) {
+  $uid = $form_state->getFormObject()->getEntity()->get('uid')->target_id;
+  $config = \Drupal::config('social_profile_privacy.settings');
+  $field_groups = $config->get('field_groups');
+  $data = [];
+
+  foreach ($field_groups as $group) {
+    $data[$group] = (bool) $form_state->getValue($group . '_visible');
+  }
+
+  $user_data = \Drupal::service('user.data');
+  $user_data->set('social_profile_privacy', $uid, 'private_info', $data);
+}
+
+/**
+ * Returns fields the names that marked as hidden.
+ *
+ * @param int $uid
+ *   Identifier of a user.
+ *
+ * @return array
+ *   Array with the names of fields that marked as hidden.
+ */
+function social_profile_privacy_private_fields_list($uid) {
+  $fields = &drupal_static(__FUNCTION__, []);
+
+  if (isset($fields[$uid])) {
+    return $fields[$uid];
+  }
+
+  $user_data = \Drupal::service('user.data');
+  $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
+  $config = \Drupal::config('social_profile_privacy.settings');
+  $form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load($config->get('form_display'));
+
+  if (!$form_display) {
+    return;
+  }
+
+  $third_party_settings = $form_display->get('third_party_settings');
+
+  if (isset($third_party_settings['field_group'])) {
+    $fields[$uid] = [];
+
+    foreach ($third_party_settings['field_group'] as $id => $data) {
+      if (isset($values[$id]) && empty($values[$id]) && in_array($id, $config->get('field_groups'))) {
+        $fields[$uid] = array_merge($fields[$uid], $data['children']);
+      }
+    }
+  }
+
+  return $fields[$uid];
+}
+
+/**
+ * Implements hook_entity_field_access().
+ */
+function social_profile_privacy_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+  if ($operation == 'view' && $field_definition->getTargetEntityTypeId() == 'profile') {
+    $uid = $items->getEntity()->get('uid')->target_id;
+    $fields = social_profile_privacy_private_fields_list($uid);
+    $account = \Drupal::currentUser();
+
+    if ($uid == $account->id() || $account->hasPermission('social profile privacy view hidden fields')) {
+      return AccessResult::neutral();
+    }
+
+    if (in_array($field_definition->getName(), $fields)) {
+      return AccessResult::forbidden();
+    }
+  }
+
+  return AccessResult::neutral();
+}
