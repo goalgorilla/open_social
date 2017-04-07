@@ -273,15 +273,16 @@ function social_profile_privacy_entity_field_access($operation, FieldDefinitionI
   if ($operation == 'view' && $field_definition->getTargetEntityTypeId() == 'profile') {
     $uid = $items->getEntity()->get('uid')->target_id;
     $fields = social_profile_privacy_private_fields_list($uid);
-    $account = \Drupal::currentUser();
 
-    if ($uid == $account->id() || $account->hasPermission('social profile privacy view hidden fields')) {
-      return AccessResult::neutral();
-    }
+    // If owner.
+    $access = ($uid == $account->id());
+    // If field is not hidden.
+    $access = $access || !in_array($field_definition->getName(), $fields);
+    // If user has access to view hidden fields.
+    $access = $access || $account->hasPermission('social profile privacy view hidden fields');
 
-    if (in_array($field_definition->getName(), $fields)) {
-      return AccessResult::forbidden();
-    }
+    $access_result = AccessResult::forbiddenIf(!$access);
+    return $access_result->cachePerUser();
   }
 
   return AccessResult::neutral();
