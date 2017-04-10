@@ -17,7 +17,7 @@ class DemoContentParser extends Yaml implements DemoContentParserInterface {
    * {@inheritdoc}
    */
   public function parseFile($file, $module) {
-    return $this->parse(file_get_contents($this->getPath($file, $module)));
+    return $this->parse($this->getPath($file, $module));
   }
 
 }
