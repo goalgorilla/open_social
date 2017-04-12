@@ -16,17 +16,14 @@
  * @ingroup themeable
  */
 #}
-<details{{ attributes.removeClass('form-wrapper') }}>
+<details{{ attributes }}>
 {%- if title -%}
-    <summary{{ summary_attributes.addClass('btn btn-flat btn-flat--gray') }}>{{ title }}</summary>
+    <summary{{ summary_attributes.addClass('btn btn-link btn-flat--gray') }}>{{ title }}
+        <svg class="details__open-icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+        <svg class="details__close-icon" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+    </summary>
 {%- endif -%}
-
-{% if errors %}
-    <div>
-        {{ errors }}
-    </div>
-{% endif %}
-
+{{ errors }}
 {{ description }}
 {{ children }}
 {{ value }}
