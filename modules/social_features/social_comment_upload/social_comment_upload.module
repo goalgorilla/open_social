@@ -13,7 +13,6 @@ function social_comment_upload_form_comment_comment_form_alter(&$form, FormState
     $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
     $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
     // Workaround for fixing behat tests, which is caused by alter in social_comment module
-    $form['actions']['submit']['#attributes']['value'] = t('Reply');
     $form['field_comment_files']['#weight'] = 9;
     $form['actions']['#weight'] = 8;
   }
