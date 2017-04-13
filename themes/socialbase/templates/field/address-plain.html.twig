@@ -51,12 +51,8 @@
   {{- dependent_locality.code ?: dependent_locality.name -}},
 {% endif %}
 
-{% if locality.name %}
-  {{- locality.name -}},
-{% elseif locality.code %}
+{% if locality.code %}
   {{- locality.code -}},
-{% elseif locality %}
-  {{- locality -}},
 {% endif %}
 
 {% if postal_code %}
