@@ -102,15 +102,32 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * Load entity by uuid.
    *
    * @param string $entity_type_id
-   * @param string $uuid
+   *   Identifier of entity type.
+   * @param string|int $id
+   *   Identifier or uuid.
    * @param bool $all
+   *   If set true, method will return all loaded entity. If set false, will return only one.
+   *
    * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityInterface[]|mixed
    */
-  protected function loadByUuid($entity_type_id, $uuid, $all = FALSE) {
-    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
-    $entities = $storage->loadByProperties([
-      'uuid' => $uuid,
-    ]);
+  protected function loadByUuid($entity_type_id, $id, $all = FALSE) {
+    if (property_exists($this, $entity_type_id . 'Storage')) {
+      $storage = $this->{$entity_type_id . 'Storage'};
+    }
+    else {
+      $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+    }
+
+    if (is_numeric($id)) {
+      $entities = $storage->loadByProperties([
+        'uid' => $id,
+      ]);
+    }
+    else {
+      $entities = $storage->loadByProperties([
+        'uuid' => $id,
+      ]);
+    }
 
     if (!$all) {
       return current($entities);
