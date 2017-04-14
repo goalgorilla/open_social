@@ -89,6 +89,10 @@ function socialbase_preprocess_block(&$variables) {
 
   }
 
+  // Show group managers block in a card
+  if ($variables['elements']['#derivative_plugin_id'] == 'group_managers-block_list_managers') {
+    $variables['card'] = TRUE;
+  }
   // for all platform_intro blocks we want them to appear as cards.
   if (isset($variables['elements']['content']['#block_content'])) {
     if ($variables['elements']['content']['#block_content']->bundle() == 'platform_intro') {
