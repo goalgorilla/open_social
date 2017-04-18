@@ -1,0 +1,53 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_event_managers module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_event_managers.
+ */
+function social_event_managers_install() {
+  // Fetch site manager role
+  $role = \Drupal\user\Entity\Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof \Drupal\user\Entity\Role) {
+    // Set permission.
+    $role->grantPermission('set social event managers settings');
+    $role->trustData()->save();
+
+    // Set default event managers settings.
+    $config = \Drupal::configFactory()->getEditable('social_event_managers.settings');
+    $config->set('author_as_manager', FALSE);
+    $config->save();
+  }
+}
+
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Perform actions related to the de-installation of social_event_managers.
+ */
+function social_event_managers_uninstall() {
+  // Fetch site manager role
+  $role = \Drupal\user\Entity\Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof \Drupal\user\Entity\Role) {
+    // Set permission.
+    $role->revokePermission('set social event managers settings');
+    $role->trustData()->save();
+  }
+
+  // Also remove the fields and the vocabulary.
+  \Drupal::configFactory()->getEditable('social_event_managers.settings')->delete();
+}
+
+/**
+ * Perform actions related to the installation of social_event_managers.
+ */
+function social_event_managers_update_8001() {
+  social_event_managers_install();
+}

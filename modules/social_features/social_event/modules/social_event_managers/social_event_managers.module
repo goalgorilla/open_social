@@ -10,6 +10,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_preprocess_block().
@@ -178,5 +179,24 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
   // PLace this here, since hiding it should happen always and not only on the mentioned routes.
   if (!$can_show_managers_link) {
     unset($data['tabs'][0]['views_view:view.managers.view_managers']);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_event_managers_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set author of event as event organizer automatically.
+  $config = \Drupal::configFactory()
+    ->getEditable('social_event_managers.settings');
+
+  if ($config->get('author_as_manager')) {
+    $account = \Drupal::currentUser();
+    $user = \Drupal::entityTypeManager()
+      ->getStorage('user')
+      ->load($account->id());
+
+    $last_key = $form['field_event_managers']['widget']['#max_delta'];
+    $form['field_event_managers']['widget'][$last_key]['target_id']['#default_value'] = $user;
   }
 }
