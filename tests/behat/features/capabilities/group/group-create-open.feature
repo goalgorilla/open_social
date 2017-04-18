@@ -38,11 +38,11 @@ Feature: Create Open Group
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
-    And I should see "Technopark" in the "Main content"
-    And I should see "Fedkovycha 60a" in the "Main content"
-    And I should see "79000" in the "Main content"
-    And I should see "Lviv" in the "Main content"
-    And I should see "Lviv oblast" in the "Main content"
+    And I should see "Technopark" in the "Hero block"
+    And I should see "Fedkovycha 60a" in the "Hero block"
+    And I should see "79000" in the "Hero block"
+    And I should see "Lviv" in the "Hero block"
+    And I should see "Lviv oblast" in the "Hero block"
 
     # As a LU I want to see the information about a group
     When I click "About"
