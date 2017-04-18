@@ -1,10 +1,9 @@
 {#
 /**
  * @file
- * Default theme implementation for confirm form.
+ * Theme override for confirm form.
  *
- * By default this does not alter the appearance of a form at all,
- * but is provided as a convenience for themers.
+ * We add a card element around these forms and make sure the brand-border-radius is applied.
  *
  * Available variables:
  * - form: The confirm form.
@@ -15,9 +14,7 @@
 
 
 <div class="card brand-border-radius">
-  <div class="card__body">
+  <div class="card__block">
     {{ form }}
-
-    {#
-      The card is closed function socialbase_form_alter in the description suffix
-    #}
+  </div>
+</div>

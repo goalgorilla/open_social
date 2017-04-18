@@ -2,6 +2,7 @@
   position: relative;
   text-align: center;
   padding: 0 1rem;
+  z-index: 2;
 }
 
 .cover-img {
@@ -61,7 +62,9 @@
   font-weight: 700;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   text-align: center;
-  margin: 1em auto 0.5em;
+  margin: 0 auto;
+  padding-top: 2rem;
+  padding-bottom: 1em;
   width: 80%;
 }
 
@@ -81,6 +84,15 @@
 
 .hero-footer__text {
   margin-top: 10px;
+}
+
+.hero-footer__cta {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
 }
 
 .hero-footer-icon {
@@ -108,20 +120,24 @@
   z-index: 3;
 }
 
-.hero-form[role='search'] .form-group {
+.hero-form {
+  padding-bottom: 2rem;
+}
+
+.hero-form .form-group {
   position: relative;
   max-width: 400px;
   margin: auto;
 }
 
-.hero-form[role='search'] .form-control {
+.hero-form .form-control {
   padding: 6px 38px 6px 12px;
   max-width: none;
   border: 0;
 }
 
-.hero-form[role='search'] .form-submit,
-.hero-form[role='search'] .search-icon {
+.hero-form .form-submit,
+.hero-form .search-icon {
   width: 38px;
   height: 38px;
   display: block;
@@ -135,7 +151,7 @@
   text-align: center;
 }
 
-.hero-form[role='search'] .search-icon {
+.hero-form .search-icon {
   line-height: 38px;
   speak: none;
   pointer-events: none;
@@ -143,9 +159,10 @@
   transition: 0.3s;
 }
 
-.hero-form[role='search'] .search-icon svg {
+.hero-form .search-icon svg {
   width: 24px;
   height: 24px;
+  vertical-align: middle;
 }
 
 @media (min-width: 600px) {
@@ -191,12 +208,6 @@
     -ms-flex: 0 0 25%;
     flex: 0 0 25%;
     max-width: 25%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: end;
-    -ms-flex-pack: end;
-    justify-content: flex-end;
   }
 
   .hero-canvas {

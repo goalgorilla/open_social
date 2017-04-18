@@ -340,14 +340,6 @@ em.placeholder {
   line-height: 1.25;
 }
 
-small {
-  font-size: 80%;
-}
-
-small .label {
-  font-size: 90%;
-}
-
 .text-align-left {
   text-align: left;
 }
@@ -737,12 +729,29 @@ img.align-center {
   display: none !important;
 }
 
+.list-inline {
+  padding-left: 0;
+  list-style: none;
+}
+
+.list-inline-item {
+  display: inline-block;
+}
+
+.list-inline-item:not(:last-child) {
+  margin-right: 5px;
+}
+
 @-ms-viewport {
   width: device-width;
 }
 
 .textarea--cke .cke {
   position: relative;
+}
+
+body {
+  margin: 10px;
 }
 
 @media (min-width: 600px) {

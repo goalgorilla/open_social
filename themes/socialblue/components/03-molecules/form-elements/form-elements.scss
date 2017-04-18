@@ -10,6 +10,11 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 }
 
 
+// When a dropdown-toggle in a button group gets an extra class it should be ignored
+.form-actions .btn-group--primary .dropdown-toggle {
+  border-color: $btn-primary-border;
+}
+
 // Feedback states
 .has-success {
   @include form-control-validation($state-success-text, $state-success-text, $state-success-bg);
@@ -23,4 +28,12 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 
 .control-label {
   font-weight: 300;
+}
+
+.form-wrapper__label {
+  font-weight: 500;
+}
+
+.form-wrapper {
+  border-radius: ($border-radius-base - 1);
 }

@@ -4,6 +4,10 @@
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 
 .teaser__image {
@@ -63,6 +67,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100%;
+  font-size: 0.875rem;
 }
 
 .teaser__content-type-icon {
@@ -86,7 +91,7 @@
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  width: calc(100% - 30px);
+  width: 85%;
 }
 
 .teaser__published-author {
@@ -107,7 +112,7 @@
 
 .teaser__badge {
   margin-bottom: 0;
-  vertical-align: text-bottom;
+  vertical-align: middle;
 }
 
 @media (min-width: 600px) {

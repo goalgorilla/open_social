@@ -192,16 +192,35 @@ function social_event_views_data_alter(array &$data) {
  * Formats the event start end date.
  */
 function _social_event_format_date($event, $view_mode) {
+
   $event_date = '';
+
+  // This will get the users timezone, which is either set by the user
+  // or defaults back to the sites timezone if the user didnt select any.
+  $timezone = drupal_get_user_timezone();
+
   // Get start and end dates
   if ($start_date_field = $event->field_event_date) {
     if (!empty($start_date_field->value)) {
-      $start_datetime = strtotime($start_date_field->value);
+      // Since dates are stored as UTC, we will declare our event values
+      // as UTC. So we can actually calculate them back to the users timezone.
+      // This is necessary because we do not store the event value as being UTC
+      // so declaring it with setTimezone will result in wrong values.
+      $start_datetime = new DateTime($start_date_field->value, new DateTimeZone("UTC"));
+      $start_datetime->setTimezone(new DateTimeZone($timezone));
+      $start_datetime = $start_datetime->getTimestamp();
     }
   }
   if ($end_date_field = $event->field_event_date_end) {
     if (!empty($end_date_field->value)) {
-      $end_datetime = strtotime($end_date_field->value);
+      // Since dates are stored as UTC, we will declare our event values
+      // as UTC. So we can actually calculate them back to the users timezone.
+      // This is necessary because we do not store the event value as being UTC
+      // so declaring it with setTimezone will result in wrong values.
+      $end_datetime = new DateTime($end_date_field->value, new DateTimeZone("UTC"));
+      // We now calculate it back to the users timezone.
+      $end_datetime->setTimezone(new DateTimeZone($timezone));
+      $end_datetime = $end_datetime->getTimestamp();
     }
   }
 
@@ -233,5 +252,6 @@ function _social_event_format_date($event, $view_mode) {
       $event_date = "$start_date $start_time - $end_date $end_time";
     }
   }
+
   return $event_date;
 }

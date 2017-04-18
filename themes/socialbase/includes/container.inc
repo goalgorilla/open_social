@@ -22,6 +22,10 @@ function socialbase_preprocess_container(&$variables) {
     $variables['bare'] = TRUE;
   }
 
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'view') {
+    $variables['bare'] = TRUE;
+  }
+
   // Identify the container used for search in the navbar. Var is set in hook_preprocess_block
   if (isset($variables['element']['#addsearchicon'])) {
     $variables['bare'] = TRUE;

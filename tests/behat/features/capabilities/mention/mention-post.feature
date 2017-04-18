@@ -12,11 +12,11 @@ Feature: Create Mention in a Post
       | user_3   | mail_3@example.com | 1      | Stephen                  | Hawking                 |
     And I am logged in as "user_1"
     And I am on the homepage
-    And I fill in "What's on your mind?" with "Hello [~user_2], [~user_3]!"
+    And I fill in "Say something to the Community" with "Hello [~user_2], [~user_3]!"
     And I press "Post"
     Then I should see "Albert Einstein posted"
     And I should see "Hello user_2, user_3!"
     And I should see the link "user_3"
     When I click "user_2"
-    Then I should see "Albert Einstein mentioned you in a post"
+    Then I should see "Albert Einstein mentioned Isaac Newton in a post"
     And I should see "Hello user_2, user_3!"

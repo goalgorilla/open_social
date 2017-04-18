@@ -187,7 +187,7 @@ gulp.task('sprite-icons', function () {
 //
 // #################
 //
-// Becsides the sprite we somtimes still need the individual svg files
+// Besides the sprite we sometimes still need the individual svg files
 // to load as a css background image. This task optimises and copies
 // the icons to the assets folder.
 // ===================================================
@@ -196,6 +196,20 @@ gulp.task('image-icons', function () {
   return gulp.src(options.icons.src + '*.svg')
     .pipe(svgmin())
     .pipe(gulp.dest(options.basetheme.build + 'images/icons/'))
+});
+
+// #################
+//
+// Image mime icons
+//
+// #################
+//
+// Copy the mime icons from the components folder to the assets folder (manual task)
+// ===================================================
+
+gulp.task('mime-image-icons', function () {
+  return gulp.src(options.icons.src + 'mime-icons/*.png')
+    .pipe(gulp.dest(options.basetheme.build + 'images/mime-icons/'))
 });
 
 

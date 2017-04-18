@@ -93,7 +93,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       if (!empty($groups)) {
         foreach ($groups as $group) {
           if ($group->hasPermission('enroll to events in groups', $current_user) == FALSE) {
-            return '';
+            return [];
           }
         }
       }

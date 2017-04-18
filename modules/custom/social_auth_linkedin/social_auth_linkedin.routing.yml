@@ -1,0 +1,79 @@
+social_auth_linkedin.settings_form:
+  path: '/admin/config/social-api/social-auth/linkedin'
+  defaults:
+    _title: 'Social Auth LinkedIn settings'
+    _form: '\Drupal\social_auth_linkedin\Form\LinkedInAuthSettingsForm'
+  requirements:
+    _permission: 'administer social api authentication'
+
+social_auth_linkedin.user_login:
+  path: '/user/login/linkedin'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInAuthController::userLogin'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_login_callback:
+  path: '/user/login/linkedin/callback'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInAuthController::userLoginCallback'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_login_notice:
+  path: '/user/login/linkedin/notice'
+  defaults:
+    _title: 'Login'
+    _form: '\Drupal\social_auth_extra\Form\AuthLoginNoticeForm'
+    network: 'linkedin'
+  requirements:
+    _role: 'anonymous'
+
+social_auth_linkedin.user_register:
+  path: '/user/register/linkedin'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInAuthController::userRegister'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_register_callback:
+  path: '/user/register/linkedin/callback'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInAuthController::userRegisterCallback'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_link:
+  path: '/social-api/link/linkedin'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInLinkController::linkAccount'
+  requirements:
+    _role: 'authenticated'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_link_callback:
+  path: '/social-api/link/linkedin/callback'
+  defaults:
+    _controller: '\Drupal\social_auth_linkedin\Controller\LinkedInLinkController::linkAccountCallback'
+  requirements:
+    _role: 'authenticated'
+  options:
+    no_cache: TRUE
+
+social_auth_linkedin.user_unlink:
+  path: '/social-api/unlink/linkedin'
+  defaults:
+    _title: 'Unlink LinkedIn'
+    _form: '\Drupal\social_auth_extra\Form\AuthUnlinkForm'
+    network: 'linkedin'
+  requirements:
+    _role: 'authenticated'

@@ -70,6 +70,7 @@
 
 .navbar-default .dropdown-menu > .active > a, .navbar-default .dropdown-menu > .active > a:hover, .navbar-default .dropdown-menu > .active > a:focus {
   background-color: #1f80aa;
+  color: #fff;
 }
 
 .navbar-default .navbar-toggle {
@@ -98,11 +99,6 @@
   background: #2189b5;
 }
 
-.navbar .dropdown .badge {
-  background-color: #ffc142;
-  color: #4d4d4d;
-}
-
 .navbar-form[role='search'] .form-group {
   border-radius: 5px;
 }
@@ -122,6 +118,22 @@
   background: white;
   fill: #29abe2;
   border-radius: 0 5px 5px 0;
+}
+
+.navbar-secondary {
+  background-color: #1f80aa;
+}
+
+.navbar-secondary .navbar-nav li:not(.active) a:hover,
+.navbar-secondary .navbar-nav li:not(.active) a:focus {
+  outline: none;
+  background-color: #17607f;
+  border-bottom-color: #17607f;
+}
+
+.navbar-scrollable:after {
+  background: -webkit-linear-gradient(left, rgba(31, 128, 170, 0), #1f80aa);
+  background: linear-gradient(to right, rgba(31, 128, 170, 0), #1f80aa);
 }
 
 @media (min-width: 900px) {

@@ -16,7 +16,7 @@ Feature: I want to be able to hide my email address
     And I press "Save configuration"
 
     Given I am logged in as "user_1"
-    And I am on "newest-members"
+    And I am on "all-members"
     Then I click "user_2"
     And I click "Information"
     And I should not see "user_2@example.com"
@@ -41,7 +41,7 @@ Feature: I want to be able to hide my email address
     And I press "Save configuration"
 
     Given I am logged in as "user_1"
-    And I am on "newest-members"
+    And I am on "all-members"
     Then I click "user_2"
     And I click "Information"
     And I should see "user_2@example.com"

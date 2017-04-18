@@ -22,7 +22,7 @@ Feature: Create topic like
     Then I should see "Topic for likes has been created."
 
    Given I am logged in as "user_2"
-     And I am at "newest-topics"
+     And I am at "all-topics"
     Then I should see "Topic for likes"
      And I should see "Marie Curie"
     When I click "Topic for likes"

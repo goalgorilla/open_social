@@ -1,0 +1,27 @@
+<?php
+
+use Drupal\user\UserInterface;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_auth_extra\AuthManagerInterface;
+use Drupal\social_auth_extra\UserManagerInterface;
+
+/**
+ * Implements hook_social_auth_extra_profile_presave().
+ */
+function social_sso_social_auth_extra_profile_presave(UserInterface $account, ProfileInterface $profile, AuthManagerInterface $auth_manager, UserManagerInterface $user_manager) {
+  $profile->get('field_profile_first_name')->setValue($auth_manager->getFirstName());
+  $profile->get('field_profile_last_name')->setValue($auth_manager->getLastName());
+
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $field_definitions = $entity_field_manager->getFieldDefinitions('profile', 'profile');
+
+  if (isset($field_definitions['field_profile_image'])) {
+    $auth_manager->setFieldPicture($field_definitions['field_profile_image']);
+    $user_manager->setFieldPicture($field_definitions['field_profile_image']);
+
+    if ($url = $auth_manager->getProfilePicture()) {
+      $user_manager->setProfilePicture($url, $user_manager->getAccountId());
+    }
+  }
+
+}

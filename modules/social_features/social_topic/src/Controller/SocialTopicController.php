@@ -17,7 +17,7 @@ class SocialTopicController extends ControllerBase {
    *   The page title.
    */
   public function latestTopicsPageTitle() {
-    $title = $this->t('Newest topics');
+    $title = $this->t('All topics');
 
     // TODO This might change depending on the view exposed filter settings.
     $topic_type_id = $attributes = \Drupal::request()->query->get('field_topic_type_target_id');

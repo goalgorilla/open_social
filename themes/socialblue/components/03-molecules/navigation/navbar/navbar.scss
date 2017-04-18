@@ -101,6 +101,7 @@
     &:hover,
     &:focus {
       background-color: $dropdown-link-active-bg;
+      color: $dropdown-link-active-color;
     }
   }
 
@@ -211,11 +212,6 @@
   background: $navbar-default-brand-bg;
 }
 
-.navbar .dropdown .badge {
-  background-color: $brand-accent;
-  color: $default-color;
-}
-
 .navbar-form[role='search'] {
 
   .form-group {
@@ -261,4 +257,26 @@
     border-radius: 0 $input-border-radius $input-border-radius 0;
   }
 
+}
+
+// Navbar secondary
+// -------------------------
+.navbar-secondary {
+  background-color: $brand-secondary;
+
+  .navbar-nav {
+
+    li:not(.active) a:hover,
+    li:not(.active) a:focus {
+      outline: none;
+      background-color: darken($brand-secondary, 10%);
+      border-bottom-color: darken($brand-secondary, 10%);
+    }
+  }
+}
+
+// Navbar scrollable
+// -------------------------
+.navbar-scrollable:after {
+  background: linear-gradient(to right, rgba($brand-secondary,0), rgba($brand-secondary,1));
 }

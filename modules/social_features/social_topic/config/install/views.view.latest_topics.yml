@@ -37,7 +37,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -184,7 +184,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: 'Newest topics'
+      title: 'All topics'
       header: {  }
       footer: {  }
       empty:
@@ -219,6 +219,15 @@ display:
       display_extenders: {  }
       display_description: ''
       block_description: 'Latest topic block'
+      title: 'Newest topics'
+      defaults:
+        title: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
+      use_more: true
+      use_more_always: true
+      use_more_text: 'All topics'
     cache_metadata:
       max-age: -1
       contexts:
@@ -252,6 +261,11 @@ display:
         empty: false
         relationships: false
         arguments: false
+        access: false
+        title: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
       relationships:
         group_content:
           id: group_content
@@ -303,15 +317,23 @@ display:
           entity_type: group_content
           entity_field: gid
           plugin_id: numeric
+      access:
+        type: group_permission
+        options:
+          group_permission: 'view group_node:topic content'
+      title: 'Newest topics'
+      use_more: true
+      use_more_always: true
+      use_more_text: 'All topics'
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
         - 'user.node_grants:view'
-        - user.permissions
       tags: {  }
   page_latest_topics:
     display_plugin: page
@@ -338,7 +360,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 4
+          items_per_page: 10
           offset: 0
           id: 0
           total_pages: null
@@ -356,7 +378,7 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
-      path: newest-topics
+      path: all-topics
       filters:
         status:
           value: '1'

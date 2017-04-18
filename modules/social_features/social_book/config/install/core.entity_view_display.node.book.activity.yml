@@ -1,0 +1,47 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.activity
+    - field.field.node.book.body
+    - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
+    - field.field.node.book.field_content_visibility
+    - field.field.node.book.field_files
+    - image.style.social_x_large
+    - node.type.book
+  module:
+    - image
+    - social_core
+    - user
+id: node.book.activity
+targetEntityType: node
+bundle: book
+mode: activity
+content:
+  field_book_comments:
+    type: comment_node
+    weight: 2
+    label: above
+    settings:
+      num_comments: 2
+      always_show_all_comments: false
+    third_party_settings: {  }
+  field_book_image:
+    type: image
+    weight: 0
+    label: above
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  links:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true
+  body: true
+  field_content_visibility: true
+  field_files: true
+  flag_follow_content: true

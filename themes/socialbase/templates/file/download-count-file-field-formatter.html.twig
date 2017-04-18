@@ -1,28 +1,13 @@
-{#
-/**
- * @file
- * Theme override for a link to a file.
- *
- * Available variables:
- * - attributes: The HTML attributes for the containing element.
- * - link: A link to the file.
- * - icon: An icon.
- * - icon_only: Flag to display only the icon and not the label.
- * - icon_position: Where an icon should be displayed.
- *
- * @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
- */
-#}
 {{ attach_library('socialbase/file') }}
 {% spaceless %}
-    <span class="{{ classes }}">
-         <span class="file-icon">
-            <svg class="icon-gray icon-small">
-                <use xlink:href="#icon-insert_drive_file"></use>
-            </svg>
-        </span>
-        <span class="file-link">{{ url }}</span>
-        <span class="file-size">{{ file_size }}</span>
-        <span class="file-size">{{ count }}</span>
-    </span>
+  <li class="node-file">
+    <a class="node-file__link" href="{{ link_url }}" title="{{ 'Open file in a new window'|t }}" target="_blank">
+      <span class="node-file__title">{{ link_text|replace({'_': ' '}) }}</span>
+      <span class="node-file__type">
+        <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+        <span class="node-file__size">{{ file_size }}</span>
+        <span class="node-file__count">{{ count }}</span>
+      </span>
+    </a>
+  </li>
 {% endspaceless %}

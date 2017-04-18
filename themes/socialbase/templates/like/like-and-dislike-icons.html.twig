@@ -18,15 +18,16 @@
 <div class="vote-widget vote-widget--like-and-dislike">
 
   <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <span class="badge badge--large">
-      <a {{ like_attributes }}>
-        <svg class="icon-gray icon-small">
-          <use xlink:href="#icon-like"></use>
-        </svg>
-        <span class="count">{{ likes }}</span>
-      </a>
-    </span>
-
+    <a {{ like_attributes }} >
+      <span class="badge badge--large badge--pill badge-default">
+        <span class="badge__container">
+          <svg class="badge__icon icon-vote">
+            <use xlink:href="#icon-like"></use>
+          </svg>
+          <span class="badge__label count">{{ likes }}</span>
+        </span>
+      </span>
+    </a>
   </div>
 
   <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">

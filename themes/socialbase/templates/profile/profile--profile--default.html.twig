@@ -67,56 +67,59 @@
 #}
 
 <div class="card brand-border-radius">
-    <div class="card__body card__body--fat">
-        <div class="list-group list-group-divider">
-            <div class="list-group-item">
-                <h4 class="list-group-item-heading">{% trans %}Contact information{% endtrans %}</h4>
-            </div>
-            {% if content.field_profile_phone_number|render %}
-            <div class="list-group-item">
-                <div class="list-group-label">{% trans %}Phone{% endtrans %}</div>
-                <div class="list-group-field">{{ content.field_profile_phone_number }}</div>
-            </div>
-            {% endif %}
-            {% if user_mail %}
-            <div class="list-group-item">
-                <div class="list-group-label">{% trans %}E-mail{% endtrans %}</div>
-                <div class="list-group-field">{{ user_mail }}</a></div>
-            </div>
-            {% endif %}
-            {% if content.field_profile_address|render %}
-            <div class="list-group-item">
-                <div class="list-group-label">{% trans %}Address{% endtrans %}</div>
-                <div class="list-group-field">
-                    {{ content.field_profile_address }}
-                </div>
-            </div>
-            {% endif %}
-        </div>
+  <div class="card__body">
 
-        {% if content.field_profile_self_introduction|render %}
-            <h4>{% trans %}Intro{% endtrans %}</h4>
-            {{ content.field_profile_self_introduction }}
-        {% endif %}
+    <h4>{% trans %}Contact information{% endtrans %}</h4>
 
-        {% if content.field_profile_interests['#items'] %}
-            <h4>{% trans %}Your interests{% endtrans %}</h4>
-            {% for item in content.field_profile_interests['#items'] %}
-              <div class="badge badge--large badge-gray-lighter">{{ item.entity.label }}</div>
-            {% endfor %}
-        {% endif %}
+    {% if content.field_profile_phone_number|render %}
+      <div class="list-item">
+          <div class="list-item__label">{% trans %}Phone{% endtrans %}</div>
+          <div class="list-item__text">{{ content.field_profile_phone_number }}</div>
+      </div>
+    {% endif %}
 
-        {% if content.field_profile_expertise['#items'] %}
-            <h4>{% trans %}Your expertise{% endtrans %}</h4>
-            {% for item in content.field_profile_expertise['#items'] %}
-              <div class="badge badge--large badge-gray-lighter">{{ item.entity.label }}</div>
-            {% endfor %}
-        {% endif %}
-        {% if content.field_profile_profile_tag['#items'] %}
-            <h4>{% trans %}Profile tags{% endtrans %}</h4>
-            {% for item in content.field_profile_profile_tag['#items'] %}
-              <div class="badge badge--large badge-gray-lighter">{{ item.entity.label }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
+    {% if user_mail %}
+      <div class="list-item">
+          <div class="list-item__label">{% trans %}E-mail{% endtrans %}</div>
+          <div class="list-item__text">{{ user_mail }}</a></div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_address|render %}
+      <div class="list-item">
+          <div class="list-item__label">{% trans %}Address{% endtrans %}</div>
+          <div class="list-item__text">
+              {{ content.field_profile_address }}
+          </div>
+      </div>
+    {% endif %}
+
+
+    {% if content.field_profile_self_introduction|render %}
+      <h5>{% trans %}Intro{% endtrans %}</h5>
+      {{ content.field_profile_self_introduction }}
+    {% endif %}
+
+    {% if content.field_profile_interests['#items'] %}
+      <h5>{% trans %}Your interests{% endtrans %}</h5>
+      {% for item in content.field_profile_interests['#items'] %}
+        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if content.field_profile_expertise['#items'] %}
+      <h5>{% trans %}Your expertise{% endtrans %}</h5>
+      {% for item in content.field_profile_expertise['#items'] %}
+        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if content.field_profile_profile_tag['#items'] %}
+      <h5>{% trans %}Profile tags{% endtrans %}</h5>
+      {% for item in content.field_profile_profile_tag['#items'] %}
+        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+      {% endfor %}
+    {% endif %}
+
+  </div>
 </div>

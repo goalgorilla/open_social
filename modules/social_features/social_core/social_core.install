@@ -511,3 +511,29 @@ function social_core_update_8013() {
   $config->set('button_iconize', 0);
   $config->save();
 }
+
+/**
+ * Update topics path.
+ */
+function social_core_update_8014(&$sandbox) {
+  $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['link__uri' => 'internal:/newest-topics']);
+
+  if ($link = reset($links)) {
+    $link->set('link', ['uri' => 'internal:/all-topics']);
+    $link->save();
+  }
+}
+
+/**
+ * Update members path.
+ */
+function social_core_update_8015(&$sandbox) {
+  $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['link__uri' => 'internal:/newest-members']);
+
+  if ($link = reset($links)) {
+    $link->set('link', ['uri' => 'internal:/all-members']);
+    $link->save();
+  }
+}

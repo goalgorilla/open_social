@@ -64,7 +64,7 @@ options.basetheme = {
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
 options.drupalURL = '';
-// options.drupalURL = 'http://social.dev:32799';
+//options.drupalURL = 'http://social.dev:32780';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
@@ -95,39 +95,36 @@ var onError = function(err) {
 
 // Define the style guide paths and options.
 options.styleGuide = {
-  source: [
+  'source': [
     options.theme.components,
     options.basetheme.components
   ],
-  mask: /\.less|\.sass|\.scss|\.styl|\.stylus/,
+  'mask': /\.less|\.sass|\.scss|\.styl|\.stylus/,
   destination: options.rootPath.styleGuide,
 
-  builder: 'os-builder',
-  namespace: options.theme.name + ':' + options.theme.components,
+  'builder': 'os-builder',
+  'namespace': options.theme.name + ':' + options.theme.components,
   'extend-drupal8': true,
 
   // The css and js paths are URLs, like '/misc/jquery.js'.
   // The following paths are relative to the generated style guide.
-  css: [
+  'css': [
     // Base stylesheets
     'kss-assets/base/base.css',
     'kss-assets/css/base.css',
     // Atom stylesheets
-    'kss-assets/base/alerts.css',
-    'kss-assets/css/alerts.css',
-    'kss-assets/base/badges.css',
-    'kss-assets/css/badges.css',
+    'kss-assets/base/alert.css',
+    'kss-assets/css/alert.css',
+    'kss-assets/base/badge.css',
+    'kss-assets/css/badge.css',
     'kss-assets/base/button.css',
     'kss-assets/css/button.css',
     'kss-assets/base/cards.css',
     'kss-assets/css/cards.css',
     'kss-assets/base/form-controls.css',
     'kss-assets/css/form-controls.css',
-    'kss-assets/base/labels.css',
-    'kss-assets/css/list-group.css',
-    'kss-assets/base/list-group.css',
-    'kss-assets/css/labels.css',
-    'kss-assets/base/close-icon.css',
+    'kss-assets/css/list.css',
+    'kss-assets/base/list.css',
     'kss-assets/css/waves.css',
     // Molecule stylesheets
     'kss-assets/base/dropdown.css',
@@ -184,11 +181,11 @@ options.styleGuide = {
     // Styleguide stylesheets
     'kss-assets/css/styleguide.css'
   ],
-  js: [
+  'js': [
     'kss-assets/js/waves.min.js'
   ],
-  homepage: 'homepage.md',
-  title: 'Style Guide for Open Social Blue'
+  'homepage': 'homepage.md',
+  'title': 'Style Guide for Open Social Blue'
 };
 
 
@@ -238,14 +235,20 @@ gulp.task('styles', function () {
 // ##################
 
 // Compile and copy the socialbase styles to the style guide
-gulp.task('styleguide-assets-base', function () {
+gulp.task('styleguide-assets-base', function() {
   return gulp.src(options.basetheme.css +'*.css')
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'))
 });
 
 // Compile and copy the subtheme assets to the style guide
-gulp.task('styleguide-assets', function () {
+gulp.task('styleguide-assets', function() {
   return gulp.src(options.theme.build +'**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
+});
+
+// Copy the mime icons from the components folder to the styleguide assets folder (manual task)
+gulp.task('styleguide-mime-image-icons', function () {
+  return gulp.src(options.basetheme.components + '06-libraries/icons/source/mime-icons/*.png')
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
 });
 
@@ -256,15 +259,9 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 
 // Before deploying create a fresh build
 gulp.task('build-styleguide', function(done) {
-  runSequence('styleguide',
-    ['styleguide-assets-base', 'styleguide-assets'],
+  runSequence('clean:styleguide', 'scripts-drupal', 'styleguide',
+    ['styleguide-assets-base', 'styleguide-assets', 'styleguide-mime-image-icons'],
     done);
-});
-
-// Debug the generation of the style guide with the --verbose flag.
-gulp.task('styleguide:debug', ['clean:styleguide', 'scripts-drupal'], function () {
-  options.styleGuide.verbose = true;
-  return kss(options.styleGuide);
 });
 
 // Copy drupal scripts from drupal to make them available for the styleguide
@@ -347,14 +344,16 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
-gulp.task('watch:styleguide', ['styleguide:debug', 'build-styleguide'], function () {
+gulp.task('watch:styleguide', ['build-styleguide'], function () {
   return gulp.watch([
     options.basetheme.components + '**/*.scss',
     options.theme.components + '**/*.scss',
     options.basetheme.components + '**/*.twig',
     options.theme.components + '**/*.twig',
+    options.basetheme.components + '**/*.json',
+    options.theme.components + '**/*.json',
     options.theme.components + '**/*.md'
-  ], options.gulpWatchOptions, 'build-styleguide');
+  ], options.gulpWatchOptions, ['build-styleguide']);
 });
 
 // #################

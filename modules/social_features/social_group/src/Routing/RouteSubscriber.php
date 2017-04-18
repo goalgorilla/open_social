@@ -34,6 +34,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
       // Override default path for Group Membership page.
       $route->setPath('/group/{group}/membership');
+      $route->setRequirements(['_group_permission' => 'administer members']);
     }
 
     // Override default title for Group Members page.

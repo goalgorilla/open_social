@@ -1,6 +1,7 @@
 <?php
 
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\Entity;
 
 /**
  * Prepares variables for node templates.
@@ -163,6 +164,14 @@ function socialbase_preprocess_node(&$variables) {
     }
   }
 
+  // If we have the like and dislike widget available for this node, we can
+  // print the count even for Anonymous.
+  $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
+  $variables['likes_count'] = NULL;
+  if (in_array($variables['node']->getType(), $enabled_types['node'])) {
+    $variables['likes_count'] = _socialbase_node_get_like_count($variables['node']->getEntityTypeId(), $variables['node']->id());
+  }
+
   //Add styles for nodes in preview
   if ($node->in_preview) {
     $variables['#attached']['library'][] = 'socialbase/preview';
@@ -184,6 +193,32 @@ function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
 
   if ($comment_count) {
     $count = $comment_count;
+  }
+
+  return $count;
+}
+
+/**
+ * Get like count for a node.
+ *
+ * @param $type entity type
+ * @param $id entity id
+ * @return int
+ * @internal param $entity
+ */
+function _socialbase_node_get_like_count($type, $id) {
+  $count = 0;
+
+  // The result function service needs entity type and entity id in order
+  // to get proper results.
+  if (!empty($type) && !empty($id)) {
+    $manager = Drupal::service('plugin.manager.votingapi.resultfunction');
+    $results = $manager->getResults($type, $id);
+
+    // Lets see if our results carry the sum of all votes.
+    if (!empty($results['like']['vote_sum'])) {
+      $count = $results['like']['vote_sum'];
+    }
   }
 
   return $count;

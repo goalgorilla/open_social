@@ -6,7 +6,11 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     return;
   }
 
-  $config = \Drupal::config('socialblue.settings');
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+
+  if($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
+    $config = \Drupal::config($system_theme_settings . '.settings');
+  }
 
   $form['open_social_settings'] = array(
     '#type' => 'vertical_tabs',

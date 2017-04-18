@@ -52,7 +52,7 @@ Feature: Create Open Group
   # DS-648 As a LU I want to see the members of a group
     And I logout
     And I am logged in as "Group User Two"
-    And I am on "newest-members"
+    And I am on "all-members"
     And I click "Group User One"
   # And I should see "Recently joined groups" in the "Sidebar second"
     And I should see "Test open group" in the "Sidebar second"
