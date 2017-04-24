@@ -131,8 +131,10 @@
         <div class="meta-engage">
 
           {% if content.flag_follow_content|render is not empty and logged_in %}
-            {{ content.flag_follow_content }}
-           {% endif %}
+            <div class="meta-follow">
+              {{ content.flag_follow_content }}
+            </div>
+          {% endif %}
 
           {% if node.isSticky() %}
             <span class="badge badge-accent badge--large brand-bg-accent">{% trans %}Featured{% endtrans %}</span>
@@ -180,7 +182,8 @@
                 <svg class="badge__icon">
                   <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-{{ visibility_icon }}"></use>
                 </svg>
-                <span class="badge__label">{{ visibility_label }}</span>
+                <span class="badge__label">&nbsp;</span>
+                <span class="badge__label badge__label--description">{{ visibility_label }}</span>
               </span>
             </div>
           {% endif %}

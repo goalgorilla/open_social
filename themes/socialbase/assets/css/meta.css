@@ -57,18 +57,20 @@
   display: -ms-flexbox;
   display: flex;
   margin-bottom: 1rem;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .meta-engage .badge {
   margin-right: 5px;
 }
 
-.btn-follow {
+.meta-follow {
   margin-right: 0;
   margin-left: auto;
-  -webkit-box-ordinal-group: 11;
-      -ms-flex-order: 10;
-          order: 10;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  margin-bottom: 1rem;
 }
 
 .article__special-fields {
@@ -107,6 +109,17 @@
 @media (min-width: 600px) {
 
   .meta-engage {
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
     margin-bottom: 2rem;
+  }
+
+  .meta-follow {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -webkit-box-ordinal-group: 11;
+    -ms-flex-order: 10;
+    order: 10;
+    margin-bottom: 0;
   }
 }

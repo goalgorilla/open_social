@@ -1,0 +1,39 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.activity_comment
+    - field.field.node.page.body
+    - field.field.node.page.field_content_visibility
+    - field.field.node.page.field_files
+    - field.field.node.page.field_page_comments
+    - field.field.node.page.field_page_image
+    - image.style.social_x_large
+    - node.type.page
+  module:
+    - image
+    - user
+id: node.page.activity_comment
+targetEntityType: node
+bundle: page
+mode: activity_comment
+content:
+  field_page_image:
+    type: image
+    weight: 0
+    label: above
+    settings:
+      image_style: social_x_large
+      image_link: content
+    third_party_settings: {  }
+  links:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  addtoany: true
+  body: true
+  field_content_visibility: true
+  field_files: true
+  field_page_comments: true
+  flag_follow_content: true
