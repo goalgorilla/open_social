@@ -15,12 +15,11 @@ function socialbase_preprocess_page(&$variables) {
   if ($user->hasPermission('access toolbar')) {
     $variables['#attached']['library'][] = 'socialbase/admin-toolbar';
   }
+
   // Add plain title for node preview page templates.
   if (!empty($variables['page']['#title'])) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
-  // Get all SVG Icons.
-  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg');
 
   // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
 

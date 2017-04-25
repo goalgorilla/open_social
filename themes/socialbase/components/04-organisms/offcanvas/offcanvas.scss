@@ -23,7 +23,7 @@
 
 .off-canvas-right {
   @include for-tablet-landscape-down {
-    transform: translateX(280px);
+    transform: translateX(290px);
     right: 0;
   }
 }
@@ -43,12 +43,11 @@
 }
 
 .views-exposed-form {
-  display: inline-block;
-  float: right;
 
-  @include for-tablet-landscape-up {
-    display: block;
-    float: none;
+  @include for-tablet-landscape-down {
+    position: absolute;
+    right: 1rem;
+    top: 1.5rem;
   }
 
 }

@@ -26,6 +26,17 @@ function socialbase_preprocess_form_element(&$variables) {
  * Implements hook_preprocess_form_element_label().
  */
 function socialbase_preprocess_form_element_label(&$variables) {
+  // Find out what the active theme is first.
+  $theme = \Drupal::theme()->getActiveTheme();
+
+  // Check if socialbase is one of the base themes.
+  // Then get the path to socialbase theme and provide a variable
+  // that can be used in the template for a path to the icons.
+  if (array_key_exists('socialbase', $theme->getBaseThemes())) {
+    $basethemes = $theme->getBaseThemes();
+    $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
+  }
+
   if (isset($variables['element']['#id'])) {
     if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
       if (isset($variables['element']['#attributes']['title'])) {
@@ -34,7 +45,7 @@ function socialbase_preprocess_form_element_label(&$variables) {
         $variables['description'] = $description;
       }
       // Set the materialize icon.
-      $variables['material_icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
+      $variables['icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
     }
   }
 }

@@ -5,7 +5,7 @@
 
   <div class="article__special-fields">
     <div class="article__special-field">
-      <svg class="article__special-fields-icon"><use xlink:href="#icon-event"></use></svg>
+      <svg class="article__special-fields-icon"><use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-event"></use></svg>
       <span class="sr-only">{% trans %}Event date {% endtrans %}</span>
       <span class="inline-center">
         <strong>{{event_date}}</strong>
@@ -13,7 +13,7 @@
     </div>
     {% if content.field_event_address|render or content.field_event_location|render %}
       <div class="article__special-field">
-        <svg class="article__special-fields-icon"><use xlink:href="#icon-location"></use></svg>
+        <svg class="article__special-fields-icon"><use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-location"></use></svg>
         <span class="sr-only">{% trans %}Event location {% endtrans %}</span>
         <span class="inline-center">
           <strong>{{content.field_event_location}}</strong>

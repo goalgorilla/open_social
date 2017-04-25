@@ -1,10 +1,9 @@
 <?php
-
 /**
- * Implements hook_preprocess_dropdown().
- * @param $variables
- */
-function socialbase_preprocess_dropdown(&$variables) {
+* Implements hook_preprocess_breadcrumb().
+* @param $variables
+*/
+function socialbase_preprocess_breadcrumb(&$variables) {
   // Find out what the active theme is first.
   $theme = \Drupal::theme()->getActiveTheme();
 
@@ -16,9 +15,4 @@ function socialbase_preprocess_dropdown(&$variables) {
     $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
   }
 
-  if (isset($variables['active']) && is_numeric($variables['active'])) {
-    $title = $variables['element'][$variables['active']]['#title'];
-    $selected_icon = _socialbase_get_visibility_icon($title);
-  }
-  $variables['selected_icon'] = isset($selected_icon) ? $selected_icon : '';
 }
