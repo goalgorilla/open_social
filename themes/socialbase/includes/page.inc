@@ -8,8 +8,11 @@ use Drupal\node\Entity\Node;
 function socialbase_preprocess_page(&$variables) {
   $variables['display_page_title'] = TRUE;
 
-  // If we have the admin toolbar on screen we need overrides for our styles.
-  if ($variables['is_admin']) {
+  // If we have the admin toolbar permission.
+  $user = \Drupal::currentUser();
+
+  // Check for permission
+  if ($user->hasPermission('access toolbar')) {
     $variables['#attached']['library'][] = 'socialbase/admin-toolbar';
   }
 
