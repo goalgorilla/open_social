@@ -20,7 +20,7 @@
           {% if item.icon_image %}
             {{ item.icon_image }}
           {% elseif item.icon_classes %}
-            <svg class="icon-white icon-medium pull-left {{ item.icon_classes }}">
+            <svg class="navbar-nav__icon {{ item.icon_classes }}">
               <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#{{ item.icon_classes }}" />
             </svg>
           {% endif %}
