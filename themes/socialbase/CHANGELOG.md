@@ -1,3 +1,9 @@
+### v2.1.4 -- Apr 2017
+* Update class on icons in navbar https://www.drupal.org/node/2872929
+  * Update instruction: In your sub theme provide a fill color for either `.navbar-nav__icon` which is the new icon class. Or like we did in social blue provide a fill for `.navbar-nav > li > a`. The default color is white. The size of the icon is in socialbase. The float class is removed and not needed.
+* Provide a condition before printing the *topic type* in `node--topic--teaser.html.twig`. Although topic type in a required field by default, this can be changed in an installation. 
+
+
 ### v2.1.3 -- Apr 2017
 * Changed wave-effect styles.
 * Changed book navigation styles.
