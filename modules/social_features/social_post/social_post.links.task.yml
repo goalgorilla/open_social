@@ -1,8 +1,5 @@
 # Post routing definition
-post.settings_tab:
-  route_name: post.settings
-  title: 'Settings'
-  base_route: post.settings
+
 entity.post.canonical:
   route_name: entity.post.canonical
   base_route: entity.post.canonical
@@ -11,10 +8,29 @@ entity.post.canonical:
 entity.post.edit_form:
   route_name: entity.post.edit_form
   base_route: entity.post.canonical
-  title: Edit
+  title: 'Edit'
 
 entity.post.delete_form:
   route_name:  entity.post.delete_form
   base_route:  entity.post.canonical
   title: Delete
   weight: 10
+
+# Post routing definition
+
+entity.post.canonical:
+  route_name: entity.post.canonical
+  base_route: entity.post.canonical
+  title: 'View'
+
+entity.post.edit_form:
+  route_name: entity.post.edit_form
+  base_route: entity.post.canonical
+  title: 'Edit'
+
+entity.post.delete_form:
+  route_name:  entity.post.delete_form
+  base_route:  entity.post.canonical
+  title: Delete
+  weight: 10
+

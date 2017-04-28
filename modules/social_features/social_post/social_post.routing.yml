@@ -1,0 +1,64 @@
+post.overview_templates:
+  path: '/admin/structure/post'
+  defaults:
+    _controller: '\Drupal\Core\Entity\Controller\EntityListController::listing'
+    entity_type: 'post_template'
+    _title: 'Post templates'
+  requirements:
+    _permission: 'administer post entities'
+
+post.template_add:
+  path: '/admin/structure/post/template/add'
+  defaults:
+    _entity_form: 'post_template.add'
+    _title: 'Add post template'
+  requirements:
+    _permission: 'administer post entities'
+
+entity.post_template.edit_form:
+  path: '/admin/structure/post/manage/{post_template}'
+  defaults:
+    _entity_form: 'post_template.edit'
+    _title: 'Edit post template'
+  requirements:
+    _permission: 'administer post entities'
+
+entity.post_template.delete_form:
+  path: '/admin/structure/post/delete/{post_template}'
+  defaults:
+    _entity_form: 'post_template.delete'
+    _title: 'Delete post template'
+  requirements:
+    _permission: 'administer post entities'
+
+post.posts:
+  path: '/admin/content/post'
+  defaults:
+    _title: 'Posts'
+    _entity_list: 'post'
+  requirements:
+    _permission: 'overview posts'
+
+post.main_settings:
+  path: '/admin/config/post'
+  defaults:
+    _content: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Post'
+  requirements:
+    _permission: 'administer post entities'
+
+post.settings:
+  path: '/admin/config/post/post'
+  defaults:
+    _title: 'Post'
+    _description: 'Post settings'
+    _form: 'Drupal\social_post\Form\PostSettingsForm'
+  requirements:
+    _permission: 'administer post entities'
+
+post.multiple_delete_confirm:
+  path: '/admin/content/post/delete'
+  defaults:
+    _form: '\Drupal\social_post\Form\DeleteMultiple'
+  requirements:
+    _permission: 'administer post entities'
