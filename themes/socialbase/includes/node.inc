@@ -19,9 +19,6 @@ use Drupal\Core\Entity\Entity;
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function socialbase_preprocess_node(&$variables) {
-  // Find out what the active theme is first.
-  $theme = \Drupal::theme()->getActiveTheme();
-
   $node = $variables['node'];
   $account = $node->getOwner();
   $variables['content_type'] = $node->bundle();
