@@ -7,6 +7,7 @@
 ### v2.1.3 -- Apr 2017
 * Changed wave-effect styles.
 * Changed book navigation styles.
+* Made image widget crop being collapsed by default.
 
 ### v2.1.2 -- Mar 2017
 * Replaced Bootstrap list-group component with custom list component
