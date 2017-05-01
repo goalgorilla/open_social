@@ -5,17 +5,6 @@
  * @param $variables
  */
 function socialbase_preprocess_dropdown(&$variables) {
-  // Find out what the active theme is first.
-  $theme = \Drupal::theme()->getActiveTheme();
-
-  // Check if socialbase is one of the base themes.
-  // Then get the path to socialbase theme and provide a variable
-  // that can be used in the template for a path to the icons.
-  if (array_key_exists('socialbase', $theme->getBaseThemes())) {
-    $basethemes = $theme->getBaseThemes();
-    $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
-  }
-
   if (isset($variables['active']) && is_numeric($variables['active'])) {
     $title = $variables['element'][$variables['active']]['#title'];
     $selected_icon = _socialbase_get_visibility_icon($title);

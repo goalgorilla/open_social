@@ -14,7 +14,7 @@
     {# See PostForm.php we set edit_mode to true so people can't actually change the dropdown button for edit mode. #}
         <button id="post-visibility" type="button" {% if edit_mode %}disabled{% endif %} data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-default dropdown-toggle  icon-before">
           <svg class="icon-black icon-small">
-            <use id="btnicon" xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-{{ selected_icon }}"></use>
+            <use id="btnicon" xlink:href="#icon-{{ selected_icon }}"></use>
           </svg>
           <span class="text">{{ selected }} </span>
           {% if not edit_mode %}<span class="caret"></span>{% endif %}
