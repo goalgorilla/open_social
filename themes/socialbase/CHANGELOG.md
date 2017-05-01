@@ -1,3 +1,7 @@
+### v2.1.4 -- Apr 2017
+* Added method for autogrow behaviour and changed event triggers.
+* Changed overflow styles for autogrow form elements.
+
 ### v2.1.3 -- Apr 2017
 * Changed wave-effect styles.
 * Changed book navigation styles.
