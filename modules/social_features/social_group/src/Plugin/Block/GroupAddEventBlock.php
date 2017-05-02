@@ -27,7 +27,7 @@ class GroupAddEventBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if(is_object($group)){
-      if ($group->hasPermission('create event node', $account)) {
+      if ($group->hasPermission('create group_node:event entity', $account)) {
         return AccessResult::allowed();
       }
     }

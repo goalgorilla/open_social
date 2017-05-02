@@ -27,7 +27,7 @@ class GroupAddTopicBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if(is_object($group)){
-      if ($group->hasPermission('create topic node', $account)) {
+      if ($group->hasPermission('create group_node:topic entity', $account)) {
         return AccessResult::allowed();
       }
     }
