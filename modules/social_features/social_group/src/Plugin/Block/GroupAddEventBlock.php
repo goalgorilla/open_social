@@ -46,7 +46,7 @@ class GroupAddEventBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if(is_object($group)){
-      $url = Url::fromUserInput("/group/{$group->id()}/node/create/event");
+      $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:event");
 
       $link_options = array(
         'attributes' => array(
