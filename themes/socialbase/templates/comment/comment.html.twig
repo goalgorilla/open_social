@@ -71,9 +71,12 @@
   <div class="comment__avatar"> {{ author_picture }} </div>
 
   <div class="comment__content">
+    {% block comment_author %}
     <div class="comment__author"> {{ author }}
       <span class="comment__metadata">&bullet; {{ submitted }} </span>
+      <mark class="badge badge-default badge--pill hidden" data-comment-timestamp="{{ new_indicator_timestamp }}"></mark>
     </div>
+    {% endblock %}
     <div class="comment__text"> {{ content }} </div>
   </div>
 

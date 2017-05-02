@@ -19,17 +19,17 @@ print:
 ## 2. The SMACSS category Component — discrete, reusable UI elements
 
 ### 2.1 Atoms
-alerts:
+alert:
   css:
     component:
-      assets/css/alerts.css: {}
+      assets/css/alert.css: {}
   js:
     assets/js/alert.min.js: {}
 
-badges:
+badge:
   css:
     component:
-      assets/css/badges.css: {}
+      assets/css/badge.css: {}
 
 button:
   css:
@@ -41,11 +41,6 @@ cards:
     component:
       assets/css/cards.css: {}
 
-close-icon:
-  css:
-    component:
-      assets/css/close-icon.css: {}
-
 form-controls:
   css:
     component:
@@ -55,15 +50,10 @@ form-controls:
   dependencies:
     - core/drupal.form
 
-labels:
+list:
   css:
     component:
-      assets/css/labels.css: {}
-
-list-group:
-  css:
-    component:
-      assets/css/list-group.css: {}
+      assets/css/list.css: {}
 
 
 ### 2.2 Molecules
@@ -137,6 +127,11 @@ form--timepicker:
       assets/css/timepicker.css: {}
   js:
     assets/js/jquery.timepicker.min.js: {}
+
+like:
+  css:
+    component:
+      assets/css/like.css: {}
 
 media:
   css:
@@ -237,39 +232,37 @@ offcanvas:
     component:
       assets/css/offcanvas.css: {}
 
+social-linking:
+  css:
+    component:
+      assets/css/social-linking.css: {}
+
 stream:
   css:
     component:
       assets/css/stream.css: {}
 
 ### 2.4 Templates
+layout:
+  css:
+    layout:
+      assets/css/layout.css: {}
+
 page-node:
   css:
-    component:
+    layout:
       assets/css/page-node.css: {}
   dependencies:
     - socialbase/meta
 
 page-search:
   css:
-    component:
+    layout:
       assets/css/page-search.css: {}
   dependencies:
     - socialbase/hero
 
 page-preview:
   css:
-    component:
+    layout:
       assets/css/page-preview.css: {}
-
-page-stream:
-  css:
-    component:
-      assets/css/page-stream.css: {}
-  dependencies:
-    - socialbase/stream
-
-responsive-dom:
-  js:
-    assets/js/jquery.responsive-dom.min.js: {}
-    assets/js/responsive-dom-init.min.js: {}

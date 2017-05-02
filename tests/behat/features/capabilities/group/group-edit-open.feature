@@ -55,7 +55,6 @@ Feature: Edit my group as a group manager
     Then I should see the link "Delete"
     When I press "Edit"
     Then I should see "Group Manager One"
-    And I should see "Group roles"
     And I should see "Group Manager"
     And I should see the button "Save"
     And I should see the link "Delete"

@@ -32,7 +32,7 @@ core: 8.x
 
 # The version number for the theme is optional. Quotes are needed because the
 # format is intepreted as a number and the trailing zero is lost when displayed.
-version: '2.0'
+version: '2.1'
 
 # Libraries-extend is used to attach libraries to other libraries. If the
 # original library is conditionally included, the library it is extended with
@@ -51,8 +51,12 @@ libraries-extend:
   # attach the bootstrap library script and css component
   bootstrap/popover:
     - socialbase/popover
+  # Extend the bootstrap modal with our own implementation
+  bootstrap/modal:
+    - socialbase/modal
 
-
+stylesheets-remove:
+  - like_and_dislike.icons.css
 
 # Libraries-override is used to override any of the assets defined by a library.
 # Use it to remove files, replace files with your own, replace a library with
@@ -82,6 +86,7 @@ libraries-override:
   system/base: false
   views/views.module: false
   classy/file: false
+  like_and_dislike/icons: false
 
 # Libraries contain CSS and JavaScript files. The libraries setting is used to
 # globally add libraries, which means they will appear on every page. Libraries
@@ -98,14 +103,13 @@ libraries:
   - socialbase/print
   - socialbase/base
   # Atoms
-  - socialbase/alerts
-  - socialbase/badges
+  - socialbase/alert
+  - socialbase/badge
   - socialbase/button
   - socialbase/cards
   - socialbase/close-icon
   - socialbase/form-controls
-  - socialbase/labels
-  - socialbase/list-group
+  - socialbase/list
   # Molecules
   - socialbase/dropdown
   - socialbase/form-elements
@@ -113,6 +117,9 @@ libraries:
   - socialbase/media
   - socialbase/navbar
   - socialbase/tour
+  - socialbase/like
+  # Templates
+  - socialbase/layout
 
 # This section is used by the contrib module, Component Libraries. It allows you
 # to reference .twig files in your components/ directory.
@@ -152,10 +159,10 @@ regions:
   complementary_top: Complementary top
   complementary_bottom: Complementary bottom
   content_bottom: Content bottom
+  sidebar_first: Sidebar First
+  sidebar_second: Sidebar Second
   footer: Footer
 # Remove regions_hidden part in your subtheme.
 # The Hidden region should be visible when you enable a sub theme due to core bug.
 regions_hidden:
   - hidden
-
-debug: false

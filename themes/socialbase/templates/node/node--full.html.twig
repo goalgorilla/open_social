@@ -69,6 +69,7 @@
 {%
   set classes = [
     'card',
+    'brand-border-radius',
     node.isPromoted() ? 'node--promoted',
     not node.isPublished() ? 'node--unpublished',
   ]
@@ -82,14 +83,14 @@
 
 <article{{ attributes.addClass(classes) }}>
 
-  <div{{ content_attributes.addClass('card-body extra-padding') }}>
+  <div{{ content_attributes.addClass('card__body') }}>
 
     {% if not node.isPublished() %}
       <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
     {% endif %}
 
 
-    {% block nodefull_header %}
+    {% block metainfo %}
       <header class="metainfo">
 
         <div class="metainfo__avatar">
@@ -115,52 +116,86 @@
 
         </div>
 
+      </header>
+    {% endblock %}
 
-        {% if content.flag_follow_content|render is not empty %}
-          <div class="metainfo__follow">
-            {{ content.flag_follow_content }}
-          </div>
-        {% endif %}
+    {% if event_date %}
+      {% block nodefull_specialfields %}
+        {{ content }}
+      {% endblock %}
+    {% endif %}
 
-        <div class="metainfo__brief">
+
+    {% if node.isSticky() or comment_field_status is not empty or logged_in %}
+      {% block metaengage %}
+        <div class="meta-engage">
+
+          {% if content.flag_follow_content|render is not empty and logged_in %}
+            <div class="meta-follow">
+              {{ content.flag_follow_content }}
+            </div>
+          {% endif %}
 
           {% if node.isSticky() %}
-            <span class="label label-featured">{% trans %}Featured{% endtrans %}</span>
+            <span class="badge badge-accent badge--large brand-bg-accent">{% trans %}Featured{% endtrans %}</span>
           {% endif %}
 
           {% if comment_field_status is not empty %}
-            <a href="#section-comments" class="badge badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
-              <label>
-                <svg class="icon-small icon-badge">
+            <a href="#section-comments" class="badge badge-default badge--large badge--pill badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
+              <span class="badge__container">
+                <svg class="badge__icon">
                   <use xlink:href="#icon-comment"></use>
                 </svg>
-                <span class="badge--comment-count__number">{{ comment_count }}</span>
-              </label>
+                <span class="badge__label">
+                  {{ comment_count }}
+                </span>
+                <span class="badge__label badge__label--description">
+                  {% if comment_count == 1 %}
+                    {% trans %}comment{% endtrans %}
+                  {% else %}
+                    {% trans %}comments{% endtrans %}
+                  {% endif %}
+                </span>
+              </span>
             </a>
           {% endif %}
 
+          {% if likes_count is not empty %}
+            <div class="badge badge-default badge--large badge--pill">
+              <span class="badge__container">
+                <svg class="badge__icon">
+                  <use xlink:href="#icon-like"></use>
+                </svg>
+                <span class="badge__label">
+                  {{ likes_count }}
+                </span>
+                <span class="badge__label badge__label--description">
+                  likes
+                </span>
+              </span>
+            </div>
+          {% endif %}
+
           {% if visibility_icon and visibility_label %}
-            <div class="badge badge--toggle">
-              <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
-                <input type="checkbox">
-                <svg class="icon-gray icon-badge-toggle">
+            <div class="badge badge-default badge--large badge--pill" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+              <span class="badge__container">
+                <svg class="badge__icon">
                   <use xlink:href="#icon-{{ visibility_icon }}"></use>
                 </svg>
-                <span class="badge--toggle__label">{{ visibility_label }}</span>
-              </label>
+                <span class="badge__label">&nbsp;</span>
+                <span class="badge__label badge__label--description">{{ visibility_label }}</span>
+              </span>
             </div>
           {% endif %}
 
         </div>
+        {% endblock %}
+    {% endif %}
 
-      </header>
+    {% block nodefull_body %}
+      {{ content|without('flag_follow_content') }}
     {% endblock %}
 
-    <div class="body-text">
-      {% block nodefull_body %}
-        {{ content|without('flag_follow_content') }}
-      {% endblock %}
-    </div>
 
   </div>
 

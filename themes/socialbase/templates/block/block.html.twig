@@ -50,41 +50,34 @@
   set classes = [
     'block-' ~ configuration.provider|clean_class,
     'block-' ~ plugin_id|clean_class,
+    card ? 'card brand-border-radius' : '',
   ]
 %}
 
-{% if card %}
-
-  <div class="card">
-
-    {{ title_prefix }}
-    {% if label %}
-      <div class="card-head">
-        <header {{ title_attributes.addClass('text-center') }}>{{ label }}</header>
-      </div>
-    {% endif %}
-    {{ title_suffix }}
+{%
+  set title_classes = [
+  card ? 'card__title' : 'block-title',
+  ]
+%}
 
 
-    <div class="card-body">
-        {{ content }}
-    </div>
-
-  </div>
-
-{% else %}
+{% if not bare %}
 
   <section{{ attributes.addClass(classes) }}>
 
     {{ title_prefix }}
     {% if label %}
-      <h2{{ title_attributes.addClass('block-title') }}>{{ label }}</h2>
+      <h2 {{ title_attributes.addClass(title_classes) }}>{{ label }}</h2>
     {% endif %}
     {{ title_suffix }}
 
-    {% block content %}
-      {{ content }}
-    {% endblock %}
+{% endif %}
+
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+
+{% if not bare %}
   </section>
 
 {% endif %}

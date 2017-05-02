@@ -92,7 +92,10 @@ function _social_topic_get_permissions($role) {
     'administer visibility settings',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**
@@ -111,7 +114,7 @@ function _social_topic_create_menu_links() {
   if (!is_null($parent)) {
     MenuLinkContent::create([
       'title' => t('All topics'),
-      'link' => ['uri' => 'internal:/newest-topics'],
+      'link' => ['uri' => 'internal:/all-topics'],
       'menu_name' => 'main',
       'expanded' => FALSE,
       'weight' => 40,

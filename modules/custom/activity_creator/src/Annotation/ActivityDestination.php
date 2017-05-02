@@ -35,4 +35,18 @@ class ActivityDestination extends Plugin {
    */
   public $label;
 
+  /**
+   * Whether this destination supports aggregation or not.
+   *
+   * @var bool
+   */
+  public $is_aggregatable = FALSE;
+
+  /**
+   * Whether this destination is common or not.
+   *
+   * @var bool
+   */
+  public $is_common = FALSE;
+
 }

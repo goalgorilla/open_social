@@ -10,6 +10,7 @@ dependencies:
     - field.field.post.post.field_visibility
   module:
     - social_post
+    - text
     - user
 id: post.post.activity
 targetEntityType: post
@@ -17,17 +18,22 @@ bundle: post
 mode: activity
 content:
   field_post:
-    type: basic_string
+    type: text_default
     weight: 1
     label: hidden
     settings: {  }
     third_party_settings: {  }
   field_post_comments:
     type: comment_post
-    weight: 2
+    weight: 3
     label: hidden
     settings:
-      num_comments: 2
+      num_comments: '2'
+      order: DESC
+    third_party_settings: {  }
+  like_and_dislike:
+    weight: 2
+    settings: {  }
     third_party_settings: {  }
   user_id:
     label: hidden

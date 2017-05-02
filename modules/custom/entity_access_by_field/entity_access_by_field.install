@@ -68,5 +68,8 @@ function _entity_access_by_field_get_permissions($role) {
 
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }

@@ -1,24 +1,11 @@
 @import "settings";
 
-// force the direct child of the container to take 100% of width screen on xs-screens
-.hero-container.container {
-
-  @include for-tablet-landscape-up {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
-  .card {
-    margin: 0.75rem 0;
-  }
-
-}
-
 // Used on a hero block that can hold a background image.
 .cover {
   position: relative; // keep hero-footer contained
   text-align: center;
-  padding: 1rem;
+  padding: 0 1rem;
+  z-index: 2; // needed for the secondary navbar shadow
 }
 
 .cover-img {
@@ -39,12 +26,6 @@
     z-index: 1;
   }
 
-  @include for-tablet-landscape-up {
-
-    .cover-wrap {
-      min-height: 335px;
-    }
-  }
 }
 
 .cover-with-canvas {
@@ -68,10 +49,12 @@
   width: 100%;
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
+  min-height: 300px;
+
+  @include for-tablet-portrait-up {
+    min-height: 410px;
+  }
+
 }
 
 .node-unpublished .status:before {
@@ -85,20 +68,15 @@
 
 .page-title {
   font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
   text-align: center;
-  margin: 0;
+  margin: 0 auto;
+  padding-top: 2rem;
+  padding-bottom: 1em;
+  width: 80%;
 
-  .cover-img & {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
-  }
-
-  .cover-wrap & {
-    margin: 1em 0 0.5em;
-
-    @include for-tablet-portrait-up {
-      margin-bottom: 0;
-    }
-
+  @include for-tablet-portrait-up {
+    max-width: 900px;
   }
 
 }
@@ -106,7 +84,7 @@
 // Profile
 
 .hero-avatar {
-  @include z-depth-2;
+  @include z-depth-1;
   margin: auto;
   width: 60px;
   height: 60px;
@@ -119,7 +97,10 @@
 }
 
 .hero-footer {
-  padding-top: 20px;
+  padding: 1rem 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 
   @include for-tablet-landscape-up {
     display: flex;
@@ -128,6 +109,7 @@
 }
 
 .hero-footer__text {
+  margin-top: 10px;
 
   @include for-tablet-landscape-up {
     padding-right: 1rem;
@@ -139,12 +121,14 @@
 }
 
 .hero-footer__cta {
+  display: flex;
+  justify-content: flex-end;
+
   @include for-tablet-landscape-up {
     padding-left: 1rem;
     flex: 0 0 25%;
     max-width: 25%;
-    display: flex;
-    justify-content: flex-end;
+
   }
 }
 
@@ -183,7 +167,8 @@
 
 // Hero search
 
-.hero-form[role='search'] {
+.hero-form {
+  padding-bottom: 2rem;
 
   .form-group {
     position: relative;
@@ -221,6 +206,7 @@
     svg {
       width: 24px;
       height: 24px;
+      vertical-align: middle;
     }
 
   }

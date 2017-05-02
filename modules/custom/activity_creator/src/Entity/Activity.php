@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\user\UserInterface;
+use Drupal\votingapi\Entity\Vote;
 
 /**
  * Defines the Activity entity.
@@ -204,8 +205,21 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   public function getRelatedEntityUrl() {
     $link = "";
     $related_object = $this->get('field_activity_entity')->getValue();
+
     if (!empty($related_object)) {
-      $entity = entity_load($related_object['0']['target_type'], $related_object['0']['target_id']);
+      $target_type = $related_object['0']['target_type'];
+      $target_id = $related_object['0']['target_id'];
+
+      // Make an exception for Votes.
+      if ($related_object['0']['target_type'] === 'vote') {
+        /** @var Vote $vote */
+        if ($vote = entity_load($target_type, $target_id)) {
+          $target_type = $vote->getVotedEntityType();
+          $target_id = $vote->getVotedEntityId();
+        }
+      }
+
+      $entity = entity_load($target_type, $target_id);
       if (!empty($entity)) {
         /** @var \Drupal\Core\Url $link */
         $link = $entity->urlInfo('canonical');

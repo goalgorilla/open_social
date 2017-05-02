@@ -1,29 +1,37 @@
+// Code
+//
+// The `<code>` element represents a fragment of computer code. <br />
+// The `<var>` element represents a variable. <br />The `<samp>` element
+// represents (sample) output from a program or computing system. <br />
+// The `<kbd>` element represents user input (typically keyboard input.)
+//
+// markup: code.twig
+//
+// Weight: 3
+//
+// Style guide: base.code
+
+
 // Inline and block code styles
 code,
 kbd,
 pre,
 samp {
   font-size: 1em;
-  font-family: $font-family-monospace;
 }
 
 // Inline code
-code {
+code, kbd {
   padding: 2px 4px;
   font-size: 90%;
 }
 
 // User input typically entered via keyboard
-kbd {
-  padding: 2px 4px;
-  font-size: 90%;
-
-  kbd {
-    padding: 0;
-    font-size: 100%;
-    font-weight: bold;
-    box-shadow: none;
-  }
+kbd kbd {
+  padding: 0;
+  font-size: 100%;
+  font-weight: bold;
+  box-shadow: none;
 }
 
 // Blocks of code
@@ -45,10 +53,4 @@ pre {
     background-color: transparent;
     border-radius: 0;
   }
-}
-
-// Enable scrollable blocks of code
-.pre-scrollable {
-  max-height: $pre-scrollable-max-height;
-  overflow-y: scroll;
 }

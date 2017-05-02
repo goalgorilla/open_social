@@ -37,10 +37,10 @@ Feature: Create Open Group
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
-    And I should see "GG HQ" in the "Main content"
-    And I should see "Oldenzaalsestraat" in the "Main content"
-    And I should see "7514DR" in the "Main content"
-    And I should see "Enschede" in the "Main content"
+    And I should see "GG HQ" in the "Hero block"
+    And I should see "Oldenzaalsestraat" in the "Hero block"
+    And I should see "7514DR" in the "Hero block"
+    And I should see "Enschede" in the "Hero block"
 
     # As a LU I want to see the information about a group
     When I click "About"
@@ -50,7 +50,7 @@ Feature: Create Open Group
   # DS-648 As a LU I want to see the members of a group
     And I logout
     And I am logged in as "Group User Two"
-    And I am on "newest-members"
+    And I am on "all-members"
     And I click "Group User One"
   # And I should see "Recently joined groups" in the "Sidebar second"
     And I should see "Test open group" in the "Sidebar second"

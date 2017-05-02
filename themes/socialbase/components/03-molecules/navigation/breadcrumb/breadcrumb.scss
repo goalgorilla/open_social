@@ -1,11 +1,22 @@
 @import 'settings';
 
-.breadcrumbs {
+// Breadcrumbs
+//
+// Breadcrumbs are a good way to display your current location.
+// This is usually used when you have multiple layers of content. They are hidden on mobile screens.
+//
+// markup: breadcrumb.twig
+//
+// Weight: 2
+//
+// Style guide: molecules.navigation.breadcrumb
+
+.region--breadcrumb {
   display: none;
 
   @include for-tablet-landscape-up {
     display: block;
-
+    background-color: #fff;
   }
 }
 

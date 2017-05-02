@@ -66,7 +66,7 @@ class AccountHeaderBlock extends BlockBase {
               'title' => $this->t('Create New Group'),
               'label' => $this->t('New group'),
               'title_classes' => '',
-              'url' => Url::fromUserInput('/group/add/open_group'),
+              'url' => Url::fromUserInput('/group/add'),
             ),
           ),
         ),
@@ -90,7 +90,7 @@ class AccountHeaderBlock extends BlockBase {
           'icon_classes' => '',
           'icon_label' => '',
           'title' => $this->t('Create New Book page'),
-          'label' => $this->t('New Book Page'),
+          'label' => $this->t('New book page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/book'),
         );
@@ -105,12 +105,12 @@ class AccountHeaderBlock extends BlockBase {
           'icon_classes' => '',
           'icon_label' => '',
           'title' => $this->t('Create New Page'),
-          'label' => $this->t('New Page'),
+          'label' => $this->t('New page'),
           'title_classes' => '',
           'url' => Url::fromUserInput('/node/add/page'),
         );
       }
-
+      
       if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
         $notifications = \Drupal::service('renderer')->render($notifications_view);
@@ -125,7 +125,7 @@ class AccountHeaderBlock extends BlockBase {
         }
         else {
           $notifications_icon = 'icon-notifications';
-          $label_classes = 'badge';
+          $label_classes = 'badge badge-accent badge--pill';
 
           if ($num_notifications > 99) {
             $num_notifications = '99+';

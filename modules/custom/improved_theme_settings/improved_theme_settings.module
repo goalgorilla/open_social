@@ -1,0 +1,305 @@
+<?php
+/**
+ * @file
+ * Improved theme settings module file.
+ */
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // If user has the improved settings, we don't alter nothing!
+  if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
+    return;
+  }
+
+  // Our form contains all the correct id's so we can start the alteration!
+  if (!empty($form['open_social_settings']) && !empty($form['os_color_settings']) && !empty($form['color'])) {
+    // Unset theme updates
+    $form['update']['#access'] = FALSE;
+
+    // Unset Bootstrap settings, we don't need it.
+    $form['bootstrap']['#access'] = FALSE;
+
+    // Unset all the settings that are part of the bootstrap group.
+    foreach ($form as $setting => $settings) {
+      if (!empty($settings['#group']) && $settings['#group'] == "bootstrap") {
+        $form[$setting]['#access'] = FALSE;
+      }
+    }
+
+    // We want color to be rendered under open social settings in a tab.
+    $form['color']['#group'] = "open_social_settings";
+  }
+}
+
+/**
+ * Function that returns the updated color pallete colors with the generated
+ * CSS for in the head.
+ * @param string $colors colors from the active theme
+ * @param string $system_theme_settings active theme
+ * @return string
+ */
+function _improved_theme_settings_update_palette($colors = '', $system_theme_settings = 'socialblue') {
+
+  if (empty($colors)) {
+    $colors = color_get_palette($system_theme_settings);
+  }
+
+  $primary = $colors['brand-bg-primary'];
+  $secondary = $colors['brand-bg-secondary'];
+  $accent = $colors['brand-bg-accent'];
+  $link = $colors['brand-text-primary'];
+
+  $css = "
+    [type=\"radio\"]:checked + label:before {
+      border-color: $secondary !important;
+    }
+
+    [type=\"radio\"]:checked + label:after {
+      border-color: $secondary !important;
+      background-color: $secondary !important;
+    }
+
+    [type=\"radio\"]:checked + label {
+      color: $secondary !important;
+    }
+
+    .dropdown-toggle.btn-primary:hover {
+      background-color: $primary !important;
+      border-color: $primary !important;
+    }
+
+    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
+      color: $link !important;
+    }
+
+    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
+      border-right-color: $primary !important;
+    }
+
+    .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
+      border-bottom-color: transparent !important;
+    }
+
+    .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+      background-color: $primary !important;
+    }
+
+    .navbar-default .navbar-brand:hover,
+    .navbar-default .navbar-brand:focus {
+      background-color: $primary !important;
+    }
+
+    @media (max-width: 959px) {
+      .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus {
+        background-color: $primary !important;
+      }
+    }
+
+    @media(max-width: 900px) {
+      .navbar-form[role='search'] .search-icon {
+        fill: $primary !important;
+      }
+    }
+
+    .hero-form[role='search'] .search-icon,
+    #navbar-search.is-open .search-icon,
+    .no-js #navbar-search .search-icon {
+      fill: $primary !important;
+    }
+
+    .form-control:focus {
+      border-color: $primary !important;
+      border-bottom-color: $primary !important;
+      box-shadow: 0 2px 0 0 $primary !important;
+    }
+
+    .brand-secondary {
+      background-color: $secondary !important;
+      border-color: $secondary !important;
+    }
+
+    .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
+      background-color: rgba(0,0,0,0.5) !important;
+    }
+
+    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+      background-color: $primary !important;
+    }
+
+    .btn-primary {
+      background-color: $primary !important;
+      border-color: $primary !important;
+    }
+
+    .btn-flat {
+      color: $link !important;
+      fill: $link !important;
+    }
+
+    .btn-flat:hover {
+      color: inherit !important;
+    }
+
+    .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+      background-color: $secondary !important;
+      border-color: $secondary !important;
+    }
+
+    [type=\"checkbox\"]:checked + label:after {
+      border-color: $secondary !important;
+      background-color: $secondary !important;
+    }
+
+    .stream-icon-new {
+      background: $secondary !important;
+    }
+
+    .comment__reply-btn {
+      color: $link !important;
+    }
+
+    .btn-accent {
+      background-color: $accent !important;
+      border-color: $accent !important;
+    }
+
+    .body-text a {
+      color: $link !important;
+    }
+
+    .body-text a:hover {
+      color: $link !important;
+    }
+
+    blockquote {
+      border-left-color: $link !important;
+    }
+
+    .book-menu .list-item--active-trail > a {
+      color: $link !important;
+    }
+
+    .input-group .form-control:focus ~ .input-group-addon {
+      border-color: $primary !important;
+      box-shadow: 0 2px 0 0 $primary !important;
+    }
+
+    .navbar-default .dropdown-menu > .active > a,
+    .navbar-default .dropdown-menu > .active > a:hover,
+    .navbar-default .dropdown-menu > .active > a:focus {
+      background-color: $primary !important;
+    }
+
+    .navbar-scrollable:before {
+      background: linear-gradient(90deg, $secondary, transparent) !important;
+    }
+
+    .navbar-scrollable:after {
+      background: linear-gradient(-90deg, $secondary, transparent) !important;
+    }
+
+  ";
+
+  return $css;
+}
+
+
+/**
+ * Implements hook_page_attachments().
+ * @param array $page
+ */
+function improved_theme_settings_page_attachments(array &$page) {
+
+  // Check for the current active theme.
+  $active_theme = \Drupal::theme()->getActiveTheme()->getName();
+  // Determine the admin theme from config.
+  $config = \Drupal::config('system.theme');
+  // If we're in the admin theme we need to add alibrary.
+  if ($active_theme == $config->get('admin')) {
+    $page['#attached']['library'][] = 'improved_theme_settings/color.admin';
+  }
+
+  // If socialblue is our default theme.
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+
+  // We render our color & font settings in the head. Only if socialblue is
+  // the default theme. And only if the current active theme is socialblue.
+  // Otherwise we also render it on all admin pages.
+  if ($system_theme_settings === 'socialblue' || $system_theme_settings === 'socialsaas') {
+    if ($active_theme == $system_theme_settings) {
+      $style_to_add = '';
+      if (\Drupal::moduleHandler()->moduleExists('social_font')) {
+        // Render font value here.
+        $style_to_add .= social_font_render();
+      }
+
+      $border_radius = Drupal\Component\Utility\Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
+      if (!empty($border_radius) || $border_radius == 0) {
+        $style_to_add .= '
+        .brand-border-radius {
+          border-radius: ' . $border_radius . 'px !important;
+        }
+
+        .tabs-left .vertical-tabs-list {
+          border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
+        }
+
+        .btn {
+          border-radius: ' . $border_radius . 'px !important;
+        }
+
+        .teaser--stream:last-child {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+          border-bottom-right-radius: ' . $border_radius . 'px !important;
+        }
+
+        .teaser--stream:last-child .teaser__image {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+        }
+
+        .card__nested-section:last-child {
+          border-bottom-left-radius: ' . $border_radius . 'px !important;
+          border-bottom-right-radius: ' . $border_radius . 'px !important;
+        }
+
+        .off-canvas-xs-only {
+          border-radius: ' . $border_radius . 'px !important;
+        }
+
+        @media (min-width: 600px) {
+          .teaser__teaser-type {
+            border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+          }
+        }
+
+        ';
+      }
+
+      // Get the color palette saved for custom social blue
+      $colors = color_get_palette($system_theme_settings);
+      $default = color_get_palette($system_theme_settings, TRUE);
+
+      // Check if there are differences between socialblue default scheme and the
+      // saved palette. If yes we render our extra's in the head too.
+      if (count(array_diff($colors, $default)) > 0) {
+        $style_to_add .= _improved_theme_settings_update_palette($colors, $system_theme_settings);
+      }
+
+      if (!empty($style_to_add)) {
+        $page['#attached']['html_head'][] = [
+          [
+            '#type' => 'html_tag',
+            '#tag' => 'style',
+            '#value' => Drupal\Core\Render\Markup::create($style_to_add),
+          ],
+
+          // A key, to make it possible to recognize this HTML element when altering.
+          'social_theme_preprocess'
+        ];
+      }
+    }
+  }
+}

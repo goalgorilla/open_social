@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * Implements hook_preprocess_input().
+ */
+function socialbase_preprocess_input(&$variables) {
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
+    // Only reaction on the visibility field.
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      $title = $variables['element']['#title'];
+      $variables['selected_material_icon'] = _socialbase_get_visibility_icon($title);
+      if (isset($variables['element']['#return_value']) && isset($variables['element']['#default_value'])) {
+        if ($variables['element']['#return_value'] === $variables['element']['#default_value']) {
+          $variables['element']['active'] = 'active';
+          $variables['active'] = 'active';
+        }
+      }
+    }
+  }
+
+  if (isset($variables['element']['#array_parents'])) {
+    if (in_array('save_modal', $variables['element']['#array_parents'], TRUE)) {
+      $variables['button_type'] = 'primary';
+    }
+  }
+
+  if (isset($variables['element']['#addsearchicon'])) {
+    $variables['add_search_icon'] = TRUE;
+  }
+
+  // Button types are determined in the hook_form_alter and set to be forced here
+  // again so the twig fill can use the variable
+  // params:
+  // ['#button_type']
+  // ['#button_level']
+
+  if (isset($variables['element']['#button_type'])) {
+    if ($variables['element']['#button_type'] == 'primary') {
+      $variables['button_type'] = 'primary';
+    }
+
+    if ($variables['element']['#button_type'] == 'danger' || $variables['element']['#button_type'] == 'default') {
+      $variables['button_type'] = 'default';
+    }
+
+    if ($variables['element']['#button_type'] == 'flat') {
+      $variables['button_type'] = 'flat';
+    }
+
+    if ($variables['element']['#button_type'] == 'accent') {
+      $variables['button_type'] = 'accent';
+    }
+
+  }
+
+  // If a split button desn't have a button_type variable, set it to default (fallback)
+  if (isset($variables['element']['#split']) && !isset($variables['element']['#button_type'])) {
+    $variables['button_type'] = 'default';
+  }
+
+  if (isset($variables['element']['#button_level'])) {
+    if ($variables['element']['#button_level'] == 'raised') {
+      $variables['button_level'] = 'raised';
+    }
+  }
+
+  // Make sure we can use a span class caret in the button.
+  if (!empty($variables['element']['#attributes']['data-caret']) && $variables['element']['#attributes']['data-caret'] === 'true') {
+    $variables['element']['caret'] = array(
+      '#markup' => '<span class="caret"></span>',
+    );
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_input_alter().
+ */
+function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
+  // Lets add the form element parent to the theme suggestions.
+  if (isset($variables['element']['#id'])) {
+    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+    }
+  }
+
+}

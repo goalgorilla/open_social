@@ -104,7 +104,10 @@ function _social_core_get_permissions($role) {
     'administer blocks',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**
@@ -460,5 +463,77 @@ function social_core_update_8009() {
   else {
     drupal_set_message('Skipped installing socialblue theme. Please check release notes.');
   }
+}
 
+/**
+ * Install social_font module.
+ */
+function social_core_update_8010() {
+  $modules = array(
+    'social_font',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install color & improved theme settings module.
+ */
+function social_core_update_8011() {
+  $modules = array(
+    'color',
+    'improved_theme_settings',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install social_like module.
+ */
+function social_core_update_8012() {
+  $modules = array(
+    'social_like',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Change socialbase and socialblue theme settings config.
+ */
+function social_core_update_8013() {
+  $config_factory = \Drupal::service('config.factory');
+  $config = $config_factory->getEditable('socialbase.settings');
+  $config->set('button_colorize', 0);
+  $config->set('button_iconize', 0);
+  $config->save();
+
+  $config = $config_factory->getEditable('socialblue.settings');
+  $config->set('button_colorize', 0);
+  $config->set('button_iconize', 0);
+  $config->save();
+}
+
+/**
+ * Update topics path.
+ */
+function social_core_update_8014(&$sandbox) {
+  $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['link__uri' => 'internal:/newest-topics']);
+
+  if ($link = reset($links)) {
+    $link->set('link', ['uri' => 'internal:/all-topics']);
+    $link->save();
+  }
+}
+
+/**
+ * Update members path.
+ */
+function social_core_update_8015(&$sandbox) {
+  $links = \Drupal::entityTypeManager()->getStorage('menu_link_content')
+    ->loadByProperties(['link__uri' => 'internal:/newest-members']);
+
+  if ($link = reset($links)) {
+    $link->set('link', ['uri' => 'internal:/all-members']);
+    $link->save();
+  }
 }

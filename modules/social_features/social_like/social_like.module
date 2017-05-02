@@ -1,0 +1,21 @@
+<?php
+/**
+ * @file
+ * The social_like module.
+ */
+
+/**
+ * Implements hook_entity_view_alter().
+ * @param array $build
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ */
+function social_like_entity_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
+  if ($display->getComponent('like_and_dislike')) {
+    // Check if the current user has permission
+    // if not, hide the like and dislike
+    if (!\Drupal::currentUser()->hasPermission('view like widget')){
+      unset($build['like_and_dislike']);
+    }
+  }
+}

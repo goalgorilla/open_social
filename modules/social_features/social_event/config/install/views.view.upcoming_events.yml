@@ -38,7 +38,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -55,7 +55,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 4
+          items_per_page: 10
           offset: 0
           id: 0
           total_pages: null
@@ -324,6 +324,9 @@ display:
         row: false
         empty: false
         title: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
       relationships:
         reverse__event_enrollment__field_event:
           id: reverse__event_enrollment__field_event
@@ -535,6 +538,9 @@ display:
           content: 'No upcoming events you have enrolled for'
           plugin_id: text_custom
       title: 'My upcoming events'
+      use_more: false
+      use_more_always: true
+      use_more_text: 'All my upcoming events'
     cache_metadata:
       max-age: -1
       contexts:

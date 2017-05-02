@@ -26,9 +26,9 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: group_permission
         options:
-          perm: 'access content'
+          group_permission: 'view group_node:topic content'
       cache:
         type: tag
         options: {  }
@@ -36,7 +36,7 @@ display:
         type: views_query
         options:
           disable_sql_rewrite: false
-          distinct: false
+          distinct: true
           replica: false
           query_comment: ''
           query_tags: {  }
@@ -383,13 +383,13 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - user
         - 'user.node_grants:view'
-        - user.permissions
       tags: {  }
   page_group_topics:
     display_plugin: page
@@ -403,11 +403,11 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
         - user
         - 'user.node_grants:view'
-        - user.permissions
       tags: {  }

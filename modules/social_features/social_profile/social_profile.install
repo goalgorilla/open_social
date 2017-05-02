@@ -103,7 +103,10 @@ function _social_profile_get_permissions($role) {
     'view profile email',
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 /**
@@ -122,7 +125,7 @@ function _social_profile_create_menu_links() {
   if (!is_null($parent)) {
     MenuLinkContent::create([
       'title' => 'All members',
-      'link' => ['uri' => 'internal:/newest-members'],
+      'link' => ['uri' => 'internal:/all-members'],
       'menu_name' => 'main',
       'expanded' => FALSE,
       'weight' => 50,

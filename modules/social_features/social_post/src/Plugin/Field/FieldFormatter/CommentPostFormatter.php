@@ -34,6 +34,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   public static function defaultSettings() {
     return array(
       'num_comments' => 2,
+      'order' => 'DESC'
     );
   }
 
@@ -86,6 +87,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
                 'class' => array(
                   'btn',
                   'btn-flat',
+                  'brand-text-primary',
                 ),
               ),
             );
@@ -159,6 +161,17 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
     );
+    $orders = [
+      'ASC' => $this->t('Oldest first'),
+      'DESC' => $this->t('Newest first'),
+    ];
+    $element['order'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Order'),
+      '#description' => $this->t('Select the order used to show the list of comments.'),
+      '#default_value' => $this->getSetting('order'),
+      '#options' => $orders,
+    ];
     return $element;
   }
 
@@ -189,18 +202,20 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       ->addMetaData('entity', $entity)
       ->addMetaData('field_name', $field_name);
 
+    $comments_order = $this->getSetting('order');
+
     if (!$this->currentUser->hasPermission('administer comments')) {
       $query->condition('c.status', CommentInterface::PUBLISHED);
     }
     if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
-      $query->orderBy('c.cid', 'DESC');
+      $query->orderBy('c.cid', $comments_order);
     }
     else {
       // See comment above. Analysis reveals that this doesn't cost too
       // much. It scales much much better than having the whole comment
       // structure.
       $query->addExpression('SUBSTRING(c.thread, 1, (LENGTH(c.thread) - 1))', 'torder');
-      $query->orderBy('torder', 'DESC');
+      $query->orderBy('torder', $comments_order);
     }
 
     // Limit The number of results.

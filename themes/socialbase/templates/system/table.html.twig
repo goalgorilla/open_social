@@ -45,9 +45,8 @@
 {{ attach_library('socialbase/tablesaw') }}
 
 {% if card %}
-    <div class="card">
-    <div class="card-body">
-{% endif %}
+    <div class="card brand-border-radius">
+ {% endif %}
 
   {% if theme.settings.table_responsive %}
 
@@ -150,7 +149,6 @@
     </div>
   {% endif %}
 
-    {% if card %}
-        </div>
-        </div>
-    {% endif %}
+{% if card %}
+    </div>
+{% endif %}

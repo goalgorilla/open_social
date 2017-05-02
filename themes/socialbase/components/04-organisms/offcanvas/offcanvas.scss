@@ -8,7 +8,7 @@
     width: 280px;
     height: 100%;
     background-color: white;
-    padding: $card-padding;
+    padding: $card-spacer-x;
     box-shadow: 0 8px 17px 0 transparent, 0 6px 20px 0 transparent;
     z-index: 4;
     backface-visibility: hidden;
@@ -18,60 +18,36 @@
 
 #block-filter:target {
   transform: translateX(0);
-  @include z-depth-2;
+  @include z-depth-5;
 }
 
 .off-canvas-right {
   @include for-tablet-landscape-down {
-    transform: translateX(280px);
+    transform: translateX(290px);
     right: 0;
   }
 }
 
 .off-canvas-xs-only {
-  @include z-depth-1;
+  @include z-depth-2;
   position: relative;
   margin-bottom: $card-spacer-y;
   background-clip: padding-box;
   background-color: white;
 
   @include for-tablet-landscape-down {
-    @include z-depth-2;
+    @include z-depth-5;
     position: fixed;
   }
 
 }
 
-// on mobile we want to "add" and "filter" buttons to be on one row
-.block-group-add-event-block,
-.block-group-add-topic-block,
-.block-event-add-block,
-.block-topic-add-block,
-.block-group-add-block {
-  display: inline-block;
-
-  .btn {
-    margin-bottom: 0.75rem;
-  }
-
-  @include for-tablet-landscape-up {
-    display: block;
-
-    .btn {
-      width: 100%;
-    }
-
-  }
-
-}
-
 .views-exposed-form {
-  display: inline-block;
-  float: right;
 
-  @include for-tablet-landscape-up {
-    display: block;
-    float: none;
+  @include for-tablet-landscape-down {
+    position: absolute;
+    right: 1rem;
+    top: 1.5rem;
   }
 
 }

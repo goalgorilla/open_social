@@ -72,20 +72,22 @@ function download_count_file_access($entity, $operation, $account) {
         }
       }
     }
-    $connection = Database::getConnection();
-    $connection->insert('download_count')
-      ->fields(array(
-        'fid' => $entity->id(),
-        'uid' => $account->id(),
-        'type' => $entity_type,
-        'id' => $entity_id,
-        'ip_address' => $ip,
-        'referrer' => $referrer,
-        'timestamp' => $time,
-      ))
-      ->execute();
+    if (!empty($entity_type) && !empty($entity_id)) {
+      $connection = Database::getConnection();
+      $connection->insert('download_count')
+        ->fields(array(
+          'fid' => $entity->id(),
+          'uid' => $account->id(),
+          'type' => $entity_type,
+          'id' => $entity_id,
+          'ip_address' => $ip,
+          'referrer' => $referrer,
+          'timestamp' => $time,
+        ))
+        ->execute();
 
-    $flood->register('download_count-fid_' . $entity->id(), $flood_window);
+      $flood->register('download_count-fid_' . $entity->id(), $flood_window);
+    }
   }
 }
 
@@ -97,10 +99,14 @@ function download_count_theme() {
     'download_count_file_field_formatter' => array(
       'variables' => array(
         'file' => NULL,
-        'url' => NULL,
+        'link' => NULL,
+        'link_url' => NULL,
+        'link_text' => NULL,
         'classes' => NULL,
         'count' => NULL,
         'file_size' => NULL,
+        'path_to_socialbase' => NULL,
+        'node_icon' => NULL,
       ),
     ),
   );

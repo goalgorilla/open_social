@@ -93,7 +93,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       if (!empty($groups)) {
         foreach ($groups as $group) {
           if ($group->hasPermission('enroll to events in groups', $current_user) == FALSE) {
-            return '';
+            return [];
           }
         }
       }
@@ -149,7 +149,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form['enroll_for_this_event']['#attributes'] = array(
         'class' => array(
           'btn',
-          'btn-accent',
+          'btn-accent brand-bg-accent',
           'btn-lg btn-raised',
           'dropdown-toggle',
         ),
@@ -164,7 +164,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Add markup for the button so it will be a dropdown.
       $form['feedback_user_has_enrolled'] = array(
-        '#markup' => '<ul class="dropdown-menu"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
+        '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
       );
 
       $form['#attached']['library'][] = 'social_event/form_submit';

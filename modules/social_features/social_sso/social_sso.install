@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_sso module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_sso.
+ */
+function social_sso_install() {
+  // Install some additional modules.
+  _social_sso_module_installer();
+
+  // Set some default permissions.
+  _social_sso_set_permissions();
+}
+
+/**
+ * Install some additional modules.
+ */
+function _social_sso_module_installer() {
+  $modules = [
+    'social_auth_facebook',
+    'social_auth_google',
+    'social_auth_linkedin',
+    'social_auth_twitter',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_sso_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_sso_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_sso_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = array(
+  );
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  ));
+
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  ));
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+    'administer social api authentication',
+  ));
+
+  return $permissions[$role];
+}

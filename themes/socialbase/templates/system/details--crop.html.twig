@@ -16,18 +16,18 @@
  * @ingroup themeable
  */
 #}
-<details{{ attributes }}>
-    {%- if title -%}
-        <summary{{ summary_attributes.addClass('btn btn-flat') }}>{{ title }}</summary>
-    {%- endif -%}
+<details{{ attributes.removeAttribute('open') }}>
+  {%- if title -%}
+    <summary{{ summary_attributes.addClass('btn btn-flat brand-text-primary') }}>{{ title }}</summary>
+  {%- endif -%}
 
-    {% if errors %}
-        <div>
-            {{ errors }}
-        </div>
-    {% endif %}
+  {% if errors %}
+    <div>
+      {{ errors }}
+    </div>
+  {% endif %}
 
-    {{ description }}
-    {{ children }}
-    {{ value }}
+  {{ description }}
+  {{ children }}
+  {{ value }}
 </details>

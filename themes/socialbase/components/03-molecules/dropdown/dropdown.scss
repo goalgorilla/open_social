@@ -45,7 +45,7 @@
   font-size: 0.875rem;
   text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
   background-color: $dropdown-bg;
-  @include z-depth-3;
+  @include z-depth-4;
   background-clip: padding-box;
 
   // Aligns the dropdown menu to right
@@ -250,13 +250,16 @@
 
   }
 
-  &.dropdown-md {
-    min-width: 240px;
-    right: -70px;
+}
 
-    @include for-tablet-portrait-up {
-      right: 0;
-    }
+.dropdown-menu--visibility {
+  min-width: 240px;
+  left: auto;
+  right: -70px;
+  padding: 0;
+
+  @include for-tablet-portrait-up {
+    right: 0;
   }
 }
 
@@ -264,48 +267,6 @@
 
   &.profile .header-nav-current-user {
     padding: 4px 15px 0;
-  }
-
-  .list-group-item {
-
-    &:hover {
-      background-color: $gray-light;
-      border-color: $gray-light;
-      cursor: pointer;
-      color: white;
-
-      .help-block {
-        color: white;
-      }
-
-    }
-
-    label {
-      cursor: pointer;
-      font-weight: 500;
-
-      .help-block {
-        font-weight: 300;
-      }
-
-    }
-
-    .help-block {
-      margin: 0;
-    }
-
-    &.active {
-      pointer-events: none;
-
-      .help-block {
-        color: white;
-      }
-    }
-
-  }
-
-  .form-group {
-    margin: 0;
   }
 
 }
@@ -316,9 +277,6 @@
   background: $dropdown-header-bg;
 }
 
-.dropdown-toggle + ul > li > svg {
-  margin-right: 10px;
-}
 
 .scrollable-menu {
 

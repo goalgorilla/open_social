@@ -76,7 +76,10 @@ function _social_search_get_permissions($role) {
 
   ));
 
-  return $permissions[$role];
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
 
 

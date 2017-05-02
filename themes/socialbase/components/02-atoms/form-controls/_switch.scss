@@ -1,7 +1,15 @@
+// Input switch
+//
+// The switch is a based around the input type `checkbox` element.
+// Wrap the checkbox in a `<label>` element and put a span with class `lever` next to the
+// input element. Now you can put your labels at the beginning and end of the label.
+//
+// markup: form-input-switch.twig
+//
+// Weight: 6
+//
+// Style guide: atoms.form-controls.input-switch
 
-/***************
-     Switch
-***************/
 .switch * {
   user-select: none;
   cursor: pointer;
@@ -21,9 +29,13 @@
 }
 
 .switch input[type=checkbox]{
-    opacity: 0;
-    width: 0;
-    height: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch label {
+  font-weight: 300;
 }
 
 .switch .lever {
@@ -41,17 +53,17 @@
 }
 
 .switch .lever:after {
-    content: "";
-    position: absolute;
-    display: inline-block;
-    width: 21px;
-    height: 21px;
-    background-color: $switch-unchecked-bg;
-    border-radius: 21px;
-    box-shadow: 0 1px 3px 1px rgba(0,0,0,.4);
-    left: -5px;
-    top: -3px;
-    transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
+  @include z-depth-1;
+  content: "";
+  position: absolute;
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  background-color: $switch-unchecked-bg;
+  border-radius: 21px;
+  left: -5px;
+  top: -3px;
+  transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
 }
 
 input[type=checkbox]:not(:disabled) ~ .lever:active:after {

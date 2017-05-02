@@ -12,26 +12,25 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/comment')}}
 <div class="card">
-  <div class="card-body">
-    <div class="media">
-      <div class="media-left">
+  <div class="card__block">
+    <div class="comment">
+      <div class="comment__avatar">
         {{ author_picture }}
       </div>
-      <div class="media-body">
+      <div class="comment__content">
         <h5 class="media-heading">
           {{ author_name }}<br>
           <small>{{ date }}</small>
         </h5>
       </div>
     </div>
-    <div class="margin-top-s">
+    <div class="margin-top-m">
       <form{{ attributes }}>
         {{ children }}
       </form>
     </div>
-    {% if content.links %}
-      {{ content.links }}
-    {% endif %}
+
   </div>
 </div>

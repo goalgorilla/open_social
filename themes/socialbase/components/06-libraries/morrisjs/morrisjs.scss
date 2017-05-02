@@ -1,0 +1,179 @@
+@import 'settings';
+
+// Morris.js
+//
+// Morris.js is used to visualise good-looking charts. Morris.js provides documntation
+// on their [website](http://morrisjs.github.io/morris.js/).
+//
+// Weight: 1
+//
+// Style guide: javascript.morrisjs
+
+// Line Chart
+//
+// Create an area chart using `Morris.Line(options)`.
+// Line charts takes in many options which are listed [here](http://morrisjs.github.io/morris.js/lines.html)
+//
+//
+// <div class="card"><div class="card-body">
+// <div id="morris-line-chart" style="height: 400px" data-colors="#29abe2,#ffc142"></div>
+// </div></div>
+//
+//<script>
+// Morris.Line({
+// 	element: 'morris-line-chart',
+// 	data: [
+//    { y: '2006', a: 100, b: 50 },
+//    { y: '2007', a: 75,  b: 65 },
+//    { y: '2008', a: 50,  b: 40 },
+//    { y: '2009', a: 75,  b: 75 },
+//    { y: '2010', a: 50,  b: 30 },
+//    { y: '2011', a: 75,  b: 65 },
+//    { y: '2012', a: 100, b: 90 },
+//    { y: '2013', a: 110, b: 100 },
+//    { y: '2014', a: 130, b: 103 },
+//    { y: '2015', a: 134, b: 106 },
+//    { y: '2016', a: 146, b: 120 }
+//  ],
+//  xkey: 'y',
+//  ykeys: ['a', 'b'],
+//  ymax: '160',
+//  labels: ['No. of visitors', 'No. of Unique visitors'],
+// 	lineColors: jQuery('#morris-line-chart').data('colors').split(',')
+// });
+//</script>
+//
+// markup: morrisjs-linechart.twig
+//
+// Weight: 1
+//
+// Style guide: javascript.morrisjs.linechart
+
+// Area Chart
+//
+// Create an area chart using `Morris.Area(options)`.
+// Area charts take all the same options as line charts,
+// and the following extras: `behaveLikeLine`.
+//
+// <div class="card"><div class="card-body">
+// <div id="morris-area-chart" style="height: 300px" data-colors="#29abe2,#ffc142"></div>
+// </div></div>
+//
+// <script>
+// var labelColor = jQuery('#morris-area-chart').css('color');
+// Morris.Area({
+//  element: 'morris-area-chart',
+//  behaveLikeLine: true,
+//  data: [
+//    {x: '2017 Q1', y: 3, z: 3},
+//    {x: '2017 Q2', y: 2, z: 1},
+//    {x: '2017 Q3', y: 2, z: 4},
+//    {x: '2017 Q4', y: 3, z: 3}
+//  ],
+//  xkey: 'x',
+//  ykeys: ['y', 'z'],
+//  ymax: '5',
+//  labels: ['Y', 'Z'],
+//  gridTextColor: labelColor,
+//  lineColors: jQuery('#morris-area-chart').data('colors').split(',')
+// });
+// </script>
+//
+// markup: morrisjs-areachart.twig
+//
+// Weight: 2
+//
+// Style guide: javascript.morrisjs.areachart
+
+// Bar Chart
+//
+// Create an area chart using `Morris.Area(options)`.
+// Area charts take all the same options as line charts,
+// and the following extras: `behaveLikeLine`.
+//
+// <div class="card"><div class="card__title">Usage statistics for
+// Drupal core</div><div class="card__body">
+// <div id="morris-bar-chart" style="height: 400px"
+// data-colors="#29abe2,#ffc142, #1ab394"></div>
+// </div></div>
+//
+//<script>
+// var labelColor = jQuery('#morris-bar-chart').css('color');
+// Morris.Bar({
+//  element: 'morris-bar-chart',
+//  data: [
+//  { y: '2012', 6: 257790, 7: 517920, 8: 0 },
+//  { y: '2013', 6: 234696, 7: 732660, 8: 0 },
+//  { y: '2014', 6: 172186, 7: 964016, 8: 0 },
+//  { y: '2015', 6: 124448, 7: 1127621, 8: 44335 },
+//  { y: '2016', 6: 86839, 7: 994627, 8: 116559 }
+//  ],
+//  xkey: 'y',
+//  ykeys: ['6', '7', '8'],
+//  ymax: '1200000',
+//  labels: ['Drupal 6', 'Drupal 7', 'Drupal 8'],
+//  gridTextColor: labelColor,
+//  barColors: jQuery('#morris-bar-chart').data('colors').split(',')
+//  });
+// </script>
+//
+// markup: morrisjs-barchart.twig
+//
+// Weight: 3
+//
+// Style guide: javascript.morrisjs.barchart
+
+// Donut Chart
+//
+// Create a Donut chart using Morris.Donut(options),
+// with the <a href="http://morrisjs.github.io/morris.js/donuts.html"
+// target="_blank" title="Morris.js Donut Chart Options">these options</a>.
+//
+// <div class="card"><div class="card__title">Usage statistics for Drupal
+// core at February 12, 2017</div><div class="card__body">
+// <div id="morris-donut-chart" data-colors="#29abe2, #ffc142, #1ab394, #d9534f"></div>
+// </div></div>
+//
+// <script>
+// Morris.Donut({
+//  element: 'morris-donut-chart',
+//  data: [
+//  { label: 'Drupal 5', value: 1262},
+//  { label: 'Drupal 6', value: 76842},
+//  { label: 'Drupal 7', value: 985007},
+//  { label: 'Drupal 8', value: 140044}
+//  ],
+//  colors: jQuery('#morris-donut-chart').data('colors').split(',')
+//  });
+// </script>
+//
+// markup: morrisjs-donutchart.twig
+//
+// Weight: 4
+//
+// Style guide: javascript.morrisjs.donutchart
+
+.morris-hover {
+  position: absolute;
+  z-index: 1000;
+
+  &.morris-default-style {
+    @include z-depth-3;
+    border-radius: 10px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    text-align: center;
+
+    .morris-hover-row-label {
+      font-weight: bold;
+      margin: 0.25em 0;
+    }
+
+    .morris-hover-point {
+      white-space: nowrap;
+      margin: 0.1em 0;
+    }
+  }
+
+}

@@ -20,7 +20,6 @@
     position: absolute;
 
     @include for-tablet-portrait-up {
-      left: 14px;
       top: 42px;
     }
   }
@@ -43,7 +42,7 @@
   border: 1px solid #fff;
 
   @include for-tablet-portrait-up {
-    left: 7px;
+    left: 0;
     top: 36px;
     width: 16px;
     height: 16px;
@@ -51,12 +50,11 @@
   }
 }
 
-.stream-card {
-  margin: 0 0 $card-padding $card-padding;
-  font-size: 0.875rem;
+.card--stream {
+  margin-left: $card-spacer-x;
 
   @include for-tablet-portrait-up {
-    margin-left: (2 * $card-padding)
+    margin-left: 30px;
   }
 
   &:before,
@@ -92,14 +90,8 @@
     }
   }
 
-  > .card-body {
-    padding: 15px;
-
-    > .card-nested-section,
-    > .media-wrapper > .card-nested-section {
-      margin: 10px -15px -15px;
-      padding: 15px;
-    }
+  .card__block {
+    z-index: initial; //prevents post visibility dropdown from showing under next card in stream
   }
 
   .mediawrapper {
@@ -114,11 +106,18 @@
     display: none;
   }
 
+  .comment {
+    font-size: 0.875rem;
+  }
+
 }
 
 
-.card--teaser.card--teaser-stream {
-  margin: 10px -15px 10px;
+.teaser--stream {
+  margin-top: ($card-spacer-x/2);
+  margin-right: -$card-spacer-x;
+  margin-bottom: ($card-spacer-x/2);
+  margin-left: -$card-spacer-x;
   background: $gray-lighter;
 
   @include for-tablet-portrait-up {
@@ -126,15 +125,14 @@
   }
 
   &:last-child {
-    margin-bottom: -15px;
+    margin-bottom: -$card-spacer-x;
   }
 
-  .card-image {
+  .teaser__image {
 
     @include for-tablet-portrait-up {
       height: 200px;
       flex: 0 0 200px;
-      border-radius: 0;
     }
 
   }

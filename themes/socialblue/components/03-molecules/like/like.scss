@@ -1,0 +1,40 @@
+@import "settings";
+
+.vote-widget {
+
+  // Added like
+  a.voted-like .icon-vote {
+    fill: $brand-danger;
+    stroke: $brand-danger;
+  }
+
+  a:active {
+
+    // Voted like focus
+    &.voted-like .icon-vote {
+      fill: $text-color;
+      stroke: $text-color;
+    }
+
+    // Not voted like focus
+    &:not(.voted-like) .icon-vote {
+      stroke: $brand-danger;
+      fill: transparent;
+    }
+
+  }
+
+  @include for-tablet-portrait-up {
+    a:hover {
+
+      // Not voted like hover
+      &:not(.voted-like) .icon-vote {
+        stroke: $brand-danger;
+        fill: transparent;
+      }
+
+    }
+
+  }
+
+}

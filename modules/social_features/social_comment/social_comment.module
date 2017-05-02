@@ -36,17 +36,13 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
 
   // Comment reply form.
   if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
-    $form['#attributes']['class'][] = 'card-nested-section';
     $form['actions']['submit']['#value'] = t('Reply');
-    $form['actions']['submit']['#attributes']['class'][] = 'btn-flat';
-
     $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
   // Comment edit form.
   if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
     $form['actions']['submit']['#value'] = t('Submit');
     $form['#title'] = t('Edit comment');
-    $form['field_comment_body']['widget'][0]['#attributes']['class'][] = 'form-control materialize-textarea';
   }
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 }
@@ -137,6 +133,11 @@ function social_comment_preprocess_comment(&$variables) {
     }
   }
 
+  // Add node ID attribute for comment "new" indicator.
+  if(\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node'){
+    $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
+  }
+
 }
 
 /**
@@ -190,7 +191,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
           'fragment' => 'comment-form',
           'attributes' => array(
             'class' => array(
-              'btn btn-block btn-link',
+              'btn btn-block btn-link brand-text-primary',
             ),
           ),
         );
@@ -210,6 +211,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
             'class' => array(
               'btn',
               'btn-flat',
+              'brand-text-primary',
             ),
           ),
         );

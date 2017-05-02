@@ -15,26 +15,39 @@ use Drupal\Core\Access\AccessResult;
  */
 function social_sharing_block_access(Block $block, $operation, AccountInterface $account) {
 
-  // When a share block is assigned to a entity, and the entity field settings
-  // are not Public. We prevent the block from being displayed.
   if ($operation == 'view' && $block->getPluginId() == 'addtoany_block') {
-    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    // Exclude Social Sharing block form Add and Edit node pages.
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    $excluded_routes = [
+      'node.add',
+      'entity.node.edit_form',
+    ];
 
-    // We have a node!
-    if (!empty($nid) && $node = Node::load($nid)) {
-      $field_definitions = $node->getFieldDefinitions();
-      /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
-      foreach ($field_definitions as $field_name => $field_definition) {
-        // Lets fetch all the entity access fields on this current node.
-        if ($field_definition->getType() === 'entity_access_field') {
-          // Lets get all the values that we have for our entity_access_fields.
-          $field_values = $node->get($field_name)->getValue();
-          foreach ($field_values as $key => $field_value) {
-            if (isset($field_value['value'])) {
-              // If we have a value, and if it's not public. We better remove
-              // our add to any block. We can't share any non public pages
-              // anyway.
-              return AccessResult::forbiddenIf($field_value['value'] != 'public')->addCacheableDependency($block);
+    if (in_array($route_name, $excluded_routes)) {
+      return AccessResult::forbidden();
+    }
+    else {
+      // When a share block is assigned to a entity, and the entity field settings
+      // are not Public. We prevent the block from being displayed.
+      $nid = \Drupal::routeMatch()->getRawParameter('node');
+
+      // We have a node!
+      if (!empty($nid) && $node = Node::load($nid)) {
+        $field_definitions = $node->getFieldDefinitions();
+        /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+        foreach ($field_definitions as $field_name => $field_definition) {
+          // Lets fetch all the entity access fields on this current node.
+          if ($field_definition->getType() === 'entity_access_field') {
+            // Lets get all the values that we have for our entity_access_fields.
+            $field_values = $node->get($field_name)->getValue();
+            foreach ($field_values as $key => $field_value) {
+              if (isset($field_value['value'])) {
+                // If we have a value, and if it's not public. We better remove
+                // our add to any block. We can't share any non public pages
+                // anyway.
+                return AccessResult::forbiddenIf($field_value['value'] != 'public')
+                  ->addCacheableDependency($block);
+              }
             }
           }
         }

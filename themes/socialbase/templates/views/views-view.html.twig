@@ -32,6 +32,7 @@
  * @ingroup templates
  */
 #}
+
 {%
   set classes = [
     'view',
@@ -41,6 +42,14 @@
     dom_id ? 'js-view-dom-id-' ~ dom_id,
   ]
 %}
+
+{%
+  set error_classes = [
+    display_id == 'page' ? 'alert alert-info',
+    display_id != 'page' ? 'small card__block',
+  ]
+%}
+
 <div{{ attributes.addClass(classes) }}>
   {{ title_prefix }}
   {{ title }}
@@ -65,7 +74,14 @@
   {% endif %}
 
   {{ rows }}
-  {{ empty }}
+
+  {% if empty %}
+    <div{{ content_attributes.addClass(error_classes) }}" role="alert">
+      <h4 class="sr-only">{{ 'Informative message'|t }}</h4>
+      {{ empty }}
+    </div>
+  {% endif %}
+
   {{ pager }}
 
   {{ attachment_after }}

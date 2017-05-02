@@ -1,144 +1,149 @@
+// Card
+//
+// The card is a very basic element that we see a lot in Open social.
+// It is the most basic way of structuring content into sections.
+// A card is elevated (through `box-shadow` property) one level from the canvas.
+// It will also have a `background-color` and `border-radius`.
+//
+// **Card title**
+//
+// A card can have a title to display what the card is about.
+// Add `.card__title--underline` for a border on the head.
+// Add a child `<div class="card__subtitle">` for a subtitle.
+//
+// **Card block**
+//
+// The default way of structuring content in a card is by placing
+// it in a `.card__block`.
+//
+// **Card body**
+//
+// Add `.card__body` to double the padding of the card. This is
+// primarily used for articles.
+//
+// **Card actionbar**
+//
+// The actionbar is reserved for actions the user can perform in the card.
+// In most cases there will be buttons, but there can also be badges in here.
+//
+// .card__block - Card block
+// .card__body - Card body
+//
+// markup: card.twig
+//
+// Style guide: atoms.card
+
+
+// Card nested section
+//
+// To display a distinguished section in a card, you can used a inner wrapper
+// with `.card__nested-section`. This will undo the padding and there is a
+// subtle gray background color added.
+//
+// markup: card-nested-section.twig
+//
+// Weight: 1
+//
+// Style guide: atoms.card.nest-section
+
 @import 'settings';
 
 .card {
   @include clearfix;
-  @include z-depth-1;
+  @include z-depth-2;
   position: relative;
+  display: flex;
+  flex-direction: column;
   margin-bottom: $card-spacer-y;
   background-clip: padding-box;
-
-  img {
-    max-width: 100%;
-  }
 }
 
-.card-head {
+.card__title {
   position: relative;
   vertical-align: middle;
-  padding: 15px $card-padding 0;
+  margin: 0;
+  padding: 15px $card-spacer-x 0;
   line-height: 1;
+  font-size: 0.875rem;
+}
+
+.card__subtitle {
+  font-size: 0.75rem;
+  display: block;
 }
 
 // This style can be used to separate the card title from the card body.
-.card-underline .card-head {
+.card__title--underline {
   border-bottom: 1px solid $gray-lighter;
   padding-bottom: 15px;
 }
 
-.card-body {
+// Default block inside a card.
+.card__block {
   position: relative;
-  padding: $card-padding;
+  // Enable `flex-grow: 1` for decks and groups so that card blocks take up
+  // as much space as possible, ensuring footers are aligned to the bottom.
+  flex: 1 1 auto;
+  padding: $card-spacer-x;
+  z-index: 1; // make sure the card__actionbar is over the body padding-bottom.
 
-  &.extra-padding {
-
-    @include for-tablet-portrait-up {
-      padding: $card-padding-large;
-    }
-
+  + .card__block {
+    padding-top: 0;
   }
 
 }
 
-.card-with-actionbar .card-body {
-  padding-bottom: 48px;
-  overflow: hidden;
+.card__block--list:not(:first-child) {
+  padding-top: 0;
 }
 
-.card-head header {
-  vertical-align: middle;
-  font-size: 0.875rem;
+.card__block--list:not(:last-child) {
+  padding-bottom: 0;
 }
 
-.card__label {
-  text-transform: uppercase;
-  font-size: 14px;
-  color: $default-color;
+
+.card__body {
+  position: relative;
+  padding: $card-spacer-x;
+
+  @include for-tablet-landscape-up {
+    padding: $card-spacer-xl;
+  }
+
 }
 
-.card-nested-section {
-  margin: 10px -20px -20px;
-  padding: $card-padding;
+// section inside card, such as comments
+.card__nested-section {
+  margin-top: ($card-spacer-x/2);
+  margin-right: -$card-spacer-x;
+  margin-bottom: -$card-spacer-x;
+  margin-left: -$card-spacer-x;
+  padding: $card-spacer-x;
   background: $gray-lighter-1;
   border-top: 1px solid $gray-lighter;
-
-  .extra-padding & {
-    @include for-tablet-portrait-up {
-      margin-left: -$card-padding-large;
-      margin-right: -$card-padding-large;
-      padding: $card-padding $card-padding-large;
-    }
-  }
-
-  &.indented {
-    margin: -20px;
-    background: transparent;
-    border-top: 0;
-
-  }
-
-  &:last-child {
-    margin-bottom: -$card-padding;
-    border-bottom: 0;
-
-    .extra-padding & {
-      @include for-tablet-portrait-up {
-        margin-bottom: -$card-padding-large;
-      }
-    }
-
-  }
 }
 
+.card__actionbar {
+  @include clearfix; // links inside float
+  margin-top: -$card-spacer-x;
+  padding: $card-spacer-x;
+  position: relative;
+  z-index:2;
+}
 
-.card {
-  p:first-child {
-    margin-top: 0;
-  }
+.card__link {
+  font-size: 0.875rem;
+  margin-left: 24px;
+  float: right;
+  transition: color .3s ease;
+  text-transform: uppercase;
+}
 
-  p:last-child {
+.card__text {
+  margin-top: 0;
+
+  &:last-child {
     margin-bottom: 0;
   }
 
-}
-
-.card-actionbar {
-  @include clearfix; // buttons inside can float
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  background-color: inherit;
-  padding: 6px $card-padding 6px ($card-padding - 4);
-
-  .actionbar {
-    position: absolute;
-    z-index: 1;
-  }
-
-}
-
-.card-actionbar--with-border {
-  border-top: 1px solid $gray-lighter;
-}
-
-.card-buttonbar {
-  padding: 6px 0;
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid $gray-lighter;
-
-  @include for-tablet-portrait-up {
-    justify-content: flex-start;
-  }
-
-  .btn-link {
-    padding: 6px;
-  }
-
-  .justify-end {
-    margin-left: auto;
-    text-align: right;
-    flex: 1;
-  }
 }

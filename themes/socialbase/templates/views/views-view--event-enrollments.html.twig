@@ -38,13 +38,11 @@
     {{ title }}
   {% endif %}
   {{ title_suffix }}
-  {% if header %}
-    <div class="card-head text-center">
-      <header> {{ header }} </header>
-    </div>
+  {% if header|render %}
+    <h4 class="card__title"> {{ header }} </h4>
   {% endif %}
 
-  <div class="card-body text-center">
+  <div class="card__block text-center">
 
     {% if rows %}
       <div class="img-grid">
@@ -58,7 +56,7 @@
       {{ pager }}
     {% endif %}
 
-    {% if more %}
+    {% if more and not empty %}
       {{ more }}
     {% endif %}
 

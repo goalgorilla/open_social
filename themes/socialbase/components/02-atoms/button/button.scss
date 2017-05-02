@@ -1,6 +1,80 @@
 @import 'settings';
 
 
+// Button
+//
+// In addition to the default styling of `<button>` and
+// `<input type="submit|image|reset|button">` elements, the `.btn` class and
+// its variants can apply buttons styles to various elements (like an `<a>`
+// link).
+//
+// Use logical elements for your buttons. If it is not a link do not use an a
+// but a `<button>` tag instead. If the `<a>` elements are used to act as buttons –
+// triggering in-page functionality, rather than navigating to another document
+// or section within the current page – they should also be given an appropriate `role="button"`.
+//
+// Style guide: atoms.button
+
+
+// Button types
+//
+// There are different types of buttons that can be used.
+// * __Default button:__ Rectangular shaped buttons that is used in most cases.
+// Does not lift (on same layer as the parent element) and should be placed cards.
+// * __Flat button:__ Are text-only buttons. They should always have a color to
+// distinguish them from normal text. They can be used to put less emphasis
+// or visual attraction to the action. They may be used in dialogs, toolbars,
+// or inline. They do not lift, but fill with color on press.
+// * __Raised button:__ Rectangular-shaped buttons that behave like a piece of
+// material resting on another sheet – they lift and fill with color on press.
+// Raised buttons add dimension to mostly flat layouts. They emphasize functions
+// on busy or wide spaces. They may be used inline. They lift and display
+// ink reactions on press.
+//
+// .btn-default - Default button
+// .btn-link - Link button
+// .btn-default.btn-raised - Raised button
+//
+// Markup: button.twig
+//
+// Weight: 3
+//
+// Style guide: atoms.button.type
+
+// Button sizes
+//
+// Define a different button size with .btn-lg, .btn-sm, or .btn-xs.
+//
+// By default use the default size. You can choose to use a large button
+// if the action really needs to catch the user`s attention. Combine this
+// with a primary or accent style as well to get maximum exposure. Do not mix
+// different button sizes in a set of buttons. If the information density in a
+// block or section is high and you need to make up space you can choose a
+// smaller button size. An example of this are buttons that appear in repetetive blocks.
+//
+// .btn-primary.btn-xs - Extra ssmall size
+// .btn-primary.btn-sm - Small size
+// .btn-primary.btn-lg - Large size
+// .btn-primary.btn-block - Block level size
+//
+// Markup: button.twig
+//
+// Weight: 5
+//
+// Style guide: atoms.button.sizes
+
+// Floating action button
+//
+// A circular button that lifts. It is used for page-wide actions.
+//
+// .btn-default.btn-floating.waves-circle - Floating button
+//
+// Markup: button--floating.twig
+//
+// Weight: 6
+//
+// Style guide: atoms.button.floating
+
 // iOS "clickable elements" fix for role="button"
 //
 // Fixes "clickability" issue (and more generally, the firing of events such as focus as well)
@@ -10,6 +84,8 @@
 [role="button"] {
   cursor: pointer;
 }
+
+
 
 
 // Base styles
@@ -26,7 +102,9 @@
   background-image: none; // Reset unusual Firefox-on-Android default style;
   border: 1px solid transparent;
   white-space: nowrap;
-  @include button-size($padding-base-vertical, $padding-base-horizontal, $button-font-size, $line-height-base);
+  padding: $padding-base-vertical $padding-base-horizontal;
+  font-size: $button-font-size;
+  line-height: $line-height-base;
   user-select: none;
   text-transform: uppercase;
   transition: .3s ease-out;
@@ -42,12 +120,6 @@
 
   .caret {
     margin-left: 3px;
-  }
-
-  &,
-  &:active,
-  &.active {
-    box-shadow: none;
   }
 
   &:hover,
@@ -70,9 +142,9 @@
     box-shadow: none;
   }
 
-  // [converter] extracted a& to a.btn
 }
 
+.btn-non-clickable,
 a.btn {
   &.disabled,
   fieldset[disabled] & {
@@ -108,17 +180,48 @@ a.btn {
   }
 }
 
+// Social button styles
+// --------------------------------------------------
+.btn--with-bgicon {
+  padding-left: 32px;
+  background-size: 16px 16px;
+  background-position: 10px 8px;
+  background-repeat: no-repeat;
+}
+
+.btn--facebook {
+  background-image: url('../images/icons/icon-facebook.svg');
+}
+
+.btn--linkedin {
+  background-image: url('../images/icons/icon-linkedin.svg');
+}
+
+.btn--google {
+  background-image: url('../images/icons/icon-google.svg');
+}
+
+.btn--twitter {
+  background-image: url('../images/icons/icon-twitter.svg');
+}
+
+.fieldset-wrapper > .btn {
+  margin: 5px 5px 5px 0;
+}
+
 
 // Button Sizes
 // --------------------------------------------------
 
 .btn-lg {
-  // line-height: ensure even-numbered height of button next to large input
-  @include button-size($padding-large-vertical, $padding-large-horizontal, $button-font-size-large, $line-height-large);
+  padding: $padding-large-vertical $padding-large-horizontal;
+  font-size: $button-font-size-large;
+  line-height: $line-height-large;
 }
 .btn-sm {
-  // line-height: ensure proper height of button next to small input
-  @include button-size($padding-small-vertical, $padding-small-horizontal, $button-font-size-small, $line-height-small);
+  padding: $padding-small-vertical $padding-small-horizontal;
+  font-size: $button-font-size-small;
+  line-height: $line-height-small;
 
   .glyphicon:before {
     width: 13px;
@@ -127,7 +230,9 @@ a.btn {
 }
 
 .btn-xs {
-  @include button-size(2px, 10px, $font-size-small, $line-height-small);
+  padding: $padding-xs-vertical $padding-xs-horizontal;
+  font-size: $button-font-size-extrasmall;
+  line-height: $line-height-small;
 }
 
 
@@ -162,39 +267,24 @@ input[type="button"] {
 // --------------------------------------------------
 
 .btn-raised {
-  // z-depth-1 will give a small gray border which doesn't look good with colored buttons
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 	transition: box-shadow, .15s ease-out;
 
   &:active,
   &.active,
   &:hover {
-    @include z-depth-3;
+    @include z-depth-4;
   }
 
   &.disabled,
   &[disabled] {
-    @include z-depth-1;
+    @include z-depth-2;
   }
 
 }
 
-// Flat button & icon toggle button
+// Buttons that only have an icon (no text)
 // --------------------------------------------------
-
-.btn-flat {
-  @include z-depth-0;
-	background-color: transparent;
-	border-color: transparent;
-  -webkit-tap-highlight-color: transparent;
-
-	&:hover,
-  &:focus,
-  .open .dropdown-toggle & {
-		@include z-depth-0;
-	}
-
-}
 
 .btn-icon-toggle {
   background-color: transparent;
@@ -215,6 +305,31 @@ input[type="button"] {
 
 }
 
+// Icons inside buttons, usually SVG
+
+.btn-icon {
+  font-size: $button-font-size * 1.143;
+  line-height: 33px - ($padding-base-vertical * 2);
+  height: 33px - ($padding-base-vertical * 2);
+  width: 33px - ($padding-base-vertical * 2);
+  vertical-align: bottom;
+}
+
+// @todo see if we can merge this with the options we have above
+// Special styles for book pagers
+.btn-iconized {
+  line-height: 12px;
+
+  .icon-inline {
+    fill: inherit;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+
+}
+
+
 // Floating button
 // --------------------------------------------------
 
@@ -224,7 +339,7 @@ input[type="button"] {
   padding: 7px; //assuming the icon is 24px / medium
   border-radius: $button-floating-radius;
   border: 0;
-  @include z-depth-2;
+  @include z-depth-3;
 
   &:active,
   &.active,
@@ -239,35 +354,9 @@ input[type="button"] {
 
   &.disabled,
   &[disabled] {
-    @include z-depth-2;
+    @include z-depth-3;
   }
 
-}
-
-// Icons in buttons
-
-.btn-icon {
-  font-size: $button-font-size * 1.143;
-  line-height: 33px - ($padding-base-vertical * 2);
-  height: 33px - ($padding-base-vertical * 2);
-  width: 33px - ($padding-base-vertical * 2);
-  vertical-align: bottom;
-}
-
-.btn-iconized {
-  line-height: 12px;
-
-  .icon-inline {
-    fill: inherit;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-  }
-
-}
-
-.btn-non-clickable {
-  pointer-events: none;
 }
 
 //
@@ -383,6 +472,16 @@ input[type="button"] {
   padding-right: 12px;
 }
 
+.btn-group > .btn-sm + .dropdown-toggle {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.btn-group > .btn-xs + .dropdown-toggle {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
 // The clickable button for toggling the menu
 // Remove the gradient
 .btn-group.open .dropdown-toggle {
@@ -396,7 +495,6 @@ input[type="button"] {
 // Carets in other button sizes
 .btn-lg .caret {
   border-width: $caret-width-large $caret-width-large 0;
-  border-bottom-width: 0;
 }
 // Upside down carets for .dropup
 .dropup .btn-lg .caret {
@@ -432,4 +530,26 @@ input[type="button"] {
     margin-top: -1px;
     margin-left: 0;
   }
+}
+
+
+// on mobile we want to "add" and "filter" buttons to be on one row
+// We need to add these selectors here now, because they need to be loaded regardless of other libraries being loaded
+.block-group-add-event-block,
+.block-group-add-topic-block,
+.block-event-add-block,
+.block-topic-add-block,
+.block-group-add-block {
+  display: inline-block;
+
+  @include for-tablet-landscape-up {
+    display: block;
+
+    .btn {
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+
+  }
+
 }

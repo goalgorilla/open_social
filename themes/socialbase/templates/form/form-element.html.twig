@@ -47,8 +47,7 @@
 #}
 {%
   set classes = [
-    'form-item',
-    'js-form-item',
+    'brand-border-radius',
     title_display not in ['after', 'before'] ? 'form-no-label',
     disabled == 'disabled' ? 'form-disabled',
     is_form_group ? 'form-group',
@@ -69,6 +68,7 @@
   ]
 %}
 
+{# For element of type password we need to load the password library #}
 {% if name == 'pass' %}
   {{ attach_library('socialbase/form--password') }}
 {% endif %}
