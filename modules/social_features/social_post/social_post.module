@@ -196,6 +196,6 @@ function social_post_comment_create_access(AccountInterface $account, array $con
  */
 function social_post_form_post_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $curr_route_parr = \Drupal::routeMatch()->getRawParameters()->getDigits('post');
-  $redirect_url = \Drupal\core\Url::fromRoute('entity.post.edit_form', ['post' => $curr_route_parr]);
+  $redirect_url = Url::fromRoute('entity.post.edit_form', ['post' => $curr_route_parr]);
   $form['actions']['cancel']['#url'] = $redirect_url;
 }
