@@ -6,8 +6,8 @@ Feature: Create Post on Group
 
   Scenario: Successfully create, edit and delete post in group
     Given users:
-      | name        | mail               | status | field_profile_first_name | field_profile_last_name |
-      | PostUser1   | mail_1@example.com | 1      | Post                     | User                |
+      | name        | mail               | status | pass      |
+      | PostUser1   | mail_1@example.com | 1      | PostUser1 |
     Given groups:
       | title      | type       | author    | description           | language |
       | Open group | open_group | PostUser1 | This is an open group | en       |
