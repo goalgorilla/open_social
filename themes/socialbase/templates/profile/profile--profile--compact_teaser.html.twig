@@ -30,15 +30,13 @@
     <div class="list-item__text">
       <a href="{{ profile_stream_url }}" title="{{ 'View Profile'|t }}">{{ profile_name|render }}</a>
 
-      {% if content.field_profile_function|render or content.field_profile_organization|render %}
-        <div class="teaser__content-line">
-          <span class="teaser__content-text">
-            {{- content.field_profile_function -}}
-            {% if content.field_profile_function|render and content.field_profile_organization|render %} <i>{{ 'at'|t }}</i><br /> {% endif %}
-           {{ content.field_profile_organization }}
-          </span>
-        </div>
-      {% endif %}
+      {% if content.field_profile_function|render and content.field_profile_organization|render %} <br /> {% endif %}
+      {{content.field_profile_function}}
+
+      {% if content.field_profile_function|render and content.field_profile_organization|render %} &bullet; {% endif %}
+
+      {{ content.field_profile_organization }}
+
     </div>
 
   </div>
