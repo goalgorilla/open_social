@@ -16,42 +16,8 @@ use \Drupal\user\UserInterface;
 function social_user_export_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   switch ($form_id) {
     case 'views_form_user_admin_people_page_1':
-      $conditions = [];
-      $form['query'] = [
-        '#tree' => TRUE,
-      ];
-
-      foreach ($_GET as $key => $value) {
-        if (is_array($value)) {
-          foreach ($value as $key2 => $value2) {
-            $conditions[$key][$key2] = $value2;
-            $form['query'][$key][$key2] = [
-              '#type' => 'hidden',
-              '#value' => $value2,
-            ];
-          }
-        }
-        else {
-          $conditions[$key] = $value;
-          $form['query'][$key] = [
-            '#type' => 'hidden',
-            '#value' => $value,
-          ];
-        }
-      }
-
-      $query = \Drupal::database()
-        ->select('users', 'u')
-        ->condition('u.uid', 0, '<>');
-
-      if ($conditions) {
-        social_user_export_user_apply_filter($query, $conditions);
-      }
-
-      $count = $query
-        ->countQuery()
-        ->execute()
-        ->fetchField();
+      // Fetch the amount of rows directly from the already executed view.
+      $count = $form['output']['0']['#view']->total_rows;
 
       $form['#attached']['library'][] = 'social_user_export/select_all';
       $form['#attached']['drupalSettings']['socialUserExport'] = [
