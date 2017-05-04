@@ -197,6 +197,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
   }
 
+  // Set some helpful text on the group join form now it's there.
+  if ($form_id == 'group_content_open_group-group_membership_group-join_form') {
+    $form['help'] = [
+      '#type' => 'item',
+      '#markup' => t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.'),
+    ];
+  }
+
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $action_forms)) {
@@ -465,6 +473,10 @@ function social_group_menu_local_actions_alter(&$local_actions) {
   // Remove "Add Relationship" button.
   if (isset($local_actions['group_content.add_page'])) {
     unset($local_actions['group_content.add_page']);
+  }
+  // Remove Create new entity in group.
+  if (isset($local_actions['group_content.create_page'])) {
+    unset($local_actions['group_content.create_page']);
   }
 }
 
