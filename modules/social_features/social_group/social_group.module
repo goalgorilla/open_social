@@ -203,6 +203,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       '#type' => 'item',
       '#markup' => t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.'),
     ];
+    $form['path']['#type'] = 'hidden';
+  }
+  if ($form_id == 'group_open_group_edit_form') {
+    $form['path']['#type'] = 'hidden';
   }
 
 
