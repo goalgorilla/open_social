@@ -292,9 +292,11 @@ function social_final_site_setup(&$install_state) {
       'group' => t('groups'),
       'topic' => t('topics'),
       'event' => t('events'),
-      'eventenrollment' => t('event enrollments'),
+      'event_enrollment' => t('event enrollments'),
       'post' => t('posts'),
       'comment' => t('comments'),
+      'like' => t('likes'),
+      // TODO Add 'event_type' if module is enabled.
     ];
     foreach ($demo_content_types as $demo_type => $demo_description) {
       $batch['operations'][] = ['_social_add_demo_batch', array($demo_type, $demo_description)];
@@ -411,13 +413,14 @@ function _social_add_demo_batch($demo_type, $demo_description, &$context) {
 
   $num_created = 0;
 
-  // Create an instance of the necessary class.
-  $className = "\Drupal\social_demo\Content\SocialDemo" . ucfirst($demo_type);
+  $content_types = array($demo_type);
+  $manager = \Drupal::service('plugin.manager.demo_content');
+  $plugins = $manager->createInstances($content_types);
 
-  if (class_exists($className)) {
-    $container = \Drupal::getContainer();
-    $class = $className::create($container);
-    $num_created = $class->createContent();
+  /** @var \Drupal\social_demo\DemoContentInterface $plugin */
+  foreach ($plugins as $plugin) {
+    $plugin->createContent();
+    $num_created = $plugin->count();
   }
 
   $context['results'][] = $demo_type;
