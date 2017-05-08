@@ -96,8 +96,7 @@ Feature: Edit my group as a group manager
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group topic"
     And I logout
     And I am logged in as "Group Manager One"
