@@ -205,7 +205,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     ];
     $form['path']['#type'] = 'hidden';
   }
-  if ($form_id == 'group_open_group_edit_form') {
+  if ($form_id == 'group_open_group_edit_form' || 'group_open_group_add_form') {
     $form['path']['#type'] = 'hidden';
   }
 
