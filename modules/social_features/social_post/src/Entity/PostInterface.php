@@ -15,6 +15,24 @@ interface PostInterface extends  ContentEntityInterface, EntityChangedInterface,
   // Add get/set methods for your configuration properties here.
 
   /**
+   * Returns the post type.
+   *
+   * @return string
+   *   The post type name.
+   */
+  public function getType();
+
+  /**
+   * Sets the post type.
+   *
+   * @param string $type
+   *   The post type.
+   *
+   * @return $this
+   */
+  public function setType($type);
+
+  /**
    * Gets the Post creation timestamp.
    *
    * @return int

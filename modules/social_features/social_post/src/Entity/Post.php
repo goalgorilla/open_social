@@ -134,6 +134,22 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
+
+  public function getType() {
+    return $this->bundle();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setType($type) {
+    $this->set('type', $this->bundle());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheContexts() {
     $defaults = parent::getCacheContexts();
 

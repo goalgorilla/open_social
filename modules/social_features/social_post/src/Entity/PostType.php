@@ -22,7 +22,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     },
  *   },
  *   config_prefix = "post_type",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "administer post entities",
  *   bundle_of = "post",
  *   entity_keys = {
  *     "id" = "id",
@@ -30,11 +30,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/post_type/{post_type}",
- *     "add-form" = "/admin/structure/post_type/add",
- *     "edit-form" = "/admin/structure/post_type/{post_type}/edit",
- *     "delete-form" = "/admin/structure/post_type/{post_type}/delete",
- *     "collection" = "/admin/structure/post_type"
+ *     "canonical" = "/admin/structure/post/{post_type}",
+ *     "add-form" = "/admin/structure/post/add",
+ *     "edit-form" = "/admin/structure/post/{post_type}/edit",
+ *     "delete-form" = "/admin/structure/post/{post_type}/delete",
+ *     "collection" = "/admin/structure/post"
  *   }
  * )
  */
