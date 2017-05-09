@@ -62,7 +62,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route
         ->setDefaults([
           '_entity_form' => "{$entity_type_id}.{$operation}",
-          '_title' => $title,
+          '_title' => $title->render(),
         ])
         ->setRequirement('_entity_create_access', $entity_type_id);
 

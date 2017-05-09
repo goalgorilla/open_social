@@ -75,9 +75,9 @@
       // Work only on bigger screens where $verticalTabsMenuItem is not empty.
       if ($verticalTabsMenuItem.length !== 0) {
         // If detailsWrapper is not visible display it and initialize cropper.
-        if (!$(this).siblings(detailsWrapper).is(':visible')) {
+        if (!$(this).parent().attr('open')) {
           evt.preventDefault();
-          $(this).parent().attr('open', 'open');
+          $(this).parent().attr('open', true);
           $(table).addClass('responsive-enabled--opened');
           $(this).parent().find(detailsWrapper).show();
           Drupal.imageWidgetCrop.initializeCropperOnChildren($(this).parent());
@@ -85,7 +85,8 @@
         }
         // If detailsWrapper is visible hide it.
         else {
-          $(this).parent().removeAttr('open');
+          evt.preventDefault();
+          $(this).parent().attr('open', false);
           $(table).removeClass('responsive-enabled--opened');
           $(this).parent().find(detailsWrapper).hide();
         }

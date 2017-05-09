@@ -34,7 +34,7 @@ function socialbase_preprocess_form_element_label(&$variables) {
         $variables['description'] = $description;
       }
       // Set the materialize icon.
-      $variables['material_icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
+      $variables['icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
     }
   }
 }

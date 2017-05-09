@@ -46,6 +46,9 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
  * @param $variables
  */
 function socialbase_preprocess_block(&$variables) {
+  // Find out what the active theme is first.
+  $theme = \Drupal::theme()->getActiveTheme();
+
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
   $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
   $route_name = \Drupal::routeMatch()->getRouteName();

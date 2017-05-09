@@ -14,11 +14,11 @@
 #}
 {{ attach_library('image_widget_crop/cropper') }}
 {% if data.preview %}
-  <div{{ attributes.addClass('media margin-bottom-m').removeClass('clearfix') }}>
-    <div class="preview media-left">
+  <div{{ attributes.addClass('image-widget margin-bottom-m').removeClass('clearfix') }}>
+    <div class="preview">
       {{ data.preview }}
     </div>
-    <div class="data media-body image-widget-data">
+    <div class="data image-widget-data">
       {# Render widget data without the image preview that was output already. #}
       {{ data|without('preview', 'image_crop') }}
     </div>
