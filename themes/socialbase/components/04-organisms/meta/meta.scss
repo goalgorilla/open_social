@@ -52,21 +52,30 @@
 .meta-engage {
   display: flex;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 
   .badge {
     margin-right: 5px;
   }
 
   @include for-tablet-portrait-up {
+    flex-wrap: nowrap;
     margin-bottom: 2rem;
   }
 }
 
 // put the button on the right side
-.btn-follow {
+.meta-follow {
   margin-right: 0;
   margin-left: auto;
-  order: 10;
+  flex-basis: 100%;
+  margin-bottom: 1rem;
+
+  @include for-tablet-portrait-up {
+    flex-basis: 0;
+    order: 10;
+    margin-bottom: 0;
+  }
 }
 
 .article__special-fields {

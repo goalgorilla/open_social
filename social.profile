@@ -162,8 +162,8 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
   $social_optional_modules = [
     'social_book' => t('Book functionality'),
     'social_sharing' => t('Share content on social media'),
-    'social_event_type' => t('Catagorize events in event types'),
-    'social_sso' => t('Registration with a social networks'),
+    'social_event_type' => t('Categorize events in event types'),
+    'social_sso' => t('Registration with social networks'),
   ];
 
   // Checkboxes to enable Optional modules.
@@ -292,9 +292,11 @@ function social_final_site_setup(&$install_state) {
       'group' => t('groups'),
       'topic' => t('topics'),
       'event' => t('events'),
-      'eventenrollment' => t('event enrollments'),
+      'event_enrollment' => t('event enrollments'),
       'post' => t('posts'),
       'comment' => t('comments'),
+      'like' => t('likes'),
+      // TODO Add 'event_type' if module is enabled.
     ];
     foreach ($demo_content_types as $demo_type => $demo_description) {
       $batch['operations'][] = ['_social_add_demo_batch', array($demo_type, $demo_description)];
@@ -308,6 +310,7 @@ function social_final_site_setup(&$install_state) {
   $final_batched = [
     'profile_weight' => t('Set weight of profile.'),
     'router_rebuild' => t('Rebuild router.'),
+    'trigger_sapi_index' => t('Index search'),
     'cron_run' => t('Run cron.'),
     'import_optional_config' => t('Import optional configuration'),
   ];
@@ -411,13 +414,14 @@ function _social_add_demo_batch($demo_type, $demo_description, &$context) {
 
   $num_created = 0;
 
-  // Create an instance of the necessary class.
-  $className = "\Drupal\social_demo\Content\SocialDemo" . ucfirst($demo_type);
+  $content_types = array($demo_type);
+  $manager = \Drupal::service('plugin.manager.demo_content');
+  $plugins = $manager->createInstances($content_types);
 
-  if (class_exists($className)) {
-    $container = \Drupal::getContainer();
-    $class = $className::create($container);
-    $num_created = $class->createContent();
+  /** @var \Drupal\social_demo\DemoContentInterface $plugin */
+  foreach ($plugins as $plugin) {
+    $plugin->createContent();
+    $num_created = $plugin->count();
   }
 
   $context['results'][] = $demo_type;
@@ -444,6 +448,14 @@ function _social_finalise_batch($process, $description, &$context) {
       // This would normally happen upon KernelEvents::TERMINATE, but since the
       // installer does not use an HttpKernel, that event is never triggered.
       \Drupal::service('router.builder')->rebuild();
+      break;
+
+    case 'trigger_sapi_index':
+      $indexes = \Drupal\search_api\Entity\Index::loadMultiple();
+      /** @var \Drupal\search_api\Entity\Index $index */
+      foreach ($indexes as $index) {
+        $index->reindex();
+      }
       break;
 
     case 'cron_run':
