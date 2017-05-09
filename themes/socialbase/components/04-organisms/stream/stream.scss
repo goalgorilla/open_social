@@ -51,8 +51,7 @@
 }
 
 .card--stream {
-  margin: 0 0 $card-padding $card-padding;
-  font-size: 0.875rem;
+  margin-left: $card-spacer-x;
 
   @include for-tablet-portrait-up {
     margin-left: 30px;
@@ -91,14 +90,8 @@
     }
   }
 
-  .card__body {
-    padding: 15px;
+  .card__block {
     z-index: initial; //prevents post visibility dropdown from showing under next card in stream
-
-    .card__nested-section {
-      margin: 10px -15px -15px;
-      padding: 15px;
-    }
   }
 
   .mediawrapper {
@@ -113,11 +106,18 @@
     display: none;
   }
 
+  .comment {
+    font-size: 0.875rem;
+  }
+
 }
 
 
 .teaser--stream {
-  margin: 10px -15px 10px;
+  margin-top: ($card-spacer-x/2);
+  margin-right: -$card-spacer-x;
+  margin-bottom: ($card-spacer-x/2);
+  margin-left: -$card-spacer-x;
   background: $gray-lighter;
 
   @include for-tablet-portrait-up {
@@ -125,7 +125,7 @@
   }
 
   &:last-child {
-    margin-bottom: -15px;
+    margin-bottom: -$card-spacer-x;
   }
 
   .teaser__image {

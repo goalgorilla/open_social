@@ -50,4 +50,24 @@ class ActivityDestinationManager extends DefaultPluginManager {
     return $options;
   }
 
+  /**
+   * Retrieves an list of available destinations by given properties.
+   *
+   * @param $condition
+   * @param $value
+   *
+   * @return string[]
+   *   An array of the IDs of all available destination plugins.
+   */
+  public function getListByProperties($condition = NULL, $value = NULL) {
+    $options = array();
+    foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
+      if (empty($condition) || (isset($plugin_definition[$condition]) && $plugin_definition[$condition] === $value)) {
+        $options[] = $plugin_id;
+      }
+    }
+    return $options;
+
+  }
+
 }

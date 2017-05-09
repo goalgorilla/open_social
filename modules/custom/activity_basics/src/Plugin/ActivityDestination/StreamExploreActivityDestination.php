@@ -14,6 +14,8 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
  * @ActivityDestination(
  *  id = "stream_explore",
  *  label = @Translation("Stream (explore)"),
+ *  is_aggregatable = TRUE,
+ *  is_common = TRUE,
  * )
  */
 class StreamExploreActivityDestination extends ActivityDestinationBase {

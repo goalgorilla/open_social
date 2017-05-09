@@ -1,0 +1,91 @@
+.list-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.list-item__avatar {
+  width: 24px;
+  height: 24px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 24px;
+          flex: 0 0 24px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.list-item__avatar--medium {
+  width: 44px;
+  height: 44px;
+  -ms-flex-preferred-size: 44px;
+      flex-basis: 44px;
+}
+
+.list-item__label {
+  margin-right: 20px;
+  font-weight: 500;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
+.list-item__text {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  margin: 0;
+}
+
+.list-item__text p {
+  margin-bottom: 0;
+}
+
+.list-item--visibility {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-bottom: -1px;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.list-item--visibility .form-group label {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.list-item--visibility:hover {
+  background-color: #e6e6e6;
+  cursor: pointer;
+}
+
+.list-item--visibility .icon-small {
+  fill: #4d4d4d;
+  margin-right: .25em;
+}
+
+.list-item--link .list-item__avatar {
+  margin-left: 0.625rem;
+}
+
+.list-item--link:hover, .list-item--link:focus {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+@media (min-width: 600px) {
+
+  .list-item__label {
+    -ms-flex-preferred-size: 180px;
+    flex-basis: 180px;
+  }
+}
