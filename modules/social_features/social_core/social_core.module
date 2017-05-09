@@ -201,21 +201,27 @@ function social_core_preprocess_block(&$variables) {
       $link->setOption('use_more', FALSE);
       break;
     case 'events-block_events_on_profile':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      if ($account instanceof \Drupal\user\Entity\User) {
+        $variables['subtitle'] = t('for this user');
+        $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
+        $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      }
       break;
     case 'topics-block_user_topics':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
-      $variables['button_text'] = $more_link;
-      $link->setOption('use_more', FALSE);
+      if ($account instanceof \Drupal\user\Entity\User) {
+        $variables['subtitle'] = t('for this user');
+        $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
+        $variables['button_text'] = $more_link;
+        $link->setOption('use_more', FALSE);
+      }
       break;
     case 'groups-block_user_groups':
-      $variables['subtitle'] = t('for this user');
-      $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
-      $variables['button_text'] = $more_link;
-      $link->setOption('use_more', FALSE);
+      if ($account instanceof \Drupal\user\Entity\User) {
+        $variables['subtitle'] = t('for this user');
+        $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
+        $variables['button_text'] = $more_link;
+        $link->setOption('use_more', FALSE);
+      }
       break;
     case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
