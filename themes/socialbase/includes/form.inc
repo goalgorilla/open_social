@@ -218,6 +218,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   $default_forms = array(
     'user_form',
+    'user_pass_reset',
     'social_user_login_form',
     'user_register_form',
     'profile_profile_edit_form',
@@ -278,6 +279,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_edit_form',
     'social_user_login_form',
     'user_register_form',
+    'user_pass_reset',
     'social_user_password_form',
   );
 

@@ -8,16 +8,18 @@ use Drupal\node\Entity\Node;
 function socialbase_preprocess_page(&$variables) {
   $variables['display_page_title'] = TRUE;
 
-  // If we have the admin toolbar on screen we need overrides for our styles.
-  if ($variables['is_admin']) {
+  // If we have the admin toolbar permission.
+  $user = \Drupal::currentUser();
+
+  // Check for permission
+  if ($user->hasPermission('access toolbar')) {
     $variables['#attached']['library'][] = 'socialbase/admin-toolbar';
   }
+
   // Add plain title for node preview page templates.
   if (!empty($variables['page']['#title'])) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
-  // Get all SVG Icons.
-  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg');
 
   // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
 

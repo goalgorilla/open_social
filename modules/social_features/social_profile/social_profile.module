@@ -199,6 +199,7 @@ function social_profile_preprocess_profile(&$variables) {
       $variables['#cache']['contexts'][] = 'route.name';
     }
   }
+
 }
 
 /**
@@ -226,6 +227,9 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
 
   if ($profile instanceof Profile) {
     if (isset($profile->field_profile_show_email)) {
+      // Check what the global value is.
+      $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+      // Account value.
       $show_email = $profile->field_profile_show_email->value;
       $form['profile_privacy'] = array(
         '#type' => 'fieldset',
@@ -241,7 +245,17 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
           'data-switch' => TRUE
         ]
       );
-      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
+
+      // If global setting is set, disable the setting and give a reason why.
+      if ($global_show_email == TRUE) {
+        $form['profile_privacy']['social_profile_show_email']['#disabled'] = TRUE;
+        $form['profile_privacy']['social_profile_show_email']['#value'] = TRUE;
+        $form['profile_privacy']['social_profile_show_email']['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
+      }
+      else {
+        // Submit function only when the data is actualy editable.
+        $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
+      }
     }
   }
 }
@@ -286,4 +300,3 @@ function _social_profile_get_profile_from_route() {
 
   return $profile;
 }
-

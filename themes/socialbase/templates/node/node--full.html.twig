@@ -131,8 +131,10 @@
         <div class="meta-engage">
 
           {% if content.flag_follow_content|render is not empty and logged_in %}
-            {{ content.flag_follow_content }}
-           {% endif %}
+            <div class="meta-follow">
+              {{ content.flag_follow_content }}
+            </div>
+          {% endif %}
 
           {% if node.isSticky() %}
             <span class="badge badge-accent badge--large brand-bg-accent">{% trans %}Featured{% endtrans %}</span>
@@ -161,7 +163,7 @@
           {% if likes_count is not empty %}
             <div class="badge badge-default badge--large badge--pill">
               <span class="badge__container">
-                <svg class="badge__icon icon-vote">
+                <svg class="badge__icon">
                   <use xlink:href="#icon-like"></use>
                 </svg>
                 <span class="badge__label">
@@ -180,7 +182,8 @@
                 <svg class="badge__icon">
                   <use xlink:href="#icon-{{ visibility_icon }}"></use>
                 </svg>
-                <span class="badge__label">{{ visibility_label }}</span>
+                <span class="badge__label">&nbsp;</span>
+                <span class="badge__label badge__label--description">{{ visibility_label }}</span>
               </span>
             </div>
           {% endif %}
