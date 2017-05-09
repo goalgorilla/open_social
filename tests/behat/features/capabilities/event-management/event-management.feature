@@ -50,7 +50,7 @@ Feature: Event Management
     And I wait for AJAX to finish
     And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
     And I press "Save and publish"
-    And I should see "This is an event with event managers in group"
+    And I should see "This is an event with event organisers in group"
 
     # Now test with event_organiser_1
     Given I logout
