@@ -39,7 +39,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Show email on all user profiles'),
       '#default_value' => $config->get('social_profile_show_email'),
-      '#description' => $this->t('If this setting is turned off, users will be able override it for their profiles. Also users with permission "view profile email" will be able to see email in any case.'),
+      '#description' => $this->t('When enabled, users are not able to hide their email address on their profile. When disabled, users will be able to control the visibility of their emailaddress.'),
     );
 
     return parent::buildForm($form, $form_state);
