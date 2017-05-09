@@ -310,6 +310,7 @@ function social_final_site_setup(&$install_state) {
   $final_batched = [
     'profile_weight' => t('Set weight of profile.'),
     'router_rebuild' => t('Rebuild router.'),
+    'trigger_sapi_index' => t('Index search'),
     'cron_run' => t('Run cron.'),
     'import_optional_config' => t('Import optional configuration'),
   ];
@@ -447,6 +448,14 @@ function _social_finalise_batch($process, $description, &$context) {
       // This would normally happen upon KernelEvents::TERMINATE, but since the
       // installer does not use an HttpKernel, that event is never triggered.
       \Drupal::service('router.builder')->rebuild();
+      break;
+
+    case 'trigger_sapi_index':
+      $indexes = \Drupal\search_api\Entity\Index::loadMultiple();
+      /** @var \Drupal\search_api\Entity\Index $index */
+      foreach ($indexes as $index) {
+        $index->reindex();
+      }
       break;
 
     case 'cron_run':
