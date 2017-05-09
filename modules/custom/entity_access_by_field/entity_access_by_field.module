@@ -173,14 +173,17 @@ function entity_access_by_field_form_alter(&$form, \Drupal\Core\Form\FormStateIn
       // This is for nodes.
       if (isset($form['field_content_visibility'])) {
         // Some vars for easier reading.
-        $field = &$form['field_content_visibility'];
         $widget = &$form['field_content_visibility']['widget'];
-        $options = &$form['field_content_visibility']['widget']['#options'];
+        $route_name = \Drupal::routeMatch()->getRouteName();
 
         // Remove the public option.
-        unset($options['public']);
-        // Check if the public options is currently selected.
-        if ($widget['#default_value'] === 'public') {
+        $widget['#disabled'] = TRUE;
+        // Check if the public options is selected on node add. Than we
+        // change it to community. Just to make sure LU will always have
+        // community selected on creating new nodes. On node edit we don't
+        // want this behavior because SM can change the visibility.
+        $widget['#title'] = t('The visibility setting has been disabled. In order to change the visibility, please contact a site manager.')->render();
+        if ($route_name == 'node.add' && $widget['#default_value'] === 'public') {
           // Set the default value to community.
           $widget['#default_value'] = 'community';
         }

@@ -49,9 +49,8 @@ Feature: Event Management
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
     And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
-    And I press "Continue to final step"
-    And I press "Create node in group"
-    And I should see "This is an event with event organisers in group"
+    And I press "Save and publish"
+    And I should see "This is an event with event managers in group"
 
     # Now test with event_organiser_1
     Given I logout
