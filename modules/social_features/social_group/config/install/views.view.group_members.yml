@@ -5,7 +5,6 @@ dependencies:
     - group.content_type.open_group-group_membership
   module:
     - group
-    - user
 id: group_members
 label: 'Group Members'
 module: views
@@ -233,6 +232,9 @@ display:
         pager: false
         sorts: false
         empty: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
       pager:
         type: some
         options:
@@ -266,6 +268,9 @@ display:
           tokenize: false
           content: 'No memebers in this group'
           plugin_id: text_custom
+      use_more: true
+      use_more_always: true
+      use_more_text: 'All members'
     cache_metadata:
       max-age: -1
       contexts:

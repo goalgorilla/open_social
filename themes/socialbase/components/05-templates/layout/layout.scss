@@ -12,6 +12,46 @@
 //
 // Style guide: templates.regions
 
+// Layout default
+//
+// The default layout consists of the content in a 2/3 column with a complementary region
+// in the sidebar with a width of 1/3.
+//
+// Markup: layout-default.twig
+//
+// Weight: 2
+//
+// Style guide: templates.layout-default
+
+// Layout 2 columns
+//
+// As mentioned above we have a default layout for Open Social. You also choose a 2 columns layout.
+// We do not use a module for that, but as a site manager make sure blocks
+// are placed in the correct region. To use the 2 columns layout,
+// you must place you blocks in the region "Sidebar First".
+// The other argument that must be true is that the complementary regions are empty. To prevent
+// a site manager from showing blocks in both the complementary region and the sidebar
+// first region, we add this argument for the display of the latter.
+//
+// `{% if page.sidebar_first and not page.complementary_top and not page.complementary_bottom %}`
+//
+// Markup: layout-2columns.twig
+//
+// Weight: 3
+//
+// Style guide: templates.layout-2cols
+
+// Layout 3 columns
+//
+// Besides a two column layout, you can also get 3 columns. For this you can fill the region
+// sidebar second with blocks. When you use sidebar second and sidebar first
+// the columns will take up an equal share of the row.
+//
+// Markup: layout-3columns.twig
+//
+// Weight: 4
+//
+// Style guide: templates.layout-3cols
 
 @import "settings";
 
@@ -26,10 +66,9 @@
 }
 
 .row {
-
-  @include for-tablet-landscape-up {
-    display: flex;
-  }
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .main-container {
@@ -40,19 +79,52 @@
   padding-bottom: 100px;
   position: relative;
   z-index: 0;
+  width: 100%;
 }
 
-.region--main-content {
-  padding-left: 1em;
-  padding-right: 1em;
+.region--title {
+  flex-basis: 100%;
+  max-width: 100%;
 
   @include for-tablet-landscape-up {
-    flex: 0 0 (100%/1.5);
-    max-width: (100%/1.5);
+    margin-top: 1rem;
   }
+}
 
-  @include for-desktop-up {
-    padding-left: 0;
+.region--content-top,
+.region--content-bottom,
+.region--hero,
+.region--secondary-navigation {
+  @extend .container;
+}
+
+.region--content,
+.region--content-top,
+.region--content-bottom,
+.region--sidebar-first,
+.region--sidebar-second {
+  margin-top: 1rem;
+}
+
+// The direct child selector solves the problem in the style guide
+.layout--with-complementary > {
+
+  .region--content {
+    padding-left: 1em;
+    padding-right: 1em;
+    flex-basis: 100%;
+    max-width: 100%;
+
+    @include for-tablet-landscape-up {
+      flex: 0 0 (100%/1.5);
+      max-width: (100%/1.5);
+      order: 1;
+    }
+
+    @include for-desktop-up {
+      padding-left: 0;
+    }
+
   }
 
 }
@@ -60,8 +132,11 @@
 .region--complementary {
   padding-left: 1em;
   padding-right: 1em;
+  flex-basis: 100%;
+  max-width: 100%;
 
   @include for-tablet-landscape-up {
+    margin-top: 1rem;
     flex: 0 1 (100%/3);
     order: 2;
     max-width: (100%/3);
@@ -73,19 +148,87 @@
 
 }
 
-.complementary-bottom {
+.layout--with-two-columns {
+
+  .region--content,
+  .region--sidebar-first,
+  .region--sidebar-second {
+    flex-basis: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+
+    @include for-tablet-landscape-up {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+
+  @include for-desktop-up {
+
+    .region--content {
+      padding-left: 0;
+    }
+
+    .region--sidebar-first,
+    .region--sidebar-second {
+      padding-right: 0;
+    }
+
+  }
+
+}
+
+.layout--with-three-columns {
+
+  .region--content,
+  .region--sidebar-first,
+  .region--sidebar-second {
+    padding-left: 1em;
+    padding-right: 1em;
+    flex-basis: 100%;
+
+    @include for-tablet-landscape-up {
+      flex: 0 0 (100%/3);
+      max-width: (100%/3);
+    }
+
+  }
+
+  @include for-desktop-up {
+
+    .region--content {
+      padding-left: 0;
+    }
+
+    .region--sidebar-second {
+      padding-right: 0;
+    }
+
+  }
+
+}
+
+
+// hide region on mobile
+.region--complementary-bottom {
   display: none;
+
+  // Show region on bigger screens
+  @include for-tablet-landscape-up {
+    display: block;
+  }
 }
 
 @include for-tablet-landscape-up {
 
-  body:not(.path-frontpage) .complementary-top {
+  :not(.path-frontpage) .region--complementary-top {
     // line-height * section-title font size + padding top + padding bottom
     margin-top: ((1.1*1.25rem) + 1.25rem + 1.25rem);
   }
 
-  // Show region on bigger screens
-  .complementary-bottom {
-    display: block;
+  .with-title-region .region--complementary-top,
+  .path-frontpage .region--complementary-top {
+    margin-top: 0;
   }
+
 }

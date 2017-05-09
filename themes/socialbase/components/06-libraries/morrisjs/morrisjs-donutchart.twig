@@ -1,0 +1,19 @@
+<pre class="language-html">
+  <code class="language-markup">
+    <div id="morris-donut-chart" data-colors="#29abe2,#ffc142,#1ab394,#d9534f"></div>
+  </code>
+</pre>
+<pre>
+  <code class="language-javascript">
+    Morris.Donut({
+      element: 'morris-donut-chart',
+      data: [
+        { label: 'Drupal 5', value: 1262},
+        { label: 'Drupal 6', value: 76842},
+        { label: 'Drupal 7', value: 985007},
+        { label: 'Drupal 8', value: 140044}
+      ],
+      colors: jQuery('#morris-donut-chart').data('colors').split(',')
+    });
+  </code>
+</pre>

@@ -37,6 +37,7 @@
 .teaser {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: row;
 
   @include for-tablet-portrait-up {
     flex-wrap: nowrap;
@@ -121,6 +122,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100%;
+  font-size: 0.875rem;
 }
 
 // Describes the type of content such as a blog, news, group or user icon.
@@ -145,7 +147,7 @@
 // Custom styling for publication info of a node, because it needs to be combined at one line next to the content type icon
 .teaser__published {
   display: inline-flex;
-  width: calc(100% - 30px);
+  width: 85%;
 }
 
 // The author name should be able to truncate when the space is limited: flex-grow: 0
@@ -165,15 +167,7 @@
 // Reset margin so the items in the actionbar are vertically aligned.
 .teaser__badge {
   margin-bottom: 0;
-  vertical-align: text-bottom;
-
-  // Badges in teasers are reset to a smaller size to align with the styling of the visibility toggle badge.
-  .badge--comment-count__number {
-    padding: 4px 8px 4px 4px;
-    font-size: 12px;
-    line-height: 1;
-  }
-
+  vertical-align: middle;
 }
 
 // Unpublished teaser states

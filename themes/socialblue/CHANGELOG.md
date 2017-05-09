@@ -1,6 +1,8 @@
+### v1.1.3 -- Apr 2017
+* Changed styles for book navigation.
+
 ### v1.1.2 -- Mar 2017
 * Contents of the complementary_bottom region will be hidden on mobile screens.
-* 
 
 ### v1.1.1 -- Feb 2017
 * Listed all mixins and base components in style guide

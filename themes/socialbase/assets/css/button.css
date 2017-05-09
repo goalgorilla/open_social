@@ -155,10 +155,6 @@ input[type="button"].btn-block {
   transition: box-shadow, .15s ease-out;
 }
 
-.btn-raised.btn-default {
-  border: 0;
-}
-
 .btn-raised:active, .btn-raised.active, .btn-raised:hover {
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
 }
@@ -346,7 +342,6 @@ input[type="button"].btn-block {
 
 .btn-lg .caret, .btn-group-lg > .btn .caret {
   border-width: 5px 5px 0;
-  border-bottom-width: 0;
 }
 
 .dropup .btn-lg .caret, .dropup .btn-group-lg > .btn .caret {
@@ -381,4 +376,32 @@ input[type="button"].btn-block {
 .btn-group-vertical > .btn-group + .btn-group {
   margin-top: -1px;
   margin-left: 0;
+}
+
+.block-group-add-event-block,
+.block-group-add-topic-block,
+.block-event-add-block,
+.block-topic-add-block,
+.block-group-add-block {
+  display: inline-block;
+}
+
+@media (min-width: 900px) {
+
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block {
+    display: block;
+  }
+
+  .block-group-add-event-block .btn,
+  .block-group-add-topic-block .btn,
+  .block-event-add-block .btn,
+  .block-topic-add-block .btn,
+  .block-group-add-block .btn {
+    width: 100%;
+    margin-bottom: 0.75rem;
+  }
 }

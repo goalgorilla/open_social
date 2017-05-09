@@ -1,3 +1,25 @@
+### v2.1.4 -- May 2017
+* Added method for autogrow behaviour and changed event triggers.
+* Changed overflow styles for autogrow form elements.
+* Update class on icons in navbar https://www.drupal.org/node/2872929
+* Update instruction: In your sub theme provide a fill color for either `.navbar-nav__icon` which is the new icon class. Or like we did in social blue provide a fill for `.navbar-nav > li > a`. The default color is white. The size of the icon is in socialbase. The float class is removed and not needed.
+* Provide a condition before printing the *topic type* in `node--topic--teaser.html.twig`. Although topic type in a required field by default, this can be changed in an installation.
+
+### v2.1.3 -- Apr 2017
+* Changed wave-effect styles.
+* Changed book navigation styles.
+* Made image widget crop being collapsed by default.
+
+### v2.1.2 -- Mar 2017
+* Replaced Bootstrap list-group component with custom list component
+* Merge label component with badges and extend badge modifiers
+* Improve card documentation with seperation of `card__block` and `card__body`
+* Document and rename alert, badge, list in style guide
+* Add Bar chart and Donut chart to MorrisJs documentation
+* Optimise small teaser templates
+* Add two columns and three columns layout, with sidebar_first and sidebar_second regions.
+* Renamed in page-full twig block nodefull_header to metainfo and added twig block metaengage.
+
 ### v2.1.1 -- Feb 2017
 * Removed pug style guide files
 * Removed content folder which contained assets for the old style guide
@@ -25,5 +47,5 @@ Complete overhaul of theme_hooks and clean up of templates
 * Updated the way we override the bootstrap panel implementation for details and fieldsets. Updated corresponding template files
 * Merged container templates
 * Merged views templates
-* Merged form templates 
+* Merged form templates
 * Updated teaser templates

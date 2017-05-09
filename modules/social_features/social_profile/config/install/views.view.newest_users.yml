@@ -136,6 +136,44 @@ display:
           entity_type: profile
           entity_field: type
           plugin_id: bundle
+        status:
+          id: status
+          table: users_field_data
+          field: status
+          relationship: uid
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: user
+          entity_field: status
+          plugin_id: boolean
       sorts:
         created:
           id: created
@@ -156,7 +194,18 @@ display:
       header: {  }
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        uid:
+          id: uid
+          table: profile
+          field: uid
+          relationship: none
+          group_type: group
+          admin_label: User
+          required: true
+          entity_type: profile
+          entity_field: uid
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
@@ -166,6 +215,7 @@ display:
         - url.query_args
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
@@ -187,6 +237,9 @@ display:
         pager: false
         style: false
         row: false
+        use_more: false
+        use_more_always: false
+        use_more_text: false
       pager:
         type: some
         options:
@@ -202,12 +255,16 @@ display:
           view_mode: small_teaser
       display_description: ''
       block_description: 'Newest users block'
+      use_more: true
+      use_more_always: true
+      use_more_text: 'All members'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_interface'
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
@@ -223,11 +280,11 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: newest-members
+      path: all-members
       pager:
         type: full
         options:
-          items_per_page: 4
+          items_per_page: 10
           offset: 0
           id: 0
           total_pages: null
@@ -247,7 +304,9 @@ display:
           quantity: 9
       defaults:
         pager: false
+        title: false
       display_description: ''
+      title: 'All members'
     cache_metadata:
       max-age: -1
       contexts:
@@ -255,6 +314,7 @@ display:
         - url.query_args
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
