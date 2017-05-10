@@ -39,6 +39,10 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
   if (in_array($block_id, $blocks_id)) {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'views_block__sidebar');
   }
+
+  if (isset($variables['elements']['kpi_analytics'])) {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'charts');
+  }
 }
 
 /**
@@ -90,6 +94,10 @@ function socialbase_preprocess_block(&$variables) {
       $variables['card'] = FALSE;
     }
 
+  }
+
+  if (isset($variables['elements']['kpi_analytics'])) {
+    $variables['card'] = TRUE;
   }
 
   // for all platform_intro blocks we want them to appear as cards.
