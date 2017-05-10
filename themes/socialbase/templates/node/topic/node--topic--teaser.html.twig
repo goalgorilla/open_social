@@ -22,10 +22,12 @@
     {%- endblock -%}
   {% endembed %}
 
-  {% embed "node--teaser__field.html.twig" %}
-    {%- block field_icon -%} label {%- endblock -%}
-    {%- block field_value -%} {{ topic_type }} {%- endblock -%}
-  {% endembed %}
+  {% if topic_type %}
+    {% embed "node--teaser__field.html.twig" %}
+      {%- block field_icon -%} label {%- endblock -%}
+      {%- block field_value -%} {{ topic_type }} {%- endblock -%}
+    {% endembed %}
+  {% endif %}
 
   {% if content.group_name %}
     {% embed "node--teaser__field.html.twig" %}

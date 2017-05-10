@@ -200,16 +200,6 @@ function social_profile_preprocess_profile(&$variables) {
     }
   }
 
-  // Find out what the active theme is first.
-  $theme = \Drupal::theme()->getActiveTheme();
-
-  // Check if socialbase is one of the base themes.
-  // Then get the path to socialbase theme and provide a variable
-  // that can be used in the template for a path to the icons.
-  if (array_key_exists('socialbase', $theme->getBaseThemes())) {
-    $basethemes = $theme->getBaseThemes();
-    $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
-  }
 }
 
 /**
@@ -237,6 +227,9 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
 
   if ($profile instanceof Profile) {
     if (isset($profile->field_profile_show_email)) {
+      // Check what the global value is.
+      $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+      // Account value.
       $show_email = $profile->field_profile_show_email->value;
       $form['profile_privacy'] = array(
         '#type' => 'fieldset',
@@ -249,7 +242,17 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
         '#title' => t('Show my email on my profile'),
         '#default_value' => $show_email,
       );
-      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
+
+      // If global setting is set, disable the setting and give a reason why.
+      if ($global_show_email == TRUE) {
+        $form['profile_privacy']['social_profile_show_email']['#disabled'] = TRUE;
+        $form['profile_privacy']['social_profile_show_email']['#value'] = TRUE;
+        $form['profile_privacy']['social_profile_show_email']['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
+      }
+      else {
+        // Submit function only when the data is actualy editable.
+        $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
+      }
     }
   }
 }
@@ -294,4 +297,3 @@ function _social_profile_get_profile_from_route() {
 
   return $profile;
 }
-

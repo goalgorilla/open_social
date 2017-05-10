@@ -55,7 +55,7 @@
       {{ title_suffix }}
       <div class="teaser__content-line">
         <svg class="teaser__content-type-icon">
-          <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-group"></use>
+          <use xlink:href="#icon-group"></use>
         </svg>
         <span class="teaser__content-text">
           {% trans %}
@@ -69,7 +69,7 @@
       {% if content.field_group_location|render or content.field_group_address|render %}
           <div class="teaser__content-line">
               <svg class="teaser__content-type-icon">
-                  <use xlink:href="/{{ path_to_socialbase }}/assets/icons/icons.svg#icon-location"></use>
+                  <use xlink:href="#icon-location"></use>
               </svg>
             <span class="teaser__content-text">
               {{ content.field_group_location }}

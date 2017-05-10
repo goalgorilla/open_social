@@ -4,17 +4,6 @@
  * Implements hook_preprocess_input().
  */
 function socialbase_preprocess_input(&$variables) {
-  // Find out what the active theme is first.
-  $theme = \Drupal::theme()->getActiveTheme();
-
-  // Check if socialbase is one of the base themes.
-  // Then get the path to socialbase theme and provide a variable
-  // that can be used in the template for a path to the icons.
-  if (array_key_exists('socialbase', $theme->getBaseThemes())) {
-    $basethemes = $theme->getBaseThemes();
-    $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
-  }
-
   if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
     // Only reaction on the visibility field.
     if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
