@@ -10,14 +10,11 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Link;
-use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-
   $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
   $form['field_visibility']['#attributes']['class'][] = 'browser-default';
 
@@ -128,18 +125,14 @@ function social_post_views_data_alter(array &$data) {
  * Implements hook_theme().
  */
 function social_post_theme() {
-  $theme = [];
-  $theme['post'] = [
-    'render element' => 'elements',
-    'file' => 'post.page.inc',
-    'template' => 'post',
+  $items = [
+    'post' => [
+      'render element' => 'elements',
+      'file' => 'post.page.inc',
+      'template' => 'post',
+    ],
   ];
-  $theme['post_content_add_list'] = [
-    'render element' => 'content',
-    'variables' => ['content' => NULL],
-    'file' => 'post.page.inc',
-  ];
-  return $theme;
+  return $items;
 }
 
 /**

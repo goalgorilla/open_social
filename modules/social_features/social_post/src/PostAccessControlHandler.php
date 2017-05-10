@@ -18,7 +18,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\social_post\Entity\PostInterface $entity */
+    /** @var \Drupal\social_post\PostInterface $entity */
 
     switch ($operation) {
       case 'view':
