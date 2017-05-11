@@ -10,6 +10,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_preprocess_block().
@@ -62,15 +63,15 @@ function social_event_managers_node_access_records(\Drupal\node\NodeInterface $n
   // Only for events.
   if ($node->getType() === 'event') {
 
-    // Event organizers should be granted access.
+    // Event managers should be granted access.
     foreach($node->get('field_event_managers')->getValue() as $eventmanager) {
       // Load the event managers account.
       if ($account = \Drupal\user\Entity\User::load($eventmanager['target_id'])) {
-        // Event organizers must have access to view the record in the first place.
+        // Event managers must have access to view the record in the first place.
         if ($node->access('view',$account)) {
           // Add grant.
           $grants[] = array(
-            'realm' => 'social_event_managers:'.$node->id(),
+            'realm' => 'social_event_managers:' . $node->id(),
             'gid' => $eventmanager['target_id'],
             'grant_view' => 1,
             'grant_update' => 1,
@@ -178,5 +179,26 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
   // PLace this here, since hiding it should happen always and not only on the mentioned routes.
   if (!$can_show_managers_link) {
     unset($data['tabs'][0]['views_view:view.managers.view_managers']);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_event_managers_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set author of event as event manager automatically.
+  $config = \Drupal::configFactory()
+    ->getEditable('social_event_managers.settings');
+
+  if ($config->get('author_as_manager')) {
+    if ($form_state->getTriggeringElement() === NULL) {
+      $account = \Drupal::currentUser();
+      $user = \Drupal::entityTypeManager()
+        ->getStorage('user')
+        ->load($account->id());
+
+      $last_key = $form['field_event_managers']['widget']['#max_delta'];
+      $form['field_event_managers']['widget'][$last_key]['target_id']['#default_value'] = $user;
+    }
   }
 }
