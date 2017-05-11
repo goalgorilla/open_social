@@ -72,9 +72,7 @@ Feature: See comments in activity stream
       | Time  | 11:00:00    |
       | Location name       | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     Then I should see "Test group event"
     When I click "Test open group"
 

@@ -109,9 +109,7 @@ Feature: Create Open Group
       | Title |Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-  # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page
