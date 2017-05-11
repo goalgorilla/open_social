@@ -31,7 +31,6 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     foreach ($email_message_templates as $key => $title) {
       $form['email_notifications'][$key] = array(
         '#type' => 'checkbox',
-        '#title_display' => 'before',
         '#title' => $title,
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : TRUE,
         '#attributes' => [
