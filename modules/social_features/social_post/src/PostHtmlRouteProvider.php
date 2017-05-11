@@ -43,7 +43,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
    *   The generated route, if available.
    */
   protected function getCollectionRoute(EntityTypeInterface $entity_type) {
-    if  ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
+    if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
       $entity_type_id = $entity_type->id();
       $parameters = [
         $entity_type_id => ['type' => 'entity:' . $entity_type_id],
