@@ -7,7 +7,9 @@
 
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\block\Entity\Block;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,9 +24,28 @@ function social_event_managers_preprocess_block(&$variables) {
   // Add variables to sidebar blocks
   switch ($variables['elements']['#derivative_plugin_id']) {
     case 'managers-event_managers':
-      $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/managers');
+      // Show "All" button only when there are more than 10 organisers.
+      if ($node->field_event_managers->count() > 10) {
+        $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/organisers');
+        $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      }
       break;
   }
+}
+
+/**
+ *  Implements hook_block_access().
+ */
+function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'views_block:managers-event_managers') {
+    // Exclude block form edit node page.
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    if ($route_name == 'entity.node.edit_form') {
+      return AccessResult::forbidden();
+    }
+  }
+  // No opinion for other situations really.
+  return AccessResult::neutral();
 }
 
 /**
@@ -62,13 +83,12 @@ function social_event_managers_node_access_records(\Drupal\node\NodeInterface $n
 
   // Only for events.
   if ($node->getType() === 'event') {
-
-    // Event managers should be granted access.
-    foreach($node->get('field_event_managers')->getValue() as $eventmanager) {
+    // Event organizers should be granted access.
+    foreach ($node->get('field_event_managers')->getValue() as $eventmanager) {
       // Load the event managers account.
       if ($account = \Drupal\user\Entity\User::load($eventmanager['target_id'])) {
-        // Event managers must have access to view the record in the first place.
-        if ($node->access('view',$account)) {
+        // Event organizers must have access to view the record in the first place.
+        if ($node->access('view', $account)) {
           // Add grant.
           $grants[] = array(
             'realm' => 'social_event_managers:' . $node->id(),
@@ -97,7 +117,7 @@ function social_event_managers_node_grants(\Drupal\Core\Session\AccountInterface
   $query->fields('em', ['entity_id']);
   $query->condition('em.field_event_managers_target_id', $account->id());
   // Add grants.
-  foreach($query->execute()->fetchAllAssoc('entity_id') as $nid) {
+  foreach ($query->execute()->fetchAllAssoc('entity_id') as $nid) {
     $grants['social_event_managers:' . $nid->entity_id][] = $account->id();
   }
 
@@ -186,7 +206,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
  * Implements hook_form_alter().
  */
 function social_event_managers_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Set author of event as event manager automatically.
+  // Set author of event as event organiser automatically.
   $config = \Drupal::configFactory()
     ->getEditable('social_event_managers.settings');
 

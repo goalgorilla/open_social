@@ -36,8 +36,8 @@ class SocialEventManagersSettings extends ConfigFormBase {
 
     $form['author_as_manager'] = array(
       '#type' => 'checkbox',
-      '#title' => $this->t('Author as event manager'),
-      '#description' => $this->t('Set author of event as event manager automatically.'),
+      '#title' => $this->t('Author as event organiser'),
+      '#description' => $this->t('Set author of event as event organiser automatically.'),
       '#default_value' => $config->get('author_as_manager'),
     );
 
