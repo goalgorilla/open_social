@@ -241,6 +241,9 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
         '#title_display' => 'before',
         '#title' => t('Show my email on my profile'),
         '#default_value' => $show_email,
+        '#attributes' => [
+          'data-switch' => TRUE
+        ]
       );
 
       // If global setting is set, disable the setting and give a reason why.

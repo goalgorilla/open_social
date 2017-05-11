@@ -34,6 +34,9 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         '#title_display' => 'before',
         '#title' => $title,
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : TRUE,
+        '#attributes' => [
+          'data-switch' => TRUE
+        ]
       );
     }
 
