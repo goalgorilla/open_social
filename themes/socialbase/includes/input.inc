@@ -18,6 +18,11 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  // set "add more managers" button style
+  if (isset($variables['element']['#array_parents']) && in_array('add_more', $variables['element']['#array_parents'], TRUE) && $variables['type'] == 'submit') {
+    $variables['button_type'] = 'flat';
+  }
+
   if (isset($variables['element']['#array_parents'])) {
     if (in_array('save_modal', $variables['element']['#array_parents'], TRUE)) {
       $variables['button_type'] = 'primary';

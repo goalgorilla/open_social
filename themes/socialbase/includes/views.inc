@@ -31,4 +31,8 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   ) {
     $suggestions[] = $variables['theme_hook_original'] . '__stream';
   }
+
+  if (isset($view_id) && $view_id == 'group_managers') {
+    $suggestions[] = $variables['theme_hook_original'] . '__group_managers';
+  }
 }
