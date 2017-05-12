@@ -5,3 +5,15 @@ social_tour.settings:
     _title: 'Tour settings'
   requirements:
     _permission: 'manage tour'
+social_tour.disable:
+  path: '/user/tour/disable'
+  defaults:
+    _controller: 'Drupal\social_tour\SocialTourController::disableOnboarding'
+  requirements:
+    _permission: 'access tour'
+social_tour.enable:
+  path: '/user/tour/enable'
+  defaults:
+    _controller: 'Drupal\social_tour\SocialTourController::enableOnboarding'
+  requirements:
+    _permission: 'access tour'

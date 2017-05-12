@@ -154,16 +154,7 @@ function _social_tour_init() {
  * Check some stuff before doing anything with these tours.
  */
 function _social_tour_check() {
-  // Check if enabled (by settings).
-  $tour_config = \Drupal::config('social_tour.settings');
-  if ($tour_config->get('social_tour_enabled') == FALSE) {
-    return FALSE;
-  }
-
-  // Check permissions.
-  if (!\Drupal::currentUser()->hasPermission('access tour')) {
-    return FALSE;
-  }
-
-  return TRUE;
+  /** @var \Drupal\social_tour\SocialTourController $onboarding */
+  $onboarding = \Drupal::service('social_tour.onboarding');
+  return $onboarding->onboardingEnabled();
 }
