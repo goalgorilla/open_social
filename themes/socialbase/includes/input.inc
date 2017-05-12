@@ -29,6 +29,11 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  // for all buttons in file upload set type to flat, usually tables -> remove button
+  if (isset($variables['element']['#submit']) && in_array('file_managed_file_submit', $variables['element']['#submit'], TRUE)) {
+    $variables['button_type'] = 'flat';
+  }
+
   if (isset($variables['element']['#addsearchicon'])) {
     $variables['add_search_icon'] = TRUE;
   }

@@ -1,0 +1,50 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment
+    - field.field.comment.comment.field_comment_body
+    - field.field.comment.comment.field_comment_files
+  module:
+    - field_group
+    - file
+    - text
+third_party_settings:
+  field_group:
+    group_add_attachment:
+      children:
+        - field_comment_files
+      parent_name: ''
+      weight: 20
+      format_type: details
+      format_settings:
+        label: 'Add attachment'
+        required_fields: true
+        id: ''
+        classes: comment-attachments
+        open: false
+      label: 'Add attachment'
+id: comment.comment.default
+targetEntityType: comment
+bundle: comment
+mode: default
+content:
+  author:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+  field_comment_body:
+    weight: 3
+    settings:
+      rows: 5
+      placeholder: 'Add a comment'
+    third_party_settings: {  }
+    type: text_textarea
+  field_comment_files:
+    weight: 21
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+hidden:
+  subject: true
