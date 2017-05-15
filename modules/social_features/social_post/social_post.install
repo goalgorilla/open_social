@@ -4,7 +4,8 @@
  * Install, update and uninstall functions for the social_comment module.
  */
 
-use Drupal\Core\Database;
+use Drupal\Core\Database\Database;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -108,6 +109,16 @@ function social_post_update_8001() {
 
     // Update definitions and schema.
     \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+
+    // Update config post_type.
+    $path = drupal_get_path('module', 'social_post') . '/config/install';
+    $config_factory = \Drupal::configFactory();
+    $config_name = "social_post.post_type.post";
+    $filepath = "{$path}/{$config_name}.yml";
+    $data = Yaml::parse($filepath);
+    if (is_array($data)) {
+        $config_factory->getEditable($config_name)->setData($data)->save();
+    }
 
     // Set the old data.
     $insert_query_post = $database
