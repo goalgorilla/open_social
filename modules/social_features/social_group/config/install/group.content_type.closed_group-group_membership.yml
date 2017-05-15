@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.closed_group
+  module:
+    - user
+id: closed_group-group_membership
+label: 'Open group: Group membership'
+description: 'Adds users to groups as members.'
+group_type: closed_group
+content_plugin: group_membership
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

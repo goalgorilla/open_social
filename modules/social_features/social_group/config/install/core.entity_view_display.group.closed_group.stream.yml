@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.stream
+    - field.field.group.closed_group.field_group_address
+    - field.field.group.closed_group.field_group_description
+    - field.field.group.closed_group.field_group_image
+    - field.field.group.closed_group.field_group_location
+    - group.type.closed_group
+id: group.closed_group.stream
+targetEntityType: group
+bundle: closed_group
+mode: stream
+content: {  }
+hidden:
+  changed: true
+  created: true
+  field_group_address: true
+  field_group_description: true
+  field_group_image: true
+  field_group_location: true
+  label: true
+  uid: true

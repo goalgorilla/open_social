@@ -1,0 +1,52 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.hero
+    - field.field.group.closed_group.field_group_address
+    - field.field.group.closed_group.field_group_description
+    - field.field.group.closed_group.field_group_image
+    - field.field.group.closed_group.field_group_location
+    - group.type.closed_group
+    - image.style.social_xx_large
+  module:
+    - address
+    - image
+id: group.closed_group.hero
+targetEntityType: group
+bundle: closed_group
+mode: hero
+content:
+  field_group_address:
+    type: address_plain
+    weight: 4
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 1
+    label: hidden
+    settings:
+      image_style: social_xx_large
+      image_link: ''
+    third_party_settings: {  }
+  field_group_location:
+    type: string
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  label:
+    label: hidden
+    type: string
+    weight: 0
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  field_group_description: true
+  uid: true
