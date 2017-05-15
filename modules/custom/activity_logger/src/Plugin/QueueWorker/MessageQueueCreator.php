@@ -34,10 +34,10 @@ class MessageQueueCreator extends MessageQueueBase {
       $timestamp = $entity->getCreatedTime();
       // Current time.
       $now = time();
-      $diff = $now - $timestamp;
+      $diff = abs($now - $timestamp);
 
       // Items must be at least 5 seconds old.
-      if ($diff <= 5) {
+      if ($diff <= 5 && $now > $timestamp) {
         // Wait for 100 milliseconds.
         // We don't want to flood the DB with unprocessable queue items.
         usleep(100000);
