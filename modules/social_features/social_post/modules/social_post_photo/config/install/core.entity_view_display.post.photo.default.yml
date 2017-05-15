@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.post.photo.field_post_image
+    - image.style.social_post_photo
+    - social_post.post_type.photo
+  module:
+    - image
+id: post.photo.default
+targetEntityType: post
+bundle: photo
+mode: default
+content:
+  field_post_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: social_post_photo
+      image_link: file
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden:
+  user_id: true

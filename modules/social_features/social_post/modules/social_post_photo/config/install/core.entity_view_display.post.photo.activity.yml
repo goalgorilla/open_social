@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.post.activity
+    - field.field.post.photo.field_post_image
+    - social_post.post_type.photo
+  module:
+    - image
+    - user
+id: post.photo.activity
+targetEntityType: post
+bundle: photo
+mode: activity
+content:
+  field_post_image:
+    weight: 1
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  user_id:
+    label: hidden
+    type: author
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

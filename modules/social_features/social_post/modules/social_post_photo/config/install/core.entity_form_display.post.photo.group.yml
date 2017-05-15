@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.post.group
+    - field.field.post.photo.field_post_image
+    - image.style.social_post_photo
+    - social_post.post_type.photo
+  module:
+    - image
+id: post.photo.group
+targetEntityType: post
+bundle: photo
+mode: group
+content:
+  field_post_image:
+    weight: 0
+    settings:
+      preview_image_style: social_post_photo
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_image
+    region: content
+hidden:
+  langcode: true
+  user_id: true
