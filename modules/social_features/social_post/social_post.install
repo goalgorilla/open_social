@@ -4,6 +4,7 @@
  * Install, update and uninstall functions for the social_comment module.
  */
 
+use Drupal\Core\Database;
 
 /**
  * Implements hook_install().
@@ -69,4 +70,63 @@ function _social_post_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Update social_post existing content.
+ */
+function social_post_update_8001() {
+    $database = \Drupal::database();
+    $table_post = 'post';
+    $table_data = 'post_field_data';
+    // Get the old data.
+    $existing_data_post = $database->select($table_post)
+        ->fields($table_post)
+        ->execute()
+        ->fetchAll(PDO::FETCH_ASSOC);
+    // Wipe it.
+    $database->truncate($table_post)->execute();
+
+    $existing_data_data = $database->select($table_data)
+        ->fields($table_data)
+        ->execute()
+        ->fetchAll(PDO::FETCH_ASSOC);
+    // Wipe it.
+    $database->truncate($table_data)->execute();
+
+    // Add new field to tables.
+    $spec = array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'post',
+        'description' => 'The ID of the target entity.',
+    );
+    $schema = Database::getConnection()->schema();
+    $schema->addField($table_post, 'type', $spec);
+    $schema->addField($table_data, 'type', $spec);
+
+    // Update definitions and schema.
+    \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+
+    // Set the old data.
+    $insert_query_post = $database
+        ->insert($table_post)
+        ->fields(array_keys(end($existing_data_post)));
+    foreach ($existing_data_post as $row) {
+        $insert_query_post->values(array_values($row));
+    }
+    $insert_query_post->execute();
+
+    $insert_query_data = $database
+        ->insert($table_data)
+        ->fields(array_keys(end($existing_data_data)));
+    foreach ($existing_data_data as $row) {
+        $insert_query_data->values(array_values($row));
+    }
+    $insert_query_data->execute();
+
+    // Unset default value for post entity
+    $schema->fieldSetNoDefault($table_data, 'type');
+    $schema->fieldSetNoDefault($table_data, 'type');
 }
