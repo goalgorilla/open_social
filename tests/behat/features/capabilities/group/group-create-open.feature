@@ -15,17 +15,18 @@ Feature: Create Open Group
     And I click "Add a group"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
-    And I fill in "Location name" with "GG HQ"
-    And I select "NL" from "Country"
+    And I fill in "Location name" with "Technopark"
+    And I select "UA" from "Country"
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Enschede |
-      | Street address | Oldenzaalsestraat |
-      | Postal code | 7514DR |
+      | City | Lviv |
+      | Street address | Fedkovycha 60a |
+      | Postal code | 79000 |
+      | Oblast | Lviv oblast |
     And I press "Save"
     And I should see "Test open group" in the "Main content"
-    And I should see "GG HQ"
+    And I should see "Technopark"
     And I should see "1 member"
     And I should see "Joined"
     And I should see the link "Read more"
@@ -37,10 +38,11 @@ Feature: Create Open Group
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
-    And I should see "GG HQ" in the "Hero block"
-    And I should see "Oldenzaalsestraat" in the "Hero block"
-    And I should see "7514DR" in the "Hero block"
-    And I should see "Enschede" in the "Hero block"
+    And I should see "Technopark" in the "Hero block"
+    And I should see "Fedkovycha 60a" in the "Hero block"
+    And I should see "79000" in the "Hero block"
+    And I should see "Lviv" in the "Hero block"
+    And I should see "Lviv oblast" in the "Hero block"
 
     # As a LU I want to see the information about a group
     When I click "About"
@@ -81,7 +83,7 @@ Feature: Create Open Group
       | Title | Test group event |
       | Date  | 2025-01-01  |
       | Time  | 11:00:00    |
-      | Location name       | GG HQ |
+      | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
     And I press "Continue to final step"

@@ -48,11 +48,18 @@
         </div>
         {% endif %}
 
-        {% if content.field_profile_profile_tag['#items'] %}
-          {% for item in content.field_profile_profile_tag['#items'] %}
-            <div class="badge" style="margin-left: 30px;">{{ item.entity.label }}</div>
-          {% endfor %}
+        {% if content.field_profile_profile_tag['#items'] or badges %}
+          <div style="margin-left: 30px; margin-top: 5px;">
+            {% for badge in badges %}
+              {% set badge_classes = badge.classes|merge(['badge']) %}
+              <div{{ attributes.addClass(badge_classes) }}>{{ badge.label }}</div>
+            {% endfor %}
+            {% for item in content.field_profile_profile_tag['#items'] %}
+              <div class="badge badge-default">{{ item.entity.label }}</div>
+            {% endfor %}
+          </div>
         {% endif %}
+
     </div>
 
     <div class="card__actionbar">
