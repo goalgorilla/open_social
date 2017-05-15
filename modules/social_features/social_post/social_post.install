@@ -104,8 +104,18 @@ function social_post_update_8001() {
         'description' => 'The ID of the target entity.',
     );
     $schema = Database::getConnection()->schema();
-    $schema->addField($table_post, 'type', $spec);
-    $schema->addField($table_data, 'type', $spec);
+
+    if($schema->fieldExists($table_post, 'type')) {
+        $schema->changeField($table_post, 'type', 'type', $spec);
+    } else {
+        $schema->addField($table_post, 'type', $spec);
+    }
+
+    if($schema->fieldExists($table_data, 'type')) {
+        $schema->changeField($table_data, 'type', 'type', $spec);
+    } else {
+        $schema->addField($table_data, 'type', $spec);
+    }
 
     // Update definitions and schema.
     \Drupal::entityDefinitionUpdateManager()->applyUpdates();
