@@ -299,3 +299,11 @@ function _social_profile_get_profile_from_route() {
 
   return $profile;
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Set User Register form Email field as required.
+  $form['account']['mail']['#required'] = TRUE;
+}
