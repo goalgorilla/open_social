@@ -20,10 +20,8 @@ class BootstrapDropdown extends \Drupal\bootstrap\Plugin\Preprocess\BootstrapDro
    */
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
-    if (isset($variables['items']['#items'][0]['#button_type']) && $variables['items']['#items'][0]['#button_type'] == 'primary') {
+    if (isset($variables['items']['#items']['publish']['element']['#button_type']) && $variables['items']['#items']['publish']['element']['#button_type'] == 'primary') {
       $variables['alignment'] = 'right';
     }
-
   }
-
 }
