@@ -45,27 +45,14 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
   protected function getCollectionRoute(EntityTypeInterface $entity_type) {
     if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
       $entity_type_id = $entity_type->id();
-      $parameters = [
-        $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-      ];
-
       $route = new Route($entity_type->getLinkTemplate('collection'));
-      // Use the add form handler, if available, otherwise default.
-      $operation = 'default';
-      if ($entity_type->getFormClass('add')) {
-        $operation = 'add';
-      }
-
-      // Title.
-      $title = t("Add @entity_type", [ "@entity_type" => $entity_type->getLabel() ]);
 
       $route
         ->setDefaults([
-          '_entity_list' => "{$entity_type_id}.{$operation}",
-          '_title' => "{$title->render()} list",
+          '_entity_list' => $entity_type_id,
+          '_title' => "{$entity_type->getLabel()} list",
         ])
         ->setRequirement('_entity_create_access', $entity_type_id)
-        ->setOption('parameters', $parameters)
         ->setOption('_admin_route', TRUE);
 
       return $route;
