@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_post;
+namespace Drupal\social_post\Entity;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
@@ -11,7 +11,26 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup social_post
  */
-interface PostInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+interface PostInterface extends  ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
+  // Add get/set methods for your configuration properties here.
+
+  /**
+   * Returns the post type.
+   *
+   * @return string
+   *   The post type name.
+   */
+  public function getType();
+
+  /**
+   * Sets the post type.
+   *
+   * @param string $type
+   *   The post type.
+   *
+   * @return $this
+   */
+  public function setType($type);
 
   /**
    * Gets the Post creation timestamp.
@@ -27,7 +46,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @param int $timestamp
    *   The Post creation timestamp.
    *
-   * @return \Drupal\social_post\PostInterface
+   * @return \Drupal\social_post\Entity\PostInterface
    *   The called Post entity.
    */
   public function setCreatedTime($timestamp);
@@ -48,7 +67,7 @@ interface PostInterface extends ContentEntityInterface, EntityChangedInterface, 
    * @param bool $published
    *   TRUE to set this Post to published, FALSE to set it to unpublished.
    *
-   * @return \Drupal\social_post\PostInterface
+   * @return \Drupal\social_post\Entity\PostInterface
    *   The called Post entity.
    */
   public function setPublished($published);
