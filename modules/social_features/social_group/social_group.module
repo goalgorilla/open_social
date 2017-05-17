@@ -93,7 +93,7 @@ function social_group_preprocess_group(&$variables) {
       $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
     }
   }
-  elseif ($group->hasPermission('join group', $account) && $group_type_id != 'closed_group') {
+  elseif ($group->hasPermission('join group', $account) /**&& $group_type_id != 'closed_group'*/) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
   }
@@ -473,8 +473,8 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
 
-    // If its a closed_group and the user is not an member
-    if ($group_type == 'closed_group' && !$group->getMember($user)) {
+    // If it is a closed_group and the user is not an member
+    if ($group_type == 'closed_group' && !$group->getMember($user) && $user != 1) {
       // Disable these local tasks
       $data['tabs'][0]['group.view'] = [];
       $data['tabs'][0]['group.content'] = [];
