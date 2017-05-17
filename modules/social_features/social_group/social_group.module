@@ -75,10 +75,14 @@ function _social_group_group_open_group_edit_form_submit($form, FormStateInterfa
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_group_preprocess_group(&$variables) {
+  /** @var GroupInterface $group */
   $group = $variables['group'];
   $variables['joined'] = FALSE;
 
   $account = \Drupal::currentUser();
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  $group_type_id = $group->getGroupType()->id();
 
   // Set joined to true for teaser when current logged in
   // user is member of the group.
@@ -89,7 +93,7 @@ function social_group_preprocess_group(&$variables) {
       $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
     }
   }
-  elseif ($group->hasPermission('join group', $account)) {
+  elseif ($group->hasPermission('join group', $account) && $group_type_id != 'closed_group') {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
   }
@@ -134,13 +138,13 @@ function social_group_preprocess_group(&$variables) {
 /**
  * Implements hook_entity_insert().
  *
- * On a new group insert, from the type open group the Owner gets the
+ * On a new group insert, from the type open_group or closed_group the Owner gets the
  * group manager role by default.
  */
 function social_group_group_insert(GroupInterface $group) {
   // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
   // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() == 'open_group') {
+  if ($group->getGroupType()->id() == 'open_group' || 'closed_group') {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
@@ -459,6 +463,24 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Remove Edit tab. Edit will always go through Floating Edit Button.
   if (isset($data['tabs'][0]['group.edit_form'])) {
     unset($data['tabs'][0]['group.edit_form']);
+  }
+
+  $user = \Drupal::currentUser();
+  // Get the Group object from the route
+  $group = Drupal::routeMatch()->getParameter('group');
+  // $group = _social_group_get_current_group(); ??
+  if ($group) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    $group_type = $group->getGroupType()->id();
+
+    // If its a closed_group and the user is not an member
+    if ($group_type == 'closed_group' && !$group->getMember($user)) {
+      // Disable these local tasks
+      $data['tabs'][0]['group.view'] = [];
+      $data['tabs'][0]['group.content'] = [];
+      $data['tabs'][0]['social_group.events'] = [];
+      $data['tabs'][0]['social_group.topics'] = [];
+    }
   }
 }
 

@@ -77,7 +77,8 @@ function _social_group_get_permissions($role) {
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
-    'create open_group group'
+    'create open_group group',
+    'create closed_group group'
   ));
 
 
@@ -248,6 +249,7 @@ function social_group_update_8005() {
   }
 
   // Remove group geolocation field.
+  $config_factory->getEditable('field.field.group.closed_group.field_group_geolocation')->delete();
   $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
   $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
 
