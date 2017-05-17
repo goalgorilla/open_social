@@ -37,10 +37,10 @@
 .list-item {
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
   padding-top: ($card-spacer-x/2);
   padding-bottom: ($card-spacer-x/2);
+  min-width: 0;
 }
 
 .list-item__avatar {
@@ -49,6 +49,7 @@
   flex: 0 0 24px;
   margin-right: 10px;
   border-radius: 50%;
+  margin-top: 2px; // vertical alignment
 }
 
 .list-item__avatar--medium {
@@ -68,8 +69,9 @@
 }
 
 .list-item__text {
-  flex: 1 1 auto;
+  flex-grow: 1;
   margin: 0;
+  line-height: 1.25;
 
   p {
     margin-bottom: 0;

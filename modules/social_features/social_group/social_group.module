@@ -593,3 +593,29 @@ function _social_group_cache_tags(GroupInterface $group) {
 function social_group_block_view_local_tasks_block_alter(array &$build, BlockPluginInterface $block) {
   $build['#cache']['contexts'][] = 'group_membership.roles.permissions';
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_preprocess_profile(&$variables) {
+  $group = _social_group_get_current_group();
+
+  if ($group instanceof Group && $variables['elements']['#view_mode'] == 'teaser') {
+    $account = $variables['elements']['#profile']->get('uid')->entity;
+
+    if (!$member = $group->getMember($account)) {
+      return;
+    }
+
+    $roles = $member->getRoles();
+
+    if (isset($roles[ $group->bundle() . '-group_manager' ])) {
+      $variables['badges'] = [
+        [
+          'label' => t('Group manager'),
+          'classes' => ['badge-secondary teaser__badge'],
+        ],
+      ];
+    }
+  }
+}
