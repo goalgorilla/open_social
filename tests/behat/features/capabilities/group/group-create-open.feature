@@ -86,8 +86,7 @@ Feature: Create Open Group
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
