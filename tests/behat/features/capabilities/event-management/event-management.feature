@@ -2,35 +2,35 @@
 Feature: Event Management
   Benefit: In order to organise an event
   Role: As a LU
-  Goal/desire: I want to assign event organiser
+  Goal/desire: I want to assign event managers
 
   @LU @perfect @critical
-  Scenario: Successfully assign event organiser
+  Scenario: Successfully assign event managers
     Given I enable the module "social_event_managers"
     And users:
       | name            | mail             | field_profile_organization | status |
-      | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      |
-      | event_organiser_2 | eo_2@example.com | Drupal                     | 1      |
+      | event_manager_1 | em_1@example.com | GoalGorilla                | 1      |
+      | event_manager_2 | em_2@example.com | Drupal                     | 1      |
     And I am logged in as an "authenticated user"
     And I am on "user"
     And I click "Events"
     And I click "Create Event"
     When I fill in the following:
-      | Title | This is an event with event organisers |
+      | Title | This is an event with event managers |
       | Date | 2025-01-01 |
       | Time | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
+    And I fill in "event_manager_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
-    And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
+    And I fill in "event_manager_2" for "field_event_managers[1][target_id]"
     And I press "Save"
-    Then I should see "This is an event with event organisers has been created."
-    And I should see "THIS IS AN EVENT WITH EVENT ORGANISERS"
+    Then I should see "This is an event with event managers has been created."
+    And I should see "THIS IS AN EVENT WITH EVENT MANAGERS"
     And I should see "Body description text" in the "Main content"
-    And I should see "Organisers"
-    And I should not see the link "All Organisers"
+    And I should see the link "Managers"
+    And I should see "Event Managers"
 
     # Create event in group.
     Given I am on "all-groups"
@@ -40,40 +40,40 @@ Feature: Event Management
     And I click "Events"
     And I click "Create Event"
     When I fill in the following:
-      | Title | This is an event with event organisers in group |
+      | Title | This is an event with event managers in group |
       | Date | 2025-01-01 |
       | Time | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I fill in "event_organiser_1" for "field_event_managers[0][target_id]"
+    And I fill in "event_manager_1" for "field_event_managers[0][target_id]"
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
-    And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
+    And I fill in "event_manager_2" for "field_event_managers[1][target_id]"
     And I press "Save and publish"
-    And I should see "This is an event with event organisers in group"
+    And I should see "This is an event with event managers in group"
 
-    # Now test with event_organiser_1
+    # Now test with event_manager_1
     Given I logout
-    And I am logged in as "event_organiser_1"
-    And I open the "event" node with title "This is an event with event organisers"
+    And I am logged in as "event_manager_1"
+    And I open the "event" node with title "This is an event with event managers"
     And I click "Edit content"
     Then I should see "Save and keep published"
     And I should not see "Authoring information"
 
-    Given I open the "event" node with title "This is an event with event organisers in group"
+    Given I open the "event" node with title "This is an event with event managers in group"
     And I click "Edit content"
     Then I should see "Save and keep published"
     And I should not see "Authoring information"
 
-    # Now test with event_organiser_2
+    # Now test with event_manager_2
     Given I logout
-    And I am logged in as "event_organiser_2"
-    And I open the "event" node with title "This is an event with event organisers"
+    And I am logged in as "event_manager_2"
+    And I open the "event" node with title "This is an event with event managers"
     And I click "Edit content"
     Then I should see "Save and keep published"
     And I should not see "Authoring information"
 
-    Given I open the "event" node with title "This is an event with event organisers in group"
+    Given I open the "event" node with title "This is an event with event managers in group"
     And I click "Edit content"
     Then I should see "Save and keep published"
     And I should not see "Authoring information"
@@ -83,4 +83,4 @@ Feature: Event Management
       | title                   | body          |
       | Topic regression test   | Description   |
     And I open the "topic" node with title "Topic regression test"
-    Then I should not see "Organisers"
+    Then I should not see the link "Managers"

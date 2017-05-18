@@ -32,19 +32,117 @@
 
 @import 'settings';
 
-// Drupal default display
+
+// Display of attachments in nodes
+
+.node__files {
+  margin-top: 40px;
+}
+
+.files__grid {
+  @include list-unstyled;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  @include for-tablet-landscape-up {
+    justify-content: flex-start;
+  }
+
+}
+
+.files__title {
+  margin-bottom: 20px;
+}
+
+.node-file {
+  @include z-depth-1;
+  flex: 0 0 47.5%;
+  margin-bottom: 13px;
+  font-size: 0.75rem;
+  background: $gray-lightest;
+
+  @include for-tablet-landscape-up {
+    flex-basis: 23%;
+    margin-right: 2%;
+
+    &:nth-child(4n+4) {
+      margin-right: 0;
+    }
+  }
+
+  &:hover {
+    @include z-depth-2;
+
+    &:after {
+
+    }
+
+  }
+}
+
+.node-file__link {
+  display: block;
+  position: relative;
+  height: 100px;
+  padding: $padding-base-horizontal;
+  color: inherit;
+  text-decoration: none;
+}
+
+.node-file__title {
+  @include multiLineEllipsis(1.35em, 2, $gray-lightest);
+  display: block;
+  word-break: break-word;
+  word-wrap: normal;
+}
+
+.node-file__type {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 4px;
+  position: absolute;
+  bottom: $padding-base-horizontal;
+  width: calc(100% - (2 * #{$padding-base-horizontal}) );
+}
+
+.node-file__icon {
+  margin-right: 8px;
+  user-select: none;
+  width: 16px;
+  height: 16px;
+}
+
+.node-file__size,
+.node-file__count {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1rem;
+}
+
+.node-file__count {
+  flex: 1 0 100%;
+  white-space: nowrap;
+  margin: 5px 0 0 24px;
+}
+
+
+// Edit files, drupal default display
 
 .file {
   display: flex;
   font-size: 0.75rem;
-  margin: 10px 0;
+  margin: 10px 0 1rem;
   width: 100%;
   background: #fff;
   border: 1px solid $gray-lighter;
   padding: 0.5em 0;
 
   @include for-tablet-portrait-up {
-    margin-top: 5px;
+    margin-top: 0;
   }
 
   > span {
@@ -59,10 +157,6 @@
     vertical-align: middle;
     border-left: 1px solid inherit;
   }
-}
-
-.form-managed-file .file {
-  margin-bottom: 0;
 }
 
 .file-icon {
@@ -92,100 +186,3 @@
   white-space: pre;
   vertical-align: middle;
 }
-
-// Display of attachments as cards
-
-.card-files {
-  margin-top: 40px;
-}
-
-.card-files__grid {
-  @include list-unstyled;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  @include for-tablet-landscape-up {
-    justify-content: flex-start;
-  }
-
-}
-
-.card-files__title {
-  margin-bottom: 20px;
-}
-
-.card-file {
-  @include z-depth-1;
-  flex: 0 0 47.5%;
-  margin-bottom: 13px;
-  font-size: 0.75rem;
-  background: $gray-lightest;
-
-  @include for-tablet-landscape-up {
-    flex-basis: 23%;
-    margin-right: 2%;
-
-    &:nth-child(4n+4) {
-      margin-right: 0;
-    }
-  }
-
-  &:hover {
-    @include z-depth-2;
-
-    &:after {
-
-    }
-
-  }
-}
-
-.card-file__link {
-  display: block;
-  position: relative;
-  height: 100px;
-  padding: $padding-base-horizontal;
-  color: inherit;
-  text-decoration: none;
-}
-
-.card-file__title {
-  @include multiLineEllipsis(1.35em, 2, $gray-lightest);
-  display: block;
-  word-break: break-word;
-  word-wrap: normal;
-}
-
-.card-file__type {
-  display: flex;
-  flex-wrap: wrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-top: 4px;
-  position: absolute;
-  bottom: $padding-base-horizontal;
-  width: calc(100% - (2 * #{$padding-base-horizontal}) );
-}
-
-.card-file__icon {
-  margin-right: 8px;
-  user-select: none;
-  width: 16px;
-  height: 16px;
-}
-
-.card-file__size,
-.card-file__count {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  line-height: 1rem;
-}
-
-.card-file__count {
-  flex: 1 0 100%;
-  white-space: nowrap;
-  margin: 5px 0 0 24px;
-}
-

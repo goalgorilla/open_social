@@ -166,7 +166,6 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
           $user_manager->setAccountId($account_id);
           $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
           $account->save();
-          $form_state->getFormObject()->setEntity($account);
 
           if ($module_handler->moduleExists('profile')) {
             // Create profile if it doesn't exists.
@@ -189,7 +188,6 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       if (!$account->id()) {
         $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
         $account->save();
-        $form_state->getFormObject()->setEntity($account);
       }
 
       user_login_finalize($account);

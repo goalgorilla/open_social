@@ -18,14 +18,13 @@ Feature: I want to have a profile
       | Function   | Behat test |
       | Organization | GoalGorilla |
       | Phone number | 911 |
-    And I select "UA" from "Country"
+    And I select "NL" from "Country"
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-         | City | Lviv |
-         | Street address | Fedkovycha 60a |
-         | Postal code | 79000 |
-         | Oblast | Lviv oblast |
+         | City | Enschede |
+         | Street address | Oldenzaalsestraat |
+         | Postal code | 7514DR |
     And I fill in the "edit-field-profile-self-introduction-0-value" WYSIWYG editor with "Self intro text."
     And I press "Save"
     Then I should see "Edit"
@@ -33,8 +32,7 @@ Feature: I want to have a profile
 #    And I should see "GoalGorilla"
 #    And I should see "Behat test"
     And I should see "911"
-    And I should see "Fedkovycha 60a"
-    And I should see "79000"
-    And I should see "Lviv"
-    And I should see "Lviv oblast"
+    And I should see "Oldenzaalsestraat"
+    And I should see "7514DR"
+    And I should see "Enschede"
     And I should see "Self intro text"

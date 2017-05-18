@@ -28,11 +28,6 @@
 
 .stream-item {
   position: relative;
-
-  &:first-of-type {
-    z-index: 2; //prevents post visibility dropdown from showing under next card in stream
-  }
-
 }
 
 .stream-icon {
@@ -93,6 +88,10 @@
       border-width: 8px;
       top: 36px;
     }
+  }
+
+  .card__block {
+    z-index: initial; //prevents post visibility dropdown from showing under next card in stream
   }
 
   .mediawrapper {

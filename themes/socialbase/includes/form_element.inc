@@ -9,7 +9,8 @@ use Drupal\Component\Utility\Html as HtmlUtility;
 function socialbase_preprocess_form_element(&$variables) {
 
   // Tell the label for a switch form element it is in that switch form element
-  if (!empty($variables['element']['#attributes']['data-switch'])) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $variables['label']['#switch'] = TRUE;
   }
 
@@ -40,8 +41,8 @@ function socialbase_preprocess_form_element_label(&$variables) {
 
 
 /**
- * Implements hook_theme_suggestions_form_element_alter().
- */
+* Implements hook_theme_suggestions_form_element_alter().
+*/
 function socialbase_theme_suggestions_form_element_alter(array &$suggestions, array $variables) {
 
   // Lets add the form element parent to the theme suggestions.
@@ -50,7 +51,8 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 
-  if (!empty($variables['element']['#attributes']['data-switch'])) {
+  $switch_elements = ['email_notifications', 'profile_privacy'];
+  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }

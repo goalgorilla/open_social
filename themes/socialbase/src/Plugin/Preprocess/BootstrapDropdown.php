@@ -23,5 +23,7 @@ class BootstrapDropdown extends \Drupal\bootstrap\Plugin\Preprocess\BootstrapDro
     if (isset($variables['items']['#items']['publish']['element']['#button_type']) && $variables['items']['#items']['publish']['element']['#button_type'] == 'primary') {
       $variables['alignment'] = 'right';
     }
+
   }
+
 }

@@ -5,10 +5,12 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 100%;
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
-  min-width: 0;
 }
 
 .list-item__avatar {
@@ -19,7 +21,6 @@
           flex: 0 0 24px;
   margin-right: 10px;
   border-radius: 50%;
-  margin-top: 2px;
 }
 
 .list-item__avatar--medium {
@@ -40,10 +41,9 @@
 
 .list-item__text {
   -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
   margin: 0;
-  line-height: 1.25;
 }
 
 .list-item__text p {

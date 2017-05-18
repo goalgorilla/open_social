@@ -3,14 +3,14 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.compact
-    - core.entity_view_mode.profile.compact_teaser
+    - core.entity_view_mode.profile.small_teaser
     - core.entity_view_mode.profile.teaser
   module:
     - node
     - profile
     - user
 id: managers
-label: 'Event organisers'
+label: 'Event managers'
 module: views
 description: ''
 tag: ''
@@ -129,7 +129,7 @@ display:
           view_mode: default
       filters: {  }
       sorts: {  }
-      title: Organisers
+      title: Managers
       header: {  }
       footer: {  }
       empty:
@@ -142,7 +142,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'We could not find any event organisers for this event.'
+          content: 'We could not find any event managers for this event.'
           plugin_id: text_custom
       relationships:
         uid:
@@ -216,7 +216,6 @@ display:
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_teaser'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'
@@ -231,7 +230,7 @@ display:
     position: 2
     display_options:
       display_extenders: {  }
-      block_description: 'Organisers Block'
+      block_description: 'Managers Block'
       footer: {  }
       defaults:
         footer: false
@@ -252,11 +251,11 @@ display:
         type: 'entity:profile'
         options:
           relationship: none
-          view_mode: compact_teaser
+          view_mode: small_teaser
       pager:
         type: some
         options:
-          items_per_page: 10
+          items_per_page: 2
           offset: 0
       arguments:
         nid:
@@ -299,7 +298,7 @@ display:
       link_url: ''
       use_more: false
       use_more_always: false
-      use_more_text: 'See all organisers'
+      use_more_text: 'See all managers'
       block_hide_empty: true
       empty: {  }
     cache_metadata:
@@ -311,7 +310,6 @@ display:
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_teaser'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'
@@ -326,10 +324,10 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: node/%node/organisers
+      path: node/%node/managers
       menu:
         type: tab
-        title: Organisers
+        title: Managers
         description: ''
         expanded: false
         parent: ''
@@ -379,7 +377,6 @@ display:
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_teaser'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'

@@ -33,12 +33,6 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
         if (in_array('image-data__crop-wrapper', $variables['element']['#attributes']['class'])) {
           $suggestions[] = 'details__crop';
         }
-
-        // Template suggestion for upload attachments in comments
-        if (isset($variables['element']['#entity_type']) && $variables['element']['#entity_type'] == 'comment') {
-          $suggestions[] = 'details__comment';
-        }
-
         break;
 
       case 'file_link':
@@ -46,21 +40,9 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
         // Get the route name for file links
         $route_name = \Drupal::routeMatch()->getRouteName();
 
-        // If the file link is part of a node field, suggest another template
+        // If the file link is on the node full page, suggest another template
         if ($route_name == 'entity.node.canonical') {
-          $file_id = $context1['file']->id();
-          $node = \Drupal::routeMatch()->getParameter('node');
-          $files = $node->get('field_files')->getValue();
-          foreach($files as $file) {
-            if ($file['target_id'] == $file_id) {
-              $suggestions[] = 'file_link__card';
-              break;
-            }
-          }
-        }
-        // If the file link is part of a group field, suggest another template
-        if ($route_name == 'entity.group.canonical') {
-          $suggestions[] = 'file_link__card';
+          $suggestions[] = 'file_link__node';
         }
         break;
 

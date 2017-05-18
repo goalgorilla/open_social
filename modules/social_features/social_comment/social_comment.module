@@ -34,30 +34,16 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
 
-  $route_name = \Drupal::routeMatch()->getRouteName();
-
-  switch ($route_name) {
-    // Comment reply form.
-    case 'comment.reply':
-      $form['actions']['submit']['#attributes']['value'] = t('Reply');
-      $form['actions']['submit']['#value'] = t('Reply');
-      $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
-      break;
-
-    // Comment edit form.
-    case 'entity.comment.edit_form':
-      $form['actions']['submit']['#attributes']['value'] = t('Submit');
-      $form['actions']['submit']['#value'] = t('Submit');
-      break;
-
-    default:
-      // By default the comment form has the "Reply comment" page URL in the "action" attribute.
-      // So we should set the current URL to exclude changing the route name.
-      // Otherwise this "switch" won't work.
-      $form['#action'] = \Drupal::request()->getRequestUri();
-      break;
+  // Comment reply form.
+  if (\Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+    $form['actions']['submit']['#value'] = t('Reply');
+    $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
   }
-
+  // Comment edit form.
+  if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+    $form['actions']['submit']['#value'] = t('Submit');
+    $form['#title'] = t('Edit comment');
+  }
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 }
 

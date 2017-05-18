@@ -20,5 +20,6 @@ function socialbase_preprocess_menu_local_action(&$variables) {
       );
 
     $variables['attributes']['class'][] = 'margin-bottom-l';
+    $variables['attributes']['class'][] = 'margin-left-l';
   }
 }

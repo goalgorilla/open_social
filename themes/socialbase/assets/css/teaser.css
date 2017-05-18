@@ -62,9 +62,10 @@
 }
 
 .teaser__content-line {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   max-width: 100%;
   font-size: 0.875rem;
 }
@@ -72,45 +73,41 @@
 .teaser__content-type-icon {
   width: 14px;
   height: 14px;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 14px;
-          flex: 0 0 14px;
-  line-height: 21px;
-  margin-top: 3px;
+  line-height: 16px;
+  display: inline-block;
+  vertical-align: middle;
   fill: #555555;
   margin-right: 12px;
 }
 
 .teaser__content-text {
-  line-height: 21px;
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-  white-space: nowrap;
+  vertical-align: middle;
+  line-height: 1;
+  margin-right: 5px;
+  display: inline;
 }
 
 .teaser__published {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  min-width: 0;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  width: 85%;
 }
 
 .teaser__published-author {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-  text-overflow: ellipsis;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
   overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-right: 4px;
 }
 
 .teaser__published-date {
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
-  margin-right: 4px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
 }
 
 .teaser__badge {

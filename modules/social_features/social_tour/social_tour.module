@@ -12,9 +12,6 @@ use Drupal\tour\Entity\Tour;
  * Implements hook_preprocess_HOOK().
  */
 function social_tour_preprocess_container(&$variables) {
-  if (!_social_tour_init()) {
-    return;
-  }
   // In TourViewBuilder.php a container is rendered, this container has
   // children attribute with the total count. If the count of these children
   // is 1, we can unset it. We don't want to show 1 of 1 count.
@@ -47,7 +44,7 @@ function social_tour_preprocess_container(&$variables) {
  * Only for users with access though.
  */
 function social_tour_page_attachments(array &$page) {
-  if (!_social_tour_init()) {
+  if (!\Drupal::currentUser()->hasPermission('access tour')) {
     return;
   }
 
@@ -77,7 +74,7 @@ function social_tour_page_attachments(array &$page) {
  * any tours a user has already seen.
  */
 function social_tour_page_bottom(array &$page_bottom) {
-  if (!_social_tour_init()) {
+  if (!\Drupal::currentUser()->hasPermission('access tour')) {
     return;
   }
 
@@ -135,35 +132,4 @@ function social_tour_page_bottom(array &$page_bottom) {
       }
     }
   }
-}
-
-/**
- * Static wrapper, since this is called approx. 8 times per page load.
- */
-function _social_tour_init() {
-  $data = &drupal_static(__FUNCTION__);
-
-  if (!isset($data['social_tour'])) {
-    $data['social_tour'] = _social_tour_check();
-  }
-
-  return $data['social_tour'];
-}
-
-/**
- * Check some stuff before doing anything with these tours.
- */
-function _social_tour_check() {
-  // Check if enabled (by settings).
-  $tour_config = \Drupal::config('social_tour.settings');
-  if ($tour_config->get('social_tour_enabled') == FALSE) {
-    return FALSE;
-  }
-
-  // Check permissions.
-  if (!\Drupal::currentUser()->hasPermission('access tour')) {
-    return FALSE;
-  }
-
-  return TRUE;
 }

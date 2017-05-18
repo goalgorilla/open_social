@@ -22,8 +22,8 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
 
     $entity_type_id = $entity_type->id();
 
-    if ($collection_route = $this->getCollectionRoute($entity_type)) {
-      $collection->add("entity.{$entity_type_id}.collection", $collection_route);
+    if ($add_form_route = $this->getAddFormRoute($entity_type)) {
+      $collection->add("entity.{$entity_type_id}.add_form", $add_form_route);
     }
 
     if ($settings_form_route = $this->getSettingsFormRoute($entity_type)) {
@@ -34,7 +34,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
   }
 
   /**
-   * Gets the collection route.
+   * Gets the add-form route.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type.
@@ -42,17 +42,32 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getCollectionRoute(EntityTypeInterface $entity_type) {
-    if ($entity_type->hasLinkTemplate('collection') && $entity_type->hasListBuilderClass()) {
+  protected function getAddFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('add-form')) {
       $entity_type_id = $entity_type->id();
-      $route = new Route($entity_type->getLinkTemplate('collection'));
+      $parameters = [
+        $entity_type_id => ['type' => 'entity:' . $entity_type_id],
+      ];
+
+      $route = new Route($entity_type->getLinkTemplate('add-form'));
+      // Use the add form handler, if available, otherwise default.
+      $operation = 'default';
+      if ($entity_type->getFormClass('add')) {
+        $operation = 'add';
+      }
+
+      // Title.
+      $title = t("Add @entity_type", [ "@entity_type" => $entity_type->getLabel() ]);
 
       $route
         ->setDefaults([
-          '_entity_list' => $entity_type_id,
-          '_title' => "{$entity_type->getLabel()} list",
+          '_entity_form' => "{$entity_type_id}.{$operation}",
+          '_title' => $title->render(),
         ])
-        ->setRequirement('_entity_create_access', $entity_type_id)
+        ->setRequirement('_entity_create_access', $entity_type_id);
+
+      $route
+        ->setOption('parameters', $parameters)
         ->setOption('_admin_route', TRUE);
 
       return $route;

@@ -33,7 +33,6 @@ class Post extends DemoEntity {
 
     return $entry + [
       'langcode' => $item['langcode'],
-      'type' => $item['type'],
       'field_post' => $item['field_post'],
       'field_visibility' => $item['field_visibility'],
       'field_recipient_user' => $recipient_id,

@@ -28,7 +28,6 @@ class ExportUser {
         t('UUID'),
         t('Email'),
         t('Last login'),
-        t('Last access'),
         t('Registration date'),
         t('Status'),
         t('Roles'),
@@ -52,19 +51,11 @@ class ExportUser {
     $status = $entity->get('status')->getValue();
 
     // Format last login time.
-    if ($last_login_time = $entity->getLastLoginTime()) {
-      $last_login = \Drupal::service('date.formatter')->format($last_login_time, 'custom', 'Y/m/d - H:i');
+    if ($time = $entity->getLastLoginTime()) {
+      $last_login = \Drupal::service('date.formatter')->format($time, 'custom', 'Y/m/d - H:i');
     }
     else {
       $last_login = t('never');
-    }
-
-    // Format last access time.
-    if ($last_access_time = $entity->getLastAccessedTime()) {
-      $last_access = \Drupal::service('date.formatter')->format($last_access_time, 'custom', 'Y/m/d - H:i');
-    }
-    else {
-      $last_access = t('never');
     }
 
     // Add row.
@@ -73,7 +64,6 @@ class ExportUser {
       $entity->uuid(),
       $entity->getEmail(),
       $last_login,
-      $last_access,
       \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
       !empty($status[0]['value']) ? t('Active') : t('Blocked'),
       implode(', ', $roles),
