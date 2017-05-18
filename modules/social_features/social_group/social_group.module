@@ -5,6 +5,7 @@
  * The Social group module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -78,11 +79,17 @@ function social_group_preprocess_group(&$variables) {
   /** @var GroupInterface $group */
   $group = $variables['group'];
   $variables['joined'] = FALSE;
+  $variables['closed_group'] = FALSE;
+  $variables['cta'] = t('');
 
   $account = \Drupal::currentUser();
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   $group_type_id = $group->getGroupType()->id();
+
+  if ($group_type_id == 'closed_group') {
+    $variables['closed_group_lock'] = t('closed group');
+  }
 
   // Set joined to true for teaser when current logged in
   // user is member of the group.
@@ -93,9 +100,15 @@ function social_group_preprocess_group(&$variables) {
       $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
     }
   }
-  elseif ($group->hasPermission('join group', $account) /**&& $group_type_id != 'closed_group'*/) {
+  elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    // If the group type is a closed_group
+    if ($group_type_id == 'closed_group') {
+      // Users can only be invited
+      $variables['closed_group'] = TRUE;
+      $variables['cta'] = t('invitation only');
+    }
   }
 
   // Add the hero styled image.
@@ -474,7 +487,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     $group_type = $group->getGroupType()->id();
 
     // If it is a closed_group and the user is not an member
-    if ($group_type == 'closed_group' && !$group->getMember($user) && $user != 1) {
+    if ($group_type == 'closed_group' && !$group->getMember($user) && $user != '1') {
       // Disable these local tasks
       $data['tabs'][0]['group.view'] = [];
       $data['tabs'][0]['group.content'] = [];
@@ -618,4 +631,28 @@ function social_group_preprocess_profile(&$variables) {
       ];
     }
   }
+}
+
+/**
+ * Implements hook_block_access().
+ *
+ * Check if the user is viewing a closed_group and then look if the user is a member
+ * If the user is not a member, the user has no access to view this block.
+ */
+function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
+  $group = _social_group_get_current_group();
+  if ($group) {
+    if ($group->getGroupType()->id() == 'closed_group' && !$group->getMember($account)) {
+      $forbidden_blocks = [
+        'views_block:upcoming_events-upcoming_events_group',
+        'views_block:latest_topics-group_topics_block'
+      ];
+      foreach ($forbidden_blocks as $forbidden_block) {
+        if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+  }
+  return AccessResult::neutral();
 }

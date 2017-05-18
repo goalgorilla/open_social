@@ -55,7 +55,7 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
         'view.group_topics.page_group_topics',
       ];
       // Check if the user meets the conditions, then perform a redirect if needed.
-      if ($group_type == 'closed_group' && !$group->getMember($user) && in_array($routeMatch, $routes)) {
+      if ($group_type == 'closed_group' && !$group->getMember($user) && in_array($routeMatch, $routes) && $user != '1') {
         $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about',['group' => $group->id()])->toString()));
       }
     }
