@@ -28,7 +28,26 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    *   contains a nested array structure of overrides.
    */
   public function loadOverrides($names) {
-    // TODO: Implement loadOverrides() method.
+    $overrides = array();
+    $config_factory = \Drupal::service('config.factory');
+
+    // Override event form display.
+    $config_name = 'message.template.create_post_community';
+    if (in_array($config_name, $names)) {
+      $config = $config_factory->getEditable($config_name);
+
+      $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
+      $entities['post-photo'] = 'post-photo';
+
+      $overrides[$config_name] = [
+        'third_party_settings' => [
+          'activity_logger' => [
+            'activity_bundle_entities' => $entities
+          ]
+        ],
+      ];
+    }
+    return $overrides;
   }
 
   /**
