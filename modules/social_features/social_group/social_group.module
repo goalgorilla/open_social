@@ -638,6 +638,11 @@ function social_group_preprocess_profile(&$variables) {
  *
  * Check if the user is viewing a closed_group and then look if the user is a member
  * If the user is not a member, the user has no access to view this block.
+ *
+ * @param \Drupal\block\Entity\Block $block
+ * @param $operation
+ * @param \Drupal\Core\Session\AccountInterface $account
+ * @return \Drupal\Core\Access\AccessResultForbidden|\Drupal\Core\Access\AccessResultNeutral
  */
 function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
   $group = _social_group_get_current_group();

@@ -58,6 +58,10 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
       if ($group_type == 'closed_group' && !$group->getMember($user) && in_array($routeMatch, $routes) && $user != '1') {
         $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about',['group' => $group->id()])->toString()));
       }
+      // If someone tries to join a closed_group through the URL, that's not gonna happen.
+      if ($group_type == 'closed_group' && $routeMatch == 'entity.group.join' && $user != '1') {
+        $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about',['group' => $group->id()])->toString()));
+      }
     }
   }
 
