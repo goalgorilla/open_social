@@ -3,22 +3,36 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.post.activity_comment
+    - field.field.post.photo.field_post
+    - field.field.post.photo.field_post_comments
     - field.field.post.photo.field_post_image
+    - field.field.post.photo.field_recipient_group
+    - field.field.post.photo.field_recipient_user
+    - field.field.post.photo.field_visibility
+    - image.style.social_post_photo
     - social_post.post_type.photo
   module:
     - image
+    - text
     - user
 id: post.photo.activity_comment
 targetEntityType: post
 bundle: photo
 mode: activity_comment
 content:
+  field_post:
+    type: text_default
+    weight: 2
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
   field_post_image:
     weight: 1
-    label: above
+    label: hidden
     settings:
-      image_style: ''
-      image_link: ''
+      image_style: social_post_photo
+      image_link: content
     third_party_settings: {  }
     type: image
     region: content
@@ -29,4 +43,8 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_post_comments: true
+  field_recipient_group: true
+  field_recipient_user: true
+  field_visibility: true
