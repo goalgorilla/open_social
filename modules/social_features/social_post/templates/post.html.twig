@@ -23,6 +23,10 @@
 
   {{ date }}
 
+  {% if content.field_post_image %}
+    {{- content.field_post_image -}}
+  {% endif %}
+
   {% if content.field_post %}
     {{- content.field_post -}}
   {% endif %}
