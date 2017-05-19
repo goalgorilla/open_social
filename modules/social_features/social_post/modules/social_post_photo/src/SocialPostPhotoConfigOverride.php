@@ -29,11 +29,33 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = array();
-    $config_factory = \Drupal::service('config.factory');
+
+    // Temporary override to allow only 1 photo.
+    $config_name = 'field.storage.post.field_post_image';
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
+        'cardinality' => 1,
+      ];
+    }
+
+    // Override postblocks on activity streams.
+    $config_names = [
+      'block.block.postblock',
+      'block.block.postongroupblock',
+      'block.block.postonprofileblock',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name] = [
+          'plugin' => 'post_photo_block',
+        ];
+      }
+    }
 
     // Override event form display.
     $config_name = 'message.template.create_post_community';
     if (in_array($config_name, $names)) {
+      $config_factory = \Drupal::service('config.factory');
       $config = $config_factory->getEditable($config_name);
 
       $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
