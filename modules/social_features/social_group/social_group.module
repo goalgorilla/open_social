@@ -197,7 +197,7 @@ function social_group_preprocess_group(&$variables) {
 function social_group_group_insert(GroupInterface $group) {
   // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
   // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() == 'open_group' || 'closed_group') {
+  if ($group->getGroupType()->id() == 'open_group' || $group->getGroupType()->id() == 'closed_group') {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
@@ -241,6 +241,7 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
  * Implements hook_form_FORM_ID_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  dpm($form_id);
   $action_forms = [
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
@@ -251,7 +252,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   ];
 
   // Perform alterations on joining / leaving groups.
-  if ($form_id == 'group_content_open_group-group_membership_delete_form' || 'group_content_closed_group-group_membership_delete_form') {
+  if (in_array($form_id, ['group_content_open_group-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
   }
 
@@ -263,7 +264,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     ];
     $form['path']['#type'] = 'hidden';
   }
-  if ($form_id == 'group_open_group_edit_form' || 'group_open_group_add_form') {
+  if (in_array($form_id, ['group_open_group_edit_form', 'group_open_group_add_form'])) {
     $form['path']['#type'] = 'hidden';
   }
 
@@ -285,11 +286,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   $membership_forms = array(
     'group_content_open_group-group_membership_edit_form',
     'group_content_open_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_edit_form',
   );
   if (in_array($form_id, $membership_forms)) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
+    $form['path']['#type'] = 'hidden';
 
     if ('group_content_open_group-group_membership_edit_form' == $form_id) {
       // Remove the user selection autocomplete on editing group membership.
@@ -345,7 +349,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
 
-    if ($complete_form['#form_id'] == 'group_content_open_group-group_membership_group-join_form' || 'group_content_closed_group-group_membership_group-join_form') {
+    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form'])) {
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
