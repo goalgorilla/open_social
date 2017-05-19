@@ -6,4 +6,8 @@ services:
   social_user.username_constraint:
     class: Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator
     arguments: ['@typed_data_manager']
-
+  social_user.user_route_context:
+    class: Drupal\social_user\ContextProvider\UserRouteContext
+    arguments: ['@current_route_match', '@entity.manager']
+    tags:
+      - { name: context_provider }
