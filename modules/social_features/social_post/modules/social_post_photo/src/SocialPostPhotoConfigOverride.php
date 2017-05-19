@@ -40,14 +40,14 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
 
     // Override postblocks on activity streams.
     $config_names = [
-      'block.block.postblock',
-      'block.block.postongroupblock',
-      'block.block.postonprofileblock',
+      'block.block.postblock' => 'post_photo_block',
+      'block.block.postongroupblock' => 'post_photo_group_block',
+      'block.block.postonprofileblock' => 'post_photo_profile_block',
     ];
-    foreach ($config_names as $config_name) {
+    foreach ($config_names as $config_name => $plugin) {
       if (in_array($config_name, $names)) {
         $overrides[$config_name] = [
-          'plugin' => 'post_photo_block',
+          'plugin' => $plugin,
         ];
       }
     }
