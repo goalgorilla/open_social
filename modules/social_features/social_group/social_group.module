@@ -647,7 +647,7 @@ function social_group_preprocess_profile(&$variables) {
 function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
   $group = _social_group_get_current_group();
   // Check if there is a group set
-  if ($group) {
+  if ($group && $account->id() != 1) {
     // If it is closed and the current user is not an member of this group
     if ($group->getGroupType()->id() == 'closed_group' && !$group->getMember($account)) {
       // Then he is not allowed to see these blocks
