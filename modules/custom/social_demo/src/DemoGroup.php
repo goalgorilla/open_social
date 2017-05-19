@@ -86,8 +86,6 @@ abstract class DemoGroup extends DemoContent {
         continue;
       }
 
-      $account = current($accounts);
-
       // Create array with data of a group.
       $item['uid'] = $account->id();
       $item['created'] = $item['changed'] = $this->createDate($item['created']);
