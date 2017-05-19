@@ -4,3 +4,17 @@
  * The Social post photo module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Don't show a title nor a description.
+  $form['field_post_image']['widget'][0]['#title'] = '';
+  $form['field_post_image']['widget'][0]['#description'] = '';
+}
