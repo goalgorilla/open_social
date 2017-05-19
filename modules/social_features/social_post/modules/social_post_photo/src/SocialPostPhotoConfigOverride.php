@@ -29,6 +29,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = array();
+    $config_factory = \Drupal::service('config.factory');
 
     // Temporary override to allow only 1 photo.
     $config_name = 'field.storage.post.field_post_image';
@@ -61,7 +62,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config_factory = \Drupal::service('config.factory');
         $config = $config_factory->getEditable($config_name);
 
         $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
@@ -77,8 +77,22 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
             ],
           ];
         }
-
       }
+    }
+
+    // Override like and dislike settings.
+    $config_name = 'like_and_dislike.settings';
+    if (in_array($config_name, $names)) {
+      $config = $config_factory->getEditable($config_name);
+      // Get enabled post bundles.
+      $post_types = $config->get('enabled_types.post');
+      $post_types['photo'] = 'photo';
+
+      $overrides[$config_name] = [
+        'enabled_types' => [
+          'post' => $post_types,
+        ],
+      ];
     }
 
     return $overrides;
