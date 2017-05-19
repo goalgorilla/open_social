@@ -17,4 +17,6 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
   // Don't show a title nor a description.
   $form['field_post_image']['widget'][0]['#title'] = '';
   $form['field_post_image']['widget'][0]['#description'] = '';
+  // Add JS to change the placeholder. @TODO: Improve this.
+  $form['#attached']['library'][] = 'social_post_photo/placeholder';
 }
