@@ -1,0 +1,31 @@
+<?php
+/**
+ * @file
+ * The Social post photo installation.
+ */
+
+
+function social_post_photo_uninstall() {
+  $configs = [
+    'core.entity_form_display.post.photo.default',
+    'core.entity_form_display.post.photo.group',
+    'core.entity_form_display.post.photo.profile',
+    'core.entity_view_display.post.photo.activity',
+    'core.entity_view_display.post.photo.activity_comment',
+    'core.entity_view_display.post.photo.default',
+    'field.field.post.photo.field_post',
+    'field.field.post.photo.field_post_comments',
+    'field.field.post.photo.field_post_image',
+    'field.field.post.photo.field_recipient_group',
+    'field.field.post.photo.field_recipient_user',
+    'field.field.post.photo.field_visibility',
+    'field.storage.post.field_post_image',
+    'image.style.social_post_photo',
+    'social_post.post_type.photo',
+  ];
+
+  foreach ($configs as $config) {
+    // Deleting config.
+    \Drupal::configFactory()->getEditable($config)->delete();
+  }
+}
