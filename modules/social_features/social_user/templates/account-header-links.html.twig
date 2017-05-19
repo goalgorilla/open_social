@@ -14,7 +14,7 @@
 #}
 
 <ul class="nav navbar-nav navbar-right">
-{% for item in links|without('search_block') %}
+{% for item in links|without('search_block') if item.access is not defined or item.access %}
     <li class="{{ item.classes }}">
         <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
           {% if item.icon_image %}
@@ -29,7 +29,7 @@
         {% if item.below %}
             {% if item.below is iterable %}
               <ul class="dropdown-menu">
-                {% for item in item.below %}
+                {% for item in item.below if item.access is not defined or item.access %}
                   {% if item.url %}
                     <li class="{{ item.classes }}">
                       <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
