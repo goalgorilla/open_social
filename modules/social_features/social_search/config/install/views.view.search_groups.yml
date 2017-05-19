@@ -72,6 +72,7 @@ display:
         options:
           view_modes:
             'entity:group':
+              closed_group: teaser
               open_group: teaser
       fields:
         search_api_language:
@@ -209,9 +210,10 @@ display:
           plugin_id: search_api_fulltext
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }
@@ -224,9 +226,10 @@ display:
       display_extenders: {  }
       path: search/groups/%keys
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }
@@ -265,9 +268,10 @@ display:
       defaults:
         header: false
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }

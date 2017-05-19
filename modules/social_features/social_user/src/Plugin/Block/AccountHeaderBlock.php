@@ -78,7 +78,7 @@ class AccountHeaderBlock extends BlockBase {
       }
 
       // Check if the current user is allowed to create new Groups.
-      if($account->hasPermission('create open_group group')){
+      if($account->hasPermission('create open_group group' || 'create closed_group group')){
         $links['add']['below']['add_group'] = array(
           'classes' => '',
           'link_attributes' => '',
@@ -88,7 +88,7 @@ class AccountHeaderBlock extends BlockBase {
           'title' => $this->t('Create New Group'),
           'label' => $this->t('New group'),
           'title_classes' => '',
-          'url' => Url::fromUserInput('/group/add/open_group'),
+          'url' => Url::fromUserInput('/group/add'),
         );
       }
 
