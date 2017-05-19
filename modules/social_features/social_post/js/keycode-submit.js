@@ -15,7 +15,7 @@
         textarea.on("keydown", function (e) {
           // Make sure the textarea contains text.
           if ($.trim(textarea.val()) != "") {
-            if (e.keyCode == 13 && e.ctrlKey) {
+            if ((e.keyCode == 13 && e.ctrlKey) || (e.keyCode == 13 && e.metaKey)){
               e.preventDefault();
               submit.prop('disabled', true);
               form.submit();
