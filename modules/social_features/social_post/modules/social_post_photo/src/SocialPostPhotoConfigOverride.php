@@ -52,23 +52,35 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
       }
     }
 
-    // Override event form display.
-    $config_name = 'message.template.create_post_community';
-    if (in_array($config_name, $names)) {
-      $config_factory = \Drupal::service('config.factory');
-      $config = $config_factory->getEditable($config_name);
+    // Override message templates.
+    $config_names = [
+      'message.template.create_post_community',
+      'message.template.create_post_group',
+      'message.template.create_post_profile',
+      'message.template.create_post_profile_stream',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $config_factory = \Drupal::service('config.factory');
+        $config = $config_factory->getEditable($config_name);
 
-      $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
-      $entities['post-photo'] = 'post-photo';
+        $entities = $config->get('third_party_settings.activity_logger.activity_bundle_entities');
+        // Only override if the configuration for posts exist.
+        if ($entities['post-post'] == 'post-post') {
+          $entities['post-photo'] = 'post-photo';
 
-      $overrides[$config_name] = [
-        'third_party_settings' => [
-          'activity_logger' => [
-            'activity_bundle_entities' => $entities
-          ]
-        ],
-      ];
+          $overrides[$config_name] = [
+            'third_party_settings' => [
+              'activity_logger' => [
+                'activity_bundle_entities' => $entities
+              ]
+            ],
+          ];
+        }
+
+      }
     }
+
     return $overrides;
   }
 
