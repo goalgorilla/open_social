@@ -104,7 +104,7 @@ function social_group_preprocess_group(&$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
     // If the group type is a closed_group
-    if ($group_type_id == 'closed_group') {
+    if ($group_type_id == 'closed_group' && $account->id() != 1) {
       // Users can only be invited
       $variables['closed_group'] = TRUE;
       $variables['cta'] = t('invitation only');
@@ -487,7 +487,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     $group_type = $group->getGroupType()->id();
 
     // If it is a closed_group and the user is not an member
-    if ($group_type == 'closed_group' && !$group->getMember($user) && $user != '1') {
+    if ($group_type == 'closed_group' && !$group->getMember($user) && $user->id() != 1) {
       // Disable these local tasks
       $data['tabs'][0]['group.view'] = [];
       $data['tabs'][0]['group.content'] = [];
