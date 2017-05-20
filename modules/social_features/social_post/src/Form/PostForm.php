@@ -28,13 +28,8 @@ class PostForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Retrieve the form display before it is overwritten in the parent.
-    $bundle = $this->getBundleEntity()->id();
-
-    // Set as variables, since the bundle might be different.
-    $this->post_view_default = 'post.'.$bundle.'.default';
-    $this->post_view_profile = 'post.'.$bundle.'.profile';
-    $this->post_view_group = 'post.'.$bundle.'.group';
+    // Init form modes.
+    $this->setFormMode();
 
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
@@ -106,6 +101,9 @@ class PostForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    // Init form modes.
+    $this->setFormMode();
+
     $display = $this->getFormDisplay($form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
@@ -135,4 +133,16 @@ class PostForm extends ContentEntityForm {
     }
   }
 
+  /**
+   * Function to set the current form modes.
+   */
+  protected function setFormMode() {
+    // Retrieve the form display before it is overwritten in the parent.
+    $bundle = $this->getBundleEntity()->id();
+
+    // Set as variables, since the bundle might be different.
+    $this->post_view_default = 'post.'.$bundle.'.default';
+    $this->post_view_profile = 'post.'.$bundle.'.profile';
+    $this->post_view_group = 'post.'.$bundle.'.group';
+  }
 }
