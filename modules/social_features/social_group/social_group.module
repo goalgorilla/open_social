@@ -8,6 +8,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\views\ViewExecutable;
@@ -73,6 +74,15 @@ function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateI
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Add custom submit handler to delete all content of the group.
+  drupal_set_message(t('are you sure you want to delete this group and all of the content?'), 'warning');
+  $form['actions']['submit']['#submit'][] = '_social_group_delete_closed_group';
+}
+
+/**
  * Form submit for group_open_group_add_form and group_open_group_edit_form.
  *
  * @param array $form
@@ -116,6 +126,58 @@ function _social_group_group_closed_group_edit_form_submit($form, FormStateInter
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_group_preprocess_group(&$variables) {
+
+
+  $group = _social_group_get_current_group();
+
+  if ($group) {
+    $contents = $group->getContent();
+    $nids = [];
+    $types = [
+      'closed_group-group_node-topic',
+      'closed_group-group_node-event'
+    ];
+
+    // This gets all events and topics from the current group.
+    $group_contents = Drupal::entityTypeManager()
+      ->getStorage('group_content')
+      ->loadByProperties([
+        'type' => $types,
+        'gid' => $group->id()
+      ]);
+
+    // For each group content item
+    foreach ($group_contents as $group_content) {
+      $nids = [$group_content->id()];
+      dpm($nids);
+    }
+    //dpm($nids); // returns: array with node id, but for some reason only 1..
+
+
+//    // OPTION A: This is not working...
+//    $a = Drupal::entityTypeManager()
+//      ->getStorage('node')
+//      ->loadByProperties([
+//        'nid' => array_values($nids),
+//      ]);
+//
+//    dpm($a); // returns: []
+//
+//    // OPTION B: This is not working...
+//    $b = Drupal::entityTypeManager()
+//      ->getStorage('node')
+//      ->loadMultiple($nids);
+//
+//    dpm($b); // returns: []
+//
+//    // OPTION C: This is also not working...
+//    $c = \Drupal::entityQuery('node')
+//      ->condition('nid', $nids)
+//      ->execute();
+//
+//    dpm($c); // returns: []
+  }
+
   /** @var GroupInterface $group */
   $group = $variables['group'];
   $variables['joined'] = FALSE;
@@ -124,7 +186,7 @@ function social_group_preprocess_group(&$variables) {
 
   $account = \Drupal::currentUser();
 
-  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type_id */
   $group_type_id = $group->getGroupType()->id();
 
   if ($group_type_id == 'closed_group') {
@@ -707,4 +769,42 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
     }
   }
   return AccessResult::neutral();
+}
+
+/**
+ *  Delete the group and all of its content
+ */
+function _social_group_delete_closed_group() {
+  // Get the group
+  $group = _social_group_get_current_group();
+  // Make sure its an closed_group
+  if ($group && $group->getGroupType()->id() == 'closed_group') {
+    $types = [
+      'closed_group-group_node-topic',
+      'closed_group-group_node-event'
+    ];
+    // This gets all events and topics from the current group.
+    $group_contents = Drupal::entityTypeManager()
+      ->getStorage('group_content')
+      ->loadByProperties([
+        'type' => $types,
+        'gid' => $group->id()
+      ]);
+
+    foreach ($group_contents as $nid) {
+      $nids = [$nid->id()];
+    }
+
+    $batch = [
+      'title' => t('Deleting the group and all the content within the group...'),
+      'operations' => [
+        [
+          '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContent',
+          [$nids]
+        ],
+      ],
+      'finished' => '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContentFinishedCallback',
+    ];
+    batch_set($batch);
+  }
 }
