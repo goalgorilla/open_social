@@ -78,8 +78,9 @@ function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateI
  */
 function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Add custom submit handler to delete all content of the group.
-  drupal_set_message(t('are you sure you want to delete this group and all of the content?'), 'warning');
-  $form['actions']['submit']['#submit'][] = '_social_group_delete_closed_group';
+//  drupal_set_message(t('are you sure you want to delete this group and all of the content?'), 'warning');
+
+  array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
 }
 
 /**
@@ -126,41 +127,6 @@ function _social_group_group_closed_group_edit_form_submit($form, FormStateInter
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_group_preprocess_group(&$variables) {
-
-  $group = _social_group_get_current_group();
-
-  if ($group) {
-    $contents = $group->getContent();
-    $nids = [];
-    $types = [
-      'closed_group-group_node-topic',
-      'closed_group-group_node-event'
-    ];
-
-//    // OPTION A: This is not working...
-//    $a = Drupal::entityTypeManager()
-//      ->getStorage('node')
-//      ->loadByProperties([
-//        'nid' => array_values($nids),
-//      ]);
-//
-//    dpm($a); // returns: []
-//
-//    // OPTION B: This is not working...
-//    $b = Drupal::entityTypeManager()
-//      ->getStorage('node')
-//      ->loadMultiple($nids);
-//
-//    dpm($b); // returns: []
-//
-//    // OPTION C: This is also not working...
-//    $c = \Drupal::entityQuery('node')
-//      ->condition('nid', $nids)
-//      ->execute();
-//
-//    dpm($c); // returns: []
-  }
-
   /** @var GroupInterface $group */
   $group = $variables['group'];
   $variables['joined'] = FALSE;
@@ -762,21 +728,17 @@ function _social_group_delete_closed_group() {
   $group = _social_group_get_current_group();
   // Make sure its an closed_group
   if ($group && $group->getGroupType()->id() == 'closed_group') {
-    $types = [
-      'closed_group-group_node-topic',
-      'closed_group-group_node-event'
-    ];
-    // This gets all events and topics from the current group.
-    $group_contents = Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->loadByProperties([
-        'type' => $types,
-        'gid' => $group->id()
-      ]);
+    $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
+    $group_content_types = array_keys($group_content_types);
 
-    foreach ($group_contents as $nid) {
-      $nids = [$nid->id()];
-    }
+    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query->addField('gcfd', 'entity_id');
+    $query->condition('gcfd.gid', $group->id());
+    $query->condition('gcfd.type', $group_content_types, 'IN');
+    $query->execute()->fetchAll();
+
+    $entity_ids = $query->execute()->fetchAllAssoc('entity_id');
+    $nids = array_keys($entity_ids);
 
     $batch = [
       'title' => t('Deleting the group and all the content within the group...'),
