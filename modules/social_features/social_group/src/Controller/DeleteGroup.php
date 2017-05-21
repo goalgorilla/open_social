@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group\Controller;
 
-use Drupal\Core\Entity\Entity;
 use Drupal\node\Entity\Node;
 
 class DeleteNode {
@@ -13,7 +12,6 @@ class DeleteNode {
     $results = [];
     foreach ($nids as $nid) {
       $node = Node::load($nid);
-      //$entity = Entity::load($group_content);
       $results[] = $node->delete();
     }
     $context['message'] = $message;

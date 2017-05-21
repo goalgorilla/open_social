@@ -127,7 +127,6 @@ function _social_group_group_closed_group_edit_form_submit($form, FormStateInter
  */
 function social_group_preprocess_group(&$variables) {
 
-
   $group = _social_group_get_current_group();
 
   if ($group) {
@@ -137,22 +136,6 @@ function social_group_preprocess_group(&$variables) {
       'closed_group-group_node-topic',
       'closed_group-group_node-event'
     ];
-
-    // This gets all events and topics from the current group.
-    $group_contents = Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->loadByProperties([
-        'type' => $types,
-        'gid' => $group->id()
-      ]);
-
-    // For each group content item
-    foreach ($group_contents as $group_content) {
-      $nids = [$group_content->id()];
-      dpm($nids);
-    }
-    //dpm($nids); // returns: array with node id, but for some reason only 1..
-
 
 //    // OPTION A: This is not working...
 //    $a = Drupal::entityTypeManager()
