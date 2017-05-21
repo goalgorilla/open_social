@@ -726,11 +726,12 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
 function _social_group_delete_closed_group() {
   // Get the group
   $group = _social_group_get_current_group();
-  // Make sure its an closed_group
+  // Make sure its a group of type closed_group
   if ($group && $group->getGroupType()->id() == 'closed_group') {
     $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
+    // Get all the node's related to the current group
     $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
     $query->addField('gcfd', 'entity_id');
     $query->condition('gcfd.gid', $group->id());
@@ -738,14 +739,27 @@ function _social_group_delete_closed_group() {
     $query->execute()->fetchAll();
 
     $entity_ids = $query->execute()->fetchAllAssoc('entity_id');
+    // Store all the node ids
     $nids = array_keys($entity_ids);
 
+    // Get all the posts from this group
+    $query = \Drupal::database()->select('post__field_recipient_group', 'pfrg');
+    $query->addField('pfrg', 'entity_id');
+    $query->condition('pfrg.field_recipient_group_target_id', $group->id());
+    $query->execute()->fetchAll();
+
+    $post_ids = $query->execute()->fetchAllAssoc('entity_id');
+    // Store all the post entity ids
+    $posts = array_keys($post_ids);
+
+    // Pass the $nids and $posts as 2 parameters in the operations
+    // See /social_group/src/Controller/DeleteGroup.php for further process
     $batch = [
       'title' => t('Deleting the group and all the content within the group...'),
       'operations' => [
         [
           '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContent',
-          [$nids]
+          [$nids, $posts]
         ],
       ],
       'finished' => '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContentFinishedCallback',

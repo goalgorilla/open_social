@@ -2,19 +2,27 @@
 
 namespace Drupal\social_group\Controller;
 
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\social_post\Entity\Post;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DeleteGroup {
 
-  public static function deleteGroupAndContent($nids, &$context) {
+  public static function deleteGroupAndContent($nids, $posts, &$context) {
     $results = [];
-
+    // Load each node and delete it.
     foreach ($nids as $nid) {
       $node = Node::load($nid);
       $message = t('Delete @type "@title"', array('@type' => $node->getType(), '@title' => $node->getTitle()));
       $results[] = $node->delete();
+    }
+    // Load each post and delete it.
+    foreach ($posts as $post_id) {
+      $post = Post::load($post_id);
+      $message = t('Deleting @type\'s', array('@type' => $post->bundle()));
+      $results[] = $post->delete();
     }
     $context['message'] = $message;
     $context['results'] = $results;
@@ -34,6 +42,7 @@ class DeleteGroup {
       $message = t('There was an unexpected error.');
       drupal_set_message($message, 'error');
     }
+    // Redirect the user back to their groups overview once the batch is done.
     return new RedirectResponse(Url::fromRoute('view.groups.page_user_groups')->setRouteParameter('user', \Drupal::currentUser()->id())->toString());
   }
 
