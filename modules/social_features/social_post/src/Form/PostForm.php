@@ -49,16 +49,30 @@ class PostForm extends ContentEntityForm {
       if (isset($display) && ($display_id = $display->get('id'))) {
           if ($display_id === 'post.post.default') {
               // Set default value to community.
-              // Remove recipient option.
-              // Only needed for 'private' permissions which we do not support yet.
               unset($form['field_visibility']['widget'][0]['#options'][0]);
               $form['field_visibility']['widget'][0]['#default_value'] = "2";
+              unset($form['field_visibility']['widget'][0]['#options'][3]);
           }
           else {
-              // Remove public option from options.
-              $form['field_visibility']['widget'][0]['#default_value'] = "0";
-              unset($form['field_visibility']['widget'][0]['#options'][1]);
-              unset($form['field_visibility']['widget'][0]['#options'][2]);
+            // Remove public option from options.
+            $form['field_visibility']['widget'][0]['#default_value'] = "0";
+            unset($form['field_visibility']['widget'][0]['#options'][1]);
+            unset($form['field_visibility']['widget'][0]['#options'][2]);
+
+            $current_group = _social_group_get_current_group();
+            if (!$current_group) {
+              unset($form['field_visibility']['widget'][0]['#options'][3]);
+            }
+            else {
+              $group_type_id = $current_group->getGroupType()->id();
+              if ($group_type_id !== 'closed_group') {
+                unset($form['field_visibility']['widget'][0]['#options'][3]);
+              }
+              else {
+                unset($form['field_visibility']['widget'][0]['#options'][0]);
+                $form['field_visibility']['widget'][0]['#default_value'] = "3";
+              }
+            }
           }
       }
 

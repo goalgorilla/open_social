@@ -84,7 +84,6 @@ function social_group_preprocess_group(&$variables) {
 
   $account = \Drupal::currentUser();
 
-  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   $group_type_id = $group->getGroupType()->id();
 
   if ($group_type_id == 'closed_group') {
@@ -179,8 +178,6 @@ function social_group_group_insert(GroupInterface $group) {
   }
 }
 
-
-
 /**
  * Implements hook_entity_view_alter().
  */
@@ -270,6 +267,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // override the form::save in group.
     $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
   }
+
 }
 
 /**
@@ -394,36 +392,20 @@ function _social_group_node_form_submit($form, FormStateInterface $form_state) {
  */
 function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
 
-  // Add a css class to widget form elements for all fields of type mytype.
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
   // Unset the public options on visibility field.
   if ($field_definition->getType() == 'entity_access_field') {
-
-    // Edit node forms. (public option is not allowed in groups)
-    // This is only here for visual purpose. Group node permissions will
-    // override the hook_node_access check implemented.
-    $build_info = $form_state->getBuildInfo();
-    $node_forms = array(
-      'node_topic_gnode-form_form',
-      'node_event_gnode-form_form',
-      'node_topic_edit_form',
-      'node_event_edit_form',
-    );
-    if (in_array($build_info['form_id'], $node_forms)) {
-      // Check if we are editing a node.
-      $node = \Drupal::routeMatch()->getParameter('node');
-      if ($node) {
-
-        // Only react if it is actually posted inside a group.
-        $groupcontents = GroupContent::loadByEntity($node);
-        if (!empty($groupcontents)) {
-          unset($element['#options']['public']);
-        }
-      }
-      else {
-        // WE must be creating a node (in the group context).
-        unset($element['#options']['public']);
+    $current_group = _social_group_get_current_group();
+    if (!empty($current_group)) {
+      $group_type = $current_group->getGroupType();
+      // Always remove the option: public for groups.
+      unset($element['#options']['public']);
+      if ($group_type->id() === 'closed_group') {
+        unset($element['#options']['community']);
+        $element['#options']['group'] = t('Group members - visible only to members of this group');
+        $element['#default_value'] = 'group';
       }
     }
   }
@@ -663,4 +645,33 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
     }
   }
   return AccessResult::neutral();
+}
+
+/**
+ * Get all open groups.
+ */
+function social_group_get_all_open_groups() {
+  $query = Drupal::service('entity.query')
+    ->get('group')
+    ->condition('type', 'open_group');
+  return $query->execute();
+}
+
+/**
+ * Get all group memberships for a certain user.
+ *
+ * @param $uid
+ */
+function social_group_get_all_group_members($uid) {
+  $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('user');
+  $group_content_types = array_keys($group_content_types);
+
+  $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+  $query->addField('gcfd', 'gid');
+  $query->condition('gcfd.entity_id', $uid);
+  $query->condition('gcfd.type', $group_content_types, 'IN');
+  $query->execute()->fetchAll();
+
+  $group_ids = $query->execute()->fetchAllAssoc('gid');
+  return array_keys($group_ids);
 }
