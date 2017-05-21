@@ -740,6 +740,7 @@ function _social_group_delete_closed_group() {
     // See /social_group/src/Controller/DeleteGroup.php for further process
     $batch = [
       'title' => t('Deleting the group and all the content within the group...'),
+      'init_message' => t('Preparing to delete the group and all it\'s topic\'s, event\'s and post\'s...'),
       'operations' => [
         [
           '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContent',
