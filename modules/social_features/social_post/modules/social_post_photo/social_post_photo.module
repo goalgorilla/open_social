@@ -20,3 +20,12 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
   // Add JS to change the placeholder. @TODO: Improve this.
   $form['#attached']['library'][] = 'social_post_photo/widget';
 }
+
+function social_post_photo_preprocess_image_formatter(&$variables) {
+  if ($variables['image_style'] == "social_post_photo") {
+    // Set the image alt to the filename.
+    $uri = $variables['#uri'];
+    $alt = substr(strrchr($uri, "/"), 1);
+    $variables['image']['#alt'] = $alt;
+  }
+}
