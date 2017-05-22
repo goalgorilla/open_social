@@ -537,3 +537,13 @@ function social_core_update_8015(&$sandbox) {
     $link->save();
   }
 }
+
+/**
+ * Install social_post_photo module.
+ */
+function social_core_update_8016() {
+  $modules = array(
+    'social_post_photo',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
