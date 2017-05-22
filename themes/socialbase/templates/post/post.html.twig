@@ -46,8 +46,8 @@
         {{ content.field_post }}
       {% endif %}
 
-      {% if content.field_post_image %}
-        {{- content.field_post_image -}}
+      {% if content.field_post_image|render %}
+        <p>{{- content.field_post_image -}}</p>
       {% endif %}
 
       {% if content.like_and_dislike %}
