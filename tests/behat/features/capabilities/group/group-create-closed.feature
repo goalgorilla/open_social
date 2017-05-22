@@ -1,4 +1,4 @@
-@api @group @DS-3428
+@api @group @DS-3428 @stability
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
   Role: As a LU
@@ -36,6 +36,13 @@ Feature: Create Closed Group
     And I should see "Padangstraat 11" in the "Hero block"
     And I should see "7556SP" in the "Hero block"
 
+  # Create a post inside the closed group, visible to group members only
+    When I fill in "Say something to the group" with "This is a closed group post."
+    And I select post visibility "Group members"
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a closed group post."
+
   # Create a topic inside the closed group
     When I click "Topics"
     And I should see the link "Create Topic" in the "Sidebar second"
@@ -72,6 +79,7 @@ Feature: Create Closed Group
     Then I should see "About Group"
     Then I should not see "Test closed group topic"
     Then I should not see "Test closed group event"
+    And I should not see "This is a closed group post."
     And I should not see "Stream"
     And I should not see "Events"
     And I should not see "Topics"
@@ -102,3 +110,4 @@ Feature: Create Closed Group
     And I press "Leave group"
     And I should see "Groups"
     And I should not see "Test closed group"
+
