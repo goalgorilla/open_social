@@ -123,7 +123,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     if ($account->isAuthenticated()) {
       $posts_in_groups = db_and();
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-      $posts_in_groups->condition('post__field_visibility.field_visibility_value', '3', '!=');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique,'IN');
 
       $or->condition($posts_in_groups);
@@ -132,7 +131,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     // Posts: all the posts the user has access to by permission.
     $post_access = db_and();
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-    $post_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+    $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
     if (!$account->hasPermission('view public posts')) {
       $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
     }
@@ -156,6 +155,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);
     }
+
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);
