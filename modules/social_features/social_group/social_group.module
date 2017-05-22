@@ -132,13 +132,14 @@ function social_group_preprocess_group(&$variables) {
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
   $variables['cta'] = t('');
+  $variables['closed_group_lock'] = FALSE;
 
   $account = \Drupal::currentUser();
 
   $group_type_id = $group->getGroupType()->id();
 
   if ($group_type_id == 'closed_group') {
-    $variables['closed_group_lock'] = t('closed group');
+    $variables['closed_group_lock'] = TRUE;
   }
 
   // Set joined to true for teaser when current logged in

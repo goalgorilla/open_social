@@ -70,6 +70,10 @@ function _socialbase_get_visibility_icon($title) {
       $icon = 'community';
       break;
 
+    case 'Group members':
+      $icon = 'lock';
+      break;
+
     default:
       $icon = strtolower(HtmlUtility::escape($title));
   }
