@@ -1,0 +1,55 @@
+{#
+/**
+ * @file
+ * Default theme implementation for an image field widget.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - data: Render elements of the image widget.
+ *
+ * @see template_preprocess_image_widget()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('image_widget_crop/cropper') }}
+{% if data.preview %}
+  <div{{ attributes.addClass('image-widget margin-bottom-m').removeClass('clearfix') }}>
+    <div class="preview">
+      {{ data.preview }}
+    </div>
+    <div class="data image-widget-data">
+      {% if data.upload['#id'] starts with "edit-field-post-image-0-upload" %}
+        {{ data|without('preview', 'image_crop', 'file_' ~ data.fids['#value'][0], 'remove_button' ) }}
+      {% else %}
+        {# Render widget data without the image preview that was output already. #}
+        {{ data|without('preview', 'image_crop') }}
+      {% endif %}
+    </div>
+  </div>
+  {{ data.image_crop }}
+
+  <div class="hidden">
+    {{ data.remove_button }}
+  </div>
+
+  <button type="button" id="post-photo-remove" class="margin-top-s btn btn-default icon-before pull-left">
+    <svg class="icon-black icon-small">
+      <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-delete"></use>
+    </svg>
+    <span class="text hidden-for-phone-only">Remove image</span>
+  </button>
+
+{% else %}
+  <div{{ attributes.addClass(classes, 'hidden') }}>
+    {{ data }}
+  </div>
+
+  <button type="button" id="post-photo-add" class="btn btn-default icon-before pull-left">
+    <svg class="icon-black icon-small">
+      <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-photo"></use>
+    </svg>
+    <span class="text hidden-for-phone-only">Add image</span>
+  </button>
+
+{% endif %}
