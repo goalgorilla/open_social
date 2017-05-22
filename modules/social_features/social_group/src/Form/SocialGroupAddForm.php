@@ -87,14 +87,18 @@ class SocialGroupAddForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['#attributes']['class'][] = 'form--default';
     $form['group_settings'] = array(
       '#type' => 'fieldset',
       '#title' => $this->t('Settings'),
     );
     $form['group_settings']['group_type'] = $this->getGroupTypeElement();
     $form['actions']['submit'] = array(
+      '#prefix' => '<div class="form-actions">',
+      '#suffix' => '</div>',
       '#type' => 'submit',
       '#value' => $this->t('Continue'),
+      '#button_type' => 'primary',
     );
 
     $form['#cache']['contexts'][] = 'user';
