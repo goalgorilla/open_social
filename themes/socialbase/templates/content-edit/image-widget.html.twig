@@ -28,6 +28,7 @@
     <div class="data image-widget-data">
 
       {% if in_post %}
+        {# Render widget data for photo's in posts without the file fields, image preview and remove button. #}
         {{ data|without('preview', 'image_crop', 'file_' ~ data.fids['#value'][0], 'remove_button' ) }}
       {% else %}
         {# Render widget data without the image preview that was output already. #}
@@ -39,6 +40,7 @@
   {{ data.image_crop }}
 
   {% if in_post %}
+    {# Render a "fake" remove button that triggers the actual (hidden) remove button. #}
     <div class="hidden">{{ data.remove_button }}</div>
     <button type="button" id="post-photo-remove" class="margin-top-s btn btn-default icon-before pull-left">
       <svg class="icon-black icon-small">
@@ -53,6 +55,8 @@
 {% else %}
 
   {% if in_post %}
+
+    {# Render a "fake" image add button that triggers the actual (hidden) upload field. #}
     <div{{ attributes.addClass(classes, 'hidden') }}>
       {{ data }}
     </div>
@@ -64,10 +68,13 @@
         {% trans %}Add image{% endtrans %}
       </span>
     </button>
+
   {% else %}
+
     <div{{ attributes.addClass(classes) }}>
       {{ data }}
     </div>
+
   {% endif %}
 
 {% endif %}
