@@ -6,23 +6,21 @@ Feature: Create Post with Photo
 
   Scenario: Successfully create, edit and delete post
   Given users:
-      | name            | status | pass            |
-      | PostCreateUser1 |      1 | PostCreateUser1 |
-      | PostCreateUser2 |      1 | PostCreateUser2 |
-    And I am logged in as "PostCreateUser1"
+      | name             | status | pass             |
+      | PostPhotoCreate1 |      1 | PostPhotoCreate1 |
+    And I am logged in as "PostPhotoCreate1"
     And I am on the homepage
-    And I should not see "PostCreateUser1" in the "Main content front"
+    And I should not see "PostPhotoCreate1" in the "Main content front"
 
    When I attach the file "/files/opensocial.jpg" to hidden field "edit-field-post-image-0-upload"
     And I wait for AJAX to finish
-#   Then I should see "Remove image"
 
     When I fill in "Say something about this photo" with "This post with a photo."
     And I select post visibility "Public"
     And I press "Post"
    Then I should see the success message "Your post has been posted."
     And I should see "This post with a photo."
-    And I should see "PostCreateUser1" in the "Main content front"
+    And I should see "PostPhotoCreate1" in the "Main content front"
     And I should be on "/stream"
 
         # Scenario: edit the post
