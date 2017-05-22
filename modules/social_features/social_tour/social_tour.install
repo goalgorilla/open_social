@@ -17,6 +17,30 @@ function social_tour_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ *
+ * Remove config that was imported on install.
+ */
+function social_tour_uninstall() {
+  $configs = [
+    'tour.tour.social-event-overview',
+    'tour.tour.social-explore',
+    'tour.tour.social-group',
+    'tour.tour.social-group-overview',
+    'tour.tour.social-home',
+    'tour.tour.social-node-view',
+    'tour.tour.social-profile',
+    'tour.tour.social-topic-overview',
+    'tour.tour.social-user',
+  ];
+
+  foreach ($configs as $config) {
+    // Deleting config.
+    \Drupal::configFactory()->getEditable($config)->delete();
+  }
+}
+
+/**
  * Function to set permissions.
  */
 function _social_tour_set_permissions() {
