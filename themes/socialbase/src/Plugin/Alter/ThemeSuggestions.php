@@ -27,14 +27,6 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
 
     switch ($hook) {
 
-      case 'image_widget':
-        $array = $variables->element->getArray();
-        if (isset($array['#field_name']) && $array['#field_name'] == 'field_post_image') {
-          $suggestions[] = 'image_widget_photo';
-        }
-
-        break;
-
       case 'details':
         $suggestions[] = 'details__plain';
 
@@ -73,8 +65,6 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
         break;
 
     }
-
-
 
   }
 
