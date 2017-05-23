@@ -55,6 +55,7 @@ Feature: Create Closed Group
     And I should see "Test closed group topic"
 
   # Create an event inside the closed group
+    And I click "Test closed group"
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
@@ -97,15 +98,15 @@ Feature: Create Closed Group
     Then I should not see "Test closed group topic"
     And I logout
 
-  # Delete the group and all content of the group
+   # Delete the group and all content of the group
     When I am logged in as "Group User One"
     And I am on "user"
     And I click "Groups"
     And I click "Test closed group"
     And I click "Edit group"
     And I click "Delete"
-    And I should see "This action cannot be undone."
-    And I should see the link "Cancel"
+    And I should see "Are you sure you want to delete your group"
+    And I should see the button "Cancel"
     And I should see the button "Delete"
     And I press "Delete"
     And I wait for AJAX to finish
@@ -133,15 +134,15 @@ Feature: Create Closed Group
     And I should see "Test closed group 2" in the "Main content"
 
   # As a member of this closed group I want to leave the group
-    And I should see the button "Joined"
+    When I click "Test closed group 2"
+    Then I should see the button "Joined"
     When I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
-    And I should see "Test closed group" in the "Hero block"
+    And I should see "Test closed group 2" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
     And I should see "Groups"
-    And I should not see "Test closed group"
-
+    And I should not see "Test closed group 2"
