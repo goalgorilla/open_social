@@ -107,7 +107,7 @@ class SocialTourController extends ControllerBase {
     // Save the value in the user_data.
     $this->setData(TRUE);
     // Set a message that they can be turned on again.
-    drupal_set_message($this->t('You can turn on tips like this on the Edit Account page'));
+    drupal_set_message($this->t('You will not see tips like this anymore.'));
     // Return to Profile.
     return new RedirectResponse('/user');
   }
