@@ -12,6 +12,17 @@ use Drupal\node\NodeInterface;
 class EntityAccessHelper {
 
   /**
+   * Array with values which need to be ignored.
+   *
+   * @return array
+   */
+  public static function getIgnoredValues() {
+    return [
+      'group',
+    ];
+  }
+
+  /**
    * NodeAccessCheck for given operation, node and user account.
    */
   public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
@@ -33,6 +44,11 @@ class EntityAccessHelper {
           if (!empty($field_values)) {
             foreach ($field_values as $key => $field_value) {
               if (isset($field_value['value'])) {
+
+                 if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
+                  return 0;
+                }
+
                 $permission_label = $field_definition->id() . ':' . $field_value['value'];
                 if ($account->hasPermission('view ' . $permission_label . ' content', $account)) {
                   return 2;

@@ -1,0 +1,97 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.closed_group.field_group_address
+    - field.field.group.closed_group.field_group_description
+    - field.field.group.closed_group.field_group_image
+    - field.field.group.closed_group.field_group_location
+    - group.type.closed_group
+    - image.style.social_x_large
+  module:
+    - address
+    - field_group
+    - image_widget_crop
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_content:
+      children:
+        - label
+        - field_group_description
+        - field_group_image
+      parent_name: ''
+      weight: 0
+      label: Content
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+    group_location:
+      children:
+        - field_group_location
+        - field_group_address
+      parent_name: ''
+      weight: 4
+      label: Location
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+id: group.closed_group.default
+targetEntityType: group
+bundle: closed_group
+mode: default
+content:
+  field_group_address:
+    weight: 33
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
+  field_group_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+  field_group_image:
+    weight: 3
+    settings:
+      show_crop_area: true
+      show_default_crop: true
+      preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero
+        - teaser
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: image_widget_crop
+  field_group_location:
+    weight: 32
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  label:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  uid: true

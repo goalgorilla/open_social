@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - group.content_type.closed_group-group_membership
     - group.content_type.open_group-group_membership
   module:
     - group
@@ -145,6 +146,47 @@ display:
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
+          group: 1
+        type_1:
+          id: type_1
+          table: group_content_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            closed_group-group_membership: closed_group-group_membership
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: group_content
+          entity_field: type
+          plugin_id: bundle
       sorts:
         created:
           id: created
@@ -167,7 +209,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: 'No memebers in this group'
+            value: 'No members in this group'
             format: basic_html
           plugin_id: text
       relationships: {  }
@@ -209,6 +251,10 @@ display:
           entity_field: gid
           plugin_id: numeric
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: OR
     cache_metadata:
       max-age: -1
       contexts:
@@ -266,7 +312,7 @@ display:
           admin_label: ''
           empty: true
           tokenize: false
-          content: 'No memebers in this group'
+          content: 'No members in this group'
           plugin_id: text_custom
       use_more: true
       use_more_always: true
