@@ -47,6 +47,10 @@
                     if ($(context).find('.joyride-tip-guide.tip-module-social-tour').length <= 1) {
                         $('.joyride-tip-guide.tip-module-social-tour .joyride-content-wrapper a.joyride-next-tip').hide();
                     }
+
+                    // Add another button
+                    var closetips = Drupal.t("Don't show tips like this anymore");
+                    $('.joyride-content-wrapper').append('<br/><a class="btn btn-primary" href="/user/tour/disable">'+closetips+'</a>');
                 }
             });
 

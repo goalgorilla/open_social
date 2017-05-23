@@ -2,7 +2,6 @@
 
 namespace Drupal\social_tour;
 
-use Drupal\Component\Serialization\Json;
 use Drupal\user\UserData;
 use Drupal\user\Entity\User;
 use Drupal\Core\Session\AccountProxy;
@@ -10,6 +9,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Returns responses for Social Group routes.
@@ -106,8 +106,10 @@ class SocialTourController extends ControllerBase {
   public function disableOnboarding() {
     // Save the value in the user_data.
     $this->setData(TRUE);
-    // Return 200.
-    return new JsonResponse(['message' => $this->t('Onboarding has been disabled.')], 200, ['Content-Type'=> 'application/json']);
+    // Set a message that they can be turned on again.
+    drupal_set_message($this->t('You can turn on tips like this on the Edit Account page'));
+    // Return to Profile.
+    return new RedirectResponse('/user');
   }
 
   /**
