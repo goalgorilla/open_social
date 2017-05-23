@@ -308,6 +308,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'node_event_delete_form',
     'node_topic_delete_form',
     'group_open_group_delete_form',
+    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
     'group_content_open_group-group_membership_group-leave_form',

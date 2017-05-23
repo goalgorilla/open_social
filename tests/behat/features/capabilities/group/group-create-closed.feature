@@ -66,6 +66,7 @@ Feature: Create Closed Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Save and publish"
     And I should see "Test closed group event"
+    And I logout
 
   # As a non-member of the closed group, when I click on the closed group
   # I should be redirected to /group/x/about. I should not see the stream, events or topics page.
@@ -94,11 +95,44 @@ Feature: Create Closed Group
     Then I should not see "Test closed group topic"
     When I am on "/all-topics"
     Then I should not see "Test closed group topic"
+    And I logout
 
-  # As a member of the closed group I want to leave the group
+  # Delete the group and all content of the group
     When I am logged in as "Group User One"
-    And I am on "/all-groups"
-    Then I click "Test closed group"
+    And I am on "user"
+    And I click "Groups"
+    And I click "Test closed group"
+    And I click "Edit group"
+    And I click "Delete"
+    And I should see "This action cannot be undone."
+    And I should see the link "Cancel"
+    And I should see the button "Delete"
+    And I press "Delete"
+    And I wait for AJAX to finish
+    Then I should see "Your group and all of it's topic's, event's and post's have been deleted."
+    And I should not see "Test closed group"
+    When I am on "/all-topics"
+    Then I should not see "Test closed group topic"
+    When I am on "/all-events"
+    Then I should not see "Test closed group event"
+
+  # Create a closed group to test the leaving of a closed group
+    When I am logged in as "Group User Two"
+    And I am on "/group/add/closed_group"
+    When I fill in "Title" with "Test closed group 2"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
+    And I fill in "Location name" with "Disclosed"
+    And I select "NL" from "Country"
+    And I wait for AJAX to finish
+    Then I should see "City"
+    And I fill in the following:
+      | City | Hengelo |
+      | Street address | Padangstraat 11 |
+      | Postal code | 7556SP |
+    And I press "Save"
+    And I should see "Test closed group 2" in the "Main content"
+
+  # As a member of this closed group I want to leave the group
     And I should see the button "Joined"
     When I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
