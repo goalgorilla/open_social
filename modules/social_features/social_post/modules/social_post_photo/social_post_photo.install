@@ -5,7 +5,30 @@
  */
 
 
+function social_post_photo_install() {
+  // Get post storage.
+  $poststorage = \Drupal::entityTypeManager()->getStorage('post');
+  // Load all posts of type post.
+  $posts = $poststorage->loadByProperties(['type' => 'post']);
+
+  /** @var \Drupal\social_post\Entity\Post $post */
+  foreach ($posts as $post) {
+    $post->set('type','photo')->save();
+  }
+}
+
 function social_post_photo_uninstall() {
+
+  // Get post storage.
+  $poststorage = \Drupal::entityTypeManager()->getStorage('post');
+  // Load all posts of type post.
+  $posts = $poststorage->loadByProperties(['type' => 'photo']);
+
+  /** @var \Drupal\social_post\Entity\Post $post */
+  foreach ($posts as $post) {
+    $post->set('type','post')->save();
+  }
+
   $configs = [
     'core.entity_form_display.post.photo.default',
     'core.entity_form_display.post.photo.group',
