@@ -21,8 +21,10 @@
       });
 
       // Change placeholder text when someone adds a photo.
-      $('#edit-field-post-image-0-upload').change(function(e) {
+      $('[data-drupal-selector="edit-field-post-image-0-upload"]').change(function(e) {
         $('#edit-field-post-0-value').attr("placeholder", Drupal.t('Say something about this photo'));
+        $('[data-drupal-selector="edit-field-post-image-wrapper"] .spinner').remove();
+        $('[data-drupal-selector="edit-field-post-image-wrapper"] .form-group .form-group').prepend('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
       });
 
     }
