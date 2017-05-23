@@ -50,7 +50,7 @@
 
                     // Add another button
                     var closetips = Drupal.t("Don't show tips like this anymore");
-                    $('.joyride-content-wrapper').append('<br/><a class="btn btn-primary" href="/user/tour/disable">'+closetips+'</a>');
+                    $('.joyride-content-wrapper').append('<br/><a class="btn btn-link" href="/user/tour/disable">'+closetips+'</a>');
                 }
             });
 
