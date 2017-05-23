@@ -78,6 +78,14 @@ function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateI
  */
 function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Add custom submit handler to delete all content of the group.
+  $group = _social_group_get_current_group();
+  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', array('@group' => $group->label()));
+  $form['actions']['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => t('Cancel'),
+    '#submit' => array('_social_group_cancel_join_leave_form'),
+    '#limit_validation_errors' => array(),
+  );
   array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
 }
 
