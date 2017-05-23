@@ -78,8 +78,6 @@ function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateI
  */
 function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Add custom submit handler to delete all content of the group.
-//  drupal_set_message(t('are you sure you want to delete this group and all of the content?'), 'warning');
-
   array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
 }
 
@@ -131,7 +129,7 @@ function social_group_preprocess_group(&$variables) {
   $group = $variables['group'];
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
-  $variables['cta'] = t('');
+  $variables['cta'] = '';
   $variables['closed_group_lock'] = FALSE;
 
   $account = \Drupal::currentUser();
@@ -537,7 +535,6 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   $user = \Drupal::currentUser();
   // Get the Group object from the route
   $group = Drupal::routeMatch()->getParameter('group');
-  // $group = _social_group_get_current_group(); ??
   if ($group) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
