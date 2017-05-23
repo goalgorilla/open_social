@@ -478,6 +478,10 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
         unset($element['#options']['group']);
       }
     }
+    else {
+      // This is not a group so lets remove this visibility option.
+      unset($element['#options']['group']);
+    }
   }
 }
 
