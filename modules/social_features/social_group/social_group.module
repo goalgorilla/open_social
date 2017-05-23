@@ -310,16 +310,17 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  $content_forms = array(
-    'group_content_open_group-group_node-topic_gnode-form_form',
-    'group_content_open_group-group_node-event_gnode-form_form',
-  );
   // Check if form is group content create form.
-  // @TODO: Remove or fix checking of second step when group module changes.
-  if (in_array($form_id, $content_forms) && $form['actions']['submit']['#value'] == 'Create node in group') {
-    // Add custom submit handler just for redirect purposes. We don't want to
-    // override the form::save in group.
-    $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+  if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
+    $group = _social_group_get_current_group();
+
+    if (!empty($group)) {
+      // Add custom submit handler just for redirect purposes. We don't want to
+      // override the form::save in group.
+      $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
+      $form['actions']['unpublish']['#submit'][] = '_social_group_node_form_submit';
+      $form['actions']['publish']['#submit'][] = '_social_group_node_form_submit';
+    }
   }
 
   $group_forms = array(
@@ -446,22 +447,12 @@ function _social_group_cancel_join_leave_form($form, FormStateInterface $form_st
  *   Form state interface.
  */
 function _social_group_node_form_submit($form, FormStateInterface $form_state) {
-  // Set redirect after group content creation to the default node '/node/%nid'
-  // not to the group node.
-  $route_params = $form_state->getRedirect()->getRouteParameters();
-  if (!empty($route_params['group_content'])) {
-    // Get node reference.
-    $group_content = \Drupal::entityTypeManager()
-      ->getStorage('group_content')
-      ->load($route_params['group_content']);
-    $group_entity_id = $group_content->get('entity_id')->getValue();
-    $node_reference = reset($group_entity_id);
-    // Set redirect.
-    $form_state->setRedirect(
-      'entity.node.canonical',
-      array('node' => $node_reference['target_id'], array())
-    );
-  }
+  $nid = $form_state->getValue('nid');
+  // Set redirect.
+  $form_state->setRedirect(
+    'entity.node.canonical',
+    array('node' => $nid)
+  );
 }
 
 /**
@@ -481,8 +472,10 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       unset($element['#options']['public']);
       if ($group_type->id() === 'closed_group') {
         unset($element['#options']['community']);
-        $element['#options']['group'] = t('Group members - visible only to members of this group');
         $element['#default_value'] = 'group';
+      }
+      else {
+        unset($element['#options']['group']);
       }
     }
   }
@@ -622,6 +615,22 @@ function _social_group_get_current_group() {
     $group = \Drupal::entityTypeManager()
       ->getStorage('group')
       ->load($group);
+  }
+  else {
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    if (is_object($node) && !is_null($node)) {
+      $node_entity = [
+        'target_type' => 'node',
+        'target_id' => $node->id(),
+      ];
+      $gid_from_entity = \Drupal\social_group\SocialGroupHelperService::getGroupFromEntity($node_entity);
+      if ($gid_from_entity !== NULL) {
+        $group = \Drupal::entityTypeManager()
+          ->getStorage('group')
+          ->load($gid_from_entity);
+      }
+    }
   }
 
   return $group;
