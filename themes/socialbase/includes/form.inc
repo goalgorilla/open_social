@@ -237,6 +237,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'comment_post_comment_delete_form',
     'comment_comment_delete_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
   );
@@ -296,6 +297,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   $confirm_forms = array (
     'user_cancel_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
     'group_open_group_delete_form',
