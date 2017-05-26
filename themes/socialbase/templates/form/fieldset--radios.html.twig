@@ -37,6 +37,9 @@ required ? 'form-required',
   {%- if required -%}
     <span class="form-required">*</span>
   {%- endif -%}
+  {% if description.content %}
+    <div{{ description.attributes.addClass('description help-block') }}>{{ description.content }}</div>
+  {% endif %}
 
   {% if errors %}
     <div>
@@ -50,8 +53,4 @@ required ? 'form-required',
   {% if suffix %}
     <span class="field-suffix">{{ suffix }}</span>
   {% endif %}
-  {% if description.content %}
-    <div{{ description.attributes.addClass('description') }}>{{ description.content }}</div>
-  {% endif %}
-
 </div>
