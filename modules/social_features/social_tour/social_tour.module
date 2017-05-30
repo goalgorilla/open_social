@@ -5,8 +5,63 @@
  * The Social Tour module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\tour\Entity\Tour;
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function social_tour_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'user_form') {
+    $user = \Drupal::routeMatch()->getParameter('user');
+    if ($user instanceof \Drupal\user\Entity\User) {
+      // @TODO: We've currently decided to turn off the possibility for a LU to re-enable the tips.
+      if (FALSE) {
+        // Only do this when onboarding is disabled.
+        // if (\Drupal::service('user.data')->get('social_tour', \Drupal::currentUser()->id(), 'onboarding_disabled')) {
+        // Add the card
+        $form['social_tour'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Other settings'),
+          '#tree' => TRUE,
+        );
+        // Add the field.
+        $form['social_tour']['social_tour_onboarding'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Show tips on how to use the community'),
+          '#defaukt_value' => FALSE,
+          '#attributes' => [
+            'data-switch' => TRUE
+          ]
+        );
+        // Add a submit action.
+        $form['actions']['submit']['#submit'][] = '_social_tour_form_user_form_submit';
+      }
+    }
+  }
+}
+
+/**
+ * Form submit for user_form.
+ *
+ * @param array $form
+ *   Commnent on a post form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_tour_form_user_form_submit($form, FormStateInterface $form_state) {
+  $onboarding = $form_state->getValue('social_tour');
+
+  // If it's changed do something.
+  if ($onboarding['social_tour_onboarding'] == TRUE) {
+    $uid = $form_state->getValue('uid');
+    \Drupal::service('user.data')->set('social_tour', $uid, 'onboarding_disabled', 0);
+  }
+}
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -154,16 +209,7 @@ function _social_tour_init() {
  * Check some stuff before doing anything with these tours.
  */
 function _social_tour_check() {
-  // Check if enabled (by settings).
-  $tour_config = \Drupal::config('social_tour.settings');
-  if ($tour_config->get('social_tour_enabled') == FALSE) {
-    return FALSE;
-  }
-
-  // Check permissions.
-  if (!\Drupal::currentUser()->hasPermission('access tour')) {
-    return FALSE;
-  }
-
-  return TRUE;
+  /** @var \Drupal\social_tour\SocialTourController $onboarding */
+  $onboarding = \Drupal::service('social_tour.onboarding');
+  return $onboarding->onboardingEnabled();
 }

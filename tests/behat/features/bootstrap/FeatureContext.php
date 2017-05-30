@@ -80,6 +80,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         '0' => 'Recipient', // Is displayed as Community in front-end.
         '1' => 'Public',
         '2' => 'Community',
+        '3' => 'Group members',
       );
 
       if (!in_array($visibility, $allowed_visibility)) {

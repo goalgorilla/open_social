@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group_content.teaser
+    - group.content_type.closed_group-group_node-event
+id: group_content.closed_group-group_node-event.teaser
+targetEntityType: group_content
+bundle: closed_group-group_node-event
+mode: teaser
+content:
+  entity_id:
+    type: entity_reference_entity_view
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: teaser
+      link: false
+    third_party_settings: {  }
+hidden:
+  uid: true
