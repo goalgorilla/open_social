@@ -10,7 +10,11 @@ Feature: Create Closed Group
       | Group User One | group_user_1@example.com | 1      |
       | Group User Two | group_user_2@example.com | 1      |
     And I am logged in as "Group User One"
-    And I am on "/group/add/closed_group"
+    And I am on "user"
+    And I click "Groups"
+    And I click "Add a group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    And I press "Continue"
     When I fill in "Title" with "Test closed group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"
@@ -119,7 +123,10 @@ Feature: Create Closed Group
 
   # Create a closed group to test the leaving of a closed group
     When I am logged in as "Group User Two"
-    And I am on "/group/add/closed_group"
+    And I am on "user"
+    And I click "Groups"
+    And I click "Add a group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
     When I fill in "Title" with "Test closed group 2"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"
