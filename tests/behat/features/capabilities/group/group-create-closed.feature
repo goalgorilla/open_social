@@ -127,6 +127,7 @@ Feature: Create Closed Group
     And I click "Groups"
     And I click "Add a group"
     Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    And I press "Continue"
     When I fill in "Title" with "Test closed group 2"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"
