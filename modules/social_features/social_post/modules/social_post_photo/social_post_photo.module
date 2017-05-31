@@ -21,6 +21,11 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
   $form['#attached']['library'][] = 'social_post_photo/widget';
 }
 
+/**
+ * Implements hook_photo_preprocess_image_formatter
+ *
+ * @param $variables
+ */
 function social_post_photo_preprocess_image_formatter(&$variables) {
   if ($variables['image_style'] == "social_post_photo") {
     // Set the image alt to the filename.
