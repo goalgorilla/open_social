@@ -165,6 +165,21 @@ function social_tour_page_bottom(array &$page_bottom) {
 
   if (!empty($results) && $tours = Tour::loadMultiple(array_keys($results))) {
     foreach ($tours as $id => $tour) {
+      // EDGE CASE:
+      // THIS MUST REMAIN ON TOP OF THE FOREACH.
+      // social-profile  needs to made available on your own profile only.
+      // So it must be removed from the array, but not marked as seen before.
+      if ($id === 'social-profile' && isset($page_bottom['tour'][$id])) {
+        /** @var \Drupal\user\Entity\User $profile */
+        $profile = $route_match->getParameter('user');
+        if ($profile->id() != \Drupal::currentUser()->id()) {
+          // If it's not your own profile, we don't show this tour.
+          unset($tours[$id]);
+          unset($page_bottom['tour'][$id]);
+          continue;
+        }
+      }
+
       // Now we check the user data, if it's set for the current tour we don't have to render it anymore.
       // because that means the user has already seen it, either they finished the tour
       // or they skipped the tour. But in any way we don't want the user to see the tour twice.
