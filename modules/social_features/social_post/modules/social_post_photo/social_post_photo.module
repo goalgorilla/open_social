@@ -29,3 +29,21 @@ function social_post_photo_preprocess_image_formatter(&$variables) {
     $variables['image']['#alt'] = $alt;
   }
 }
+
+/**
+ * Function to change the post type
+ *
+ * @param $from
+ * @param $to
+ */
+function _social_post_photo_settype($from, $to) {
+  // Get post storage.
+  $poststorage = \Drupal::entityTypeManager()->getStorage('post');
+  // Load all posts of type post.
+  $posts = $poststorage->loadByProperties(['type' => $from]);
+
+  /** @var \Drupal\social_post\Entity\Post $post */
+  foreach ($posts as $post) {
+    $post->set('type',$to)->save();
+  }
+}
