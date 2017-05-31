@@ -14,6 +14,8 @@ function social_tour_install() {
   _social_tour_set_permissions();
   // Set weight so it's executed after the core tour module.
   module_set_weight('social_tour', 50);
+  // Enable the module's on/off setting by default
+  \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
 }
 
 /**
