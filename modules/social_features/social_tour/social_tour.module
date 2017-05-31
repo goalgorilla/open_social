@@ -125,6 +125,23 @@ function social_tour_page_attachments(array &$page) {
 }
 
 /**
+ * Implements hook_module_implements_alter().
+ *
+ * Making sure here that the social_tour is executed after the tour.
+ *
+ * @param $implementations
+ * @param $hook
+ */
+function social_tour_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'page_bottom') {
+    // Move social_tour_page_bottom() to the end of the list.
+    $st = $implementations['social_tour'];
+    unset($implementations['social_tour']);
+    $implementations['social_tour'] = $st;
+  }
+}
+
+/**
  * Implements hook_page_bottom().
  *
  * Because the social_tour weight is higher than the core tour.module weight
