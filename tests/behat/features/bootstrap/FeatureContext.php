@@ -24,14 +24,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct()
-    {
+    public function __construct() {
+    }
+
+    /**
+     * @BeforeScenario
+     *
+     * @param $event
+     */
+    public function before($event) {
       // Let's disable the tour module for all tests by default.
       \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
     }
 
-    public function __destruct() {
-      // Let's enable the tour module after all tests have run.
+  /**
+   * @AfterScenario
+   *
+   * @param $event
+   */
+    public function after($event) {
+      // Let's disable the tour module for all tests by default.
       \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
     }
 
