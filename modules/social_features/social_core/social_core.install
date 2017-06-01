@@ -13,6 +13,29 @@ use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
 
 /**
+ * Implements hook_requirements().
+ *
+ * @param $phase
+ * @return array
+ */
+function social_core_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
+      $requirements['social_file_private_module_check'] = [
+        'title' => 'Social Private Files',
+        'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
+        'severity' => REQUIREMENT_WARNING,
+        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+      ];
+    }
+  }
+
+  return $requirements;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_core.
@@ -629,4 +652,22 @@ function social_core_update_8017() {
     'social_post_photo',
   );
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install the social_file_private module.
+ */
+function social_core_update_8018() {
+  $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
+
+  if ($file_private_path_base_path !== NULL) {
+    $modules = array(
+      'social_file_private',
+    );
+    \Drupal::service('module_installer')->install($modules);
+    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+  }
+  else {
+    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+  }
 }
