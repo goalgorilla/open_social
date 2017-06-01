@@ -26,6 +26,13 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function __construct()
     {
+      // Let's disable the tour module for all tests by default.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+    }
+
+    public function __destruct() {
+      // Let's enable the tour module after all tests have run.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
     }
 
     /**

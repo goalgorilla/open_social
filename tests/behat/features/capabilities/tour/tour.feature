@@ -6,6 +6,7 @@ Feature: Take the tour
 
 Scenario: Successfully take the tour and see all pop-ups
   Given I am logged in as an "authenticated user"
+    And I enable the tour setting
     # Necessary, because homepage tour is already marked as seen
     And I reset tour "social-home"
     And I am on the homepage
@@ -78,6 +79,7 @@ Scenario: Successfully take the tour and see all pop-ups
 @nomoretips
 Scenario: Stop showing me tips
    When I am logged in as an "authenticated user"
+    And I enable the tour setting
     And I am on "all-topics"
    Then I should see "Here you can filter content for topic types"
     And I should see "Don't show tips like this anymore"
