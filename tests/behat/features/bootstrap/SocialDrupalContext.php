@@ -119,6 +119,19 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @Given I reset tour :tour_id
+   *
+   * @param $tour_id
+   */
+  public function iResetTour($tour_id)
+  {
+    $query = \Drupal::database()->delete('users_data');
+    $query->condition('module', 'social_tour');
+    $query->condition('name', 'social-home');
+    $query->execute();
+  }
+
+  /**
    * I wait for (seconds) seconds.
    *
    * @When /^(?:|I )wait for "([^"]*)" seconds$/
