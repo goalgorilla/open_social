@@ -66,8 +66,6 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
 
     }
 
-
-
   }
 
 }

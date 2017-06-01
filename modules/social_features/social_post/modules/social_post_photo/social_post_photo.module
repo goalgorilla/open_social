@@ -1,0 +1,54 @@
+<?php
+/**
+ * @file
+ * The Social post photo module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Don't show a title nor a description.
+  $form['field_post_image']['widget'][0]['#title'] = '';
+  $form['field_post_image']['widget'][0]['#description'] = '';
+  // Add JS to change the placeholder. @TODO: Improve this.
+  $form['#attached']['library'][] = 'social_post_photo/widget';
+}
+
+/**
+ * Implements hook_photo_preprocess_image_formatter
+ *
+ * @param $variables
+ */
+function social_post_photo_preprocess_image_formatter(&$variables) {
+  if ($variables['image_style'] == "social_post_photo") {
+    // Set the image alt to the filename.
+    $uri = $variables['image']['#uri'];
+    $alt = substr(strrchr($uri, "/"), 1);
+    $variables['image']['#alt'] = $alt;
+  }
+}
+
+/**
+ * Function to change the post type
+ *
+ * @param $from
+ * @param $to
+ */
+function _social_post_photo_settype($from, $to) {
+  // Get post storage.
+  $poststorage = \Drupal::entityTypeManager()->getStorage('post');
+  // Load all posts of type post.
+  $posts = $poststorage->loadByProperties(['type' => $from]);
+
+  /** @var \Drupal\social_post\Entity\Post $post */
+  foreach ($posts as $post) {
+    $post->set('type',$to)->save();
+  }
+}
