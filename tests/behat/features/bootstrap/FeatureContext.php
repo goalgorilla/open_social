@@ -466,6 +466,110 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Checks if correct amount of uploaded files by user are private.
+     *
+     * @Then /User "(?P<username>[^"]+)" should have uploaded "(?P<private>[^"]+)" private files and "(?P<public>[^"]+)" public files$/
+     */
+    public function checkFilesPrivateForUser($username, $private, $public)
+    {
+
+      $query = \Drupal::entityQuery('user')
+        ->condition('name', $username);
+      $uid = $query->execute();
+
+      if (!empty($uid) && count($uid) === 1) {
+        $uid = reset($uid);
+
+        if ($uid) {
+          $private_query = \Drupal::database()->select('file_managed', 'fm');
+          $private_query->addField('fm', 'fid');
+          $private_query->condition('fm.uid', $uid, '=');
+          $private_query->condition('fm.uri', 'private://%', 'LIKE');
+          $private_count = count($private_query->execute()->fetchAllAssoc('fid'));
+
+          $public_query = \Drupal::database()->select('file_managed', 'fm');
+          $public_query->addField('fm', 'fid');
+          $public_query->condition('fm.uid', $uid, '=');
+          $public_query->condition('fm.uri', 'public://%', 'LIKE');
+          $public_count = count($public_query->execute()->fetchAllAssoc('fid'));
+
+          PHPUnit::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
+          PHPUnit::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
+        }
+
+      }
+      else {
+        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+      }
+    }
+
+    /**
+     * Opens the files uploaded by a given user.
+     *
+     * @Then /I open and check the access of the files uploaded by "(?P<username>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+     */
+    public function openAndCheckFilesPrivateForUser($username, $access)
+    {
+      $allowed_access = array(
+        '0' => 'denied',
+        '1' => 'allowed',
+      );
+      if (!in_array($access, $allowed_access)) {
+        throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
+      }
+      $expected_access = 0;
+      if ($access == 'allowed') {
+        $expected_access = 1;
+      }
+
+      $query = \Drupal::entityQuery('user')
+        ->condition('name', $username);
+      $uid = $query->execute();
+
+      if (!empty($uid) && count($uid) === 1) {
+        $uid = reset($uid);
+
+        if ($uid) {
+          $private_query = \Drupal::database()->select('file_managed', 'fm');
+          $private_query->addField('fm', 'fid');
+          $private_query->condition('fm.uid', $uid, '=');
+          $private_query->condition('fm.uri', 'private://%', 'LIKE');
+          $private_files = $private_query->execute()->fetchAllAssoc('fid');
+
+          foreach ($private_files as $fid => $file) {
+            $this->openFileAndExpectAccess($fid, $expected_access);
+          }
+        }
+      }
+      else {
+        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+      }
+    }
+
+    /**
+     * This opens the files and check for the expected access.
+     *
+     * @param $fid
+     * @param $expected_access
+     *  0 = NO access
+     *  1 = YES access
+     */
+    public function openFileAndExpectAccess($fid, $expected_access) {
+      /** @var \Drupal\file\Entity\File $file */
+      $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+      $url = $file->url();
+      $page = file_url_transform_relative($url);
+      $this->visitPath($page);
+
+      if ($expected_access == 0) {
+        $this->assertSession()->pageTextContains('Access denied. You must log in to view this page.');
+      }
+      else {
+        $this->assertSession()->pageTextNotContains('Access denied. You must log in to view this page.');
+      }
+    }
+
+    /**
      * Log out.
      *
      * @Given /^(?:|I )logout$/
