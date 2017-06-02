@@ -655,9 +655,19 @@ function social_core_update_8017() {
 }
 
 /**
+ * Install social_tour module.
+ */
+function social_core_update_8018(&$sandbox) {
+  $modules = array(
+    'social_tour',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
  * Install the social_file_private module.
  */
-function social_core_update_8018() {
+function social_core_update_8019() {
   $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
 
   if ($file_private_path_base_path !== NULL) {

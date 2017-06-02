@@ -24,8 +24,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct()
-    {
+    public function __construct() {
+    }
+
+    /**
+     * @BeforeScenario
+     *
+     * @param $event
+     */
+    public function before($event) {
+      // Let's disable the tour module for all tests by default.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+    }
+
+  /**
+   * @AfterScenario
+   *
+   * @param $event
+   */
+    public function after($event) {
+      // Let's disable the tour module for all tests by default.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
     }
 
     /**
@@ -561,4 +580,20 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $this->visitPath($page);
     }
 
+    /**
+     * @When I close the open tip
+     */
+    public function iCloseTheOpenTip()
+    {
+      $locator = 'a.joyride-close-tip';
+      $session = $this->getSession();
+      $element = $session->getPage()->find('css', $locator);
+
+      if ($element === NULL) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
+      }
+
+      // Now click the element.
+      $element->click();
+    }
 }
