@@ -630,3 +630,13 @@ function social_core_update_8017() {
   );
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Install social_tour module.
+ */
+function social_core_update_8018(&$sandbox) {
+  $modules = array(
+    'social_tour',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
