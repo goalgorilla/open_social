@@ -98,7 +98,7 @@ third_party_settings:
         label: Attachments
         required_fields: true
         id: attachments
-        classes: 'card'
+        classes: card
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -112,37 +112,44 @@ content:
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    region: content
   created:
     type: datetime_timestamp
     weight: 4
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_content_visibility:
     weight: 10
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
+    region: content
   field_event_address:
     weight: 14
     settings:
       default_country: ''
     third_party_settings: {  }
     type: address_default
+    region: content
   field_event_comments:
     weight: 11
     settings: {  }
     third_party_settings: {  }
     type: comment_default
+    region: content
   field_event_date:
     weight: 10
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_event_date_end:
     weight: 11
     settings: {  }
     third_party_settings: {  }
     type: datetime_default
+    region: content
   field_event_image:
     weight: 3
     settings:
@@ -156,6 +163,7 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: image_widget_crop
+    region: content
   field_event_location:
     weight: 11
     settings:
@@ -163,29 +171,34 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
   field_files:
     weight: 12
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
   path:
     type: path
     weight: 10
     settings: {  }
     third_party_settings: {  }
+    region: content
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 6
     third_party_settings: {  }
+    region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 9
     third_party_settings: {  }
+    region: content
   title:
     type: string_textfield
     weight: 2
@@ -193,6 +206,7 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 1
@@ -201,4 +215,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
 hidden: {  }
