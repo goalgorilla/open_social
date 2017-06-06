@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\group\Entity\Group;
 
 /**
  * Access controller for the Post entity.
@@ -59,6 +60,23 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
               return $this->checkDefaultAccess($entity, $operation, $account);
             }
             return AccessResult::forbidden();
+
+          // Group.
+          case "3":
+            // Check if the post has been posted in a group.
+            $group_id = $entity->field_recipient_group->target_id;
+            if ($group_id) {
+              /** @var Group $group */
+              $group = entity_load('group', $group_id);
+              if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                return AccessResult::allowed();
+              }
+              else {
+                return AccessResult::forbidden();
+              }
+            }
+            return AccessResult::forbidden();
+
         }
 
       case 'update':

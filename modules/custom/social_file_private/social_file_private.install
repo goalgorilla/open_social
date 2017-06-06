@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Implements hook_requirements().
+ *
+ * @param $phase
+ * @return array
+ */
+function social_file_private_requirements($phase) {
+  $requirements = [];
+
+  // Test if the Private File System Path is set.
+  if ($phase == 'runtime') {
+    $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
+
+    if ($file_private_path_base_path === NULL) {
+      $requirements['social_file_private_path'] = [
+        'title' => 'Social Private Files',
+        'value' => t('Private file system path not set'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => t('Your uploaded files on the Open Social entities are not fully protected because you did not set a Private File Directory. You need to set an existing local file system path for storing private files. It should be writable by Drupal and not accessible over the web. This must be changed in settings.php. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+      ];
+    }
+    else {
+      $requirements['social_file_private_path'] = [
+        'title' => 'Social Private Files',
+        'value' => t('Private file system path is set'),
+        'severity' => REQUIREMENT_OK,
+        'description' => t('Assuming your private file system path configuration is functional and no other warnings are shown: your uploaded files on the Open Social entities are fully protected. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+      ];
+    }
+
+    $image_fields = \Drupal::entityManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'image']);
+    $file_fields = \Drupal::entityManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'file']);
+    $all_fields = array_merge($image_fields, $file_fields);
+
+    /* @var $plugin \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride */
+    $file_private_fields_config_override = \Drupal::service('social_file_private_fields.overrider');
+    $protected_fields = $file_private_fields_config_override->getFileImageFieldsToProtect();
+
+    /** @var \Drupal\field\FieldStorageConfigInterface $field */
+    $unprotected_fields = [];
+    foreach ($all_fields as $field) {
+      $id = $field->getOriginalId();
+      if ($id === 'font.field_fonts') {
+        continue;
+      }
+      if (!in_array('field.storage.' . $id, $protected_fields)) {
+        if ($field->getSetting('uri_scheme') === 'public') {
+          $unprotected_fields[$id] = $id;
+        }
+      }
+    }
+    if (!empty($unprotected_fields)) {
+      $requirements['social_file_private_path'] = [
+        'title' => 'Social Private Files Unprotected',
+        'value' => t('Private file system path not set for some fields'),
+        'severity' => REQUIREMENT_ERROR,
+        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', array(':fields' => implode(',', $unprotected_fields))),
+      ];
+    }
+  }
+
+  return $requirements;
+}
