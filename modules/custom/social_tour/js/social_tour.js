@@ -48,7 +48,7 @@
                     }
 
                     // Add another button
-                    var closetips = Drupal.t("Always hide tips like this");
+                    var closetips = Drupal.t("Don't show tips like this anymore");
                     $('.joyride-content-wrapper').append('<a class="joyride-tip-remove" href="/user/tour/disable">'+closetips+'</a>');
                 }
             });
