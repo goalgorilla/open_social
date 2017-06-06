@@ -31,10 +31,10 @@ Scenario: Successfully take the tour and see all pop-ups
     And I should not see "Don't show tips like this anymore"
 
   Given I am on "all-groups"
-   Then I should see "Use this button to create a new topic, or to start a new event or group"
+   Then I should see "Use the plus button in the navigation bar to create a new topic, or to start a new event or group"
     And I should see "Don't show tips like this anymore"
    When I close the open tip
-   Then I should not see "Use this button to create a new topic, or to start a new event or group"
+   Then I should not see "Use the plus button in the navigation bar to create a new topic, or to start a new event or group"
     And I should not see "Don't show tips like this anymore"
 
   Given I am on "/user"
@@ -81,7 +81,7 @@ Scenario: Stop showing me tips
    When I am logged in as an "authenticated user"
     And I enable the tour setting
     And I am on "all-topics"
-   Then I should see "Here you can filter content for topic types"
+   Then I should see "Use the topic filter to filter on topic type."
     And I should see "Don't show tips like this anymore"
    When I click "Don't show tips like this anymore"
    Then I should see "You will not see tips like this anymore."
