@@ -581,6 +581,92 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Opens the content from a group and check for access.
+     *
+     * @Then /I open and check the access of content in group "(?P<groupname>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+     */
+    public function openAndCheckGroupContentAccess($groupname, $access)
+    {
+      $allowed_access = array(
+        '0' => 'denied',
+        '1' => 'allowed',
+      );
+      if (!in_array($access, $allowed_access)) {
+        throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
+      }
+      $expected_access = 0;
+      if ($access == 'allowed') {
+        $expected_access = 1;
+      }
+
+      $query = \Drupal::entityQuery('group')
+        ->condition('label', $groupname);
+      $gid = $query->execute();
+
+      if (!empty($gid) && count($gid) === 1) {
+        $gid = reset($gid);
+
+        if ($gid) {
+          $group = Group::load($gid);
+          $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
+          $group_content_types = array_keys($group_content_types);
+
+          // Get all the node's related to the current group
+          $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+          $query->addField('gcfd', 'entity_id');
+          $query->condition('gcfd.gid', $group->id());
+          $query->condition('gcfd.type', $group_content_types, 'IN');
+          $query->execute()->fetchAll();
+
+          $nodes = $query->execute()->fetchAllAssoc('entity_id');
+          foreach (array_keys($nodes) as $key => $entity_id) {
+            $this->openEntityAndExpectAccess('node', $entity_id, $expected_access);
+          }
+
+          // Get all the posts from this group
+          $query = \Drupal::database()->select('post__field_recipient_group', 'pfrg');
+          $query->addField('pfrg', 'entity_id');
+          $query->condition('pfrg.field_recipient_group_target_id', $group->id());
+          $query->execute()->fetchAll();
+
+          $post_ids = $query->execute()->fetchAllAssoc('entity_id');
+
+          foreach (array_keys($post_ids) as $key => $entity_id) {
+            $this->openEntityAndExpectAccess('post', $entity_id, $expected_access);
+          }
+        }
+      }
+      else {
+        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+      }
+    }
+
+    /**
+     * This opens the entity and check for the expected access.
+     *
+     * @param $entity_type
+     * @param $entity_id
+     * @param $expected_access
+     *  0 = NO access
+     *  1 = YES access
+     */
+    public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
+      $entity = entity_load($entity_type, $entity_id);
+      /** @var \Drupal\Core\Url $url */
+      $url = $entity->toUrl();
+      $page = $url->toString();
+
+      $this->visitPath($page);
+
+      if ($expected_access == 0) {
+        $this->assertSession()->pageTextContains('Access denied');
+      }
+      else {
+        $this->assertSession()->pageTextNotContains('Access denied');
+      }
+    }
+
+    /**
      * @When I close the open tip
      */
     public function iCloseTheOpenTip()
