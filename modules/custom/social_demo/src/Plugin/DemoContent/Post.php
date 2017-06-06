@@ -58,6 +58,9 @@ class Post extends DemoEntity {
    * @return int|false
    */
   protected function createDate($date_string) {
+    if ($date_string === 'now') {
+      return time();
+    }
     // Split from delimiter.
     $timestamp = explode('|', $date_string);
 
