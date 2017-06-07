@@ -58,3 +58,32 @@ Feature: Private files
     And I open the "topic" node with title "Private: topic"
     Then I should see "Access denied. You must log in to view this page."
     Then I open and check the access of the files uploaded by "private_file_user_1" and I expect access "denied"
+
+  Scenario: Upload files in the WYSIWYG
+    Given I enable the module "social_file_private"
+    And users:
+      | name                     | mail                               | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
+      | wysiwyg_private_user_1   | wysiwyg_private_user_1@example.com | 1      | Real Slim                 | Shady                    | Privateering               | Private              |
+    And I am logged in as "wysiwyg_private_user_1"
+
+    Given I am on "node/add/topic"
+    And I click radio button "Discussion"
+    When I fill in the following:
+      | Title | Private WYSIWYG: topic |
+    And I click on the image icon in the WYSIWYG editor
+    And I wait for AJAX to finish
+    And I attach the file "/files/opensocial.jpg" to "files[fid]"
+    And I wait for AJAX to finish
+    And I fill in "Alternative text" with "Just a private image test"
+    And I press "Save" in the "Modal footer"
+    And I wait for AJAX to finish
+    And I wait for "3" seconds
+    And I press "Save"
+    Then I should see "Topic Private WYSIWYG: topic has been created."
+    And I should see "Private WYSIWYG: topic" in the "Hero block"
+    And The image path in the body description should be private
+    Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "allowed"
+    When I logout
+    And I open the "topic" node with title "Private WYSIWYG: topic"
+    Then I should see "Access denied. You must log in to view this page."
+    Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "denied"
