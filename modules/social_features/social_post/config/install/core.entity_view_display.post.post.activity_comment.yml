@@ -8,8 +8,8 @@ dependencies:
     - field.field.post.post.field_recipient_group
     - field.field.post.post.field_recipient_user
     - field.field.post.post.field_visibility
+    - social_post.post_type.post
   module:
-    - social_post
     - text
     - user
 id: post.post.activity_comment
@@ -23,12 +23,14 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    region: content
   user_id:
     label: hidden
     type: author
     weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_post_comments: true
   field_recipient_group: true

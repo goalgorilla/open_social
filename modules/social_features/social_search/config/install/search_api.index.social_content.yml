@@ -62,6 +62,22 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: created
     type: date
+datasource_settings:
+  'entity:node':
+    plugin_id: 'entity:node'
+    settings:
+      bundles:
+        default: true
+        selected: {  }
+      languages:
+        default: true
+        selected: {  }
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
 processor_settings:
   add_url:
     plugin_id: add_url
@@ -95,6 +111,16 @@ processor_settings:
       weights:
         preprocess_index: -10
         preprocess_query: -10
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+      em: 1
+      u: 1
   ignorecase:
     plugin_id: ignorecase
     settings:
@@ -104,11 +130,6 @@ processor_settings:
       weights:
         preprocess_index: -10
         preprocess_query: -10
-  node_status:
-    plugin_id: node_status
-    settings:
-      weights:
-        preprocess_index: -10
   rendered_item:
     plugin_id: rendered_item
     settings:
@@ -160,6 +181,42 @@ processor_settings:
       weights:
         preprocess_index: -5
         preprocess_query: -2
+    stopwords:
+      - a
+      - an
+      - and
+      - are
+      - as
+      - at
+      - be
+      - but
+      - by
+      - for
+      - if
+      - in
+      - into
+      - is
+      - it
+      - 'no'
+      - not
+      - of
+      - 'on'
+      - or
+      - s
+      - such
+      - t
+      - that
+      - the
+      - their
+      - then
+      - there
+      - these
+      - they
+      - this
+      - to
+      - was
+      - will
+      - with
   tokenizer:
     plugin_id: tokenizer
     settings:
@@ -172,6 +229,9 @@ processor_settings:
       weights:
         preprocess_index: -6
         preprocess_query: -6
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
   transliteration:
     plugin_id: transliteration
     settings:
@@ -181,21 +241,11 @@ processor_settings:
       weights:
         preprocess_index: -10
         preprocess_query: -10
-options:
-  index_directly: true
-  cron_limit: 50
-datasource_settings:
-  'entity:node':
-    plugin_id: 'entity:node'
-    settings:
-      bundles:
-        default: true
-        selected: {  }
-      languages:
-        default: true
-        selected: {  }
 tracker_settings:
   default:
     plugin_id: default
     settings: {  }
+options:
+  index_directly: true
+  cron_limit: 50
 server: social_database

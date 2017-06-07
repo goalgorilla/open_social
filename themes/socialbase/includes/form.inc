@@ -226,21 +226,28 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_cancel_form',
     'group_open_group_add_form',
     'group_open_group_edit_form',
+    'group_closed_group_add_form',
+    'group_closed_group_edit_form',
     'node_event_form',
     'node_topic_form',
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_group-join_form',
+    'group_content_closed_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_edit_form',
     'group_open_group_delete_form',
+    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
     'comment_comment_delete_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
   );
-
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -277,6 +284,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_group-join_form',
+    'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_edit_form',
     'social_user_login_form',
     'user_register_form',
     'user_pass_reset',
@@ -296,12 +306,15 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   $confirm_forms = array (
     'user_cancel_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
     'group_open_group_delete_form',
+    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_group-leave_form',
   );
 
   if (in_array($form_id, $confirm_forms)) {

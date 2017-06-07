@@ -27,36 +27,51 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 4
+    weight: 2
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_event_address:
     type: address_plain
-    weight: 3
+    weight: 1
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_event_comments:
-    weight: 5
+    weight: 3
     label: above
     settings:
       pager_id: 0
       view_mode: default
     third_party_settings: {  }
     type: comment_group_content
+    region: content
   field_event_location:
     type: string
-    weight: 2
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    region: content
   field_files:
-    weight: 6
+    weight: 4
     label: above
     settings: {  }
     third_party_settings: {  }
     type: file_default
+    region: content
+  flag_follow_content:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  like_and_dislike:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
   field_content_visibility: true
   field_event_date: true

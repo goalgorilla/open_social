@@ -14,22 +14,25 @@ Feature: Create Event
          | Title | This is a test event |
          | Date | 2025-01-01 |
          | Time | 11:00:00 |
-         | Location name | GG HQ |
+         | Location name | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I select "NL" from "Country"
+    And I select "UA" from "Country"
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-         | City | Enschede |
-         | Street address | Oldenzaalsestraat |
-         | Postal code | 7514DR |
+         | City | Lviv |
+         | Street address | Fedkovycha 60a |
+         | Postal code | 79000 |
+         | Oblast | Lviv oblast |
     And I press "Save"
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
+    And I should see "Technopark" in the "Main content"
     And I should see "Body description text" in the "Main content"
-    And I should see "Oldenzaalsestraat" in the "Main content"
-    And I should see "7514DR" in the "Main content"
-    And I should see "Enschede" in the "Main content"
+    And I should see "Fedkovycha 60a" in the "Main content"
+    And I should see "79000" in the "Main content"
+    And I should see "Lviv" in the "Main content"
+    And I should see "Lviv oblast" in the "Main content"
 
     # Quick edit
     Given I click "Edit content"
