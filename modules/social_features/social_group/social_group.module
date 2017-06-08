@@ -547,17 +547,35 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   $user = \Drupal::currentUser();
   // Get the Group object from the route
   $group = Drupal::routeMatch()->getParameter('group');
+
   if ($group) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
-
-    // If it is a closed_group and the user is not an member
-    if ($group_type == 'closed_group' && !$group->getMember($user) && $user->id() != 1) {
-      // Disable these local tasks
-      $data['tabs'][0]['group.view'] = [];
-      $data['tabs'][0]['group.content'] = [];
-      $data['tabs'][0]['social_group.events'] = [];
-      $data['tabs'][0]['social_group.topics'] = [];
+    // Check if it's a closed group
+    if ($group_type == 'closed_group') {
+      // And if the user is not user 1
+      if ($user->id() != 1) {
+        // The roles allowed to access and edit closed groups
+        $allowed_roles = [
+          'contentmanager',
+          'sitemanager'
+        ];
+        $allowed = FALSE;
+        foreach ($allowed_roles as $role) {
+          if (in_array($role, $user->getRoles())) {
+            $allowed = TRUE;
+            return;
+          }
+          // If the user is not an member of this group
+          elseif (!$group->getMember($user)) {
+            // Disable these local tasks
+            $data['tabs'][0]['group.view'] = [];
+            $data['tabs'][0]['group.content'] = [];
+            $data['tabs'][0]['social_group.events'] = [];
+            $data['tabs'][0]['social_group.topics'] = [];
+          }
+        }
+      }
     }
   }
 }
