@@ -8,7 +8,6 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\views\ViewExecutable;
@@ -161,7 +160,7 @@ function social_group_preprocess_group(&$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
     // If the group type is a closed_group
-    if ($group_type_id == 'closed_group' && $account->id() != 1) {
+    if ($group_type_id == 'closed_group' && $account->id() != 1 && !in_array('contentmanager', $account->getRoles()) && !in_array('sitemanager', $account->getRoles())) {
       // Users can only be invited
       $variables['closed_group'] = TRUE;
       $variables['cta'] = t('invitation only');
@@ -343,6 +342,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
 
     if (in_array($form_id, $group_forms['edit'])) {
+      $form['actions']['submit']['#value'] = t('save');
       $etm = \Drupal::service('entity_type.manager');
       $social_group_form = new \Drupal\social_group\Form\SocialGroupAddForm($etm);
       $group_type_element = $social_group_form->getGroupTypeElement();
@@ -745,10 +745,17 @@ function social_group_preprocess_profile(&$variables) {
  */
 function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
   $group = _social_group_get_current_group();
-  // Check if there is a group set
-  if ($group && $account->id() != 1) {
-    // If it is closed and the current user is not an member of this group
-    if ($group->getGroupType()->id() == 'closed_group' && !$group->getMember($account)) {
+  // Check if there is a group set and if its an closed group
+  if ($group && $group->getGroupType()->id() == 'closed_group' && $account->id() != 1) {
+    $allowed_roles = [
+      'contentmanager',
+      'sitemanager'
+    ];
+    foreach ($allowed_roles as $role) {
+      if (in_array($role, $account->getRoles())) {
+        return AccessResult::neutral();
+      } else {
+      // If it is closed and the current user is not an member of this group
       // Then he is not allowed to see these blocks
       $forbidden_blocks = [
         'views_block:upcoming_events-upcoming_events_group',
@@ -758,6 +765,7 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
         if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
           return AccessResult::forbidden();
         }
+      }
       }
     }
   }
