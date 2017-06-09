@@ -272,7 +272,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Set some helpful text on the group join form now it's there.
-  if ($form_id == 'group_content_open_group-group_membership_group-join_form') {
+  if (in_array($form_id, $action_forms)) {
     $form['help'] = [
       '#type' => 'item',
       '#markup' => t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.'),
@@ -766,17 +766,17 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
       return AccessResult::neutral();
     }
     else {
-    // If it is closed and the current user is not an member of this group
-    // Then he is not allowed to see these blocks
-    $forbidden_blocks = [
-      'views_block:upcoming_events-upcoming_events_group',
-      'views_block:latest_topics-group_topics_block'
-    ];
-    foreach ($forbidden_blocks as $forbidden_block) {
-      if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
-        return AccessResult::forbidden();
+      // If it is closed and the current user is not an member of this group
+      // Then he is not allowed to see these blocks
+      $forbidden_blocks = [
+        'views_block:upcoming_events-upcoming_events_group',
+        'views_block:latest_topics-group_topics_block'
+      ];
+      foreach ($forbidden_blocks as $forbidden_block) {
+        if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
+          return AccessResult::forbidden();
+        }
       }
-    }
     }
   }
   return AccessResult::neutral();
@@ -845,6 +845,7 @@ function social_group_get_all_open_groups() {
  * Get all group memberships for a certain user.
  *
  * @param $uid
+ * @return array
  */
 function social_group_get_all_group_members($uid) {
   $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('user');
