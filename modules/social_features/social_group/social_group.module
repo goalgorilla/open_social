@@ -560,20 +560,25 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
           'contentmanager',
           'sitemanager'
         ];
+        // By default you're not allowed
         $allowed = FALSE;
         foreach ($allowed_roles as $role) {
+          // If you have the allowed role
           if (in_array($role, $user->getRoles())) {
+            // Then you're allowed
             $allowed = TRUE;
-            return;
           }
-          // If the user is not an member of this group
-          elseif (!$group->getMember($user)) {
-            // Disable these local tasks
-            $data['tabs'][0]['group.view'] = [];
-            $data['tabs'][0]['group.content'] = [];
-            $data['tabs'][0]['social_group.events'] = [];
-            $data['tabs'][0]['social_group.topics'] = [];
-          }
+        }
+        if ($allowed) {
+          return;
+        }
+        // If the user is not an member of this group
+        elseif (!$group->getMember($user)) {
+          // Disable these local tasks
+          $data['tabs'][0]['group.view'] = [];
+          $data['tabs'][0]['group.content'] = [];
+          $data['tabs'][0]['social_group.events'] = [];
+          $data['tabs'][0]['social_group.topics'] = [];
         }
       }
     }
@@ -751,22 +756,27 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
       'contentmanager',
       'sitemanager'
     ];
+    $allowed = FALSE;
     foreach ($allowed_roles as $role) {
       if (in_array($role, $account->getRoles())) {
-        return AccessResult::neutral();
-      } else {
-      // If it is closed and the current user is not an member of this group
-      // Then he is not allowed to see these blocks
-      $forbidden_blocks = [
-        'views_block:upcoming_events-upcoming_events_group',
-        'views_block:latest_topics-group_topics_block'
-      ];
-      foreach ($forbidden_blocks as $forbidden_block) {
-        if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
-          return AccessResult::forbidden();
-        }
+        $allowed = TRUE;
       }
+    }
+    if ($allowed) {
+      return AccessResult::neutral();
+    }
+    else {
+    // If it is closed and the current user is not an member of this group
+    // Then he is not allowed to see these blocks
+    $forbidden_blocks = [
+      'views_block:upcoming_events-upcoming_events_group',
+      'views_block:latest_topics-group_topics_block'
+    ];
+    foreach ($forbidden_blocks as $forbidden_block) {
+      if ($operation == 'view' && $block->getPluginId() == $forbidden_block) {
+        return AccessResult::forbidden();
       }
+    }
     }
   }
   return AccessResult::neutral();

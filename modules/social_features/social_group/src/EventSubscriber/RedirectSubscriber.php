@@ -44,17 +44,22 @@ class RedirectSubscriber implements EventSubscriberInterface {
           'contentmanager',
           'sitemanager'
         ];
+        // By default you're not allowed
         $allowed = FALSE;
         foreach ($allowed_roles as $role) {
+          // If you have the allowed role
           if (in_array($role, $user->getRoles())) {
+            // Then you're allowed
             $allowed = TRUE;
-            return;
           }
-          // If the user is not an member of this group
-          elseif (!$group->getMember($user) && in_array($routeMatch, $routes)) {
-            $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
-              ->toString()));
-          }
+        }
+        if ($allowed) {
+          return;
+        }
+        // If the user is not an member of this group
+        elseif (!$group->getMember($user) && in_array($routeMatch, $routes)) {
+          $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
+            ->toString()));
         }
       }
     }
