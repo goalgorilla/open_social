@@ -49,7 +49,8 @@
 
                     // Add another button
                     var closetips = Drupal.t("Don't show tips like this anymore");
-                    $('.joyride-content-wrapper').append('<a class="joyride-tip-remove" href="/user/tour/disable">'+closetips+'</a>');
+                    var destination = $(location).attr('pathname');
+                    $('.joyride-content-wrapper').append('<a class="joyride-tip-remove" href="/user/tour/disable?destination=' + destination + '">'+closetips+'</a>');
                 }
             });
 
