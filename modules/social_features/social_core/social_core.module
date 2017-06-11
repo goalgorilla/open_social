@@ -353,6 +353,13 @@ function social_core_element_info_alter(array &$info) {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_core_filter_process_format';
   }
+
+  if (isset($info['entity_autocomplete'])) {
+    $info['entity_autocomplete']['#value_callback'] = [
+      '\Drupal\social_core\Entity\Element\EntityAutocomplete',
+      'valueCallback',
+    ];
+  }
 }
 
 /**
