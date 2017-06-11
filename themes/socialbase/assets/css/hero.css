@@ -32,7 +32,6 @@
   display: block;
   position: absolute;
   content: '';
-  background-image: -webkit-linear-gradient(transparent 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
   background-image: linear-gradient(transparent 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
   width: 100%;
   left: 0;
@@ -77,8 +76,6 @@
 
 .hero-footer {
   padding: 1rem 0;
-  position: absolute;
-  bottom: 0;
   width: 100%;
 }
 
@@ -155,7 +152,6 @@
   line-height: 38px;
   speak: none;
   pointer-events: none;
-  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -169,6 +165,16 @@
 
   .cover-wrap {
     min-height: 410px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
   }
 
   .page-title {
@@ -191,6 +197,8 @@
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
+    -ms-flex-item-align: end;
+    align-self: flex-end;
   }
 
   .hero-footer__text {
