@@ -75,7 +75,7 @@ class Topic extends DemoNode {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
-    // Load term by uuid and set to node.
+    // Load term by name and set to node.
     if (!empty($item['field_topic_type'])) {
       $entry['field_topic_type'] = $this->prepareTopicType($item['field_topic_type']);
     }
@@ -114,13 +114,16 @@ class Topic extends DemoNode {
   /**
    * Returns taxonomy term id.
    *
-   * @param $uuid
+   * @param string $name
+   *   Term name.
+   *
    * @return array|null
+   *   Array containing related terms.
    */
-  protected function prepareTopicType($uuid) {
+  protected function prepareTopicType($name) {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
-      'uuid' => $uuid,
+      'name' => $name,
     ]);
 
     if ($terms) {

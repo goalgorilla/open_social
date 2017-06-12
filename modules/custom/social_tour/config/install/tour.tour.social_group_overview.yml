@@ -1,0 +1,21 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_group
+id: social-group-overview
+label: 'Group Overview functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.newest_groups.page_all_groups
+tips:
+  content_tooltip:
+    id: content_tooltip
+    plugin: text
+    location: 'bottom'
+    body: 'Use the plus button in the navigation bar to create a new topic, or to start a new event or group'
+    weight: 2
+    attributes:
+      data-id: main-navigation

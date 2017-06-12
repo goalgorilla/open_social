@@ -50,6 +50,13 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupAddMemberTitle';
       $route->setDefaults($defaults);
     }
+
+    if ($route = $collection->get('entity.group.add_page')) {
+      $defaults = $route->getDefaults();
+      unset($defaults['_controller']);
+      $defaults['_form'] = '\Drupal\social_group\Form\SocialGroupAddForm';
+      $route->setDefaults($defaults);
+    }
   }
 
 }

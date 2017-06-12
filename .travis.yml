@@ -48,6 +48,7 @@ before_install:
 
 script:
   - docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh
+  - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
   - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
   - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
 

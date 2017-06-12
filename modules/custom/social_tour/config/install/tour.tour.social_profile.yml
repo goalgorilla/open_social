@@ -1,0 +1,20 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_core
+id: social-profile
+label: 'Profile page stream functionality.'
+module: social_tour
+routes:
+  - route_name: entity.user.canonical
+tips:
+  welcome_profile:
+    id: welcome_profile
+    plugin: text
+    label: 'Welcome on your profile stream!'
+    body: "Here other community members can leave messages for you! You can also post messages on your own profile, these messages will be shown on other community members' homepage."
+    weight: 1
+    attributes:
+      backdrop: 1

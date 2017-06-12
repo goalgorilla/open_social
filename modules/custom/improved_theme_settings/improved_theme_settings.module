@@ -247,7 +247,7 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
         }
 
-        .btn {
+        div:not(.btn-group) > .btn {
           border-radius: ' . $border_radius . 'px !important;
         }
 
@@ -265,13 +265,13 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-bottom-right-radius: ' . $border_radius . 'px !important;
         }
 
-        .off-canvas-xs-only {
-          border-radius: ' . $border_radius . 'px !important;
-        }
-
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+          }
+          
+          .off-canvas-xs-only {
+            border-radius: ' . $border_radius . 'px !important;
           }
         }
 

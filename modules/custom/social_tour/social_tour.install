@@ -1,0 +1,86 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the social_tour module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_tour.
+ */
+function social_tour_install() {
+  // Set some default permissions.
+  _social_tour_set_permissions();
+  // Enable the module's on/off setting by default
+  \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Remove config that was imported on install.
+ */
+function social_tour_uninstall() {
+  $configs = [
+    'tour.tour.social-event-overview',
+    'tour.tour.social-explore',
+    'tour.tour.social-group',
+    'tour.tour.social-group-overview',
+    'tour.tour.social-home',
+    'tour.tour.social-node-view',
+    'tour.tour.social-profile',
+    'tour.tour.social-topic-overview',
+    'tour.tour.social-user',
+  ];
+
+  foreach ($configs as $config) {
+    // Deleting config.
+    \Drupal::configFactory()->getEditable($config)->delete();
+  }
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_tour_set_permissions() {
+  $roles = \Drupal\user\Entity\Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    $permissions = _social_tour_get_permissions($role->id());
+
+    if (!is_null($permissions)) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * @param $role
+ * @return array
+ */
+function _social_tour_get_permissions($role) {
+  $permissions = [];
+
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'access tour'
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'manage tour'
+  ]);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
+}
