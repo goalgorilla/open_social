@@ -294,7 +294,6 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
  * Implements hook_form_FORM_ID_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  dpm($form_id);
   $action_forms = [
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
@@ -351,9 +350,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // Add redirect to Group Membership page.
       $form['actions']['submit']['#submit'][] = '_social_group_membership_edit_form_submit';
     }
-//    if ($form_id == 'group_content_open_group-group_membership_add_form' || 'group_content_closed_group-group_membership_add_form') {
-//      $form['actions']['submit']['#submit'][] = '_social_group_membership_grant_admin_role'; // if the user to be added is CM+ go through this function
-//    }
+    if ($form_id == 'group_content_open_group-group_membership_add_form' || 'group_content_closed_group-group_membership_add_form') {
+      $form['actions']['submit']['#submit'][] = '_social_group_membership_grant_admin_role';
+    }
   }
 
   // Check if form is group content create form.
@@ -431,7 +430,8 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
 
-    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form'])) {
+    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form', 'group_content_open_group-group_membership_add_form', 'group_content_closed_group-group_membership_add_form'])) {
+      _social_group_membership_grant_admin_role($form, $form_state);
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
@@ -444,6 +444,73 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
         'view.groups.page_user_groups',
         array('user' => \Drupal::currentUser()->id(), array())
       );
+    }
+  }
+}
+
+/**
+ * When a user is joining or being added to group, has the role of CM+
+ * we give this user the group_admin role so the user keeps full
+ * control over a group
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ */
+function _social_group_membership_grant_admin_role(&$form, FormStateInterface $form_state) {
+  $group = _social_group_get_current_group();
+  $user = Drupal::currentUser();
+  $selected_user = $form_state->getValue('entity_id');
+  $complete_form = $form_state->getCompleteForm();
+  $form_id = $complete_form['#form_id'];
+  $global_roles = [
+    'sitemanager',
+    'contentmanager',
+    'administrator'
+  ];
+  if ($group && $user->id() != 1) {
+    // If a user joins a group
+    if ($form_id == 'group_content_' . $group->bundle() . '-group_membership_group-join_form') {
+      $grant_group_admin = FALSE;
+      foreach ($global_roles as $role) {
+        if (in_array($role, $user->getRoles())) {
+          $grant_group_admin = TRUE;
+        }
+      }
+      if ($grant_group_admin) {
+        $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+        $values = ['group_roles' => [$group->bundle() . '-group_admin']];
+        $group_content = GroupContent::create([
+            'type' => $plugin->getContentTypeConfigId(),
+            'gid' => $group->id(),
+            // Get the member ID that should have the group_admin role instead of the group owner
+            'entity_id' => $user->id(),
+          ] + $values
+        );
+        $group_content->save();
+      }
+    }
+    // If a user is being added
+    if ($form_id == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
+      // Load the selected user and the user's roles
+      $load_selected_user = User::load($selected_user[0]['target_id']);
+      $grant_group_admin = FALSE;
+      foreach ($global_roles as $role) {
+        if (in_array($role, $load_selected_user->getRoles())) {
+          $grant_group_admin = TRUE;
+        }
+      }
+      if ($grant_group_admin) {
+        $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+        $values = ['group_roles' => [$group->bundle() . '-group_admin']];
+        $group_content = GroupContent::create([
+            'type' => $plugin->getContentTypeConfigId(),
+            'gid' => $group->id(),
+            // Get the member ID that should have the group_admin role instead of the group owner
+            'entity_id' => $selected_user[0]['target_id'],
+          ] + $values
+        );
+        $group_content->save();
+      }
     }
   }
 }
