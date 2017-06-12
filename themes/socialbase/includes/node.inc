@@ -117,6 +117,11 @@ function socialbase_preprocess_node(&$variables) {
         $variables['visibility_icon'] = 'public';
         $variables['visibility_label'] = t('public');
         break;
+
+      case 'group':
+        $variables['visibility_icon'] = 'lock';
+        $variables['visibility_label'] = t('group');
+        break;
     }
   }
 

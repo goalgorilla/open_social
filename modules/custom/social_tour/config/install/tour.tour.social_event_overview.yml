@@ -1,0 +1,20 @@
+langcode: en
+status: true
+translatable: true
+dependencies:
+  module:
+    - social_event
+id: social-event-overview
+label: 'Event Overview functionality.'
+module: social_tour
+routes:
+  -
+    route_name: view.upcoming_events.page_community_events
+tips:
+  filter_tooltip:
+    id: filter_tooltip
+    plugin: text
+    location: 'left'
+    body: 'Use the event filter if you only want to see either upcoming or past events'
+    attributes:
+     data-id: block-socialblue-exposedformupcoming-eventspage-community-events

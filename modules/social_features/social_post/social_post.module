@@ -10,7 +10,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -137,17 +136,18 @@ function social_post_theme() {
 }
 
 /**
- * Implements hook_theme_suggestions_HOOK().
- */
+* Implements hook_theme_suggestions_HOOK().
+*/
 function social_post_theme_suggestions_post(array $variables) {
-  $suggestions = array();
-  $post = $variables['elements']['#post'];
+  $suggestions = [];
+  $entity = $variables['elements']['#post'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
   $suggestions[] = 'post__' . $sanitized_view_mode;
-  $suggestions[] = 'post__' . $post->id();
-  $suggestions[] = 'post__' . $post->id() . '__' . $sanitized_view_mode;
-
+  $suggestions[] = 'post__' . $entity->bundle();
+  $suggestions[] = 'post__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'post__' . $entity->id();
+  $suggestions[] = 'post__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
 }
 

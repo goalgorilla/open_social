@@ -47,12 +47,16 @@
 
 .cover-wrap {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
   z-index: 2;
   min-height: 300px;
 
   @include for-tablet-portrait-up {
     min-height: 410px;
+
   }
 
 }
@@ -98,13 +102,12 @@
 
 .hero-footer {
   padding: 1rem 0;
-  position: absolute;
-  bottom: 0;
   width: 100%;
 
   @include for-tablet-landscape-up {
     display: flex;
     align-items: center;
+    align-self: flex-end;
   }
 }
 
