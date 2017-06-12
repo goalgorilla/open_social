@@ -430,7 +430,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
 
-    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form', 'group_content_open_group-group_membership_add_form', 'group_content_closed_group-group_membership_add_form'])) {
+    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form'])) {
       _social_group_membership_grant_admin_role($form, $form_state);
       // Set redirect to group home page.
       $form_state->setRedirect(
@@ -470,6 +470,7 @@ function _social_group_membership_grant_admin_role(&$form, FormStateInterface $f
   if ($group && $user->id() != 1) {
     // If a user joins a group
     if ($form_id == 'group_content_' . $group->bundle() . '-group_membership_group-join_form') {
+      dpm('we are on a join form');
       $grant_group_admin = FALSE;
       foreach ($global_roles as $role) {
         if (in_array($role, $user->getRoles())) {
