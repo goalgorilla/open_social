@@ -29,8 +29,7 @@ use Drupal\profile\Entity\Profile;
  */
 function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  //$form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
-  array_unshift($form['actions']['submit']['#submit'], '_social_group_group_open_group_edit_form_submit');
+  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -246,10 +245,10 @@ function social_group_group_insert(GroupInterface $group) {
     }
     if ($grant_group_admin) {
       $content->delete();
-      // Give the global role the Group Admin role so he keeps the permissions
-      // to fully control the group
+      // When a CM+ creates a group, he is given the group_manager role
+      // alongside the group_admin role to keep the full control over the group
       $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_admin']];
+      $values = ['group_roles' => [$group->bundle() . '-group_admin', $group->bundle() . '-group_manager']];
       $group_content = GroupContent::create([
           'type' => $plugin->getContentTypeConfigId(),
           'gid' => $group->id(),
@@ -296,7 +295,6 @@ function social_group_entity_view_alter(array &$build, Drupal\Core\Entity\Entity
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   dpm($form_id);
-  dpm($form);
   $action_forms = [
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
@@ -354,7 +352,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['actions']['submit']['#submit'][] = '_social_group_membership_edit_form_submit';
     }
 //    if ($form_id == 'group_content_open_group-group_membership_add_form' || 'group_content_closed_group-group_membership_add_form') {
-//      $form['actions']['submit']['#submit'][] = '_social_group_membership_grant_admin_role';
+//      $form['actions']['submit']['#submit'][] = '_social_group_membership_grant_admin_role'; // if the user to be added is CM+ go through this function
 //    }
   }
 
