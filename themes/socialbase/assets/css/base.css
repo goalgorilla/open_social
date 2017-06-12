@@ -143,6 +143,7 @@ body {
 
 .fade {
   opacity: 0;
+  -webkit-transition: opacity .15s linear;
   transition: opacity .15s linear;
 }
 
@@ -162,9 +163,12 @@ body {
   position: relative;
   height: 0;
   overflow: hidden;
+  -webkit-transition-property: height, visibility;
   transition-property: height, visibility;
-  transition-duration: 0.35s;
-  transition-timing-function: ease;
+  -webkit-transition-duration: 0.35s;
+          transition-duration: 0.35s;
+  -webkit-transition-timing-function: ease;
+          transition-timing-function: ease;
 }
 
 code,
@@ -231,6 +235,7 @@ h1, h2, h3, h4, h5, h6,
   font-weight: 500;
   line-height: 1.1;
   margin: 1rem 0 0.5rem;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 

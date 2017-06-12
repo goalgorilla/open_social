@@ -8,6 +8,7 @@
   font-size: inherit;
   line-height: 1.5;
   background-image: none;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
@@ -98,6 +99,7 @@ textarea.form-control {
   display: inline-block;
   line-height: 21px;
   font-size: 1em;
+  -webkit-transition: .28s ease;
   transition: .28s ease;
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -115,6 +117,7 @@ textarea.form-control {
   width: 16px;
   height: 16px;
   z-index: 0;
+  -webkit-transition: .28s ease;
   transition: .28s ease;
 }
 
@@ -178,6 +181,7 @@ textarea.form-control {
   left: 0;
   position: absolute;
   /* .1s delay is for check animation */
+  -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
   transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
   z-index: 1;
 }
@@ -215,6 +219,7 @@ textarea.form-control {
   -webkit-transform: rotateZ(37deg);
           transform: rotateZ(37deg);
   margin-top: 2px;
+  -webkit-transition: .2s;
   transition: .2s;
   -webkit-transform-origin: 100% 100%;
           transform-origin: 100% 100%;
@@ -311,6 +316,7 @@ textarea.form-control {
   background-color: #777777;
   border-radius: 15px;
   margin-right: 10px;
+  -webkit-transition: background 0.3s ease;
   transition: background 0.3s ease;
   vertical-align: middle;
   margin: 0 16px;
@@ -327,6 +333,7 @@ textarea.form-control {
   border-radius: 21px;
   left: -5px;
   top: -3px;
+  -webkit-transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
   transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
 }
 
@@ -372,6 +379,7 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 [type='range']::-webkit-slider-runnable-track {
   cursor: pointer;
   height: 8px;
+  -webkit-transition: all .2s ease;
   transition: all .2s ease;
   width: 100%;
   background: #e6e6e6;
@@ -392,6 +400,7 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 [type='range']::-moz-range-track {
   cursor: pointer;
   height: 8px;
+  -webkit-transition: all .2s ease;
   transition: all .2s ease;
   width: 100%;
   background: #e6e6e6;
@@ -410,6 +419,7 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 [type='range']::-ms-track {
   cursor: pointer;
   height: 8px;
+  -webkit-transition: all .2s ease;
   transition: all .2s ease;
   width: 100%;
   background: transparent;
