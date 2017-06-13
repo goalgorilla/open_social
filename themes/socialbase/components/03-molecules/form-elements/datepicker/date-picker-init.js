@@ -31,6 +31,9 @@
 
                 // DATES
                 $context.find($date).once('datePicker').each(function () {
+                  // Set the prepoluted value of the datepicker for the end date
+                  var startDate = $("#edit-field-event-date-0-value-date");
+                  var endDate = $("#edit-field-event-date-end-0-value-date");
                   // Change it's input to text. Only for date element and only on Desktop.
                   // If JS is disabled the fallback is the HTML 5 element, not too user friendly.
                   $date.prop('type', 'text');
@@ -39,33 +42,36 @@
                       altFormat: 'yy-mm-dd',
                       dateFormat: 'yy-mm-dd', // @Todo we can alter this to show the user a different format.
                       onSelect: function(dateText, inst) {
-                        // Set the prepoluted value of the datepicker for the end date
-                        var startDate = $("#edit-field-event-date-0-value-date");
-                        var endDate = $("#edit-field-event-date-end-0-value-date");
 
                         // Check if end date field is empty and populate the target field
                         if ( !endDate.val() ) {
                           endDate.val( dateText )
                         }
-                        // If the end date field is already set do this
+                        // If the end date field is already set start comparing timestamps
                         else {
                           // Create timestamps to compare
                           var startDateTimestamp = new Date(startDate[0].value).getTime();
                           var endDateTimestamp = new Date(endDate[0].value).getTime();
 
-                          console.log(startDateTimestamp);
-                          console.log(endDateTimestamp);
+                          if (startDateTimestamp > endDateTimestamp) endDate.val( dateText );
+                          if (endDateTimestamp < startDateTimestamp) startDate.val( dateText );
+                        }
+                      },
+                      beforeShowDay: function(date) {
+                        // Create timestamps to compare
+                        var startDateTimestamp = new Date(startDate.val()).getTime() - 86400000; // Minus a day in ms
+                        var endDateTimestamp = new Date(endDate.val()).getTime();
+                        var currentDateTimestamp = date.getTime();
 
-                          // If the start user selects a start date that exceeds the end date do this
-                          if (startDateTimestamp > endDateTimestamp ) {
-                            endDate.val( dateText )
-                          }
+                        if (currentDateTimestamp >= startDateTimestamp  && currentDateTimestamp <= endDateTimestamp) {
+                          return [true, 'bg-info', ''];
                         }
 
-                        console.log( endDate[0].value );
-
+                        return [true, '', ''];
                       }
+
                   });
+
                 });
 
             }
