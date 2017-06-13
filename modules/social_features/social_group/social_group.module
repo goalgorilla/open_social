@@ -379,7 +379,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   );
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
     $form['path']['#type'] = 'hidden';
-    $form['actions']['submit']['#value'] = t('save');
+    $form['actions']['submit']['#value'] = t('Save');
 
     if (in_array($form_id, $group_forms['edit'])) {
       $etm = \Drupal::service('entity_type.manager');
