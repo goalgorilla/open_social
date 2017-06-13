@@ -446,17 +446,18 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 }
 
 /**
- * When a user is joining or being added to group, has the role of CM+
- * we give this user the group_admin role so the user keeps full
- * control over a group
+ * When a user is joining or being added to group, has the role of CM+ we give this
+ * user the group_admin role so the user keeps full control over a group
+ *
  * @param $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function _social_group_membership_grant_admin_role(&$form, FormStateInterface $form_state) {
+  // Get the current group
   $group = _social_group_get_current_group();
+  // Get the current user (for when a user joins a group)
   $user = Drupal::currentUser();
-  // The selected user in the Add Member form
+  // The selected user from the Add Member form (for when a user is being added to a group)
   $selected_user = $form_state->getValue('entity_id');
   $complete_form = $form_state->getCompleteForm();
   $form_id = $complete_form['#form_id'];
@@ -468,12 +469,14 @@ function _social_group_membership_grant_admin_role(&$form, FormStateInterface $f
   $grant_group_admin = FALSE;
   // If a user joins a group
   if ($form_id == 'group_content_' . $group->bundle() . '-group_membership_group-join_form') {
-    // Get membership.
+    // Get the initial created membership.
     $content = $group->getMember($user)->getGroupContent();
-    // Delete the initial created membership.
-    $content->delete();
+    // If the user has one of the global roles
     foreach ($global_roles as $role) {
       if (in_array($role, $user->getRoles())) {
+        // Delete the initial created membership.
+        $content->delete();
+        // Grant permission for the Group Admin role
         $grant_group_admin = TRUE;
       }
     }
@@ -497,10 +500,11 @@ function _social_group_membership_grant_admin_role(&$form, FormStateInterface $f
     $load_selected_user = User::load($selected_user[0]['target_id']);
     // Get membership.
     $content = $group->getMember($load_selected_user)->getGroupContent();
-    // Delete the initial created membership. TODO check if the initially created group role is not group_manager
-    $content->delete();
     foreach ($global_roles as $role) {
       if (in_array($role, $load_selected_user->getRoles())) {
+        // Delete the initial created membership.
+        $content->delete();
+        // Grant permission for the Group Admin role
         $grant_group_admin = TRUE;
       }
     }
