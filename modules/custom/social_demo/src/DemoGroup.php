@@ -79,16 +79,12 @@ abstract class DemoGroup extends DemoContent {
       }
 
       // Try to load a user account (author's account).
-      $accounts = $this->userStorage->loadByProperties([
-        'uuid' => $item['uid'],
-      ]);
+      $account = $this->loadByUuid('user', $item['uid']);
 
-      if (!$accounts) {
-        drush_log(dt("Account with uuid: {$item['uid']} doesn't exists."), LogLevel::WARNING);
+      if (!$account) {
+        drush_log(dt("Account with uuid: {$item['uid']} doesn't exists."), LogLevel::ERROR);
         continue;
       }
-
-      $account = current($accounts);
 
       // Create array with data of a group.
       $item['uid'] = $account->id();
