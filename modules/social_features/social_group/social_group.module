@@ -875,6 +875,7 @@ function social_group_preprocess_profile(&$variables) {
  */
 function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
   $group = _social_group_get_current_group();
+  $user = Drupal::currentUser();
   // Check if there is a group set and if its an closed group
   if ($group && $group->getGroupType()->id() == 'closed_group' && $account->id() != 1) {
     $allowed_roles = [
@@ -890,7 +891,7 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
     if ($allowed) {
       return AccessResult::neutral();
     }
-    else {
+    elseif (!$group->getMember($user)) {
       // If it is closed and the current user is not an member of this group
       // Then he is not allowed to see these blocks
       $forbidden_blocks = [
