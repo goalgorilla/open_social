@@ -20,7 +20,8 @@
                   $time.timepicker({
                     'show2400': false,
                     'scrollDefault': 'now',
-                    'timeFormat': 'H:i'
+                    'timeFormat': 'H:i',
+                    'step': 5
                   });
                   // Listen for changes in the time field and update the end value.
                   $time.on('changeTime', function() {
