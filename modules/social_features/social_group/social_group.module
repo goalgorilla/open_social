@@ -337,10 +337,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_closed_group-group_membership_add_form',
     'group_content_closed_group-group_membership_edit_form',
   );
-  if (in_array($form_id, $membership_forms)) {
+  if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
+    // Hide the submission for the Group Admin role
+    unset($form['group_roles']['widget']['#options']['closed_group-group_admin']);
     $form['path']['#type'] = 'hidden';
 
     if ('group_content_open_group-group_membership_edit_form' == $form_id) {
@@ -377,9 +379,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   );
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
     $form['path']['#type'] = 'hidden';
+    $form['actions']['submit']['#value'] = t('save');
 
     if (in_array($form_id, $group_forms['edit'])) {
-      $form['actions']['submit']['#value'] = t('save');
       $etm = \Drupal::service('entity_type.manager');
       $social_group_form = new \Drupal\social_group\Form\SocialGroupAddForm($etm);
       $group_type_element = $social_group_form->getGroupTypeElement();
@@ -498,6 +500,8 @@ function _social_group_membership_grant_admin_role(&$form, FormStateInterface $f
   if ($form_id == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
     // Load the selected user and the user's roles
     $load_selected_user = User::load($selected_user[0]['target_id']);
+    // Get the selected group roles on add member page
+    $group_roles = $form_state->getValue('group_roles');
     // Get membership.
     $content = $group->getMember($load_selected_user)->getGroupContent();
     foreach ($global_roles as $role) {
@@ -510,7 +514,12 @@ function _social_group_membership_grant_admin_role(&$form, FormStateInterface $f
     }
     if ($grant_group_admin) {
       $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_admin']];
+      // If there was a role selected, we grant this role as well
+      if (isset($group_roles[0]['target_id'])) {
+        $values = ['group_roles' => [$group->bundle() . '-group_admin', $group_roles[0]['target_id']]];
+      } else {
+        $values = ['group_roles' => [$group->bundle() . '-group_admin']];
+      }
       $group_content = GroupContent::create([
           'type' => $plugin->getContentTypeConfigId(),
           'gid' => $group->id(),
