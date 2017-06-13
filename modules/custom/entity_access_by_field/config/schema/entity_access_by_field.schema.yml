@@ -1,0 +1,34 @@
+# Schema for the configuration files of the Entity Access By Field.
+
+field.storage_settings.entity_access_field:
+  type: mapping
+  label: 'Entity access field settings'
+  mapping:
+    allowed_values:
+      type: sequence
+      label: 'Allowed values list'
+      sequence:
+        type: mapping
+        label: 'Allowed value with label'
+        mapping:
+          value:
+            type: string
+            label: 'Value'
+          label:
+            type: label
+            label: 'Label'
+    allowed_values_function:
+      type: string
+      label: 'Allowed values function'
+
+field.field_settings.entity_access_field:
+  label: 'Entity access field settings'
+  type: mapping
+
+field.value.entity_access_field:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    value:
+      type: string
+      label: 'Value'

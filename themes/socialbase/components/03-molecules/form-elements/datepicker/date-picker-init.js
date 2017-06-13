@@ -20,7 +20,8 @@
                   var options = {
                     'show2400': false,
                     'scrollDefault': 'now',
-                    'timeFormat': 'H:i'
+                    'timeFormat': 'H:i',
+                    'step': 5
                   };
                   $time.timepicker(options);
                 });
