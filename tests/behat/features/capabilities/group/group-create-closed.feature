@@ -10,7 +10,11 @@ Feature: Create Closed Group
       | Group User One | group_user_1@example.com | 1      |
       | Group User Two | group_user_2@example.com | 1      |
     And I am logged in as "Group User One"
-    And I am on "/group/add/closed_group"
+    And I am on "user"
+    And I click "Groups"
+    And I click "Add a group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    And I press "Continue"
     When I fill in "Title" with "Test closed group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"
@@ -67,7 +71,29 @@ Feature: Create Closed Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Save and publish"
     And I should see "Test closed group event"
+
+  # Lets add another user on the Manage members tab.
+    When I click "Test closed group"
+    And I click "Manage members"
+    And I click "Add member"
+    And I fill in "Group User Two" for "Select a member"
+    And I press "Save"
+    Then I click "Members"
+    And I should see "Group User Two"
     And I logout
+
+  # Now login as user two.
+    Given I am logged in as "Group User Two"
+    And I am on "/all-groups"
+    Then I should see "Test closed group"
+    When I click "Test closed group"
+    And I should see the button "Joined"
+    And I should see "Test closed group topic"
+    And I should see "Test closed group event"
+    And I should see "This is a closed group post."
+    And I open and check the access of content in group "Test closed group" and I expect access "allowed"
+    And I logout
+    And I open and check the access of content in group "Test closed group" and I expect access "denied"
 
   # As a non-member of the closed group, when I click on the closed group
   # I should be redirected to /group/x/about. I should not see the stream, events or topics page.
@@ -75,6 +101,7 @@ Feature: Create Closed Group
       | name           | mail                      | status |
       | Platform User  | platform_user@example.com | 1      |
     And I am logged in as "Platform User"
+    And I open and check the access of content in group "Test closed group" and I expect access "denied"
     And I am on "/all-groups"
     Then I should see "Test closed group"
     When I click "Test closed group"
@@ -119,7 +146,11 @@ Feature: Create Closed Group
 
   # Create a closed group to test the leaving of a closed group
     When I am logged in as "Group User Two"
-    And I am on "/group/add/closed_group"
+    And I am on "user"
+    And I click "Groups"
+    And I click "Add a group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    And I press "Continue"
     When I fill in "Title" with "Test closed group 2"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"

@@ -29,6 +29,10 @@
   background: transparent;
   z-index: $zindex-tour;
 
+  @include for-phone-only {
+    display: none !important; // We hide tooltips on mobile since edge detectiond and arrow placement is not working propertly.
+  }
+
   @include for-tablet-portrait-up {
     width: 450px;
   }
@@ -41,6 +45,14 @@
     & + .joyride-content-wrapper {
       top: 28px;
     }
+
+    @include for-tablet-portrait-up {
+      left: -25px;
+
+      & + .joyride-content-wrapper {
+        left: -40px;
+      }
+    }
   }
 
   .joyride-nub.bottom {
@@ -50,6 +62,14 @@
 
     & + .joyride-content-wrapper {
       bottom: 28px;
+    }
+
+    @include for-tablet-portrait-up {
+      left: -25px;
+
+      & + .joyride-content-wrapper {
+        left: -40px;
+      }
     }
   }
 
@@ -61,6 +81,14 @@
     & + .joyride-content-wrapper {
       left: 28px;
     }
+
+    @include for-tablet-portrait-up {
+      top: -25px;
+
+      & + .joyride-content-wrapper {
+        top: -45px;
+      }
+    }
   }
 
   .joyride-nub.right {
@@ -71,18 +99,40 @@
     & + .joyride-content-wrapper {
       right: 28px;
     }
+
+    @include for-tablet-portrait-up {
+      top: -25px;
+
+      & + .joyride-content-wrapper {
+        top: -45px;
+      }
+    }
   }
 
-}
+  .tour-progress {
+    position: absolute;
+    bottom: 25px;
+  }
 
-.joyride-next-tip {
-  margin-left: 10px;
+  .joyride-tip-remove {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 12px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+  }
+
 }
 
 .joyride-content-wrapper {
   background: $tour-background-color;
   color: $tour-text-color;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  padding: 20px 50px 35px 20px;
 
   @include for-tablet-portrait-up {
     padding: 35px 65px 35px 35px;

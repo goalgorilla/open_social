@@ -30,15 +30,16 @@
 {% endif %}
 
 <div class="cover-wrap">
+  <header>
   <h1 class="page-title">
     {{ profile_name }}
   </h1>
-  <br />
 
-  {{ content.field_profile_image }}
+    {{ content.field_profile_image }}
+  </header>
 
   {% if (content.field_profile_function|render or content.field_profile_organization|render) %}
-    <div class="hero-footer">
+    <footer class="hero-footer">
       <div class="hero-footer__text">
         {% if content.field_profile_function|render %}
           <strong>{{ content.field_profile_function|render }}</strong>
@@ -51,7 +52,7 @@
         {% endif %}
       </div>
 
-    </div>
+    </footer>
   {% endif %}
 
   {# render other fields that developers might add #}

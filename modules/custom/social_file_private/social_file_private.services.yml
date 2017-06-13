@@ -1,0 +1,9 @@
+services:
+  social_file_private_fields.overrider:
+    class: \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
+  social_file_private_text_editor.overrider:
+    class: \Drupal\social_file_private\SocialFilePrivateTextEditorConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
