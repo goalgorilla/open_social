@@ -122,6 +122,24 @@ Feature: Create Open Group
     And I should see "Test group topic" in the "Main content"
     And I should see "Test open group" in the "Main content"
 
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "contentmanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
+
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "sitemanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
+
   # DS-703 As a LU I want to leave a group
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
