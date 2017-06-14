@@ -125,6 +125,7 @@ options.styleGuide = {
     'kss-assets/css/form-controls.css',
     'kss-assets/css/list.css',
     'kss-assets/base/list.css',
+    'kss-assets/css/spinner.css',
     'kss-assets/css/waves.css',
     // Molecule stylesheets
     'kss-assets/base/dropdown.css',

@@ -42,23 +42,19 @@
  */
 #}
 
-{{ attach_library('socialbase/tablesaw') }}
-
-{% if card %}
-    <div class="card brand-border-radius">
- {% endif %}
-
   {% if theme.settings.table_responsive %}
-
+    {{ attach_library('socialbase/tablesaw') }}
     <div class="table-responsive">
   {% endif %}
+
   {% set classes = [
     'table',
     'tablesaw',
-    context.bordered is not empty or theme.settings.table_bordered ? 'table-bordered',
-    context.condensed is not empty or theme.settings.table_condensed ? 'table-condensed',
-    context.hover is not empty or theme.settings.table_hover ? 'table-hover',
-    context.striped is not empty or theme.settings.table_striped ? 'table-striped',
+    bordered ? 'table-bordered',
+    condensed ? 'table-condensed',
+    hover ? 'table-hover',
+    striped ? 'table-striped',
+    sticky ? 'sticky-enabled',
   ] %}
 
     <table{{ attributes.addClass(classes) }} data-tablesaw-mode="swipe" data-tablesaw-minimap>
@@ -148,7 +144,3 @@
   {% if theme.settings.table_responsive %}
     </div>
   {% endif %}
-
-{% if card %}
-    </div>
-{% endif %}

@@ -1,0 +1,4 @@
+services:
+  social_tour.onboarding:
+    class: Drupal\social_tour\SocialTourController
+    arguments: ['@user.data', '@config.factory', '@current_user']

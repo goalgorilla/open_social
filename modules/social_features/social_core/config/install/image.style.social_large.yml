@@ -1,13 +1,21 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - crop
 name: social_large
 label: 'social large (128 x 128)'
 effects:
   29ad1fa6-2731-11e6-b67b-9e71128cae77:
     uuid: 29ad1fa6-2731-11e6-b67b-9e71128cae77
     id: image_scale_and_crop
-    weight: 2
+    weight: -9
     data:
       width: 128
       height: 128
+  357bbb69-a9cc-4de8-b1ec-f6dacf47fe56:
+    uuid: 357bbb69-a9cc-4de8-b1ec-f6dacf47fe56
+    id: crop_crop
+    weight: -10
+    data:
+      crop_type: profile_large

@@ -55,6 +55,7 @@ function socialbase_preprocess_block(&$variables) {
 
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
   $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
+  $route_name = \Drupal::routeMatch()->getRouteName();
 
   // Fetch the current active (sub)theme.
   $theme = \Drupal::theme()->getActiveTheme();
@@ -97,6 +98,16 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   if (isset($variables['elements']['kpi_analytics'])) {
+    $variables['card'] = TRUE;
+  }
+
+  // wrap the group/membership table in a card element.
+  if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block' && $route_name == 'entity.group_content.collection') {
+    $variables['card'] = TRUE;
+  }
+
+  // Show group managers block in a card
+  if ($variables['elements']['#derivative_plugin_id'] == 'group_managers-block_list_managers') {
     $variables['card'] = TRUE;
   }
 

@@ -17,8 +17,10 @@
 {%
   set classes = [
     'btn-group',
+    'dropdown',
     alignment == 'up' ? 'dropup',
     alignment == 'right' ? 'btn-group--primary',
+    btn_context == 'operations' ? 'btn-group--operations',
   ]
 %}
 <div{{ attributes.addClass(classes) }}>

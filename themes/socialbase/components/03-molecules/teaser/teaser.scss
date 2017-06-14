@@ -115,12 +115,9 @@
   position: relative;
 }
 
-// A line of content giving information about the content. Will always be cut off after one line
+// A line of content giving information about the content.
 .teaser__content-line {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  display: flex;
   max-width: 100%;
   font-size: 0.875rem;
 }
@@ -129,39 +126,41 @@
 .teaser__content-type-icon {
   width: 14px;
   height: 14px;
-  line-height: 16px;
-  display: inline-block;
-  vertical-align: middle;
+  flex: 0 0 14px;
+  line-height: 21px;
+  margin-top: 3px; // vertical alignment
   fill: $gray;
   margin-right: 12px;
 }
 
-// text displaying next to the icon
+// Will always be cut off after one line
 .teaser__content-text {
-  vertical-align: middle;
-  line-height: 1;
-  margin-right: 5px;
-  display: inline;
+  line-height: 21px;
+  flex-grow: 1;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
 }
+
 
 // Custom styling for publication info of a node, because it needs to be combined at one line next to the content type icon
 .teaser__published {
-  display: inline-flex;
-  width: 85%;
+  display: flex;
+  min-width: 0; // critical to prevent children from growing
 }
 
-// The author name should be able to truncate when the space is limited: flex-grow: 0
+// The author name should be able to truncate when the space is limited
 .teaser__published-author {
-  flex: 0 1 auto;
+  flex-grow: 1;
+  text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
-  margin-right: 4px;
 }
 
-// The published date should be shown completely when the space is limited: flex-grow: 1
+// The published date should be shown completely when the space is limited
 .teaser__published-date {
-  flex: 1 1 auto;
+  flex-shrink: 0;
+  margin-right: 4px;
 }
 
 // Reset margin so the items in the actionbar are vertically aligned.

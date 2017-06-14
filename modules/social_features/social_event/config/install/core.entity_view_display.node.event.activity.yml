@@ -31,6 +31,7 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    region: content
   field_event_comments:
     weight: 6
     label: hidden
@@ -39,6 +40,7 @@ content:
       always_show_all_comments: '1'
     third_party_settings: {  }
     type: comment_node
+    region: content
   field_event_date:
     type: datetime_default
     weight: 1
@@ -47,6 +49,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
+    region: content
   field_event_date_end:
     type: datetime_default
     weight: 2
@@ -55,6 +58,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
+    region: content
   field_event_image:
     type: image
     weight: 0
@@ -63,6 +67,7 @@ content:
       image_style: social_x_large
       image_link: content
     third_party_settings: {  }
+    region: content
   field_event_location:
     type: string
     weight: 3
@@ -70,11 +75,17 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    region: content
+  flag_follow_content:
+    weight: 10
+    region: content
   links:
     weight: 5
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   body: true
   field_content_visibility: true
   field_files: true
+  like_and_dislike: true

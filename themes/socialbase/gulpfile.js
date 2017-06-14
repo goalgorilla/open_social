@@ -93,7 +93,7 @@ gulp.task('styles', ['clean:css'], function () {
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.basetheme.css))
-    .pipe($.if(browserSync.active, browserSync.stream({match: '**/*.css'})));
+    .pipe(browserSync.stream());
 });
 
 
@@ -228,7 +228,7 @@ gulp.task('browser-sync', ['watch:css', 'watch:icons'], function () {
   }
   return browserSync.init({
     proxy: options.drupalURL,
-    noOpen: false
+    open: false
   });
 });
 

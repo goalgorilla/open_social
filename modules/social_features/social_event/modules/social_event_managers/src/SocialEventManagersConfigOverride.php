@@ -29,10 +29,10 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
         ],
         'parent_name' => '',
         'weight' => 9,
-        'label' => 'Event managers',
+        'label' => 'Event organisers',
         'format_type' =>  'fieldset',
         'format_settings' => [
-          'label' => 'Event managers',
+          'label' => 'Event organisers',
           'id' => 'event-managers',
           'classes' => 'card',
           'required_fields' => FALSE,

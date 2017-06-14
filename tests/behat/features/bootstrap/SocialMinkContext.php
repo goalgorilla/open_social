@@ -72,4 +72,19 @@ class SocialMinkContext extends MinkContext{
       $this->iMakeAScreenshotWithFileName($today . '-error');
     }
   }
+
+
+  /**
+   * Attaches file to field with specified name.
+   *
+   * @When /^(?:|I )attach the file "(?P<path>[^"]*)" to hidden field "(?P<field>(?:[^"]|\\")*)"$/
+   */
+  public function attachFileToHiddenField($field, $path) {
+    $field = $this->fixStepArgument($field);
+
+    $javascript = "jQuery('#".$field."').parent().removeClass('hidden')";
+    $this->getSession()->executeScript($javascript);
+
+    $this->attachFileToField($field, $path);
+  }
 }
