@@ -29,7 +29,7 @@ use Drupal\profile\Entity\Profile;
  */
 function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -41,7 +41,7 @@ function social_group_form_group_open_group_add_form_alter(&$form, FormStateInte
  */
 function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -53,7 +53,7 @@ function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInt
  */
 function social_group_form_group_closed_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_closed_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -65,7 +65,7 @@ function social_group_form_group_closed_group_add_form_alter(&$form, FormStateIn
  */
 function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_closed_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -77,7 +77,7 @@ function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateI
  */
 function social_group_form_group_open_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -101,30 +101,14 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\
 }
 
 /**
- * Form submit for group_open_group_add_form and group_open_group_edit_form.
+ * Form submit redirect for open and closed groups
  *
  * @param array $form
  *   Group add or group edit form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
-  // Set redirect to the group overview page when user saves a group.
-  $form_state->setRedirect(
-    'view.groups.page_user_groups',
-    array('user' => \Drupal::currentUser()->id(), array())
-  );
-}
-
-/**
- * Form submit for group_closed_group_add_form and group_closed_group_edit_form.
- *
- * @param array $form
- *   Group add or group edit form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_group_group_closed_group_edit_form_submit($form, FormStateInterface $form_state) {
+function _social_group_edit_submit_redirect($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
     'view.groups.page_user_groups',
@@ -175,7 +159,7 @@ function social_group_preprocess_group(&$variables) {
     if ($group_type_id == 'closed_group' && $account->id() != 1 && !in_array('contentmanager', $account->getRoles()) && !in_array('sitemanager', $account->getRoles())) {
       // Users can only be invited
       $variables['closed_group'] = TRUE;
-      $variables['cta'] = t('invitation only');
+      $variables['cta'] = t('Invitation only');
     }
   }
 
