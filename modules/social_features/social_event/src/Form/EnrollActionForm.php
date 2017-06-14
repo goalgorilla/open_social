@@ -152,6 +152,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           'btn-accent brand-bg-accent',
           'btn-lg btn-raised',
           'dropdown-toggle',
+          'waves-effect',
         ),
         'autocomplete' => 'off',
         'data-toggle' => 'dropdown',
