@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.nested_content.field_nested_content
+    - paragraphs.paragraphs_type.nested_content
+  module:
+    - paragraphs
+id: paragraph.nested_content.default
+targetEntityType: paragraph
+bundle: nested_content
+mode: default
+content:
+  field_nested_content:
+    type: paragraphs
+    weight: 0
+    settings:
+      title: Content
+      title_plural: Content
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

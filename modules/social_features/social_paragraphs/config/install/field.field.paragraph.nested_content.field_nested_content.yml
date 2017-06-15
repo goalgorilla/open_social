@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_nested_content
+    - paragraphs.paragraphs_type.nested_content
+  module:
+    - entity_reference_revisions
+id: paragraph.nested_content.field_nested_content
+field_name: field_nested_content
+entity_type: paragraph
+bundle: nested_content
+label: 'Nested Content'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles: null
+    target_bundles_drag_drop:
+      image_text:
+        weight: 7
+        enabled: false
+      images:
+        weight: 8
+        enabled: false
+      nested_content:
+        weight: 9
+        enabled: false
+      text:
+        weight: 10
+        enabled: false
+      text_image:
+        weight: 11
+        enabled: false
+      user:
+        weight: 12
+        enabled: false
+      attachment:
+        weight: 13
+        enabled: false
+field_type: entity_reference_revisions

@@ -4,7 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.text_image.field_image
     - field.field.paragraph.text_image.field_text
-    - image.style.content_image
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.text_image
   module:
     - image
@@ -15,19 +15,22 @@ bundle: text_image
 mode: default
 content:
   field_image:
-    weight: 0
-    label: hidden
+    weight: 1
     settings:
-      image_style: content_image
-      image_link: ''
+      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
-    type: image
+    type: image_image
     region: content
   field_text:
-    weight: 1
-    label: hidden
-    settings: {  }
+    weight: 0
+    settings:
+      rows: 5
+      placeholder: ''
     third_party_settings: {  }
-    type: text_default
+    type: text_textarea
     region: content
-hidden: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

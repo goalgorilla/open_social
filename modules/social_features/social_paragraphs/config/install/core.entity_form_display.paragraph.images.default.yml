@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.images.field_images
-    - image.style.content_image
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.images
   module:
     - image
@@ -14,11 +14,13 @@ mode: default
 content:
   field_images:
     weight: 0
-    label: hidden
     settings:
-      image_style: content_image
-      image_link: ''
+      preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
-    type: image
+    type: image_image
     region: content
-hidden: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
