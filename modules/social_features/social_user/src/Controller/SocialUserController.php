@@ -4,6 +4,8 @@ namespace Drupal\social_user\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Class SocialUserController.
@@ -33,6 +35,17 @@ class SocialUserController extends ControllerBase {
     if ($user instanceof UserInterface) {
       return $user->getDisplayName();
     }
+  }
+  
+  /**
+   * Checks access for a user list page request.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Run access checks for this account.
+   */
+  public function access(AccountInterface $account) {
+    // Check standart permission and our custom.
+    return AccessResult::allowedIfHasPermissions($account, array('administer users', 'view users'), 'OR');
   }
 
 }
