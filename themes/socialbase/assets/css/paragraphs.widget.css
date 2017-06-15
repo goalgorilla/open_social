@@ -1,6 +1,6 @@
-@import 'settings';
-
 .js .field--widget-paragraphs .dropbutton-wrapper {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
   display: inline-flex;
   padding-right: 0em;
   margin-right: 0em;
@@ -13,11 +13,19 @@
 }
 
 .js .paragraph-type-top {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
+
 .js .paragraphs-collapsed-description {
   height: 1.538em;
   padding-left: 1em;
@@ -28,6 +36,7 @@
   overflow: hidden;
   word-break: break-all;
 }
+
 .js .paragraphs-collapsed-description:after {
   content: '\00a0';
   display: block;
@@ -35,22 +44,30 @@
   top: 0;
   right: 1em;
   width: 3em;
-
   background: #fff;
+  background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, #fff 100%);
   background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
 }
+
 .js .draggable:hover .paragraphs-collapsed-description:after,
 .js .draggable:hover .paragraphs-collapsed-description:after {
   background: #f7fcff;
+  background: -webkit-linear-gradient(left, rgba(247, 252, 255, 0) 0%, #f7fcff 100%);
   background: linear-gradient(to right, rgba(247, 252, 255, 0) 0%, #f7fcff 100%);
 }
+
 .js .drag-previous .paragraphs-collapsed-description:after {
   background: #ffd;
+  background: -webkit-linear-gradient(left, rgba(255, 255, 221, 0) 0%, #ffd 100%);
   background: linear-gradient(to right, rgba(255, 255, 221, 0) 0%, #ffd 100%);
 }
+
 .js .paragraph-type-title {
-  flex-basis: 25%;
-  flex-grow: 1;
+  -ms-flex-preferred-size: 25%;
+      flex-basis: 25%;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
   min-width: 80px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -67,51 +84,47 @@
 }
 
 .paragraphs-edit-button-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-flow: row-reverse;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-flow: row-reverse;
+          flex-flow: row-reverse;
   padding-left: 1em;
   padding-right: 1em;
   margin-left: auto;
 }
 
 /* Override 600px breakpoint core submit button tweaks. */
-@media screen and (max-width: 600px) {
-  .js .paragraphs-edit-button-container {
-    height: 40px;
-    width: 50px;
-  }
-}
 
 .js .paragraph-type-top .paragraphs-dropbutton-wrapper {
   text-align: right;
 }
 
 .js .table-striped > tbody > tr:nth-of-type(odd) .paragraphs-collapsed-description:after {
+  background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
   background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
 }
 
 .clearfix + .paragraphs-dropbutton-wrapper {
   padding: 10px 0;
-  border-top: 1px solid $gray-lighter;
+  border-top: 1px solid #e6e6e6;
 }
-
 
 .paragraphs-dropbutton-wrapper > .btn-widget {
   margin: 4px 2px;
+}
 
-  .btn-icon {
-    height: 31px - ($padding-small-vertical * 2);
-    width: 31px - ($padding-small-vertical * 2);
-  }
-
+.paragraphs-dropbutton-wrapper > .btn-widget .btn-icon {
+  height: 21px;
+  width: 21px;
 }
 
 .paragraphs-button-wrapper__label {
   margin-right: 10px;
 }
 
-// Paragraphs are using tables of type table--plain (@see tables component).
-// We position the weight toggle button top right.
 .field--widget-paragraphs .tabledrag-toggle-weight {
   position: absolute;
   right: 0;
@@ -124,17 +137,21 @@
   opacity: 0;
 }
 
-.delta-order {
+.delta-order .form-item {
+  margin-bottom: 0;
+}
 
-  .form-item {
-    margin-bottom: 0;
+.delta-order .select-wrapper .form-control {
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  height: auto;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 600px) {
+
+  .js .paragraphs-edit-button-container {
+    height: 40px;
+    width: 50px;
   }
-
-  .select-wrapper .form-control {
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    height: auto;
-    line-height: 1.5;
-  }
-
 }
