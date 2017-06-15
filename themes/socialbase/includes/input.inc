@@ -87,6 +87,39 @@ function socialbase_preprocess_input(&$variables) {
     );
   }
 
+  if (isset($variables['element']['#array_parents']) && in_array('field_paragraphs', $variables['element']['#array_parents'], TRUE) && $variables['element']['#type'] == 'submit') {
+    $variables['button_type'] = 'widget';
+  }
+
+  if (isset($variables['element']['#bundle_machine_name'])) {
+
+    // set icons based on paragraph types (machine names).
+    switch ($variables['element']['#bundle_machine_name']) {
+      case 'images':
+        $variables['icon'] = 'photo';
+        break;
+      case 'image_text':
+        $variables['icon'] = 'image_text';
+        break;
+      case 'text_image':
+        $variables['icon'] = 'text_image';
+        break;
+      case 'text':
+        $variables['icon'] = 'text';
+        break;
+      case 'attachment':
+        $variables['icon'] = 'insert_file_drive';
+        break;
+      case 'user':
+        $variables['icon'] = 'account_circle';
+        break;
+      case 'nested_paragraph':
+        $variables['icon'] = 'nested';
+        break;
+    }
+
+  }
+
 }
 
 /**

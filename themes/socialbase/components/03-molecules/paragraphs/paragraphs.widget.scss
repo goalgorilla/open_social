@@ -1,0 +1,125 @@
+@import 'settings';
+
+.js .field--widget-paragraphs .dropbutton-wrapper {
+  display: inline-flex;
+  padding-right: 0em;
+  margin-right: 0em;
+  /* Override 600px breakpoint from core. */
+  width: auto;
+}
+
+.js .field--widget-paragraphs .dropbutton-widget {
+  position: relative;
+}
+
+.js .paragraph-type-top {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.js .paragraphs-collapsed-description {
+  height: 1.538em;
+  padding-left: 1em;
+  padding-right: 1em;
+  position: relative;
+  width: 100%;
+  color: #777;
+  overflow: hidden;
+  word-break: break-all;
+}
+.js .paragraphs-collapsed-description:after {
+  content: '\00a0';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 1em;
+  width: 3em;
+
+  background: #fff;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
+}
+.js .draggable:hover .paragraphs-collapsed-description:after,
+.js .draggable:hover .paragraphs-collapsed-description:after {
+  background: #f7fcff;
+  background: linear-gradient(to right, rgba(247, 252, 255, 0) 0%, #f7fcff 100%);
+}
+.js .drag-previous .paragraphs-collapsed-description:after {
+  background: #ffd;
+  background: linear-gradient(to right, rgba(255, 255, 221, 0) 0%, #ffd 100%);
+}
+.js .paragraph-type-title {
+  flex-basis: 25%;
+  flex-grow: 1;
+  min-width: 80px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.js .field--widget-paragraphs .delta-order {
+  padding-right: 10px;
+  text-align: right;
+}
+
+.paragraph--view-mode--preview {
+  padding-right: 1em;
+}
+
+.paragraphs-edit-button-container {
+  display: flex;
+  flex-flow: row-reverse;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-left: auto;
+}
+
+/* Override 600px breakpoint core submit button tweaks. */
+@media screen and (max-width: 600px) {
+  .js .paragraphs-edit-button-container {
+    height: 40px;
+    width: 50px;
+  }
+}
+
+.js .paragraph-type-top .paragraphs-dropbutton-wrapper {
+  text-align: right;
+}
+
+.js .table-striped > tbody > tr:nth-of-type(odd) .paragraphs-collapsed-description:after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.clearfix + .paragraphs-dropbutton-wrapper {
+  padding: 10px 0;
+  border-top: 1px solid $gray-lighter;
+}
+
+
+.paragraphs-dropbutton-wrapper > .btn-widget {
+  @include button-variant($default-color, $gray-lighter, $gray-light);
+  border-radius: $btn-border-radius-base;
+  margin: 4px 2px;
+
+  .btn-icon {
+    height: 31px - ($padding-small-vertical * 2);
+    width: 31px - ($padding-small-vertical * 2);
+  }
+
+}
+
+.dropbutton-multiple .btn-widget {
+    @include button-variant($btn-default-color, $gray-lighter, transparent);
+}
+
+.paragraphs-button-wrapper__label {
+  margin-right: 10px;
+}
+
+// Paragraphs are using tables of type table--plain (@see tables component).
+// We position the weight toggle button top right.
+.field--widget-paragraphs .tabledrag-toggle-weight {
+  position: absolute;
+  right: 0;
+  top: 0;
+}

@@ -127,3 +127,11 @@ table {
     padding-left: 24px;
   }
 }
+
+// For tables that can be added multiple times in a form (eg. paragraphs)
+// we use plain tables, which means no card and no tablesaw.
+.table--plain tbody > tr > td {
+  vertical-align: top;
+  border-top: 1px solid $gray-lighter;
+  padding: $padding-small-vertical $padding-small-horizontal;
+}

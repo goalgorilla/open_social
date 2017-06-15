@@ -40,8 +40,6 @@ version: '2.1'
 libraries-extend:
   core/drupal.ajax:
     - socialbase/form--autocomplete
-  core/drupal.tabledrag:
-    - socialbase/tabledrag
   # attach the timepicker library to all date fields
   core/drupal.date:
     - socialbase/form--datepicker
@@ -87,6 +85,10 @@ libraries-override:
   views/views.module: false
   classy/file: false
   like_and_dislike/icons: false
+  # we have our own custom script for tabledrag
+  bootstrap/tabledrag: socialbase/tabledrag
+  paragraphs/drupal.paragraphs.widget: socialbase/paragraphs.widget
+
 
 # Libraries contain CSS and JavaScript files. The libraries setting is used to
 # globally add libraries, which means they will appear on every page. Libraries

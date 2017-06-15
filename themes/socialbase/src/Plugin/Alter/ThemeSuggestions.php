@@ -64,6 +64,20 @@ class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
         }
         break;
 
+      case 'input':
+        # The buttons that are used to add paragraph types to entities
+        if (isset($variables['element']['#array_parents'])  && in_array('field_paragraphs', $variables['element']['#array_parents'], TRUE) && $variables['element']['#type'] == 'submit') {
+          $suggestions[] = 'input__button__widget';
+        }
+        break;
+
+      case 'table':
+        # The tables that are added multiple times in a form. We assume they are already in a card and need to be displayed condensed.
+        if (isset($variables['attributes']['class']) && in_array('field-multiple-table', $variables['attributes']['class'], TRUE)) {
+          $suggestions[] = 'table__plain';
+        }
+        break;
+
     }
 
   }
