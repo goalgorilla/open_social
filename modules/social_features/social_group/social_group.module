@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\GroupMembership;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
@@ -437,18 +438,29 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 function _social_group_grant_admin_role($uid, $gid) {
   $account = User::load($uid);
   $group = Group::load($gid);
-  dpm($group->hasPermission('administer group', $account));
-  // If the user has this permission inside a group
-  if ($group->hasPermission('administer group', $account)){
-    $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-    $values = ['group_roles' => [$group->bundle() . '-group_admin']];
-    $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $account->id(),
-      ] + $values
-    );
-    $group_content->save();
+
+  // Must be a valid account AND a valid group.
+  if ($account instanceof User && $group instanceof Group) {
+    // Must have administer group permission. Otherwise normal flow will be fine.
+    if (!$group->hasPermission('administer group', $account)) {
+      return;
+    }
+    // Check if the user is already a member in the group (could be in update mode here).
+    /** @var GroupMembership $membership */
+    $admin_role = $group->bundle() . '-group_admin';
+    $membership = $group->getMember($account);
+
+    // Check what roles are there.
+    $roles = [];
+    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+      $roles[] = $group_role_ref->target_id;
+    }
+
+    // No admin? Add it.
+    if (!in_array($admin_role, $roles)) {
+      $membership->getGroupContent()->group_roles = ['target_id' => $admin_role];
+      $membership->getGroupContent()->save();
+    }
   }
 }
 
