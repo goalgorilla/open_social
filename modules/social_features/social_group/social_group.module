@@ -458,7 +458,7 @@ function _social_group_grant_admin_role($uid, $gid) {
 
     // No admin? Add it.
     if (!in_array($admin_role, $roles)) {
-      $membership->getGroupContent()->group_roles = ['target_id' => $admin_role];
+      $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
       $membership->getGroupContent()->save();
     }
   }
