@@ -240,8 +240,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => $this->t('Edit account'),
-            'label' => $this->t('Edit account'),
+            'title' => $this->t('Settings'),
+            'label' => $this->t('Settings'),
             'title_classes' => '',
             'url' => Url::fromRoute('entity.user.edit_form', [
               'user' => $account->id(),
