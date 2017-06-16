@@ -36,11 +36,10 @@ function social_user_update_8001(&$sandbox) {
 }
 
 /**
- * Add view, block users permissions for the content manager.
+ * Add view, block users permissions for the content,site managers.
  */
 function social_user_update_8002() {
-  $permissions = _social_user_get_permissions('contentmanager');
-  user_role_grant_permissions('contentmanager', $permissions);
+  _social_user_set_permissions();
 }
 
 
