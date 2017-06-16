@@ -55,14 +55,14 @@ class EntityAccessHelper {
                 // When content is posted in a group and the account does not
                 // have permission we return Access::ignore.
                 if ($field_value['value'] === 'group') {
-                  if (!$account->hasPermission('view ' . $permission_label . ' content', $account)) {
+                  if (!$account->hasPermission('view ' . $permission_label . ' content')) {
                     return 0;
                   }
                 }
-                if ($account->hasPermission('view ' . $permission_label . ' content', $account)) {
+                if ($account->hasPermission('view ' . $permission_label . ' content')) {
                   return 2;
                 }
-                if ($account->id() !== 0 && $account->id() === $node->getOwnerId()) {
+                if (($account->id() !== 0) && ($account->id() === $node->getOwnerId())) {
                   return 2;
                 }
 
