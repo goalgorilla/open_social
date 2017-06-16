@@ -158,7 +158,7 @@ function social_group_preprocess_group(&$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
     // If the group type is a closed_group
-    if ($group_type_id == 'closed_group' && !$group->hasPermission('administer group', $account)) {
+    if ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
       // Users can only be invited
       $variables['closed_group'] = TRUE;
       $variables['cta'] = t('Invitation only');
@@ -220,7 +220,7 @@ function social_group_group_insert(GroupInterface $group) {
     $content->delete();
     $grant_group_admin = FALSE;
     // If the user has this permission inside a group
-    if ($perms = $group->hasPermission('administer group', $account)){
+    if ($perms = $group->hasPermission('manage all groups', $account)){
       // Then we grant this user de Group Admin role
       $grant_group_admin = TRUE;
     }
@@ -440,8 +440,8 @@ function _social_group_grant_admin_role($uid, $gid) {
 
   // Must be a valid account AND a valid group.
   if ($account instanceof User && $group instanceof Group) {
-    // Must have administer group permission. Otherwise normal flow will be fine.
-    if (!$group->hasPermission('administer group', $account)) {
+    // Must have manage all groups permission. Otherwise normal flow will be fine.
+    if (!$account->hasPermission('manage all groups')) {
       return;
     }
     // Check if the user is already a member in the group (could be in update mode here).
@@ -464,7 +464,7 @@ function _social_group_grant_admin_role($uid, $gid) {
 }
 
 /**
- * When creating a new membership
+ * When creating a new group membership
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
@@ -476,7 +476,7 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
 }
 
 /**
- * When updating an existing membership
+ * When updating a group membership
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
  */
 function social_group_group_content_update(GroupContentInterface $group_content) {
@@ -635,21 +635,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     if ($group_type == 'closed_group') {
       // And if the user is not user 1
       if ($user->id() != 1) {
-        // The roles allowed to access and edit closed groups
-        $allowed_roles = [
-          'contentmanager',
-          'sitemanager'
-        ];
-        // By default you're not allowed
-        $allowed = FALSE;
-        foreach ($allowed_roles as $role) {
-          // If you have the allowed role
-          if (in_array($role, $user->getRoles())) {
-            // Then you're allowed
-            $allowed = TRUE;
-          }
-        }
-        if ($allowed) {
+        if ($user->hasPermission('manage all groups')) {
           return;
         }
         // If the user is not an member of this group
@@ -833,17 +819,7 @@ function social_group_block_access(\Drupal\block\Entity\Block $block, $operation
   $user = Drupal::currentUser();
   // Check if there is a group set and if its an closed group
   if ($group && $group->getGroupType()->id() == 'closed_group' && $account->id() != 1) {
-    $allowed_roles = [
-      'contentmanager',
-      'sitemanager'
-    ];
-    $allowed = FALSE;
-    foreach ($allowed_roles as $role) {
-      if (in_array($role, $account->getRoles())) {
-        $allowed = TRUE;
-      }
-    }
-    if ($allowed) {
+    if ($account->hasPermission('manage all groups')) {
       return AccessResult::neutral();
     }
     elseif (!$group->getMember($user)) {

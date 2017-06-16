@@ -39,21 +39,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // If a group is set, and the type is closed_group
     if ($group && $group->getGroupType()->id() == 'closed_group') {
       if ($user->id() != 1) {
-        // The roles allowed to access and edit closed groups
-        $allowed_roles = [
-          'contentmanager',
-          'sitemanager'
-        ];
-        // By default you're not allowed
-        $allowed = FALSE;
-        foreach ($allowed_roles as $role) {
-          // If you have the allowed role
-          if (in_array($role, $user->getRoles())) {
-            // Then you're allowed
-            $allowed = TRUE;
-          }
-        }
-        if ($allowed) {
+        if ($user->hasPermission('manage all groups')) {
           return;
         }
         // If the user is not an member of this group
