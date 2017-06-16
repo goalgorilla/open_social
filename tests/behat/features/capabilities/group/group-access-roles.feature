@@ -6,11 +6,11 @@ Feature: Group access roles
 
   Scenario: Successfully access a group I'm not a member of
     Given users:
-      | name           | mail                     | status |
-      | Group User One | group_user_1@example.com | 1      |
-      | Group User Two | group_user_2@example.com | 1      |
+      | name           | mail                     | status | roles              |
+      | Group User One | group_user_1@example.com | 1      |                    |
+      | Group User Two | group_user_2@example.com | 1      | sitemanager        |
   # Create a closed group to test the leaving of a closed group
-    When I am logged in as "Group User Two"
+    When I am logged in as "Group User One"
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
@@ -29,6 +29,7 @@ Feature: Group access roles
     | Postal code | 7556SP |
     And I press "Save"
     And I should see "Test closed group 3" in the "Main content"
+    Then I click "Test closed group 3"
 
   # Create a topic inside the closed group
     When I am on "user"
@@ -60,8 +61,30 @@ Feature: Group access roles
     Then I should see "Test closed group 3 topic"
     When I am on "/all-topics"
     Then I should see "Test closed group 3 topic"
-    And I logout
+    When I am on "/all-groups"
+    And I click "Test closed group 3"
 
-  # join the group
-  # check if there is still access on all content
+  # DS-647 As a LU I want to join a group
+    Then I should see the link "Join" in the "Hero block"
+    And I click "Join"
+    And I should see "Join group Test closed group 3"
+    And I should see the button "Cancel"
+    And I should see the button "Join group"
+    And I press "Join group"
+    And I should see the button "Joined"
+
+  # Check if there is still access on all content if the CM+ joined the closed group
+    Then I open and check the access of content in group "Test closed group 3" and I expect access "allowed"
+
+  # Add a user with CM+ role (that has 'manage all groups' permission) on the Manage members tab.
+    When I click "Test closed group 3"
+    And I click "Manage members"
+    And I click "Add member"
+    And I fill in "Group User Two" for "Select a member"
+    And I press "Save"
+    Then I click "Members"
+    And I should see "Group User Two"
+    And I should see "Group Admin"
+    And I should see "Group Admin"
+
   # edit/delete some content?
