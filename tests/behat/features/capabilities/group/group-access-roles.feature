@@ -21,7 +21,6 @@ Feature: Group access roles
     And I fill in "Location name" with "Disclosed"
     And I select "NL" from "Country"
     And I wait for AJAX to finish
-    And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
     | City | Hengelo |
@@ -71,20 +70,32 @@ Feature: Group access roles
     And I should see the button "Cancel"
     And I should see the button "Join group"
     And I press "Join group"
+    And I am on "user"
+    And I click "Groups"
+    Then I click "Test closed group 3"
     And I should see the button "Joined"
 
   # Check if there is still access on all content if the CM+ joined the closed group
     Then I open and check the access of content in group "Test closed group 3" and I expect access "allowed"
 
-  # Add a user with CM+ role (that has 'manage all groups' permission) on the Manage members tab.
+  # As a CM+ member of this closed group I want to leave the group
+    When I click "Test closed group 3"
+    Then I should see the button "Joined"
+    When I click the xth "4" element with the css ".dropdown-toggle"
+    And I should see the link "Leave group"
+    And I click "Leave group"
+    And I should see "This action cannot be undone."
+    And I should see the button "Cancel"
+    And I should see the button "Leave group"
+    And I press "Leave group"
+    And I should see "Groups"
+    And I should not see "Test closed group 3"
+
+  # Add a user with CM+ role (that has 'manage all groups' permission) on the Manage members tab so he gets the group admin role.
+    When I am logged in as "Group User One"
     When I click "Test closed group 3"
     And I click "Manage members"
     And I click "Add member"
     And I fill in "Group User Two" for "Select a member"
     And I press "Save"
-    Then I click "Members"
-    And I should see "Group User Two"
-    And I should see "Group Admin"
-    And I should see "Group Admin"
-
-  # edit/delete some content?
+    Then I should see "Group Admin"
