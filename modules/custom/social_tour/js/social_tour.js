@@ -39,7 +39,7 @@
 
                     // Alter the tour button templates.
                     $('.tip-module-social-tour').each(function(){
-                        $(this).find('.button.button--primary').removeClass('button').addClass('btn').removeClass('button--primary').addClass('btn-primary');;
+                        $(this).find('.button.button--primary').removeClass('button').addClass('btn').removeClass('button--primary').addClass('btn-primary').addClass('waves-effect');;
                     })
 
                     // For our social tour, we only want to show the next button if there is more than 1 tool tip.
