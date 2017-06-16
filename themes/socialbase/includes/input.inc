@@ -63,6 +63,12 @@ function socialbase_preprocess_input(&$variables) {
 
   }
 
+  if (isset($variables['element']['#button_size'])) {
+    if ($variables['element']['#button_size'] == 'small') {
+      $variables['button_size'] = 'small';
+    }
+  }
+
   // If a split button desn't have a button_type variable, set it to default (fallback)
   if (isset($variables['element']['#split']) && !isset($variables['element']['#button_type'])) {
     $variables['button_type'] = 'default';

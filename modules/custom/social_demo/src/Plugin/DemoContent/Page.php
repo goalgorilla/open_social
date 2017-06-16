@@ -3,22 +3,21 @@
 namespace Drupal\social_demo\Plugin\DemoContent;
 
 use Drupal\social_demo\DemoNode;
-use Drupal\taxonomy\TermStorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_demo\DemoContentParserInterface;
 use Drupal\user\UserStorageInterface;
-use Drupal\file\FileStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\file\FileStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @DemoContent(
- *   id = "topic",
- *   label = @Translation("Topic"),
- *   source = "content/entity/topic.yml",
+ *   id = "page",
+ *   label = @Translation("Basic page"),
+ *   source = "content/entity/page.yml",
  *   entity_type = "node"
  * )
  */
-class Topic extends DemoNode {
+class Page extends DemoNode {
 
   /**
    * The file storage.
@@ -28,14 +27,7 @@ class Topic extends DemoNode {
   protected $fileStorage;
 
   /**
-   * The taxonomy term storage.
-   *
-   * @var \Drupal\taxonomy\TermStorageInterface
-   */
-  protected $termStorage;
-
-  /**
-   * Topic constructor.
+   * Page constructor.
    * @param array $configuration
    * @param string $plugin_id
    * @param mixed $plugin_definition
@@ -43,13 +35,11 @@ class Topic extends DemoNode {
    * @param \Drupal\user\UserStorageInterface $user_storage
    * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
    * @param \Drupal\file\FileStorageInterface $file_storage
-   * @param \Drupal\taxonomy\TermStorageInterface $term_storage
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
 
     $this->fileStorage = $file_storage;
-    $this->termStorage = $term_storage;
   }
 
   /**
@@ -63,8 +53,7 @@ class Topic extends DemoNode {
       $container->get('social_demo.yaml_parser'),
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('file'),
-      $container->get('entity.manager')->getStorage('taxonomy_term')
+      $container->get('entity.manager')->getStorage('file')
     );
   }
 
@@ -75,14 +64,15 @@ class Topic extends DemoNode {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
-    // Load term by name and set to node.
-    if (!empty($item['field_topic_type'])) {
-      $entry['field_topic_type'] = $this->prepareTopicType($item['field_topic_type']);
+    // Load image by uuid and set to node.
+    if (!empty($item['field_page_image'])) {
+      $entry['field_page_image'] = $this->prepareImage($item['field_page_image']);
     }
 
-    // Load image by uuid and set to node.
-    if (!empty($item['field_topic_image'])) {
-      $entry['field_topic_image'] = $this->prepareImage($item['field_topic_image']);
+    if (!empty($item['alias'])) {
+      $entry['path'] = [
+        'alias' => $item['alias'],
+      ];
     }
 
     return $entry;
@@ -105,32 +95,6 @@ class Topic extends DemoNode {
         [
           'target_id' => current($files)->id(),
         ],
-      ];
-    }
-
-    return $value;
-  }
-
-  /**
-   * Returns taxonomy term id.
-   *
-   * @param string $name
-   *   Term name.
-   *
-   * @return array|null
-   *   Array containing related terms.
-   */
-  protected function prepareTopicType($name) {
-    $value = NULL;
-    $terms = $this->termStorage->loadByProperties([
-      'name' => $name,
-    ]);
-
-    if ($terms) {
-      $value = [
-        [
-          'target_id' => current($terms)->id(),
-        ]
       ];
     }
 
