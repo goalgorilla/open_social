@@ -70,7 +70,7 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
@@ -117,7 +117,7 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(TRUE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
@@ -163,7 +163,7 @@ class EntityAccessTest extends UnitTestCase {
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
     $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
