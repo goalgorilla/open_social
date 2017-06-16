@@ -91,6 +91,21 @@ function socialbase_preprocess_input(&$variables) {
     $variables['button_type'] = 'widget';
   }
 
+  if (isset($variables['element']['#array_parents']) && in_array('paragraphs_edit_button', $variables['element']['#array_parents'], TRUE) && $variables['element']['#type'] == 'submit') {
+    $variables['button_type'] = 'flat';
+    $variables['button_size'] = 'small';
+  }
+
+  if (isset($variables['element']['#array_parents']) && !in_array('links', $variables['element']['#array_parents'], TRUE)) {
+      if (isset($variables['element']['#array_parents']) && in_array('remove_button', $variables['element']['#array_parents'], TRUE) && $variables['element']['#type'] == 'submit') {
+        $variables['button_type'] = 'flat';
+      }
+    }
+
+
+
+
+
   if (isset($variables['element']['#bundle_machine_name'])) {
 
     // set icons based on paragraph types (machine names).

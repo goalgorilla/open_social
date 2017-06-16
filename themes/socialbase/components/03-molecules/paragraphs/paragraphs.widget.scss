@@ -17,13 +17,17 @@
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
+
+  .form-group {
+    margin-bottom: 0;
+  }
 }
 .js .paragraphs-collapsed-description {
   height: 1.538em;
   padding-left: 1em;
   padding-right: 1em;
   position: relative;
-  width: 100%;
+  flex: 1 1 50%;
   color: #777;
   overflow: hidden;
   word-break: break-all;
@@ -49,8 +53,7 @@
   background: linear-gradient(to right, rgba(255, 255, 221, 0) 0%, #ffd 100%);
 }
 .js .paragraph-type-title {
-  flex-basis: 25%;
-  flex-grow: 1;
+  flex: 1 1 25%;
   min-width: 80px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -67,10 +70,10 @@
 }
 
 .paragraphs-edit-button-container {
+  flex: 0 1 auto;
   display: flex;
   flex-flow: row-reverse;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-right: 0.5em;
   margin-left: auto;
 }
 
@@ -106,35 +109,171 @@
 
 }
 
-.paragraphs-button-wrapper__label {
-  margin-right: 10px;
-}
-
 // Paragraphs are using tables of type table--plain (@see tables component).
 // We position the weight toggle button top right.
-.field--widget-paragraphs .tabledrag-toggle-weight {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
+.field--widget-paragraphs {
 
-.field--widget-paragraphs thead th.tabledrag-hide {
-  font-size: 0;
-  text-indent: -9999px;
-  opacity: 0;
-}
+  .field-multiple-table {
+    border-bottom: 1px solid $gray-lighter;
 
-.delta-order {
+    .field--name-field-nested-content {
+      @include z-depth-2;
+      padding: 0.625rem;
+    }
 
-  .form-item {
-    margin-bottom: 0;
+    .field-multiple-table {
+      background-color: transparent;
+    }
+
   }
 
-  .select-wrapper .form-control {
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    height: auto;
-    line-height: 1.5;
+  .tabledrag-toggle-weight {
+    position: absolute;
+    right: 0;
+  }
+
+  .field-multiple-drag {
+    padding-left: 0;
+    padding-right: 0;
+
+    .tabledrag-handle {
+      padding: 0;
+      margin: 0;
+      position: relative;
+
+      .icon {
+        margin: 0;
+
+        &:before {
+          top: 6px;
+        }
+      }
+    }
+  }
+
+  thead th.tabledrag-hide {
+    font-size: 0;
+    text-indent: -9999px;
+    opacity: 0;
+  }
+
+  .delta-order {
+
+    .form-item {
+      margin-bottom: 0;
+    }
+
+    .select-wrapper .form-control {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      height: auto;
+      line-height: 1.5;
+    }
+
+  }
+
+  .field--type-image .form-type-managed-file {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+
+    > .control-label {
+      flex: 1 0 100%;
+    }
+
+    .image-widget {
+      flex: 1 1 auto;
+      display: flex;
+
+      .form-file {
+        margin-left: 0;
+      }
+
+    }
+
+
+    @include for-tablet-landscape-up {
+
+      .preview {
+        flex: 0 1 auto;
+        margin-bottom: 1rem;
+        padding-right: 1rem;
+      }
+
+      .image-widget-data {
+        flex: 1 1 auto;
+        align-self: flex-start;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      .form-managed-file + .help-block {
+        margin-left: 1rem;
+        margin-top: 0;
+        align-self: center;
+      }
+    }
+
+  }
+
+  // used for file upload
+  .field--type-file {
+    width: 100%;
+
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    @include for-tablet-landscape-up {
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      .help-block {
+        margin-left: 1rem;
+      }
+
+    }
+
+    .control-label {
+      @include visually-hidden;
+    }
+
+    .form-managed-file + .help-block {
+      margin-left: 1rem;
+      margin-top: 0;
+      align-self: center;
+    }
+
+
+    // file name with icon and filesize
+    .file {
+      margin-bottom: 0.5em;
+      flex: 1 0 100%;
+    }
+
+    // attachments and images
+    .form-type-textfield {
+      flex: 1 1 (100% / 1.5);
+      margin-bottom: 0;
+    }
+
+    // remove button
+    .btn {
+      flex: 0 1 auto;
+      align-self: flex-start;
+    }
+
+  }
+
+  .form-type-textarea .control-label {
+    @include visually-hidden;
   }
 
 }

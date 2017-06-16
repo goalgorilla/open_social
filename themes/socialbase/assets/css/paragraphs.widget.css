@@ -26,12 +26,18 @@
           align-items: center;
 }
 
+.js .paragraph-type-top .form-group {
+  margin-bottom: 0;
+}
+
 .js .paragraphs-collapsed-description {
   height: 1.538em;
   padding-left: 1em;
   padding-right: 1em;
   position: relative;
-  width: 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 50%;
+          flex: 1 1 50%;
   color: #777;
   overflow: hidden;
   word-break: break-all;
@@ -63,11 +69,9 @@
 }
 
 .js .paragraph-type-title {
-  -ms-flex-preferred-size: 25%;
-      flex-basis: 25%;
   -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+      -ms-flex: 1 1 25%;
+          flex: 1 1 25%;
   min-width: 80px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -84,6 +88,9 @@
 }
 
 .paragraphs-edit-button-container {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -91,8 +98,7 @@
   -webkit-box-direction: reverse;
       -ms-flex-flow: row-reverse;
           flex-flow: row-reverse;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-right: 0.5em;
   margin-left: auto;
 }
 
@@ -121,14 +127,41 @@
   width: 21px;
 }
 
-.paragraphs-button-wrapper__label {
-  margin-right: 10px;
+.field--widget-paragraphs .field-multiple-table {
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.field--widget-paragraphs .field-multiple-table .field--name-field-nested-content {
+  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  padding: 0.625rem;
+}
+
+.field--widget-paragraphs .field-multiple-table .field-multiple-table {
+  background-color: transparent;
 }
 
 .field--widget-paragraphs .tabledrag-toggle-weight {
   position: absolute;
   right: 0;
-  top: 0;
+}
+
+.field--widget-paragraphs .field-multiple-drag {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.field--widget-paragraphs .field-multiple-drag .tabledrag-handle {
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.field--widget-paragraphs .field-multiple-drag .tabledrag-handle .icon {
+  margin: 0;
+}
+
+.field--widget-paragraphs .field-multiple-drag .tabledrag-handle .icon:before {
+  top: 6px;
 }
 
 .field--widget-paragraphs thead th.tabledrag-hide {
@@ -137,15 +170,152 @@
   opacity: 0;
 }
 
-.delta-order .form-item {
+.field--widget-paragraphs .delta-order .form-item {
   margin-bottom: 0;
 }
 
-.delta-order .select-wrapper .form-control {
+.field--widget-paragraphs .delta-order .select-wrapper .form-control {
   padding: 5px 10px;
   font-size: 0.75rem;
   height: auto;
   line-height: 1.5;
+}
+
+.field--widget-paragraphs .field--type-image .form-type-managed-file {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+}
+
+.field--widget-paragraphs .field--type-image .form-type-managed-file > .control-label {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
+}
+
+.field--widget-paragraphs .field--type-image .form-type-managed-file .image-widget {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.field--widget-paragraphs .field--type-image .form-type-managed-file .image-widget .form-file {
+  margin-left: 0;
+}
+
+.field--widget-paragraphs .field--type-file {
+  width: 100%;
+}
+
+.field--widget-paragraphs .field--type-file .form-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  width: 100%;
+}
+
+.field--widget-paragraphs .field--type-file .control-label {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.field--widget-paragraphs .field--type-file .form-managed-file + .help-block {
+  margin-left: 1rem;
+  margin-top: 0;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+.field--widget-paragraphs .field--type-file .file {
+  margin-bottom: 0.5em;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
+}
+
+.field--widget-paragraphs .field--type-file .form-type-textfield {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 66.66667%;
+          flex: 1 1 66.66667%;
+  margin-bottom: 0;
+}
+
+.field--widget-paragraphs .field--type-file .btn {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
+.field--widget-paragraphs .form-type-textarea .control-label {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (min-width: 900px) {
+
+  .field--widget-paragraphs .field--type-image .form-type-managed-file .preview {
+    -webkit-box-flex: 0;
+    -ms-flex: 0 1 auto;
+    flex: 0 1 auto;
+    margin-bottom: 1rem;
+    padding-right: 1rem;
+  }
+
+  .field--widget-paragraphs .field--type-image .form-type-managed-file .image-widget-data {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    -ms-flex-item-align: start;
+    align-self: flex-start;
+  }
+
+  .field--widget-paragraphs .field--type-image .form-type-managed-file .form-group {
+    margin-bottom: 0;
+  }
+
+  .field--widget-paragraphs .field--type-image .form-type-managed-file .form-managed-file + .help-block {
+    margin-left: 1rem;
+    margin-top: 0;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center;
+  }
+
+  .field--widget-paragraphs .field--type-file .form-group {
+    margin-bottom: 0;
+  }
+
+  .field--widget-paragraphs .field--type-file .help-block {
+    margin-left: 1rem;
+  }
 }
 
 @media screen and (max-width: 600px) {
