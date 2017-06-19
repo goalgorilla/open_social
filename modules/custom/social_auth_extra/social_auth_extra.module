@@ -187,6 +187,19 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
 
             $module_handler->invokeAll('social_auth_extra_profile_presave', [$account, $profile, $auth_manager, $user_manager]);
             $profile->save();
+
+            // Redirect to profile.
+            $form_state->setRedirect(
+              'entity.profile.type.profile.user_profile_form',
+                ['user' => $account->id(),
+                  'profile_type' => 'profile', []]
+            );
+          }
+          else {
+            // If the profile module does not exist redirect to account form.
+            $form_state->setRedirect('entity.user.edit_form', [
+              'user' => $account->id(),
+            ]);
           }
         }
       }
@@ -201,12 +214,6 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
         '@community_name' => \Drupal::config('system.site')->get('name'),
       ]));
-
-      // Redirect to profile.
-      $form_state->setRedirect(
-        'entity.profile.type.profile.user_profile_form',
-        array('user' => $account->id(), 'profile_type' => 'profile', array())
-      );
 
       // Send email notification.
       $params['account'] = $account;
