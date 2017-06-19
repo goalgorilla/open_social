@@ -105,6 +105,10 @@
       if (typeof settings.extraData !== 'undefined' && settings.extraData.hasOwnProperty('_triggering_element_name')) {
         if (typeof $('button[name="' + settings.extraData._triggering_element_name + '"]') !== 'undefined') {
           Drupal.imageWidgetCrop.initializeCropperAutomatically($(".image-widget").next(".image-data__crop-wrapper"));
+          // Open crop details
+          $(cropWrapperSelector).each(function(){
+            $(this).attr('open','open');
+          });
         }
       }
     });
