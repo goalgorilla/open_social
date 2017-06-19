@@ -57,6 +57,11 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
           $name = preg_replace('/[^0-9a-z]/si', '_', $name);
         }
 
+        // The user already selected an authentication method and there
+        // will be a drupal_set_message informing the user.
+        unset($form['social_auth_extra']);
+        unset($form['account']['title']);
+
         $form['account']['mail']['#default_value'] = $data_handler->get('mail');
         $form['account']['name']['#default_value'] = $name;
         $form['actions']['submit']['#submit'] = ['social_auth_extra_form_user_register_form_submit'];
@@ -197,9 +202,11 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
         '@community_name' => \Drupal::config('system.site')->get('name'),
       ]));
 
-      $form_state->setRedirect('entity.user.edit_form', [
-        'user' => $account->id(),
-      ]);
+      // Redirect to profile.
+      $form_state->setRedirect(
+        'entity.profile.type.profile.user_profile_form',
+        array('user' => $account->id(), 'profile_type' => 'profile', array())
+      );
 
       // Send email notification.
       $params['account'] = $account;
