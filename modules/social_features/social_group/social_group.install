@@ -84,7 +84,11 @@ function _social_group_get_permissions($role) {
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'manage all groups',
+    'view node.book.field_content_visibility:group content',
+    'view node.event.field_content_visibility:group content',
+    'view node.topic.field_content_visibility:group content',
+    'view node.page.field_content_visibility:group content',
   ));
 
   // Site manager.
@@ -273,4 +277,11 @@ function social_group_update_8007() {
     'grolesync',
   );
   \Drupal::service('module_installer')->uninstall($modules);
+}
+
+/**
+ * Update the permissions for social_group.
+ */
+function social_group_update_8008() {
+  _social_group_set_permissions();
 }

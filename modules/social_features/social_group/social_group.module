@@ -8,9 +8,10 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\GroupMembership;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Url;
@@ -30,7 +31,7 @@ use Drupal\profile\Entity\Profile;
  */
 function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -42,7 +43,7 @@ function social_group_form_group_open_group_add_form_alter(&$form, FormStateInte
  */
 function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_open_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -54,7 +55,7 @@ function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInt
  */
 function social_group_form_group_closed_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_closed_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -66,7 +67,19 @@ function social_group_form_group_closed_group_add_form_alter(&$form, FormStateIn
  */
 function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_group_closed_group_edit_form_submit';
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
+  // Hide default title from Address field.
+  if (isset($form['field_group_address'])) {
+    $form['field_group_address']['widget'][0]['#title'] = '';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_group_open_group_delete_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Add custom submit handler just for redirect purposes.
+  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
   // Hide default title from Address field.
   if (isset($form['field_group_address'])) {
     $form['field_group_address']['widget'][0]['#title'] = '';
@@ -90,30 +103,14 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, \Drupal\
 }
 
 /**
- * Form submit for group_open_group_add_form and group_open_group_edit_form.
+ * Form submit redirect for open and closed groups
  *
  * @param array $form
  *   Group add or group edit form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_group_group_open_group_edit_form_submit($form, FormStateInterface $form_state) {
-  // Set redirect to the group overview page when user saves a group.
-  $form_state->setRedirect(
-    'view.groups.page_user_groups',
-    array('user' => \Drupal::currentUser()->id(), array())
-  );
-}
-
-/**
- * Form submit for group_closed_group_add_form and group_closed_group_edit_form.
- *
- * @param array $form
- *   Group add or group edit form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_group_group_closed_group_edit_form_submit($form, FormStateInterface $form_state) {
+function _social_group_edit_submit_redirect($form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
     'view.groups.page_user_groups',
@@ -161,10 +158,10 @@ function social_group_preprocess_group(&$variables) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
     // If the group type is a closed_group
-    if ($group_type_id == 'closed_group' && $account->id() != 1) {
+    if ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
       // Users can only be invited
       $variables['closed_group'] = TRUE;
-      $variables['cta'] = t('invitation only');
+      $variables['cta'] = t('Invitation only');
     }
   }
 
@@ -221,18 +218,39 @@ function social_group_group_insert(GroupInterface $group) {
     $content = $group->getMember($account)->getGroupContent();
     // Delete the initial created membership.
     $content->delete();
-
-    // Create a new membership.
-    $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-    $values = array('group_roles' => array('open_group-group_manager'));
-    $group_content = GroupContent::create([
-        'type' => $plugin->getContentTypeConfigId(),
-        'gid' => $group->id(),
-        'entity_id' => $group->getOwnerId(),
-      ] + $values
-    );
-    $group_content->save();
-
+    $grant_group_admin = FALSE;
+    // If the user has this permission inside a group
+    if ($perms = $group->hasPermission('manage all groups', $account)){
+      // Then we grant this user de Group Admin role
+      $grant_group_admin = TRUE;
+    }
+    // When a CM+ creates a group, he is given the group_manager role
+    // alongside the group_admin role to keep the full control over the group
+    if ($grant_group_admin) {
+      // Delete the initial created membership.
+      $content->delete();
+      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+      $values = ['group_roles' => [$group->bundle() . '-group_admin', $group->bundle() . '-group_manager']];
+      $group_content = GroupContent::create([
+          'type' => $plugin->getContentTypeConfigId(),
+          'gid' => $group->id(),
+          'entity_id' => $group->getOwnerId(),
+        ] + $values
+      );
+      $group_content->save();
+    }
+    else {
+      // Create a new membership.
+      $plugin = $group->getGroupType()->getContentPlugin('group_membership');
+      $values = ['group_roles' => [$group->bundle() . '-group_manager']];
+      $group_content = GroupContent::create([
+          'type' => $plugin->getContentTypeConfigId(),
+          'gid' => $group->id(),
+          'entity_id' => $group->getOwnerId(),
+        ] + $values
+      );
+      $group_content->save();
+    }
   }
 }
 
@@ -268,12 +286,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   ];
 
   // Perform alterations on joining / leaving groups.
-  if (in_array($form_id, ['group_content_open_group-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
+  if (in_array($form_id, ['group_content_-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
   }
 
   // Set some helpful text on the group join form now it's there.
-  if ($form_id == 'group_content_open_group-group_membership_group-join_form') {
+  if (in_array($form_id, ['group_content_closed_group-group_membership_group-join_form', 'group_content_open_group-group_membership_group-join_form'])) {
     $form['help'] = [
       '#type' => 'item',
       '#markup' => t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.'),
@@ -301,10 +319,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_closed_group-group_membership_add_form',
     'group_content_closed_group-group_membership_edit_form',
   );
-  if (in_array($form_id, $membership_forms)) {
+  if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
+    // Hide the submission for the Group Admin role
+    unset($form['group_roles']['widget']['#options']['closed_group-group_admin']);
     $form['path']['#type'] = 'hidden';
 
     if ('group_content_open_group-group_membership_edit_form' == $form_id) {
@@ -341,6 +361,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   );
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
     $form['path']['#type'] = 'hidden';
+    $form['actions']['submit']['#value'] = t('Save');
 
     if (in_array($form_id, $group_forms['edit'])) {
       $etm = \Drupal::service('entity_type.manager');
@@ -390,7 +411,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
 
-    if (in_array($complete_form['#form_id'], ['group_content_open_group-group_membership_group-join_form', 'group_content_closed_group-group_membership_group-join_form'])) {
+    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
@@ -403,6 +424,65 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
         'view.groups.page_user_groups',
         array('user' => \Drupal::currentUser()->id(), array())
       );
+    }
+  }
+}
+
+/**
+ * This function checks if the user should get the admin role within a group
+ * Also check if the user has already a membership, if so, update it with the new role
+ * @param $uid
+ * @param $gid
+ */
+function _social_group_grant_admin_role($uid, $gid) {
+  $account = User::load($uid);
+  $group = Group::load($gid);
+
+  // Must be a valid account AND a valid group.
+  if ($account instanceof User && $group instanceof Group) {
+    // Must have manage all groups permission. Otherwise normal flow will be fine.
+    if (!$account->hasPermission('manage all groups')) {
+      return;
+    }
+    // Check if the user is already a member in the group (could be in update mode here).
+    /** @var GroupMembership $membership */
+    $admin_role = $group->bundle() . '-group_admin';
+    $membership = $group->getMember($account);
+
+    // Check what roles are there.
+    $roles = [];
+    foreach ($membership->getGroupContent()->group_roles as $group_role_ref) {
+      $roles[] = $group_role_ref->target_id;
+    }
+
+    // No admin? Add it.
+    if (!in_array($admin_role, $roles)) {
+      $membership->getGroupContent()->group_roles[] = ['target_id' => $admin_role];
+      $membership->getGroupContent()->save();
+    }
+  }
+}
+
+/**
+ * When creating a new group membership
+ * @param \Drupal\group\Entity\GroupContentInterface $group_content
+ */
+function social_group_group_content_insert(GroupContentInterface $group_content) {
+  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
+    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
+      _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
+    }
+  }
+}
+
+/**
+ * When updating a group membership
+ * @param \Drupal\group\Entity\GroupContentInterface $group_content
+ */
+function social_group_group_content_update(GroupContentInterface $group_content) {
+  if ($group_content->getEntity()->getEntityTypeId() == 'user') {
+    if ($group_content->bundle() == $group_content->getGroup()->bundle() . '-group_membership') {
+      _social_group_grant_admin_role($group_content->getEntity()->id(), $group_content->getGroup()->id());
     }
   }
 }
@@ -547,17 +627,26 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   $user = \Drupal::currentUser();
   // Get the Group object from the route
   $group = Drupal::routeMatch()->getParameter('group');
+
   if ($group) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
-
-    // If it is a closed_group and the user is not an member
-    if ($group_type == 'closed_group' && !$group->getMember($user) && $user->id() != 1) {
-      // Disable these local tasks
-      $data['tabs'][0]['group.view'] = [];
-      $data['tabs'][0]['group.content'] = [];
-      $data['tabs'][0]['social_group.events'] = [];
-      $data['tabs'][0]['social_group.topics'] = [];
+    // Check if it's a closed group
+    if ($group_type == 'closed_group') {
+      // And if the user is not user 1
+      if ($user->id() != 1) {
+        if ($user->hasPermission('manage all groups')) {
+          return;
+        }
+        // If the user is not an member of this group
+        elseif (!$group->getMember($user)) {
+          // Disable these local tasks
+          $data['tabs'][0]['group.view'] = [];
+          $data['tabs'][0]['group.content'] = [];
+          $data['tabs'][0]['social_group.events'] = [];
+          $data['tabs'][0]['social_group.topics'] = [];
+        }
+      }
     }
   }
 }
@@ -727,10 +816,14 @@ function social_group_preprocess_profile(&$variables) {
  */
 function social_group_block_access(\Drupal\block\Entity\Block $block, $operation, \Drupal\Core\Session\AccountInterface $account) {
   $group = _social_group_get_current_group();
-  // Check if there is a group set
-  if ($group && $account->id() != 1) {
-    // If it is closed and the current user is not an member of this group
-    if ($group->getGroupType()->id() == 'closed_group' && !$group->getMember($account)) {
+  $user = Drupal::currentUser();
+  // Check if there is a group set and if its an closed group
+  if ($group && $group->getGroupType()->id() == 'closed_group' && $account->id() != 1) {
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::neutral();
+    }
+    elseif (!$group->getMember($user)) {
+      // If it is closed and the current user is not an member of this group
       // Then he is not allowed to see these blocks
       $forbidden_blocks = [
         'views_block:upcoming_events-upcoming_events_group',
@@ -809,6 +902,7 @@ function social_group_get_all_open_groups() {
  * Get all group memberships for a certain user.
  *
  * @param $uid
+ * @return array
  */
 function social_group_get_all_group_members($uid) {
   $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('user');
