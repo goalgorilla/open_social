@@ -14,11 +14,12 @@ class EntityAccessHelper {
   /**
    * Array with values which need to be ignored.
    *
+   * TODO Add group to ignored values (when outsider role is working).
+   *
    * @return array
    */
   public static function getIgnoredValues() {
     return [
-      'group',
     ];
   }
 
@@ -50,9 +51,21 @@ class EntityAccessHelper {
                 }
 
                 $permission_label = $field_definition->id() . ':' . $field_value['value'];
-                if ($account->hasPermission('view ' . $permission_label . ' content', $account)) {
+
+                // When content is posted in a group and the account does not
+                // have permission we return Access::ignore.
+                if ($field_value['value'] === 'group') {
+                  if (!$account->hasPermission('view ' . $permission_label . ' content')) {
+                    return 0;
+                  }
+                }
+                if ($account->hasPermission('view ' . $permission_label . ' content')) {
                   return 2;
                 }
+                if (($account->id() !== 0) && ($account->id() === $node->getOwnerId())) {
+                  return 2;
+                }
+
               }
             }
           }

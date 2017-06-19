@@ -10,3 +10,7 @@ services:
     class: Drupal\social_group\EventSubscriber\AddressFormatSubscriber
     tags:
       - { name: event_subscriber }
+  social_group.redirect_subscriber:
+    class: Drupal\social_group\EventSubscriber\RedirectSubscriber
+    tags:
+      - { name: event_subscriber }
