@@ -562,9 +562,79 @@ function social_core_update_8015(&$sandbox) {
 }
 
 /**
+ * Install social_tour module.
+ */
+function social_core_update_8018(&$sandbox) {
+  $modules = array(
+    'social_tour',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install the social_file_private module.
+ */
+function social_core_update_8019() {
+  $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
+
+  if ($file_private_path_base_path !== NULL) {
+    $modules = array(
+      'social_file_private',
+    );
+    \Drupal::service('module_installer')->install($modules);
+    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+  }
+  else {
+    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
+  }
+}
+
+/**
+ * Fix an schema issue caused by Flag module.
+ */
+function social_core_update_8020() {
+  $bundle_schema = [
+    'description' => 'The Flag ID.',
+    'type' => 'varchar_ascii',
+    'length' => \Drupal\Core\Entity\EntityTypeInterface::BUNDLE_MAX_LENGTH,
+    // 'binary' => FALSE,
+    'not null' => TRUE,
+  ];
+
+  /** @var \Drupal\Core\Database\Schema $schema */
+  $schema = \Drupal::database()->schema();
+  $schema->changeField('flagging', 'flag_id', 'flag_id', $bundle_schema);
+  $schema->dropIndex('flagging', 'flag_id');
+  $schema->dropIndex('flagging', 'flagging_field__flag_id__target_id');
+  $schema->addIndex('flagging', 'flagging_field__flag_id__target_id', ['flag_id'], ['fields' => ['flag_id' => $bundle_schema]]);
+
+  // Update the field storage repository.
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $efm */
+  $efm = \Drupal::service('entity_field.manager');
+  /** @var \Drupal\Core\KeyValueStore\KeyValueStoreInterface $kv */
+  $kv = \Drupal::service('keyvalue');
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $repo */
+  $repo = \Drupal::service('entity.last_installed_schema.repository');
+
+  $efm->clearCachedFieldDefinitions();
+  $storage_definition = $efm->getFieldStorageDefinitions('flagging')['flag_id'];
+  $repo->setLastInstalledFieldStorageDefinition($storage_definition);
+
+  // Update the stored field schema.
+  // @todo: There has to be a better way to do this.
+  $kv_collection = 'entity.storage_schema.sql';
+  $kv_name = 'flagging.field_schema_data.flag_id';
+  $field_schema = $kv->get($kv_collection)->get($kv_name);
+  $field_schema['flagging']['fields']['flag_id'] = $bundle_schema;
+  $field_schema['flagging']['indexes']['flagging_field__flag_id__target_id'] = ['flag_id'];
+  $kv->get($kv_collection)->set($kv_name, $field_schema);
+}
+
+
+/**
  * Update social_post existing content.
  */
-function social_core_update_8016(&$sandbox) {
+function social_core_update_8021(&$sandbox) {
   $database = \Drupal::database();
   $table_post = 'post';
   $table_data = 'post_field_data';
@@ -647,37 +717,9 @@ function social_core_update_8016(&$sandbox) {
 /**
  * Install social_post_photo module.
  */
-function social_core_update_8017() {
+function social_core_update_8022() {
   $modules = array(
     'social_post_photo',
   );
   \Drupal::service('module_installer')->install($modules);
-}
-
-/**
- * Install social_tour module.
- */
-function social_core_update_8018(&$sandbox) {
-  $modules = array(
-    'social_tour',
-  );
-  \Drupal::service('module_installer')->install($modules);
-}
-
-/**
- * Install the social_file_private module.
- */
-function social_core_update_8019() {
-  $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
-
-  if ($file_private_path_base_path !== NULL) {
-    $modules = array(
-      'social_file_private',
-    );
-    \Drupal::service('module_installer')->install($modules);
-    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
-  }
-  else {
-    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
-  }
 }
