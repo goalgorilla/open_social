@@ -396,3 +396,34 @@ function social_core_filter_process_format($element) {
 
   return $element;
 }
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+
+  if ($field_definition->getType() == 'path') {
+    $url = Url::fromRoute('<front>');
+    $url->setAbsolute();
+    $element['alias']['#field_prefix'] = '<span class="field__prefix">' . $url->toString() . '</span>';
+    $element['#element_validate'][] = 'social_core_path_validate';
+  }
+}
+
+/**
+ * Form element validation handler for URL alias form element.
+ *
+ * @param array $element
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function social_core_path_validate(array &$element, FormStateInterface $form_state) {
+  $alias = trim($element['alias']['#value'], " \\/");
+  $parsed_url = parse_url($alias);
+
+  if (isset($parsed_url['host']) || isset($parsed_url['scheme']) || !isset($parsed_url['path'])) {
+    $form_state->setError($element, t('The URL alias must be a relative URL.'));
+  }
+}
