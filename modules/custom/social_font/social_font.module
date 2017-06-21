@@ -34,8 +34,11 @@ function social_font_help($route_name, RouteMatchInterface $route_match) {
 function social_font_render($font_id = NULL) {
 
   if ($font_id == NULL) {
-    $config = \Drupal::config('socialblue.settings');
-    $font_id  = $config->get('font_primary');
+    $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+    if ($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
+      $config = \Drupal::config($system_theme_settings . '.settings');
+      $font_id = $config->get('font_primary');
+    }
   }
 
   $font = \Drupal\social_font\Entity\Font::load($font_id);

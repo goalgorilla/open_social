@@ -1,0 +1,119 @@
+@import 'settings';
+
+// Badge
+//
+// Small and adaptive tag for adding context to just about any content.
+//
+// Badges scale to match the size of the immediate parent
+// element by using relative font sizing and em units.
+//
+// Markup: badge.twig
+//
+// style guide: atoms.badge
+
+.badge {
+  display: inline-block;
+  margin-bottom: 3px;
+  margin-right: 3px;
+  padding: $badge-padding-y $badge-padding-x;
+  font-size: $badge-font-size;
+  font-weight: $badge-font-weight;
+  line-height: $badge-line-height;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  min-width: 10px;
+  max-width: 100%;
+
+  // Empty badges collapse automatically (not available in IE8)
+  &:empty {
+    display: none;
+  }
+
+  small &,
+  .small & {
+    font-size: 90%;
+    position: relative;
+    top: -1px;
+    margin: 0;
+  }
+
+}
+
+// Quick fix for badges in buttons
+.btn .badge {
+  position: relative;
+  top: -1px;
+  text-transform: none;
+  margin: 0;
+
+}
+
+a .badge {
+  cursor: pointer;
+}
+
+// Pill badges
+//
+// Use the `.badge--pill` modifier class to make badges more
+// rounded (with a larger `border-radius` and additional `horizontal padding`).
+//
+// Markup: badge-pill.twig
+//
+// Weight: 2
+//
+// style guide: atoms.badge.pill
+
+// Badge size
+//
+// Use the `.badge--large` modifier class to make badges larger.
+//
+// Markup: badge-size.twig
+//
+// Weight: 3
+//
+// style guide: atoms.badge.size
+
+.badge--pill {
+  padding-right: $badge-pill-padding-x;
+  padding-left: $badge-pill-padding-x;
+}
+
+.badge--large {
+  padding: 0 $badge-large-padding-x;
+  font-size: $badge-large-size;
+  line-height: $badge-large-line-height;
+}
+
+// the container is needed for alignment of children
+.badge__container {
+  display: flex;
+  align-items: center;
+}
+
+// icons in badges
+.badge__icon {
+  width: 15px;
+  height: 18px;
+  padding: 0 1px;
+
+  // any text that needs to be displayed next to badge icons
+  ~ .badge__label {
+    padding-left: 2px;
+    font-weight: lighter;
+
+    &:first-of-type {
+      padding-left: 4px;
+    }
+
+  }
+}
+
+// a text in a badge that explains more about the first badge label
+.badge__label--description {
+  display: none;
+
+  @include for-tablet-portrait-up {
+    display: inline;
+  }
+}

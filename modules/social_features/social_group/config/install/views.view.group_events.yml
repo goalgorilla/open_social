@@ -3,13 +3,13 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.group_content.teaser
+    - group.content_type.closed_group-group_node-event
     - group.content_type.open_group-group_node-event
   module:
     - datetime
     - group
     - node
     - social_event
-    - user
 id: group_events
 label: 'Group Events'
 module: views
@@ -147,6 +147,7 @@ display:
           field: type
           value:
             open_group-group_node-event: open_group-group_node-event
+            closed_group-group_node-event: closed_group-group_node-event
           entity_type: group_content
           entity_field: type
           plugin_id: bundle

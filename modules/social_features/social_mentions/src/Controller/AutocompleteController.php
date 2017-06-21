@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Class AutocompleteController.
  *
+ * TODO Add parameters here to prevent referencing users without access to node.
+ *
  * @package Drupal\social_mentions\Controller
  */
 class AutocompleteController extends ControllerBase {

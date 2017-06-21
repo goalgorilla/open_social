@@ -18,21 +18,20 @@ Feature: See newest topics in the community
 
     Given I am on the homepage
 
-    Then I should see "Newest topics"
+    Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click "All Newest topics"
+    When I am on "all-topics"
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
-    And I should see "Newest topics"
-
+    And I should see "All topics"
 
     Given I am logged in as an "authenticated user"
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 
-    When I click "All Newest topics"
-    Then I should see "Newest topics"
+    When I am on "all-topics"
+    Then I should see "All topics"
     And I should see "Behat Topic 1"
     And I should see "Behat Topic 2"

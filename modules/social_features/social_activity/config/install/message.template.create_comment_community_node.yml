@@ -20,17 +20,14 @@ label: 'Create comment on node in the community'
 description: 'A user add a comment to content in the community'
 text:
   -
+    value: "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type]</p>\r\n"
     format: full_html
-    value: "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> commented on content</p>\r\n"
   -
+    value: "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> and @count others commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type]</p>\r\n"
     format: full_html
-    value: "<p><a href=\"[message:author:url:relative]\">[message:author:display-name]</a> and @count others commented on content</p>\r\n"
 settings:
   'token options':
     clear: false
     'token replace': true
-  purge:
-    override: false
-    enabled: false
-    quota: null
-    days: null
+  purge_override: false
+  purge_methods: {  }

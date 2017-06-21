@@ -27,7 +27,7 @@ class GroupAddTopicBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if(is_object($group)){
-      if ($group->hasPermission('create topic node', $account)) {
+      if ($group->hasPermission('create group_node:topic entity', $account)) {
         return AccessResult::allowed();
       }
     }
@@ -45,7 +45,7 @@ class GroupAddTopicBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if(is_object($group)){
-      $url = Url::fromUserInput("/group/{$group->id()}/node/create/topic");
+      $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:topic");
 
       $link_options = array(
         'attributes' => array(

@@ -21,21 +21,17 @@
 #}
 
 
-<div class="list-group-item media">
-  <div class="media-left media-middle">
-    {% if content.field_profile_image %}
-      <a href="{{ profile_stream_url }}">
-        {{ content.field_profile_image }}
-      </a>
-    {% endif %}
-  </div>
+<div class="card__block card__block--list">
 
-  <div class="media-body media-middle align-center">
-    <h6 class="list-group-item-heading no-margin">
-      <a href="{{ profile_stream_url }}">
-        {{ profile_name|render }}
-      </a>
-    </h6>
-  </div>
+  <a href="{{ profile_stream_url }}" class="card__text list-item">
+    <span class="list-item__avatar">
+      {{ content.field_profile_image }}
+    </span>
+
+    <span class="list-item__text">
+      {{ profile_name|render }}
+    </span>
+
+  </a>
 
 </div>

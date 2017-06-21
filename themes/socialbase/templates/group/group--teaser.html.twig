@@ -49,6 +49,11 @@
       {{ title_prefix }}
       {% if not page %}
         <h4{{ title_attributes }} class="teaser__title">
+          {% if closed_group_lock %}
+            <svg class="icon-gray icon-small">
+              <use xlink:href="#icon-lock"></use>
+            </svg>
+          {% endif %}
           <a href="{{ url }}" rel="bookmark">{{ label }}</a>
         </h4>
       {% endif %}
@@ -82,7 +87,7 @@
 
     <div class="card__actionbar">
       {% if joined %}
-        <span class="label label-default">
+        <span class="badge teaser__badge badge-secondary brand-bg-secondary">
           {% trans %}Joined{% endtrans %}
         </span>
       {% endif %}

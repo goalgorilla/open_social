@@ -13,4 +13,7 @@ function socialbase_preprocess_html(&$variables) {
       $variables['node_edit'] = TRUE;
     }
   }
+
+  // Get all SVG Icons.
+  $variables['svg_icons'] = file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg');
 }

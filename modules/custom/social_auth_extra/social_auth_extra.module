@@ -57,6 +57,11 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
           $name = preg_replace('/[^0-9a-z]/si', '_', $name);
         }
 
+        // The user already selected an authentication method and there
+        // will be a drupal_set_message informing the user.
+        unset($form['social_auth_extra']);
+        unset($form['account']['title']);
+
         $form['account']['mail']['#default_value'] = $data_handler->get('mail');
         $form['account']['name']['#default_value'] = $name;
         $form['actions']['submit']['#submit'] = ['social_auth_extra_form_user_register_form_submit'];
@@ -166,6 +171,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
           $user_manager->setAccountId($account_id);
           $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
           $account->save();
+          $form_state->getFormObject()->setEntity($account);
 
           if ($module_handler->moduleExists('profile')) {
             // Create profile if it doesn't exists.
@@ -181,6 +187,19 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
 
             $module_handler->invokeAll('social_auth_extra_profile_presave', [$account, $profile, $auth_manager, $user_manager]);
             $profile->save();
+
+            // Redirect to profile.
+            $form_state->setRedirect(
+              'entity.profile.type.profile.user_profile_form',
+                ['user' => $account->id(),
+                  'profile_type' => 'profile', []]
+            );
+          }
+          else {
+            // If the profile module does not exist redirect to account form.
+            $form_state->setRedirect('entity.user.edit_form', [
+              'user' => $account->id(),
+            ]);
           }
         }
       }
@@ -188,16 +207,13 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       if (!$account->id()) {
         $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
         $account->save();
+        $form_state->getFormObject()->setEntity($account);
       }
 
       user_login_finalize($account);
       drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
         '@community_name' => \Drupal::config('system.site')->get('name'),
       ]));
-
-      $form_state->setRedirect('entity.user.edit_form', [
-        'user' => $account->id(),
-      ]);
 
       // Send email notification.
       $params['account'] = $account;

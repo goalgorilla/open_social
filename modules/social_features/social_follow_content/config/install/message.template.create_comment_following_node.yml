@@ -20,14 +20,14 @@ label: 'Create comment on following node'
 description: 'A person commented on content I am following'
 text:
   -
-    format: 'full_html'
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on <a href="[message:field_message_related_object:entity:url:absolute]">content</a> you are following</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s <a href=\"[message:field_message_related_object:entity:url:absolute]\">[social_comment:commented_content_type]</a> you are following</p>\r\n"
+    format: full_html
   -
-    format: 'full_html'
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on <a href="[message:field_message_related_object:entity:url:absolute]">content</a> you are following</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s <a href=\"[message:field_message_related_object:entity:url:absolute]\">[social_comment:commented_content_type]</a> you are following</p>\r\n"
+    format: full_html
   -
-    format: 'full_html'
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> commented on <a href="[message:field_message_related_object:entity:url:absolute]">content</a> you are following</p>'
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s <a href=\"[message:field_message_related_object:entity:url:absolute]\">[social_comment:commented_content_type]</a> you are following</p>\r\n"
+    format: full_html
 settings:
   'token options':
     clear: false

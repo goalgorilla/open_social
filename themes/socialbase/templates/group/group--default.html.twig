@@ -40,9 +40,9 @@
  */
 #}
 {% if content.field_group_description|render %}
-    <div{{ attributes.addClass('card') }}>
-        <div{{ content_attributes.addClass('card__body card__body--fat body-text') }}>
-            {{ content.field_group_description }}
-        </div>
+  <div{{ attributes.addClass('card') }}>
+    <div{{ content_attributes.addClass('card__body body-text') }}>
+      {{ content.field_group_description }}
     </div>
+  </div>
 {% endif %}

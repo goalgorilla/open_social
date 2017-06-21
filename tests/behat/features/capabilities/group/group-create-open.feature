@@ -13,19 +13,22 @@ Feature: Create Open Group
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    Then I click radio button "Open group This is a open group. Users may join without approval and all content added in this group will be visible for non members as well." with the id "edit-group-type-open-group"
+    And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
-    And I fill in "Location name" with "GG HQ"
-    And I select "NL" from "Country"
+    And I fill in "Location name" with "Technopark"
+    And I select "UA" from "Country"
     And I wait for AJAX to finish
     Then I should see "City"
     And I fill in the following:
-      | City | Enschede |
-      | Street address | Oldenzaalsestraat |
-      | Postal code | 7514DR |
+      | City | Lviv |
+      | Street address | Fedkovycha 60a |
+      | Postal code | 79000 |
+      | Oblast | Lviv oblast |
     And I press "Save"
     And I should see "Test open group" in the "Main content"
-    And I should see "GG HQ"
+    And I should see "Technopark"
     And I should see "1 member"
     And I should see "Joined"
     And I should see the link "Read more"
@@ -37,10 +40,11 @@ Feature: Create Open Group
     And I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
-    And I should see "GG HQ" in the "Main content"
-    And I should see "Oldenzaalsestraat" in the "Main content"
-    And I should see "7514DR" in the "Main content"
-    And I should see "Enschede" in the "Main content"
+    And I should see "Technopark" in the "Hero block"
+    And I should see "Fedkovycha 60a" in the "Hero block"
+    And I should see "79000" in the "Hero block"
+    And I should see "Lviv" in the "Hero block"
+    And I should see "Lviv oblast" in the "Hero block"
 
     # As a LU I want to see the information about a group
     When I click "About"
@@ -50,7 +54,7 @@ Feature: Create Open Group
   # DS-648 As a LU I want to see the members of a group
     And I logout
     And I am logged in as "Group User Two"
-    And I am on "newest-members"
+    And I am on "all-members"
     And I click "Group User One"
   # And I should see "Recently joined groups" in the "Sidebar second"
     And I should see "Test open group" in the "Sidebar second"
@@ -79,13 +83,13 @@ Feature: Create Open Group
     And I click "Create Event"
     And I fill in the following:
       | Title | Test group event |
-      | Date  | 2025-01-01  |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time  | 11:00:00    |
-      | Location name       | GG HQ |
+      | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -107,9 +111,7 @@ Feature: Create Open Group
       | Title |Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-  # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page
@@ -120,6 +122,24 @@ Feature: Create Open Group
     And I click "Topics"
     And I should see "Test group topic" in the "Main content"
     And I should see "Test open group" in the "Main content"
+
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "contentmanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
+
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "sitemanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "4" element with the css ".dropdown-toggle"

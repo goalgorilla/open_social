@@ -15,22 +15,25 @@
  * @ingroup themeable
  */
 #}
+<div class="card">
+  <div class="card__block">
 
-{% if types is not empty %}
-  <div class="list-group">
-    {% for type in types %}
-      <dl class="list-group-item">
-        <dt>{{ type.add_link }}</dt>
-        <dd>{{ type.description }}</dd>
-      </dl>
-    {% endfor %}
-  </div>
+    {% if types is not empty %}
 
-{% else %}
-  <div class="list-group-item">
-    {% set create_content = path('node.type_add') %}
-    {% trans %}
-      You have not created any content types yet. Go to the <a href="{{ create_content }}">content type creation page</a> to add a new content type.
-    {% endtrans %}
+      {% for type in types %}
+        <dl class="list-item">
+          <dt class="list-item__label"><span class="btn btn-flat">{{ type.add_link }}</span></dt>
+          <dd class="list-item__text">{{ type.description }}</dd>
+        </dl>
+      {% endfor %}
+
+    {% else %}
+      <div class="list-item">
+        {% set create_content = path('node.type_add') %}
+          {% trans %}
+            You have not created any content types yet. Go to the <a href="{{ create_content }}">content type creation page</a> to add a new content type.
+          {% endtrans %}
+      </div>
+    {% endif %}
   </div>
-{% endif %}
+</div>

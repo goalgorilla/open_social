@@ -13,6 +13,7 @@ Feature: Edit my group as a group manager
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    And I press "Continue"
     And I wait for AJAX to finish
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
@@ -55,7 +56,6 @@ Feature: Edit my group as a group manager
     Then I should see the link "Delete"
     When I press "Edit"
     Then I should see "Group Manager One"
-    And I should see "Group roles"
     And I should see "Group Manager"
     And I should see the button "Save"
     And I should see the link "Delete"
@@ -97,8 +97,7 @@ Feature: Edit my group as a group manager
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     And I should see "Test group topic"
     And I logout
     And I am logged in as "Group Manager One"

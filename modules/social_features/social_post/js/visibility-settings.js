@@ -11,7 +11,7 @@
       attach: function (context, settings) {
         var dropDown = '#post-visibility';
 
-        $(dropDown + ' + .dropdown-menu > .list-group-item').click(function() {
+        $(dropDown + ' + .dropdown-menu > .list-item').click(function() {
           var setting = $('label > span', this).text();
 
           $('.text', dropDown).text(setting);
@@ -28,8 +28,8 @@
           // Just check the input below the list item we clicked.
           $(this).find('input').prop("checked", true);
 
-          $(this).siblings('li').removeClass('active');
-          $(this).addClass('active');
+          $(this).siblings('li').removeClass('list-item--active');
+          $(this).addClass('list-item--active');
 
         });
 

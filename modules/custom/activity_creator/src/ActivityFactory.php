@@ -10,6 +10,7 @@ use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\message\Entity\Message;
+use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 
 /**
  * Class ActivityFactory to create Activity items based on ActivityLogs.
@@ -17,6 +18,15 @@ use Drupal\message\Entity\Message;
  * @package Drupal\activity_creator
  */
 class ActivityFactory extends ControllerBase {
+
+  /**
+   * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
+   */
+  private $activityDestinationManager;
+
+  public function __construct(ActivityDestinationManager $activityDestinationManager) {
+    $this->activityDestinationManager = $activityDestinationManager;
+  }
 
   /**
    * Create the activities based on a data array.
@@ -171,13 +181,18 @@ class ActivityFactory extends ControllerBase {
    */
   private function buildAggregatedActivites($data, $activity_fields) {
     $activities = [];
+    $common_destinations = $this->activityDestinationManager->getListByProperties('is_common', TRUE);
+    $personal_destinations = $this->activityDestinationManager->getListByProperties('is_common', FALSE);
+
     // Get related activities.
     $related_activities = $this->getAggregationRelatedActivities($data);
     if (!empty($related_activities)) {
       // Update related activities.
       foreach ($related_activities as $related_activity) {
+        $destination = $related_activity->field_activity_destinations->value;
         // If user already have related activity we remove it and create new.
-        if ($related_activity->getOwnerId() == $this->getActor($data)) {
+        // And we also remove related activities from common streams.
+        if ($related_activity->getOwnerId() == $this->getActor($data) || in_array($destination, $common_destinations)) {
           // @TODO: Consider if need to delete or unpublish old activites.
           $related_activity->delete();
         }
@@ -199,12 +214,10 @@ class ActivityFactory extends ControllerBase {
         $arguments = ['@count' => $count - 1];
       }
       $activity_fields['field_activity_output_text'] = $this->getFieldOutputText($message, $arguments);
-      $allowed_destinations = ['stream_group', 'stream_home', 'stream_explore'];
-      $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $allowed_destinations);
+      $activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $common_destinations);
 
       // Create separate activity for activity on user related streams.
-      $profile_allowed_destinations = ['stream_profile', 'notifications', 'email'];
-      $profile_activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $profile_allowed_destinations);
+      $profile_activity_fields['field_activity_destinations'] = $this->getFieldDestinations($data, $personal_destinations);
       $activity = Activity::create($profile_activity_fields);
       $activity->save();
       $activities[] = $activity;
@@ -220,7 +233,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related activities for activity aggregation.
    */
-  public static function getAggregationRelatedActivities($data) {
+  private function getAggregationRelatedActivities($data) {
     $activities = array();
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
@@ -239,8 +252,10 @@ class ActivityFactory extends ControllerBase {
           $activity_query = \Drupal::entityQuery('activity');
           $activity_query->condition('field_activity_entity.target_id', $comment_ids, 'IN');
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
-          // We exclude activities with email destination from aggregation.
-          $activity_query->condition('field_activity_destinations.value', 'email', '!=');
+          // We exclude activities with email, platform_email and notifications
+          // destinations from aggregation.
+          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('is_aggregatable', TRUE);
+          $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
             $activities = Activity::loadMultiple($activity_ids);
@@ -278,10 +293,12 @@ class ActivityFactory extends ControllerBase {
       $comment = $comment_storage->load($related_object['target_id']);
       if($comment){
         $commented_entity = $comment->getCommentedEntity();
-        $related_object = [
-          'target_type' => $commented_entity->getEntityTypeId(),
-          'target_id' => $commented_entity->id(),
-        ];
+        if(!empty($commented_entity)) {
+          $related_object = [
+            'target_type' => $commented_entity->getEntityTypeId(),
+            'target_id' => $commented_entity->id(),
+          ];
+        }
       }
     }
     return $related_object;

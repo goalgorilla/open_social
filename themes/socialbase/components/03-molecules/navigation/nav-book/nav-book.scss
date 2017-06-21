@@ -1,15 +1,46 @@
+// Nav book
+//
+// Styles for table of contents as provided bij the social_book module. Menu items have triangle icons indicating wether there are menu items below this item or not.
+// The highlighted path leads to the page title the user is currently viewing.
+//
+// markup: nav-book.twig
+//
+// Weight: 4
+//
+// Style guide: molecules.navigation.nav-book
+
+
 @import 'settings';
 
-.book-menu {
+.nav-book {
+  padding: 0;
 
-  .list-item {
+  .menu-item {
     list-style: none;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    clear: both;
+    padding-left: 1.25rem;
+    position: relative;
+
+    &:before {
+      content: '\25CB';
+      position: absolute;
+      left: 0;
+    }
+
+    &.menu-item--collapsed:before {
+      content: '\25B8';
+    }
+
   }
 
-  .list-item--active-trail > a {
-    text-decoration: underline;
+  .menu-item--expanded .menu {
+    padding-left: 0;
+  }
+
+  .menu-item--expanded.menu-item--has-children:before {
+    content: '\25BE';
   }
 
 }
@@ -17,10 +48,6 @@
 .navigation-book {
   padding: 0.5em 0;
   font-size: $font-size-small;
-
-  .book-menu {
-    padding-left: 66px;
-  }
 
   a:hover {
     text-decoration: underline;

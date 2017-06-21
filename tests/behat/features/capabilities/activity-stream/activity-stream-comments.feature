@@ -56,6 +56,7 @@ Feature: See comments in activity stream
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
@@ -68,13 +69,12 @@ Feature: See comments in activity stream
     And I click "Create Event"
     And I fill in the following:
       | Title | Test group event |
-      | Date  | 2025-01-01  |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time  | 11:00:00    |
       | Location name       | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    # TODO: Change title of this button when we will have one step
-    And I press "Continue to final step"
-    And I press "Create node in group"
+    And I press "Save and publish"
     Then I should see "Test group event"
     When I click "Test open group"
 

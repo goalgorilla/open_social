@@ -19,6 +19,12 @@ function social_event_type_install() {
     $role->grantPermission('edit terms in event_types');
     $role->grantPermission('delete terms in event_types');
     $role->trustData()->save();
+
+    // Set default event type settings.
+    $config = \Drupal::configFactory()->getEditable('social_event_type.settings');
+    $config->set('social_event_type_required', FALSE);
+    $config->set('social_event_type_select_changer', 5);
+    $config->save();
   }
 }
 
@@ -44,4 +50,5 @@ function social_event_type_uninstall() {
   \Drupal::configFactory()->getEditable('field.field.node.event.field_event_type')->delete();
   \Drupal::configFactory()->getEditable('field.storage.node.field_event_type')->delete();
   \Drupal::configFactory()->getEditable('taxonomy.vocabulary.event_types')->delete();
+  \Drupal::configFactory()->getEditable('social_event_type.settings')->delete();
 }

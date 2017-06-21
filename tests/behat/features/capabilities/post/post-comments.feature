@@ -13,7 +13,7 @@ Feature: Comment on a Post
     And I am on the homepage
 
         # Scenario: Succesfully create a private post
-   When I fill in "What's on your mind?" with "This is a community post."
+   When I fill in "Say something to the Community" with "This is a community post."
     And I select post visibility "Community"
     And I press "Post"
    Then I should see the success message "Your post has been posted."

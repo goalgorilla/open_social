@@ -90,6 +90,12 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 }
 
+/**
+ * Submit function for resetting password form.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
 function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
   $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
@@ -114,7 +120,6 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     }
   }
 }
-
 
 /**
  * Check if an users with the input field for name or mail field is blocked.
@@ -197,6 +202,7 @@ function template_preprocess_account_header_links(&$variables) {
 
     $variables['links']['search_block'] = $block_output;
   }
+
 }
 
 /**

@@ -197,7 +197,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<h4 class="section-title">Content results</h4><p>If you are searching for users, <a href="/search/users/{{ arguments.search_api_fulltext }}">click here</a> If you are searching for groups, <a href="/search/groups/{{ arguments.search_api_fulltext }}">click here</a></p>'
+            value: '<h4 class="section-title">Content results</h4>'
             format: basic_html
           plugin_id: text
       footer: {  }
@@ -256,9 +256,10 @@ display:
         operator: AND
         groups: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }
@@ -282,15 +283,16 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<h4 class="section-title">Content results</h4><p>If you are searching for users, <a href="/search/users/{{ arguments.search_api_fulltext }}">click here</a> If you are searching for groups, <a href="/search/groups/{{ arguments.search_api_fulltext }}">click here</a></p>'
+            value: '<h4 class="section-title">Content results</h4>'
             format: full_html
           plugin_id: text
       defaults:
         header: false
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }
@@ -318,9 +320,10 @@ display:
         description: ''
         weight: 0
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_interface'
+        - url
         - url.query_args
         - user.permissions
       tags: {  }

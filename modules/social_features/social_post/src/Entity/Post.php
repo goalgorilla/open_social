@@ -7,7 +7,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\social_post\PostInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -18,6 +17,7 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "post",
  *   label = @Translation("Post"),
+ *   bundle_label = @Translation("Post type"),
  *   handlers = {
  *     "view_builder" = "Drupal\social_post\PostViewBuilder",
  *     "list_builder" = "Drupal\social_post\PostListBuilder",
@@ -40,6 +40,7 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer post entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "bundle" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -47,12 +48,14 @@ use Drupal\user\UserInterface;
  *   },
  *   links = {
  *     "canonical" = "/post/{post}",
- *     "add-form" = "/post/add",
+ *     "add-page" = "/post/add",
+ *     "add-form" = "/post/add/{post_type}",
  *     "edit-form" = "/post/{post}/edit",
  *     "delete-form" = "/post/{post}/delete",
  *     "collection" = "/admin/content/post",
  *   },
- *   field_ui_base_route = "post.settings"
+ *   bundle_entity_type = "post_type",
+ *   field_ui_base_route = "entity.post_type.edit_form"
  * )
  */
 class Post extends ContentEntityBase implements PostInterface {
@@ -63,9 +66,9 @@ class Post extends ContentEntityBase implements PostInterface {
    */
   public static function preCreate(EntityStorageInterface $storage_controller, array &$values) {
     parent::preCreate($storage_controller, $values);
-    $values += array(
+    $values += [
       'user_id' => \Drupal::currentUser()->id(),
-    );
+    ];
   }
 
   /**
@@ -131,6 +134,22 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
+
+  public function getType() {
+    return $this->bundle();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setType($type) {
+    $this->set('type', $this->bundle());
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheContexts() {
     $defaults = parent::getCacheContexts();
 
@@ -149,10 +168,13 @@ class Post extends ContentEntityBase implements PostInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Post entity.'))
       ->setReadOnly(TRUE);
+
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Post entity.'))
@@ -166,20 +188,20 @@ class Post extends ContentEntityBase implements PostInterface {
       ->setSetting('handler', 'default')
       ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
-      ))
+      ])
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
-        'settings' => array(
+        'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
           'autocomplete_type' => 'tags',
           'placeholder' => '',
-        ),
+        ],
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);

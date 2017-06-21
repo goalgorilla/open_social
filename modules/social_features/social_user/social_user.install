@@ -16,6 +16,26 @@ function social_user_install() {
 }
 
 /**
+ * Fix 2 wrongly saved view displays.
+ * @param $sandbox
+ */
+function social_user_update_8001(&$sandbox) {
+  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_default */
+  $conf_default = \Drupal::getContainer()->get('config.factory')->getEditable('core.entity_view_display.user.user.default');
+  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $conf_full */
+  $conf_full = \Drupal::getContainer()->get('config.factory')->getEditable('core.entity_view_display.user.user.full');
+
+  /*
+   * For both these displays, the content is empty.
+   * In a previous version 3 subfields were exported into the root level of 'content'
+   * This removes those fields that have no purpose and makes sure
+   * the update hook for Drupal 8.3.1 works properly.
+   */
+  $conf_default->set('content', [])->save();
+  $conf_full->set('content', [])->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {

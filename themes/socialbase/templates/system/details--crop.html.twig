@@ -16,7 +16,7 @@
  * @ingroup themeable
  */
 #}
-<details{{ attributes }}>
+<details{{ attributes.removeAttribute('open') }}>
   {%- if title -%}
     <summary{{ summary_attributes.addClass('btn btn-flat brand-text-primary') }}>{{ title }}</summary>
   {%- endif -%}

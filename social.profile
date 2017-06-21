@@ -78,33 +78,6 @@ function social_verify_custom_requirements(&$install_state) {
     ];
   }
 
-  if (!class_exists('\CommerceGuys\Enum\AbstractEnum')) {
-    $requirements['addressing_library_enum'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/enum library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\CommerceGuys\Intl\Country\CountryRepository')) {
-    $requirements['addressing_library_country'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/intl library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\CommerceGuys\Zone\Repository\ZoneRepository')) {
-    $requirements['addressing_library_zone'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/zone library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
   if (!class_exists('\Facebook\Facebook')) {
     $requirements['social_auth_facebook'] = [
       'title' => t('Social Auth Facebook module requirements'),
@@ -162,8 +135,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
   $social_optional_modules = [
     'social_book' => t('Book functionality'),
     'social_sharing' => t('Share content on social media'),
-    'social_event_type' => t('Catagorize events in event types'),
-    'social_sso' => t('Registration with a social networks'),
+    'social_event_type' => t('Categorize events in event types'),
+    'social_sso' => t('Registration with social networks'),
+    'social_file_private' => t('Use the private file system for uploaded files (highly recommended)'),
   ];
 
   // Checkboxes to enable Optional modules.
@@ -171,7 +145,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     '#type' => 'checkboxes',
     '#title' => t('Enable additional features'),
     '#options' => $social_optional_modules,
-    '#default_value' => [],
+    '#default_value' => [
+      'social_file_private',
+    ],
   ];
 
   // Checkboxes to generate demo content.
@@ -224,6 +200,8 @@ function social_install_profile_modules(&$install_state) {
     'social_mentions' => 'social_mentions',
     'social_font' => 'social_font',
     'social_like' => 'social_like',
+    'social_tour' => 'social_tour',
+    'social_post_photo' => 'social_post_photo',
   );
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between
@@ -292,9 +270,11 @@ function social_final_site_setup(&$install_state) {
       'group' => t('groups'),
       'topic' => t('topics'),
       'event' => t('events'),
-      'eventenrollment' => t('event enrollments'),
+      'event_enrollment' => t('event enrollments'),
       'post' => t('posts'),
       'comment' => t('comments'),
+      'like' => t('likes'),
+      // TODO Add 'event_type' if module is enabled.
     ];
     foreach ($demo_content_types as $demo_type => $demo_description) {
       $batch['operations'][] = ['_social_add_demo_batch', array($demo_type, $demo_description)];
@@ -308,6 +288,7 @@ function social_final_site_setup(&$install_state) {
   $final_batched = [
     'profile_weight' => t('Set weight of profile.'),
     'router_rebuild' => t('Rebuild router.'),
+    'trigger_sapi_index' => t('Index search'),
     'cron_run' => t('Run cron.'),
     'import_optional_config' => t('Import optional configuration'),
   ];
@@ -411,13 +392,14 @@ function _social_add_demo_batch($demo_type, $demo_description, &$context) {
 
   $num_created = 0;
 
-  // Create an instance of the necessary class.
-  $className = "\Drupal\social_demo\Content\SocialDemo" . ucfirst($demo_type);
+  $content_types = array($demo_type);
+  $manager = \Drupal::service('plugin.manager.demo_content');
+  $plugins = $manager->createInstances($content_types);
 
-  if (class_exists($className)) {
-    $container = \Drupal::getContainer();
-    $class = $className::create($container);
-    $num_created = $class->createContent();
+  /** @var \Drupal\social_demo\DemoContentInterface $plugin */
+  foreach ($plugins as $plugin) {
+    $plugin->createContent();
+    $num_created = $plugin->count();
   }
 
   $context['results'][] = $demo_type;
@@ -444,6 +426,14 @@ function _social_finalise_batch($process, $description, &$context) {
       // This would normally happen upon KernelEvents::TERMINATE, but since the
       // installer does not use an HttpKernel, that event is never triggered.
       \Drupal::service('router.builder')->rebuild();
+      break;
+
+    case 'trigger_sapi_index':
+      $indexes = \Drupal\search_api\Entity\Index::loadMultiple();
+      /** @var \Drupal\search_api\Entity\Index $index */
+      foreach ($indexes as $index) {
+        $index->reindex();
+      }
       break;
 
     case 'cron_run':

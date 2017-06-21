@@ -1,20 +1,37 @@
-.book-menu .list-item {
-  list-style: none;
-  padding-top: 6px;
-  padding-bottom: 6px;
+.nav-book {
+  padding: 0;
 }
 
-.book-menu .list-item--active-trail > a {
-  text-decoration: underline;
+.nav-book .menu-item {
+  list-style: none;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  clear: both;
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.nav-book .menu-item:before {
+  content: '\25CB';
+  position: absolute;
+  left: 0;
+}
+
+.nav-book .menu-item.menu-item--collapsed:before {
+  content: '\25B8';
+}
+
+.nav-book .menu-item--expanded .menu {
+  padding-left: 0;
+}
+
+.nav-book .menu-item--expanded.menu-item--has-children:before {
+  content: '\25BE';
 }
 
 .navigation-book {
   padding: 0.5em 0;
   font-size: 14px;
-}
-
-.navigation-book .book-menu {
-  padding-left: 66px;
 }
 
 .navigation-book a:hover {

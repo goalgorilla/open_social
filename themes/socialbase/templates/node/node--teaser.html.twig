@@ -71,8 +71,7 @@
 {%
   set classes = [
     'teaser',
-    'brand-border-radius',
-    view_mode == 'teaser' ? 'card',
+    view_mode == 'teaser' ? 'card brand-border-radius',
     view_mode == 'activity' ? 'teaser--stream',
     view_mode == 'activity_comment' ? 'teaser--stream',
     node.isPromoted() ? 'promoted',
@@ -117,30 +116,26 @@
     <div class="card__actionbar">
 
         {% if comment_count > 0 %}
-          <a href="{{ url }}#section-comments" class="badge badge--comment-count teaser__badge">
-            <label>
-              <svg class="icon-small icon-badge teaser__badge">
+          <a href="{{ url }}#section-comments" class="badge badge--pill badge-default teaser__badge">
+            <span class="badge__container">
+              <svg class="badge__icon">
                 <use xlink:href="#icon-comment"></use>
               </svg>
-              <span class="badge--comment-count__number">{{ comment_count }}</span>
-            </label>
+              <span class="badge__label">{{ comment_count }}</span>
+            </span>
           </a>
         {% endif %}
 
         {% if visibility_icon and visibility_label %}
-          <div class="badge badge--toggle teaser__badge">
-            <label title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
-              <input type="checkbox">
-              <svg class="icon-gray icon-badge-toggle">
+          <div class="badge teaser__badge" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+              <svg class="badge__icon">
                 <use xlink:href="#icon-{{ visibility_icon }}"></use>
               </svg>
-              <span class="badge--toggle__label">{{ visibility_label }}</span>
-            </label>
           </div>
         {% endif %}
 
         {% if content.enrolled %}
-          <span class="label label-default">
+          <span class="badge badge-secondary teaser__badge">
             {%- trans -%} Enrolled {%- endtrans -%}
           </span>
         {% endif %}

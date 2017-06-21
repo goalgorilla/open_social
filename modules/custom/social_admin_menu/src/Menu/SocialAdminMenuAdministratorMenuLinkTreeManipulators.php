@@ -45,7 +45,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    */
   public function checkAccess(array $tree) {
 
-    if ($this->account->id() !== 1) {
+    if ($this->account->id() != 1) {
       $account_roles = $this->account->getRoles();
       // Define routes to hide for a role.
       // 'content' => 'system.admin_content',

@@ -19,17 +19,17 @@ print:
 ## 2. The SMACSS category Component — discrete, reusable UI elements
 
 ### 2.1 Atoms
-alerts:
+alert:
   css:
     component:
-      assets/css/alerts.css: {}
+      assets/css/alert.css: {}
   js:
     assets/js/alert.min.js: {}
 
-badges:
+badge:
   css:
     component:
-      assets/css/badges.css: {}
+      assets/css/badge.css: {}
 
 button:
   css:
@@ -41,11 +41,6 @@ cards:
     component:
       assets/css/cards.css: {}
 
-close-icon:
-  css:
-    component:
-      assets/css/close-icon.css: {}
-
 form-controls:
   css:
     component:
@@ -55,15 +50,15 @@ form-controls:
   dependencies:
     - core/drupal.form
 
-labels:
+list:
   css:
     component:
-      assets/css/labels.css: {}
+      assets/css/list.css: {}
 
-list-group:
+spinner:
   css:
     component:
-      assets/css/list-group.css: {}
+      assets/css/spinner.css: {}
 
 
 ### 2.2 Molecules
@@ -138,6 +133,11 @@ form--timepicker:
   js:
     assets/js/jquery.timepicker.min.js: {}
 
+imagecrop:
+  css:
+    component:
+      assets/css/imagecrop.css: {}
+      
 like:
   css:
     component:
@@ -220,6 +220,11 @@ comment:
     component:
       assets/css/comment.css: {}
 
+group-managers:
+  css:
+    component:
+      assets/css/group-managers.css: {}
+
 hero:
   css:
     component:
@@ -277,14 +282,11 @@ page-preview:
     layout:
       assets/css/page-preview.css: {}
 
-page-stream:
+### 2.5 Libraries
+charts:
   css:
-    layout:
-      assets/css/page-stream.css: {}
-  dependencies:
-    - socialbase/stream
-
-responsive-dom:
+    component:
+      assets/css/morrisjs.css: {}
   js:
-    assets/js/jquery.responsive-dom.min.js: {}
-    assets/js/responsive-dom-init.min.js: {}
+    assets/js/morris.min.js: {}
+    assets/js/raphael.min.js: {}

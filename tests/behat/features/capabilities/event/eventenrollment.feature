@@ -27,7 +27,7 @@ Feature: Enroll for an event
     Then I should see the button "Enrolled"
     And I should see the link "Enrollments"
     And I should see "View profile"
-    And I should see "Contact me"
+    And I should see "View activities"
 
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
@@ -38,7 +38,8 @@ Feature: Enroll for an event
     And I am on "node/add/event"
     When I fill in the following:
       | Title         | Enrollment redirect test event |
-      | Date          | 2025-01-01 |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."

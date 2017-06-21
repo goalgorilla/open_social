@@ -9,8 +9,7 @@ use Drupal\Component\Utility\Html as HtmlUtility;
 function socialbase_preprocess_form_element(&$variables) {
 
   // Tell the label for a switch form element it is in that switch form element
-  $switch_elements = ['email_notifications', 'profile_privacy'];
-  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
+  if (!empty($variables['element']['#attributes']['data-switch'])) {
     $variables['label']['#switch'] = TRUE;
   }
 
@@ -34,15 +33,15 @@ function socialbase_preprocess_form_element_label(&$variables) {
         $variables['description'] = $description;
       }
       // Set the materialize icon.
-      $variables['material_icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
+      $variables['icon'] = _socialbase_get_visibility_icon($variables['element']['#title']);
     }
   }
 }
 
 
 /**
-* Implements hook_theme_suggestions_form_element_alter().
-*/
+ * Implements hook_theme_suggestions_form_element_alter().
+ */
 function socialbase_theme_suggestions_form_element_alter(array &$suggestions, array $variables) {
 
   // Lets add the form element parent to the theme suggestions.
@@ -51,8 +50,7 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
     $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
   }
 
-  $switch_elements = ['email_notifications', 'profile_privacy'];
-  if (array_intersect($switch_elements, $variables['element']['#array_parents'])) {
+  if (!empty($variables['element']['#attributes']['data-switch'])) {
     $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }

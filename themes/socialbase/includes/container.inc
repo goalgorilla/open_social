@@ -18,7 +18,16 @@ function socialbase_preprocess_container(&$variables) {
     }
   }
 
+  // remove extra wrapper for container of comment files form
+  if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-comment-files-wrapper') {
+    $variables['bare'] = TRUE;
+  };
+
   if (isset($variables['element']['#inline'])) {
+    $variables['bare'] = TRUE;
+  }
+
+  if (isset($variables['element']['#type']) && $variables['element']['#type'] == 'view') {
     $variables['bare'] = TRUE;
   }
 

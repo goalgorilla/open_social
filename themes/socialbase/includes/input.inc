@@ -18,10 +18,20 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
+  // set "add more managers" button style
+  if (isset($variables['element']['#array_parents']) && in_array('add_more', $variables['element']['#array_parents'], TRUE) && $variables['type'] == 'submit') {
+    $variables['button_type'] = 'flat';
+  }
+
   if (isset($variables['element']['#array_parents'])) {
     if (in_array('save_modal', $variables['element']['#array_parents'], TRUE)) {
       $variables['button_type'] = 'primary';
     }
+  }
+
+  // for all buttons in file upload set type to flat, usually tables -> remove button
+  if (isset($variables['element']['#submit']) && in_array('file_managed_file_submit', $variables['element']['#submit'], TRUE)) {
+    $variables['button_type'] = 'flat';
   }
 
   if (isset($variables['element']['#addsearchicon'])) {
@@ -51,6 +61,12 @@ function socialbase_preprocess_input(&$variables) {
       $variables['button_type'] = 'accent';
     }
 
+  }
+
+  if (isset($variables['element']['#button_size'])) {
+    if ($variables['element']['#button_size'] == 'small') {
+      $variables['button_size'] = 'small';
+    }
   }
 
   // If a split button desn't have a button_type variable, set it to default (fallback)
