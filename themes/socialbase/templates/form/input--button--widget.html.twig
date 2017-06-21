@@ -1,0 +1,19 @@
+{% extends "input--button.html.twig" %}
+
+{%
+  set widget_classes = [
+    button_type == 'widget' ? 'btn-widget btn-sm waves-effect',
+  ]
+%}
+
+{% set attributes = attributes.addClass(widget_classes) %}
+
+{% block input %}
+  <button{{ attributes.addClass(classes) }}>
+  {% if icon %}
+    <svg class="btn-icon">
+      <use xlink:href="#icon-{{ icon }}"></use>
+    </svg>
+  {% endif %}
+  {{ label }}{{ element.caret }}</button>{{ children }}
+{% endblock %}

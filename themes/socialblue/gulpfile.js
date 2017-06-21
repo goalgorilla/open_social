@@ -369,7 +369,7 @@ gulp.task('watch:styleguide', ['build-styleguide'], function () {
 // ===================================================
 
 gulp.task('watch:js', function () {
-  return gulp.src(options.theme.components + '**/*.js')
+  return gulp.watch(options.theme.components + '**/*.js')
     .pipe($.uglify())
     .pipe($.flatten())
     .pipe($.rename({

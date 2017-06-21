@@ -1,0 +1,191 @@
+/**
+ * @file
+ * Visual styles for Pachamama's dropbutton component.
+ */
+
+@import 'settings';
+
+.dropbutton-wrapper,
+.dropbutton-widget {
+  display: block;
+  position: relative;
+}
+
+@media screen and (max-width:600px) {
+  .js .dropbutton-wrapper {
+    width: 100%;
+  }
+}
+
+/* Splitbuttons */
+@media screen and (min-width:600px) {
+  .form-actions .dropbutton-wrapper {
+    float: left; /* LTR */
+  }
+  [dir="rtl"] .form-actions .dropbutton-wrapper {
+    float: right;
+  }
+}
+.js .form-actions .dropbutton-widget {
+  position: static;
+}
+.js td .dropbutton-widget {
+  position: absolute;
+}
+.js td .dropbutton-wrapper {
+  min-height: 2em;
+}
+.js td .dropbutton-multiple {
+  padding-right: 10em; /* LTR */
+  margin-right: 2em; /* LTR */
+  max-width: 100%;
+}
+[dir="rtl"].js td .dropbutton-multiple {
+  padding-right: 0;
+  margin-right: 0;
+  padding-left: 10em;
+  margin-left: 2em;
+}
+.js td .dropbutton-multiple .dropbutton-action a,
+.js td .dropbutton-multiple .dropbutton-action input,
+.js td .dropbutton-multiple .dropbutton-action button {
+  width: auto;
+}
+
+/* UL styles are over-scoped in core, so this selector needs weight parity. */
+.js .dropbutton-widget .dropbutton {
+  list-style-image: none;
+  list-style-type: none;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+.js .dropbutton li,
+.js .dropbutton a {
+  display: block;
+  outline: none;
+}
+
+.js .dropbutton li:hover,
+.js .dropbutton li:focus,
+.js .dropbutton a:hover,
+.js .dropbutton a:focus {
+  outline: initial;
+}
+
+/**
+ * The dropbutton styling.
+ *
+ * A dropbutton is a widget that displays a list of action links as a button
+ * with a primary action. Secondary actions are hidden behind a click on a
+ * twisty arrow.
+ *
+ * The arrow is created using border on a zero-width, zero-height span.
+ * The arrow inherits the link color, but can be overridden with border colors.
+ */
+.js .dropbutton-multiple .dropbutton-widget {
+  padding-right: 2em; /* LTR */
+}
+.js[dir="rtl"] .dropbutton-multiple .dropbutton-widget {
+  padding-left: 2em;
+  padding-right: 0;
+}
+.dropbutton-multiple.open,
+.dropbutton-multiple.open .dropbutton-widget {
+  max-width: none;
+}
+.dropbutton-multiple.open {
+  z-index: 100;
+}
+.dropbutton-multiple .dropbutton .secondary-action {
+  display: none;
+}
+.dropbutton-multiple.open .dropbutton .secondary-action {
+  display: block;
+}
+.dropbutton-toggle {
+  bottom: 0;
+  display: block;
+  position: absolute;
+  right: 0; /* LTR */
+  text-indent: 110%;
+  top: 0;
+  white-space: nowrap;
+  width: 2em;
+}
+[dir="rtl"] .dropbutton-toggle {
+  left: 0;
+  right: auto;
+}
+.dropbutton-toggle button {
+  display: block;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.dropbutton-toggle button:hover,
+.dropbutton-toggle button:focus {
+  outline: initial;
+}
+.dropbutton-arrow {
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-style: solid;
+  border-width: 6px 6px 0;
+  display: block;
+  height: 0;
+  line-height: 0;
+  position: absolute;
+  right: 50%;
+  margin-right: -6px;
+  top: 50%;
+  margin-top: -3px;
+  width: 0;
+  overflow: hidden;
+}
+[dir="rtl"] .dropbutton-arrow {
+  left: 0.6667em;
+  right: auto;
+}
+
+.js .dropbutton-multiple {
+
+  .btn-widget {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border: 1px solid $gray-light-1;
+    background: white;
+    text-align: left;
+  }
+
+  .dropbutton-toggle .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+}
+
+.js .dropbutton-multiple.open {
+  border: 1px solid $gray-light-1;
+  background: $gray-lighter;
+
+  .dropbutton-toggle .btn {
+    border: 0;
+  }
+
+  .btn-widget {
+    background: transparent;
+    border: 0;
+    width: 100%;
+  }
+
+  .dropbutton-arrow {
+    border-bottom: 6px solid;
+    border-top-color: transparent;
+    top: 12px;
+  }
+
+}
+

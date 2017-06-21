@@ -1,0 +1,279 @@
+@import 'settings';
+
+.js .field--widget-paragraphs .dropbutton-wrapper {
+  display: inline-flex;
+  padding-right: 0em;
+  margin-right: 0em;
+  /* Override 600px breakpoint from core. */
+  width: auto;
+}
+
+.js .field--widget-paragraphs .dropbutton-widget {
+  position: relative;
+}
+
+.js .paragraph-type-top {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  .form-group {
+    margin-bottom: 0;
+  }
+}
+.js .paragraphs-collapsed-description {
+  height: 1.538em;
+  padding-left: 1em;
+  padding-right: 1em;
+  position: relative;
+  flex: 1 1 50%;
+  color: #777;
+  overflow: hidden;
+  word-break: break-all;
+}
+.js .paragraphs-collapsed-description:after {
+  content: '\00a0';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 1em;
+  width: 3em;
+
+  background: #fff;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #fff 100%);
+}
+.js .draggable:hover .paragraphs-collapsed-description:after,
+.js .draggable:hover .paragraphs-collapsed-description:after {
+  background: #f7fcff;
+  background: linear-gradient(to right, rgba(247, 252, 255, 0) 0%, #f7fcff 100%);
+}
+.js .drag-previous .paragraphs-collapsed-description:after {
+  background: #ffd;
+  background: linear-gradient(to right, rgba(255, 255, 221, 0) 0%, #ffd 100%);
+}
+.js .paragraph-type-title {
+  flex: 1 1 25%;
+  min-width: 80px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.js .field--widget-paragraphs .delta-order {
+  padding-right: 10px;
+  text-align: right;
+}
+
+.paragraph--view-mode--preview {
+  padding-right: 1em;
+}
+
+.paragraphs-edit-button-container {
+  flex: 0 1 auto;
+  display: flex;
+  flex-flow: row-reverse;
+  padding-right: 0.5em;
+  margin-left: auto;
+}
+
+/* Override 600px breakpoint core submit button tweaks. */
+@media screen and (max-width: 600px) {
+  .js .paragraphs-edit-button-container {
+    height: 40px;
+    width: 50px;
+  }
+}
+
+.js .paragraph-type-top .paragraphs-dropbutton-wrapper {
+  text-align: right;
+}
+
+.js .table-striped > tbody > tr:nth-of-type(odd) .paragraphs-collapsed-description:after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.clearfix + .paragraphs-dropbutton-wrapper {
+  padding: 10px 0;
+  border-top: 1px solid $gray-lighter;
+}
+
+
+.paragraphs-dropbutton-wrapper > .btn-widget {
+  margin: 4px 2px;
+
+  .btn-icon {
+    height: 31px - ($padding-small-vertical * 2);
+    width: 31px - ($padding-small-vertical * 2);
+  }
+
+}
+
+// Paragraphs are using tables of type table--plain (@see tables component).
+// We position the weight toggle button top right.
+.field--widget-paragraphs {
+
+  .field-multiple-table {
+    border-bottom: 1px solid $gray-lighter;
+
+    .field--name-field-nested-content {
+      @include z-depth-2;
+      padding: 0.625rem;
+    }
+
+    .field-multiple-table {
+      background-color: transparent;
+    }
+
+  }
+
+  .tabledrag-toggle-weight {
+    position: absolute;
+    right: 0;
+  }
+
+  .field-multiple-drag {
+    padding-left: 0;
+    padding-right: 0;
+
+    .tabledrag-handle {
+      padding: 0;
+      margin: 0;
+      position: relative;
+
+      .icon {
+        margin: 0;
+
+        &:before {
+          top: 6px;
+        }
+      }
+    }
+  }
+
+  thead th.tabledrag-hide {
+    font-size: 0;
+    text-indent: -9999px;
+    opacity: 0;
+  }
+
+  .delta-order {
+
+    .form-item {
+      margin-bottom: 0;
+    }
+
+    .select-wrapper .form-control {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      height: auto;
+      line-height: 1.5;
+    }
+
+  }
+
+  .field--type-image .form-type-managed-file {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+
+    > .control-label {
+      flex: 1 0 100%;
+    }
+
+    .image-widget {
+      flex: 1 1 auto;
+      display: flex;
+
+      .form-file {
+        margin-left: 0;
+      }
+
+    }
+
+
+    @include for-tablet-landscape-up {
+
+      .preview {
+        flex: 0 1 auto;
+        margin-bottom: 1rem;
+        padding-right: 1rem;
+      }
+
+      .image-widget-data {
+        flex: 1 1 auto;
+        align-self: flex-start;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      .form-managed-file + .help-block {
+        margin-left: 1rem;
+        margin-top: 0;
+        align-self: center;
+      }
+    }
+
+  }
+
+  // used for file upload
+  .field--type-file {
+    width: 100%;
+
+    .form-group {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    @include for-tablet-landscape-up {
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      .help-block {
+        margin-left: 1rem;
+      }
+
+    }
+
+    .control-label {
+      @include visually-hidden;
+    }
+
+    .form-managed-file + .help-block {
+      margin-left: 1rem;
+      margin-top: 0;
+      align-self: center;
+    }
+
+
+    // file name with icon and filesize
+    .file {
+      margin-bottom: 0.5em;
+      flex: 1 0 100%;
+    }
+
+    // attachments and images
+    .form-type-textfield {
+      flex: 1 1 (100% / 1.5);
+      margin-bottom: 0;
+    }
+
+    // remove button
+    .btn {
+      flex: 0 1 auto;
+      align-self: flex-start;
+    }
+
+  }
+
+  .form-type-textarea .control-label {
+    @include visually-hidden;
+  }
+
+}

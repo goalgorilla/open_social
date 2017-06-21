@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.nested_content.field_nested_content
+    - paragraphs.paragraphs_type.nested_content
+  module:
+    - entity_reference_revisions
+id: paragraph.nested_content.default
+targetEntityType: paragraph
+bundle: nested_content
+mode: default
+content:
+  field_nested_content:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden: {  }
