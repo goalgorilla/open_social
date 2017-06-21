@@ -723,3 +723,24 @@ function social_core_update_8022() {
   );
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Update the context_mapping for account_header_block blocks.
+ */
+function social_core_update_8023() {
+
+  $blocks = \Drupal\block\Entity\Block::loadMultiple();
+
+  /** @var \Drupal\block\Entity\Block $block */
+  foreach ($blocks as $block) {
+    if ($block->getPluginId() === 'account_header_block') {
+      $block_settings = $block->get('settings');
+      if (!isset($block_settings['context_mapping']['user'])) {
+        $block_settings['context_mapping']['user'] = '@user.current_user_context:current_user';
+        $block->set('settings', $block_settings);
+        $block->save();
+      }
+    }
+  }
+
+}
