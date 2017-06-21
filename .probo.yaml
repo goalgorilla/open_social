@@ -1,0 +1,16 @@
+
+steps:
+  - name: Update Composer
+    command: '/usr/local/bin/composer self-update'
+  - name: Install drush-master for d8
+    command: 'composer global require drush/drush:8.* ; cd /usr/local/bin ; mv drush drush7 ; ln -s $HOME/.composer/vendor/bin/drush drush'
+  - name: Run the profile script
+    command: './$SRC_DIR/.probo-profile-build.sh'
+  - name: Run install
+    command: "drush site-install --root=/var/www/html open_social --db-url='mysqli://root:strongpassword@localhost/open_social'"
+  - name: Set file directory permissions
+    command: 'chown -R www-data:www-data /var/www/html/sites/default/files'
+  - name: Rebuild caches
+    command: 'drush cr'
+  - name: Run behat tests
+    command: 'cd /var/www/html/profiles/open_social/tests ; composer install ; ./bin/behat --profile probo'
