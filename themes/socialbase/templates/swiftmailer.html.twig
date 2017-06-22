@@ -65,6 +65,9 @@
             font-family: sans-serif;
             font-size: 14px;
             vertical-align: top; }
+        em {
+            font-style: normal;
+            font-weight: bold;  }
 
         /* -------------------------------------
             BODY & CONTAINER
@@ -100,10 +103,17 @@
             text-align: center;
         }
 
+        .postheader {
+            padding-bottom: 30px;
+            text-align: center;
+            font-size: 18px;
+        }
+
         .main {
             background: #fff;
-            border-radius: 10px;
-            width: 100%; }
+            border-radius: {{ border_radius }};
+            width: 100%;
+            box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24); }
 
         .wrapper {
             box-sizing: border-box;
@@ -163,7 +173,7 @@
             margin-left: 5px; }
 
         a {
-            color: #784288;
+            color: {{ link }};
             text-decoration: underline; }
 
         /* -------------------------------------
@@ -325,7 +335,11 @@
                 <span class="preheader"></span>
 
                 <div class="header">
-                    <img width="42" height="42" src="{{ logo }}" alt="Open Social logo" />
+                    <img width="42" height="42" src="{{ logo }}" alt="Logo" />
+                </div>
+
+                <div class="postheader">
+                    {{ heading }}
                 </div>
 
                 <table class="main">
@@ -362,7 +376,7 @@
                         </tr>
                         <tr>
                             <td class="content-block powered-by">
-                                Copyright &copy; 2017.
+                                Copyright &copy; {{ "now"|date("Y") }}.
                             </td>
                         </tr>
                     </table>
