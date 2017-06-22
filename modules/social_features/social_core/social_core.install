@@ -742,5 +742,14 @@ function social_core_update_8023() {
       }
     }
   }
+}
 
+/**
+ * Install social_swiftmail module.
+ */
+function social_core_update_8024() {
+  $modules = array(
+    'social_swiftmail',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }
