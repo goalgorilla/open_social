@@ -10,13 +10,16 @@
  * @param $variables
  */
 function social_swiftmail_preprocess_swiftmailer(&$variables) {
+  // Determine host.
+  $request = \Drupal::request();
+  $host = $request->getSchemeAndHttpHost();
   // Load default theme (not active)
   $theme_id = \Drupal::config('system.theme')->get('default');
   // Load the colors.
   $colors = color_get_palette($theme_id);
 
   // Set variables from theme.
-  $logo = theme_get_setting('logo.url', $theme_id);
+  $logo = $host.theme_get_setting('logo.url', $theme_id);
   $primary = $colors['brand-bg-primary'];
   $secondary = $colors['brand-bg-secondary'];
   $accent = $colors['brand-bg-accent'];
@@ -30,7 +33,6 @@ function social_swiftmail_preprocess_swiftmailer(&$variables) {
   $variables['accent'] = $accent;
   $variables['link'] = $link;
   $variables['border_radius'] = $border_radius;
-
 
   // Try to add a heading message.
   if ($user = user_load_by_mail($variables['message']['to'])) {
