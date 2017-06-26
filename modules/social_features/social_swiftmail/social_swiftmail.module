@@ -15,8 +15,12 @@ function social_swiftmail_preprocess_swiftmailer(&$variables) {
   $host = $request->getSchemeAndHttpHost();
   // Load default theme (not active)
   $theme_id = \Drupal::config('system.theme')->get('default');
-  // Load the colors.
-  $colors = color_get_palette($theme_id);
+
+  // Need to check this, since otherwise site-install will fail.
+  if (\Drupal::service('module_handler')->moduleExists('color')) {
+    // Load the colors.
+    $colors = color_get_palette($theme_id);
+  }
 
   // Set variables from theme.
   $logo = $host.theme_get_setting('logo.url', $theme_id);
