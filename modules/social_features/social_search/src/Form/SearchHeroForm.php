@@ -39,6 +39,7 @@ class SearchHeroForm extends FormBase {
       '#type' => 'submit',
       '#value' => t('Search'),
     );
+    $form['#cache']['contexts'][] = 'url';
 
     return $form;
   }

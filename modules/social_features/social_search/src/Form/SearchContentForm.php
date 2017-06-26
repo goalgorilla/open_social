@@ -43,15 +43,15 @@ class SearchContentForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $search_content_view = 'search_content';
+    $search_all_view = 'search_all';
     if (empty($form_state->getValue('search_input_content'))) {
       // Redirect to the search content page with empty search values.
-      $search_content_page = Url::fromRoute("view.$search_content_view.page_no_value");
+      $search_content_page = Url::fromRoute("view.$search_all_view.page_no_value");
     }
     else {
       // Redirect to the search content page with filters in the GET parameters.
       $search_input = $form_state->getValue('search_input_content');
-      $search_content_page = Url::fromRoute("view.$search_content_view.page", array('keys' => $search_input));
+      $search_content_page = Url::fromRoute("view.$search_all_view.page", array('keys' => $search_input));
     }
     $redirect_path = $search_content_page->toString();
 
