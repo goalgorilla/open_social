@@ -21,6 +21,19 @@
     And I should see "Albert Einstein" in the "Main content front"
     And I should be on "/stream"
 
+  # Click the avatar from the post in the stream
+    Given I am logged in as "user_2"
+    And I am on the homepage
+    Then I click the xth "0" element with the css ".media-left"
+    And I should see the heading "Albert Einstein"
+    And I should see "Albert Einstein posted"
+    And I should see "This is a public post."
+
+  # Click the avatar as AN
+    Given I am logged in as an "anonymous user"
+    Then I click the xth "0" element with the css ".media-left"
+    Then I should see "Access denied. You must log in to view this page."
+
   # Click the avatar from the comment
     Given I am logged in as "user_2"
     And I am on the homepage
