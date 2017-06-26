@@ -61,7 +61,7 @@ function template_preprocess_activity(array &$variables) {
           $variables['actor'] = $content;
         }
         else {
-          $variables['actor'] = Link::fromTextAndUrl($content, $full_url);
+          $variables['actor'] = Link::fromTextAndUrl($content, $account->toUrl());
         }
       }
     }
