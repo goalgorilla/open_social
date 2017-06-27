@@ -3,13 +3,14 @@
 namespace Drupal\social_search\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Provides a 'SearchHeroBlock' block.
  *
  * @Block(
- *  id = "search_hero_block",
- *  admin_label = @Translation("Search hero block"),
+ *   id = "search_hero_block",
+ *   admin_label = @Translation("Search hero block"),
  * )
  */
 class SearchHeroBlock extends BlockBase {
@@ -24,6 +25,13 @@ class SearchHeroBlock extends BlockBase {
     $build['search_form'] = $form;
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    return Cache::mergeContexts(parent::getCacheContexts(), ['url']);
   }
 
 }
