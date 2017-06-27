@@ -34,7 +34,7 @@
     Then I click the xth "0" element with the css ".media-left"
     Then I should see "Access denied. You must log in to view this page."
 
-  # Click the avatar from the comment
+  # Click the avatar of the comment
     Given I am logged in as "user_2"
     And I am on the homepage
     When I fill in "Comment #1" for "Post comment"
