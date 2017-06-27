@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.profile.compact
+    - core.entity_view_mode.profile.compact_notification
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
@@ -19,17 +19,17 @@ dependencies:
     - profile.type.profile
   module:
     - image
-id: profile.profile.compact
+id: profile.profile.compact_notification
 targetEntityType: profile
 bundle: profile
-mode: compact
+mode: compact_notification
 content:
   field_profile_image:
     weight: 7
     label: hidden
     settings:
       image_style: social_medium
-      image_link: content
+      image_link: ''
     third_party_settings: {  }
     type: image
     region: content
