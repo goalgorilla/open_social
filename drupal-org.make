@@ -44,7 +44,6 @@ projects[override_node_options][type] = module
 projects[override_node_options][version] = 2.0
 projects[profile][type] = module
 projects[profile][version] = 1.0-beta1
-projects[profile][patch][] = "https://www.drupal.org/files/issues/profile-accesscontrol-2703825-6.patch"
 projects[r4032login][type] = module
 projects[r4032login][download][type] = git
 projects[r4032login][download][revision] = 4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9
