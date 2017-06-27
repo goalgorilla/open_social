@@ -167,6 +167,7 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_profile_preprocess_profile(&$variables) {
+  /** @var Profile $profile */
   $profile = $variables['profile'];
   $user = User::load($profile->getOwnerId());
   $current_user = \Drupal::currentUser();
@@ -194,7 +195,7 @@ function social_profile_preprocess_profile(&$variables) {
   // Get the current route name to check if the user is on the edit or delete page.
   $route = \Drupal::routeMatch()->getRouteName();
   if (!in_array($route, array('entity.profile.type.user_profile_form'))) {
-    if ($profile->access('edit', $current_user)) {
+    if ($profile->access('update', $current_user)) {
       $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
       $variables['#cache']['contexts'][] = 'route.name';
     }
