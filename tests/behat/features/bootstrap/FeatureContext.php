@@ -24,8 +24,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * You can also pass arbitrary arguments to the
      * context constructor through behat.yml.
      */
-    public function __construct()
-    {
+    public function __construct() {
+    }
+
+    /**
+     * @BeforeScenario
+     *
+     * @param $event
+     */
+    public function before($event) {
+      // Let's disable the tour module for all tests by default.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+    }
+
+  /**
+   * @AfterScenario
+   *
+   * @param $event
+   */
+    public function after($event) {
+      // Let's disable the tour module for all tests by default.
+      \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
     }
 
     /**
@@ -57,6 +76,49 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @When /^I click on the image icon in the WYSIWYG editor$/
+     */
+    public function clickImageIconInWysiwygEditor() {
+
+      $cssSelector = 'a.cke_button__drupalimage';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $element->click();
+
+    }
+
+    /**
+     * @Then /^The image path in the body description should be private$/
+     */
+    public function imagePathInBodyDescriptionShouldBePrivate() {
+
+      $cssSelector = 'article .card__body .body-text img';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $src = $element->getAttribute('src');
+
+      if (strpos($src, '/system/files/inline-images') === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The image does not seem to be uploaded in the private file system: "%s"', $src));
+      }
+    }
+
+    /**
      * @When I click admin link :text
      */
     public function clickAdminLink($text) {
@@ -80,6 +142,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         '0' => 'Recipient', // Is displayed as Community in front-end.
         '1' => 'Public',
         '2' => 'Community',
+        '3' => 'Group members',
       );
 
       if (!in_array($visibility, $allowed_visibility)) {
@@ -446,6 +509,110 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Checks if correct amount of uploaded files by user are private.
+     *
+     * @Then /User "(?P<username>[^"]+)" should have uploaded "(?P<private>[^"]+)" private files and "(?P<public>[^"]+)" public files$/
+     */
+    public function checkFilesPrivateForUser($username, $private, $public)
+    {
+
+      $query = \Drupal::entityQuery('user')
+        ->condition('name', $username);
+      $uid = $query->execute();
+
+      if (!empty($uid) && count($uid) === 1) {
+        $uid = reset($uid);
+
+        if ($uid) {
+          $private_query = \Drupal::database()->select('file_managed', 'fm');
+          $private_query->addField('fm', 'fid');
+          $private_query->condition('fm.uid', $uid, '=');
+          $private_query->condition('fm.uri', 'private://%', 'LIKE');
+          $private_count = count($private_query->execute()->fetchAllAssoc('fid'));
+
+          $public_query = \Drupal::database()->select('file_managed', 'fm');
+          $public_query->addField('fm', 'fid');
+          $public_query->condition('fm.uid', $uid, '=');
+          $public_query->condition('fm.uri', 'public://%', 'LIKE');
+          $public_count = count($public_query->execute()->fetchAllAssoc('fid'));
+
+          PHPUnit::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
+          PHPUnit::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
+        }
+
+      }
+      else {
+        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+      }
+    }
+
+    /**
+     * Opens the files uploaded by a given user.
+     *
+     * @Then /I open and check the access of the files uploaded by "(?P<username>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+     */
+    public function openAndCheckFilesPrivateForUser($username, $access)
+    {
+      $allowed_access = array(
+        '0' => 'denied',
+        '1' => 'allowed',
+      );
+      if (!in_array($access, $allowed_access)) {
+        throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
+      }
+      $expected_access = 0;
+      if ($access == 'allowed') {
+        $expected_access = 1;
+      }
+
+      $query = \Drupal::entityQuery('user')
+        ->condition('name', $username);
+      $uid = $query->execute();
+
+      if (!empty($uid) && count($uid) === 1) {
+        $uid = reset($uid);
+
+        if ($uid) {
+          $private_query = \Drupal::database()->select('file_managed', 'fm');
+          $private_query->addField('fm', 'fid');
+          $private_query->condition('fm.uid', $uid, '=');
+          $private_query->condition('fm.uri', 'private://%', 'LIKE');
+          $private_files = $private_query->execute()->fetchAllAssoc('fid');
+
+          foreach ($private_files as $fid => $file) {
+            $this->openFileAndExpectAccess($fid, $expected_access);
+          }
+        }
+      }
+      else {
+        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+      }
+    }
+
+    /**
+     * This opens the files and check for the expected access.
+     *
+     * @param $fid
+     * @param $expected_access
+     *  0 = NO access
+     *  1 = YES access
+     */
+    public function openFileAndExpectAccess($fid, $expected_access) {
+      /** @var \Drupal\file\Entity\File $file */
+      $file = \Drupal::entityTypeManager()->getStorage('file')->load($fid);
+      $url = $file->url();
+      $page = file_url_transform_relative($url);
+      $this->visitPath($page);
+
+      if ($expected_access == 0) {
+        $this->assertSession()->pageTextContains('Access denied. You must log in to view this page.');
+      }
+      else {
+        $this->assertSession()->pageTextNotContains('Access denied. You must log in to view this page.');
+      }
+    }
+
+    /**
      * Log out.
      *
      * @Given /^(?:|I )logout$/
@@ -456,4 +623,111 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $this->visitPath($page);
     }
 
+    /**
+     * Opens the content from a group and check for access.
+     *
+     * @Then /I open and check the access of content in group "(?P<groupname>[^"]+)" and I expect access "(?P<access>[^"]+)"$/
+     */
+    public function openAndCheckGroupContentAccess($groupname, $access)
+    {
+      $allowed_access = array(
+        '0' => 'denied',
+        '1' => 'allowed',
+      );
+      if (!in_array($access, $allowed_access)) {
+        throw new \InvalidArgumentException(sprintf('This access option is not allowed: "%s"', $access));
+      }
+      $expected_access = 0;
+      if ($access == 'allowed') {
+        $expected_access = 1;
+      }
+
+      $query = \Drupal::entityQuery('group')
+        ->condition('label', $groupname);
+      $gid = $query->execute();
+
+      if (!empty($gid) && count($gid) === 1) {
+        $gid = reset($gid);
+
+        if ($gid) {
+          $group = Group::load($gid);
+          $group_content_types = \Drupal\group\Entity\GroupContentType::loadByEntityTypeId('node');
+          $group_content_types = array_keys($group_content_types);
+
+          // Get all the node's related to the current group
+          $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+          $query->addField('gcfd', 'entity_id');
+          $query->condition('gcfd.gid', $group->id());
+          $query->condition('gcfd.type', $group_content_types, 'IN');
+          $query->execute()->fetchAll();
+
+          $nodes = $query->execute()->fetchAllAssoc('entity_id');
+          foreach (array_keys($nodes) as $key => $entity_id) {
+            $this->openEntityAndExpectAccess('node', $entity_id, $expected_access);
+          }
+
+          // Get all the posts from this group
+          $query = \Drupal::database()->select('post__field_recipient_group', 'pfrg');
+          $query->addField('pfrg', 'entity_id');
+          $query->condition('pfrg.field_recipient_group_target_id', $group->id());
+          $query->execute()->fetchAll();
+
+          $post_ids = $query->execute()->fetchAllAssoc('entity_id');
+
+          foreach (array_keys($post_ids) as $key => $entity_id) {
+            $this->openEntityAndExpectAccess('post', $entity_id, $expected_access);
+          }
+        }
+      }
+      else {
+        if (empty($gid)) {
+          throw new \Exception(sprintf("Group '%s' does not exist.", $groupname));
+        }
+        if (count($gid) > 1) {
+          throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
+        }
+      }
+    }
+
+    /**
+     * This opens the entity and check for the expected access.
+     *
+     * @param $entity_type
+     * @param $entity_id
+     * @param $expected_access
+     *  0 = NO access
+     *  1 = YES access
+     */
+    public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
+      $entity = entity_load($entity_type, $entity_id);
+      /** @var \Drupal\Core\Url $url */
+      $url = $entity->toUrl();
+      $page = $url->toString();
+
+      $this->visitPath($page);
+
+      if ($expected_access == 0) {
+        $this->assertSession()->pageTextContains('Access denied');
+      }
+      else {
+        $this->assertSession()->pageTextNotContains('Access denied');
+      }
+    }
+
+    /**
+     * @When I close the open tip
+     */
+    public function iCloseTheOpenTip()
+    {
+      $locator = 'a.joyride-close-tip';
+      $session = $this->getSession();
+      $element = $session->getPage()->find('css', $locator);
+
+      if ($element === NULL) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
+      }
+
+      // Now click the element.
+      $element->click();
+    }
 }

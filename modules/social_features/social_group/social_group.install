@@ -77,13 +77,18 @@ function _social_group_get_permissions($role) {
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
-    'create open_group group'
+    'create open_group group',
+    'create closed_group group'
   ));
 
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
+    'manage all groups',
+    'view node.book.field_content_visibility:group content',
+    'view node.event.field_content_visibility:group content',
+    'view node.topic.field_content_visibility:group content',
+    'view node.page.field_content_visibility:group content',
   ));
 
   // Site manager.
@@ -248,9 +253,35 @@ function social_group_update_8005() {
   }
 
   // Remove group geolocation field.
+  $config_factory->getEditable('field.field.group.closed_group.field_group_geolocation')->delete();
   $config_factory->getEditable('field.field.group.open_group.field_group_geolocation')->delete();
   $config_factory->getEditable('field.storage.group.field_group_geolocation')->delete();
 
   // Uninstall geocoder and geolocation modules.
   \Drupal::service('module_installer')->uninstall($modules);
+}
+
+/**
+ * Add 'closed_group' group type and enable the permission for Authenticated.
+ */
+function social_group_update_8006() {
+  $permissions = _social_group_get_permissions('authenticated');
+  user_role_grant_permissions('authenticated', $permissions);
+}
+
+/**
+ * Uninstall grolesync module (for now, more info: drupal.org/node/2850417).
+ */
+function social_group_update_8007() {
+  $modules = array(
+    'grolesync',
+  );
+  \Drupal::service('module_installer')->uninstall($modules);
+}
+
+/**
+ * Update the permissions for social_group.
+ */
+function social_group_update_8008() {
+  _social_group_set_permissions();
 }

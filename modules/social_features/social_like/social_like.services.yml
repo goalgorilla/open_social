@@ -1,0 +1,5 @@
+services:
+  social_like.override:
+    class: \Drupal\social_like\SocialLikeConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}

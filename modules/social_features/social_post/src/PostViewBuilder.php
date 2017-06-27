@@ -89,6 +89,7 @@ class PostViewBuilder extends EntityViewBuilder {
         'title' => t('Edit'),
         'weight' => 10,
         'url' => $entity->urlInfo('edit-form'),
+        'query' => array('destination' => \Drupal::destination()->get()),
       );
     }
     if ($entity->access('delete') && $entity->hasLinkTemplate('delete-form')) {

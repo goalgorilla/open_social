@@ -1,19 +1,14 @@
 @import 'settings';
 
-// make sure the site doesn't get pushed by the admin toolbar
-.toolbar-tray-open.toolbar-vertical {
-  .navbar-default,
-  .main-container {
-    margin-left: -15rem;
-  }
-
+.toolbar-vertical #block-filter:target {
+  transform: translateY(39px) translateX(0);
 }
 
 // make sure to take the admin into account when opening a off-canvas sidebar
 .toolbar-vertical .off-canvas-right {
   transform: translateY(39px) translateX(280px);
 
-  @include for-tablet-portrait-up {
+  @include for-tablet-landscape-up {
     transform: none;
   }
 }
@@ -21,7 +16,7 @@
 .toolbar-vertical .off-canvas-right.is-open {
   transform: translateY(39px) translateX(0);
 
-  @include for-tablet-portrait-up {
+  @include for-tablet-landscape-up {
     transform: none;
   }
 
@@ -33,7 +28,8 @@
   z-index: 10;
 }
 
-.toolbar-fixed .main-container {
+.toolbar-fixed .main-container,
+.toolbar-vertical .main-container {
   padding-top: 0;
 }
 

@@ -45,14 +45,18 @@ function mentions_theme() {
  * Implements hook_entity_insert().
  */
 function mentions_entity_insert(EntityInterface $entity) {
-  mentions_insert_or_update($entity, FALSE);
+  if (PHP_SAPI !== 'cli') {
+    mentions_insert_or_update($entity, FALSE);
+  }
 }
 
 /**
  * Implements hook_entity_update().
  */
 function mentions_entity_update(EntityInterface $entity) {
-  mentions_insert_or_update($entity, TRUE);
+  if (PHP_SAPI !== 'cli') {
+    mentions_insert_or_update($entity, TRUE);
+  }
 }
 
 /**

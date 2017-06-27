@@ -28,6 +28,7 @@ content:
       always_show_all_comments: '1'
     third_party_settings: {  }
     type: comment_node
+    region: content
   field_topic_image:
     type: image
     weight: 0
@@ -36,6 +37,7 @@ content:
       image_style: social_x_large
       image_link: content
     third_party_settings: {  }
+    region: content
   field_topic_type:
     type: entity_reference_label
     weight: 2
@@ -43,10 +45,15 @@ content:
     settings:
       link: true
     third_party_settings: {  }
+    region: content
+  flag_follow_content:
+    weight: 10
+    region: content
   links:
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   body: true
   field_content_visibility: true
