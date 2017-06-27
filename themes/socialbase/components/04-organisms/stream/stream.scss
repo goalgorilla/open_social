@@ -109,6 +109,24 @@
 
   .comment {
     font-size: 0.875rem;
+    position: relative;
+    display: flex;
+    width: 100%;
+  }
+
+  .comment__avatar {
+    margin-right: 8px;
+    width: 44px;
+    flex-shrink: 0;
+
+    @include for-tablet-portrait-up {
+      margin-right: 12px;
+    }
+
+  }
+
+  .comment__content {
+    flex: 1;
   }
 
 }
