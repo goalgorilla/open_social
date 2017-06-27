@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.post_comment.default
     - core.entity_view_mode.post.activity
     - field.field.post.photo.field_post
     - field.field.post.photo.field_post_comments
@@ -13,8 +12,8 @@ dependencies:
     - image.style.social_post_photo
     - social_post.post_type.photo
   module:
-    - comment
     - image
+    - social_post
     - text
     - user
 id: post.photo.activity
@@ -30,13 +29,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_post_comments:
-    type: comment_default
+    type: comment_post
     weight: 3
     region: content
     label: hidden
     settings:
-      view_mode: default
-      pager_id: 0
+      num_comments: '2'
+      order: DESC
     third_party_settings: {  }
   field_post_image:
     weight: 1
