@@ -49,13 +49,6 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
       $form['actions']['submit']['#attributes']['value'] = t('Submit');
       $form['actions']['submit']['#value'] = t('Submit');
       break;
-
-    default:
-      // By default the comment form has the "Reply comment" page URL in the "action" attribute.
-      // So we should set the current URL to exclude changing the route name.
-      // Otherwise this "switch" won't work.
-      $form['#action'] = \Drupal::request()->getRequestUri();
-      break;
   }
 
   $form['#attached']['library'][] = 'social_post/keycode-submit';
