@@ -300,3 +300,19 @@ function _social_profile_get_profile_from_route() {
 
   return $profile;
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_profile_profile_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+  // Change the URL in the compact view mode.
+  if ($view_mode === 'compact' && $entity instanceof Profile) {
+    $uid = $entity->getOwnerId();
+    // Get the url from the user profile.
+    $url = Url::fromRoute('entity.user.canonical', [
+      'user' => $uid,
+    ]);
+    // Add it to the build.
+    $build['field_profile_image'][0]['#url'] = $url;
+  }
+}
