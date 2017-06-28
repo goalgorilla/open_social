@@ -743,3 +743,13 @@ function social_core_update_8023() {
   }
 
 }
+
+/**
+ * Install image_effects module.
+ */
+function social_core_update_8024() {
+  $modules = array(
+    'image_effects',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
