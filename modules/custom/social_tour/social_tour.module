@@ -246,3 +246,19 @@ function _social_tour_check() {
   $onboarding = \Drupal::service('social_tour.onboarding');
   return $onboarding->onboardingEnabled();
 }
+
+/**
+ * Function that reimports tour configuration.
+ */
+function social_tour_reimport_config() {
+  $config_factory = \Drupal::configFactory();
+  $names = $config_factory->listAll('tour.tour.social');
+
+  // Loop through existing content and throw away.
+  foreach ($names as $name) {
+    $config_factory->getEditable($name)->delete();
+  }
+
+  // Re-import config.
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'social_tour');
+}
