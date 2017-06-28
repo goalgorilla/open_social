@@ -75,6 +75,24 @@
 
 .card--stream .comment {
   font-size: 0.875rem;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.card--stream .comment__avatar {
+  margin-right: 8px;
+  width: 44px;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.card--stream .comment__content {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 
 .teaser--stream {
@@ -119,6 +137,10 @@
   .card--stream:after {
     border-width: 8px;
     top: 36px;
+  }
+
+  .card--stream .comment__avatar {
+    margin-right: 12px;
   }
 
   .teaser--stream {
