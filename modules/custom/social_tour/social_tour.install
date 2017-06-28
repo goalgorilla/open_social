@@ -41,6 +41,14 @@ function social_tour_uninstall() {
 }
 
 /**
+ * Reinstall the tours, because of some textual changes.
+ */
+function social_tour_update_8001(&$sandbox) {
+  // Reinstall the tours, because of some textual changes.
+  social_tour_reimport_config();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_tour_set_permissions() {

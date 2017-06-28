@@ -315,6 +315,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'comment_post_comment_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_group-leave_form',
+    '_auth_login_notice_form',
   );
 
   if (in_array($form_id, $confirm_forms)) {

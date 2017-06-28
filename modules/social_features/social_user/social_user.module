@@ -109,7 +109,7 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     // the user save form before. Which means we can redirect to user profile.
     if ($first_time_login) {
       $form_state->setRedirect(
-        'entity.profile.type.profile.user_profile_form',
+        'entity.profile.type.user_profile_form',
         array('user' => $submitted_user_id, 'profile_type' => 'profile', array())
       );
       $form_state->set('first_time_login', FALSE);

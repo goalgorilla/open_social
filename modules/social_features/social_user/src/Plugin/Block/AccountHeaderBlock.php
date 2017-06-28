@@ -256,7 +256,7 @@ class AccountHeaderBlock extends BlockBase {
             'title' => $this->t('Edit profile'),
             'label' => $this->t('Edit profile'),
             'title_classes' => '',
-            'url' => Url::fromRoute('entity.profile.type.profile.user_profile_form', [
+            'url' => Url::fromRoute('entity.profile.type.user_profile_form', [
               'user' => $account->id(),
               'profile_type' => 'profile',
             ]),
