@@ -38,3 +38,10 @@ function social_post_photo_uninstall() {
     \Drupal::configFactory()->getEditable($config)->delete();
   }
 }
+
+/**
+ * Set the no of comments on Post Teaser and Full display.
+ */
+function social_post_photo_update_8001() {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');
+}
