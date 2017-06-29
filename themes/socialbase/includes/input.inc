@@ -100,4 +100,8 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
     }
   }
 
+  if (isset($variables['element']['#comment_button'])) {
+    $suggestions[] = 'input__button__comment';
+  }
+
 }
