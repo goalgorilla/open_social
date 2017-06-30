@@ -200,8 +200,8 @@ function social_install_profile_modules(&$install_state) {
     'social_mentions' => 'social_mentions',
     'social_font' => 'social_font',
     'social_like' => 'social_like',
-    'social_tour' => 'social_tour',
     'social_post_photo' => 'social_post_photo',
+    'social_swiftmail' => 'social_swiftmail',
   );
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between
