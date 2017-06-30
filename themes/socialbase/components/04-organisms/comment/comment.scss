@@ -119,31 +119,29 @@
 
 .comment-form {
 
-  .form-group-inline {
+  @include for-phone-only {
 
-    @include for-phone-only {
+    .btn--comment-submit {
+      padding-left: 6px;
+      padding-right: 6px;
+      margin-bottom: 0;
 
-      .btn--comment-submit {
-        padding-left: 6px;
-        padding-right: 6px;
-        margin-bottom: 0;
-
-        .label {
-          font-size: 0;
-          text-indent: -9999px;
-        }
-
+      .label {
+        font-size: 0;
+        text-indent: -9999px;
       }
 
-    }
-
-    @include for-tablet-portrait-up {
-      .btn-icon {
-        display: none;
-      }
     }
 
   }
+
+  @include for-tablet-portrait-up {
+    .btn-icon {
+      display: none;
+    }
+  }
+
+
 }
 
 // when optional module social_comment_upload is enabled

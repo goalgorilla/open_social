@@ -90,6 +90,30 @@ function socialbase_preprocess_input(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_textarea().
+ */
+function socialbase_preprocess_textarea(&$variables) {
+
+  if (isset($variables['element']['#array_parents']) ) {
+    $context = $variables['element']['#array_parents'];
+
+    // indentify textareas that need to get autogrow behaviour
+    $autogrow_areas = [
+      'field_post',
+      'field_comment_body'
+    ];
+
+    $c = array_intersect($context, $autogrow_areas);
+
+    if (count($c) > 0) {
+      $variables['autogrow'] = 'true';
+    }
+
+  }
+}
+
+
+/**
  * Implements hook_theme_suggestions_input_alter().
  */
 function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
