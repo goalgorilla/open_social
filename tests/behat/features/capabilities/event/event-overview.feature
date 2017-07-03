@@ -21,8 +21,8 @@ Feature: Overview
 
     # Scenario: Successfully see the topic overview of another user
     Given I am logged in as "eoverview2"
-      And I am on "stream"
-     Then I should see "eoverview1" in the "Sidebar second"
+      And I am on "all-members"
+     Then I should see "eoverview1"
      When I click "eoverview1"
       And I click "Events"
      Then I should see "Events" in the "Page title block"

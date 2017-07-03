@@ -20,8 +20,8 @@ Feature: Topic Overview
 
   # Scenario: Successfully see the topic overview of another user
     Given I am logged in as "toverview2"
-    And I am on "stream"
-    Then I should see "toverview1" in the "Sidebar second"
+    And I am on "all-members"
+    Then I should see "toverview1"
     When I click "toverview1"
     And I click "Topics"
     Then I should see "Topics" in the "Page title block"
