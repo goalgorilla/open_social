@@ -741,5 +741,24 @@ function social_core_update_8023() {
       }
     }
   }
+}
 
+/**
+ * Install image_effects module.
+ */
+function social_core_update_8024() {
+  $modules = array(
+    'image_effects',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install social_swiftmail module.
+ */
+function social_core_update_8025() {
+  $modules = array(
+    'social_swiftmail',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }

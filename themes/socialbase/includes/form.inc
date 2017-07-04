@@ -164,7 +164,11 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
+
+  // set a placeholder text to guide the user
+  $form['field_comment_body']['widget'][0]['#placeholder'] = t('Write a comment...');
 
 }
 
@@ -178,6 +182,7 @@ function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_sta
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'primary';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
 }
 
