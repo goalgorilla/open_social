@@ -331,6 +331,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['group_roles']['widget']['#title'] = t('Group roles');
     // Hide the submission for the Group Admin role
     unset($form['group_roles']['widget']['#options']['closed_group-group_admin']);
+    unset($form['group_roles']['widget']['#options']['open_group-group_admin']);
     $form['path']['#type'] = 'hidden';
 
     if ('group_content_open_group-group_membership_edit_form' == $form_id) {
