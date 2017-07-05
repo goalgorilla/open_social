@@ -9,6 +9,7 @@ namespace Drupal\social_event_type;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Example configuration override.
@@ -150,7 +151,10 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
           ]
         ];
       }
+    }
 
+    if (isset($overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id'])) {
+      $overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id']['relationship'] = 'gc__node';
     }
 
     return $overrides;
