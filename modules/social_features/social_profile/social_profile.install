@@ -5,7 +5,8 @@
  */
 
 use Drupal\file\Entity\File;
-use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\block\Entity\Block;
 
 /**
  * Implements hook_install().
@@ -211,6 +212,26 @@ function social_profile_update_8004(&$sandbox) {
     }
     if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
       user_role_grant_permissions($role->id(), $cm_permissions);
+    }
+  }
+}
+
+/**
+ * Update the context_mapping for profile_hero_block blocks.
+ */
+function social_profile_update_8005() {
+  $blocks = Block::loadMultiple();
+
+  /** @var \Drupal\block\BlockInterface $block */
+  foreach ($blocks as $block) {
+    if ($block->getPluginId() == 'profile_hero_block') {
+      $settings = $block->get('settings');
+
+      if (!isset($settings['context_mapping']['user'])) {
+        $settings['context_mapping']['user'] = '@social_user.user_route_context:user';
+        $block->set('settings', $settings);
+        $block->save();
+      }
     }
   }
 }
