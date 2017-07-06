@@ -9,6 +9,9 @@
  * Implements hook_form_FORM_ID_alter().
  */
 function improved_theme_settings_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+
+  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users.');
+
   // If user has the improved settings, we don't alter nothing!
   if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
     return;
@@ -247,7 +250,7 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
         }
 
-        .btn {
+        div:not(.btn-group) > .btn {
           border-radius: ' . $border_radius . 'px !important;
         }
 
@@ -265,13 +268,13 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-bottom-right-radius: ' . $border_radius . 'px !important;
         }
 
-        .off-canvas-xs-only {
-          border-radius: ' . $border_radius . 'px !important;
-        }
-
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+          }
+          
+          .off-canvas-xs-only {
+            border-radius: ' . $border_radius . 'px !important;
           }
         }
 

@@ -61,6 +61,17 @@ function socialbase_preprocess_field(&$variables) {
     $variables['nodelink'] = Link::fromTextAndUrl(t('Comment'), $urlwithoptions);
   }
 
+  if ($variables['element']['#field_name'] == 'field_call_to_action_link') {
+    $url_options = array(
+      'attributes' => array('class' => array('btn btn-primary waves-effect')),
+    );
+    $variables['element'][0]['#url']->setOptions($url_options);
+    $url_options = array(
+      'attributes' => array('class' => array('btn btn-default waves-effect')),
+    );
+    $variables['element'][1]['#url']->setOptions($url_options);
+  }
+
 }
 
 /**

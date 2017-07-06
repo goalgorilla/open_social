@@ -78,33 +78,6 @@ function social_verify_custom_requirements(&$install_state) {
     ];
   }
 
-  if (!class_exists('\CommerceGuys\Enum\AbstractEnum')) {
-    $requirements['addressing_library_enum'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/enum library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\CommerceGuys\Intl\Country\CountryRepository')) {
-    $requirements['addressing_library_country'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/intl library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\CommerceGuys\Zone\Repository\ZoneRepository')) {
-    $requirements['addressing_library_zone'] = [
-      'title' => t('Address module requirements)'),
-      'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/zone library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
   if (!class_exists('\Facebook\Facebook')) {
     $requirements['social_auth_facebook'] = [
       'title' => t('Social Auth Facebook module requirements'),
@@ -164,6 +137,7 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     'social_sharing' => t('Share content on social media'),
     'social_event_type' => t('Categorize events in event types'),
     'social_sso' => t('Registration with social networks'),
+    'social_file_private' => t('Use the private file system for uploaded files (highly recommended)'),
   ];
 
   // Checkboxes to enable Optional modules.
@@ -171,7 +145,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     '#type' => 'checkboxes',
     '#title' => t('Enable additional features'),
     '#options' => $social_optional_modules,
-    '#default_value' => [],
+    '#default_value' => [
+      'social_file_private',
+    ],
   ];
 
   // Checkboxes to generate demo content.
@@ -224,6 +200,8 @@ function social_install_profile_modules(&$install_state) {
     'social_mentions' => 'social_mentions',
     'social_font' => 'social_font',
     'social_like' => 'social_like',
+    'social_post_photo' => 'social_post_photo',
+    'social_swiftmail' => 'social_swiftmail',
   );
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between

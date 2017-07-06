@@ -90,6 +90,12 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 }
 
+/**
+ * Submit function for resetting password form.
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
 function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
   $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
@@ -103,7 +109,7 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     // the user save form before. Which means we can redirect to user profile.
     if ($first_time_login) {
       $form_state->setRedirect(
-        'entity.profile.type.profile.user_profile_form',
+        'entity.profile.type.user_profile_form',
         array('user' => $submitted_user_id, 'profile_type' => 'profile', array())
       );
       $form_state->set('first_time_login', FALSE);
@@ -114,7 +120,6 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     }
   }
 }
-
 
 /**
  * Check if an users with the input field for name or mail field is blocked.

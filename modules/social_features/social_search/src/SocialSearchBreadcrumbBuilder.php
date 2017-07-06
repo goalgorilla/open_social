@@ -19,6 +19,8 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function applies(RouteMatchInterface $route_match) {
     $search_routes = array(
+      'view.search_all.page',
+      'view.search_all.page_no_value',
       'view.search_content.page',
       'view.search_content.page_no_value',
       'view.search_users.page',
@@ -49,6 +51,11 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       case 'view.search_groups.page':
       case 'view.search_groups.page_no_value':
         $page_title = $this->t('Search groups');
+        break;
+
+      case 'view.search_all.page':
+      case 'view.search_all.page_no_value':
+        $page_title = $this->t('Search all');
         break;
 
       default:

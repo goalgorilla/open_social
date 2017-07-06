@@ -63,6 +63,12 @@ function socialbase_preprocess_input(&$variables) {
 
   }
 
+  if (isset($variables['element']['#button_size'])) {
+    if ($variables['element']['#button_size'] == 'small') {
+      $variables['button_size'] = 'small';
+    }
+  }
+
   // If a split button desn't have a button_type variable, set it to default (fallback)
   if (isset($variables['element']['#split']) && !isset($variables['element']['#button_type'])) {
     $variables['button_type'] = 'default';
@@ -84,6 +90,30 @@ function socialbase_preprocess_input(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_textarea().
+ */
+function socialbase_preprocess_textarea(&$variables) {
+
+  if (isset($variables['element']['#array_parents']) ) {
+    $context = $variables['element']['#array_parents'];
+
+    // indentify textareas that need to get autogrow behaviour
+    $autogrow_areas = [
+      'field_post',
+      'field_comment_body'
+    ];
+
+    $c = array_intersect($context, $autogrow_areas);
+
+    if (count($c) > 0) {
+      $variables['autogrow'] = 'true';
+    }
+
+  }
+}
+
+
+/**
  * Implements hook_theme_suggestions_input_alter().
  */
 function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
@@ -92,6 +122,10 @@ function socialbase_theme_suggestions_input_alter(array &$suggestions, array $va
     if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
       $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
     }
+  }
+
+  if (isset($variables['element']['#comment_button'])) {
+    $suggestions[] = 'input__button__comment';
   }
 
 }

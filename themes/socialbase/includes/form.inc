@@ -164,7 +164,11 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
+
+  // set a placeholder text to guide the user
+  $form['field_comment_body']['widget'][0]['#placeholder'] = t('Write a comment...');
 
 }
 
@@ -178,6 +182,7 @@ function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_sta
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
   if(isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'primary';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
 }
 
@@ -226,21 +231,28 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_cancel_form',
     'group_open_group_add_form',
     'group_open_group_edit_form',
+    'group_closed_group_add_form',
+    'group_closed_group_edit_form',
     'node_event_form',
     'node_topic_form',
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_group-join_form',
+    'group_content_closed_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_edit_form',
     'group_open_group_delete_form',
+    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
     'comment_comment_delete_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
   );
-
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -277,6 +289,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_group-join_form',
+    'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_edit_form',
     'social_user_login_form',
     'user_register_form',
     'user_pass_reset',
@@ -296,12 +311,16 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   $confirm_forms = array (
     'user_cancel_form',
     'post_delete_form',
+    'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
     'group_open_group_delete_form',
+    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_group-leave_form',
+    '_auth_login_notice_form',
   );
 
   if (in_array($form_id, $confirm_forms)) {

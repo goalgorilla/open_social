@@ -93,7 +93,7 @@ gulp.task('styles', ['clean:css'], function () {
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.basetheme.css))
-    .pipe(browserSync.stream());
+    .pipe(browserSync.reload({stream:true}))
 });
 
 

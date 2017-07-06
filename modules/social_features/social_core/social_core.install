@@ -13,6 +13,29 @@ use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
 
 /**
+ * Implements hook_requirements().
+ *
+ * @param $phase
+ * @return array
+ */
+function social_core_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
+      $requirements['social_file_private_module_check'] = [
+        'title' => 'Social Private Files',
+        'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
+        'severity' => REQUIREMENT_WARNING,
+        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+      ];
+    }
+  }
+
+  return $requirements;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_core.
@@ -233,7 +256,6 @@ function social_core_update_8002() {
 function social_core_update_8003() {
 
   $modules = array(
-    'libraries',
     'image_widget_crop',
   );
   \Drupal::service('module_installer')->install($modules);
@@ -536,4 +558,207 @@ function social_core_update_8015(&$sandbox) {
     $link->set('link', ['uri' => 'internal:/all-members']);
     $link->save();
   }
+}
+
+/**
+ * Install social_tour module.
+ */
+function social_core_update_8018(&$sandbox) {
+  $modules = array(
+    'social_tour',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install the social_file_private module.
+ */
+function social_core_update_8019() {
+  $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
+
+  if ($file_private_path_base_path !== NULL) {
+    $modules = array(
+      'social_file_private',
+    );
+    \Drupal::service('module_installer')->install($modules);
+    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+  }
+  else {
+    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
+  }
+}
+
+/**
+ * Fix an schema issue caused by Flag module.
+ */
+function social_core_update_8020() {
+  $bundle_schema = [
+    'description' => 'The Flag ID.',
+    'type' => 'varchar_ascii',
+    'length' => \Drupal\Core\Entity\EntityTypeInterface::BUNDLE_MAX_LENGTH,
+    // 'binary' => FALSE,
+    'not null' => TRUE,
+  ];
+
+  /** @var \Drupal\Core\Database\Schema $schema */
+  $schema = \Drupal::database()->schema();
+  $schema->changeField('flagging', 'flag_id', 'flag_id', $bundle_schema);
+  $schema->dropIndex('flagging', 'flag_id');
+  $schema->dropIndex('flagging', 'flagging_field__flag_id__target_id');
+  $schema->addIndex('flagging', 'flagging_field__flag_id__target_id', ['flag_id'], ['fields' => ['flag_id' => $bundle_schema]]);
+
+  // Update the field storage repository.
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $efm */
+  $efm = \Drupal::service('entity_field.manager');
+  /** @var \Drupal\Core\KeyValueStore\KeyValueStoreInterface $kv */
+  $kv = \Drupal::service('keyvalue');
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $repo */
+  $repo = \Drupal::service('entity.last_installed_schema.repository');
+
+  $efm->clearCachedFieldDefinitions();
+  $storage_definition = $efm->getFieldStorageDefinitions('flagging')['flag_id'];
+  $repo->setLastInstalledFieldStorageDefinition($storage_definition);
+
+  // Update the stored field schema.
+  // @todo: There has to be a better way to do this.
+  $kv_collection = 'entity.storage_schema.sql';
+  $kv_name = 'flagging.field_schema_data.flag_id';
+  $field_schema = $kv->get($kv_collection)->get($kv_name);
+  $field_schema['flagging']['fields']['flag_id'] = $bundle_schema;
+  $field_schema['flagging']['indexes']['flagging_field__flag_id__target_id'] = ['flag_id'];
+  $kv->get($kv_collection)->set($kv_name, $field_schema);
+}
+
+
+/**
+ * Update social_post existing content.
+ */
+function social_core_update_8021(&$sandbox) {
+  $database = \Drupal::database();
+  $table_post = 'post';
+  $table_data = 'post_field_data';
+  // Get the old data.
+  $existing_data_post = $database->select($table_post)
+    ->fields($table_post)
+    ->execute()
+    ->fetchAll(PDO::FETCH_ASSOC);
+  // Wipe it.
+  $database->truncate($table_post)->execute();
+
+  $existing_data_data = $database->select($table_data)
+    ->fields($table_data)
+    ->execute()
+    ->fetchAll(PDO::FETCH_ASSOC);
+  // Wipe it.
+  $database->truncate($table_data)->execute();
+
+  // Add new field to tables.
+  $spec = array(
+    'type' => 'varchar',
+    'length' => 32,
+    'not null' => TRUE,
+    'default' => 'post',
+    'description' => 'The ID of the target entity.',
+  );
+  $schema = Drupal\Core\Database\Database::getConnection()->schema();
+
+  if($schema->fieldExists($table_post, 'type')) {
+    $schema->changeField($table_post, 'type', 'type', $spec);
+  } else {
+    $schema->addField($table_post, 'type', $spec);
+  }
+
+  if($schema->fieldExists($table_data, 'type')) {
+    $schema->changeField($table_data, 'type', 'type', $spec);
+  } else {
+    $schema->addField($table_data, 'type', $spec);
+  }
+
+  // Update definitions and schema.
+  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+
+  // Update config post_type.
+  $path = drupal_get_path('module', 'social_post') . '/config/install';
+  $config_factory = \Drupal::configFactory();
+  $config_name = "social_post.post_type.post";
+  $filepath = "{$path}/{$config_name}.yml";
+  $data = Symfony\Component\Yaml\Yaml::parse($filepath);
+  if (is_array($data)) {
+    $config_factory->getEditable($config_name)->setData($data)->save();
+  }
+
+  if (!empty($existing_data_post)) {
+    // Set the old data.
+    $insert_query_post = $database
+      ->insert($table_post)
+      ->fields(array_keys(end($existing_data_post)));
+    foreach ($existing_data_post as $row) {
+      $insert_query_post->values(array_values($row));
+    }
+    $insert_query_post->execute();
+  }
+
+  if (!empty($existing_data_data)) {
+    $insert_query_data = $database
+      ->insert($table_data)
+      ->fields(array_keys(end($existing_data_data)));
+    foreach ($existing_data_data as $row) {
+      $insert_query_data->values(array_values($row));
+    }
+    $insert_query_data->execute();
+  }
+
+  // Unset default value for post entity
+  $schema->fieldSetNoDefault($table_data, 'type');
+  $schema->fieldSetNoDefault($table_data, 'type');
+}
+
+/**
+ * Install social_post_photo module.
+ */
+function social_core_update_8022() {
+  $modules = array(
+    'social_post_photo',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Update the context_mapping for account_header_block blocks.
+ */
+function social_core_update_8023() {
+
+  $blocks = \Drupal\block\Entity\Block::loadMultiple();
+
+  /** @var \Drupal\block\Entity\Block $block */
+  foreach ($blocks as $block) {
+    if ($block->getPluginId() === 'account_header_block') {
+      $block_settings = $block->get('settings');
+      if (!isset($block_settings['context_mapping']['user'])) {
+        $block_settings['context_mapping']['user'] = '@user.current_user_context:current_user';
+        $block->set('settings', $block_settings);
+        $block->save();
+      }
+    }
+  }
+}
+
+/**
+ * Install image_effects module.
+ */
+function social_core_update_8024() {
+  $modules = array(
+    'image_effects',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install social_swiftmail module.
+ */
+function social_core_update_8025() {
+  $modules = array(
+    'social_swiftmail',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }

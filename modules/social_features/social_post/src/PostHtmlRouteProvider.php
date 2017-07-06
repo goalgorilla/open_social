@@ -52,7 +52,7 @@ class PostHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_entity_create_access', $entity_type_id)
+        ->setRequirement('_permission', 'administer post entities')
         ->setOption('_admin_route', TRUE);
 
       return $route;

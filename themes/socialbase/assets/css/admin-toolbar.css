@@ -1,6 +1,6 @@
-.toolbar-tray-open.toolbar-vertical .navbar-default,
-.toolbar-tray-open.toolbar-vertical .main-container {
-  margin-left: -15rem;
+.toolbar-vertical #block-filter:target {
+  -webkit-transform: translateY(39px) translateX(0);
+          transform: translateY(39px) translateX(0);
 }
 
 .toolbar-vertical .off-canvas-right {
@@ -18,11 +18,12 @@
   z-index: 10;
 }
 
-.toolbar-fixed .main-container {
+.toolbar-fixed .main-container,
+.toolbar-vertical .main-container {
   padding-top: 0;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
 
   .toolbar-vertical .off-canvas-right {
     -webkit-transform: none;

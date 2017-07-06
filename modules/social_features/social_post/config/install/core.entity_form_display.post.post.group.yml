@@ -11,7 +11,6 @@ dependencies:
     - social_post.post_type.post
   module:
     - dropdown
-    - social_post
 id: post.post.group
 targetEntityType: post
 bundle: post
@@ -25,11 +24,13 @@ content:
       rows: 5
       placeholder: 'What''s on your mind?'
     third_party_settings: {  }
+    region: content
   field_visibility:
     type: dropdown_widget_type
     weight: 1
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   field_post_comments: true
   field_recipient_group: true

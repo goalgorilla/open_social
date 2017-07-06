@@ -13,6 +13,8 @@ Feature: Create Open Group
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    Then I click radio button "Open group This is a open group. Users may join without approval and all content added in this group will be visible for non members as well." with the id "edit-group-type-open-group"
+    And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Technopark"
@@ -81,7 +83,8 @@ Feature: Create Open Group
     And I click "Create Event"
     And I fill in the following:
       | Title | Test group event |
-      | Date  | 2025-01-01  |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time  | 11:00:00    |
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
@@ -119,6 +122,24 @@ Feature: Create Open Group
     And I click "Topics"
     And I should see "Test group topic" in the "Main content"
     And I should see "Test open group" in the "Main content"
+
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "contentmanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
+
+  # As a outsider with the role CM+ I should be able to see and manage content from a closed group
+    Given I am logged in as a user with the "sitemanager" role
+    Then I open and check the access of content in group "Test open group" and I expect access "allowed"
+    When I am on "stream"
+    Then I should not see "Test group topic"
+    When I am on "/all-topics"
+    Then I should not see "Test group topic"
+    And I logout
 
   # DS-703 As a LU I want to leave a group
     And I click the xth "4" element with the css ".dropdown-toggle"

@@ -13,6 +13,10 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class PostForm extends ContentEntityForm {
 
+  private $post_view_default;
+  private $post_view_profile;
+  private $post_view_group;
+
   /**
    * {@inheritdoc}
    */
@@ -24,7 +28,9 @@ class PostForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Retrieve the form display before it is overwritten in the parent.
+    // Init form modes.
+    $this->setFormMode();
+
     $display = $this->getFormDisplay($form_state);
     $form = parent::buildForm($form, $form_state);
     $form['#attached']['library'][] = 'social_post/keycode-submit';
@@ -40,25 +46,39 @@ class PostForm extends ContentEntityForm {
       }
       else {
           $visibility_value = $this->entity->get('field_visibility')->value;
-          $display_id = ($visibility_value === '0') ? 'post.post.profile' : 'post.post.default';
+          $display_id = ($visibility_value === '0') ? $this->post_view_profile : $this->post_view_default;
           $display = EntityFormDisplay::load($display_id);
           // Set the custom display in the form.
           $this->setFormDisplay($display, $form_state);
       }
 
       if (isset($display) && ($display_id = $display->get('id'))) {
-          if ($display_id === 'post.post.default') {
+          if ($display_id === $this->post_view_default) {
               // Set default value to community.
-              // Remove recipient option.
-              // Only needed for 'private' permissions which we do not support yet.
               unset($form['field_visibility']['widget'][0]['#options'][0]);
               $form['field_visibility']['widget'][0]['#default_value'] = "2";
+              unset($form['field_visibility']['widget'][0]['#options'][3]);
           }
           else {
-              // Remove public option from options.
-              $form['field_visibility']['widget'][0]['#default_value'] = "0";
-              unset($form['field_visibility']['widget'][0]['#options'][1]);
-              unset($form['field_visibility']['widget'][0]['#options'][2]);
+            // Remove public option from options.
+            $form['field_visibility']['widget'][0]['#default_value'] = "0";
+            unset($form['field_visibility']['widget'][0]['#options'][1]);
+            unset($form['field_visibility']['widget'][0]['#options'][2]);
+
+            $current_group = _social_group_get_current_group();
+            if (!$current_group) {
+              unset($form['field_visibility']['widget'][0]['#options'][3]);
+            }
+            else {
+              $group_type_id = $current_group->getGroupType()->id();
+              if ($group_type_id !== 'closed_group') {
+                unset($form['field_visibility']['widget'][0]['#options'][3]);
+              }
+              else {
+                unset($form['field_visibility']['widget'][0]['#options'][0]);
+                $form['field_visibility']['widget'][0]['#default_value'] = "3";
+              }
+            }
           }
       }
 
@@ -95,14 +115,17 @@ class PostForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    // Init form modes.
+    $this->setFormMode();
+
     $display = $this->getFormDisplay($form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === 'post.post.profile') {
+      if ($display_id === $this->post_view_profile) {
         $account_profile = \Drupal::routeMatch()->getParameter('user');
         $this->entity->get('field_recipient_user')->setValue($account_profile);
       }
-      elseif ($display_id === 'post.post.group') {
+      elseif ($display_id === $this->post_view_group) {
         $group = \Drupal::routeMatch()->getParameter('group');
         $this->entity->get('field_recipient_group')->setValue($group);
       }
@@ -124,4 +147,16 @@ class PostForm extends ContentEntityForm {
     }
   }
 
+  /**
+   * Function to set the current form modes.
+   */
+  protected function setFormMode() {
+    // Retrieve the form display before it is overwritten in the parent.
+    $bundle = $this->getBundleEntity()->id();
+
+    // Set as variables, since the bundle might be different.
+    $this->post_view_default = 'post.'.$bundle.'.default';
+    $this->post_view_profile = 'post.'.$bundle.'.profile';
+    $this->post_view_group = 'post.'.$bundle.'.group';
+  }
 }
