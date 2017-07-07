@@ -49,20 +49,20 @@ class SocialPageTitleBlock extends PageTitleBlock {
     else {
       $request = \Drupal::request();
       $group = _social_group_get_current_group();
-      if ($group && $request->attributes->get('_route') == 'entity.group_content.create_form') {
-        return [
-          '#type' => 'page_title',
-          '#title' => 'Foo',
-        ];
-      } else {}
 
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = \Drupal::service('title_resolver')->getTitle($request, $route);
-
-        return [
-          '#type' => 'page_title',
-          '#title' => $title,
-        ];
+        if ($group && $request->attributes->get('_route') == 'entity.group_content.create_form') {
+          return [
+            '#type' => 'page_title',
+            '#title' => t($title . ' in ' . $group->label()),
+          ];
+        } else {
+          return [
+            '#type' => 'page_title',
+            '#title' => t($title),
+          ];
+        }
       }
       else {
         return [
