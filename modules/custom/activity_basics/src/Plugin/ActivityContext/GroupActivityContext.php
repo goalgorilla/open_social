@@ -44,6 +44,9 @@ class GroupActivityContext extends ActivityContextBase {
     return $recipients;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntity($entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {

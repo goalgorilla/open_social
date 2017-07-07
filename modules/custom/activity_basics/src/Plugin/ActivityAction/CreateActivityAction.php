@@ -15,7 +15,7 @@ use Drupal\activity_creator\Plugin\ActivityActionBase;
 class CreateActivityAction extends ActivityActionBase {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function create($entity) {
 

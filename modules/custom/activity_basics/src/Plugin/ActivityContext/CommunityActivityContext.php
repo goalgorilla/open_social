@@ -24,6 +24,9 @@ class CommunityActivityContext extends ActivityContextBase {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntity($entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
