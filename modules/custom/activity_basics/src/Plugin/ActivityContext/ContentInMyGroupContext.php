@@ -54,7 +54,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     return $recipients;
   }
 
-
   public function isValidEntity($entity) {
     // Check if it's placed in a group (regardless off content type).
     if ($group_entity = GroupContent::loadByEntity($entity)) {

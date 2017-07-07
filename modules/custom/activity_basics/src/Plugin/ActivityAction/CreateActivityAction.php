@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_basics\Plugin\ActivityAction\CreateActivityAction.
- */
-
 namespace Drupal\activity_basics\Plugin\ActivityAction;
 
 use Drupal\activity_creator\Plugin\ActivityActionBase;
@@ -38,6 +33,5 @@ class CreateActivityAction extends ActivityActionBase {
       }
     }
   }
-
 
 }
