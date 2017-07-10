@@ -93,4 +93,5 @@ class SiteWideJSForm extends ConfigFormBase {
       ->set('swjs_javascript', $form_state->getValue('swjs_javascript'))
       ->save();
   }
+
 }
