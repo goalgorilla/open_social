@@ -41,7 +41,17 @@ before_install:
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
-  - sh scripts/social/ci/install-docker.sh
+  # Lets install Docker first.
+  - sudo apt-get clean
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker --version
+  - sudo rm /usr/local/bin/docker-compose || true
+  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose --version
+  # - sh scripts/social/ci/install-docker.sh
 #  - composer install --prefer-dist --no-interaction
   - docker-compose -f docker-compose-ci.yml up -d
 
