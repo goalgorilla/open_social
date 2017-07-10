@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContextBase.
- */
 
 namespace Drupal\activity_creator\Plugin;
 
@@ -12,7 +8,6 @@ use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_post\Entity\Post;
-use Drupal\node\Entity\Node;
 
 /**
  * Base class for Activity context plugin plugins.
