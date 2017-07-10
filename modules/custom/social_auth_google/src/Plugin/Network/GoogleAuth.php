@@ -87,10 +87,7 @@ class GoogleAuth extends SocialAuthNetwork {
   }
 
   /**
-   * Returns key-name of a social network.
-   *
-   * @return string
-   *   The key-name of a social network.
+   * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
     return $this->settings->getSocialNetworkKey();

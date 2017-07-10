@@ -132,6 +132,7 @@ class GoogleAuthController extends ControllerBase {
    * Registers the new account after redirect from Google.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userRegisterCallback() {
     $sdk = $this->getSdk('register');
