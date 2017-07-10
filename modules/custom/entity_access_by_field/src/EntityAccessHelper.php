@@ -14,13 +14,13 @@ class EntityAccessHelper {
   /**
    * Array with values which need to be ignored.
    *
-   * TODO Add group to ignored values (when outsider role is working).
+   * @todo Add group to ignored values (when outsider role is working).
    *
    * @return array
+   *   An array containing a list of values to ignore.
    */
   public static function getIgnoredValues() {
-    return [
-    ];
+    return [];
   }
 
   /**
@@ -31,7 +31,7 @@ class EntityAccessHelper {
       // Check published status.
       if (isset($node->status) && $node->status->value == NODE_NOT_PUBLISHED) {
         $unpublished_own = $account->hasPermission('view own unpublished content');
-        if(($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)){
+        if (($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)) {
           return 1;
         }
       }
@@ -46,7 +46,7 @@ class EntityAccessHelper {
             foreach ($field_values as $key => $field_value) {
               if (isset($field_value['value'])) {
 
-                 if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
+                if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
                   return 0;
                 }
 
