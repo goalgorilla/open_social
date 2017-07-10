@@ -36,16 +36,12 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
-  - cat composer.json
-  - cat composer.lock
-  - ls -lah scripts/social
-  - ls -lah scripts/social/ci
-  - sh scripts/social/ci/install-docker.sh
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
+  - sh scripts/social/ci/install-docker.sh
 #  - composer install --prefer-dist --no-interaction
   - docker-compose -f docker-compose-ci.yml up -d
 
