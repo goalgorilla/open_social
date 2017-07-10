@@ -37,24 +37,13 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
-  # Lets install Docker first.
-  - sudo apt-get clean
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - docker --version
-  - sudo rm /usr/local/bin/docker-compose || true
-  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
-  # Composer install.
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT} --prefer-dist
-  # - sh scripts/social/ci/install-docker.sh
-#  - composer install --prefer-dist --no-interaction
+  # Install docker and our docker containers.
+  - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
 
 install:
@@ -63,7 +52,7 @@ install:
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
 script:
-  - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
+  - if [ "$TEST_SUITE" = "install" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
   - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
   - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
 
