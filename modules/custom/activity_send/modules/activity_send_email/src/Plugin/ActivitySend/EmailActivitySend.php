@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend.
- */
-
 namespace Drupal\activity_send_email\Plugin\ActivitySend;
 
 use Drupal\activity_send\Plugin\ActivitySendBase;
@@ -20,7 +15,7 @@ use Drupal\activity_send\Plugin\ActivitySendBase;
 class EmailActivitySend extends ActivitySendBase {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function create($entity) {
     $data['entity_id'] = $entity->id();
