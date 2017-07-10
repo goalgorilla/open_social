@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Activity Group Argument for Views.
- */
 
 namespace Drupal\activity_viewer\Plugin\views\argument;
 
