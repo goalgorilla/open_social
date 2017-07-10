@@ -923,3 +923,14 @@ function social_group_get_all_group_members($uid) {
   $group_ids = $query->execute()->fetchAllAssoc('gid');
   return array_keys($group_ids);
 }
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function social_group_block_view_group_hero_block_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+  $current_route = Drupal::routeMatch()->getRouteName();
+  // Hide the group_hero_block on the content creation page
+  if ($current_route == 'entity.group_content.create_form') {
+    $build['#pre_render'] = [];
+  }
+}
