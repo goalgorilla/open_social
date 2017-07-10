@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\mentions\Form\MentionsTypeForm.
- */
-
 namespace Drupal\mentions\Form;
 
 use Drupal\Core\Entity\EntityForm;
@@ -234,6 +229,9 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
     $form_state->setRedirect('entity.mentions_type.list');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function changeEntityTypeInForm(array &$form, FormStateInterface $form_state) {
     $entitytype_state = $form_state->getValue(array('input', 'entity_type'));
     $entitytype_info = $this->entityManager->getDefinition($entitytype_state);

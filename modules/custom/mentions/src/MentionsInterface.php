@@ -5,7 +5,7 @@ namespace Drupal\mentions;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
- * Provides an interface defining a Mention entity
+ * Provides an interface defining a Mention entity.
  */
 interface MentionsInterface extends ContentEntityInterface {
 
