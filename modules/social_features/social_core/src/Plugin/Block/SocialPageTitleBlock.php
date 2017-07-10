@@ -60,7 +60,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         } else {
           return [
             '#type' => 'page_title',
-            '#title' => t($title),
+            '#title' => $title,
           ];
         }
       }
