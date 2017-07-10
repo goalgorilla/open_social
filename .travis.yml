@@ -22,11 +22,11 @@ env:
     # Docker Hub token.
     secure: "YUkomj6ieyi6AqrMnFyhPTORMvBhvMtZolvMZmckiAUaEV+Kiwb6TU6BsxARU1LeAfeSDuu5Ay69yib20AHe/OI8m7DmzZhhmnfRcV5aE09/xIdS7DN55g0a+9rWMHuYreeX7Xc8KX6DAEEcmW7EotyCO1pf8ljMD7wHuO+HpeydCLEGM200r1pSLCZpPCCTnHQXJBQ8MwSZu6tcPiVNnrmYs/fbbWOxB8QIv330SaF/i8trFDGJBUFLRw/7cIStA5Ye9EJp7AS7e+nR+kuCs/GPsRxSNH8BNtbk78iPwFILCH+xPhjRQ/hVL4St7DeN/F0PXn13GPAXkfrUXqrOgpDcpqPgtucEJekyDW9+YBuz2AJDynaIuWqjIWW1gheCVPSrsF7a9l7u/RVoQbeuSmGkbQXWzQuUaOkhVM6bq28qzRraeq/gNidV1ZikwoV7oi57HBxBQPZpVlKrLmNJ4Tsa9FkFwzjt55NV8VtxV8rav3r4zeQ3C/6yLAXr0Z3hX8bJdPCTgE4k+4dbA9nLjgZh6YV5yXwoIXNq8tF/A/rctpAA491AOk57qfLOH8Xi+y9kOPjshG5dNSprfIL/yZxz5CgED5OPNhh2veH9GrXlUcNzyO2+BI7kMQ8ipc+wy39Hw0xOu2JF40x4TVQuphc9flh/OQLDRludDY3aJd4="
 
-matrix:
-  include:
-  - env: TEST_SUITE=install
-  - env: TEST_SUITE=install_update
-  - env: TEST_SUITE=drush_make
+#matrix:
+#  include:
+#  - env: TEST_SUITE=install
+#  - env: TEST_SUITE=install_update
+#  - env: TEST_SUITE=drush_make
 
 services:
   - docker
@@ -36,11 +36,6 @@ before_install:
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
-  - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
-  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
-  - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
   # Lets install Docker first.
   - sudo apt-get clean
   - sudo apt-get update
@@ -51,6 +46,12 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose --version
+  # Composer install.
+  - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
+  - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
+  - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT} --prefer-dist
   # - sh scripts/social/ci/install-docker.sh
 #  - composer install --prefer-dist --no-interaction
   - docker-compose -f docker-compose-ci.yml up -d
