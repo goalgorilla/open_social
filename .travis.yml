@@ -65,7 +65,7 @@ install:
 script:
   - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
   - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
-  - docker exec -it social_ci_behat sh /var/www/scripts/social/ci/behatstability.sh
+  - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
