@@ -193,7 +193,7 @@ class FacebookAuthController extends ControllerBase {
    * Returns the SDK instance or RedirectResponse when error occurred.
    *
    * @param string $type
-   *   Type of action. "login" or "register".
+   *   Type of action, "login" or "register".
    *
    * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
    *   Returns an instance of the SDK or a Redirect Response.
