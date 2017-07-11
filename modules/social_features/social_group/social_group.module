@@ -329,9 +329,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
     $form['group_roles']['widget']['#title'] = t('Group roles');
-    // Hide the submission for the Group Admin role
-    unset($form['group_roles']['widget']['#options']['closed_group-group_admin']);
-    unset($form['group_roles']['widget']['#options']['open_group-group_admin']);
+    // Remove the 'group_admin' role in a generic way for all (future) group types.
+    foreach ($form['group_roles']['widget']['#options'] as $key => $value) {
+      // Hide the submission for the Group Admin role
+      if (strpos($key, 'group_admin') != FALSE) {
+        unset($form['group_roles']['widget']['#options'][$key]);
+      }
+    }
+
     $form['path']['#type'] = 'hidden';
 
     if ('group_content_open_group-group_membership_edit_form' == $form_id) {
