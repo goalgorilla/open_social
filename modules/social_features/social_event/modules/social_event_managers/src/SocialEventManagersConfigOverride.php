@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event_managers\SocialEventManagersConfigOverride.
- */
-
 namespace Drupal\social_event_managers;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -12,11 +7,24 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
+ * Class SocialEventManagersConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_event_managers
  */
 class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterface {
 
-  public function loadOverrides($names) {
+  /**
+   * Load overrides.
+   *
+   * @param array $names
+   *    Array with names.
+   *
+   * @return array
+   *    Returns an array.
+   */
+  public function loadOverrides(array $names) {
     $overrides = array();
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
@@ -30,7 +38,7 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
         'parent_name' => '',
         'weight' => 9,
         'label' => 'Event organisers',
-        'format_type' =>  'fieldset',
+        'format_type' => 'fieldset',
         'format_settings' => [
           'label' => 'Event organisers',
           'id' => 'event-managers',

@@ -72,4 +72,5 @@ class SocialEventTypeSettings extends ConfigFormBase {
       ->set('social_event_type_select_changer', $form_state->getValue('social_event_type_select_changer'))
       ->save();
   }
+
 }
