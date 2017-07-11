@@ -5,14 +5,15 @@ namespace Drupal\social_demo;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoTaxonomyTerm.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoTaxonomyTerm extends DemoContent {
 
   /**
    * DemoTaxonomyTerm constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -60,7 +61,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
       $entity->save();
 
       if ($entity->id()) {
-        $this->content[ $entity->id() ] = $entity;
+        $this->content[$entity->id()] = $entity;
       }
     }
 

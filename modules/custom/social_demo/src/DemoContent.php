@@ -5,6 +5,11 @@ namespace Drupal\social_demo;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\PluginBase;
 
+/**
+ * Class DemoContent.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoContent extends PluginBase implements DemoContentInterface {
 
   /**
@@ -102,13 +107,15 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * Load entity by uuid.
    *
    * @param string $entity_type_id
-   *   Identifier of entity type.
+   *    Identifier of entity type.
    * @param string|int $id
-   *   Identifier or uuid.
+   *    Identifier or uuid.
    * @param bool $all
-   *   If set true, method will return all loaded entity. If set false, will return only one.
+   *    If set true, method will return all loaded entity.
+   *    If set false, will return only one.
    *
    * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityInterface[]|mixed
+   *    Returns the entity.
    */
   protected function loadByUuid($entity_type_id, $id, $all = FALSE) {
     if (property_exists($this, $entity_type_id . 'Storage')) {
@@ -140,8 +147,11 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * Makes an array with data of an entity.
    *
    * @param array $item
+   *    Array with items.
+   *
    * @return array
+   *    Returns an array.
    */
-  abstract protected function getEntry($item);
+  abstract protected function getEntry(array $item);
 
 }

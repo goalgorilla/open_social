@@ -6,6 +6,8 @@ use Drupal\social_demo\DemoTaxonomyTerm;
 use Drush\Log\LogLevel;
 
 /**
+ * EventType Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "event_type",
  *   label = @Translation("Event type"),

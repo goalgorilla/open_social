@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * Like Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "like",
  *   label = @Translation("Like"),

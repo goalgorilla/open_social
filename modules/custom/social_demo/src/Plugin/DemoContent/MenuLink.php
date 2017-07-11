@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * MenuLink Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "link",
  *   label = @Translation("Menu link"),

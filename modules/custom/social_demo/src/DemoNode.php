@@ -9,6 +9,11 @@ use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoNode.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoNode extends DemoContent {
 
   /**
@@ -27,12 +32,6 @@ abstract class DemoNode extends DemoContent {
 
   /**
    * DemoNode constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -102,7 +101,7 @@ abstract class DemoNode extends DemoContent {
       $entity->save();
 
       if ($entity->id()) {
-        $this->content[ $entity->id() ] = $entity;
+        $this->content[$entity->id()] = $entity;
 
         if (!empty($item['group'])) {
           $this->createGroupContent($entity, $item['group']);

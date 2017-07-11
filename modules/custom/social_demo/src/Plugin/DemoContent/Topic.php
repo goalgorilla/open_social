@@ -11,6 +11,8 @@ use Drupal\file\FileStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
+ * Topic Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "topic",
  *   label = @Translation("Topic"),
@@ -36,14 +38,6 @@ class Topic extends DemoNode {
 
   /**
    * Topic constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
-   * @param \Drupal\file\FileStorageInterface $file_storage
-   * @param \Drupal\taxonomy\TermStorageInterface $term_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
@@ -91,8 +85,11 @@ class Topic extends DemoNode {
   /**
    * Prepares data about an image of node.
    *
-   * @param $uuid
+   * @param string $uuid
+   *   Type of uuid.
+   *
    * @return array|null
+   *   Returns array|null
    */
   protected function prepareImage($uuid) {
     $value = NULL;
@@ -130,7 +127,7 @@ class Topic extends DemoNode {
       $value = [
         [
           'target_id' => current($terms)->id(),
-        ]
+        ],
       ];
     }
 
