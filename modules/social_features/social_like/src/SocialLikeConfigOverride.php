@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post_photo\SocialLikeConfigOverride.
- */
-
 namespace Drupal\social_like;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -12,9 +7,14 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
+ * Class SocialLikeConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_like
  */
 class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
+
   /**
    * Returns config overrides.
    *
@@ -25,7 +25,7 @@ class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
    *   An array keyed by configuration name of override data. Override data
    *   contains a nested array structure of overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides(array $names) {
     $overrides = array();
 
     $config_factory = \Drupal::service('config.factory');
@@ -76,4 +76,5 @@ class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
+
 }

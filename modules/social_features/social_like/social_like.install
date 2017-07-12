@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_like module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -27,7 +30,7 @@ function social_like_update_8001() {
  * Re-set permissions for viewing the like widget.
  */
 function social_like_update_8002() {
-  // revoke permission for AN like widget.
+  // Revoke permission for AN like widget.
   user_role_revoke_permissions('anonymous', ['view like widget']);
 }
 
@@ -35,7 +38,7 @@ function social_like_update_8002() {
  * Function to set permissions.
  */
 function _social_like_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -49,13 +52,12 @@ function _social_like_set_permissions() {
 }
 
 /**
- * @param $role
- * @return array
+ * Build the permissions.
  */
 function _social_like_get_permissions($role) {
   // Anonymous.
   $permissions['anonymous'] = array(
-    'view like widget'
+    'view like widget',
   );
 
   // Authenticated.
@@ -68,14 +70,10 @@ function _social_like_get_permissions($role) {
   ));
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
-  ));
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
-  ));
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
