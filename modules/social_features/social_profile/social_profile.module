@@ -324,3 +324,22 @@ function social_profile_profile_view(array &$build, \Drupal\Core\Entity\EntityIn
     $build['field_profile_image'][0]['#url'] = $url;
   }
 }
+
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ *
+ * @param array $build
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ */
+function social_profile_profile_view_alter(array &$build, Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display) {
+
+  /** @var \Drupal\Core\Session\AccountProxy $current_user */
+  $current_user = \Drupal::currentUser();
+  // If the current user has no access to viewing user profiles, he might not have access to
+  // the users profile.
+  if (!$current_user->hasPermission('view any profile profile')) {
+    $file = \Drupal\file\Entity\File::load($entity->get('field_profile_image')->target_id);
+  }
+}
