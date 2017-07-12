@@ -339,7 +339,16 @@ function social_profile_profile_view_alter(array &$build, Drupal\Core\Entity\Ent
   $current_user = \Drupal::currentUser();
   // If the current user has no access to viewing user profiles, he might not have access to
   // the users profile.
-  if (!$current_user->hasPermission('view any profile profile')) {
+  if (!$current_user->hasPermission('view any profile profile') && $display->getMode() === 'compact') {
+    // Try to load the profile picture.
     $file = \Drupal\file\Entity\File::load($entity->get('field_profile_image')->target_id);
+    if ($file instanceof \Drupal\file\Entity\File) {
+      // Potentially the file is in the private file system. In that case,
+      // anonymous user don't have access to it.
+      if (!$file->access('view', $current_user)) {
+        // Remove the image.
+        unset($build['field_profile_image']);
+      }
+    }
   }
 }
