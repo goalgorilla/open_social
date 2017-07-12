@@ -1,21 +1,30 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_mentions\SocialMentionsConfigOverride.
- */
-
 namespace Drupal\social_mentions;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
 /**
+ * Class SocialMentionsConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_mentions
  */
 class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
 
-  public function loadOverrides($names) {
+  /**
+   * Returns config overrides.
+   *
+   * @param array $names
+   *   A list of configuration names that are being loaded.
+   *
+   * @return array
+   *   An array keyed by configuration name of override data. Override data
+   *   contains a nested array structure of overrides.
+   */
+  public function loadOverrides(array $names) {
     $overrides = array();
     // Add mentions filter to Basic HTML text format.
     $config_name = 'filter.format.basic_html';
@@ -35,15 +44,15 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
           'mentions_filter' => [
             'ProfileMention' => 1,
             'UserMention' => 1,
-          ]
+          ],
         ],
       ];
 
       $overrides[$config_name] = [
         'dependencies' => [
-          'module' => $dependencies
+          'module' => $dependencies,
         ],
-        'filters' => $filters
+        'filters' => $filters,
       ];
     }
     return $overrides;

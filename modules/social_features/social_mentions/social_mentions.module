@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
+use Drupal\mentions\Entity\MentionsType;
 
 define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
 define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
@@ -32,14 +33,14 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
     $config = \Drupal::config('mentions.settings');
 
     if ($config->get('suggestions_format') === 'username') {
-      if ($usermention = \Drupal\mentions\Entity\MentionsType::load('UserMention')) {
+      if ($usermention = MentionsType::load('UserMention')) {
         $usermention = $usermention->getInputSettings();
         $prefix = $usermention['prefix'];
         $suffix = $usermention['suffix'];
       }
     }
     else {
-      if ($profilemention = \Drupal\mentions\Entity\MentionsType::load('ProfileMention')) {
+      if ($profilemention = MentionsType::load('ProfileMention')) {
         $profilemention = $profilemention->getInputSettings();
         $prefix = $profilemention['prefix'];
         $suffix = $profilemention['suffix'];
