@@ -217,6 +217,12 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
  * @param $form_id
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // Clientside validation is not consistent accross devices. Disable for now.
+  if (!isset($form['#attributes']['novalidate'])) {
+    $form['#attributes']['novalidate'] = 'novalidate';
+  }
+
   // These forms have a container with class form-action at the bottom and
   // we style it in a way that the primary/submit button is aligned right
   // Also we define the style of the buttons based on their function
