@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_topic module.
@@ -6,6 +7,7 @@
 
 use Drupal\taxonomy\Entity\Term;
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -13,7 +15,6 @@ use \Drupal\menu_link_content\Entity\MenuLinkContent;
  * Perform actions related to the installation of social_topic.
  */
 function social_topic_install() {
-
   // Set some default permissions.
   _social_topic_set_permissions();
   // Add some links.
@@ -39,7 +40,7 @@ function social_topic_install() {
  * Function to set permissions.
  */
 function _social_topic_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -53,8 +54,13 @@ function _social_topic_set_permissions() {
 }
 
 /**
- * @param $role
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
  * @return array
+ *   A list of permissions.
  */
 function _social_topic_get_permissions($role) {
   // Anonymous.
@@ -70,7 +76,6 @@ function _social_topic_get_permissions($role) {
     'override topic published option',
     'view node.topic.field_content_visibility:community content',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
