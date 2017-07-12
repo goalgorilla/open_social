@@ -23,7 +23,7 @@ class GroupAddBlock extends BlockBase {
    *
    * Custom access logic to display the block.
    */
-  function blockAccess(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account) {
     $current_user = \Drupal::currentUser();
     $route_user_id = \Drupal::routeMatch()->getParameter('user');
 
@@ -42,7 +42,7 @@ class GroupAddBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    //@TODO: Change url and add caching when closed groups will be added.
+    // TODO: Change url and add caching when closed groups will be added.
     $url = Url::fromUserInput('/group/add');
     $link_options = array(
       'attributes' => array(
