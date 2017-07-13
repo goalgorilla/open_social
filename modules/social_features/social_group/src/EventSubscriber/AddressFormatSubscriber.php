@@ -25,11 +25,8 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
 
   /**
    * The onGetDefinition function.
-   *
-   * @param array $event
-   *    Array containing definitions.
    */
-  public function onGetDefinition(array $event) {
+  public function onGetDefinition($event) {
     $definition = $event->getDefinition();
     // This makes all address fields optional for all entity types on site.
     // We can't set empty array because of check in AddressFormat.php, line 128.
