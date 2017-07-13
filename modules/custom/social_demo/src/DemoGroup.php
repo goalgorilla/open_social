@@ -130,7 +130,7 @@ abstract class DemoGroup extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],

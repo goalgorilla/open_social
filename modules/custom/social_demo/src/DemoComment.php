@@ -124,7 +124,7 @@ abstract class DemoComment extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'field_comment_body' => [
