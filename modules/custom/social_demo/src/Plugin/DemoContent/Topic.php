@@ -65,7 +65,7 @@ class Topic extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 

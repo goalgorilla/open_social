@@ -65,7 +65,7 @@ class Event extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = parent::getEntry($item);
 
     $entry['field_event_address'] = $item['field_event_address'];

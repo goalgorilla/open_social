@@ -19,7 +19,7 @@ class Post extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry($item) {
+  public function getEntry(array $item) {
     $recipient_id = NULL;
     $group_id = NULL;
     $file_id = NULL;
