@@ -17,14 +17,8 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * Load overrides.
-   *
-   * @param array $names
-   *    Array with names.
-   *
-   * @return array
-   *    Returns an array.
    */
-  public function loadOverrides(array $names) {
+  public function loadOverrides($names) {
     $overrides = array();
     $config_factory = \Drupal::service('config.factory');
 

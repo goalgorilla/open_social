@@ -16,14 +16,8 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * Load overrides.
-   *
-   * @param array $names
-   *    Array with names.
-   *
-   * @return array
-   *    Returns an array with overrides.
    */
-  public function loadOverrides(array $names) {
+  public function loadOverrides($names) {
     $overrides = array();
     // Set hero title block for book content type.
     $config_names = [

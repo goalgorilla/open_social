@@ -16,14 +16,8 @@ class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterfac
 
   /**
    * Load overrides.
-   *
-   * @param array $names
-   *    Array of names.
-   *
-   * @return array
-   *    Returns an array containing overrides.
    */
-  public function loadOverrides(array $names) {
+  public function loadOverrides($names) {
     $overrides = array();
 
     // Set private file system to files field.

@@ -17,14 +17,8 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
 
   /**
    * Load overrides.
-   *
-   * @param array $names
-   *    Array with names.
-   *
-   * @return array
-   *    Returns an array.
    */
-  public function loadOverrides(array $names) {
+  public function loadOverrides($names) {
     $overrides = array();
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
