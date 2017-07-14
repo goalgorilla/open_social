@@ -69,11 +69,15 @@ function socialbase_preprocess_field(&$variables) {
     $url_options = array(
       'attributes' => array('class' => array('btn btn-primary waves-effect')),
     );
-    $variables['element'][0]['#url']->setOptions($url_options);
+    if (isset($variables['element'][0])) {
+      $variables['element'][0]['#url']->setOptions($url_options);
+    }
     $url_options = array(
       'attributes' => array('class' => array('btn btn-default waves-effect')),
     );
-    $variables['element'][1]['#url']->setOptions($url_options);
+    if (isset($variables['element'][1])) {
+      $variables['element'][1]['#url']->setOptions($url_options);
+    }
   }
 
 }
