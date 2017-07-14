@@ -49,6 +49,11 @@ class MentionActivityContext extends ActivityContextBase {
           if (isset($mention->uid)) {
             $uid = $mention->getMentionedUserId();
 
+            // Don't send notifications to myself.
+            if ($uid === $data['actor']) {
+              continue;
+            }
+
             $entity_storage = \Drupal::entityTypeManager()
               ->getStorage($mention->getMentionedEntityTypeId());
             $mentioned_entity = $entity_storage->load($mention->getMentionedEntityId());

@@ -103,8 +103,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                 }
                 if ($name === 'gurl') {
                   $gurl = Url::fromRoute('entity.group.canonical', array(
-                    'group' => $group->id(),
-                    array()
+                    'group' => $group->id()
                   ));
                   $replacements[$original] = $gurl->toString();
                 }
