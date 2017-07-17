@@ -25,7 +25,8 @@ env:
 
 matrix:
   include:
-  - env: TEST_SUITE=install_stability_1-2
+  - env: TEST_SUITE=install_stability_1
+  - env: TEST_SUITE=install_stability_2
   - env: TEST_SUITE=install_stability_3
   - env: TEST_SUITE=install_stability_4-5
   - env: TEST_SUITE=install_update
@@ -49,14 +50,15 @@ before_install:
   - docker-compose -f docker-compose-ci.yml up -d
 
 install:
-  - if [ "$TEST_SUITE" = "install_stability_1-2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4-5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4-5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh; fi
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
 script:
   - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
   - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
-  - if [ "$TEST_SUITE" = "install_stability_1-2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 stability-2; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 stability-2; fi
+  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
   - if [ "$TEST_SUITE" = "install_stability_3" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3; fi
   - if [ "$TEST_SUITE" = "install_stability_4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-4 stability-5; fi
 #  - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
