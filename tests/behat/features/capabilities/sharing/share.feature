@@ -1,4 +1,4 @@
-@api @share @perfect @critical @DS-1829
+@api @share @perfect @critical @DS-1829 @stability-4
 Feature: Social Sharing
   Benefit: In order to share my page with external people
   Role: As a LU

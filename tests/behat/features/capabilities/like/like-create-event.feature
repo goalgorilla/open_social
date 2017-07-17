@@ -1,4 +1,4 @@
-@api @like @stability @DS-2968
+@api @like @stability @DS-2968 @stability-4
 Feature: Create event like
   Benefit: In order to like an event
   Role: As a LU

@@ -1,4 +1,4 @@
-@api @comment @stability @DS-477
+@api @comment @stability @DS-477 @stability-2
 Feature: See Comment
   Benefit: In order to interact with people on the platform
   Role: As a LU

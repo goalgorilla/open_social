@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-2311
+@api @topic @stability @perfect @critical @DS-2311 @stability-3
 Feature: Follow Content
   Benefit: In order receive (email) notification  when a new comments or reply has been placed
   Role: As a LU

@@ -1,4 +1,4 @@
-@api @DS-2936
+@api @DS-2936 @stability-3
   Feature: I want to visit another profile by clicking on their avatar
     Benefit: Better interaction upon viewing other's profiles
     Role: LU
