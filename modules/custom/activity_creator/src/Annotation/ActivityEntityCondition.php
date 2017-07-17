@@ -33,7 +33,7 @@ class ActivityEntityCondition extends Plugin {
   /**
    * The array with entities for which this plugin is allowed.
    *
-   * @var arrayoptional
+   * @var array
    */
   public $entities;
 
