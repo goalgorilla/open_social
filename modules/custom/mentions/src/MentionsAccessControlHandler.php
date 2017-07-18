@@ -28,4 +28,5 @@ class MentionsAccessControlHandler extends EntityAccessControlHandler {
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
+
 }

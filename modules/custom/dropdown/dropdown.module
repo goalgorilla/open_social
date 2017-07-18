@@ -47,7 +47,7 @@ function dropdown_theme() {
  *     Properties used: #title, #value, #options, #description, #required,
  *     #attributes, #children.
  */
-function template_preprocess_dropdown(&$variables) {
+function template_preprocess_dropdown(array &$variables) {
   $element = $variables['element'];
   $variables['attributes'] = array();
   if (isset($element['#id'])) {

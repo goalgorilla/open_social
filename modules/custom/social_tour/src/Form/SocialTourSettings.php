@@ -61,4 +61,5 @@ class SocialTourSettings extends ConfigFormBase {
       ->set('social_tour_enabled', $form_state->getValue('social_tour_enabled'))
       ->save();
   }
+
 }

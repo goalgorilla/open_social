@@ -1,22 +1,27 @@
 <?php
-/**
- * @file
- * Contains \Drupal\social_download_count\SocialDownloadCountConfigOverride.
- */
+
 namespace Drupal\social_download_count;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
 /**
+ * Class SocialDownloadCountConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_download_count
  */
 class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * Load overrides.
+   */
   public function loadOverrides($names) {
     $overrides = array();
 
     // Set private file system to files field.
-    $config_name =  'field.storage.node.field_files';
+    $config_name = 'field.storage.node.field_files';
     if (in_array($config_name, $names)) {
       $overrides[$config_name] = ['settings' => ['uri_scheme' => 'private']];
     }
@@ -51,4 +56,5 @@ class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterfac
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
+
 }

@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the group_core_comments module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -10,7 +13,6 @@
  * Perform actions related to the installation of group_core_comments.
  */
 function group_core_comments_install() {
-
   // Set some default permissions.
   _group_core_comments_set_permissions();
 }
@@ -19,7 +21,7 @@ function group_core_comments_install() {
  * Function to set permissions.
  */
 function _group_core_comments_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -33,8 +35,13 @@ function _group_core_comments_set_permissions() {
 }
 
 /**
- * @param $role
+ * Get permissions per role.
+ *
+ * @param string $role
+ *   The name of the role.
+ *
  * @return array
+ *   A list of permissions.
  */
 function _group_core_comments_get_permissions($role) {
   // Anonymous.
@@ -48,7 +55,7 @@ function _group_core_comments_get_permissions($role) {
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-    'delete all comments'
+    'delete all comments',
   ));
 
   if (isset($permissions[$role])) {
@@ -61,7 +68,7 @@ function _group_core_comments_get_permissions($role) {
  * Enable 'delete all comments' permission for site manager users.
  */
 function group_core_comments_update_8001(&$sandbox) {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   $permissions = array(
     'delete all comments',

@@ -4,6 +4,11 @@ namespace Drupal\social_demo;
 
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Class DemoContentParser.
+ *
+ * @package Drupal\social_demo
+ */
 class DemoContentParser extends Yaml implements DemoContentParserInterface {
 
   /**

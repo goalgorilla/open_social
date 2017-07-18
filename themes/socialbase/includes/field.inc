@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * @file
+ * The field inc file for the Social base theme.
+ */
+
 use \Drupal\Core\Link;
 
 /**
  * Implements hook_preprocess_field().
- * @param $variables
  */
 function socialbase_preprocess_field(&$variables) {
   // For each field that doesn't need a div to wrap the content in.
@@ -65,19 +69,21 @@ function socialbase_preprocess_field(&$variables) {
     $url_options = array(
       'attributes' => array('class' => array('btn btn-primary waves-effect')),
     );
-    $variables['element'][0]['#url']->setOptions($url_options);
+    if (isset($variables['element'][0])) {
+      $variables['element'][0]['#url']->setOptions($url_options);
+    }
     $url_options = array(
       'attributes' => array('class' => array('btn btn-default waves-effect')),
     );
-    $variables['element'][1]['#url']->setOptions($url_options);
+    if (isset($variables['element'][1])) {
+      $variables['element'][1]['#url']->setOptions($url_options);
+    }
   }
 
 }
 
 /**
  * Implements hook_theme_suggestions_field_alter().
- * @param array $suggestions
- * @param array $variables
  */
 function socialbase_theme_suggestions_field_alter(array &$suggestions, array $variables) {
   if (!empty($variables['node']) && $variables['node'] == TRUE) {
@@ -86,9 +92,12 @@ function socialbase_theme_suggestions_field_alter(array &$suggestions, array $va
 }
 
 /**
- * @param $variables
+ * Pre process the image widget.
+ *
+ * @param array $variables
+ *    Array with variables of the image widget.
  */
-function socialbase_preprocess_image_widget(&$variables) {
+function socialbase_preprocess_image_widget(array &$variables) {
   if (isset($variables['data']['remove_button'])) {
     $variables['data']['remove_button']['#button_type'] = 'flat';
   }

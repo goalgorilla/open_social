@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Event Handler when a mention is deleted.
- */
-
 namespace Drupal\mentions\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -13,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * MentionsDelete handles event 'mentions.delete'.
  */
 class MentionsDelete implements EventSubscriberInterface {
+
   /**
    * {@inheritdoc}
    */

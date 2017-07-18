@@ -19,8 +19,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
  *   type = "social_auth",
  *   handlers = {
  *     "settings": {
-*        "class": "\Drupal\social_auth_twitter\Settings\TwitterAuthSettings",
-*        "config_id": "social_auth_twitter.settings"
+ *        "class": "\Drupal\social_auth_twitter\Settings\TwitterAuthSettings",
+ *        "config_id": "social_auth_twitter.settings"
  *     }
  *   }
  * )
@@ -29,12 +29,18 @@ class TwitterAuth extends SocialAuthNetwork {
 
   protected $loggerFactory;
 
+  /**
+   * TwitterAuth constructor.
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
     $this->loggerFactory = $logger_factory;
 
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
@@ -71,6 +77,7 @@ class TwitterAuth extends SocialAuthNetwork {
    * Returns status of social network.
    *
    * @return bool
+   *   The status of the social network.
    */
   public function isActive() {
     return (bool) $this->settings->isActive();
@@ -82,9 +89,8 @@ class TwitterAuth extends SocialAuthNetwork {
    * @param \Drupal\social_auth_twitter\Settings\TwitterAuthSettings $settings
    *   The Twitter auth settings.
    *
-   * @return bool True if module is configured
-   *   True if module is configured
-   *   False otherwise
+   * @return bool
+   *   True if module is configured, False otherwise.
    */
   protected function validateConfig(TwitterAuthSettings $settings) {
     $consumer_key = $settings->getConsumerKey();
@@ -102,9 +108,7 @@ class TwitterAuth extends SocialAuthNetwork {
   }
 
   /**
-   * Returns key-name of a social network.
-   *
-   * @return string
+   * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
     return $this->settings->getSocialNetworkKey();
@@ -114,6 +118,7 @@ class TwitterAuth extends SocialAuthNetwork {
    * Returns an instance of storage that handles data.
    *
    * @return object
+   *   An instance of the storage that handles the data.
    */
   public function getDataHandler() {
     $data_handler = \Drupal::service('social_auth_extra.session_persistent_data_handler');

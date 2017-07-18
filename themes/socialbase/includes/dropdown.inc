@@ -1,8 +1,12 @@
 <?php
 
 /**
+ * @file
+ * The dropdown inc file for the Social base theme.
+ */
+
+/**
  * Implements hook_preprocess_dropdown().
- * @param $variables
  */
 function socialbase_preprocess_dropdown(&$variables) {
   if (isset($variables['active']) && is_numeric($variables['active'])) {

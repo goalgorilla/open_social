@@ -6,7 +6,8 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class GoogleAuthSettingsForm
+ * Class GoogleAuthSettingsForm.
+ *
  * @package Drupal\social_auth_google\Form
  */
 class GoogleAuthSettingsForm extends ConfigFormBase {

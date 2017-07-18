@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send_email\Plugin\QueueWorker\ActivitySendEmailWorker.
- */
-
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\message\Entity\Message;
-
 
 /**
  * An activity send email worker.
@@ -50,7 +44,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
             || (isset($user_email_settings[$message_template_id]) && $user_email_settings[$message_template_id] == 1))
           && isset($activity->field_activity_output_text)
         ) {
-          // Send Email
+          // Send Email.
           $langcode = \Drupal::currentUser()->getPreferredLangcode();
 
           $body_text = EmailActivityDestination::getSendEmailOutputText($message);
@@ -58,7 +52,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
             $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
 
             $mail_manager = \Drupal::service('plugin.manager.mail');
-            $mail = $mail_manager->mail(
+            $mail_manager->mail(
               'activity_send_email',
               'activity_send_email',
               $target_account->getEmail(),

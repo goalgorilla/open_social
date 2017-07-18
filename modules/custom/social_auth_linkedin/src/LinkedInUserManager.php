@@ -6,7 +6,8 @@ use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
 
 /**
- * Class LinkedInUserManager
+ * Class LinkedInUserManager.
+ *
  * @package Drupal\social_auth_linkedin
  */
 class LinkedInUserManager extends UserManager {

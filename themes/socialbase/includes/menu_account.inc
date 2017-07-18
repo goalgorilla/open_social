@@ -1,7 +1,12 @@
 <?php
+
+/**
+ * @file
+ * The menu_account inc file for the Social base theme.
+ */
+
 /**
  * Implements hook_preprocess_menu().
- * @param $variables
  */
 function socialbase_preprocess_menu(&$variables) {
   // Find out what the active theme is first.

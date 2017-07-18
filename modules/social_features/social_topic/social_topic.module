@@ -27,7 +27,7 @@ use Drupal\views\ViewExecutable;
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_topic_preprocess_node(&$variables) {
+function social_topic_preprocess_node(array &$variables) {
   /* @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'topic') {
@@ -36,7 +36,7 @@ function social_topic_preprocess_node(&$variables) {
     if (count($topic_type_entities) === 1) {
       foreach ($topic_type_entities as $topic) {
         $variables['metadata'] = t('in @topic', array('@topic' => $topic->link()));
-        // Set topic type link
+        // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', array('field_topic_type_target_id' => $topic->id()));
         $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
           ->toString();
@@ -152,7 +152,7 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
     // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"
     // (see form alter when published is selected).
-    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NODE_PUBLISHED || !$membership ) {
+    if ($view->exposed_raw_input['status'] == "1" || $view->exposed_raw_input['status'] == NODE_PUBLISHED || !$membership) {
       $query->where[1]['conditions'][] = array(
         'field' => 'node_field_data_group_content_field_data.status',
         'value' => NODE_PUBLISHED,
