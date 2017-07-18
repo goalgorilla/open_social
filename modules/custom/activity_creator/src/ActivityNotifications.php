@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * ActivityNotifications.
- */
 
 namespace Drupal\activity_creator;
 
@@ -10,7 +6,6 @@ use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Session\AccountInterface;
-
 
 /**
  * Class ActivityNotifications to get Personalised activity items for account.
@@ -30,7 +25,7 @@ class ActivityNotifications extends ControllerBase {
    * @return array
    *   Return array of notification ids.
    */
-  public function getNotifications(AccountInterface $account, $status = array(ACTIVITY_STATUS_RECEIVED)) {
+  public function getNotifications(AccountInterface $account, array $status = array(ACTIVITY_STATUS_RECEIVED)) {
     $ids = $this->getNotificationIds($account, $status);
 
     return $ids;
@@ -47,7 +42,7 @@ class ActivityNotifications extends ControllerBase {
    * @return array
    *   Return array of notifications as activity objects.
    */
-  public function getNotificationsActivities(AccountInterface $account, $status = array(ACTIVITY_STATUS_RECEIVED)) {
+  public function getNotificationsActivities(AccountInterface $account, array $status = array(ACTIVITY_STATUS_RECEIVED)) {
     $ids = $this->getNotificationIds($account, $status);
 
     return entity_load_multiple('activity', $ids);
@@ -127,7 +122,7 @@ class ActivityNotifications extends ControllerBase {
    * @return Activity
    *    Returns activity object.
    */
-  public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
+  public function changeStatusOfActivity(Activity $activity, array $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);
 
     return $activity->save();
@@ -146,7 +141,7 @@ class ActivityNotifications extends ControllerBase {
    * @return array
    *    Returns an array of notification ids.
    */
-  private function getNotificationIds(AccountInterface $account, $status = array(), Entity $entity = NULL) {
+  private function getNotificationIds(AccountInterface $account, array $status = array(), Entity $entity = NULL) {
     $destinations = array('notifications');
 
     $uid = $account->id();

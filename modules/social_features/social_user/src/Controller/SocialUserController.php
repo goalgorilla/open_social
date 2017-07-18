@@ -27,9 +27,8 @@ class SocialUserController extends ControllerBase {
    *
    * @return string
    *   The first and/or last name with the AccountName as a fallback.
-   *
    */
-  function setUserStreamTitle(UserInterface $user = NULL) {
+  public function setUserStreamTitle(UserInterface $user = NULL) {
     if ($user instanceof UserInterface) {
       return $user->getDisplayName();
     }

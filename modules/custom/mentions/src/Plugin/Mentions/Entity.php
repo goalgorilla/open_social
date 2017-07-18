@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\mentions\Plugin\Mentions;
 
 use Drupal\Core\Entity\EntityManager;
@@ -7,8 +8,9 @@ use Drupal\Core\Utility\Token;
 use Drupal\mentions\MentionsPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 /**
+ * Class Entity.
+ *
  * @Mention(
  *  id = "entity",
  *  name = @Translation("Entity")
@@ -19,12 +21,18 @@ class Entity implements MentionsPluginInterface {
   private $entity_manager;
   private $entityQuery_service;
 
+  /**
+   * Entity constructor.
+   */
   public function __construct(Token $token, EntityManager $entity_manager, QueryFactory $entity_query) {
     $this->token_service = $token;
     $this->entity_manager = $entity_manager;
     $this->entityQuery_service = $entity_query;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $token = $container->get('token');
     $entity_manager = $container->get('entity.manager');
@@ -36,6 +44,9 @@ class Entity implements MentionsPluginInterface {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function outputCallback($mention, $settings) {
     $entity = $this->entity_manager->getStorage($mention['target']['entity_type'])
       ->load($mention['target']['entity_id']);
@@ -46,6 +57,9 @@ class Entity implements MentionsPluginInterface {
     return $output;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function targetCallback($value, $settings) {
     $entity_type = $settings['entity_type'];
     $input_value = $settings['value'];
@@ -64,18 +78,30 @@ class Entity implements MentionsPluginInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function mentionPresaveCallback($entity) {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function patternCallback($settings, $regex) {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function settingsCallback($form, $form_state, $type) {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function settingsSubmitCallback($form, $form_state, $type) {
 
   }

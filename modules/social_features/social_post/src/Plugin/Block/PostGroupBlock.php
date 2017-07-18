@@ -53,5 +53,4 @@ class PostGroupBlock extends PostBlock {
     return AccessResult::forbidden()->setCacheMaxAge(0);
   }
 
-
 }

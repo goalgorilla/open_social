@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\socialbase\Plugin\Preprocess\InputButton.
- */
-
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Utility\Element;

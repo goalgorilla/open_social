@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\mentions\Plugin\Filter\MentionsFilter.
- */
-
 namespace Drupal\mentions\Plugin\Filter;
 
 use Drupal\filter\Plugin\FilterBase;
@@ -53,15 +48,6 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
 
   /**
    * MentionsFilter constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
-   * @param \Drupal\Core\Render\RendererInterface $render
-   * @param \Drupal\Core\Config\ConfigFactory $config
-   * @param \Drupal\mentions\MentionsPluginManager $mentions_manager
-   * @param \Drupal\Core\Utility\Token $token
-   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager, RendererInterface $render, ConfigFactory $config, MentionsPluginManager $mentions_manager, Token $token, QueryFactory $query_factory) {
     $this->entityManager = $entity_manager;
@@ -79,11 +65,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $entity_manager = $container->get('entity.manager');
@@ -105,10 +87,22 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
     );
   }
 
+  /**
+   * Returns the settings.
+   *
+   * @return array
+   *   A list of settings.
+   */
   public function getSettings() {
     return $this->settings;
   }
 
+  /**
+   * Checks if there are mentionTypes.
+   *
+   * @return bool
+   *   TRUE if there are mentionTypes, otherwise FALSE.
+   */
   public function checkMentionTypes() {
     $settings = $this->settings;
 
@@ -124,7 +118,10 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
+   * Checks if a textFormat filter should be applied.
+   *
    * @return bool
+   *   TRUE if filter should applied, otherwise FALSE.
    */
   public function shouldApplyFilter() {
     if ($this->checkMentionTypes()) {
@@ -144,8 +141,13 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
-   * @param $text string
+   * Gets the mentions in text.
+   *
+   * @param string $text
+   *   The text to find mentions in.
+   *
    * @return array
+   *   A list of mentions.
    */
   public function getMentions($text) {
     $mentions = [];
@@ -200,8 +202,13 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
-   * @param $text string
+   * Filters mentions in a text.
+   *
+   * @param string $text
+   *   The text containing the possible mentions.
+   *
    * @return string
+   *   The processed text.
    */
   public function filterMentions($text) {
     $mentions = $this->getMentions($text);

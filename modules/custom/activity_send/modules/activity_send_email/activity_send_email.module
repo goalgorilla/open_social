@@ -7,10 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\activity_creator\ActivityInterface;
-use Drupal\message\Entity\Message;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
-use Drupal\Core\Url;
-use Drupal\Core\Link;
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
@@ -34,8 +31,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         '#title' => $title,
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : TRUE,
         '#attributes' => [
-          'data-switch' => TRUE
-        ]
+          'data-switch' => TRUE,
+        ],
       );
     }
 
@@ -52,7 +49,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _activity_send_email_form_user_form_submit($form, FormStateInterface $form_state) {
+function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state) {
   $account = \Drupal::routeMatch()->getParameter('user');
   $values = $form_state->getValue('email_notifications');
 

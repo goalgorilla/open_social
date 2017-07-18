@@ -18,6 +18,7 @@ use Drupal\Component\Utility\Html;
  * )
  */
 class FieldDownloadCount extends GenericFileFormatter {
+
   /**
    * {@inheritdoc}
    */
@@ -35,7 +36,7 @@ class FieldDownloadCount extends GenericFileFormatter {
           ->query('SELECT COUNT(fid) from {download_count} where fid = :fid AND type = :type AND id = :id', array(
             ':fid' => $file->id(),
             ':type' => $entity_type,
-            ':id' => $entity->id()
+            ':id' => $entity->id(),
           ))
           ->fetchField();
         $file->download = $download;
@@ -65,7 +66,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         // Add a specific class for each and every mime type.
         'file--mime-' . strtr($file->getMimeType(), array(
           '/' => '-',
-          '.' => '-'
+          '.' => '-',
         )),
         // Add a more general class for groups of well known mime types.
         'file--' . file_icon_class($file->getMimeType()),
@@ -88,7 +89,6 @@ class FieldDownloadCount extends GenericFileFormatter {
       // Check if socialbase is one of the base themes.
       // Then get the path to socialbase theme and provide a variable
       // that can be used in the template for a path to the icons.
-
       if (array_key_exists('socialbase', $theme->getBaseThemes())) {
         $basethemes = $theme->getBaseThemes();
         $path_to_socialbase = $basethemes['socialbase']->getPath();
@@ -173,4 +173,5 @@ class FieldDownloadCount extends GenericFileFormatter {
 
     return $element;
   }
+
 }

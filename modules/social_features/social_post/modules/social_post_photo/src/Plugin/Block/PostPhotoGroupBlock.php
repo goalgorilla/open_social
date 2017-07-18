@@ -20,6 +20,7 @@ class PostPhotoGroupBlock extends PostGroupBlock {
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     // Override the bundle and the formDisplay.
-    $this->bundle= 'photo';
+    $this->bundle = 'photo';
   }
+
 }

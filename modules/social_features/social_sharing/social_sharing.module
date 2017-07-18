@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The Social sharing module.
+ * The Social Sharing module.
  */
 
 use Drupal\node\Entity\Node;
@@ -11,7 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 
 /**
- *  Implements hook_block_access().
+ * Implements hook_block_access().
  */
 function social_sharing_block_access(Block $block, $operation, AccountInterface $account) {
 
@@ -27,8 +27,8 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
       return AccessResult::forbidden();
     }
     else {
-      // When a share block is assigned to a entity, and the entity field settings
-      // are not Public. We prevent the block from being displayed.
+      // When a share block is assigned to a entity, and the entity field
+      // settings are not Public. We prevent the block from being displayed.
       $nid = \Drupal::routeMatch()->getRawParameter('node');
 
       // We have a node!
@@ -38,7 +38,8 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
         foreach ($field_definitions as $field_name => $field_definition) {
           // Lets fetch all the entity access fields on this current node.
           if ($field_definition->getType() === 'entity_access_field') {
-            // Lets get all the values that we have for our entity_access_fields.
+            // Lets get all the values that we have for our
+            // entity_access_fields.
             $field_values = $node->get($field_name)->getValue();
             foreach ($field_values as $key => $field_value) {
               if (isset($field_value['value'])) {
@@ -58,5 +59,3 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
   // No opinion for other situations really.
   return AccessResult::neutral();
 }
-
-

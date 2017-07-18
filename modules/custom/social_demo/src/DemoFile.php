@@ -2,12 +2,18 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\file\FileInterface;
 use Drupal\image_widget_crop\ImageWidgetCropManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drush\Log\LogLevel;
 use Drupal\crop\Entity\CropType;
 
+/**
+ * Class DemoFile.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoFile extends DemoContent {
 
   /**
@@ -26,12 +32,6 @@ abstract class DemoFile extends DemoContent {
 
   /**
    * DemoFile constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\image_widget_crop\ImageWidgetCropManager $image_widget_crop_manager
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, ImageWidgetCropManager $image_widget_crop_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -94,7 +94,7 @@ abstract class DemoFile extends DemoContent {
         continue;
       }
 
-      $this->content[ $entity->id() ] = $entity;
+      $this->content[$entity->id()] = $entity;
 
       if (!empty($item['crops'])) {
         $this->applyCrops($item, $entity);
@@ -107,7 +107,7 @@ abstract class DemoFile extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],
@@ -123,9 +123,11 @@ abstract class DemoFile extends DemoContent {
    * Crops the images.
    *
    * @param array $item
+   *    The array with items.
    * @param \Drupal\file\FileInterface $entity
+   *    The FileInterface entity.
    */
-  protected function applyCrops($item, $entity) {
+  protected function applyCrops(array $item, FileInterface $entity) {
     // Add coordinates for cropping images.
     foreach ($item['crops'] as $crop_name => $data) {
       $crop_type = $this->entityTypeManager

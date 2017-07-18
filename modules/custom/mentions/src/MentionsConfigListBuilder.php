@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\mentions\MentionsConfigListBuilder.
- */
-
 namespace Drupal\mentions;
 
 use Drupal\Core\Config\Entity\DraggableListBuilder;
@@ -14,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
  * Provides a listing of Mentions Type entities.
  */
 class MentionsConfigListBuilder extends DraggableListBuilder {
+
   /**
    * {@inheritdoc}
    */

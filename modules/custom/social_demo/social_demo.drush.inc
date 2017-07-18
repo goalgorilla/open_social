@@ -121,8 +121,9 @@ function drush_social_demo_remove() {
  * Convert old keys of content types to new.
  *
  * @param array $content_types
+ *    Array containing content types.
  */
-function _social_demo_convert_content_types(&$content_types = []) {
+function _social_demo_convert_content_types(array &$content_types = []) {
   $replacements = [
     'eventenrollment' => 'event_enrollment',
     'eventtype' => 'event_type',
@@ -130,8 +131,8 @@ function _social_demo_convert_content_types(&$content_types = []) {
   ];
 
   foreach ($content_types as &$content_type) {
-    if (isset($replacements[ $content_type ])) {
-      $content_type = $replacements[ $content_type ];
+    if (isset($replacements[$content_type])) {
+      $content_type = $replacements[$content_type];
     }
   }
 }

@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_viewer\Plugin\views\filter\ActivityPostVisibilityAccess.
- */
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
@@ -123,7 +119,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     if ($account->isAuthenticated() && count($groups_unique) > 0) {
       $posts_in_groups = db_and();
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
-      $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique,'IN');
+      $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
 
       $or->condition($posts_in_groups);
     }
@@ -158,7 +154,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);
     }
-
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);

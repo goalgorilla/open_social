@@ -1,15 +1,21 @@
 <?php
+
 /**
  * @file
  * The Social post photo installation.
  */
 
-
+/**
+ * Install hook for Social Post Photo.
+ */
 function social_post_photo_install() {
   // Change post to photo.
   _social_post_photo_settype('post', 'photo');
 }
 
+/**
+ * Uninstall hook for Social Post Photo.
+ */
 function social_post_photo_uninstall() {
 
   // Change photo to post.
@@ -40,7 +46,7 @@ function social_post_photo_uninstall() {
 }
 
 /**
- * Set the no of comments on Post Teaser and Full display.
+ * Set the number of comments on Post Teaser and Full display.
  */
 function social_post_photo_update_8001() {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');

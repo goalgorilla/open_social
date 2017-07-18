@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_viewer\Plugin\views\filter\ActivityVisibilityAccess.
- */
-
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
