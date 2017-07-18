@@ -132,7 +132,6 @@ class AccountHeaderBlock extends BlockBase {
         $account_notifications = \Drupal::service('activity_creator.activity_notifications');
         $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
 
-
         if ($num_notifications === 0) {
           $notifications_icon = 'icon-notifications_none';
           $label_classes = 'hidden';
@@ -240,8 +239,8 @@ class AccountHeaderBlock extends BlockBase {
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => $this->t('Edit account'),
-            'label' => $this->t('Edit account'),
+            'title' => $this->t('Settings'),
+            'label' => $this->t('Settings'),
             'title_classes' => '',
             'url' => Url::fromRoute('entity.user.edit_form', [
               'user' => $account->id(),
@@ -256,7 +255,7 @@ class AccountHeaderBlock extends BlockBase {
             'title' => $this->t('Edit profile'),
             'label' => $this->t('Edit profile'),
             'title_classes' => '',
-            'url' => Url::fromRoute('entity.profile.type.profile.user_profile_form', [
+            'url' => Url::fromRoute('entity.profile.type.user_profile_form', [
               'user' => $account->id(),
               'profile_type' => 'profile',
             ]),
@@ -307,11 +306,11 @@ class AccountHeaderBlock extends BlockBase {
     }
 
     foreach (['add', 'account_box'] as $key) {
-      if (!isset($links[ $key ]['below'])) {
+      if (!isset($links[$key]['below'])) {
         continue;
       }
 
-      foreach ($links[ $key ]['below'] as &$item) {
+      foreach ($links[$key]['below'] as &$item) {
         if (!isset($item['access']) && isset($item['url']) && $item['url'] instanceof Url) {
           $item['access'] = $item['url']->access($account);
         }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send\Plugin\ActivitySendManager.
- */
-
 namespace Drupal\activity_send\Plugin;
 
 use Drupal\Core\Plugin\DefaultPluginManager;

@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @file mentions.module
+ * @file
+ * Code for the mentions module.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -34,9 +35,9 @@ function mentions_theme() {
         'mention_id' => NULL,
         'link' => NULL,
         'render_link' => FALSE,
-        'render_value' => ''
-      )
-    )
+        'render_value' => '',
+      ),
+    ),
   ];
   return $items;
 }
@@ -45,14 +46,18 @@ function mentions_theme() {
  * Implements hook_entity_insert().
  */
 function mentions_entity_insert(EntityInterface $entity) {
-  mentions_insert_or_update($entity, FALSE);
+  if (PHP_SAPI !== 'cli') {
+    mentions_insert_or_update($entity, FALSE);
+  }
 }
 
 /**
  * Implements hook_entity_update().
  */
 function mentions_entity_update(EntityInterface $entity) {
-  mentions_insert_or_update($entity, TRUE);
+  if (PHP_SAPI !== 'cli') {
+    mentions_insert_or_update($entity, TRUE);
+  }
 }
 
 /**
@@ -151,7 +156,7 @@ function mentions_crud_update($type, $mentions, $id, $author) {
       'entity_type' => $type,
       'entity_id' => $id,
       'uid' => $uid,
-      'auid' => $author
+      'auid' => $author,
     );
     $mention = $mentions_storage->create($mention_attributes);
     $mention->save();

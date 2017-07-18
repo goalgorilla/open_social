@@ -54,7 +54,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       // 'reports' => 'system.admin_reports',
       // 'themes' => 'system.themes_page',
       // 'people' => 'entity.user.collection',
-      // 'help' => 'help.main',
+      // 'help' => 'help.main'.
       $routes = [
         'contentmanager' => [
           'config' => 'system.admin_config',

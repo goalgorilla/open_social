@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\mentions\Form\MentionsTypeDeleteForm.
- */
-
 namespace Drupal\mentions\Form;
 
 use Drupal\Core\Entity\EntityDeleteForm;

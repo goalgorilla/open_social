@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The Social post photo module.
@@ -8,10 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Don't show a title nor a description.
@@ -22,9 +19,7 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
 }
 
 /**
- * Implements hook_photo_preprocess_image_formatter
- *
- * @param $variables
+ * Implements hook_photo_preprocess_image_formatter().
  */
 function social_post_photo_preprocess_image_formatter(&$variables) {
   if ($variables['image_style'] == "social_post_photo") {
@@ -36,10 +31,12 @@ function social_post_photo_preprocess_image_formatter(&$variables) {
 }
 
 /**
- * Function to change the post type
+ * Function to change the post type.
  *
- * @param $from
- * @param $to
+ * @param string $from
+ *   Type to change it from.
+ * @param string $to
+ *   Type to change it to.
  */
 function _social_post_photo_settype($from, $to) {
   // Get post storage.
@@ -49,6 +46,6 @@ function _social_post_photo_settype($from, $to) {
 
   /** @var \Drupal\social_post\Entity\Post $post */
   foreach ($posts as $post) {
-    $post->set('type',$to)->save();
+    $post->set('type', $to)->save();
   }
 }

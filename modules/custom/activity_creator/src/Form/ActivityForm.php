@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Form\ActivityForm.
- */
-
 namespace Drupal\activity_creator\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -16,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup activity_creator
  */
 class ActivityForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */

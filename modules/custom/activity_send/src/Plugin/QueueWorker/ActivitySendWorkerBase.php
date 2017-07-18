@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase.
- */
-
 namespace Drupal\activity_send\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -13,6 +8,7 @@ use Drupal\Core\Queue\QueueWorkerBase;
  * Provides base functionality for the ActivitySendWorkers.
  */
 abstract class ActivitySendWorkerBase extends QueueWorkerBase {
+
   /**
    * Create queue item.
    *
@@ -25,4 +21,5 @@ abstract class ActivitySendWorkerBase extends QueueWorkerBase {
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
+
 }

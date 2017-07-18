@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_viewer\Plugin\Field\FieldFormatter\ActivityEntityReferenceFormatter.
- */
-
 namespace Drupal\activity_viewer\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;

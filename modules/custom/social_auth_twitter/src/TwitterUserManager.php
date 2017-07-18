@@ -6,7 +6,8 @@ use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
 
 /**
- * Class TwitterUserManager
+ * Class TwitterUserManager.
+ *
  * @package Drupal\social_auth_twitter
  */
 class TwitterUserManager extends UserManager {

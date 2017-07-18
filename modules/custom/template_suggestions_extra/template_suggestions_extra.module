@@ -67,7 +67,7 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
   $suggestions[] = $original . '__' . $sanitized_view_mode;
   $suggestions[] = $original . '__' . $entity->bundle();
   $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
-  $suggestions[] = 'comment' . '__' . $sanitized_view_mode;
+  $suggestions[] = 'comment__' . $sanitized_view_mode;
 
   return $suggestions;
 }

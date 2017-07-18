@@ -5,6 +5,8 @@
  * Installation code for the download_count module.
  */
 
+use Drupal\user\Entity\Role;
+
 /**
  * Implements hook_schema().
  */
@@ -101,7 +103,7 @@ function download_count_install() {
  * Function to set permissions.
  */
 function _download_count_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {

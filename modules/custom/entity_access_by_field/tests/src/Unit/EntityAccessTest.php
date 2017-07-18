@@ -47,6 +47,8 @@ class EntityAccessTest extends UnitTestCase {
     $this->fieldId = 'node.article.field_content_visibility';
     $this->fieldValue = 'public';
     $this->fieldType = 'entity_access_field';
+    $this->accountId = 5;
+    $this->nodeOwnerId = 3;
     $fieldDefinitionInterface = $this->getMock('Drupal\Core\Field\FieldConfigInterface');
     $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
@@ -62,13 +64,15 @@ class EntityAccessTest extends UnitTestCase {
 
     $node->get('entity_access_field')->willReturn($fieldItemListInterface);
     $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getOwnerId()->willReturn($this->nodeOwnerId);
     $node = $node->reveal();
 
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(FALSE);
+    $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
@@ -88,6 +92,9 @@ class EntityAccessTest extends UnitTestCase {
     $this->fieldId = 'node.article.field_content_visibility';
     $this->fieldValue = 'public';
     $this->fieldType = 'entity_access_field';
+    $this->accountId = 5;
+    $this->nodeOwnerId = 3;
+
     $fieldDefinitionInterface = $this->getMock('Drupal\Core\Field\FieldConfigInterface');
     $fieldDefinitionInterface->expects($this->once())
       ->method('getType')
@@ -104,13 +111,61 @@ class EntityAccessTest extends UnitTestCase {
     $node->get('entity_access_field')->willReturn($fieldItemListInterface);
     $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
     $node->getCacheContexts()->willReturn(NULL);
+    $node->getOwnerId()->willReturn($this->nodeOwnerId);
     $node = $node->reveal();
 
     $op = 'view';
 
     $account = $this->prophesize(AccountInterface::class);
-    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content', $account)
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
       ->willReturn(TRUE);
+    $account->id()->willReturn($this->accountId);
+    $account = $account->reveal();
+
+    $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
+    $this->assertEquals(2, $access_result);
+    $this->assertNotEquals(0, $access_result);
+    $this->assertNotEquals(1, $access_result);
+  }
+
+  /**
+   * Tests the EntityAccessHelper::nodeAccessCheck for Author Access Allowed.
+   */
+  public function testAuthorAccessAllowed() {
+
+    $node = $this->prophesize(NodeInterface::class);
+
+    $this->fieldId = 'node.article.field_content_visibility';
+    $this->fieldValue = 'nonexistant';
+    $this->fieldType = 'entity_access_field';
+    $this->accountId = 5;
+    $this->nodeOwnerId = 5;
+
+    $fieldDefinitionInterface = $this->getMock('Drupal\Core\Field\FieldConfigInterface');
+    $fieldDefinitionInterface->expects($this->once())
+      ->method('getType')
+      ->willReturn($this->fieldType);
+    $fieldDefinitionInterface->expects($this->any())
+      ->method('id')
+      ->willReturn($this->fieldId);
+
+    $fieldItemListInterface = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+    $fieldItemListInterface->expects($this->any())
+      ->method('getValue')
+      ->willReturn(array(0 => array('value' => $this->fieldValue)));
+
+    $node->get('entity_access_field')->willReturn($fieldItemListInterface);
+    $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getCacheContexts()->willReturn(NULL);
+    $node->getOwnerId()->willReturn($this->nodeOwnerId);
+    $node = $node->reveal();
+
+    $op = 'view';
+
+    $account = $this->prophesize(AccountInterface::class);
+    $account->hasPermission('view ' . $this->fieldId . ':' . $this->fieldValue . ' content')
+      ->willReturn(FALSE);
+    $account->id()->willReturn($this->accountId);
     $account = $account->reveal();
 
     $access_result = EntityAccessHelper::nodeAccessCheck($node, $op, $account);

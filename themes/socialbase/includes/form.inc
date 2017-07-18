@@ -1,28 +1,33 @@
 <?php
 
+/**
+ * @file
+ * The form inc file for the Social base theme.
+ */
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 
 /**
  * Implements template_preprocess_form().
- * @param $variables
  */
 function socialbase_preprocess_form(&$variables) {
 
   $element = $variables['element'];
 
-  // If this is a search content form set a variable for twig
+  // If this is a search content form set a variable for twig.
   if ($element['#form_id'] === 'search_content_form' || $element['#form_id'] === 'search_hero_form' || $element['#form_id'] === 'geolocation_search_form' || $element['#form_id'] === 'geolocation_search_content_form') {
     $variables['is_search_form'] = TRUE;
   }
 
-  // Add the custom search autocomplete to search users for now only.
+  // Add the custom search auto complete to search users for now only.
   if ($element['#form_id'] === 'search_users_form') {
     $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
   }
 
-  // We have set the region via propress block, now pass this variable on to be used in twig
-  // In twig we can distinguish the navbar form from the hero form as they both have the same ID's.
+  // We have set the region via propress block, now pass this variable on
+  // to be used in twig. In twig we can distinguish the nav bar form from
+  // the hero form as they both have the same ID's.
   if (isset($element['#region'])) {
     if ($element['#region'] === 'hero') {
       $variables['in_hero_region'] = TRUE;
@@ -58,7 +63,6 @@ function socialbase_preprocess_form(&$variables) {
         $submitted = t('@time ago', array('@time' => $created_time_ago->getString()));
         $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
         $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
-
 
         // Display author information.
         $account = $comment->getOwner();
@@ -103,7 +107,6 @@ function socialbase_preprocess_form(&$variables) {
       $variables['date']['#markup'] = $date;
       $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
-
       // To change user picture settings (e.g. image style), edit the 'compact'
       // view mode on the User entity. Note that the 'compact' view mode might
       // not be configured, so remember to always check the theme setting first.
@@ -135,9 +138,6 @@ function socialbase_preprocess_form(&$variables) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['#inline'] = TRUE;
@@ -156,36 +156,32 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  if(isset($form['actions']['submit']['#button_type'])) {
+  if (isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
+
+  // Set a placeholder text to guide the user.
+  $form['field_comment_body']['widget'][0]['#placeholder'] = t('Write a comment...');
 
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
-  if(isset($form['actions']['submit']['#button_type'])) {
+  if (isset($form['actions']['submit']['#button_type'])) {
     $form['actions']['submit']['#button_type'] = 'primary';
+    $form['actions']['submit']['#comment_button'] = TRUE;
   }
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form['field_event_address'])) {
@@ -195,9 +191,6 @@ function socialbase_form_node_event_form_alter(&$form, FormStateInterface $form_
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form['field_profile_address'])) {
@@ -207,15 +200,17 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
 
 /**
  * Implements hook_form_FORM_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // Clientside validation is not consistent accross devices. Disable for now.
+  if (!isset($form['#attributes']['novalidate'])) {
+    $form['#attributes']['novalidate'] = 'novalidate';
+  }
+
   // These forms have a container with class form-action at the bottom and
   // we style it in a way that the primary/submit button is aligned right
-  // Also we define the style of the buttons based on their function
-
+  // Also we define the style of the buttons based on their function.
   $default_forms = array(
     'user_form',
     'user_pass_reset',
@@ -252,34 +247,36 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
 
-    if(isset($form['actions']['submit'])) {
+    if (isset($form['actions']['submit'])) {
       $form['actions']['submit']['#button_type'] = 'primary';
       $form['actions']['submit']['#button_level'] = 'raised';
     }
 
-    if(isset($form['actions']['delete'])) {
+    if (isset($form['actions']['delete'])) {
 
-      // Some `delete` buttons are not inputs but links
+      // Some `delete` buttons are not inputs but links.
       if (isset($form['actions']['delete']['#type']) && $form['actions']['delete']['#type'] == 'link') {
         $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
-      }  else {
+      }
+      else {
         $form['actions']['delete']['#button_type'] = 'flat';
       }
 
     }
 
-    if(isset($form['actions']['cancel'])) {
+    if (isset($form['actions']['cancel'])) {
 
-      // Some `cancel` buttons are not inputs but links
+      // Some `cancel` buttons are not inputs but links.
       if (isset($form['actions']['cancel']['#type']) &&  $form['actions']['cancel']['#type'] == 'link') {
         $form['actions']['cancel']['#attributes']['class'][] = 'btn btn-flat';
-      }  else {
+      }
+      else {
         $form['actions']['cancel']['#button_type'] = 'flat';
       }
     }
   }
 
-  // Here we list all the forms that need to be wrapped in cards
+  // Here we list all the forms that need to be wrapped in cards.
   $add_card_to_forms = array(
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_add_form',
@@ -298,12 +295,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['actions']['#prefix'] = '</div></div>';
   }
 
-
-  /**
-   * List all the confirmation forms here. We need to close the card before showing the actions.
-   */
-
-  $confirm_forms = array (
+  // List all the confirmation forms here. We need to close the card
+  // before showing the actions.
+  $confirm_forms = array(
     'user_cancel_form',
     'post_delete_form',
     'post_photo_delete_form',
@@ -315,6 +309,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'comment_post_comment_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_group-leave_form',
+    '_auth_login_notice_form',
   );
 
   if (in_array($form_id, $confirm_forms)) {
@@ -322,8 +317,8 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['description']['#suffix'] = '</div></div></div>';
   }
 
-  // Add extra classes to
-  if($form_id == 'enroll_action_form') {
+  // Add extra classes to.
+  if ($form_id == 'enroll_action_form') {
     $form['enroll_for_this_event']['#button_type'] = 'accent';
     $form['enroll_for_this_event']['#attributes']['class'][] = 'btn-lg';
   }
@@ -332,34 +327,31 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
 /**
  * Implements hook_form_BASE_ID_alter().
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- * @param $form_id
  *
  * Set button types for input elements.
  * Note that these variables are read in hook_preprocess_input.
- *
  */
 function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['#attributes']['class'][] = 'form--default';
 
-  // Delete is not an input element, so we must apply extra classes to anchor directly
-  if(isset($form['actions']['delete'])) {
+  // Delete is not an input element, so we must apply extra classes
+  // to anchor directly.
+  if (isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
   }
 
-  if(isset($form['actions']['preview'])) {
+  if (isset($form['actions']['preview'])) {
     $form['actions']['preview']['#button_type'] = 'flat';
   }
-  if(isset($form['actions']['submit'])) {
+  if (isset($form['actions']['submit'])) {
     $form['actions']['submit']['#button_level'] = 'raised';
     $form['actions']['submit']['#button_type'] = 'primary';
   }
-  if(isset($form['actions']['publish'])) {
+  if (isset($form['actions']['publish'])) {
     $form['actions']['publish']['#button_level'] = 'raised';
     $form['actions']['publish']['#button_type'] = 'primary';
   }
-  if(isset($form['actions']['unpublish'])) {
+  if (isset($form['actions']['unpublish'])) {
     $form['actions']['unpublish']['#button_level'] = 'raised';
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
@@ -368,8 +360,6 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
 
 /**
  * Implements hook_theme_suggestions_form_alter().
- * @param array $suggestions
- * @param array $variables
  */
 function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
 
@@ -386,7 +376,8 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
       $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    } else {
+    }
+    else {
       $suggestions[] = $variables['theme_hook_original'] . '__comment';
     }
   }

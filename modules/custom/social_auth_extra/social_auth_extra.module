@@ -49,13 +49,19 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
           $name = $auth_manager->getUsername();
         }
 
-        // If username is not given from social network, generate it based on first name and last name.
+        // If username is not given from social network, generate it based on
+        // first name and last name.
         if (empty($name)) {
           // Translate to lowercase and remove unnecessary symbols.
           $name = strtolower($data_handler->get('name'));
           $name = str_replace('  ', ' ', $name);
           $name = preg_replace('/[^0-9a-z]/si', '_', $name);
         }
+
+        // The user already selected an authentication method and there
+        // will be a drupal_set_message informing the user.
+        unset($form['social_auth_extra']);
+        unset($form['account']['title']);
 
         $form['account']['mail']['#default_value'] = $data_handler->get('mail');
         $form['account']['name']['#default_value'] = $name;
@@ -99,7 +105,7 @@ function _social_auth_extra_get_buttons($type = 'login') {
     $form['social_auth_extra'] = array(
       '#type' => 'fieldset',
       '#title' => t('%action with', array(
-        '%action' => $type == 'register' ? t('Sign up') : t('Log in')
+        '%action' => $type == 'register' ? t('Sign up') : t('Log in'),
       )),
       '#weight' => -100,
     );
@@ -126,7 +132,7 @@ function _social_auth_extra_get_buttons($type = 'login') {
       }
     }
 
-    // if there are no any active network, hide fieldset.
+    // If there are no any active network, hide fieldset.
     if (empty(array_intersect_key($networks, $form['social_auth_extra']))) {
       unset($form['social_auth_extra']);
     }
@@ -137,10 +143,11 @@ function _social_auth_extra_get_buttons($type = 'login') {
 
 /**
  * Custom submit function for user_register_form.
+ *
  * This function is using for registration via social network.
  */
 function social_auth_extra_form_user_register_form_submit($form, FormStateInterface $form_state) {
-  /** @var $instance NetworkBase */
+  /* @var $instance NetworkBase */
   if (($instance = $form_state->get('network_instance')) && $instance instanceof NetworkBase) {
     $id = $instance->getPluginId();
     $user_manager = \Drupal::service($id . '.user_manager');
@@ -164,7 +171,11 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
           // Set id of social profile to account and save.
           $account_id = $auth_manager->getAccountId();
           $user_manager->setAccountId($account_id);
-          $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
+          $module_handler->invokeAll('social_auth_extra_user_presave', [
+            $account,
+            $auth_manager,
+            $user_manager,
+          ]);
           $account->save();
           $form_state->getFormObject()->setEntity($account);
 
@@ -180,14 +191,38 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
               $user_manager->setProfile($profile);
             }
 
-            $module_handler->invokeAll('social_auth_extra_profile_presave', [$account, $profile, $auth_manager, $user_manager]);
+            $module_handler->invokeAll('social_auth_extra_profile_presave', [
+              $account,
+              $profile,
+              $auth_manager,
+              $user_manager,
+            ]);
             $profile->save();
+
+            // Redirect to profile.
+            $form_state->setRedirect(
+              'entity.profile.type.user_profile_form', [
+                'user' => $account->id(),
+                'profile_type' => 'profile',
+                [],
+              ]
+            );
+          }
+          else {
+            // If the profile module does not exist redirect to account form.
+            $form_state->setRedirect('entity.user.edit_form', [
+              'user' => $account->id(),
+            ]);
           }
         }
       }
 
       if (!$account->id()) {
-        $module_handler->invokeAll('social_auth_extra_user_presave', [$account, $auth_manager, $user_manager]);
+        $module_handler->invokeAll('social_auth_extra_user_presave', [
+          $account,
+          $auth_manager,
+          $user_manager,
+        ]);
         $account->save();
         $form_state->getFormObject()->setEntity($account);
       }
@@ -196,10 +231,6 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
         '@community_name' => \Drupal::config('system.site')->get('name'),
       ]));
-
-      $form_state->setRedirect('entity.user.edit_form', [
-        'user' => $account->id(),
-      ]);
 
       // Send email notification.
       $params['account'] = $account;
@@ -215,7 +246,8 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       }
 
       \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
-    } catch (EntityStorageException $e) {
+    }
+    catch (EntityStorageException $e) {
       drupal_set_message($this->t('Creation of user account failed. Please contact site administrator.'), 'error');
       $logger_factory = \Drupal::service('logger.fatory');
       $logger_factory
@@ -252,14 +284,14 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
         $user_manager = \Drupal::service($network['id'] . '.user_manager');
         $user_manager->setAccount($account);
 
-        $form['social_login_connections'][ $network['id'] ] = [
+        $form['social_login_connections'][$network['id']] = [
           '#type' => 'item',
           '#social_linkitem' => TRUE,
           '#title' => $network['social_network'],
         ];
 
         if ($user_manager->getAccountId()) {
-          $form['social_login_connections'][ $network['id'] ]['link'] = [
+          $form['social_login_connections'][$network['id']]['link'] = [
             '#type' => 'link',
             '#title' => t('Unlink'),
             '#attributes' => array(
@@ -269,7 +301,7 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
           ];
         }
         else {
-          $form['social_login_connections'][ $network['id'] ]['link'] = [
+          $form['social_login_connections'][$network['id']]['link'] = [
             '#type' => 'link',
             '#title' => t('Link'),
             '#attributes' => array(
@@ -304,7 +336,7 @@ function social_auth_extra_form_user_admin_settings_alter(&$form, FormStateInter
     '#description' => t('This message will be sent to users when users will be registered with a social network account.'),
     '#group' => 'email',
     '#tree' => TRUE,
-    '#weight' => -10
+    '#weight' => -10,
   ];
 
   $form['email_social_login']['subject'] = [
@@ -347,7 +379,11 @@ function social_auth_extra_mail($key, &$message, $params) {
   $language_manager->setConfigOverrideLanguage($language);
   $mail_config = \Drupal::config('social_auth_extra.mail');
 
-  $token_options = ['langcode' => $langcode, 'callback' => 'user_mail_tokens', 'clear' => TRUE];
+  $token_options = [
+    'langcode' => $langcode,
+    'callback' => 'user_mail_tokens',
+    'clear' => TRUE,
+  ];
   $message['subject'] .= PlainTextOutput::renderFromHtml($token_service->replace($mail_config->get($key . '.subject'), $variables, $token_options));
   $message['body'][] = $token_service->replace($mail_config->get($key . '.body'), $variables, $token_options);
 

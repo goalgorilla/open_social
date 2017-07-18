@@ -10,6 +10,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  * MentionsPluginManager for Mentions Type.
  */
 class MentionsPluginManager extends DefaultPluginManager {
+
   /**
    * {@inheritdoc}
    */
@@ -23,20 +24,18 @@ class MentionsPluginManager extends DefaultPluginManager {
    * Get the names of plugins of type mentions_type.
    *
    * @return array
+   *   A list of plugin names.
    */
   public function getPluginNames() {
     $definitions = $this->getDefinitions();
     $plugin_names = array();
 
     foreach ($definitions as $definition) {
-      //array_push($plugin_names, $definition['name']->getUntranslatedString());
       $name = $definition['name']->getUntranslatedString();
       $plugin_names[$definition['id']] = $name;
     }
 
     return $plugin_names;
   }
-  
-
 
 }
