@@ -38,7 +38,7 @@ class UserBulkForm extends BaseUserBulkForm {
           $this->drupalSetMessage($this->t('No access to execute %action on the @entity_type_label %entity_label.', [
             '%action' => $action->label(),
             '@entity_type_label' => $entity->getEntityType()->getLabel(),
-            '%entity_label' => $entity->label()
+            '%entity_label' => $entity->label(),
           ]), 'error');
           continue;
         }

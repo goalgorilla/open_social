@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Annotation\ActivityAction.
- */
-
 namespace Drupal\activity_creator\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

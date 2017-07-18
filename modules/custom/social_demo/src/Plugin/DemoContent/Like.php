@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * Like Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "like",
  *   label = @Translation("Like"),
@@ -17,7 +19,7 @@ class Like extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry($item) {
+  public function getEntry(array $item) {
     $entry = parent::getEntry($item);
 
     return $entry + [

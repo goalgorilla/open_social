@@ -45,9 +45,10 @@ function template_preprocess_activity(array &$variables) {
   }
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
-  // To change user picture settings (e.g. image style), edit the 'compact'
-  // view mode on the User entity. Note that the 'compact' view mode might
-  // not be configured, so remember to always check the theme setting first.
+  // To change user picture settings (e.g. image style), edit the
+  // 'compact_notification' view mode on the User entity. Note that the
+  // 'compact_notification' view mode might not be configured, so remember to
+  // always check the theme setting first.
   $account = $activity->getOwner();
   if ($account) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -56,12 +57,12 @@ function template_preprocess_activity(array &$variables) {
       if ($user_profile) {
         $content = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
-          ->view($user_profile, 'compact');
+          ->view($user_profile, 'compact_notification');
         if ($full_url == '') {
           $variables['actor'] = $content;
         }
         else {
-          $variables['actor'] = Link::fromTextAndUrl($content, $full_url);
+          $variables['actor'] = Link::fromTextAndUrl($content, $account->toUrl());
         }
       }
     }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * The container inc file for the Social base theme.
+ */
+
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -12,13 +17,13 @@ function socialbase_preprocess_container(&$variables) {
     ->get(RouteObjectInterface::ROUTE_NAME);
   if (strpos($routename, 'search') !== FALSE) {
 
-    // Exclude the filter block on the search page
+    // Exclude the filter block on the search page.
     if (!isset($variables['element']['#exposed_form'])) {
       $variables['bare'] = TRUE;
     }
   }
 
-  // remove extra wrapper for container of comment files form
+  // Remove extra wrapper for container of comment files form.
   if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-comment-files-wrapper') {
     $variables['bare'] = TRUE;
   };
@@ -31,15 +36,16 @@ function socialbase_preprocess_container(&$variables) {
     $variables['bare'] = TRUE;
   }
 
-  // Identify the container used for search in the navbar. Var is set in hook_preprocess_block
+  // Identify the container used for search in the nav bar.
+  // Var is set in hook_preprocess_block.
   if (isset($variables['element']['#addsearchicon'])) {
     $variables['bare'] = TRUE;
   }
 
-  // Identify the container used for views_exposed filter. Var is set in hook_preprocess_views_exposed_form
+  // Identify the container used for views_exposed filter.
+  // Var is set in hook_preprocess_views_exposed_form.
   if (isset($variables['element']['#exposed_form'])) {
     $variables['exposed_form'] = TRUE;
   }
 
 }
-

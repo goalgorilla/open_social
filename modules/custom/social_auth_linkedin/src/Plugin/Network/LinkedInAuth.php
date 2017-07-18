@@ -31,12 +31,18 @@ class LinkedInAuth extends SocialAuthNetwork {
 
   protected $loggerFactory;
 
+  /**
+   * LinkedInAuth constructor.
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
     $this->loggerFactory = $logger_factory;
 
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
@@ -52,6 +58,8 @@ class LinkedInAuth extends SocialAuthNetwork {
    * Returns an instance of sdk.
    *
    * @return mixed
+   *   Returns a new LinkedIn instance or FALSE if the config was incorrect.
+   *
    * @throws \Drupal\social_api\SocialApiException
    */
   public function initSdk() {
@@ -72,6 +80,7 @@ class LinkedInAuth extends SocialAuthNetwork {
    * Returns status of social network.
    *
    * @return bool
+   *   The status of the social network.
    */
   public function isActive() {
     return (bool) $this->settings->isActive();
@@ -83,9 +92,8 @@ class LinkedInAuth extends SocialAuthNetwork {
    * @param \Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings $settings
    *   The LinkedIn auth settings.
    *
-   * @return bool True if module is configured
-   *   True if module is configured
-   *   False otherwise
+   * @return bool
+   *   True if module is configured, False otherwise.
    */
   protected function validateConfig(LinkedInAuthSettings $settings) {
     $client_id = $settings->getClientId();
@@ -103,9 +111,7 @@ class LinkedInAuth extends SocialAuthNetwork {
   }
 
   /**
-   * Returns key-name of a social network.
-   *
-   * @return string
+   * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
     return $this->settings->getSocialNetworkKey();
@@ -115,6 +121,7 @@ class LinkedInAuth extends SocialAuthNetwork {
    * Returns an instance of storage that handles data.
    *
    * @return object
+   *   An instance of the storage that handles the data.
    */
   public function getDataHandler() {
     $data_handler = \Drupal::service('social_auth_extra.session_persistent_data_handler');

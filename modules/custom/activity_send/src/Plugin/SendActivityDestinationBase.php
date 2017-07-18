@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send\Plugin\ActivityDestination\SendActivityDestinationBase.
- */
-
 namespace Drupal\activity_send\Plugin;
 
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
@@ -54,7 +49,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
           'uid' => $account->id(),
           'destination' => $destination,
           'message_template' => $message_template,
-          'status' => $status
+          'status' => $status,
         ]);
         $query->keys([
           'uid' => $account->id(),

@@ -1,11 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerActivities.
- */
-
 namespace Drupal\activity_creator\Plugin\QueueWorker;
+
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

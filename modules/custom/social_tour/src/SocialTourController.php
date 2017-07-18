@@ -12,24 +12,37 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
+ * Class SocialTourController.
+ *
  * Returns responses for Social Group routes.
+ *
+ * @package Drupal\social_tour
  */
 class SocialTourController extends ControllerBase {
 
-  /** @var \Drupal\user\UserData $this->userData */
+  /**
+   * Protected var UserData.
+   *
+   * @var \Drupal\user\UserData
+   */
   protected $userData;
 
-  /** @var \Drupal\Core\Config\ConfigFactory $configFactory */
+  /**
+   * Protected var ConfigFactory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
   protected $configFactory;
 
-  /** @var \Drupal\Core\Session\AccountProxy $currentUser */
+  /**
+   * Protected var for the current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxy
+   */
   protected $currentUser;
 
   /**
-   *
-   * @param \Drupal\user\UserData $user_data
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   * @param \Drupal\Core\Session\AccountProxy $current_user
+   * SocialTourController constructor.
    */
   public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user) {
     // We needs it.
@@ -50,7 +63,10 @@ class SocialTourController extends ControllerBase {
   }
 
   /**
+   * Check if onboarding is enabled.
+   *
    * @return bool
+   *    Returns either TRUE or FALSE.
    */
   public function onboardingEnabled() {
     // Check if tour is enabled by SM setting.
@@ -65,15 +81,18 @@ class SocialTourController extends ControllerBase {
 
     // Check if current disabled it.
     if ($this->userData->get('social_tour', $this->currentUser->id(), 'onboarding_disabled') == TRUE) {
-     return FALSE;
+      return FALSE;
     }
     return TRUE;
   }
 
   /**
-   * @param $account
+   * Toggle onboarding.
+   *
+   * @param array $account
+   *    Array containing the account.
    */
-  public function toggleOnboarding($account = NULL) {
+  public function toggleOnboarding(array $account = NULL) {
 
     // No user given, then current user.
     $id = $this->currentUser->id();
@@ -97,7 +116,7 @@ class SocialTourController extends ControllerBase {
     // Save the value in the user_data.
     $this->setData(FALSE);
     // Return 200.
-    return new JsonResponse(['message' => $this->t('Onboarding has been enabled.')], 200, ['Content-Type'=> 'application/json']);
+    return new JsonResponse(['message' => $this->t('Onboarding has been enabled.')], 200, ['Content-Type' => 'application/json']);
   }
 
   /**
@@ -115,9 +134,12 @@ class SocialTourController extends ControllerBase {
 
   /**
    * Set onboarding data value.
+   *
    * @param bool $disabled
+   *    Type of bool, either TRUE or FALSE.
    */
   private function setData($disabled = TRUE) {
     $this->userData->set('social_tour', $this->currentUser->id(), 'onboarding_disabled', $disabled);
   }
+
 }

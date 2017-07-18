@@ -11,8 +11,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup social_post
  */
-interface PostInterface extends  ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
+interface PostInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
    * Returns the post type.

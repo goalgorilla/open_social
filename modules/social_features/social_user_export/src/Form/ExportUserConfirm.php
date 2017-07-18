@@ -11,6 +11,11 @@ use \Drupal\Core\Url;
 use \Drupal\Core\Form\FormStateInterface;
 use \Drupal\user\Entity\User;
 
+/**
+ * Class ExportUserConfirm.
+ *
+ * @package Drupal\social_user_export\Form
+ */
 class ExportUserConfirm extends ConfirmFormBase {
 
   /**

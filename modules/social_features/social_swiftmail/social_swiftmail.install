@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for Social Swiftmailer.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_swiftmail.
+ */
+function social_swiftmail_install() {
+  // Get swift and mailsystem config.
+  $swift_settings = \Drupal::configFactory()->getEditable('swiftmailer.message');
+  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+  // Alter swift settings.
+  $swift_settings->set('format', 'text/html')->save();
+  $swift_settings->set('respect_format', FALSE)->save();
+  // Alter mailsystem settings.
+  $mailsystem_settings->set('theme', 'current')->save();
+  $mailsystem_settings->set('defaults.sender', 'social_swiftmailer')->save();
+  $mailsystem_settings->set('defaults.formatter', 'social_swiftmailer')->save();
+  $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
+  $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
+}
