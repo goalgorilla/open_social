@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\social_user\Tests;
 
 use Drupal\Tests\UnitTestCase;

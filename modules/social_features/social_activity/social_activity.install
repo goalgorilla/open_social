@@ -4,12 +4,16 @@
  * @file
  * The Social activity install.
  */
+
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 use \Drupal\block\Entity\Block;
 
+/**
+ * Social activity install function.
+ */
 function social_activity_install() {
-  // Add menu items
+  // Add menu items.
   _social_activity_create_menu_links();
 
   // We can't add this as dependency, because this modules should be installed
@@ -55,6 +59,9 @@ function social_activity_update_8001() {
   _social_activity_create_activity_homepage_block();
 }
 
+/**
+ * Create a block for the activity stream homepage.
+ */
 function _social_activity_create_activity_homepage_block() {
   // Revert view so it has the block display.
   $config_revert = \Drupal::service('features.config_update');
@@ -62,7 +69,7 @@ function _social_activity_create_activity_homepage_block() {
 
   $config = \Drupal::configFactory();
 
-  // Do not add a new block if it alreadyexists.
+  // Do not add a new block if it already exists.
   $block = Block::load('views_block__activity_stream_block_stream_homepage');
   if (!isset($block)) {
     $visibility = array(
@@ -119,7 +126,7 @@ function social_activity_update_8002() {
     foreach ($templates as $name => $template) {
       $new_text = [];
 
-      //check if text is in the wrong format
+      // Check if text is in the wrong format.
       if (!empty($text_array = $template->get('text'))) {
 
         foreach ($text_array as $text) {
@@ -131,7 +138,8 @@ function social_activity_update_8002() {
           }
         }
 
-        //if all text was ok this would be empty, no need to update in that case
+        // If all text was ok this would be empty,
+        // no need to update in that case.
         if (!empty($new_text)) {
           $templates[$name]->set('text', $new_text);
           $templates[$name]->save();
@@ -150,12 +158,14 @@ function social_activity_update_8002() {
 }
 
 /**
- * Update Dynamic Entity Reference related configs to work with latest version of DER.
+ * Update Dynamic Entity Reference.
+ *
+ * Related configs to work with latest version of DER.
  */
 function social_activity_update_8003() {
   $config = \Drupal::service('config.factory')->getEditable('core.entity_view_display.activity.activity.default');
 
-  //only update if config exists and this is not a fresh install
+  // Only update if config exists and this is not a fresh install.
   if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
     if (!empty($settings['view_mode'])) {
       $config->clear('content.field_activity_entity.settings');
@@ -169,7 +179,8 @@ function social_activity_update_8003() {
 /**
  * Get entity view mode settings for Dynamic Entity Reference update.
  *
- * @return array View mode settings, keyed by entity machine name
+ * @return array
+ *    View mode settings, keyed by entity machine name.
  */
 function social_activity_get_der_settings() {
   $result = [];

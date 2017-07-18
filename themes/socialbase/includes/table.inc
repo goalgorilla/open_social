@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The table inc file for the Social base theme.
+ */
+
+/**
  * Implements template_preprocess_table().
  */
 function socialbase_preprocess_table(&$variables) {

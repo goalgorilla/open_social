@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Row style plugin for Views.
- */
 
 namespace Drupal\activity_viewer\Plugin\views\row;
 

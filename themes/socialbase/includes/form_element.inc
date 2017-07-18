@@ -1,25 +1,28 @@
 <?php
 
-use Drupal\Component\Utility\Html as HtmlUtility;
+/**
+ * @file
+ * The form_element inc file for the Social base theme.
+ */
 
+use Drupal\Component\Utility\Html as HtmlUtility;
 
 /**
  * Implements hook_preprocess_form_element().
  */
 function socialbase_preprocess_form_element(&$variables) {
 
-  // Tell the label for a switch form element it is in that switch form element
+  // Tell the label for a switch form element it is in that switch form element.
   if (!empty($variables['element']['#attributes']['data-switch'])) {
     $variables['label']['#switch'] = TRUE;
   }
 
-  // Use cards for the vertical tabs component
+  // Use cards for the vertical tabs component.
   if ($variables['element']['#type'] === 'vertical_tabs') {
     $variables['attributes']['class'][] = 'card';
   }
 
 }
-
 
 /**
  * Implements hook_preprocess_form_element_label().
@@ -38,7 +41,6 @@ function socialbase_preprocess_form_element_label(&$variables) {
   }
 }
 
-
 /**
  * Implements hook_theme_suggestions_form_element_alter().
  */
@@ -55,7 +57,6 @@ function socialbase_theme_suggestions_form_element_alter(array &$suggestions, ar
   }
 }
 
-
 /**
  * Implements hook_theme_suggestions_form_element_label_alter().
  */
@@ -68,17 +69,16 @@ function socialbase_theme_suggestions_form_element_label_alter(array &$suggestio
   }
 
   if (isset($variables['element']['#switch']) && $variables['element']['#switch'] == TRUE) {
-    $suggestions[] = $variables['theme_hook_original'] . '__' . 'switch';
+    $suggestions[] = $variables['theme_hook_original'] . '__switch';
   }
 }
-
 
 /**
  * Implements hook_preprocess_file_widget_multiple().
  */
 function socialbase_preprocess_file_widget_multiple(&$variables) {
   // Remove duplicated ajax wrapper for topic/events files field,
-  // because one is already rendered in container.html.twig
+  // because one is already rendered in container.html.twig.
   if (!empty($variables['element']['#id']) && (strpos($variables['element']['#id'], 'edit-field-files') !== FALSE)) {
     unset($variables['element']['#prefix']);
     unset($variables['element']['#suffix']);

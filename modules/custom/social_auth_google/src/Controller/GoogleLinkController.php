@@ -11,7 +11,8 @@ use Drupal\Core\Routing\TrustedRedirectResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class GoogleLinkController
+ * Class GoogleLinkController.
+ *
  * @package Drupal\social_auth_google\Controller
  */
 class GoogleLinkController extends ControllerBase {
@@ -21,8 +22,6 @@ class GoogleLinkController extends ControllerBase {
 
   /**
    * GoogleAuthController constructor.
-   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
-   * @param \Drupal\social_auth_google\GoogleAuthManager $auth_manager
    */
   public function __construct(NetworkManager $network_manager, GoogleAuthManager $auth_manager) {
     $this->networkManager = $network_manager;
@@ -61,6 +60,7 @@ class GoogleLinkController extends ControllerBase {
    * Makes joining between account on this site and account on social network.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A RedirectResponse pointing to the user edit form.
    */
   public function linkAccountCallback() {
     $sdk = $this->getSdk();
@@ -123,6 +123,7 @@ class GoogleLinkController extends ControllerBase {
    * Returns the SDK instance or RedirectResponse when error occurred.
    *
    * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Can return an SDK instance or a RedirectResponse to the user edit form.
    */
   public function getSdk() {
     $network_manager = $this->networkManager->createInstance('social_auth_google');

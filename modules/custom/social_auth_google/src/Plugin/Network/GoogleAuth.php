@@ -29,6 +29,9 @@ class GoogleAuth extends SocialAuthNetwork {
    * Returns an instance of sdk.
    *
    * @return mixed
+   *   Returns a new Google Client instance or FALSE if the config was
+   *   incorrect.
+   *
    * @throws \Drupal\social_api\SocialApiException
    */
   public function initSdk() {
@@ -53,6 +56,7 @@ class GoogleAuth extends SocialAuthNetwork {
    * Returns status of social network.
    *
    * @return bool
+   *   The status of the social network.
    */
   public function isActive() {
     return (bool) $this->settings->isActive();
@@ -64,9 +68,8 @@ class GoogleAuth extends SocialAuthNetwork {
    * @param \Drupal\social_auth_google\Settings\GoogleAuthSettings $settings
    *   The Google auth settings.
    *
-   * @return bool True if module is configured
-   *   True if module is configured
-   *   False otherwise
+   * @return bool
+   *   True if module is configured, False otherwise.
    */
   protected function validateConfig(GoogleAuthSettings $settings) {
     $client_id = $settings->getClientId();
@@ -84,9 +87,7 @@ class GoogleAuth extends SocialAuthNetwork {
   }
 
   /**
-   * Returns key-name of a social network.
-   *
-   * @return string
+   * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
     return $this->settings->getSocialNetworkKey();
@@ -96,6 +97,7 @@ class GoogleAuth extends SocialAuthNetwork {
    * Returns an instance of storage that handles data.
    *
    * @return object
+   *   An instance of the storage that handles the data.
    */
   public function getDataHandler() {
     $data_handler = \Drupal::service('social_auth_extra.session_persistent_data_handler');

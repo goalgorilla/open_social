@@ -34,7 +34,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   public static function defaultSettings() {
     return array(
       'num_comments' => 2,
-      'order' => 'DESC'
+      'order' => 'DESC',
     );
   }
 
@@ -81,7 +81,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
             $t_args = array(':num_comments' => $comment_count);
             $more_link = $this->t('Show all :num_comments comments', $t_args);
 
-            // set link classes to be added to the button
+            // Set link classes to be added to the button.
             $more_link_options = array(
               'attributes' => array(
                 'class' => array(
@@ -92,13 +92,13 @@ class CommentPostFormatter extends CommentDefaultFormatter {
               ),
             );
 
-            // set path to post node
+            // Set path to post node.
             $link_url = $entity->urlInfo('canonical');
 
-            // attach the attributes
+            // Attach the attributes.
             $link_url->setOptions($more_link_options);
 
-            // build the link
+            // Build the link.
             $more_button = Link::fromTextAndUrl($more_link, $link_url);
             $output['more_link'] = $more_button;
           }

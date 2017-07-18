@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The input inc file for the Social base theme.
+ */
+
+/**
  * Implements hook_preprocess_input().
  */
 function socialbase_preprocess_input(&$variables) {
@@ -18,7 +23,7 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
-  // set "add more managers" button style
+  // Set "add more managers" button style.
   if (isset($variables['element']['#array_parents']) && in_array('add_more', $variables['element']['#array_parents'], TRUE) && $variables['type'] == 'submit') {
     $variables['button_type'] = 'flat';
   }
@@ -29,7 +34,8 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
-  // for all buttons in file upload set type to flat, usually tables -> remove button
+  // For all buttons in file upload set type to flat,
+  // usually tables -> remove button.
   if (isset($variables['element']['#submit']) && in_array('file_managed_file_submit', $variables['element']['#submit'], TRUE)) {
     $variables['button_type'] = 'flat';
   }
@@ -38,12 +44,10 @@ function socialbase_preprocess_input(&$variables) {
     $variables['add_search_icon'] = TRUE;
   }
 
-  // Button types are determined in the hook_form_alter and set to be forced here
-  // again so the twig fill can use the variable
-  // params:
+  // Button types are determined in the hook_form_alter and set to be
+  // forced here again so the twig fill can use the variable params:
   // ['#button_type']
-  // ['#button_level']
-
+  // ['#button_level'].
   if (isset($variables['element']['#button_type'])) {
     if ($variables['element']['#button_type'] == 'primary') {
       $variables['button_type'] = 'primary';
@@ -69,7 +73,8 @@ function socialbase_preprocess_input(&$variables) {
     }
   }
 
-  // If a split button desn't have a button_type variable, set it to default (fallback)
+  // If a split button doesn't have a button_type variable,
+  // set it to default (fallback).
   if (isset($variables['element']['#split']) && !isset($variables['element']['#button_type'])) {
     $variables['button_type'] = 'default';
   }
@@ -94,13 +99,13 @@ function socialbase_preprocess_input(&$variables) {
  */
 function socialbase_preprocess_textarea(&$variables) {
 
-  if (isset($variables['element']['#array_parents']) ) {
+  if (isset($variables['element']['#array_parents'])) {
     $context = $variables['element']['#array_parents'];
 
-    // indentify textareas that need to get autogrow behaviour
+    // Identify text areas that need to get autogrow behaviour.
     $autogrow_areas = [
       'field_post',
-      'field_comment_body'
+      'field_comment_body',
     ];
 
     $c = array_intersect($context, $autogrow_areas);
@@ -111,7 +116,6 @@ function socialbase_preprocess_textarea(&$variables) {
 
   }
 }
-
 
 /**
  * Implements hook_theme_suggestions_input_alter().

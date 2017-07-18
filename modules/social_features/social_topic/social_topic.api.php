@@ -5,7 +5,6 @@
  * Hooks provided by the Social_topic module.
  */
 
-
 /**
  * @addtogroup hooks
  * @{
@@ -17,11 +16,12 @@
  * @param string $title
  *   The default generated view title for the term.
  * @param \Drupal\taxonomy\Entity\Term $term
- *   The topic type term that is selected in the filter. NULL if none is selected.
+ *   The topic type term that is selected in the filter. NULL if none is
+ *   selected.
  *
  * @ingroup social_topic_api
  */
-function hook_topic_type_title_alter(&$title, &$term) {
+function hook_topic_type_title_alter(&$title, \Drupal\taxonomy\Entity\Term &$term) {
   if (isset($term)) {
     $term_title = $term->getName();
     $title = t('@type', ['@type' => $term_title]);

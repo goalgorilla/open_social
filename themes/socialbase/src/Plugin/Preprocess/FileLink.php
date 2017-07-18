@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\socialbase\Plugin\Preprocess\FileLink.
- */
-
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\file\Entity\File;
@@ -32,7 +27,6 @@ class FileLink extends \Drupal\bootstrap\Plugin\Preprocess\FileLink {
     // Check if socialbase is one of the base themes.
     // Then get the path to socialbase theme and provide a variable
     // that can be used in the template for a path to the icons.
-
     if (array_key_exists('socialbase', $theme->getBaseThemes())) {
       $basethemes = $theme->getBaseThemes();
       $variables['path_to_socialbase'] = $basethemes['socialbase']->getPath();
@@ -42,7 +36,6 @@ class FileLink extends \Drupal\bootstrap\Plugin\Preprocess\FileLink {
 
     $mime_type = $file->getMimeType();
     $generic_mime_type = file_icon_class($mime_type);
-
 
     if (isset($generic_mime_type)) {
 
@@ -87,7 +80,7 @@ class FileLink extends \Drupal\bootstrap\Plugin\Preprocess\FileLink {
 
     }
 
-    // set a new variable to be used in the template file.
+    // Set a new variable to be used in the template file.
     $variables['node_icon'] = $node_icon;
 
   }

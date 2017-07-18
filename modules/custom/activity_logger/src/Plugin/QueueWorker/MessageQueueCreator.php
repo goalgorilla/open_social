@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_logger\Plugin\QueueWorker\MessageQueueCreator.
- */
-
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
 use Drupal\node\Entity\Node;
-
 
 /**
  * A report worker.

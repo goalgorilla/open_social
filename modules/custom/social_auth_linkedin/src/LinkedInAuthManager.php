@@ -9,7 +9,8 @@ use Happyr\LinkedIn\Exception\LinkedInException;
 use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
 
 /**
- * Class LinkedInAuthManager
+ * Class LinkedInAuthManager.
+ *
  * @package Drupal\social_auth_linkedin
  */
 class LinkedInAuthManager extends AuthManager {
@@ -118,7 +119,7 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getLastName() {
-    return isset($this->profile['lastName']) ?$this->profile['lastName'] : NULL;
+    return isset($this->profile['lastName']) ? $this->profile['lastName'] : NULL;
   }
 
 }

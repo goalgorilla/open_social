@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityEntityConditionInterface.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

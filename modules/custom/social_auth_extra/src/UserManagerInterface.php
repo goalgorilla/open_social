@@ -7,7 +7,8 @@ use Drupal\user\UserInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
- * Interface UserManagerInterface
+ * Interface UserManagerInterface.
+ *
  * @package Drupal\social_auth_extra
  */
 interface UserManagerInterface {
@@ -16,6 +17,7 @@ interface UserManagerInterface {
    * Returns key-name of a social network.
    *
    * @return string
+   *   Key-name of the social network.
    */
   public function getSocialNetworkKey();
 
@@ -28,7 +30,7 @@ interface UserManagerInterface {
    * @return \Drupal\Core\Entity\EntityInterface
    *   Object of a new user account.
    */
-  public function createAccount($values = []);
+  public function createAccount(array $values = []);
 
   /**
    * Creates object of a new profile.
@@ -39,26 +41,27 @@ interface UserManagerInterface {
    * @return \Drupal\Core\Entity\EntityInterface
    *   Object of a new user profile.
    */
-  public function createProfile($values = []);
+  public function createProfile(array $values = []);
 
   /**
-   * Download and set the picture to profile
+   * Download and set the picture to profile.
    *
-   * @param $url
+   * @param string $url
    *    Absolute URL of a picture.
-   * @param $account_id
+   * @param string $account_id
    *    Identifier of account on social network.
    *
    * @return bool
+   *   Returns TRUE if the picture was saved successfully, FALSE if it didn't.
    */
   public function setProfilePicture($url, $account_id);
 
   /**
    * Saves the picture from URL.
    *
-   * @param $url
+   * @param string $url
    *   Absolute URL of a picture.
-   * @param $account_id
+   * @param string $account_id
    *   Identifier of account on social network.
    *
    * @return bool|object
@@ -78,7 +81,10 @@ interface UserManagerInterface {
    * Set the account ID to the account on this site.
    *
    * @param string $account_id
+   *   Identifier of account on this site.
+   *
    * @return null
+   *   Returns null.
    */
   public function setAccountId($account_id);
 
@@ -86,6 +92,7 @@ interface UserManagerInterface {
    * Get the account ID to the account on this site.
    *
    * @return string
+   *   Account ID on this site.
    */
   public function getAccountId();
 
@@ -93,7 +100,10 @@ interface UserManagerInterface {
    * Set an instance of profile to user manager to use it later.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *   Profile instance.
+   *
    * @return null
+   *   Returns null.
    */
   public function setProfile(ProfileInterface $profile);
 
@@ -101,7 +111,10 @@ interface UserManagerInterface {
    * Set an instance of user account to user manager to use it later.
    *
    * @param \Drupal\user\UserInterface $account
+   *   User account.
+   *
    * @return null
+   *   Returns null.
    */
   public function setAccount(UserInterface $account);
 
@@ -109,7 +122,10 @@ interface UserManagerInterface {
    * Set an instance of a field definition that contains picture.
    *
    * @param \Drupal\Core\Field\FieldDefinitionInterface $field
+   *   Field definition containing the picture.
+   *
    * @return null
+   *   Returns null.
    */
   public function setFieldPicture(FieldDefinitionInterface $field);
 
@@ -117,6 +133,7 @@ interface UserManagerInterface {
    * Set the profile type.
    *
    * @param string $profile_type
+   *   Profile type.
    */
   public function setProfileType($profile_type);
 

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The menu_local_action inc file for the Social base theme.
+ */
+
+/**
  * Implements hook_preprocess_menu_local_action().
  */
 function socialbase_preprocess_menu_local_action(&$variables) {
@@ -12,12 +17,12 @@ function socialbase_preprocess_menu_local_action(&$variables) {
       }
     }
     $variables['link']['#options']['attributes']['class'] = $link_classes + array(
-        'waves-effect',
-        'waves-light',
-        'btn-sm',
-        'btn-primary',
-        'btn-raised'
-      );
+      'waves-effect',
+      'waves-light',
+      'btn-sm',
+      'btn-primary',
+      'btn-raised',
+    );
 
     $variables['attributes']['class'][] = 'margin-bottom-l';
   }

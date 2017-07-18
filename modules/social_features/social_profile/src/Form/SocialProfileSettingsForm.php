@@ -10,6 +10,7 @@ use Drupal\Core\Cache\Cache;
  * Configure social profile settings.
  */
 class SocialProfileSettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */

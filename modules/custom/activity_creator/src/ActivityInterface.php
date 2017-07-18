@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\ActivityInterface.
- */
-
 namespace Drupal\activity_creator;
 
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -17,7 +12,7 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup activity_creator
  */
 interface ActivityInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
+
   /**
    * Gets the Activity creation timestamp.
    *

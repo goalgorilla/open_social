@@ -1,8 +1,14 @@
 <?php
+
 /**
  * @file
  * Activity Creator module file.
  */
+
+use Drupal\message\Entity\Message;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Url;
 
 /**
  * Activity statuses.
@@ -50,7 +56,7 @@ function activity_creator_field_activity_destinations_allowed_values() {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_creator_message_insert(\Drupal\message\Entity\Message $entity) {
+function activity_creator_message_insert(Message $entity) {
   if ($entity) {
     // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
@@ -195,7 +201,7 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  *
  * TODO: Maybe this should be an event subscriber service
  */
-function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($view_mode === 'full') {
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
@@ -210,7 +216,7 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
   $view = $variables['view'];
   $view_name = $view->storage->id();
   if ($view_name == 'activity_stream_notifications') {
-    $notification_url = \Drupal\Core\Url::fromRoute('view.activity_stream_notifications.page_1');
+    $notification_url = Url::fromRoute('view.activity_stream_notifications.page_1');
     $variables['notification_url'] = $notification_url;
   }
 }
@@ -223,9 +229,9 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
  * @TODO: When group is deleted delete activities where group is recipient.
  * @TODO: When user is deleted delete activities where user is recipient.
  */
-function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function activity_creator_entity_delete(EntityInterface $entity) {
 
-  // TODO Move this into a service
+  // TODO Move this into a service.
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
@@ -275,7 +281,9 @@ function activity_creator_empty_queue() {
   // The workermanager.
   $workerManager = \Drupal::service('plugin.manager.queue_worker');
 
-  /** @var Drupal\Core\Queue\QueueFactory; $queue */
+  /*
+   * @var Drupal\Core\Queue\QueueFactory; $queue
+   */
   $queue = \Drupal::service('queue');
 
   for ($i = 0; $i < 5; $i++) {
