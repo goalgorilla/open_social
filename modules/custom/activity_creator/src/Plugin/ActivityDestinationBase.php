@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityDestinationBase.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;

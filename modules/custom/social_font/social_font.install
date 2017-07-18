@@ -5,13 +5,19 @@
  * Contains social_font.install.
  */
 
+use Drupal\social_font\Entity\Font;
+use Drupal\user\Entity\Role;
+
+/**
+ * The social_font install file.
+ */
 function social_font_install() {
 
-  $font = \Drupal\social_font\Entity\Font::create([
+  $font = Font::create([
     'name' => 'Montserrat',
     'user_id' => 1,
     'created' => REQUEST_TIME,
-    'field_fallback' => '0'
+    'field_fallback' => '0',
   ]);
 
   $font->save();
@@ -24,7 +30,7 @@ function social_font_install() {
  * Function to set permissions.
  */
 function _social_font_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -38,24 +44,23 @@ function _social_font_set_permissions() {
 }
 
 /**
- * @param $role
+ * Build the permissions for each role.
+ *
+ * @param string $role
+ *    The role.
+ *
  * @return array
+ *    Returns an array containing permissions.
  */
 function _social_font_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
-
-  );
+  $permissions['anonymous'] = array();
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
-  ));
-
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], array());
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
-  ));
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
@@ -64,7 +69,7 @@ function _social_font_get_permissions($role) {
     'edit font entities',
     'access font overview',
     'view published font entities',
-    'view unpublished font entities'
+    'view unpublished font entities',
   ));
 
   if (isset($permissions[$role])) {

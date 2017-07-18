@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * ActivityFactory.
- */
 
 namespace Drupal\activity_creator;
 
@@ -289,11 +285,11 @@ class ActivityFactory extends ControllerBase {
     // We return commented entity as related object for all other comments.
     elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
-      // @TODO: Check if comment published?
+      // @todo: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
-      if($comment){
+      if ($comment) {
         $commented_entity = $comment->getCommentedEntity();
-        if(!empty($commented_entity)) {
+        if (!empty($commented_entity)) {
           $related_object = [
             'target_type' => $commented_entity->getEntityTypeId(),
             'target_id' => $commented_entity->id(),
@@ -307,7 +303,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get unique authors number for activity aggregation.
    */
-  private function getAggregationAuthorsCount($data) {
+  private function getAggregationAuthorsCount(array $data) {
     $count = 0;
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
@@ -362,7 +358,7 @@ class ActivityFactory extends ControllerBase {
    * @return int
    *    Value uid integer.
    */
-  private function getActor($data) {
+  private function getActor(array $data) {
     $value = 0;
     if (isset($data['actor'])) {
       $value = $data['actor'];
@@ -394,7 +390,6 @@ class ActivityFactory extends ControllerBase {
 
     return $output;
   }
-
 
   /**
    * Process the message given the arguments saved with it.

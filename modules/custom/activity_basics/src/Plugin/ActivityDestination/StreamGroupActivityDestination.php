@@ -1,11 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_basics\Plugin\ActivityDestination\StreamGroupActivityDestination.
- */
-
 namespace Drupal\activity_basics\Plugin\ActivityDestination;
+
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 
 /**

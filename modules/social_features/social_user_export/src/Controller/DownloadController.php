@@ -15,7 +15,10 @@ class DownloadController extends ControllerBase {
    * Returns headers to force download file.
    *
    * @param string $name
+   *   The name of the file.
+   *
    * @return BinaryFileResponse
+   *   The file object.
    */
   public function download($name) {
     $file_path = file_directory_temp() . '/' . $name;

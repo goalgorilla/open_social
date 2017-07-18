@@ -14,11 +14,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class MentionsController extends ControllerBase {
 
-
   /**
    * Redirects mention links to the correct page depending on entity context.
    *
-   * Taken from: commentPermalink
+   * Taken from: commentPermalink.
    *
    * @param \Drupal\mentions\MentionsInterface $mentions
    *   A mention entity.

@@ -10,6 +10,7 @@ use Drupal\Core\Entity\ContentEntityTypeInterface;
  * Configure mentions settings.
  */
 class MentionsSettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */

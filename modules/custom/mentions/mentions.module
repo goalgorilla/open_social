@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @file mentions.module
+ * @file
+ * Code for the mentions module.
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -34,9 +35,9 @@ function mentions_theme() {
         'mention_id' => NULL,
         'link' => NULL,
         'render_link' => FALSE,
-        'render_value' => ''
-      )
-    )
+        'render_value' => '',
+      ),
+    ),
   ];
   return $items;
 }
@@ -155,7 +156,7 @@ function mentions_crud_update($type, $mentions, $id, $author) {
       'entity_type' => $type,
       'entity_id' => $id,
       'uid' => $uid,
-      'auid' => $author
+      'auid' => $author,
     );
     $mention = $mentions_storage->create($mention_attributes);
     $mention->save();

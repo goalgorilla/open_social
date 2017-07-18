@@ -73,4 +73,5 @@ class SocialPageTitleBlock extends PageTitleBlock {
 
     }
   }
+
 }

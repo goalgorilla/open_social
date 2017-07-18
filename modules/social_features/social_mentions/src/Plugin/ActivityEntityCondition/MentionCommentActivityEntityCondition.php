@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_mentions\Plugin\ActivityEntityCondition\MentionCommentActivityEntityCondition.
- */
-
 namespace Drupal\social_mentions\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;

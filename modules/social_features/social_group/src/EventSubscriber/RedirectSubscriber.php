@@ -9,6 +9,11 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Class RedirectSubscriber.
+ *
+ * @package Drupal\social_group\EventSubscriber
+ */
 class RedirectSubscriber implements EventSubscriberInterface {
 
   /**
@@ -24,6 +29,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * dispatched.
    *
    * @param GetResponseEvent $event
+   *    The event.
    */
   public function checkForRedirection(GetResponseEvent $event) {
     // Check if there is a group object on the current route.
