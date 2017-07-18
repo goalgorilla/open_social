@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_group module.
@@ -8,11 +9,10 @@ use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_update_dependencies().
- *
- * @return array
  */
 function social_group_update_dependencies() {
   // Necessary because in system_update_8200 all the configuration files are
@@ -32,7 +32,7 @@ function social_group_install() {
 
   // Set some default permissions.
   _social_group_set_permissions();
-  // Add menu items
+  // Add menu items.
   _social_group_create_menu_links();
 
   // Make sure the admin theme is not used when managing groups.
@@ -52,7 +52,7 @@ function social_group_install() {
  * Function to set permissions.
  */
 function _social_group_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -66,21 +66,23 @@ function _social_group_set_permissions() {
 }
 
 /**
- * @param $role
+ * Build the permissions.
+ *
+ * @param string $role
+ *    The role.
+ *
  * @return array
+ *    Returns an array containing the permissions.
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
-
-  );
+  $permissions['anonymous'] = array();
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'create open_group group',
-    'create closed_group group'
+    'create closed_group group',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
@@ -92,9 +94,7 @@ function _social_group_get_permissions($role) {
   ));
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
-  ));
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -207,9 +207,9 @@ function social_group_update_8004(&$sandbox) {
   $view_display = \Drupal::entityManager()->getStorage('entity_view_display')->load($display_id);
   if ($component = $view_display->getComponent($field_name)) {
     $view_display->setComponent($field_name, array(
-        'type' => 'basic_string',
-        'settings' => [],
-      ) + $component)->save();
+      'type' => 'basic_string',
+      'settings' => [],
+    ) + $component)->save();
   }
 
   // Update entity form display.
@@ -217,12 +217,12 @@ function social_group_update_8004(&$sandbox) {
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load($form_display_name);
   if (($component = $form_display->getComponent($field_name)) && $component['type'] == 'string_textarea') {
     $form_display->setComponent($field_name, array(
-        'type' => 'text_textarea',
-        'settings' => array(
-          'rows' => 5,
-          'placeholder' => '',
-        ),
-      ) + $component)->save();
+      'type' => 'text_textarea',
+      'settings' => array(
+        'rows' => 5,
+        'placeholder' => '',
+      ),
+    ) + $component)->save();
   }
 }
 

@@ -2,6 +2,11 @@
 
 namespace Drupal\social_demo;
 
+/**
+ * Interface DemoContentParserInterface.
+ *
+ * @package Drupal\social_demo
+ */
 interface DemoContentParserInterface {
 
   /**

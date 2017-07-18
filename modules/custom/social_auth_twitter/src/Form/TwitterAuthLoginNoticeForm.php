@@ -7,7 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Class TwitterAuthLoginNoticeForm
+ * Class TwitterAuthLoginNoticeForm.
+ *
  * @package Drupal\social_auth_twitter\Form
  */
 class TwitterAuthLoginNoticeForm extends ConfirmFormBase {

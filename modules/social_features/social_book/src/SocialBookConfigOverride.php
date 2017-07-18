@@ -1,20 +1,22 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_book\SocialBookConfigOverride.
- */
-
 namespace Drupal\social_book;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
 /**
+ * Class SocialBookConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_book
  */
 class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
 
+  /**
+   * Load overrides.
+   */
   public function loadOverrides($names) {
     $overrides = array();
     // Set hero title block for book content type.

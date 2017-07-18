@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Annotation\ActivityEntityCondition.
- */
-
 namespace Drupal\activity_creator\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -38,7 +33,7 @@ class ActivityEntityCondition extends Plugin {
   /**
    * The array with entities for which this plugin is allowed.
    *
-   * @var array (optional)
+   * @var array
    */
   public $entities;
 

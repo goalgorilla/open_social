@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityActionInterface.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
@@ -28,7 +23,5 @@ interface ActivityActionInterface extends PluginInspectionInterface {
    * Checks if this is a valid entity for the action.
    */
   public function isValidEntity($entity);
-
-
 
 }

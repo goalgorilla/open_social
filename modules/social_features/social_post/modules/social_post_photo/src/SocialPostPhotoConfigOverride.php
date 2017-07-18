@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post_photo\SocialPostPhotoConfigOverride.
- */
-
 namespace Drupal\social_post_photo;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -15,7 +10,6 @@ use Drupal\Core\Config\StorageInterface;
  * Example configuration override.
  */
 class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
-
 
   /**
    * Returns config overrides.
@@ -72,8 +66,8 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
           $overrides[$config_name] = [
             'third_party_settings' => [
               'activity_logger' => [
-                'activity_bundle_entities' => $entities
-              ]
+                'activity_bundle_entities' => $entities,
+              ],
             ],
           ];
         }

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\votingapi\Entity\Vote;
 
 /**
  * Implements hook_token_info().
@@ -44,7 +45,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
     /** @var \Drupal\votingapi\Entity\Vote $vote */
-    if ($vote = \Drupal\votingapi\Entity\Vote::load($message->field_message_related_object->target_id)) {
+    if ($vote = Vote::load($message->field_message_related_object->target_id)) {
       foreach ($tokens as $name => $original) {
         switch ($name) {
 
@@ -58,9 +59,9 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             $storage = \Drupal::entityManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
             $content_type = $entity->getEntityTypeId();
-            // Check if the content type is node
+            // Check if the content type is node.
             if ($content_type === 'node') {
-              // Then get the bundle name
+              // Then get the bundle name.
               $content_type = $entity->bundle();
             }
 

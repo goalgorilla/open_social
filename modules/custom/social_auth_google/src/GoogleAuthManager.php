@@ -7,12 +7,17 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 
 /**
- * Class GoogleAuthManager
+ * Class GoogleAuthManager.
+ *
  * @package Drupal\social_auth_google
  */
 class GoogleAuthManager extends AuthManager {
 
-  /** @var \Google_Service_Oauth2 $googleService */
+  /**
+   * Holds the Google Service.
+   *
+   * @var \Google_Service_Oauth2
+   */
   private $googleService;
 
   /**

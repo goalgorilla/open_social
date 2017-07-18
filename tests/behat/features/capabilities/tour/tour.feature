@@ -1,4 +1,4 @@
-@api @tour @stability @critical @DS-3710
+@api @tour @critical @DS-3710
 Feature: Take the tour
   Benefit: In order to get to know the platform
   Role: As a LU

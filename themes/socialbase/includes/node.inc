@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ * The node inc file for the Social base theme.
+ */
+
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\Entity;
 
@@ -18,7 +25,7 @@ use Drupal\Core\Entity\Entity;
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function socialbase_preprocess_node(&$variables) {
+function socialbase_preprocess_node(array &$variables) {
   $node = $variables['node'];
   $account = $node->getOwner();
   $variables['content_type'] = $node->bundle();
@@ -70,7 +77,7 @@ function socialbase_preprocess_node(&$variables) {
       // Only on Events & Topics.
       if ($variables['node']->getType() == 'event' || $variables['node']->getType() == 'topic') {
         // Add group name to the teaser (if it's part of a group).
-        $group_content = \Drupal\group\Entity\GroupContent::loadByEntity($variables['node']);
+        $group_content = GroupContent::loadByEntity($variables['node']);
         if (!empty($group_content)) {
           // It can only exist in one group. So we get the first pointer out of
           // the array that gets returned from loading GroupContent.
@@ -154,7 +161,7 @@ function socialbase_preprocess_node(&$variables) {
 
     // If we have a comment and the status is OPEN or CLOSED we can render icon
     // for comment count, and add the comment count to the node.
-    if ($node->$comment_field_name->status != \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::HIDDEN) {
+    if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
       $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
       $t_args = array(':num_comments' => $comment_count);
       $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
@@ -162,7 +169,7 @@ function socialbase_preprocess_node(&$variables) {
       // If it's closed, we only show the comment section when there are
       // comments placed. Closed means we show comments but you are not able
       // to add any comments.
-      if (($node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::CLOSED && $comment_count > 0) || $node->$comment_field_name->status == \Drupal\comment\Plugin\Field\FieldType\CommentItemInterface::OPEN) {
+      if (($node->$comment_field_name->status == CommentItemInterface::CLOSED && $comment_count > 0) || $node->$comment_field_name->status == CommentItemInterface::OPEN) {
         $variables['comment_field_status'] = $comment_field_name;
         $variables['comment_count'] = $comment_count;
       }
@@ -177,7 +184,7 @@ function socialbase_preprocess_node(&$variables) {
     $variables['likes_count'] = _socialbase_node_get_like_count($variables['node']->getEntityTypeId(), $variables['node']->id());
   }
 
-  //Add styles for nodes in preview
+  // Add styles for nodes in preview.
   if ($node->in_preview) {
     $variables['#attached']['library'][] = 'socialbase/preview';
   }
@@ -185,11 +192,6 @@ function socialbase_preprocess_node(&$variables) {
 
 /**
  * Get comment count for a node.
- *
- * @param \Drupal\node\Entity\Node $node
- * @param $comment_field_name
- * @return int
- * @internal param $entity
  */
 function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
   $count = 0;
@@ -205,11 +207,6 @@ function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
 
 /**
  * Get like count for a node.
- *
- * @param $type entity type
- * @param $id entity id
- * @return int
- * @internal param $entity
  */
 function _socialbase_node_get_like_count($type, $id) {
   $count = 0;

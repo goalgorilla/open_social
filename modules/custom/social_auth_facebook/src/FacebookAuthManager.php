@@ -10,7 +10,8 @@ use Facebook\Exceptions\FacebookSDKException;
 use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
 
 /**
- * Class FacebookAuthManager
+ * Class FacebookAuthManager.
+ *
  * @package Drupal\social_auth_facebook
  */
 class FacebookAuthManager extends AuthManager {

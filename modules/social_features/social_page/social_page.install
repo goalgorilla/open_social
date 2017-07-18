@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_page module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -19,7 +22,7 @@ function social_page_install() {
  * Function to set permissions.
  */
 function _social_page_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -33,8 +36,7 @@ function _social_page_set_permissions() {
 }
 
 /**
- * @param $role
- * @return array
+ * Build the permissions.
  */
 function _social_page_get_permissions($role) {
   // Anonymous.
@@ -46,7 +48,6 @@ function _social_page_get_permissions($role) {
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
     'view node.page.field_content_visibility:community content',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
@@ -76,4 +77,3 @@ function _social_page_get_permissions($role) {
   }
   return [];
 }
-
