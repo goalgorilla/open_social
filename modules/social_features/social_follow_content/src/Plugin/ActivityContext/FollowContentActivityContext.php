@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_follow_content\Plugin\ActivityContext\FollowContentActivityContext.
- */
-
 namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
-
 
 /**
  * Provides a 'FollowContentActivityContext' activity context plugin.

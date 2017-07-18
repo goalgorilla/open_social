@@ -45,9 +45,10 @@ function template_preprocess_activity(array &$variables) {
   }
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
-  // To change user picture settings (e.g. image style), edit the 'compact_notification'
-  // view mode on the User entity. Note that the 'compact_notification' view mode might
-  // not be configured, so remember to always check the theme setting first.
+  // To change user picture settings (e.g. image style), edit the
+  // 'compact_notification' view mode on the User entity. Note that the
+  // 'compact_notification' view mode might not be configured, so remember to
+  // always check the theme setting first.
   $account = $activity->getOwner();
   if ($account) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');

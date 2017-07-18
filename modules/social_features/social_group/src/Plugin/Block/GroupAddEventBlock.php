@@ -23,10 +23,10 @@ class GroupAddEventBlock extends BlockBase {
    *
    * Custom access logic to display the block.
    */
-  function blockAccess(AccountInterface $account) {
+  public function blockAccess(AccountInterface $account) {
     $group = _social_group_get_current_group();
 
-    if(is_object($group)){
+    if (is_object($group)) {
       if ($group->hasPermission('create group_node:event entity', $account)) {
         return AccessResult::allowed();
       }
@@ -36,7 +36,6 @@ class GroupAddEventBlock extends BlockBase {
     return AccessResult::forbidden();
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -45,7 +44,7 @@ class GroupAddEventBlock extends BlockBase {
 
     $group = _social_group_get_current_group();
 
-    if(is_object($group)){
+    if (is_object($group)) {
       $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:event");
 
       $link_options = array(
@@ -63,7 +62,7 @@ class GroupAddEventBlock extends BlockBase {
 
       $build['content'] = Link::fromTextAndUrl(t('Create Event'), $url)->toRenderable();
 
-      // Cache
+      // Cache.
       $build['#cache']['contexts'][] = 'url.path';
       $build['#cache']['tags'][] = 'group:' . $group->id();
 

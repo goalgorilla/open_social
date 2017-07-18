@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityEntityConditionBase.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
@@ -14,9 +9,11 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class ActivityEntityConditionBase extends PluginBase implements ActivityEntityConditionInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntityCondition($entity) {
     return TRUE;
   }
 
 }
-

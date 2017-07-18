@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send\Annotation\ActivitySend.
- */
-
 namespace Drupal\activity_send\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

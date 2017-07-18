@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_event_managers module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -10,10 +13,10 @@
  * Perform actions related to the installation of social_event_managers.
  */
 function social_event_managers_install() {
-  // Fetch site manager role
-  $role = \Drupal\user\Entity\Role::load('sitemanager');
+  // Fetch site manager role.
+  $role = Role::load('sitemanager');
   // Set permission for site manager.
-  if ($role instanceof \Drupal\user\Entity\Role) {
+  if ($role instanceof Role) {
     // Set permission.
     $role->grantPermission('set social event managers settings');
     $role->trustData()->save();

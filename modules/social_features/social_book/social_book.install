@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_book module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -19,7 +22,7 @@ function social_book_install() {
  * Function to set permissions.
  */
 function _social_book_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -33,20 +36,24 @@ function _social_book_set_permissions() {
 }
 
 /**
- * @param $role
+ * Build the permissions.
+ *
+ * @param string $role
+ *    The role.
+ *
  * @return array
+ *    Returns an array containing the permissions.
  */
 function _social_book_get_permissions($role) {
   // Anonymous.
   $permissions['anonymous'] = array(
-    'view node.book.field_content_visibility:public content'
+    'view node.book.field_content_visibility:public content',
   );
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
-    'view node.book.field_content_visibility:community content'
+    'view node.book.field_content_visibility:community content',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
@@ -77,7 +84,7 @@ function _social_book_get_permissions($role) {
  * Enable book page creation permissions for CM and SM.
  */
 function social_book_update_8001() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   $permissions = array(
     'create new books',
@@ -98,5 +105,5 @@ function social_book_update_8001() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
-}
 
+}

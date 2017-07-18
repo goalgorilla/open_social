@@ -5,14 +5,15 @@ namespace Drupal\social_demo;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoEntity.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoEntity extends DemoContent {
 
   /**
    * DemoEntity constructor.
-   * @param array $configuration
-   * @param mixed $plugin_id
-   * @param $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -61,7 +62,7 @@ abstract class DemoEntity extends DemoContent {
       $entity->save();
 
       if ($entity->id()) {
-        $this->content[ $entity->id() ] = $entity;
+        $this->content[$entity->id()] = $entity;
       }
     }
   }
@@ -69,7 +70,7 @@ abstract class DemoEntity extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
     ];

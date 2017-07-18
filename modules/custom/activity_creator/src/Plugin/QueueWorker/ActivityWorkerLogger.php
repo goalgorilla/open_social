@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerLogger.
- */
 
 namespace Drupal\activity_creator\Plugin\QueueWorker;
 
@@ -39,8 +35,6 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($data) {
-
-    $old_data = $data;
 
     // Get 100 Recipients at a time.
     $limit = 0;
