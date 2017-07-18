@@ -235,6 +235,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'profile_profile_edit_form',
     'social_user_password_form',
     'user_cancel_form',
+    'social_group_add',
     'group_open_group_add_form',
     'group_open_group_edit_form',
     'group_closed_group_add_form',
