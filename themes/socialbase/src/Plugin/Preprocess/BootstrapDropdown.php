@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\socialbase\Plugin\Preprocess\BootstrapDropdown.
- */
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
@@ -36,14 +32,16 @@ class BootstrapDropdown extends \Drupal\bootstrap\Plugin\Preprocess\BootstrapDro
 
   }
 
+  /**
+   * Function to preprocess the links.
+   */
   protected function preprocessLinks(Variables $variables) {
     parent::preprocessLinks($variables);
 
     $operations = !!Unicode::strpos($variables->theme_hook_original, 'operations');
 
     // Make operations button small, not smaller ;).
-    // Bootstrap basetheme override
-
+    // Bootstrap basetheme override.
     if ($operations) {
       $variables->toggle['#attributes']['class'] = ['btn-sm'];
       $variables['btn_context'] = 'operations';

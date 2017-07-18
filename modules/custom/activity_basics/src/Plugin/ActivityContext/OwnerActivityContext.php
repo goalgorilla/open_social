@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_basics\Plugin\ActivityContext\OwnerActivityContext.
- */
-
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
-
 
 /**
  * Provides a 'OwnerActivityContext' activity context.

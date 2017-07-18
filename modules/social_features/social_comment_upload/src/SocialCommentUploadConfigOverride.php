@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_post_photo\SocialPostPhotoConfigOverride.
- */
-
 namespace Drupal\social_comment_upload;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -12,20 +7,16 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
+ * Class SocialCommentUploadConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_comment_upload
  */
 class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterface {
 
-
   /**
    * Returns config overrides.
-   *
-   * @param array $names
-   *   A list of configuration names that are being loaded.
-   *
-   * @return array
-   *   An array keyed by configuration name of override data. Override data
-   *   contains a nested array structure of overrides.
    */
   public function loadOverrides($names) {
     $overrides = array();
@@ -42,7 +33,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
         'field_group' => [
           'group_add_attachment' => [
             'children' => [
-              'field_comment_files'
+              'field_comment_files',
             ],
             'parent_name' => '',
             'weight' => 20,
@@ -52,18 +43,18 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
               'required_fields' => TRUE,
               'id' => '',
               'classes' => 'comment-attachments',
-              'open' => FALSE
+              'open' => FALSE,
             ],
-            'label' => 'Add attachment'
-          ]
-        ]
+            'label' => 'Add attachment',
+          ],
+        ],
       ];
 
       $content = $config->get('content');
       $content['field_comment_files'] = [
         'weight' => 1,
         'settings' => [
-          'progress_indicator' => 'throbber'
+          'progress_indicator' => 'throbber',
         ],
         'third_party_settings' => [],
         'type' => 'file_generic',

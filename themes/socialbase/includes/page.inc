@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * The page inc file for the Social base theme.
+ */
+
 use Drupal\node\Entity\Node;
 
 /**
@@ -11,7 +16,7 @@ function socialbase_preprocess_page(&$variables) {
   // If we have the admin toolbar permission.
   $user = \Drupal::currentUser();
 
-  // Check for permission
+  // Check for permission.
   if ($user->hasPermission('access toolbar')) {
     $variables['#attached']['library'][] = 'socialbase/admin-toolbar';
   }
@@ -21,10 +26,9 @@ function socialbase_preprocess_page(&$variables) {
     $variables['plain_title'] = strip_tags($variables['page']['#title']);
   }
 
-  // Hide page title for pages where we want to display it in the Hero instead, like event, topic, basic page.
-
-  // Determine if we are looking at a node
-
+  // Hide page title for pages where we want to display it in the Hero instead,
+  // like event, topic, basic page.
+  // Determine if we are looking at a node.
   $nid = \Drupal::routeMatch()->getRawParameter('node');
   $node = FALSE;
 
@@ -33,7 +37,7 @@ function socialbase_preprocess_page(&$variables) {
   }
 
   if ($node instanceof Node) {
-    // list pages where we want to hide the default page title
+    // List pages where we want to hide the default page title.
     $page_to_exclude = [
       'event',
       'topic',
@@ -59,12 +63,12 @@ function socialbase_preprocess_page_title(&$variables) {
     $variables['stream'] = TRUE;
   }
 
-  // check if we are a node
+  // Check if we are a node.
   if (strpos($current_path, 'node') !== FALSE) {
     $variables['node'] = TRUE;
   }
 
-  // check if we are on the node/edit or node/add
+  // Check if we are on the node/edit or node/add.
   if (strpos($current_path, 'edit') !== FALSE || strpos($current_path, 'add') !== FALSE) {
     $variables['edit'] = TRUE;
   }

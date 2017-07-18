@@ -102,7 +102,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     }
 
   }
-  // PLace this here, since hiding it should happen always and not only on the mentioned routes.
+  // PLace this here, since hiding it should happen always
+  // and not only on the mentioned routes.
   if (!$can_show_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
   }
@@ -157,7 +158,7 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
  *   - node: The node object.
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
-function social_event_preprocess_node(&$variables) {
+function social_event_preprocess_node(array &$variables) {
   $view_mode = $variables['view_mode'];
   $node = $variables['node'];
   if ($node->getType() === 'event') {
@@ -199,7 +200,7 @@ function _social_event_format_date($event, $view_mode) {
   // or defaults back to the sites timezone if the user didnt select any.
   $timezone = drupal_get_user_timezone();
 
-  // Get start and end dates
+  // Get start and end dates.
   if ($start_date_field = $event->field_event_date) {
     if (!empty($start_date_field->value)) {
       // Since dates are stored as UTC, we will declare our event values

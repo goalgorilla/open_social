@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\file\FileStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -9,6 +10,11 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoUser.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoUser extends DemoContent {
 
   /**
@@ -27,12 +33,6 @@ abstract class DemoUser extends DemoContent {
 
   /**
    * DemoUser constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\profile\ProfileStorageInterface $profile_storage
-   * @param \Drupal\file\FileStorageInterface $file_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, ProfileStorageInterface $profile_storage, FileStorageInterface $file_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -84,7 +84,8 @@ abstract class DemoUser extends DemoContent {
         $item['picture'] = $this->preparePicture($item['picture']);
       }
       else {
-        // Set "null" to exclude errors during saving (in cases when picture will equal to "false").
+        // Set "null" to exclude errors during saving
+        // (in cases when picture will equal to "false").
         $item['picture'] = NULL;
       }
 
@@ -106,7 +107,7 @@ abstract class DemoUser extends DemoContent {
         continue;
       }
 
-      $this->content[ $account->id() ] = $account;
+      $this->content[$account->id()] = $account;
 
       // Load the profile, since it's autocreated.
       $profiles = $this->profileStorage->loadByProperties([
@@ -124,7 +125,7 @@ abstract class DemoUser extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'name' => $item['name'],
@@ -143,8 +144,11 @@ abstract class DemoUser extends DemoContent {
   /**
    * Prepares data about an image of a profile.
    *
-   * @param $picture
+   * @param string $picture
+   *    The picture by uuid.
+   *
    * @return array
+   *    Returns an array.
    */
   protected function preparePicture($picture) {
     $value = NULL;
@@ -167,9 +171,11 @@ abstract class DemoUser extends DemoContent {
    * Fills the some fields of a profile.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
+   *    Type of ProfileInterface.
    * @param array $item
+   *    The profile field item.
    */
-  protected function fillProfile($profile, $item) {
+  protected function fillProfile(ProfileInterface $profile, array $item) {
     $profile->field_profile_image = $item['picture'];
     $profile->field_profile_first_name = $item['first_name'];
     $profile->field_profile_last_name = $item['last_name'];

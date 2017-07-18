@@ -10,6 +10,8 @@ use Drupal\file\FileStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Page Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "page",
  *   label = @Translation("Basic page"),
@@ -28,13 +30,6 @@ class Page extends DemoNode {
 
   /**
    * Page constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
-   * @param \Drupal\file\FileStorageInterface $file_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
@@ -60,7 +55,7 @@ class Page extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
@@ -81,8 +76,11 @@ class Page extends DemoNode {
   /**
    * Prepares data about an image of node.
    *
-   * @param $uuid
+   * @param string $uuid
+   *    The uuid for the image.
+   *
    * @return array|null
+   *    Returns an array or null.
    */
   protected function prepareImage($uuid) {
     $value = NULL;

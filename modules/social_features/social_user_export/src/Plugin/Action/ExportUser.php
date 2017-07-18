@@ -18,7 +18,6 @@ use \Symfony\Component\DependencyInjection\ContainerInterface;
  *   confirm_form_route_name = "social_user_export.export_user_confirm"
  * )
  */
-
 class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
 
   /**
@@ -36,11 +35,15 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
   protected $currentUser;
 
   /**
+   * Apply for all.
+   *
    * @var bool
    */
   protected $apply_all;
 
   /**
+   * The query.
+   *
    * @var array
    */
   protected $query = [];
@@ -112,14 +115,20 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
   }
 
   /**
+   * Set the apply_all property.
+   *
    * @param bool $apply_all
+   *   Boolean that determines if this applies for all or not.
    */
   public function setApplyAll($apply_all) {
     $this->apply_all = $apply_all;
   }
 
   /**
+   * Set the query property.
+   *
    * @param array $query
+   *   An array with query properties.
    */
   public function setQuery(array $query) {
     $this->query = $query;

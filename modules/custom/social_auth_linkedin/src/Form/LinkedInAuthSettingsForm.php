@@ -6,7 +6,8 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class LinkedInAuthSettingsForm
+ * Class LinkedInAuthSettingsForm.
+ *
  * @package Drupal\social_auth_linkedin\Form
  */
 class LinkedInAuthSettingsForm extends ConfigFormBase {

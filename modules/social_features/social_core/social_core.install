@@ -1,22 +1,24 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_comment module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\file\Entity\File;
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_requirements().
- *
- * @param $phase
- * @return array
  */
 function social_core_requirements($phase) {
   $requirements = [];
@@ -46,9 +48,9 @@ function social_core_install() {
   _social_core_set_permissions();
   // Create AN Homepage block.
   _social_core_create_an_homepage_block();
-  // Add menu items
+  // Add menu items.
   _social_core_create_menu_links();
-  //Set jpeg quality
+  // Set jpeg quality.
   _social_core_set_image_quality();
 }
 
@@ -64,7 +66,7 @@ function social_core_update_8001(&$sandbox) {
  * Function to set permissions.
  */
 function _social_core_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -78,8 +80,13 @@ function _social_core_set_permissions() {
 }
 
 /**
- * @param $role
+ * Build the permissions.
+ *
+ * @param string $role
+ *    The role.
+ *
  * @return array
+ *    Returns an array containing the permissions.
  */
 function _social_core_get_permissions($role) {
   // Anonymous.
@@ -93,7 +100,6 @@ function _social_core_get_permissions($role) {
     'use text format basic_html',
     'use text format simple_text',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
@@ -141,7 +147,7 @@ function _social_core_create_an_homepage_block() {
   // Block image.
   $path = drupal_get_path('module', 'social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
-  $uri  = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
+  $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
 
   $media = File::create(array(
     'langcode' => 'en',
@@ -206,7 +212,6 @@ function _social_core_create_an_homepage_block() {
   $block->save();
 }
 
-
 /**
  * Function to create some menu items.
  */
@@ -236,7 +241,7 @@ function _social_core_create_menu_links() {
  * Enable full_html format for contentmanager and sitemanager roles.
  */
 function social_core_update_8002() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   $permissions = array(
     'use text format full_html',
@@ -256,7 +261,6 @@ function social_core_update_8002() {
 function social_core_update_8003() {
 
   $modules = array(
-    'libraries',
     'image_widget_crop',
   );
   \Drupal::service('module_installer')->install($modules);
@@ -267,7 +271,7 @@ function social_core_update_8003() {
  * Add permission to view admin theme for contentmanager and sitemanager roles.
  */
 function social_core_update_8004() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   $permissions = array(
     'view the administration theme',
@@ -389,16 +393,18 @@ function social_core_update_8005(&$sandbox) {
           if ($ratio > 1) {
             $width = $value['width'];
             $height = $value['height'] * (($value['width'] / $value['height']) / $ratio);
-          } elseif ($ratio === 1) {
+          }
+          elseif ($ratio === 1) {
             $width = $height = min([$value['width'], $value['height']]);
-          } else {
+          }
+          else {
             $width = $value['width'] * (($value['width'] / $value['height']) / $ratio);
             $height = $value['height'];
           }
 
           $center_x = round($value['width'] / 2);
           $center_y = round($value['height'] / 2);
-          $crop_width_half  = round($width / 2);
+          $crop_width_half = round($width / 2);
           $crop_height_half = round($height / 2);
           $x = max(0, $center_x - $crop_width_half);
           $y = max(0, $center_y - $crop_height_half);
@@ -562,9 +568,77 @@ function social_core_update_8015(&$sandbox) {
 }
 
 /**
+ * Install social_tour module.
+ */
+function social_core_update_8018(&$sandbox) {
+  $modules = array(
+    'social_tour',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Install the social_file_private module.
+ */
+function social_core_update_8019() {
+  $file_private_path_base_path = PrivateStream::basePath();
+
+  if ($file_private_path_base_path !== NULL) {
+    $modules = array(
+      'social_file_private',
+    );
+    \Drupal::service('module_installer')->install($modules);
+    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+  }
+  else {
+    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
+  }
+}
+
+/**
+ * Fix an schema issue caused by Flag module.
+ */
+function social_core_update_8020() {
+  $bundle_schema = [
+    'description' => 'The Flag ID.',
+    'type' => 'varchar_ascii',
+    'length' => EntityTypeInterface::BUNDLE_MAX_LENGTH,
+    'not null' => TRUE,
+  ];
+
+  /** @var \Drupal\Core\Database\Schema $schema */
+  $schema = \Drupal::database()->schema();
+  $schema->changeField('flagging', 'flag_id', 'flag_id', $bundle_schema);
+  $schema->dropIndex('flagging', 'flag_id');
+  $schema->dropIndex('flagging', 'flagging_field__flag_id__target_id');
+  $schema->addIndex('flagging', 'flagging_field__flag_id__target_id', ['flag_id'], ['fields' => ['flag_id' => $bundle_schema]]);
+
+  // Update the field storage repository.
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $efm */
+  $efm = \Drupal::service('entity_field.manager');
+  /** @var \Drupal\Core\KeyValueStore\KeyValueStoreInterface $kv */
+  $kv = \Drupal::service('keyvalue');
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $repo */
+  $repo = \Drupal::service('entity.last_installed_schema.repository');
+
+  $efm->clearCachedFieldDefinitions();
+  $storage_definition = $efm->getFieldStorageDefinitions('flagging')['flag_id'];
+  $repo->setLastInstalledFieldStorageDefinition($storage_definition);
+
+  // Update the stored field schema.
+  // @todo: There has to be a better way to do this.
+  $kv_collection = 'entity.storage_schema.sql';
+  $kv_name = 'flagging.field_schema_data.flag_id';
+  $field_schema = $kv->get($kv_collection)->get($kv_name);
+  $field_schema['flagging']['fields']['flag_id'] = $bundle_schema;
+  $field_schema['flagging']['indexes']['flagging_field__flag_id__target_id'] = ['flag_id'];
+  $kv->get($kv_collection)->set($kv_name, $field_schema);
+}
+
+/**
  * Update social_post existing content.
  */
-function social_core_update_8016(&$sandbox) {
+function social_core_update_8021(&$sandbox) {
   $database = \Drupal::database();
   $table_post = 'post';
   $table_data = 'post_field_data';
@@ -593,15 +667,17 @@ function social_core_update_8016(&$sandbox) {
   );
   $schema = Drupal\Core\Database\Database::getConnection()->schema();
 
-  if($schema->fieldExists($table_post, 'type')) {
+  if ($schema->fieldExists($table_post, 'type')) {
     $schema->changeField($table_post, 'type', 'type', $spec);
-  } else {
+  }
+  else {
     $schema->addField($table_post, 'type', $spec);
   }
 
-  if($schema->fieldExists($table_data, 'type')) {
+  if ($schema->fieldExists($table_data, 'type')) {
     $schema->changeField($table_data, 'type', 'type', $spec);
-  } else {
+  }
+  else {
     $schema->addField($table_data, 'type', $spec);
   }
 
@@ -639,7 +715,7 @@ function social_core_update_8016(&$sandbox) {
     $insert_query_data->execute();
   }
 
-  // Unset default value for post entity
+  // Unset default value for post entity.
   $schema->fieldSetNoDefault($table_data, 'type');
   $schema->fieldSetNoDefault($table_data, 'type');
 }
@@ -647,7 +723,7 @@ function social_core_update_8016(&$sandbox) {
 /**
  * Install social_post_photo module.
  */
-function social_core_update_8017() {
+function social_core_update_8022() {
   $modules = array(
     'social_post_photo',
   );
@@ -655,29 +731,41 @@ function social_core_update_8017() {
 }
 
 /**
- * Install social_tour module.
+ * Update the context_mapping for account_header_block blocks.
  */
-function social_core_update_8018(&$sandbox) {
+function social_core_update_8023() {
+
+  $blocks = Block::loadMultiple();
+
+  /** @var \Drupal\block\Entity\Block $block */
+  foreach ($blocks as $block) {
+    if ($block->getPluginId() === 'account_header_block') {
+      $block_settings = $block->get('settings');
+      if (!isset($block_settings['context_mapping']['user'])) {
+        $block_settings['context_mapping']['user'] = '@user.current_user_context:current_user';
+        $block->set('settings', $block_settings);
+        $block->save();
+      }
+    }
+  }
+}
+
+/**
+ * Install image_effects module.
+ */
+function social_core_update_8024() {
   $modules = array(
-    'social_tour',
+    'image_effects',
   );
   \Drupal::service('module_installer')->install($modules);
 }
 
 /**
- * Install the social_file_private module.
+ * Install social_swiftmail module.
  */
-function social_core_update_8019() {
-  $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
-
-  if ($file_private_path_base_path !== NULL) {
-    $modules = array(
-      'social_file_private',
-    );
-    \Drupal::service('module_installer')->install($modules);
-    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
-  }
-  else {
-    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
-  }
+function social_core_update_8025() {
+  $modules = array(
+    'social_swiftmail',
+  );
+  \Drupal::service('module_installer')->install($modules);
 }

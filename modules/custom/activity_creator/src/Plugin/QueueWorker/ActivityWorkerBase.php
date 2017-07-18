@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\QueueWorker\ActivityWorkerBase.
- */
-
 namespace Drupal\activity_creator\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;

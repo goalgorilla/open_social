@@ -49,13 +49,6 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
       $form['actions']['submit']['#attributes']['value'] = t('Submit');
       $form['actions']['submit']['#value'] = t('Submit');
       break;
-
-    default:
-      // By default the comment form has the "Reply comment" page URL in the "action" attribute.
-      // So we should set the current URL to exclude changing the route name.
-      // Otherwise this "switch" won't work.
-      $form['#action'] = \Drupal::request()->getRequestUri();
-      break;
   }
 
   $form['#attached']['library'][] = 'social_post/keycode-submit';
@@ -99,7 +92,8 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
     default:
       if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
         unset($links['comment']['#links']['comment-reply']);
-      } else{
+      }
+      else {
         $group_contents = GroupContent::loadByEntity($commented_entity);
         // Only react if it is actually posted inside a group.
         if (!empty($group_contents)) {
@@ -148,7 +142,7 @@ function social_comment_preprocess_comment(&$variables) {
   }
 
   // Add node ID attribute for comment "new" indicator.
-  if(\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node'){
+  if (\Drupal::moduleHandler()->moduleExists('history') && $comment->getCommentedEntityTypeId() == 'node') {
     $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
   }
 
@@ -219,7 +213,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       if ($comment_count > 1) {
         $more_link = t('Show all :num_comments comments', $t_args);
 
-        // set link classes to be added to the button
+        // Set link classes to be added to the button.
         $more_link_options = array(
           'attributes' => array(
             'class' => array(
@@ -230,10 +224,10 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
           ),
         );
 
-        // set path to post node
+        // Set path to post node.
         $link_url = $commented_entity->urlInfo('canonical');
 
-        // attach the attributes
+        // Attach the attributes.
         $link_url->setOptions($more_link_options);
 
         $more_button = Link::fromTextAndUrl($more_link, $link_url)

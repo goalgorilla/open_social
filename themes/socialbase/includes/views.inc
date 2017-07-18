@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The views inc file for the Social base theme.
+ */
+
+/**
  * Implements hook_preprocess_views_exposed_form().
  *
  * For all views exposed forms we set a consistent form actions layout.

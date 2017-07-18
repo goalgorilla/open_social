@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContextInterface.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
@@ -27,9 +22,9 @@ interface ActivityContextInterface extends PluginInspectionInterface {
    */
   public function getRecipients(array $data, $last_id, $limit);
 
-
   /**
    * Determines if the entity is valid for this context.
    */
   public function isValidEntity($entity);
+
 }

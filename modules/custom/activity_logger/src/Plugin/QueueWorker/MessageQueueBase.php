@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_logger\Plugin\QueueWorker\MessageQueueBase.
- */
-
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -13,6 +8,7 @@ use Drupal\Core\Queue\QueueWorkerBase;
  * Provides base functionality for the ReportWorkers.
  */
 abstract class MessageQueueBase extends QueueWorkerBase {
+
   /**
    * Simple reporter log and display information about the queue.
    *

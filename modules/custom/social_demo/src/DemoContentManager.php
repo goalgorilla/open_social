@@ -6,6 +6,11 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
+/**
+ * Class DemoContentManager.
+ *
+ * @package Drupal\social_demo
+ */
 class DemoContentManager extends DefaultPluginManager {
 
   /**
@@ -41,10 +46,11 @@ class DemoContentManager extends DefaultPluginManager {
    *   Identifiers of plugins.
    * @param array $configurations
    *   Array with configuration for all plugins.
+   *
    * @return array
    *   Array with instances of the plugins.
    */
-  public function createInstances($plugin_ids, array $configurations = []) {
+  public function createInstances(array $plugin_ids, array $configurations = []) {
     $instances = [];
 
     foreach ($plugin_ids as $plugin_id) {

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * The block inc file for the Social base theme.
+ */
+
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block\Entity\Block;
 use Drupal\file\Entity\File;
@@ -8,8 +13,10 @@ use Drupal\image\Entity\ImageStyle;
 /**
  * Override block theme suggestions.
  *
- * @param $suggestions
- * @param $variables
+ * @param array $suggestions
+ *    Array with suggestions.
+ * @param array $variables
+ *    Array with variables.
  */
 function socialbase_theme_suggestions_block_alter(array &$suggestions, array $variables) {
 
@@ -39,18 +46,21 @@ function socialbase_theme_suggestions_block_alter(array &$suggestions, array $va
   if (in_array($block_id, $blocks_id)) {
     $suggestions = array($variables['theme_hook_original'] . '__' . 'views_block__sidebar');
   }
+
+  if (isset($variables['elements']['kpi_analytics'])) {
+    $suggestions = array($variables['theme_hook_original'] . '__' . 'charts');
+  }
 }
 
 /**
  * Implements hook_preprocess_block().
- * @param $variables
  */
 function socialbase_preprocess_block(&$variables) {
   // Find out what the active theme is first.
   $theme = \Drupal::theme()->getActiveTheme();
 
   $profile_user_id = \Drupal::routeMatch()->getParameter('user');
-  $block = \Drupal\block\Entity\Block::load($variables['elements']['#id']);
+  $block = Block::load($variables['elements']['#id']);
   $route_name = \Drupal::routeMatch()->getRouteName();
 
   // Fetch the current active (sub)theme.
@@ -68,9 +78,8 @@ function socialbase_preprocess_block(&$variables) {
     'complementary_top',
     'complementary_bottom',
     'content_top',
-    'content_bottom'
+    'content_bottom',
   ];
-
 
   if (in_array($region, $regions_card)) {
     $variables['card'] = TRUE;
@@ -84,7 +93,7 @@ function socialbase_preprocess_block(&$variables) {
       $prefix . 'topic_add_block',
       $prefix . 'group_add_block',
       $prefix . 'group_add_event_block',
-      $prefix . 'group_add_topic_block'
+      $prefix . 'group_add_topic_block',
     ];
 
     if (in_array($variables['elements']['#id'], $block_buttons)) {
@@ -93,17 +102,21 @@ function socialbase_preprocess_block(&$variables) {
 
   }
 
-  // wrap the group/membership table in a card element.
+  if (isset($variables['elements']['kpi_analytics'])) {
+    $variables['card'] = TRUE;
+  }
+
+  // Wrap the group/membership table in a card element.
   if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block' && $route_name == 'entity.group_content.collection') {
     $variables['card'] = TRUE;
   }
 
-  // Show group managers block in a card
+  // Show group managers block in a card.
   if ($variables['elements']['#derivative_plugin_id'] == 'group_managers-block_list_managers') {
     $variables['card'] = TRUE;
   }
 
-  // for all platform_intro blocks we want them to appear as cards.
+  // For all platform_intro blocks we want them to appear as cards.
   if (isset($variables['elements']['content']['#block_content'])) {
     if ($variables['elements']['content']['#block_content']->bundle() == 'platform_intro') {
       $variables['card'] = TRUE;
@@ -142,7 +155,6 @@ function socialbase_preprocess_block(&$variables) {
   }
 
   // Preprocess search block header.
-
   if (isset($variables['content']['search_form'])) {
     $variables['content']['search_form']['#attributes']['role'] = 'search';
     $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
@@ -176,6 +188,7 @@ function socialbase_preprocess_block(&$variables) {
     }
     $variables['profile_user_id'] = $profile_user_id;
   }
+
   // AN Homepage block.
   if (isset($variables['elements']['content']['#block_content'])) {
     if ($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {

@@ -1,17 +1,21 @@
 <?php
 
 /**
+ * @file
+ * The social_file_private install file.
+ */
+
+use Drupal\Core\StreamWrapper\PrivateStream;
+
+/**
  * Implements hook_requirements().
- *
- * @param $phase
- * @return array
  */
 function social_file_private_requirements($phase) {
   $requirements = [];
 
   // Test if the Private File System Path is set.
   if ($phase == 'runtime') {
-    $file_private_path_base_path = \Drupal\Core\StreamWrapper\PrivateStream::basePath();
+    $file_private_path_base_path = PrivateStream::basePath();
 
     if ($file_private_path_base_path === NULL) {
       $requirements['social_file_private_path'] = [
