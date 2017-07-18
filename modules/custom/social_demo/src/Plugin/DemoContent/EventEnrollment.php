@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * EventEnrollment Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "event_enrollment",
  *   label = @Translation("Event enrollment"),
@@ -17,7 +19,7 @@ class EventEnrollment extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry($item) {
+  public function getEntry(array $item) {
     $uid = $this->loadByUuid('user', $item['uid'])->id();
     $entry = parent::getEntry($item);
 

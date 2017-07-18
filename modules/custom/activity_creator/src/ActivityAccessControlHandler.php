@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\ActivityAccessControlHandler.
- */
-
 namespace Drupal\activity_creator;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -18,6 +13,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\activity_creator\Entity\Activity.
  */
 class ActivityAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */

@@ -1,6 +1,8 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - image_effects
 name: crop_thumbnail
 label: 'Crop thumbnail'
 effects:
@@ -12,3 +14,9 @@ effects:
       width: 400
       height: null
       upscale: false
+  cc6640a9-3c13-4371-a9f6-447a90efcce3:
+    uuid: cc6640a9-3c13-4371-a9f6-447a90efcce3
+    id: image_effects_auto_orient
+    weight: 2
+    data:
+      scan_exif: true

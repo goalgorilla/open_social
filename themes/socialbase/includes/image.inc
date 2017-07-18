@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * The image inc file for the Social base theme.
+ */
+
+/**
  * Implements template_preprocess_image_style().
  */
 function socialbase_preprocess_image_style(&$variables) {

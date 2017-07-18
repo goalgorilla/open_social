@@ -26,7 +26,7 @@ class GroupHeroBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if (!empty($group)) {
-      // Content
+      // Content.
       $content = \Drupal::entityTypeManager()
         ->getViewBuilder('group')
         ->view($group, 'hero');
@@ -37,7 +37,6 @@ class GroupHeroBlock extends BlockBase {
     }
     // Cache contexts.
     $build['#cache']['contexts'][] = 'url.path';
-
 
     return $build;
   }

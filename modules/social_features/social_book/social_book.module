@@ -22,6 +22,6 @@ function social_book_node_links_alter(array &$links, NodeInterface $entity, arra
 function social_book_menu_local_tasks_alter(&$data, $route_name) {
   // Remove the outline from ALL pages.
   if (isset($data['tabs'][0]['entity.node.book_outline_form'])) {
-      unset($data['tabs'][0]['entity.node.book_outline_form']);
+    unset($data['tabs'][0]['entity.node.book_outline_form']);
   }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\social_post_photo\Plugin\Block;
 
 use Drupal\social_post\Plugin\Block\PostBlock;

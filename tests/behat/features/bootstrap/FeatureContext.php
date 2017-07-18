@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -680,7 +681,12 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
       else {
-        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+        if (empty($gid)) {
+          throw new \Exception(sprintf("Group '%s' does not exist.", $groupname));
+        }
+        if (count($gid) > 1) {
+          throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
+        }
       }
     }
 

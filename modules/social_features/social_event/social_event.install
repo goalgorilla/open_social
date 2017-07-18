@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_event module.
  */
 
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -23,7 +25,7 @@ function social_event_install() {
  * Function to set permissions.
  */
 function _social_event_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -37,8 +39,13 @@ function _social_event_set_permissions() {
 }
 
 /**
- * @param $role
+ * Build permissions.
+ *
+ * @param string $role
+ *    The role.
+ *
  * @return array
+ *    Returns an array containing the permissions.
  */
 function _social_event_get_permissions($role) {
   // Anonymous.
@@ -54,7 +61,6 @@ function _social_event_get_permissions($role) {
     'override event published option',
     'view node.event.field_content_visibility:community content',
   ));
-
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(

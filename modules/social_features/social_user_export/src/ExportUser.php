@@ -7,8 +7,12 @@ use \Drupal\user\UserInterface;
 use \League\Csv\Writer;
 use \Drupal\Core\Link;
 use \Drupal\user\Entity\User;
-use \Drupal\Component\Utility\Random;
 
+/**
+ * Class ExportUser.
+ *
+ * @package Drupal\social_user_export
+ */
 class ExportUser {
 
   /**
@@ -170,6 +174,7 @@ class ExportUser {
    * Returns unique file path.
    *
    * @return string
+   *   The path to the file.
    */
   public static function getFileTemporaryPath() {
     $hash = md5(microtime(TRUE));

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityDestinationManager.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Utility\Html;
@@ -53,8 +48,10 @@ class ActivityDestinationManager extends DefaultPluginManager {
   /**
    * Retrieves an list of available destinations by given properties.
    *
-   * @param $condition
-   * @param $value
+   * @param string $condition
+   *   The property to filter on.
+   * @param bool $value
+   *   Value.
    *
    * @return string[]
    *   An array of the IDs of all available destination plugins.

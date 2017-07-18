@@ -37,25 +37,6 @@
  * @see template_preprocess_field()
  */
 #}
-
-{%
-set classes1 = [
-  'btn',
-  'btn-primary',
-  ]
-%}
-
-{%
-set classes2 = [
-  'btn',
-  'btn-default',
-  ]
-%}
-
 {% for item in items %}
-  {% if loop.first %}
-    <div{{ item.attributes.addClass(classes1) }}>{{ item.content }}</div>
-  {% else %}
-    <div{{ item.attributes.addClass(classes2) }}>{{ item.content }}</div>
-  {% endif %}
+  {{ item.content }}
 {% endfor %}

@@ -4,12 +4,12 @@ namespace Drupal\download_count\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 
 /**
  * Configure download count settings.
  */
 class DownloadCountSettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -39,7 +39,7 @@ class DownloadCountSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Excluded file extensions'),
       '#default_value' => $config->get('download_count_excluded_file_extensions'),
       '#maxlength' => 255,
-      '#description' => $this->t('To exclude files of certain types, enter the extensions to exclude separated by spaces. This is useful if you have private image fields and don\'t wish to include them in download counts.'),
+      '#description' => $this->t("To exclude files of certain types, enter the extensions to exclude separated by spaces. This is useful if you have private image fields and don't wish to include them in download counts."),
     );
 
     $form['download_count_flood_control'] = array(

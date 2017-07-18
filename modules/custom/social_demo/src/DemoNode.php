@@ -9,6 +9,11 @@ use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoNode.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoNode extends DemoContent {
 
   /**
@@ -27,12 +32,6 @@ abstract class DemoNode extends DemoContent {
 
   /**
    * DemoNode constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -80,16 +79,12 @@ abstract class DemoNode extends DemoContent {
       }
 
       // Try to load a user account (author's account).
-      $accounts = $this->userStorage->loadByProperties([
-        'uuid' => $item['uid'],
-      ]);
+      $account = $this->loadByUuid('user', $item['uid']);
 
-      if (!$accounts) {
+      if (!$account) {
         drush_log(dt("Account with uuid: {$item['uid']} doesn't exists."), LogLevel::ERROR);
         continue;
       }
-
-      $account = current($accounts);
 
       // Create array with data of a node.
       $item['uid'] = $account->id();
@@ -106,7 +101,7 @@ abstract class DemoNode extends DemoContent {
       $entity->save();
 
       if ($entity->id()) {
-        $this->content[ $entity->id() ] = $entity;
+        $this->content[$entity->id()] = $entity;
 
         if (!empty($item['group'])) {
           $this->createGroupContent($entity, $item['group']);
@@ -120,7 +115,7 @@ abstract class DemoNode extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],

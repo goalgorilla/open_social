@@ -8,7 +8,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
- * Class AuthManager
+ * Class AuthManager.
+ *
  * @package Drupal\social_auth_extra
  */
 abstract class AuthManager implements AuthManagerInterface {
@@ -40,9 +41,6 @@ abstract class AuthManager implements AuthManagerInterface {
 
   /**
    * AuthManager constructor.
-   * @param \Drupal\Core\Routing\UrlGeneratorInterface $urlGenerator
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
-   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    */
   public function __construct(UrlGeneratorInterface $urlGenerator, EntityFieldManagerInterface $entity_field_manager, LoggerChannelFactoryInterface $logger_factory) {
     $this->urlGenerator = $urlGenerator;

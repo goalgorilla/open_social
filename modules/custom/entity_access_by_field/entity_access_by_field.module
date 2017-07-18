@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Entity Access By Field module file.
@@ -8,10 +9,10 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\Cache;
-use \Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
 
-// @TODO Prevent creating multiple visibility fields on one node.
-// @TODO Add support for multiple entity types.
+// @todo: Prevent creating multiple visibility fields on one node.
+// @todo: Add support for multiple entity types.
 
 /**
  * Here we define a constant for our node access grant ID.
@@ -78,17 +79,15 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
                 'grant_delete' => 0,
                 'priority' => 0,
               );
-            } else {
-              $grants[] = array(
-                'realm' => $realm . '_author',
-                'gid' => $node->getOwnerId(),
-                'grant_view' => 1,
-                'grant_update' => 1,
-                'grant_delete' => 1,
-                'priority' => 0,
-              );
             }
-
+            $grants[] = array(
+              'realm' => $realm . '_author',
+              'gid' => $node->getOwnerId(),
+              'grant_view' => 1,
+              'grant_update' => 1,
+              'grant_delete' => 1,
+              'priority' => 0,
+            );
           }
         }
       }
@@ -152,11 +151,10 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
   }
 }
 
-
 /**
  * Implements hook_form_alter().
  */
-function entity_access_by_field_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function entity_access_by_field_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   if (isset($form['field_content_visibility']) || isset($form['field_visibility'])) {
 

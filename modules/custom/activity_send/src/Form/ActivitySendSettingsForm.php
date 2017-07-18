@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
  * Configure activity send settings.
  */
 class ActivitySendSettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */
