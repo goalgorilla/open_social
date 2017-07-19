@@ -14,7 +14,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   // Determine host.
   $request = \Drupal::request();
   $host = $request->getSchemeAndHttpHost();
-  // Load default theme (not active)
+  // Load default theme (not active).
   $theme_id = \Drupal::config('system.theme')->get('default');
 
   // Need to check this, since otherwise site-install will fail.
@@ -51,4 +51,21 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     );
     $variables['heading'] = t('Hi %display_name', $replace, $options);
   }
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function social_swiftmail_mail_alter(&$message) {
+  // Get the site settings.
+  $site_settings = \Drupal::config('system.site');
+
+  // If there is something set as 'from' sender, we append the site name.
+  if (isset($message['from'])) {
+    $message['from'] = $site_settings->get('name') . ' <' . $message['from'] . '>';
+  }
+  else {
+    $message['from'] = $site_settings->get('name') . ' <' . $site_settings->get('mail') . '>';
+  }
+
 }
