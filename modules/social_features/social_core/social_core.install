@@ -168,7 +168,7 @@ function _social_core_create_an_homepage_block() {
   ];
   $crop_type = \Drupal::entityTypeManager()
     ->getStorage('crop_type')
-    ->load('hero');
+    ->load('hero_an');
   if (!empty($crop_type) && $crop_type instanceof CropType) {
     $image_widget_crop_manager = \Drupal::service('image_widget_crop.manager');
     $image_widget_crop_manager->applyCrop($data, [
