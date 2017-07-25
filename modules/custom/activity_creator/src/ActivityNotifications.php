@@ -122,7 +122,7 @@ class ActivityNotifications extends ControllerBase {
    * @return Activity
    *    Returns activity object.
    */
-  public function changeStatusOfActivity(Activity $activity, array $status = ACTIVITY_STATUS_RECEIVED) {
+  public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);
 
     return $activity->save();
