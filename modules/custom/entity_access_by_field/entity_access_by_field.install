@@ -26,6 +26,16 @@ function entity_access_by_field_update_8001(&$sandbox) {
 }
 
 /**
+ * Set community visibility by default.
+ */
+function entity_access_by_field_update_8002() {
+  \Drupal::configFactory()
+    ->getEditable('entity_access_by_field.settings')
+    ->set('default_visibility', 'community')
+    ->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _entity_access_by_field_set_permissions() {
