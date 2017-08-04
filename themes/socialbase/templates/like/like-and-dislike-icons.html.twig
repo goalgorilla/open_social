@@ -16,15 +16,13 @@
  */
 #}
 <div class="vote-widget vote-widget--like-and-dislike">
-
   <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ like_attributes }} >
+    <a {{ like_attributes }} >&nbsp;
       <span class="badge badge--large badge--pill badge-default">
         <span class="badge__container">
           <svg class="badge__icon icon-vote">
             <use xlink:href="#icon-like"></use>
           </svg>
-          <span class="badge__label count">{{ likes }}</span>
         </span>
       </span>
     </a>
@@ -35,4 +33,5 @@
     <span class="count">{{ dislikes }}</span>
   </div>
 
+  <span class="badge badge--large badge--pill badge-default"><a class="use-ajax" data-dialog-type="modal" href="/wholiked/{{ entity_type }}/{{ entity_id }}">{% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}</a></span>
 </div>

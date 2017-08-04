@@ -18,5 +18,8 @@ function social_like_entity_view_alter(array &$build, EntityInterface $entity, E
     if (!\Drupal::currentUser()->hasPermission('view like widget')) {
       unset($build['like_and_dislike']);
     }
+    else {
+      $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    }
   }
 }
