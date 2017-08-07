@@ -59,6 +59,14 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
     unset($form['actions']['set_default']);
   }
 
+  if (isset($form['field_profile_expertise']['widget']['target_id'])) {
+    $form['field_profile_expertise']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
+  }
+
+  if (isset($form['field_profile_interests']['widget']['target_id'])) {
+    $form['field_profile_interests']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
+  }
+
   // Add custom submit handler just for redirect purposes. We don't want to
   // override the form::save in profile.
   $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
@@ -84,6 +92,14 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Remove the save and set default submit button on profile edit.
   if (isset($form['actions']['set_default'])) {
     unset($form['actions']['set_default']);
+  }
+
+  if (isset($form['field_profile_expertise']['widget']['target_id'])) {
+    $form['field_profile_expertise']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
+  }
+
+  if (isset($form['field_profile_interests']['widget']['target_id'])) {
+    $form['field_profile_interests']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
   }
 
   // Add custom submit handler just for redirect purposes. We don't want to
