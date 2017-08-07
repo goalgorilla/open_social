@@ -83,6 +83,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             if (isset($message->field_message_related_object)) {
               $target_type = $message->field_message_related_object->target_type;
               $target_id = $message->field_message_related_object->target_id;
+              /** @var \Drupal\comment\Entity\Comment $comment */
               $comment = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
@@ -90,10 +91,16 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
               if (!empty($comment)) {
                 if ($comment->getEntityTypeId() == 'comment') {
                   if (!empty($comment->getCommentedEntity())) {
+                    /** @var \Drupal\Core\Entity\Entity $node */
                     $node = $comment->getCommentedEntity();
                     $bundle = $node->bundle();
+                    $type = $node->getEntityTypeId();
 
                     if (!empty($bundle)) {
+                      // For posts, we don't use the bundle name, but the entity type id.
+                      if (isset($type) && $type == 'post') {
+                        $bundle = $type;
+                      }
                       $replacements[$original] = $bundle;
                     }
                   }
