@@ -3,8 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.compact
-    - field.storage.profile.field_profile_first_name
-    - field.storage.profile.field_profile_last_name
     - votingapi.vote_type.like
   module:
     - node
@@ -118,11 +116,11 @@ display:
           view_mode: compact
           entity_type: profile
           plugin_id: rendered_entity
-        field_profile_first_name:
-          id: field_profile_first_name
-          table: profile__field_profile_first_name
-          field: field_profile_first_name
-          relationship: profile
+        name:
+          id: name
+          table: users_field_data
+          field: name
+          relationship: user_id
           group_type: group
           admin_label: ''
           label: ''
@@ -167,9 +165,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: user_name
           settings:
-            link_to_entity: false
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -180,69 +178,8 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
-        field_profile_last_name:
-          id: field_profile_last_name
-          table: profile__field_profile_last_name
-          field: field_profile_last_name
-          relationship: profile
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
+          entity_type: user
+          entity_field: name
           plugin_id: field
         view_user:
           id: view_user
@@ -492,19 +429,17 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-        - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_notification'
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.like_teaser'
         - 'config:core.entity_view_display.profile.profile.search_index'
-        - 'config:core.entity_view_display.profile.profile.small'
-        - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.profile.field_profile_first_name'
-        - 'config:field.storage.profile.field_profile_last_name'
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.compact_notification'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
   wholiked:
     display_plugin: page
     id: wholiked
@@ -533,5 +468,3 @@ display:
         - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.profile.field_profile_first_name'
-        - 'config:field.storage.profile.field_profile_last_name'
