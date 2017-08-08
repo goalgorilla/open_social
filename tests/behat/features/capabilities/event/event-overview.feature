@@ -7,12 +7,12 @@ Feature: Overview
   @LU @perfect @critical
   Scenario: Successfully see the event overview
     Given users:
-      | name       | pass       | mail                   | status |
-      | eoverview1 | eoverview1 | eoverview1@example.com | 1      |
-      | eoverview2 | eoverview2 | eoverview2@example.com | 1      |
-    And I am logged in as "eoverview1"
-    And I am on "user"
-    When I click "Events"
+      | name     | mail               | status |
+      | User One | user_1@example.com | 1      |
+      | User Two | user_2@example.com | 1      |
+    When I am logged in as "User One"
+    And I am on "/user"
+    And I click "Events"
     Then I should see "Events" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"
     And I should see "Upcoming events"
@@ -20,13 +20,10 @@ Feature: Overview
     And I should see text matching "Publish status"
 
     # Scenario: Successfully see the topic overview of another user
-    Given I am logged in as "eoverview2"
-      And I am on "all-members"
-     Then I should see "eoverview1"
-     When I click "eoverview1"
-      And I click "Events"
-     Then I should see "Events" in the "Page title block"
-      And I should see "FILTER" in the "Sidebar second"
-      And I should not see text matching "Publish status"
+    Given I am on the profile of "User Two"
+    When I click "Events"
+    Then I should see "Events" in the "Page title block"
+    And I should see "FILTER" in the "Sidebar second"
+    And I should not see text matching "Publish status"
 
     #@TODO make a scenario for filters to work.
