@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_entity_view_alter().
@@ -21,5 +22,18 @@ function social_like_entity_view_alter(array &$build, EntityInterface $entity, E
     else {
       $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
     }
+  }
+}
+
+
+/**
+ * Implements hook_views_pre_render().
+ *
+ * @param \Drupal\views\ViewExecutable $view
+ */
+function social_like_views_pre_render(ViewExecutable $view) {
+  // Set the amount of likes as the title.
+  if ($view->id() == 'who_liked_this_entity') {
+    $view->setTitle(t('@amount like(s)', ['@amount' => $view->total_rows]));
   }
 }
