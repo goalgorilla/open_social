@@ -52,7 +52,7 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 10
+          items_per_page: 50
           offset: 0
       style:
         type: default
@@ -176,7 +176,18 @@ display:
       title: ''
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content: 'No one liked this content yet'
+          plugin_id: text_custom
       relationships:
         entity_id:
           id: entity_id
@@ -290,6 +301,9 @@ display:
           entity_field: entity_id
           plugin_id: numeric
       display_extenders: {  }
+      use_more: true
+      use_more_always: false
+      use_more_text: 'show some more'
     cache_metadata:
       max-age: -1
       contexts:
@@ -298,15 +312,15 @@ display:
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-        - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_notification'
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
-        - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.compact_notification'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.teaser'
   wholiked:
     display_plugin: page
