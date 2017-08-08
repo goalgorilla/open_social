@@ -72,7 +72,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function createAccount($values = []) {
+  public function createAccount(array $values = []) {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $values = array_merge([
       'name' => '',
@@ -94,7 +94,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function createProfile($values = []) {
+  public function createProfile(array $values = []) {
     $values = array_merge([
       'uid' => $this->account ? $this->account->id() : NULL,
       'type' => $this->profileType,
