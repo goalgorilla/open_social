@@ -28,10 +28,17 @@
     a:hover {
 
       // Not voted like hover
+      &:not(.disable-status) .icon-vote,
       &:not(.voted-like) .icon-vote {
         stroke: $brand-danger;
         fill: transparent;
       }
+
+      &.disable-status .icon-vote,
+      .voted-like .icon-vote {
+        stroke: $text-color;
+      }
+
 
     }
 
