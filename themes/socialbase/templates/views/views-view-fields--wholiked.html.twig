@@ -31,7 +31,14 @@
  * @ingroup themeable
  */
 #}
-
+<div class="row">
 {% for field in fields -%}
-  {{ field.content }}
+  {%- if field.wrapper_element -%}
+    <{{ field.wrapper_element }}{{ field.wrapper_attributes }}>
+  {%- endif %}
+    {{ field.content }}
+  {%- if field.wrapper_element -%}
+    </{{ field.wrapper_element }}>
+  {%- endif %}
 {%- endfor %}
+</div>
