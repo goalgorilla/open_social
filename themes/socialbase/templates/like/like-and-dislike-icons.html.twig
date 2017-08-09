@@ -15,23 +15,33 @@
  *   - dislike_attributes : Set of attributes for dislike link.
  */
 #}
+{% if logged_in %}
+  
+{% endif %}
+
 <div class="vote-widget vote-widget--like-and-dislike">
-  <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ like_attributes }} >&nbsp;
-      <span class="badge badge--large badge--pill badge-default">
-        <span class="badge__container">
-          <svg class="badge__icon icon-vote">
-            <use xlink:href="#icon-like"></use>
-          </svg>
-        </span>
-      </span>
-    </a>
-  </div>
+  <div class="vote__wrapper">
+    <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
+      <a {{ like_attributes }} >
+        <svg class="icon-vote">
+          <use xlink:href="#icon-like"></use>
+        </svg>
+      </a>
+    </div>
 
-  <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ dislike_attributes }}>Dislike</a>
-    <span class="count">{{ dislikes }}</span>
-  </div>
+    <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">
+      <a {{ dislike_attributes }}>Dislike</a>
+      <span class="count">{{ dislikes }}</span>
+    </div>
 
-  <span class="badge badge--large badge--pill badge-default"><a class="use-ajax" data-dialog-type="modal" href="/wholiked/{{ entity_type }}/{{ entity_id }}">{% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}</a></span>
+    <div class="vote__count">
+      {% if logged_in %}
+      <a class="use-ajax" data-dialog-type="modal" href="/wholiked/{{ entity_type }}/{{ entity_id }}">
+        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+      </a>
+      {% else %}
+        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+      {% endif %}
+    </div>
+  </div>
 </div>
