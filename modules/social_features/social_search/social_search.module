@@ -24,6 +24,14 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     $form['#action'] = \Drupal::service('path.current')->getPath();
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
+
+    if ($form['#id'] == 'views-exposed-form-search-users-page') {
+      foreach ($form as &$element) {
+        if (is_array($element) && isset($element['#type']) && $element['#type'] == 'entity_autocomplete') {
+          $element['#selection_settings']['hide_id'] = TRUE;
+        }
+      }
+    }
   }
 }
 

@@ -116,13 +116,13 @@ class ActivityNotifications extends ControllerBase {
    *
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *    Activity object.
-   * @param array $status
+   * @param int $status
    *    See: activity_creator_field_activity_status_allowed_values().
    *
    * @return Activity
    *    Returns activity object.
    */
-  public function changeStatusOfActivity(Activity $activity, array $status = ACTIVITY_STATUS_RECEIVED) {
+  public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);
 
     return $activity->save();
