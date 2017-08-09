@@ -121,3 +121,10 @@ function social_search_update_8102(array &$sandbox) {
   }
 
 }
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8103() {
+  drush_search_api_reset_tracker();
+}
