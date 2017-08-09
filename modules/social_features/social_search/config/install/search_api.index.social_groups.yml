@@ -1,3 +1,4 @@
+uuid: 091664cb-07ba-4d42-8461-03c5217d07b2
 langcode: en
 status: true
 dependencies:
@@ -8,6 +9,9 @@ dependencies:
   config:
     - field.storage.group.field_group_description
     - search_api.server.social_database
+    - core.entity_view_mode.group.teaser
+_core:
+  default_config_hash: MxT41bMbWurJ5ITdkJiBQX5Ncc3qyelwUG6Q5-6C2LY
 id: social_groups
 name: 'Social Groups'
 description: 'Default group index created for the Social distribution.'
@@ -22,8 +26,8 @@ field_settings:
         anonymous: anonymous
       view_mode:
         'entity:group':
-          closed_group: default
-          open_group: default
+          closed_group: teaser
+          open_group: teaser
   type:
     label: Type
     datasource_id: 'entity:group'
