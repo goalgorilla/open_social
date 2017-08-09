@@ -28,6 +28,10 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
     $suggestions[] = $variables['theme_hook_original'] . '__page';
   }
 
+  if (!empty($views_display->display['id']) && $views_display->display['id'] == 'wholiked') {
+    $suggestions[] = $variables['theme_hook_original'] . '__members_list';
+  }
+
   if (!empty($views_display->display['id']) && (
       $views_display->display['id'] == 'page_explore' ||
       $views_display->display['id'] == 'block_stream_homepage' ||
@@ -40,4 +44,12 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   if (isset($view_id) && $view_id == 'group_managers') {
     $suggestions[] = $variables['theme_hook_original'] . '__group_managers';
   }
+}
+
+function socialbase_theme_suggestions_views_view_fields_alter(array &$suggestions, array $variables) {
+  //dpm($variables);
+  if (isset($variables['view']['current_display']) && $variables['view']['current_display'] == 'wholiked' ) {
+    $suggestions[] = $variables['theme_hook_original'] . '__wholiked';
+  }
+
 }
