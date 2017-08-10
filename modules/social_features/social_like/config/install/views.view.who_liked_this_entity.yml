@@ -8,6 +8,7 @@ dependencies:
     - node
     - profile
     - user
+    - views_infinite_scroll
     - votingapi
 id: who_liked_this_entity
 label: 'Who liked this entity'
@@ -50,10 +51,26 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: some
+        type: infinite_scroll
         options:
           items_per_page: 50
           offset: 0
+          id: 0
+          total_pages: null
+          tags:
+            previous: '‹ Previous'
+            next: 'Next ›'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          views_infinite_scroll:
+            button_text: 'show some more'
+            automatically_load_content: false
       style:
         type: default
       row:
@@ -417,15 +434,17 @@ display:
           entity_field: entity_id
           plugin_id: numeric
       display_extenders: {  }
-      use_more: true
+      use_more: false
       use_more_always: false
       use_more_text: 'show some more'
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
@@ -453,6 +472,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
