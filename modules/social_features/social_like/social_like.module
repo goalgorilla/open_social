@@ -5,6 +5,7 @@
  * The social_like module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\ViewExecutable;
@@ -36,4 +37,33 @@ function social_like_views_pre_render(ViewExecutable $view) {
   if ($view->id() == 'who_liked_this_entity') {
     $view->setTitle(t('@amount like(s)', ['@amount' => $view->total_rows]));
   }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function social_like_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'vote') {
+    social_like_invalidate_cache($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_like_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == 'vote') {
+    social_like_invalidate_cache($entity);
+  }
+}
+
+/**
+ * Implements social_like_invalidate_cache().
+ */
+function social_like_invalidate_cache(Drupal\Core\Entity\EntityInterface $entity) {
+  $cache_tag = [
+    $entity->getEntityTypeId() . ':' . $entity->id(),
+    'config:views.view.who_liked_this_entity'
+  ];
+  Cache::invalidateTags($cache_tag);
 }
