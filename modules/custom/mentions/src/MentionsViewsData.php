@@ -10,7 +10,7 @@ use Drupal\views\EntityViewsData;
 class MentionsViewsData extends EntityViewsData {
 
   /**
-   * @{inheritdoc}
+   * Get the views data.
    */
   public function getViewsData() {
     $data = parent::getViewsData();
