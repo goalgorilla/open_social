@@ -191,13 +191,17 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
         'user' => \Drupal::currentUser()->id(),
       ]);
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', [
+        '@label' => $variables['label']['#markup'],
+      ]);
       break;
 
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = Url::fromRoute('view.upcoming_events.page_community_events');
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', [
+        '@label' => $variables['label']['#markup'],
+      ]);
       break;
 
     case 'latest_topics-block_latest_topics':
@@ -227,7 +231,9 @@ function social_core_preprocess_block(&$variables) {
         $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
           'user' => $account->id(),
         ]);
-        $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+        $variables['button_text'] = t('All @label', [
+          '@label' => $variables['label']['#markup'],
+        ]);
       }
       break;
 
@@ -267,7 +273,9 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.group_events.page_group_events', [
         'group' => $group->id(),
       ]);
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', [
+        '@label' => $variables['label']['#markup'],
+      ]);
       break;
 
     case 'latest_topics-group_topics_block':
