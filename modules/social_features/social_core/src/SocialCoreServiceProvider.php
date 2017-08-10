@@ -5,6 +5,11 @@ namespace Drupal\social_core;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class SocialCoreServiceProvider.
+ *
+ * @package Drupal\social_core
+ */
 class SocialCoreServiceProvider extends ServiceProviderBase {
 
   /**
