@@ -5,7 +5,12 @@ namespace Drupal\social_core\Routing;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
-class RouteSubscriber extends RouteSubscriberBase{
+/**
+ * Class RouteSubscriber.
+ *
+ * @package Drupal\social_core\Routing
+ */
+class RouteSubscriber extends RouteSubscriberBase {
 
   /**
    * {@inheritdoc}

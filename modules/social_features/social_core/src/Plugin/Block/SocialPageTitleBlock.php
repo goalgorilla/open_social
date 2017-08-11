@@ -57,7 +57,8 @@ class SocialPageTitleBlock extends PageTitleBlock {
             '#type' => 'page_title',
             '#title' => t($title . ' in ' . $group->label()),
           ];
-        } else {
+        }
+        else {
           return [
             '#type' => 'page_title',
             '#title' => $title,
