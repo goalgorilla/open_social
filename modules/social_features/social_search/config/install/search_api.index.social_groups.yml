@@ -8,11 +8,23 @@ dependencies:
   config:
     - field.storage.group.field_group_description
     - search_api.server.social_database
+    - core.entity_view_mode.group.teaser
 id: social_groups
 name: 'Social Groups'
 description: 'Default group index created for the Social distribution.'
 read_only: false
 field_settings:
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:group':
+          closed_group: teaser
+          open_group: teaser
   type:
     label: Type
     datasource_id: 'entity:group'
@@ -39,16 +51,6 @@ field_settings:
     dependencies:
       config:
         - field.storage.group.field_group_description
-  rendered_item:
-    label: 'Rendered HTML output'
-    property_path: rendered_item
-    type: text
-    configuration:
-      roles:
-        anonymous: anonymous
-      view_mode:
-        'entity:group':
-          open_group: default
 datasource_settings:
   'entity:group':
     plugin_id: 'entity:group'
