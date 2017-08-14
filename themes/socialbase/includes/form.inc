@@ -20,11 +20,6 @@ function socialbase_preprocess_form(&$variables) {
     $variables['is_search_form'] = TRUE;
   }
 
-  // Add the custom search auto complete to search users for now only.
-  if ($element['#form_id'] === 'search_users_form') {
-    $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
-  }
-
   // We have set the region via propress block, now pass this variable on
   // to be used in twig. In twig we can distinguish the nav bar form from
   // the hero form as they both have the same ID's.
