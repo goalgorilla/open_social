@@ -90,18 +90,18 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
               if (!empty($comment)) {
                 if ($comment->getEntityTypeId() == 'comment') {
-                  if (!empty($comment->getCommentedEntity())) {
-                    /** @var \Drupal\Core\Entity\Entity $node */
-                    $node = $comment->getCommentedEntity();
-                    $bundle = $node->bundle();
-                    $type = $node->getEntityTypeId();
+                  /** @var \Drupal\Core\Entity\Entity $entity */
+                  $entity = $comment->getCommentedEntity();
+                  if (!empty($entity)) {
+                    if (is_callable([$entity, 'getDisplayName'])) {
+                      $display_name = $entity->getDisplayName();
+                    }
+                    else {
+                      $display_name = $entity->bundle();
+                    }
 
-                    if (!empty($bundle)) {
-                      // For posts, we don't use the bundle name, but the entity type id.
-                      if (isset($type) && $type == 'post') {
-                        $bundle = $type;
-                      }
-                      $replacements[$original] = $bundle;
+                    if (!empty($display_name)) {
+                      $replacements[$original] = $display_name;
                     }
                   }
                 }
