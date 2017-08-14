@@ -46,6 +46,9 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
   }
 }
 
+/**
+ * Implements hook_theme_suggestions_views_view_fields_alter().
+ */
 function socialbase_theme_suggestions_views_view_fields_alter(array &$suggestions, array $variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = $variables['view'];
