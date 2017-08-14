@@ -1,6 +1,6 @@
 @import 'settings';
 
-.ui-widget-content {
+.ui-autocomplete .ui-widget-content {
   @include z-depth-4;
 	background: white;
 }
@@ -30,12 +30,8 @@
 .ui-state-default a:visited {
 	color: #555555/*{fcDefault}*/;
 }
-.ui-state-hover,
-.ui-widget-content .ui-state-hover,
-.ui-widget-header .ui-state-hover,
-.ui-state-focus,
-.ui-widget-content .ui-state-focus,
-.ui-widget-header .ui-state-focus {
+.ui-autocomplete .ui-state-hover,
+.ui-autocomplete .ui-state-focus {
 	background: $gray-lighter;
 }
 .ui-state-hover a,
@@ -49,17 +45,16 @@
 	color: #212121/*{fcHover}*/;
 	text-decoration: none;
 }
-.ui-state-active,
-.ui-widget-content .ui-state-active,
-.ui-widget-header .ui-state-active {
+
+.ui-autocomplete .ui-state-active {
 	border: 1px solid #aaaaaa/*{borderColorActive}*/;
 	background: #ffffff;
 	font-weight: normal/*{fwDefault}*/;
 	color: #212121/*{fcActive}*/;
 }
-.ui-state-active a,
-.ui-state-active a:link,
-.ui-state-active a:visited {
+.ui-autocomplete .ui-state-active a,
+.ui-autocomplete .ui-state-active a:link,
+.ui-autocomplete .ui-state-active a:visited {
 	color: #212121/*{fcActive}*/;
 	text-decoration: none;
 }
@@ -144,15 +139,7 @@
 	font-size: 100%;
 	list-style: none;
 }
-.ui-helper-clearfix:before,
-.ui-helper-clearfix:after {
-	content: "";
-	display: table;
-	border-collapse: collapse;
-}
-.ui-helper-clearfix:after {
-	clear: both;
-}
+
 .ui-helper-clearfix {
 	min-height: 0; /* support: IE7 */
 }
