@@ -146,6 +146,10 @@ class Post extends ContentEntityBase implements PostInterface {
     return $this;
   }
 
+  public function getDisplayName() {
+    return $this->label();
+  }
+
   /**
    * {@inheritdoc}
    */
