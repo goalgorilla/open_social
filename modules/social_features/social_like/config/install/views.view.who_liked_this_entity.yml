@@ -5,7 +5,6 @@ dependencies:
     - core.entity_view_mode.profile.compact
     - votingapi.vote_type.like
   module:
-    - node
     - profile
     - user
     - views_infinite_scroll
@@ -322,17 +321,6 @@ display:
           content: 'No one liked this content yet'
           plugin_id: text_custom
       relationships:
-        entity_id:
-          id: entity_id
-          table: votingapi_vote
-          field: entity_id
-          relationship: none
-          group_type: group
-          admin_label: 'Voted Entity'
-          required: true
-          entity_type: vote
-          entity_field: entity_id
-          plugin_id: standard
         user_id:
           id: user_id
           table: votingapi_vote
