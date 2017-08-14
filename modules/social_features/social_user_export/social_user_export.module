@@ -102,7 +102,10 @@ function social_user_export_user_apply_filter(Select $query, array $conditions) 
  * Returns quantity of comments posted by specific user.
  *
  * @param UserInterface $account
+ *   The account to get the data for.
+ *
  * @return int
+ *   Quantity of comments posted by the account.
  */
 function social_user_export_comments_count(UserInterface $account) {
   $query = \Drupal::database()->select('comment', 'c');
@@ -119,7 +122,10 @@ function social_user_export_comments_count(UserInterface $account) {
  * Returns quantity of posts created by specific user.
  *
  * @param UserInterface $account
+ *   The account to get the data for.
+ *
  * @return int
+ *   Quantity of posts created by the account.
  */
 function social_user_export_posts_count(UserInterface $account) {
   $query = \Drupal::database()->select('post', 'p');
@@ -136,8 +142,12 @@ function social_user_export_posts_count(UserInterface $account) {
  * Returns quantity of nodes created by specific user.
  *
  * @param UserInterface $account
+ *   The account to get the data for.
  * @param string $type
+ *   The node type to filter on.
+ *
  * @return int
+ *   Quantity of nodes created by the account.
  */
 function social_user_export_nodes_count(UserInterface $account, $type) {
   $query = \Drupal::database()->select('node', 'n');
@@ -156,7 +166,10 @@ function social_user_export_nodes_count(UserInterface $account, $type) {
  * Returns quantity of enrollments of specific user.
  *
  * @param UserInterface $account
+ *   The account to get the data for.
+ *
  * @return int
+ *   Quantity of enrollments by the account.
  */
 function social_user_export_events_enrollments_count(UserInterface $account) {
   $query = \Drupal::database()->select('event_enrollment', 'ee');
@@ -173,7 +186,10 @@ function social_user_export_events_enrollments_count(UserInterface $account) {
  * Returns quantity of groups created by specific user.
  *
  * @param UserInterface $account
+ *   The account to get the data for.
+ *
  * @return int
+ *   Quantity of groups created by the account.
  */
 function social_user_export_groups_count(UserInterface $account) {
   $query = \Drupal::database()->select('groups', 'g');

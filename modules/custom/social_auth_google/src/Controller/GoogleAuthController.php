@@ -9,7 +9,8 @@ use Drupal\social_auth_google\GoogleAuthManager;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 
 /**
- * Class GoogleAuthController
+ * Class GoogleAuthController.
+ *
  * @package Drupal\social_auth_google\Controller
  */
 class GoogleAuthController extends ControllerBase {
@@ -24,8 +25,6 @@ class GoogleAuthController extends ControllerBase {
 
   /**
    * GoogleAuthController constructor.
-   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
-   * @param \Drupal\social_auth_google\GoogleAuthManager $auth_manager
    */
   public function __construct(NetworkManager $network_manager, GoogleAuthManager $auth_manager) {
     $this->networkManager = $network_manager;
@@ -45,9 +44,11 @@ class GoogleAuthController extends ControllerBase {
   /**
    * Returns the redirect response.
    *
-   * @param $type
-   *   Type of action. "login" or "register".
+   * @param string $type
+   *   Type of action, "login" or "register".
+   *
    * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   protected function getRedirectResponse($type) {
     $sdk = $this->getSdk($type);
@@ -75,6 +76,7 @@ class GoogleAuthController extends ControllerBase {
    * Authorizes the user after redirect from Google.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userLoginCallback() {
     $sdk = $this->getSdk('login');
@@ -130,6 +132,7 @@ class GoogleAuthController extends ControllerBase {
    * Registers the new account after redirect from Google.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userRegisterCallback() {
     $sdk = $this->getSdk('register');
@@ -168,8 +171,8 @@ class GoogleAuthController extends ControllerBase {
       ]);
     }
 
-
-    // Save email and name to session to use for auto fill the registration form.
+    // Save email and name to session to use for auto fill the registration
+    // form.
     $data_handler = $this->networkManager->createInstance('social_auth_google')->getDataHandler();
     $data_handler->set('access_token', $this->accessToken);
     $data_handler->set('mail', $profile->getEmail());
@@ -188,9 +191,10 @@ class GoogleAuthController extends ControllerBase {
    * Returns the SDK instance or RedirectResponse when error occurred.
    *
    * @param string $type
-   *   Type of action. "login" or "register".
+   *   Type of action, "login" or "register".
    *
    * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns an instance of the SDK or a Redirect Response.
    */
   public function getSdk($type) {
     $network_manager = $this->networkManager->createInstance('social_auth_google');
@@ -216,8 +220,10 @@ class GoogleAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
+   *    The type.
    *
    * @return object
+   *    Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from Google.

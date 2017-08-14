@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityContextBase.
- */
 
 namespace Drupal\activity_creator\Plugin;
 
@@ -12,7 +8,6 @@ use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_post\Entity\Post;
-use Drupal\node\Entity\Node;
 
 /**
  * Base class for Activity context plugin plugins.
@@ -24,14 +19,14 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
    */
-  private $entity_query;
+  private $entityQuery;
 
   /**
    * Entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entity_type_manager;
+  private $entityTypeManager;
 
   /**
    * {@inheritdoc}
@@ -39,8 +34,8 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   public function __construct(array $configuration, $plugin_id, $plugin_definition, QueryFactory $entity_query, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entity_query = $entity_query;
-    $this->entity_type_manager = $entity_type_manager;
+    $this->entityQuery = $entity_query;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**

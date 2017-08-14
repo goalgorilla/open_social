@@ -13,9 +13,9 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class PostForm extends ContentEntityForm {
 
-  private $post_view_default;
-  private $post_view_profile;
-  private $post_view_group;
+  private $postViewDefault;
+  private $postViewProfile;
+  private $postViewGroup;
 
   /**
    * {@inheritdoc}
@@ -42,69 +42,69 @@ class PostForm extends ContentEntityForm {
       $form['field_visibility']['widget'][0]['#edit_mode'] = FALSE;
 
       if (isset($display)) {
-          $this->setFormDisplay($display, $form_state);
+        $this->setFormDisplay($display, $form_state);
       }
       else {
-          $visibility_value = $this->entity->get('field_visibility')->value;
-          $display_id = ($visibility_value === '0') ? $this->post_view_profile : $this->post_view_default;
-          $display = EntityFormDisplay::load($display_id);
-          // Set the custom display in the form.
-          $this->setFormDisplay($display, $form_state);
+        $visibility_value = $this->entity->get('field_visibility')->value;
+        $display_id = ($visibility_value === '0') ? $this->postViewProfile : $this->postViewDefault;
+        $display = EntityFormDisplay::load($display_id);
+        // Set the custom display in the form.
+        $this->setFormDisplay($display, $form_state);
       }
 
       if (isset($display) && ($display_id = $display->get('id'))) {
-          if ($display_id === $this->post_view_default) {
-              // Set default value to community.
-              unset($form['field_visibility']['widget'][0]['#options'][0]);
-              $form['field_visibility']['widget'][0]['#default_value'] = "2";
-              unset($form['field_visibility']['widget'][0]['#options'][3]);
+        if ($display_id === $this->postViewDefault) {
+          // Set default value to community.
+          unset($form['field_visibility']['widget'][0]['#options'][0]);
+          $form['field_visibility']['widget'][0]['#default_value'] = "2";
+          unset($form['field_visibility']['widget'][0]['#options'][3]);
+        }
+        else {
+          // Remove public option from options.
+          $form['field_visibility']['widget'][0]['#default_value'] = "0";
+          unset($form['field_visibility']['widget'][0]['#options'][1]);
+          unset($form['field_visibility']['widget'][0]['#options'][2]);
+
+          $current_group = _social_group_get_current_group();
+          if (!$current_group) {
+            unset($form['field_visibility']['widget'][0]['#options'][3]);
           }
           else {
-            // Remove public option from options.
-            $form['field_visibility']['widget'][0]['#default_value'] = "0";
-            unset($form['field_visibility']['widget'][0]['#options'][1]);
-            unset($form['field_visibility']['widget'][0]['#options'][2]);
-
-            $current_group = _social_group_get_current_group();
-            if (!$current_group) {
+            $group_type_id = $current_group->getGroupType()->id();
+            if ($group_type_id !== 'closed_group') {
               unset($form['field_visibility']['widget'][0]['#options'][3]);
             }
             else {
-              $group_type_id = $current_group->getGroupType()->id();
-              if ($group_type_id !== 'closed_group') {
-                unset($form['field_visibility']['widget'][0]['#options'][3]);
-              }
-              else {
-                unset($form['field_visibility']['widget'][0]['#options'][0]);
-                $form['field_visibility']['widget'][0]['#default_value'] = "3";
-              }
+              unset($form['field_visibility']['widget'][0]['#options'][0]);
+              $form['field_visibility']['widget'][0]['#default_value'] = "3";
             }
           }
+        }
       }
 
       // Do some alterations on this form.
       if ($this->operation == 'edit') {
-          /** @var \Drupal\social_post\Entity\Post $post */
-          $post = $this->entity;
-          $form['#post_id'] = $post->id();
+        /** @var \Drupal\social_post\Entity\Post $post */
+        $post = $this->entity;
+        $form['#post_id'] = $post->id();
 
-          // In edit mode we don't want people to actually change visibility setting
-          // of the post.
-          if ($current_value = $this->entity->get('field_visibility')->value) {
-              // We set the default value.
-              $form['field_visibility']['widget'][0]['#default_value'] = $current_value;
+        // In edit mode we don't want people to actually change visibility
+        // setting of the post.
+        if ($current_value = $this->entity->get('field_visibility')->value) {
+          // We set the default value.
+          $form['field_visibility']['widget'][0]['#default_value'] = $current_value;
+        }
+
+        // Unset the other options, because we do not want to be able to change
+        // it but we do want to use the button for informing the user.
+        foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
+          if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value']) {
+            unset($form['field_visibility']['widget'][0]['#options'][$key]);
           }
+        }
 
-          // Unset the other options, because we do not want to be able to change
-          // it but we do want to use the button for informing the user.
-          foreach ($form['field_visibility']['widget'][0]['#options'] as $key => $option) {
-              if ($option['value'] != $form['field_visibility']['widget'][0]['#default_value']) {
-                  unset($form['field_visibility']['widget'][0]['#options'][$key]);
-              }
-          }
-
-          // Set button to disabled in our template, users have no option anyway.
-          $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
+        // Set button to disabled in our template, users have no option anyway.
+        $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
       }
     }
 
@@ -121,11 +121,11 @@ class PostForm extends ContentEntityForm {
     $display = $this->getFormDisplay($form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === $this->post_view_profile) {
+      if ($display_id === $this->postViewProfile) {
         $account_profile = \Drupal::routeMatch()->getParameter('user');
         $this->entity->get('field_recipient_user')->setValue($account_profile);
       }
-      elseif ($display_id === $this->post_view_group) {
+      elseif ($display_id === $this->postViewGroup) {
         $group = \Drupal::routeMatch()->getParameter('group');
         $this->entity->get('field_recipient_group')->setValue($group);
       }
@@ -155,8 +155,9 @@ class PostForm extends ContentEntityForm {
     $bundle = $this->getBundleEntity()->id();
 
     // Set as variables, since the bundle might be different.
-    $this->post_view_default = 'post.'.$bundle.'.default';
-    $this->post_view_profile = 'post.'.$bundle.'.profile';
-    $this->post_view_group = 'post.'.$bundle.'.group';
+    $this->postViewDefault = 'post.' . $bundle . '.default';
+    $this->postViewProfile = 'post.' . $bundle . '.profile';
+    $this->postViewGroup = 'post.' . $bundle . '.group';
   }
+
 }

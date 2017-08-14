@@ -5,15 +5,24 @@ namespace Drupal\social_auth_extra;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Class AuthSessionDataHandler
+ * Class AuthSessionDataHandler.
+ *
  * @package Drupal\social_auth_extra
  */
-class AuthSessionDataHandler implements AuthDataHandlerInterface  {
+class AuthSessionDataHandler implements AuthDataHandlerInterface {
 
-  /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+  /**
+   * Used for storing the session.
+   *
+   * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+   */
   protected $session;
 
-  /** @var string $sessionPrefix */
+  /**
+   * Used for storing the session prefix.
+   *
+   * @var string
+   */
   protected $sessionPrefix;
 
   /**

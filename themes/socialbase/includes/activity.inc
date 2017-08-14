@@ -1,14 +1,18 @@
 <?php
 
 /**
+ * @file
+ * The activity inc file for the Social base theme.
+ */
+
+/**
  * Implements hook_preprocess_activity().
- * @param $variables
  */
 function socialbase_preprocess_activity(&$variables) {
   // Check if the view mode is one of the notification view modes.
   if (in_array($variables['content']['field_activity_output_text']['#view_mode'], array(
     'notification',
-    'notification_archive'
+    'notification_archive',
   ))) {
     // Remove href from date.
     $variables['date'] = strip_tags($variables['date']->toString()

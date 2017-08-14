@@ -14,7 +14,8 @@ use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Class UserManager
+ * Class UserManager.
+ *
  * @package Drupal\social_auth_extra
  */
 abstract class UserManager implements UserManagerInterface {
@@ -57,14 +58,6 @@ abstract class UserManager implements UserManagerInterface {
 
   /**
    * UserManager constructor.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
-   * @param \Drupal\Core\Utility\Token $token
-   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
-   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityFieldManagerInterface $entity_field_manager, Token $token, TransliterationInterface $transliteration, LoggerChannelFactoryInterface $logger_factory) {
     $this->configFactory = $config_factory;
@@ -79,7 +72,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function createAccount($values = []) {
+  public function createAccount(array $values = []) {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
     $values = array_merge([
       'name' => '',
@@ -101,7 +94,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function createProfile($values = []) {
+  public function createProfile(array $values = []) {
     $values = array_merge([
       'uid' => $this->account ? $this->account->id() : NULL,
       'type' => $this->profileType,

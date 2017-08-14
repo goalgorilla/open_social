@@ -6,7 +6,8 @@ use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
 
 /**
- * Class FacebookUserManager
+ * Class FacebookUserManager.
+ *
  * @package Drupal\social_auth_facebook
  */
 class FacebookUserManager extends UserManager {

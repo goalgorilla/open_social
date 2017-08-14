@@ -6,7 +6,8 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class FacebookAuthSettingsForm
+ * Class FacebookAuthSettingsForm.
+ *
  * @package Drupal\social_auth_facebook\Form
  */
 class FacebookAuthSettingsForm extends ConfigFormBase {

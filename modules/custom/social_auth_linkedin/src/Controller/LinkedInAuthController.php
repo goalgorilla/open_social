@@ -10,7 +10,8 @@ use Drupal\social_auth_linkedin\LinkedInAuthManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class LinkedInAuthController
+ * Class LinkedInAuthController.
+ *
  * @package Drupal\social_auth_linkedin\Controller
  */
 class LinkedInAuthController extends ControllerBase {
@@ -25,8 +26,6 @@ class LinkedInAuthController extends ControllerBase {
 
   /**
    * LinkedInAuthController constructor.
-   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
-   * @param \Drupal\social_auth_linkedin\LinkedInAuthManager $auth_manager
    */
   public function __construct(NetworkManager $network_manager, LinkedInAuthManager $auth_manager) {
     $this->networkManager = $network_manager;
@@ -46,9 +45,11 @@ class LinkedInAuthController extends ControllerBase {
   /**
    * Returns the redirect response.
    *
-   * @param $type
-   *   Type of action. "login" or "register".
+   * @param string $type
+   *   Type of action, "login" or "register".
+   *
    * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   protected function getRedirectResponse($type) {
     $sdk = $this->getSdk($type);
@@ -76,6 +77,7 @@ class LinkedInAuthController extends ControllerBase {
    * Authorizes the user after redirect from LinkedIn.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userLoginCallback() {
     $sdk = $this->getSdk('login');
@@ -130,6 +132,7 @@ class LinkedInAuthController extends ControllerBase {
    * Registers the new account after redirect from LinkedIn.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userRegisterCallback() {
     $sdk = $this->getSdk('register');
@@ -150,7 +153,7 @@ class LinkedInAuthController extends ControllerBase {
     $account = $this->entityTypeManager()
       ->getStorage('user')
       ->loadByProperties([
-        'linkedin_id' => $profile['id']
+        'linkedin_id' => $profile['id'],
       ]);
 
     if ($account) {
@@ -168,7 +171,8 @@ class LinkedInAuthController extends ControllerBase {
       ]);
     }
 
-    // Save email and name to session to use for auto fill the registration form.
+    // Save email and name to session to use for auto fill the registration
+    // form.
     $data_handler = $this->networkManager->createInstance('social_auth_linkedin')->getDataHandler();
     $data_handler->set('access_token', $this->accessToken);
     $data_handler->set('mail', $profile['emailAddress']);
@@ -187,9 +191,10 @@ class LinkedInAuthController extends ControllerBase {
    * Returns the SDK instance or RedirectResponse when error occurred.
    *
    * @param string $type
-   *   Type of action. "login" or "register".
+   *   Type of action, "login" or "register".
    *
    * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns an instance of the SDK or a Redirect Response.
    */
   public function getSdk($type) {
     $network_manager = $this->networkManager->createInstance('social_auth_linkedin');
@@ -215,8 +220,10 @@ class LinkedInAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
+   *    The type.
    *
    * @return object
+   *    Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from LinkedIn.

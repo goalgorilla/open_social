@@ -72,7 +72,8 @@ class TwitterAuthManager extends AuthManager {
       ]);
 
       return $this->profile;
-    } catch (TwitterOAuthException $e) {
+    }
+    catch (TwitterOAuthException $e) {
       $this->loggerFactory
         ->get('social_auth_twitter')
         ->error('Could not load Twitter user profile: TwitterOAuthException: @message', [

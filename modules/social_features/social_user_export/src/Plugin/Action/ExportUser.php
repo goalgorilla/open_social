@@ -18,7 +18,6 @@ use \Symfony\Component\DependencyInjection\ContainerInterface;
  *   confirm_form_route_name = "social_user_export.export_user_confirm"
  * )
  */
-
 class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
 
   /**
@@ -36,11 +35,15 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
   protected $currentUser;
 
   /**
+   * Apply for all.
+   *
    * @var bool
    */
-  protected $apply_all;
+  protected $applyAll;
 
   /**
+   * The query.
+   *
    * @var array
    */
   protected $query = [];
@@ -83,7 +86,7 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function executeMultiple(array $entities) {
-    if ($this->apply_all) {
+    if ($this->applyAll) {
       $this->tempStoreFactory->get('user_operations_export')->set($this->currentUser->id(), [
         'apply_all' => TRUE,
         'query' => $this->query,
@@ -112,14 +115,20 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
   }
 
   /**
-   * @param bool $apply_all
+   * Set the apply_all property.
+   *
+   * @param bool $applyAll
+   *   Boolean that determines if this applies for all or not.
    */
-  public function setApplyAll($apply_all) {
-    $this->apply_all = $apply_all;
+  public function setApplyAll($applyAll) {
+    $this->applyAll = $applyAll;
   }
 
   /**
+   * Set the query property.
+   *
    * @param array $query
+   *   An array with query properties.
    */
   public function setQuery(array $query) {
     $this->query = $query;

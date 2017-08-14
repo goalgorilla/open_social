@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Entity\Activity.
- */
 
 namespace Drupal\activity_creator\Entity;
 
@@ -62,6 +58,7 @@ use Drupal\votingapi\Entity\Vote;
  */
 class Activity extends ContentEntityBase implements ActivityInterface {
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -234,7 +231,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   public function getDestinations() {
     $values = [];
     $field_activity_destinations = $this->field_activity_destinations;
-    if(isset($field_activity_destinations)){
+    if (isset($field_activity_destinations)) {
       $destinations = $field_activity_destinations->getValue();
       foreach ($destinations as $key => $destination) {
         $values[] = $destination['value'];
@@ -245,8 +242,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
 
   /**
    * Get recipient.
+   *
    * Assume that activity can't have recipient group and user at the same time.
-   * @TODO: Split it to two separate functions.
+   *
+   * @todo: Split it to two separate functions.
    */
   public function getRecipient() {
     $value = NULL;

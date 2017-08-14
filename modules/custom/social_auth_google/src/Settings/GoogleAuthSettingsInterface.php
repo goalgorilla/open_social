@@ -27,6 +27,7 @@ interface GoogleAuthSettingsInterface {
    * Returns status of social network.
    *
    * @return bool
+   *   The status of the social network.
    */
   public function isActive();
 
@@ -34,6 +35,7 @@ interface GoogleAuthSettingsInterface {
    * Returns key-name of a social network.
    *
    * @return string
+   *   The key-name of a social network.
    */
   public static function getSocialNetworkKey();
 

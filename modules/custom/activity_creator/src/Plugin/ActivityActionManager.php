@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityActionManager.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Core\Plugin\DefaultPluginManager;

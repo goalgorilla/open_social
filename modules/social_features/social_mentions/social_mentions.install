@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_mentions module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -20,7 +23,7 @@ function social_mentions_install() {
  * Function to set permissions.
  */
 function _social_mentions_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -34,8 +37,7 @@ function _social_mentions_set_permissions() {
 }
 
 /**
- * @param $role
- * @return array
+ * Build the permissions.
  */
 function _social_mentions_get_permissions($role) {
   // Anonymous.

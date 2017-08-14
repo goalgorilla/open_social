@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_mentions\Plugin\ActivityContext\MentionActivityContext.
- */
-
 namespace Drupal\social_mentions\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\User;
-
 
 /**
  * Provides a 'MentionActivityContext' activity context.
@@ -76,6 +69,9 @@ class MentionActivityContext extends ActivityContextBase {
     return $recipients;
   }
 
+  /**
+   * Check for valid entity.
+   */
   public function isValidEntity($entity) {
     if ($entity->getEntityTypeId() === 'mentions') {
       return TRUE;
@@ -94,8 +90,11 @@ class MentionActivityContext extends ActivityContextBase {
     return FALSE;
   }
 
+  /**
+   * Get the mentions from the related entity.
+   */
   public function getMentionsFromRelatedEntity($entity) {
-    if($entity->getEntityTypeId() === 'comment'){
+    if ($entity->getEntityTypeId() === 'comment') {
       if ($entity->getParentComment()) {
         $entity = $entity->getParentComment();
       }

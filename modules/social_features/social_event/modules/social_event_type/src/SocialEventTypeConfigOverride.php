@@ -1,20 +1,23 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_event_type\SocialEventTypeConfigOverride.
- */
-
 namespace Drupal\social_event_type;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
+ * Class SocialEventTypeConfigOverride.
+ *
  * Example configuration override.
+ *
+ * @package Drupal\social_event_type
  */
 class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
 
+  /**
+   * Load overrides.
+   */
   public function loadOverrides($names) {
     $overrides = array();
     $config_factory = \Drupal::service('config.factory');
@@ -32,16 +35,16 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
         'weight' => 1,
         'settings' => [],
         'third_party_settings' => [],
-        'type' => 'options_buttons'
+        'type' => 'options_buttons',
       ];
 
       $overrides[$config_name] = [
         'third_party_settings' => [
           'field_group' => [
             'group_title_image' => [
-              'children' => $children
-            ]
-          ]
+              'children' => $children,
+            ],
+          ],
         ],
         'content' => $content,
       ];
@@ -53,7 +56,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
       'core.entity_view_display.node.event.teaser',
     ];
 
-    foreach ($view_modes as  $config_name) {
+    foreach ($view_modes as $config_name) {
       if (in_array($config_name, $names)) {
         $config = $config_factory->getEditable($config_name);
 
@@ -63,9 +66,9 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
           'weight' => 2,
           'label' => 'hidden',
           'settings' => [
-            'link' => FALSE
+            'link' => FALSE,
           ],
-          'third_party_settings' => []
+          'third_party_settings' => [],
         ];
 
         $overrides[$config_name] = [
@@ -79,7 +82,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
     $event_views = [
       'views.view.events' => 'events_overview',
       'views.view.group_events' => 'default',
-      'views.view.upcoming_events' => 'page_community_events'
+      'views.view.upcoming_events' => 'page_community_events',
     ];
 
     foreach ($event_views as $config_name => $display_name) {
@@ -144,13 +147,16 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
           'display' => [
             $display_name => [
               'display_options' => [
-                'filters' => $filters
-              ]
-            ]
-          ]
+                'filters' => $filters,
+              ],
+            ],
+          ],
         ];
       }
+    }
 
+    if (isset($overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id'])) {
+      $overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id']['relationship'] = 'gc__node';
     }
 
     return $overrides;

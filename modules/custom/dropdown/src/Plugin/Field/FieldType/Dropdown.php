@@ -94,7 +94,7 @@ class Dropdown extends FieldItemBase {
    *
    * @see \Drupal\Core\Render\Element\FormElement::processPattern()
    */
-  public static function validateAllowedValues($element, FormStateInterface $form_state) {
+  public static function validateAllowedValues(array $element, FormStateInterface $form_state) {
     $values = static::extractAllowedValues($element['#value'], $element['#field_has_data']);
 
     if (!is_array($values)) {
@@ -149,7 +149,7 @@ class Dropdown extends FieldItemBase {
    *    - Values are separated by a carriage return.
    *    - Each value is in the format "value|label" or "value".
    */
-  protected function allowedValuesString($values) {
+  protected function allowedValuesString(array $values) {
     $lines = array();
     foreach ($values as $key => $value) {
       if (is_array($value)) {

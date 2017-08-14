@@ -12,6 +12,7 @@ use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme().
@@ -46,7 +47,7 @@ function social_core_theme() {
  *   - topic_type: List of topic types as an array or NULL
  *   - hero_node: Rendered hero display of the current active node or NULL.
  */
-function template_preprocess_page_hero_data(&$variables) {
+function template_preprocess_page_hero_data(array &$variables) {
   // Get current user.
   $account = \Drupal::currentUser();
 
@@ -75,10 +76,11 @@ function template_preprocess_page_hero_data(&$variables) {
 
     // Add node edit url for management.
     if ($node instanceof Node) {
-      // Get the current route name to check if the user is on the edit or delete page.
+      // Get the current route name to check if the user is on the
+      // edit or delete page.
       $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, array('entity.node.edit_form','entity.node.delete_form'))) {
-        if ($node->access('update',$account)) {
+      if (!in_array($route, array('entity.node.edit_form', 'entity.node.delete_form'))) {
+        if ($node->access('update', $account)) {
           $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
         }
       }
@@ -144,7 +146,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
  *   - element: An associative array containing render arrays for the list of
  *     comments, and the comment form. Array keys: comments, comment_form.
  */
-function social_core_preprocess_field(&$variables) {
+function social_core_preprocess_field(array &$variables) {
   $element = $variables['element'];
   if ($element['#formatter'] == 'comment_node') {
     // Create separate variables for the more_link.
@@ -161,85 +163,96 @@ function social_core_preprocess_block(&$variables) {
   /** @var \Drupal\group\Entity\Group $group */
   $group = \Drupal::routeMatch()->getParameter('group');
 
-  if(!empty($variables['elements']['content']['#view'])) {
+  if (!empty($variables['elements']['content']['#view'])) {
     $view = $variables['elements']['content']['#view'];
-    if(!empty($view->getDisplay())) {
+    if (!empty($view->getDisplay())) {
       $link = $view->getDisplay();
-      if(!empty($link->useMoreText())) {
+      if (!empty($link->useMoreText())) {
         $more_link = $link->useMoreText();
       }
     }
   }
 
-  // Add variables to sidebar blocks
+  // Add variables to sidebar blocks.
   switch ($variables['elements']['#derivative_plugin_id']) {
     case 'upcoming_events-block_my_upcoming_events':
       $variables['view_all_path'] = 'my-events';
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
       break;
+
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'community-events';
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
       break;
+
     case 'latest_topics-block_latest_topics':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'all-topics';
       $variables['button_text'] = $more_link;
       $link->setOption('use_more', FALSE);
       break;
+
     case 'newest_groups-block_newest_groups':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'all-groups';
       $variables['button_text'] = $more_link;
       $link->setOption('use_more', FALSE);
       break;
+
     case 'newest_users-block_newest_users':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'all-members';
       $variables['button_text'] = $more_link;
       $link->setOption('use_more', FALSE);
       break;
+
     case 'events-block_events_on_profile':
-      if ($account instanceof \Drupal\user\Entity\User) {
+      if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
         $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
-        $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+        $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
       }
       break;
+
     case 'topics-block_user_topics':
-      if ($account instanceof \Drupal\user\Entity\User) {
+      if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
         $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
         $variables['button_text'] = $more_link;
         $link->setOption('use_more', FALSE);
       }
       break;
+
     case 'groups-block_user_groups':
-      if ($account instanceof \Drupal\user\Entity\User) {
+      if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
         $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
         $variables['button_text'] = $more_link;
         $link->setOption('use_more', FALSE);
       }
       break;
+
     case 'group_members-block_newest_members':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/members');
       $variables['button_text'] = $more_link;
       $link->setOption('use_more', FALSE);
       break;
+
     case 'upcoming_events-upcoming_events_group':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/events');
-      $variables['button_text'] = t('All ') . $variables['label']['#markup'];
+      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
       break;
+
     case 'latest_topics-group_topics_block':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/topics');
       $variables['button_text'] = $more_link;
       $link->setOption('use_more', FALSE);
       break;
+
   }
 }
 
@@ -289,7 +302,7 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
 /**
  * Implements hook_form_taxonomy_vocabulary_form_alter().
  */
-function social_core_form_taxonomy_vocabulary_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Fetch current user.
   $account = \Drupal::currentUser();
 
@@ -300,11 +313,10 @@ function social_core_form_taxonomy_vocabulary_form_alter(&$form, \Drupal\Core\Fo
   }
 }
 
-
 /**
  * Implements hook_form_taxonomy_vocabulary_confirm_delete_alter().
  */
-function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   // Fetch current user.
   $account = \Drupal::currentUser();
@@ -320,7 +332,7 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, \Drup
 /**
  * Implements hook_form_alter().
  */
-function social_core_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_core_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $formfield = array(
     'node_topic_edit_form' => 'field_topic_image',
     'node_topic_event_form' => 'field_event_image',
@@ -353,20 +365,29 @@ function social_core_element_info_alter(array &$info) {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_core_filter_process_format';
   }
+
+  if (isset($info['entity_autocomplete'])) {
+    $info['entity_autocomplete']['#value_callback'] = [
+      '\Drupal\social_core\Entity\Element\EntityAutocomplete',
+      'valueCallback',
+    ];
+  }
 }
 
 /**
  * Remove ability of selecting format if full_html is available.
+ *
  * @todo Instead of defining the list of fields it would be better to add a separate
- * setting to all text_format fields, allowing to select wether to show format selector or not
+ * Setting to all text_format fields,
+ * allowing to select whether to show format selector or not.
  */
 function social_core_filter_process_format($element) {
 
-  // Only fields listed here will have text format settings disabled
+  // Only fields listed here will have text format settings disabled.
   $full_html_field_ids = [
     'edit-body-0',
     'edit-field-profile-self-introduction-0',
-    'edit-field-group-description-0'
+    'edit-field-group-description-0',
   ];
 
   $full_html = FilterFormat::load('full_html');
