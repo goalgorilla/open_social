@@ -29,16 +29,14 @@ matrix:
   - env: TEST_SUITE=install_stability_2
   - env: TEST_SUITE=install_stability_3-4-5
   - env: TEST_SUITE=install_update
-    before_install:
-      - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then exit 0; fi
   - env: TEST_SUITE=drush_make
-    before_install:
-      - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then exit 0; fi
 
 services:
   - docker
 
 before_install:
+  # Kill the install_update and drush_make jobs if it is not a PR build.
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ] || [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
