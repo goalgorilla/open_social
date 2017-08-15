@@ -29,7 +29,11 @@ matrix:
   - env: TEST_SUITE=install_stability_2
   - env: TEST_SUITE=install_stability_3-4-5
   - env: TEST_SUITE=install_update
+    before_install:
+      - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then exit 0; fi
   - env: TEST_SUITE=drush_make
+    before_install:
+      - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then exit 0; fi
 
 services:
   - docker
@@ -61,7 +65,7 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
-  - if [ "$TEST_SUITE" = "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh; fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
