@@ -35,6 +35,25 @@ function social_like_update_8002() {
 }
 
 /**
+ * Disable bootstrap modal.
+ */
+function social_like_update_8003() {
+  // Bootstrap modal breaks jquery.dialog, so turn it off.
+  $settings = \Drupal::configFactory()->getEditable('socialbase.settings');
+  $settings->set('modal_enabled', 0)->save();
+}
+
+/**
+ * Install views_infinite_scroll module.
+ */
+function social_like_update_8004() {
+  $modules = array(
+    'views_infinite_scroll',
+  );
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
  * Function to set permissions.
  */
 function _social_like_set_permissions() {
