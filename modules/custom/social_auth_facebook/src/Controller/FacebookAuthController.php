@@ -222,8 +222,10 @@ class FacebookAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
+   *    The type.
    *
    * @return object
+   *    Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from Facebook.

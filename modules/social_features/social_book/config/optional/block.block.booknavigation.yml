@@ -3,6 +3,7 @@ status: true
 dependencies:
   module:
     - book
+    - node
   theme:
     - socialbase
 id: booknavigation
@@ -17,4 +18,11 @@ settings:
   provider: book
   label_display: visible
   block_mode: 'book pages'
-visibility: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      book: book
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

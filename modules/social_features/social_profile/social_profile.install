@@ -8,6 +8,10 @@
 use Drupal\file\Entity\File;
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use \Drupal\user\Entity\Role;
+use Drupal\block\Entity\Block;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_install().
@@ -23,6 +27,11 @@ function social_profile_install() {
   _social_profile_add_default_profile_image();
   // Set default config.
   _social_profile_set_default_config();
+  // Create a profile for user 1.
+  Profile::create([
+    'type' => ProfileType::load('profile')->id(),
+    'uid' => 1,
+  ])->save();
 }
 
 /**
@@ -214,6 +223,46 @@ function social_profile_update_8004(&$sandbox) {
     }
     if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
       user_role_grant_permissions($role->id(), $cm_permissions);
+    }
+  }
+}
+
+/**
+ * Update the context_mapping for profile_hero_block blocks.
+ */
+function social_profile_update_8005() {
+  $blocks = Block::loadMultiple();
+
+  /** @var \Drupal\block\BlockInterface $block */
+  foreach ($blocks as $block) {
+    if ($block->getPluginId() == 'profile_hero_block') {
+      $settings = $block->get('settings');
+
+      if (!isset($settings['context_mapping']['user'])) {
+        $settings['context_mapping']['user'] = '@social_user.user_route_context:user';
+        $block->set('settings', $settings);
+        $block->save();
+      }
+    }
+  }
+}
+
+/**
+ * Create a profile for users that have none.
+ */
+function social_profile_update_8006() {
+  /** @var \Drupal\user\Entity\User $account */
+  foreach (User::loadMultiple() as $account) {
+    // For anonymous we do nothing.
+    if ($account->isAnonymous()) {
+      continue;
+    }
+    // Check if the user has a profile already.
+    if (!$profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE)) {
+      Profile::create([
+        'type' => ProfileType::load('profile')->id(),
+        'uid' => $account->id(),
+      ])->save();
     }
   }
 }
