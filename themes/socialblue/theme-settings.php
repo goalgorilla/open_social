@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_font\Entity\Font;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -20,7 +21,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
 
   // If the default theme is either socialblue or socialsaas then extend
   // the form in the appearance section.
-  if($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
+  if ($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
     $config = \Drupal::config($system_theme_settings . '.settings');
 
     $form['open_social_settings'] = array(
@@ -58,10 +59,12 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
     // Font tab.
     $fonts = [];
     if (\Drupal::service('module_handler')->moduleExists('social_font')) {
-        /** @var \Drupal\social_font\Entity\Font $font_entities */
-      foreach(\Drupal\social_font\Entity\Font::loadMultiple() as $font_entities) {
-        $fonts [$font_entities->id()]= $font_entities->get('name')->value;
+
+      /** @var \Drupal\social_font\Entity\Font $font_entities */
+      foreach (Font::loadMultiple() as $font_entities) {
+        $fonts[$font_entities->id()] = $font_entities->get('name')->value;
       }
+
     }
 
     $form['os_font_settings']['font_primary'] = array(
