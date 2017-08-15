@@ -52,7 +52,7 @@ function socialbase_theme_suggestions_views_view_alter(array &$suggestions, arra
 function socialbase_theme_suggestions_views_view_fields_alter(array &$suggestions, array $variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = $variables['view'];
-  if (($view) && $view->id() == 'who_liked_this_entity' ) {
+  if (($view) && $view->id() == 'who_liked_this_entity') {
     $suggestions[] = $variables['theme_hook_original'] . '__wholiked';
   }
 
