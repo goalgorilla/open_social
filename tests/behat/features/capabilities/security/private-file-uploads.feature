@@ -1,4 +1,4 @@
-@api @security @stability @perfect @critical @DS-3605
+@api @security @stability @perfect @critical @DS-3605 @stability-1
 Feature: Private files
   Benefit: Upload files to private file directory
   Role: As a LU

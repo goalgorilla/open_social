@@ -1,4 +1,4 @@
-@api @account @login @security @stability @AN @perfect @DS-233
+@api @account @login @security @stability @AN @perfect @DS-233 @stability-2
 Feature: Login
   Benefit: In order to participate
   Role: AN
