@@ -5,6 +5,10 @@
   display: inline-block;
   vertical-align: middle;
 
+  @include for-phone-only {
+    width: 100%;
+  }
+
   .vote-dislike {
     display: none;
   }
@@ -14,11 +18,19 @@
 .vote__wrapper {
   display: flex;
   align-items: center;
+
+  @include for-phone-only {
+    justify-content: space-between;
+  }
 }
 
 .vote-like {
   margin-right: 3px;
   cursor: pointer;
+
+  @include for-phone-only {
+    margin-right: 10px;
+  }
 }
 
 .icon-vote {
@@ -30,6 +42,18 @@
   stroke: $default-color;
   stroke-width: 15px;
   transition: 0.3s;
+  vertical-align: text-top;
+
+  @include for-phone-only {
+    width: 22px;
+    height: 22px;
+  }
+
+}
+
+// specifity horror, override base component
+svg[class^="icon-vote"] {
+  vertical-align: text-bottom;
 }
 
 .vote__count {
@@ -104,7 +128,7 @@
   }
 
   .row {
-    display: flex;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
     border-bottom: 1px solid $gray-lighter;
@@ -119,34 +143,49 @@
 
   .views-field-rendered-entity-1 {
     flex: 0 0 54px;
+
+    a:focus {
+      outline: 0;
+    }
   }
 
   .views-field-name {
-    flex: 2 0 auto;
+    flex: 2 1 auto;
+    min-width: 0; // critical to prevent children from growing
+    a {
+      @include singleLineEllipsis;
+    }
   }
 
   .views-field-view-user {
-    margin-right: 0;
+    display: none;
 
-    a {
-      display: inline-block;
-      margin-bottom: 0; // For input.btn
-      font-weight: $btn-font-weight;
-      text-align: center;
-      vertical-align: middle;
-      touch-action: manipulation;
-      cursor: pointer;
-      background-image: none; // Reset unusual Firefox-on-Android default style;
-      border: 1px solid transparent;
-      white-space: nowrap;
-      padding: $padding-base-vertical $padding-base-horizontal;
-      font-size: $button-font-size;
-      line-height: $line-height-base;
-      user-select: none;
-      text-transform: uppercase;
-      transition: .3s ease-out;
-      outline: 0;
+    @include for-tablet-landscape-up {
+      margin-right: 0;
+      display: block;
+
+      a {
+        display: inline-block;
+        margin-bottom: 0; // For input.btn
+        font-weight: $btn-font-weight;
+        text-align: center;
+        vertical-align: middle;
+        touch-action: manipulation;
+        cursor: pointer;
+        background-image: none; // Reset unusual Firefox-on-Android default style;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        padding: $padding-base-vertical $padding-base-horizontal;
+        font-size: $button-font-size;
+        line-height: $line-height-base;
+        user-select: none;
+        text-transform: uppercase;
+        transition: .3s ease-out;
+        outline: 0;
+      }
+
     }
+
   }
 
   .mini-pager {
