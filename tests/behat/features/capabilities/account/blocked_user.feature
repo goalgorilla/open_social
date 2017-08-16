@@ -1,4 +1,4 @@
-@api @account @login @stability @blocked_user @AN @perfect @security @DS-238
+@api @account @login @stability @blocked_user @AN @perfect @security @DS-238 @stability-4
 Feature: Notification that account is blocked
   Benefit: In order to know what the problem is not able to login with correct credentials
   Role: AN

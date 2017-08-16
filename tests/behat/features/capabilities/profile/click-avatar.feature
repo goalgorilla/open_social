@@ -30,7 +30,7 @@
     And I should see "This is a public post."
 
   # Click the avatar as AN
-    Given I am logged in as an "anonymous user"
+    Given I am an anonymous user
     Then I click the xth "0" element with the css ".media-left"
     Then I should see "Access denied. You must log in to view this page."
 

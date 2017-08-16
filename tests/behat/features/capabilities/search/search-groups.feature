@@ -1,4 +1,4 @@
-@api @search @groups @stability @1523
+@api @search @groups @stability @1523 @stability-3
 Feature: Search
   Benefit: In order to find specific content
   Role: As a LU

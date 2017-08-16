@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-1933
+@api @topic @stability @perfect @critical @DS-1933 @stability-4
 Feature: Download Topic
   Benefit: In order to see which files are popular
   Role: As a LU

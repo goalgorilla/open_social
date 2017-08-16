@@ -8,7 +8,6 @@
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Entity\Entity;
 
 /**
  * Prepares variables for node templates.

@@ -5,7 +5,9 @@
  * Module file for Social Comment Upload.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -62,13 +64,13 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
 /**
  * Implements hook_comment_delete().
  */
-function social_comment_upload_comment_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function social_comment_upload_comment_delete(EntityInterface $entity) {
   // Loop through the files in the comment.
   foreach ($entity->field_comment_files as $filefield) {
     // Try to load the actual file object.
-    $file = \Drupal\file\Entity\File::load($filefield->target_id);
+    $file = File::load($filefield->target_id);
     // Check if it's an actual file object.
-    if ($file instanceof \Drupal\file\Entity\File) {
+    if ($file instanceof File) {
       // Delete the file object.
       $file->delete();
     }

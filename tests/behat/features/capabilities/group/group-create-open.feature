@@ -1,4 +1,4 @@
-@api @group @DS-811 @DS-816 @stability
+@api @group @DS-811 @DS-816 @stability @stability-1
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU

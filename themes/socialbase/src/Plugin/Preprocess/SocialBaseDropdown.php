@@ -4,6 +4,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\bootstrap\Utility\Unicode;
+use Drupal\bootstrap\Plugin\Preprocess\BootstrapDropdown;
 
 /**
  * Pre-processes variables for the "bootstrap_dropdown" theme hook.
@@ -12,7 +13,7 @@ use Drupal\bootstrap\Utility\Unicode;
  *
  * @BootstrapPreprocess("bootstrap_dropdown")
  */
-class BootstrapDropdown extends \Drupal\bootstrap\Plugin\Preprocess\BootstrapDropdown {
+class SocialBaseDropdown extends BootstrapDropdown {
 
   /**
    * {@inheritdoc}

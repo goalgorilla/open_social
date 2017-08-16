@@ -1,4 +1,4 @@
-@api @event @eventenrollment @stability @perfect @DS-479 @profile
+@api @event @eventenrollment @stability @perfect @DS-479 @profile @stability-2
 Feature: Enroll for an event
   Benefit: In order to attend an Event
   Role: LU
