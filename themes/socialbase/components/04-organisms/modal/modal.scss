@@ -14,6 +14,17 @@
 // http://api.jqueryui.com/dialog/#theming
 //
 
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: $modal-backdrop-opacity; }
+}
+
+@keyframes fadein_scale {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .ui-front {
   z-index: 100;
 }
@@ -28,6 +39,7 @@
   z-index: $zindex-modal-background;
   background-color: $modal-backdrop-bg;
   opacity: $modal-backdrop-opacity;
+  animation: fadein 0.3s;
 }
 
 .ui-helper-hidden-accessible {
@@ -46,8 +58,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
+  max-width: 100%;
   top: 0;
-  left: 0;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   padding: .2em;
   outline: 0;
   z-index: $zindex-modal;
@@ -55,6 +69,8 @@
   border: 1px solid $modal-content-border-color;
   box-shadow: 0 3px 9px rgba(0,0,0,.5);
   background-clip: padding-box;
+  backface-visibility: hidden;
+  animation: fadein_scale 0.5s ease-out;
 }
 
 .ui-dialog-titlebar {
@@ -85,7 +101,7 @@
   color: #000;
   text-shadow: 0 1px 0 #fff;
   opacity: .5;
-  padding: 0;
+  padding: 0 0 0 1em;
   cursor: pointer;
   background: 0 0;
   border: 0;
@@ -113,6 +129,10 @@
   box-shadow: none;
   flex: 1 1 auto;
   padding: 1rem;
+
+  @include for-phone-only {
+    max-height: 60vh !important; // make sure the height doesn't stretch beyond the height of th e screen including the browser toolbar
+  }
 }
 
 

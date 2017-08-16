@@ -1,3 +1,47 @@
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@-webkit-keyframes fadein_scale {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+@keyframes fadein_scale {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
 .ui-front {
   z-index: 100;
 }
@@ -12,6 +56,8 @@
   z-index: 1040;
   background-color: #000;
   opacity: 0.5;
+  -webkit-animation: fadein 0.3s;
+          animation: fadein 0.3s;
 }
 
 .ui-helper-hidden-accessible {
@@ -29,8 +75,10 @@
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
+  max-width: 100%;
   top: 0;
-  left: 0;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
   padding: .2em;
   outline: 0;
   z-index: 1050;
@@ -38,6 +86,10 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-animation: fadein_scale 0.5s ease-out;
+          animation: fadein_scale 0.5s ease-out;
 }
 
 .ui-dialog-titlebar {
@@ -70,7 +122,7 @@
   color: #000;
   text-shadow: 0 1px 0 #fff;
   opacity: .5;
-  padding: 0;
+  padding: 0 0 0 1em;
   cursor: pointer;
   background: 0 0;
   border: 0;
@@ -166,5 +218,11 @@
 @media (min-width: 900px) {
   .ui-dialog-title {
     font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 599px) {
+  .ui-dialog-content {
+    max-height: 60vh !important;
   }
 }

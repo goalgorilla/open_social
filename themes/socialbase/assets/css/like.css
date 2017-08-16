@@ -31,6 +31,11 @@
   stroke-width: 15px;
   -webkit-transition: 0.3s;
   transition: 0.3s;
+  vertical-align: text-top;
+}
+
+svg[class^="icon-vote"] {
+  vertical-align: text-bottom;
 }
 
 .vote__count {
@@ -66,9 +71,8 @@
 }
 
 .view--who-liked .row {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
@@ -89,39 +93,26 @@
           flex: 0 0 54px;
 }
 
+.view--who-liked .views-field-rendered-entity-1 a:focus {
+  outline: 0;
+}
+
 .view--who-liked .views-field-name {
   -webkit-box-flex: 2;
-      -ms-flex: 2 0 auto;
-          flex: 2 0 auto;
+      -ms-flex: 2 1 auto;
+          flex: 2 1 auto;
+  min-width: 0;
+}
+
+.view--who-liked .views-field-name a {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .view--who-liked .views-field-view-user {
-  margin-right: 0;
-}
-
-.view--who-liked .views-field-view-user a {
-  display: inline-block;
-  margin-bottom: 0;
-  font-weight: normal;
-  text-align: center;
-  vertical-align: middle;
-  -ms-touch-action: manipulation;
-      touch-action: manipulation;
-  cursor: pointer;
-  background-image: none;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  padding: 6px 12px;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  text-transform: uppercase;
-  -webkit-transition: .3s ease-out;
-  transition: .3s ease-out;
-  outline: 0;
+  display: none;
 }
 
 .view--who-liked .mini-pager {
@@ -152,5 +143,57 @@
 
   .view--who-liked {
     width: 500px;
+  }
+
+  .view--who-liked .views-field-view-user {
+    margin-right: 0;
+    display: block;
+  }
+
+  .view--who-liked .views-field-view-user a {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-transform: uppercase;
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out;
+    outline: 0;
+  }
+}
+
+@media (max-width: 599px) {
+
+  .vote-widget {
+    width: 100%;
+  }
+
+  .vote__wrapper {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+  }
+
+  .vote-like {
+    margin-right: 10px;
+  }
+
+  .icon-vote {
+    width: 22px;
+    height: 22px;
   }
 }
