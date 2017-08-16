@@ -20,11 +20,6 @@ function socialbase_preprocess_form(&$variables) {
     $variables['is_search_form'] = TRUE;
   }
 
-  // Add the custom search auto complete to search users for now only.
-  if ($element['#form_id'] === 'search_users_form') {
-    $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
-  }
-
   // We have set the region via propress block, now pass this variable on
   // to be used in twig. In twig we can distinguish the nav bar form from
   // the hero form as they both have the same ID's.
@@ -219,6 +214,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'profile_profile_edit_form',
     'social_user_password_form',
     'user_cancel_form',
+    'social_group_add',
     'group_open_group_add_form',
     'group_open_group_edit_form',
     'group_closed_group_add_form',
@@ -229,10 +225,12 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-join_form',
     'group_content_closed_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_add_form',
     'group_content_closed_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_delete_form',
     'group_open_group_delete_form',
     'group_closed_group_delete_form',
     'comment_comment_delete_form',
@@ -307,7 +305,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
   );
