@@ -31,29 +31,34 @@
   position: relative;
 }
 
-.btn.btn--post-remove-image {
-  padding: 0;
-}
-
 .btn--post-remove-image {
   position: absolute;
-  top: 0;
-  right: 0;
-  background: none;
+  top: -1px;
+  right: -1px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 0;
   padding: 0;
+  -webkit-transition: 0.3s background-color;
+  transition: 0.3s background-color;
+}
+
+.btn--post-remove-image:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.btn--post-remove-image:hover .btn-icon {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
 
 .btn--post-remove-image .btn-icon {
   fill: white;
-  -webkit-transition: 0.3s opacity;
-  transition: 0.3s opacity;
-  opacity: 0.6;
   height: 32px;
   width: 32px;
-}
-
-.btn--post-remove-image .btn-icon:hover {
-  opacity: 1;
+  -webkit-transition: 0.3s -webkit-transform;
+  transition: 0.3s -webkit-transform;
+  transition: 0.3s transform;
+  transition: 0.3s transform, 0.3s -webkit-transform;
 }
 
 @media (min-width: 600px) {

@@ -43,27 +43,28 @@
 
 }
 
-.btn.btn--post-remove-image {
-  padding: 0;
-}
-
 .btn--post-remove-image {
   position: absolute;
-  top: 0;
-  right: 0;
-  background: none;
+  top: -1px;
+  right: -1px;
+  background: rgba(0,0,0,0.2);
+  border: 0;
   padding: 0;
+  transition: 0.3s background-color;
+
+  &:hover {
+    background: rgba(0,0,0,0.8);
+
+    .btn-icon {
+      transform: rotate(90deg);
+    }
+  }
 
   .btn-icon {
     fill: white;
-    transition: 0.3s opacity;
-    opacity: 0.6;
     height: 32px;
     width: 32px;
-
-    &:hover {
-      opacity: 1
-    }
+    transition: 0.3s transform;
   }
 }
 
