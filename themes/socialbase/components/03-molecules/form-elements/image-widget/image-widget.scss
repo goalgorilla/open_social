@@ -1,0 +1,69 @@
+@import 'settings';
+
+.form-type-managed-file .image-widget {
+  margin-bottom: 1rem;
+
+  .preview img {
+    width: 100%;
+  }
+
+  @include for-tablet-portrait-up {
+    display: flex;
+
+    .preview {
+      flex: 0 0 auto;
+    }
+
+    .file--image {
+      margin-bottom: 0.5rem;
+    }
+
+  }
+
+  .image-widget-data {
+    padding: 0.5rem 1rem;
+    background-color: $gray-lightest;
+  }
+}
+
+.field--name-field-post-image {
+  display: inline-block;
+
+  .preview {
+    display: inline-block;
+    @include z-depth-3;
+    width: auto;
+  }
+
+  .image-widget {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+}
+
+.btn.btn--post-remove-image {
+  padding: 0;
+}
+
+.btn--post-remove-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  padding: 0;
+
+  .btn-icon {
+    fill: white;
+    transition: 0.3s opacity;
+    opacity: 0.6;
+    height: 32px;
+    width: 32px;
+
+    &:hover {
+      opacity: 1
+    }
+  }
+}
+
