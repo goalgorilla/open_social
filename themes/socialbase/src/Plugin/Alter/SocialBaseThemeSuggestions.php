@@ -67,7 +67,6 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
           $suggestions[] = 'container__post_image';
         };
 
-
     }
 
   }
