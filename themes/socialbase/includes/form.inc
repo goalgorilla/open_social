@@ -139,8 +139,8 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
   $form['field_visibility']['#inline'] = TRUE;
 
   // Set an extra wrapper to display the dropdown and forms actions inline.
-  $form['field_visibility']['#prefix'] = '<div class="form-group-inline form-group-inline--right">';
-  $form['actions']['#suffix'] = '</div>';
+  //$form['field_visibility']['#prefix'] = '<div class="form-group-inline form-group-inline--right">';
+  //$form['actions']['#suffix'] = '</div>';
 
   // Give the `delete` button correct classes.
   if (isset($form['actions']['delete']['#type']) && $form['actions']['delete']['#type'] == 'link') {
@@ -386,6 +386,9 @@ function socialbase_theme_suggestions_form_alter(array &$suggestions, array $var
   if ($variables['element']['#form_id'] == 'social_post_entity_form') {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
       $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
+    } else {
+      $suggestions[] = $variables['theme_hook_original'] . '__post_create';
     }
+
   }
 }

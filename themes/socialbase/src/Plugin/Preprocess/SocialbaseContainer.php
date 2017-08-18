@@ -32,11 +32,6 @@ class SocialbaseContainer extends PreprocessBase implements PreprocessInterface 
     }
 
     // Remove extra wrapper for container of post image form.
-    if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-post-image-wrapper') {
-      $variables['bare'] = TRUE;
-    };
-
-    // Remove extra wrapper for container of comment files form.
     if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-comment-files-wrapper') {
       $variables['bare'] = TRUE;
     };
