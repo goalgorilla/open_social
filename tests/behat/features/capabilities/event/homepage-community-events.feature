@@ -1,4 +1,4 @@
-@api @event @stability @perfect @community @upcoming @overview @block @LU @critical @DS-1056
+@api @event @stability @perfect @community @upcoming @overview @block @LU @critical @DS-1056 @stability-2
 Feature: See upcoming events in the community
   Benefit: In order to know which events I can join
   Role: LU

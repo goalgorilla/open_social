@@ -1,13 +1,140 @@
 @import 'settings';
 
 //
-// Modals
+// jQuery UI Dialog
 // --------------------------------------------------
 
-// .modal-open      - body class for killing the scroll
-// .modal           - container to scroll within
-// .modal-dialog    - positioning shell for the actual modal
-// .modal-content   - actual modal w/ bg and corners and shit
+//
+// jQuery UI Dialog 1.11.4
+// http://jqueryui.com
+//
+// Copyright jQuery Foundation and other contributors
+// Released under the MIT license.
+// http://jquery.org/license
+// http://api.jqueryui.com/dialog/#theming
+//
+
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: $modal-backdrop-opacity; }
+}
+
+@keyframes fadein_scale {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ui-front {
+  z-index: 100;
+}
+
+/* Overlays */
+.ui-widget-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindex-modal-background;
+  background-color: $modal-backdrop-bg;
+  opacity: $modal-backdrop-opacity;
+  animation: fadein 0.3s;
+}
+
+.ui-helper-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+
+.ui-dialog {
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  max-width: 100%;
+  top: 0;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  padding: .2em;
+  outline: 0;
+  z-index: $zindex-modal;
+  background-color: $modal-content-bg;
+  border: 1px solid $modal-content-border-color;
+  box-shadow: 0 3px 9px rgba(0,0,0,.5);
+  background-clip: padding-box;
+  backface-visibility: hidden;
+  animation: fadein_scale 0.5s ease-out;
+}
+
+.ui-dialog-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid $gray-lighter;
+}
+
+.ui-dialog-title {
+  font-family: $headings-font-family;
+  font-weight: $headings-font-weight;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include for-tablet-landscape-up {
+    font-size: 1.25rem;
+  }
+}
+
+.ui-dialog-titlebar-close {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+  padding: 0 0 0 1em;
+  cursor: pointer;
+  background: 0 0;
+  border: 0;
+  outline: 0;
+  -webkit-appearance: none;
+  transition: 0.3s;
+
+  &:before {
+    content: 'x';
+  }
+
+  &:hover {
+    opacity: .75;
+  }
+
+  .ui-button-text {
+    @include visually-hidden;
+  }
+
+}
+
+.ui-dialog-content {
+  position: relative;
+  overflow: auto;
+  box-shadow: none;
+  flex: 1 1 auto;
+  padding: 1rem;
+
+  @include for-phone-only {
+    max-height: 60vh !important; // make sure the height doesn't stretch beyond the height of th e screen including the browser toolbar
+  }
+}
+
 
 // Kill the scroll on the body
 .modal-open {
@@ -62,91 +189,3 @@
   outline: 0;
 }
 
-// Modal background
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: $zindex-modal-background;
-  background-color: $modal-backdrop-bg;
-  // Fade for backdrop
-  &.fade { opacity: 0; }
-  &.in { opacity: $modal-backdrop-opacity; }
-}
-
-// Modal header
-// Top section of the modal w/ title and dismiss
-.modal-header {
-  padding: $modal-title-padding;
-  border-bottom: 1px solid $modal-header-border-color;
-  @include clearfix;
-}
-// Close icon
-.modal-header .close {
-  margin-top: -2px;
-}
-
-// Title text within header
-.modal-title {
-  margin: 0;
-  line-height: $modal-title-line-height;
-}
-
-// Modal body
-// Where all modal content resides (sibling of .modal-header and .modal-footer)
-.modal-body {
-  position: relative;
-  padding: $modal-inner-padding;
-}
-
-// Footer (for actions)
-.modal-footer {
-  padding: $modal-inner-padding;
-  text-align: right; // right align buttons
-  border-top: 1px solid $modal-footer-border-color;
-  @include clearfix; // clear it in case folks use .pull-* classes on buttons
-
-  // Properly space out buttons
-  .btn + .btn {
-    margin-left: 5px;
-    margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
-  }
-  // but override that for button groups
-  .btn-group .btn + .btn {
-    margin-left: -1px;
-  }
-  // and override it for block buttons as well
-  .btn-block + .btn-block {
-    margin-left: 0;
-  }
-}
-
-// Measure scrollbar width for padding body during modal show/hide
-.modal-scrollbar-measure {
-  position: absolute;
-  top: -9999px;
-  width: 50px;
-  height: 50px;
-  overflow: scroll;
-}
-
-// Scale up the modal
-@include for-tablet-portrait-up {
-  // Automatically set modal's width for larger viewports
-  .modal-dialog {
-    width: $modal-md;
-    margin: 30px auto;
-  }
-  .modal-content {
-    box-shadow: 0 5px 15px rgba(0,0,0,.5);
-  }
-
-  // Modal sizes
-  .modal-sm { width: $modal-sm; }
-}
-
-@include for-tablet-landscape-up {
-  .modal-lg { width: $modal-lg; }
-}

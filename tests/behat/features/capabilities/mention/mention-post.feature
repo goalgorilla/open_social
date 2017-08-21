@@ -1,4 +1,4 @@
-@api @mentions @stability @DS-2647
+@api @mentions @stability @DS-2647 @stability-3
 Feature: Create Mention in a Post
   Benefit: In order to make sure that mentioned person will read this post
   Role: As a LU

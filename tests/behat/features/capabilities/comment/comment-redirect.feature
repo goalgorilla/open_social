@@ -1,4 +1,4 @@
-@api @comment @stability @DS-642 @comment-redirect
+@api @comment @stability @DS-642 @comment-redirect @stability-3
 Feature: Redirect comment page
   Benefit: See the full scope of the comment thread
   Role: As a LU

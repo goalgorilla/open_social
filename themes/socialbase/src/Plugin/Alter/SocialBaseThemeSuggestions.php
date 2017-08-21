@@ -3,6 +3,7 @@
 namespace Drupal\socialbase\Plugin\Alter;
 
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions;
 
 /**
  * Implements hook_theme_suggestions_alter().
@@ -11,7 +12,7 @@ use Drupal\bootstrap\Utility\Variables;
  *
  * @BootstrapAlter("theme_suggestions")
  */
-class ThemeSuggestions extends \Drupal\bootstrap\Plugin\Alter\ThemeSuggestions {
+class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
   /**
    * {@inheritdoc}

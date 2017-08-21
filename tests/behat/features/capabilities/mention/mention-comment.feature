@@ -1,4 +1,4 @@
-@api @mentions @stability @DS-2649
+@api @mentions @stability @DS-2649 @stability-3
 Feature: Create Mention in a Comment
   Benefit: In order to make sure that mentioned person will read the comment
   Role: As a LU

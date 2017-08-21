@@ -15,24 +15,30 @@
  *   - dislike_attributes : Set of attributes for dislike link.
  */
 #}
+
 <div class="vote-widget vote-widget--like-and-dislike">
+  <div class="vote__wrapper">
+    <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
+      <a {{ like_attributes }} >
+        <svg class="icon-vote">
+          <use xlink:href="#icon-like"></use>
+        </svg>
+      </a>
+    </div>
 
-  <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ like_attributes }} >
-      <span class="badge badge--large badge--pill badge-default">
-        <span class="badge__container">
-          <svg class="badge__icon icon-vote">
-            <use xlink:href="#icon-like"></use>
-          </svg>
-          <span class="badge__label count">{{ likes }}</span>
-        </span>
-      </span>
-    </a>
+    <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">
+      <a {{ dislike_attributes }}>Dislike</a>
+      <span class="count">{{ dislikes }}</span>
+    </div>
+
+    <div class="vote__count">
+      {% if logged_in %}
+      <a class="use-ajax" data-dialog-options='{"title":"{{ modal_title }}","width":"auto"}' data-dialog-type="modal" href="/wholiked/{{ entity_type }}/{{ entity_id }}">
+        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+      </a>
+      {% else %}
+        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+      {% endif %}
+    </div>
   </div>
-
-  <div class="vote-dislike type-{{ entity_type }}" id="dislike-container-{{ entity_type }}-{{ entity_id }}">
-    <a {{ dislike_attributes }}>Dislike</a>
-    <span class="count">{{ dislikes }}</span>
-  </div>
-
 </div>

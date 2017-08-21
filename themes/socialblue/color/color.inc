@@ -37,22 +37,28 @@ $info = array(
     'logo.svg',
   ),
 
-  // Gradient definitions.
-  //  'gradients' => array(
-  //    array(
-  //      // (x, y, width, height).
-  //      'dimension' => array(0, 0, 0, 0),
-  //      // Direction of gradient ('vertical' or 'horizontal').
-  //      'direction' => 'vertical',
-  //      // Keys of colors to use for the gradient.
-  //      'colors' => array('top', 'bottom'),
-  //    ),
-  //  ),
-
-  // Preview files.
-  // @todo Make sure we update the preview it will help
-  // Distro users / SaaS users a lot!
-  // 'preview_library' => 'socialbase/color.preview',
+  /**
+   * Gradient definitions.
+   *
+   * Example:
+   *
+   *  'gradients' => array(
+   *    array(
+   *      // (x, y, width, height).
+   *      'dimension' => array(0, 0, 0, 0),
+   *      // Direction of gradient ('vertical' or 'horizontal').
+   *      'direction' => 'vertical',
+   *      // Keys of colors to use for the gradient.
+   *      'colors' => array('top', 'bottom'),
+   *    ),
+   *  ),
+   *
+   * Preview files
+   *
+   * @todo Make sure we update the preview it will help
+   * Distro users / SaaS users a lot!
+   * 'preview_library' => 'socialbase/color.preview'.
+   */
   'preview_html' => '',
 
   // Attachments.

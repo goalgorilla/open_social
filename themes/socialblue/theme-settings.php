@@ -1,6 +1,17 @@
 <?php
 
-function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\FormStateInterface &$form_state, $form_id = NULL) {
+/**
+ * @file
+ * Allows users to change the color scheme of themes.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_font\Entity\Font;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface &$form_state, $form_id = NULL) {
   // Work-around for a core bug affecting admin themes. See issue #943212.
   if (isset($form_id)) {
     return;
@@ -10,15 +21,15 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
 
   // If the default theme is either socialblue or socialsaas then extend
   // the form in the appearance section.
-  if($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
+  if ($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
     $config = \Drupal::config($system_theme_settings . '.settings');
 
     $form['open_social_settings'] = array(
       '#type' => 'vertical_tabs',
       '#title' => t('Opensocial settings'),
       '#weight' => -50,
-      '#collapsible' => true,
-      '#collapsed' => true,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
     );
 
     $form['os_color_settings'] = array(
@@ -26,8 +37,8 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
       '#group' => 'open_social_settings',
       '#title' => t('Border radius'),
       '#weight' => 20,
-      '#collapsible' => true,
-      '#collapsed' => true,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
     );
 
     $form['os_font_settings'] = array(
@@ -35,8 +46,8 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
       '#group' => 'open_social_settings',
       '#title' => t('Fonts'),
       '#weight' => 10,
-      '#collapsible' => true,
-      '#collapsed' => true,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
     );
 
     $form['os_color_settings']['border_radius'] = array(
@@ -48,10 +59,12 @@ function socialblue_form_system_theme_settings_alter(&$form, \Drupal\Core\Form\F
     // Font tab.
     $fonts = [];
     if (\Drupal::service('module_handler')->moduleExists('social_font')) {
-        /** @var \Drupal\social_font\Entity\Font $font_entities */
-      foreach(\Drupal\social_font\Entity\Font::loadMultiple() as $font_entities) {
-        $fonts [$font_entities->id()]= $font_entities->get('name')->value;
+
+      /** @var \Drupal\social_font\Entity\Font $font_entities */
+      foreach (Font::loadMultiple() as $font_entities) {
+        $fonts[$font_entities->id()] = $font_entities->get('name')->value;
       }
+
     }
 
     $form['os_font_settings']['font_primary'] = array(

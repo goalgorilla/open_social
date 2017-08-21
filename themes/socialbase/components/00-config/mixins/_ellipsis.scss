@@ -1,10 +1,25 @@
-// Multiline ellipsis
+// Single line ellipsis
+//
+// Allows a text to be truncated and get '...' at the end.
+//
+// Weight: 6
+//
+// Style guide: sass.singleline-ellipsis
+
+@mixin singleLineEllipsis() {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Multi line ellipsis
 //
 // Allows an text to be truncated and get '...' at the end when it exceeds the
 // maximum amount of lines.
 // `@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white)`
 //
-// Weight: 6
+// Weight: 7
 //
 // Style guide: sass.multiline-ellipsis
 
