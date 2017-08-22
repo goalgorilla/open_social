@@ -24,6 +24,41 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
     switch ($hook) {
 
+      case 'block':
+
+        if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
+          $menu_name = $variables['elements']['content']['#menu_name'];
+          $suggestions[] = 'block__block_menu__' . $menu_name;
+        }
+
+        if (isset($variables['elements']['content']['#block_content'])) {
+          $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
+        }
+
+        $block_id = $variables['elements']['#derivative_plugin_id'];
+        $blocks_id = array(
+          'upcoming_events-block_my_upcoming_events',
+          'upcoming_events-block_community_events',
+          'latest_topics-block_latest_topics',
+          'newest_groups-block_newest_groups',
+          'newest_users-block_newest_users',
+          'events-block_events_on_profile',
+          'topics-block_user_topics',
+          'groups-block_user_groups',
+          'group_members-block_newest_members',
+          'upcoming_events-upcoming_events_group',
+          'latest_topics-group_topics_block',
+        );
+        if (in_array($block_id, $blocks_id)) {
+          $suggestions = array($variables['theme_hook_original'] . '__' . 'views_block__sidebar');
+        }
+
+        if (isset($variables['elements']['kpi_analytics'])) {
+          $suggestions = array($variables['theme_hook_original'] . '__' . 'charts');
+        }
+
+        break;
+
       case 'details':
         $suggestions[] = 'details__plain';
 
@@ -59,6 +94,7 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         if ($route_name == 'entity.group.canonical') {
           $suggestions[] = 'file_link__card';
         }
+
         break;
 
     }
