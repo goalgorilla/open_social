@@ -4,7 +4,6 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
-use Drupal\bootstrap\Annotation\BootstrapPreprocess;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 

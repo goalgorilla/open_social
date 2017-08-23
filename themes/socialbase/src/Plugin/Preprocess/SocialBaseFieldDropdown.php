@@ -26,4 +26,5 @@ class SocialBaseFieldDropdown extends PreprocessBase implements PreprocessInterf
 
     $variables['selected_icon'] = isset($selected_icon) ? $selected_icon : '';
   }
+
 }
