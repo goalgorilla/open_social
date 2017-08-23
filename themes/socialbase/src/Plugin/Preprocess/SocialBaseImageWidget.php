@@ -28,6 +28,10 @@ class SocialbaseImageWidget extends ImageWidget {
       $variables['in_post'] = TRUE;
     }
 
+    if (isset($variables['data']['remove_button'])) {
+      $variables['data']['remove_button']['#button_type'] = 'flat';
+    }
+
     parent::preprocessElement($element, $variables);
   }
 
