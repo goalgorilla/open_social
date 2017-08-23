@@ -147,7 +147,11 @@ class Post extends ContentEntityBase implements PostInterface {
   }
 
   public function getDisplayName() {
-    return $this->label();
+    if (!$this->get('field_post_image')->isEmpty()) {
+      return t('photo');
+    }
+
+    return t('post');
   }
 
   /**
