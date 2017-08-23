@@ -2,8 +2,6 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
-use \Drupal\Core\Link;
-
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\bootstrap\Annotation\BootstrapPreprocess;
