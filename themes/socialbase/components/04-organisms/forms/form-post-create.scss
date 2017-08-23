@@ -1,0 +1,52 @@
+@import 'settings';
+
+.form--post-create {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  .field--name-field-post {
+    flex: 1 0 100%;
+
+    .filter-wrapper {
+      margin-bottom: 0;
+    }
+  }
+
+  .field--name-field-post-image {
+    flex: 1 0 100%;
+    margin-bottom: 1rem;
+
+    .btn-default {
+      width: 100%;
+    }
+
+    @include for-tablet-portrait-up {
+      flex-basis: auto;
+      margin-bottom: 0;
+
+      .btn-default {
+        width: auto;
+      }
+    }
+  }
+
+  .field--name-field-post-visibility {
+    flex: 1 1 auto;
+
+    @include for-tablet-portrait-up {
+      flex-grow: 0;
+    }
+  }
+
+  .btn-primary {
+    flex: 0 1 auto;
+    margin-left: 0.5rem;
+
+    @include for-tablet-portrait-up {
+      flex-grow: 0;
+    }
+
+  }
+
+}
