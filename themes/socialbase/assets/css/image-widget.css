@@ -11,26 +11,6 @@
   background-color: #f3f3f3;
 }
 
-.field--name-field-post-image {
-  display: inline-block;
-}
-
-.field--name-field-post-image .preview {
-  display: inline-block;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-  width: auto;
-}
-
-.field--name-field-post-image .image-widget {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
-  position: relative;
-}
-
 .btn--post-remove-image {
   position: absolute;
   top: -1px;
@@ -77,5 +57,10 @@
 
   .form-type-managed-file .image-widget .file--image {
     margin-bottom: 0.5rem;
+  }
+
+  .form--post-create .field--name-field-post-image.container-post-image {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
   }
 }

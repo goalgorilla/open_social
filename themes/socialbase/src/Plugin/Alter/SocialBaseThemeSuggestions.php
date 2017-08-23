@@ -61,6 +61,12 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         }
         break;
 
+      case 'container':
+
+        if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-post-image-wrapper') {
+          $suggestions[] = 'container__post_image';
+        };
+
     }
 
   }

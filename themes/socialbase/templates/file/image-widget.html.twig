@@ -19,10 +19,9 @@
 {% set in_post = false %}
 {% endif %}
 
-{{ attach_library('image_widget_crop/cropper') }}
 {% if data.preview %}
   {{ attach_library('socialbase/image-widget') }}
-  <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
+    <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
     <div class="preview">
       {{ data.preview }}
     </div>
@@ -38,6 +37,8 @@
 
     </div>
   </div>
+
+  {{ attach_library('image_widget_crop/cropper') }}
   {{ data.image_crop }}
 
   {% if in_post %}
@@ -65,7 +66,7 @@
       <svg class="icon-black icon-small">
         <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-plus"></use>
       </svg>
-      <span class="text hidden-for-phone-only">
+      <span>
         {% trans %}Add image{% endtrans %}
       </span>
     </button>

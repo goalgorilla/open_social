@@ -26,19 +26,12 @@
   }
 }
 
-.field--name-field-post-image {
-  display: inline-block;
 
-  .preview {
-    display: inline-block;
-    @include z-depth-3;
-    width: auto;
-  }
+// This is kind of a hack. The upload field op on the post needs to display inline, but the image should not. Since this library is only loaded when the preview is there, the following line overrides the style from form-post-create.
+.form--post-create .field--name-field-post-image.container-post-image {
 
-  .image-widget {
-    display: flex;
-    justify-content: flex-end;
-    position: relative;
+  @include for-tablet-portrait-up {
+    flex-basis: 100%;
   }
 
 }
@@ -66,5 +59,6 @@
     width: 32px;
     transition: 0.3s transform;
   }
+
 }
 
