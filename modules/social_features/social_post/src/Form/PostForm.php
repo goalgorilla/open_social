@@ -56,7 +56,18 @@ class PostForm extends ContentEntityForm {
         if ($display_id === $this->postViewDefault) {
           // Set default value to community.
           unset($form['field_visibility']['widget'][0]['#options'][0]);
-          $form['field_visibility']['widget'][0]['#default_value'] = "2";
+
+          if (isset($form['field_visibility']['widget'][0]['#default_value'])) {
+            $default_value = $form['field_visibility']['widget'][0]['#default_value'];
+
+            if ((string) $default_value !== '1') {
+              $form['field_visibility']['widget'][0]['#default_value'] = '2';
+            }
+          }
+          else {
+            $form['field_visibility']['widget'][0]['#default_value'] = '2';
+          }
+
           unset($form['field_visibility']['widget'][0]['#options'][3]);
         }
         else {

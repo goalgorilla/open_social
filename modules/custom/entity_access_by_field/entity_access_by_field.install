@@ -26,6 +26,35 @@ function entity_access_by_field_update_8001(&$sandbox) {
 }
 
 /**
+ * Set community visibility by default.
+ */
+function entity_access_by_field_update_8002() {
+  \Drupal::configFactory()
+    ->getEditable('entity_access_by_field.settings')
+    ->set('default_visibility', 'community')
+    ->save();
+}
+
+/**
+ * Remove default value from fields type of "entity_access_field".
+ */
+function entity_access_by_field_update_8003() {
+  $field_map = \Drupal::service('entity_field.manager')->getFieldMapByFieldType('entity_access_field');
+  $config_factory = \Drupal::configFactory();
+
+  foreach ($field_map as $entity_type_id => $fields) {
+    foreach ($fields as $field_name => $data) {
+      foreach ($data['bundles'] as $bundle) {
+        $config_factory
+          ->getEditable("field.field.{$entity_type_id}.{$bundle}.{$field_name}")
+          ->set('default_value', NULL)
+          ->save();
+      }
+    }
+  }
+}
+
+/**
  * Function to set permissions.
  */
 function _entity_access_by_field_set_permissions() {
