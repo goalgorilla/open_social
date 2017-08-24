@@ -106,6 +106,39 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         break;
 
+      case 'form':
+
+        // Alter comment form.
+        if ($variables['element']['#form_id'] == 'comment_comment_form') {
+          if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
+          }
+          else {
+            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment');
+          }
+        }
+
+        if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
+          if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
+            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
+          }
+          else {
+            $suggestions[] = $variables['theme_hook_original'] . '__comment';
+          }
+        }
+
+        // Add templates for post add/edit forms.
+        if ($variables['element']['#form_id'] == 'social_post_entity_form') {
+          if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
+            $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
+          }
+          else {
+            $suggestions[] = $variables['theme_hook_original'] . '__post_create';
+          }
+        }
+
+        break;
+
       case 'form_element':
 
         // Lets add the form element parent to the theme suggestions.
@@ -130,6 +163,21 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         if (isset($variables['element']['#switch']) && $variables['element']['#switch'] == TRUE) {
           $suggestions[] = $variables['theme_hook_original'] . '__switch';
+        }
+
+        break;
+
+      case 'input':
+
+        // Add the form element parent to the theme suggestions.
+        if (isset($variables['element']['#id'])) {
+          if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+            $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+          }
+        }
+
+        if (isset($variables['element']['#comment_button'])) {
+          $suggestions[] = 'input__button__comment';
         }
 
         break;

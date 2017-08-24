@@ -25,9 +25,9 @@
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
-{{ menus.menu_links(items, attributes, 0, path_to_socialbase) }}
+{{ menus.menu_links(items, attributes, 0) }}
 
-{% macro menu_links(items, attributes, menu_level, path_to_socialbase) %}
+{% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
 
