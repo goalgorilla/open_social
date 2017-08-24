@@ -27,7 +27,8 @@ class SocialBaseNode extends PreprocessBase implements PreprocessInterface {
     $account = $node->getOwner();
     $variables['content_type'] = $node->bundle();
 
-    // We get the group link to the node if there is one, will return NULL if not.
+    // We get the group link to the node if there is one,
+    // will return NULL if not.
     $group_link = socialbase_group_link($node);
     if (!empty($group_link)) {
       $variables['group_link'] = $group_link;
@@ -76,7 +77,8 @@ class SocialBaseNode extends PreprocessBase implements PreprocessInterface {
           // Add group name to the teaser (if it's part of a group).
           $group_content = GroupContent::loadByEntity($variables['node']);
           if (!empty($group_content)) {
-            // It can only exist in one group. So we get the first pointer out of
+            // It can only exist in one group.
+            // So we get the first pointer out of
             // the array that gets returned from loading GroupContent.
             $group = reset($group_content)->getGroup();
 
@@ -156,8 +158,9 @@ class SocialBaseNode extends PreprocessBase implements PreprocessInterface {
         unset($variables['content'][$comment_field_name]);
       }
 
-      // If we have a comment and the status is OPEN or CLOSED we can render icon
-      // for comment count, and add the comment count to the node.
+      // If we have a comment and the status is
+      // OPEN or CLOSED we can render icon for
+      // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
         $t_args = array(':num_comments' => $comment_count);
@@ -173,10 +176,8 @@ class SocialBaseNode extends PreprocessBase implements PreprocessInterface {
       }
     }
 
-    //dpm($node->$comment_field_name->status);
-
-    // If we have the like and dislike widget available for this node, we can
-    // print the count even for Anonymous.
+    // If we have the like and dislike widget available
+    // for this node, we can print the count even for Anonymous.
     $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
     $variables['likes_count'] = NULL;
     if (in_array($variables['node']->getType(), $enabled_types['node'])) {
