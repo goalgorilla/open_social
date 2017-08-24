@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The Social post module.
@@ -22,7 +23,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post');
+  $form['actions']['submit']['#value'] = t('Post',array(),array('context' => 'Post button'));
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
     // For posting on the stream on the group stream.
@@ -33,7 +34,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
     elseif (!empty(\Drupal::routeMatch()->getParameter('user')) && \Drupal::routeMatch()->getParameter('user')->id() != \Drupal::currentUser()->id()) {
       $user_profile = \Drupal::routeMatch()->getParameter('user');
       $name = $user_profile->getDisplayName();
-      $form['field_post']['widget'][0]['#placeholder'] = t('Leave a message to ') . $name;
+      $form['field_post']['widget'][0]['#placeholder'] = t('Leave a message to @name', ['@name' => $name]);
     }
     else {
       $form['field_post']['widget'][0]['#placeholder'] = t('Say something to the Community');
@@ -73,7 +74,7 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function _social_post_comment_post_comment_form_submit($form, FormStateInterface $form_state) {
+function _social_post_comment_post_comment_form_submit(array $form, FormStateInterface $form_state) {
   // Fetch from the form.
   $uri = $form_state->getValue('redirect_after_save');
   // Let's not trust this.
@@ -136,8 +137,8 @@ function social_post_theme() {
 }
 
 /**
-* Implements hook_theme_suggestions_HOOK().
-*/
+ * Implements hook_theme_suggestions_HOOK().
+ */
 function social_post_theme_suggestions_post(array $variables) {
   $suggestions = [];
   $entity = $variables['elements']['#post'];
@@ -164,7 +165,7 @@ function social_post_theme_suggestions_post(array $variables) {
  * @todo Rename to template_preprocess_field__comment() once
  *   https://www.drupal.org/node/939462 is resolved.
  */
-function social_post_preprocess_field(&$variables) {
+function social_post_preprocess_field(array &$variables) {
   $element = $variables['element'];
   if ($element['#formatter'] == 'comment_post') {
     // Create separate variables for the more_link.

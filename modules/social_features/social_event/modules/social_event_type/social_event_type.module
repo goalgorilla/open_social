@@ -1,33 +1,35 @@
 <?php
 
-use Drupal\Core\Url;
-use Drupal\Core\Link;
-
 /**
  * @file
  * The Social event type module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
+
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_event_type_form_node_event_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_event_type_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   social_event_type_widget_alter($form);
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_event_type_form_node_event_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function social_event_type_form_node_event_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   social_event_type_widget_alter($form);
 }
-
 
 /**
  * Function that does some magic to the event type field.
- * @param $form
+ *
+ * @param array $form
+ *    Form array.
  */
-function social_event_type_widget_alter(&$form) {
+function social_event_type_widget_alter(array &$form) {
   /** @var \Drupal\Core\Config\ConfigFactory $config */
   $config = \Drupal::service('config.factory')->getEditable('social_event_type.settings');
 
@@ -50,7 +52,13 @@ function social_event_type_widget_alter(&$form) {
   }
 }
 
-function social_event_type_preprocess_node(&$variables) {
+/**
+ * Preprocess event node.
+ *
+ * @param array $variables
+ *    Array with variables of a node.
+ */
+function social_event_type_preprocess_node(array &$variables) {
   /* @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'event') {
@@ -64,12 +72,13 @@ function social_event_type_preprocess_node(&$variables) {
         $now = strtotime("now");
         $end = strtotime($node->get('field_event_date_end')->getString());
         // 1 are upcoming events.
-        // 2 are ones that have started or are finshed
+        // 2 are ones that have started or are finished.
         $datetype = ($now > $end) ? 2 : 1;
 
         $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
           'field_event_date_value' => $datetype,
-          'event_type_id' => $event->id()));
+          'event_type_id' => $event->id(),
+        ));
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
         $variables['event_type'] = $event_type_link;

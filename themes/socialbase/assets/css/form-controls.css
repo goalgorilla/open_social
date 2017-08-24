@@ -26,6 +26,17 @@ fieldset[disabled] .form-control {
   cursor: not-allowed;
 }
 
+.form-control--autogrow {
+  resize: none;
+  min-height: 38px;
+  overflow: hidden;
+  max-width: none;
+}
+
+textarea.form-control {
+  height: auto;
+}
+
 input[type="search"] {
   box-sizing: border-box;
 }
@@ -55,10 +66,6 @@ input[type="checkbox"]:focus {
 
 input[type="search"] {
   -webkit-appearance: none;
-}
-
-textarea.form-control {
-  height: auto;
 }
 
 .radio,

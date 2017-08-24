@@ -1,4 +1,4 @@
-@api @topic @stability @overview @DS-357 @DS-358
+@api @topic @stability @overview @DS-357 @DS-358 @stability-2
 Feature: Topic Overview
   Benefit: In order to find a Topic from a author
   Role: As a User

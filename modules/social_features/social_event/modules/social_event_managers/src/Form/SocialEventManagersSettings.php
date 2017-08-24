@@ -61,4 +61,5 @@ class SocialEventManagersSettings extends ConfigFormBase {
       ->set('author_as_manager', $form_state->getValue('author_as_manager'))
       ->save();
   }
+
 }

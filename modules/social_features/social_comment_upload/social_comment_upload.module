@@ -1,18 +1,26 @@
 <?php
 
+/**
+ * @file
+ * Module file for Social Comment Upload.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * Alter the weight of the actions, so the upload is last
+ * Alter the weight of the actions, so the upload is last.
  */
 function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form['field_comment_files'])) {
     $form['field_comment_files']['widget']['#file_upload_title'] = '';
     $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
     $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
-    // Workaround for fixing behat tests, which is caused by alter in social_comment module
+    // Workaround for fixing behat tests,
+    // which is caused by alter in social_comment module.
     $form['field_comment_files']['#weight'] = 9;
     $form['actions']['#weight'] = 8;
   }
@@ -40,10 +48,10 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
     // Remove "weight" column.
     foreach ($variables['table']['#rows'] as $key => $row) {
       if (!empty($element['#display_field'])) {
-        unset($variables['table']['#rows'][ $key ]['data'][2]);
+        unset($variables['table']['#rows'][$key]['data'][2]);
       }
       else {
-        unset($variables['table']['#rows'][ $key ]['data'][1]);
+        unset($variables['table']['#rows'][$key]['data'][1]);
       }
     }
 
@@ -51,4 +59,21 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
     $variables['table']['#header'] = [];
     $variables['table']['#tabledrag'] = [];
   }
+}
+
+/**
+ * Implements hook_comment_delete().
+ */
+function social_comment_upload_comment_delete(EntityInterface $entity) {
+  // Loop through the files in the comment.
+  foreach ($entity->field_comment_files as $filefield) {
+    // Try to load the actual file object.
+    $file = File::load($filefield->target_id);
+    // Check if it's an actual file object.
+    if ($file instanceof File) {
+      // Delete the file object.
+      $file->delete();
+    }
+  }
+
 }

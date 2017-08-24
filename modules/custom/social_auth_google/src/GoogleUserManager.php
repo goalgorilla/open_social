@@ -6,7 +6,8 @@ use Drupal\social_auth_extra\UserManager;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 
 /**
- * Class GoogleUserManager
+ * Class GoogleUserManager.
+ *
  * @package Drupal\social_auth_google
  */
 class GoogleUserManager extends UserManager {

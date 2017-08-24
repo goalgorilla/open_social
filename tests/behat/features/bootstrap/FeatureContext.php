@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -73,6 +74,49 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     public function iFillInTheWysiwygEditor($instanceId, $text) {
       $instance = $this->getWysiwygInstance($instanceId);
       $this->getSession()->executeScript("$instance.setData(\"$text\");");
+    }
+
+    /**
+     * @When /^I click on the image icon in the WYSIWYG editor$/
+     */
+    public function clickImageIconInWysiwygEditor() {
+
+      $cssSelector = 'a.cke_button__drupalimage';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $element->click();
+
+    }
+
+    /**
+     * @Then /^The image path in the body description should be private$/
+     */
+    public function imagePathInBodyDescriptionShouldBePrivate() {
+
+      $cssSelector = 'article .card__body .body-text img';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $src = $element->getAttribute('src');
+
+      if (strpos($src, '/system/files/inline-images') === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The image does not seem to be uploaded in the private file system: "%s"', $src));
+      }
     }
 
     /**
@@ -637,7 +681,12 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
       else {
-        throw new \Exception(sprintf("User '%s' does not exist.", $username));
+        if (empty($gid)) {
+          throw new \Exception(sprintf("Group '%s' does not exist.", $groupname));
+        }
+        if (count($gid) > 1) {
+          throw new \Exception(sprintf("Multiple groups with label '%s' found.", $groupname));
+        }
       }
     }
 

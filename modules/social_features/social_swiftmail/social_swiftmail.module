@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Module file for  Social Swiftmailer.
+ */
+
+use Drupal\Component\Utility\Xss;
+
+/**
+ * Preprocess swift template.
+ */
+function social_swiftmail_preprocess_swiftmailer(array &$variables) {
+  // Determine host.
+  $request = \Drupal::request();
+  $host = $request->getSchemeAndHttpHost();
+  // Load default theme (not active).
+  $theme_id = \Drupal::config('system.theme')->get('default');
+
+  // Need to check this, since otherwise site-install will fail.
+  if (\Drupal::service('module_handler')->moduleExists('color')) {
+    // Load the colors.
+    $colors = color_get_palette($theme_id);
+  }
+
+  // Set variables from theme.
+  $logo = $host . theme_get_setting('logo.url', $theme_id);
+  $primary = $colors['brand-bg-primary'];
+  $secondary = $colors['brand-bg-secondary'];
+  $accent = $colors['brand-bg-accent'];
+  $link = $colors['brand-text-primary'];
+  $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id));
+
+  // Add variables to send to the html template.
+  $variables['logo'] = $logo;
+  $variables['primary'] = $primary;
+  $variables['secondary'] = $secondary;
+  $variables['accent'] = $accent;
+  $variables['link'] = $link;
+  $variables['border_radius'] = $border_radius;
+
+  // Try to add a heading message.
+  if ($user = user_load_by_mail($variables['message']['to'])) {
+    $message = $variables['message'];
+    $options = array(
+      'langcode' => $message['langcode'],
+    );
+
+    $replace = array(
+      '%display_name' => $user->getDisplayName(),
+    );
+    $variables['heading'] = t('Hi %display_name', $replace, $options);
+  }
+}
+
+/**
+ * Implements hook_mail_alter().
+ */
+function social_swiftmail_mail_alter(&$message) {
+  // Get the site settings.
+  $site_settings = \Drupal::config('system.site');
+
+  // If there is something set as 'from' sender, we append the site name.
+  if (isset($message['from'])) {
+    $message['from'] = $site_settings->get('name') . ' <' . $message['from'] . '>';
+  }
+  else {
+    $message['from'] = $site_settings->get('name') . ' <' . $site_settings->get('mail') . '>';
+  }
+
+}

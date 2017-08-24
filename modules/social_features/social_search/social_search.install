@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_search module.
@@ -6,11 +7,10 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\views\Entity\View;
+use \Drupal\user\Entity\Role;
 
 /**
  * Implements hook_update_dependencies().
- *
- * @return array
  */
 function social_search_update_dependencies() {
   // Necessary because we delete a view with geolocation filter.
@@ -36,7 +36,7 @@ function social_search_install() {
  * Function to set permissions.
  */
 function _social_search_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -50,8 +50,13 @@ function _social_search_set_permissions() {
 }
 
 /**
- * @param $role
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
  * @return array
+ *   A list of permissions.
  */
 function _social_search_get_permissions($role) {
   // Anonymous.
@@ -65,16 +70,11 @@ function _social_search_get_permissions($role) {
     'access group search',
   ));
 
-
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
-
-  ));
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
-  ));
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -82,12 +82,12 @@ function _social_search_get_permissions($role) {
   return [];
 }
 
-
 /**
  * Install new submodule from search_api, to fix our exposed filters.
+ *
  * See https://www.drupal.org/node/2777483.
  */
-function social_search_update_8101(&$sandbox) {
+function social_search_update_8101(array &$sandbox) {
 
   $modules = array(
     'search_api_views_taxonomy',
@@ -99,7 +99,7 @@ function social_search_update_8101(&$sandbox) {
 /**
  * Remove deprecated bloks and views from Social Search module.
  */
-function social_search_update_8102(&$sandbox) {
+function social_search_update_8102(array &$sandbox) {
 
   // Remove exposed filter blocks from Social Search Views.
   $block_ids = [
@@ -120,4 +120,17 @@ function social_search_update_8102(&$sandbox) {
     $view->delete();
   }
 
+}
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8103() {
+  // Clear the index.
+  drush_search_api_clear('social_all');
+  drush_search_api_clear('social_groups');
+
+  // Schedule the indexes for a search re-index.
+  drush_search_api_reset_tracker('social_all');
+  drush_search_api_reset_tracker('social_groups');
 }

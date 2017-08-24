@@ -26,8 +26,7 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * @param $form
- * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Validate function for the user register form.
  */
 function social_user_register_validate(&$form, FormStateInterface $form_state) {
 
@@ -90,12 +89,15 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   }
 }
 
+/**
+ * Submit function for resetting password form.
+ */
 function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
   $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
 
-  // Only when there is actual user, and the actual user is changing his own account.
-  // we redirect. When you're editting others you don't want this ofcourse.
+  // Only when there is actual user, and the actual user is changing his own
+  // account we redirect. When you're editing others you don't want this.
   if (!empty($submitted_user_id) && \Drupal::currentUser()->id() == $submitted_user_id) {
     $first_time_login = $form_state->get('first_time_login');
 
@@ -103,9 +105,12 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     // the user save form before. Which means we can redirect to user profile.
     if ($first_time_login) {
       $form_state->setRedirect(
-        'entity.profile.type.profile.user_profile_form',
-        array('user' => $submitted_user_id, 'profile_type' => 'profile', array())
-      );
+        'entity.profile.type.user_profile_form',
+        array(
+          'user' => $submitted_user_id,
+          'profile_type' => 'profile',
+          array(),
+        ));
       $form_state->set('first_time_login', FALSE);
     }
     else {
@@ -114,7 +119,6 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     }
   }
 }
-
 
 /**
  * Check if an users with the input field for name or mail field is blocked.
@@ -187,10 +191,10 @@ function social_user_theme() {
  *   An associative array containing:
  *    - links.
  */
-function template_preprocess_account_header_links(&$variables) {
+function template_preprocess_account_header_links(array &$variables) {
   // Add the search content block to account_header_links.
   $block = Block::load('search_content_block_header');
-  if(!empty($block)){
+  if (!empty($block)) {
     $block_output = \Drupal::entityManager()
       ->getViewBuilder('block')
       ->view($block);
@@ -242,7 +246,7 @@ function social_user_user_format_name_alter(&$name, $account) {
     if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
       $accountname = trim(t('@first @last', array(
         '@first' => $user_profile->get('field_profile_first_name')->value,
-        '@last' => $user_profile->get('field_profile_last_name')->value
+        '@last' => $user_profile->get('field_profile_last_name')->value,
       )));
     }
   }

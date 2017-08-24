@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- */
-
 namespace Drupal\mentions;
 
 use Drupal\views\EntityViewsData;
@@ -14,7 +10,7 @@ use Drupal\views\EntityViewsData;
 class MentionsViewsData extends EntityViewsData {
 
   /**
-   * @{inheritdoc}
+   * Get the views data.
    */
   public function getViewsData() {
     $data = parent::getViewsData();
@@ -35,19 +31,19 @@ class MentionsViewsData extends EntityViewsData {
       'title' => t('Mention ID'),
       'help' => t('Mention ID'),
       'field' => [
-        'id' => 'numeric'
+        'id' => 'numeric',
       ],
     ];
 
     $data['mentions_field_data']['entity_type'] = [
       'title' => t('Entity type'),
-        'help' => t('Entity type of entity that contains mention'),
-        'field' => [
-          'id' => 'standard'
-        ],
-        'filter' => [
-          'id' => 'standard'
-        ],
+      'help' => t('Entity type of entity that contains mention'),
+      'field' => [
+        'id' => 'standard',
+      ],
+      'filter' => [
+        'id' => 'standard',
+      ],
     ];
 
     $data['mentions_field_data']['title'] = [
@@ -55,7 +51,7 @@ class MentionsViewsData extends EntityViewsData {
       'help' => t('Title of entity containing mention'),
       'real field' => 'mid',
       'field' => [
-        'id' => 'mentions_title'
+        'id' => 'mentions_title',
       ],
       'relationship' => [
         'base' => 'node_field_data',

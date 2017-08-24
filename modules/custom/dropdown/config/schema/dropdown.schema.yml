@@ -1,0 +1,34 @@
+# Schema for the configuration files of the Dropdown module.
+
+field.storage_settings.dropdown:
+  type: mapping
+  label: 'Dropdown list settings'
+  mapping:
+    allowed_values:
+      type: sequence
+      label: 'Allowed values list'
+      sequence:
+        type: mapping
+        label: 'Allowed value with label'
+        mapping:
+          value:
+            type: string
+            label: 'Value'
+          label:
+            type: label
+            label: 'Label'
+          description:
+            type: label
+            label: 'Description'
+
+field.field_settings.dropdown:
+  label: 'Dropdown list settings'
+  type: mapping
+
+field.value.dropdown:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    value:
+      type: string
+      label: 'Value'

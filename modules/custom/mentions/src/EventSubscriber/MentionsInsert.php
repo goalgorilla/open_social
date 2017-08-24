@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Event Handler when a mention is inserted.
- */
-
 namespace Drupal\mentions\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -13,8 +8,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * MentionsInsert handles event 'mentions.insert'.
  */
 class MentionsInsert implements EventSubscriberInterface {
+
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
     $events['mentions.insert'][] = array('onMentionsInsert', 0);

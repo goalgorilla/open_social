@@ -48,6 +48,9 @@
 
 .comment__text p {
   word-break: break-word;
+}
+
+.comment__text p:last-of-type {
   margin-bottom: 0;
 }
 
@@ -87,6 +90,14 @@
   padding: 0;
   font-size: 0.75rem;
   margin-right: 10px;
+}
+
+.comment__avatar {
+  display: none;
+}
+
+.comment-form textarea.form-control {
+  height: 38px;
 }
 
 .comment-attachments {
@@ -147,11 +158,33 @@ details[open] .details__close-icon {
   .comment__avatar {
     margin-right: 12px;
   }
+
+  .comment__avatar {
+    display: block;
+  }
+
+  .comment-form .btn-icon {
+    display: none;
+  }
 }
 
 @media (min-width: 900px) {
 
   .comments {
     margin-left: 56px;
+  }
+}
+
+@media (max-width: 599px) {
+
+  .comment-form .btn--comment-submit {
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-bottom: 0;
+  }
+
+  .comment-form .btn--comment-submit .label {
+    font-size: 0;
+    text-indent: -9999px;
   }
 }

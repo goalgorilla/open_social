@@ -1,4 +1,4 @@
-@api @event @eventenrollment @stability @perfect @DS-479 @profile
+@api @event @eventenrollment @stability @perfect @DS-479 @profile @stability-2
 Feature: Enroll for an event
   Benefit: In order to attend an Event
   Role: LU
@@ -38,7 +38,8 @@ Feature: Enroll for an event
     And I am on "node/add/event"
     When I fill in the following:
       | Title         | Enrollment redirect test event |
-      | Date          | 2025-01-01 |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."

@@ -1,0 +1,281 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group.field_group_description
+    - field.storage.group.field_group_location
+    - field.storage.profile.field_profile_expertise
+    - field.storage.profile.field_profile_interests
+    - field.storage.profile.field_profile_profile_tag
+    - search_api.server.social_database
+    - core.entity_view_mode.group.teaser
+    - core.entity_view_mode.node.search_index
+    - core.entity_view_mode.profile.search_index
+  module:
+    - user
+    - search_api
+    - node
+    - group
+    - profile
+id: social_all
+name: 'Social all'
+description: ''
+read_only: false
+field_settings:
+  rendered_item:
+    label: 'Rendered HTML output'
+    property_path: rendered_item
+    type: text
+    configuration:
+      roles:
+        anonymous: anonymous
+      view_mode:
+        'entity:node':
+          event: search_index
+          page: default
+          topic: search_index
+        'entity:group':
+          closed_group: teaser
+          open_group: teaser
+        'entity:profile':
+          profile: search_index
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+  status:
+    label: 'Publishing status'
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: string
+  uid:
+    label: 'Authored by'
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+  created:
+    label: 'Authored on'
+    datasource_id: 'entity:node'
+    property_path: created
+    type: date
+  label:
+    label: Title
+    datasource_id: 'entity:group'
+    property_path: label
+    type: string
+  uid_1:
+    label: 'Group creator'
+    datasource_id: 'entity:group'
+    property_path: uid
+    type: integer
+  created_1:
+    label: 'Created on'
+    datasource_id: 'entity:group'
+    property_path: created
+    type: date
+  field_group_description:
+    label: Description
+    datasource_id: 'entity:group'
+    property_path: field_group_description
+    type: text
+    dependencies:
+      config:
+        - field.storage.group.field_group_description
+  field_group_location:
+    label: 'Location name'
+    datasource_id: 'entity:group'
+    property_path: field_group_location
+    type: string
+    dependencies:
+      config:
+        - field.storage.group.field_group_location
+  field_profile_expertise:
+    label: Expertise
+    datasource_id: 'entity:profile'
+    property_path: field_profile_expertise
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_expertise
+  field_profile_interests:
+    label: Interests
+    datasource_id: 'entity:profile'
+    property_path: field_profile_interests
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_interests
+  field_profile_profile_tag:
+    label: 'Profile tag'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_profile_tag
+    type: integer
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_profile_tag
+  uid_2:
+    label: Owner
+    datasource_id: 'entity:profile'
+    property_path: uid
+    type: integer
+  name:
+    label: 'Owner » User » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'uid:entity:name'
+    type: text
+    dependencies:
+      module:
+        - user
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:group':
+    bundles:
+      default: true
+      selected: {  }
+    languages:
+      default: true
+      selected: {  }
+  'entity:profile':
+    bundles:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  content_access:
+    weights:
+      preprocess_query: -30
+  html_filter:
+    fields:
+      - rendered_item
+      - type
+      - title
+      - label
+      - field_group_description
+      - field_group_location
+      - name
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      b: 2
+      em: 1
+      u: 1
+    weights:
+      preprocess_index: -15
+      preprocess_query: -15
+    all_fields: false
+  ignorecase:
+    fields:
+      - rendered_item
+      - type
+      - title
+      - label
+      - field_group_description
+      - field_group_location
+      - name
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+    all_fields: false
+  rendered_item: {  }
+  stopwords:
+    fields:
+      - rendered_item
+      - field_group_description
+    stopwords:
+      - a
+      - an
+      - and
+      - are
+      - as
+      - at
+      - be
+      - but
+      - by
+      - for
+      - if
+      - in
+      - into
+      - is
+      - it
+      - 'no'
+      - not
+      - of
+      - 'on'
+      - or
+      - s
+      - such
+      - t
+      - that
+      - the
+      - their
+      - then
+      - there
+      - these
+      - they
+      - this
+      - to
+      - was
+      - will
+      - with
+    weights:
+      preprocess_index: -5
+      preprocess_query: -2
+    all_fields: false
+  tokenizer:
+    fields:
+      - rendered_item
+      - field_group_description
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
+    all_fields: false
+  transliteration:
+    fields:
+      - rendered_item
+      - type
+      - title
+      - label
+      - field_group_description
+      - field_group_location
+      - name
+    weights:
+      preprocess_index: -20
+      preprocess_query: -20
+    all_fields: false
+tracker_settings:
+  default: {  }
+options:
+  index_directly: true
+  cron_limit: 50
+server: social_database

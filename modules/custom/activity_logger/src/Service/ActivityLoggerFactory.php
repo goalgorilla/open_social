@@ -1,11 +1,8 @@
 <?php
-/**
- * @file
- * Activity Logger Factory to create message entities.
- */
 
 namespace Drupal\activity_logger\Service;
 
+use Drupal\Core\Entity\Entity;
 use Drupal\message\Entity\Message;
 
 /**
@@ -24,7 +21,7 @@ class ActivityLoggerFactory {
    * @param string $action
    *    Action string. Defaults to 'create'.
    */
-  public function createMessages(\Drupal\Core\Entity\Entity $entity, $action) {
+  public function createMessages(Entity $entity, $action) {
     // Get all messages that are responsible for creating items.
     $message_types = $this->getMessageTypes($action, $entity);
     // Loop through those message types and create messages.
@@ -50,11 +47,10 @@ class ActivityLoggerFactory {
         ['name' => 'field_message_destination', 'type' => 'list_string'],
         [
           'name' => 'field_message_related_object',
-          'type' => 'dynamic_entity_reference'
+          'type' => 'dynamic_entity_reference',
         ],
       ];
       $this->createFieldInstances($message_type, $additional_fields);
-
 
       $new_message['field_message_context'] = $mt_context;
       $new_message['field_message_destination'] = $destinations;
@@ -72,7 +68,6 @@ class ActivityLoggerFactory {
     }
   }
 
-
   /**
    * Get message templates for action and entity.
    *
@@ -84,7 +79,7 @@ class ActivityLoggerFactory {
    * @return array
    *    Array of message types.
    */
-  public function getMessageTypes($action, \Drupal\Core\Entity\Entity $entity) {
+  public function getMessageTypes($action, Entity $entity) {
     // Init.
     $messagetypes = array();
 
@@ -131,7 +126,15 @@ class ActivityLoggerFactory {
     return $messagetypes;
   }
 
-  protected function createFieldInstances($message_type, $fields) {
+  /**
+   * Create field instances.
+   *
+   * @param string $message_type
+   *   The typeof message.
+   * @param array $fields
+   *   The data to insert in the field instances.
+   */
+  protected function createFieldInstances($message_type, array $fields) {
     foreach ($fields as $field) {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = \Drupal::entityTypeManager()
@@ -165,9 +168,7 @@ class ActivityLoggerFactory {
         }
         elseif ($field['type'] === 'dynamic_entity_reference') {
           $field_instance['module'] = ['dynamic_entity_reference'];
-          $field_instance['settings'] = [
-
-          ];
+          $field_instance['settings'] = [];
         }
         $config_storage->create($field_instace)->save();
       }

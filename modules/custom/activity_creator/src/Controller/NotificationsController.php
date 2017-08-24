@@ -1,10 +1,7 @@
 <?php
-/**
- * @file
- * Contains \Drupal\activity_creator\Controller\NotificationsController.
- */
 
 namespace Drupal\activity_creator\Controller;
+
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 
@@ -19,12 +16,12 @@ class NotificationsController extends ControllerBase {
   public function readNotificationCallback() {
     $account = \Drupal::currentUser();
 
-    // TODO Add dependency injection.
+    // @todo: Add dependency injection.
     $activity_notifications = \Drupal::service('activity_creator.activity_notifications');
     $remaining_notifications = $activity_notifications->markAllNotificationsAsSeen($account);
 
     // Create AJAX Response object.
-    // TODO Implement a Ajax command instead and call via addCommand().
+    // @todo: Implement a Ajax command instead and call via addCommand().
     $response = new AjaxResponse();
     $data = [
       'remaining_notifications' => $remaining_notifications,

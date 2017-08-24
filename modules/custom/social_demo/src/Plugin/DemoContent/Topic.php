@@ -11,6 +11,8 @@ use Drupal\file\FileStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
+ * Topic Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "topic",
  *   label = @Translation("Topic"),
@@ -36,14 +38,6 @@ class Topic extends DemoNode {
 
   /**
    * Topic constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\Core\Entity\EntityStorageInterface $group_storage
-   * @param \Drupal\file\FileStorageInterface $file_storage
-   * @param \Drupal\taxonomy\TermStorageInterface $term_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
@@ -71,11 +65,11 @@ class Topic extends DemoNode {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = parent::getEntry($item);
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
-    // Load term by uuid and set to node.
+    // Load term by name and set to node.
     if (!empty($item['field_topic_type'])) {
       $entry['field_topic_type'] = $this->prepareTopicType($item['field_topic_type']);
     }
@@ -91,8 +85,11 @@ class Topic extends DemoNode {
   /**
    * Prepares data about an image of node.
    *
-   * @param $uuid
+   * @param string $uuid
+   *   Type of uuid.
+   *
    * @return array|null
+   *   Returns array|null
    */
   protected function prepareImage($uuid) {
     $value = NULL;
@@ -114,20 +111,23 @@ class Topic extends DemoNode {
   /**
    * Returns taxonomy term id.
    *
-   * @param $uuid
+   * @param string $name
+   *   Term name.
+   *
    * @return array|null
+   *   Array containing related terms.
    */
-  protected function prepareTopicType($uuid) {
+  protected function prepareTopicType($name) {
     $value = NULL;
     $terms = $this->termStorage->loadByProperties([
-      'uuid' => $uuid,
+      'name' => $name,
     ]);
 
     if ($terms) {
       $value = [
         [
           'target_id' => current($terms)->id(),
-        ]
+        ],
       ];
     }
 

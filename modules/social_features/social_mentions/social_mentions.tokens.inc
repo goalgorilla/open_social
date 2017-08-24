@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_token_info().
@@ -56,7 +57,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               if (!empty($profile->field_profile_first_name->value) && !empty($profile->field_profile_last_name->value)) {
                 $user_name = t('@first @last', array(
                   '@first' => $profile->field_profile_first_name->value,
-                  '@last' => $profile->field_profile_last_name->value
+                  '@last' => $profile->field_profile_last_name->value,
                 ));
               }
           }
@@ -80,7 +81,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'mentioned_user':
 
-          if($name === 'mentioned_user') {
+          if ($name === 'mentioned_user') {
             if (isset($message->field_message_related_object)) {
               $target_type = $message->field_message_related_object->target_type;
               $target_id = $message->field_message_related_object->target_id;
@@ -89,7 +90,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                 ->load($target_id);
 
               if ($mention->getEntityTypeId() == 'mentions') {
-                $loadUserId = \Drupal\user\Entity\User::load($mention->getMentionedUserID());
+                $loadUserId = User::load($mention->getMentionedUserID());
                 $user = $loadUserId->getDisplayName();
 
                 $replacements[$original] = $user;

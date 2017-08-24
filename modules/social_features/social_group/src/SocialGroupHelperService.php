@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\social_group;
+
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;

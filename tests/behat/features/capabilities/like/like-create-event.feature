@@ -1,4 +1,4 @@
-@api @like @stability @DS-2968
+@api @like @stability @DS-2968 @stability-4
 Feature: Create event like
   Benefit: In order to like an event
   Role: As a LU
@@ -16,7 +16,8 @@ Feature: Create event like
 
     When I fill in the following:
       | Title | Event for likes |
-      | Date | 2025-01-01 |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | Time | 11:00:00 |
       | Location name | GG HQ |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
