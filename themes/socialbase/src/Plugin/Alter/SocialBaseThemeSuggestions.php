@@ -2,6 +2,7 @@
 
 namespace Drupal\socialbase\Plugin\Alter;
 
+use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions;
 
@@ -101,6 +102,34 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         // If the file link is part of a group field, suggest another template.
         if ($route_name == 'entity.group.canonical') {
           $suggestions[] = 'file_link__card';
+        }
+
+        break;
+
+      case 'form_element':
+
+        // Lets add the form element parent to the theme suggestions.
+        if (isset($variables['element']['#parents'][0])) {
+          $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
+          $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+        }
+
+        if (!empty($variables['element']['#attributes']['data-switch'])) {
+          $suggestions[] = $variables['theme_hook_original'] . '__switch';
+        }
+
+        break;
+
+      case 'form_element_label':
+
+        if (isset($variables['element']['#id'])) {
+          if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+            $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+          }
+        }
+
+        if (isset($variables['element']['#switch']) && $variables['element']['#switch'] == TRUE) {
+          $suggestions[] = $variables['theme_hook_original'] . '__switch';
         }
 
         break;
