@@ -59,6 +59,14 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         break;
 
+      case 'container':
+
+        if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-post-image-wrapper') {
+          $suggestions[] = 'container__post_image';
+        };
+
+        break;
+
       case 'details':
         $suggestions[] = 'details__plain';
 
@@ -97,11 +105,46 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         break;
 
-      case 'container':
+      case 'views_view':
 
-        if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-post-image-wrapper') {
-          $suggestions[] = 'container__post_image';
-        };
+        $view_id = $variables['view']->id();
+        $display_id = $variables['view']->getDisplay()->display['id'];
+
+        if (isset($display_id)) {
+
+          if ($display_id == 'wholiked') {
+            $suggestions[] = $variables['theme_hook_original'] . '__members_list';
+          }
+
+        }
+
+        if (isset($view_id)) {
+
+          if ($view_id == 'view_enrollments') {
+            $suggestions[] = $variables['theme_hook_original'] . '__page';
+          }
+
+          if ($view_id == 'group_managers') {
+            $suggestions[] = $variables['theme_hook_original'] . '__group_managers';
+          }
+
+          if ($view_id == 'activity_stream' || $view_id == 'activity_stream_profile' || $view_id == 'activity_stream_group') {
+            $suggestions[] = $variables['theme_hook_original'] . '__stream';
+          }
+
+        }
+
+        break;
+
+      case 'views_view_fields':
+
+        /** @var \Drupal\views\ViewExecutable $view */
+        $view = $variables['view'];
+        if (($view) && $view->id() == 'who_liked_this_entity') {
+          $suggestions[] = $variables['theme_hook_original'] . '__wholiked';
+        }
+
+        break;
 
     }
 
