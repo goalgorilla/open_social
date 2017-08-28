@@ -9,27 +9,27 @@ use Drupal\user\Entity\User;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\features\FeaturesManagerInterface;
 use Drupal\features\ConfigurationItem;
-use \Drupal\search_api\Entity\Index;
+use Drupal\search_api\Entity\Index;
 
 /**
  * Implements hook_install_tasks().
  */
 function social_install_tasks(&$install_state) {
-  $tasks = array(
-    'social_install_profile_modules' => array(
+  $tasks = [
+    'social_install_profile_modules' => [
       'display_name' => t('Install Open Social modules'),
       'type' => 'batch',
-    ),
-    'social_final_site_setup' => array(
+    ],
+    'social_final_site_setup' => [
       'display_name' => t('Apply configuration'),
       'type' => 'batch',
       'display' => TRUE,
-    ),
-    'social_theme_setup' => array(
+    ],
+    'social_theme_setup' => [
       'display_name' => t('Apply theme'),
       'display' => TRUE,
-    ),
-  );
+    ],
+  ];
   return $tasks;
 }
 
@@ -75,7 +75,7 @@ function social_verify_custom_requirements(array &$install_state) {
     $requirements['addressing_library'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/addressing library. <a href=":link" target="_blank">For more information check our readme</a>', array(':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg')),
+      'description' => t('The Address module requires the commerceguys/addressing library. <a href=":link" target="_blank">For more information check our readme</a>', [':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg']),
       'severity' => REQUIREMENT_ERROR,
     ];
   }
@@ -185,7 +185,7 @@ function social_install_profile_modules(array &$install_state) {
 
   $files = system_rebuild_module_data();
 
-  $modules = array(
+  $modules = [
     'social_core' => 'social_core',
     'social_user' => 'social_user',
     'social_group' => 'social_group',
@@ -204,12 +204,12 @@ function social_install_profile_modules(array &$install_state) {
     'social_like' => 'social_like',
     'social_post_photo' => 'social_post_photo',
     'social_swiftmail' => 'social_swiftmail',
-  );
+  ];
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between
   // the modules.
-  $required = array();
-  $non_required = array();
+  $required = [];
+  $non_required = [];
 
   // Add modules that other modules depend on.
   foreach ($modules as $module) {
@@ -233,19 +233,19 @@ function social_install_profile_modules(array &$install_state) {
   }
   arsort($required);
 
-  $operations = array();
+  $operations = [];
   foreach ($required + $non_required + $social_modules as $module => $weight) {
-    $operations[] = array(
+    $operations[] = [
       '_social_install_module_batch',
-      array(array($module), $module),
-    );
+      [[$module], $module],
+    ];
   }
 
-  $batch = array(
+  $batch = [
     'operations' => $operations,
     'title' => t('Install Open Social modules'),
     'error_message' => t('The installation has encountered an error.'),
-  );
+  ];
   return $batch;
 }
 
@@ -265,20 +265,20 @@ function social_final_site_setup(array &$install_state) {
   // There is no content at this point.
   node_access_needs_rebuild(FALSE);
 
-  $batch = array();
+  $batch = [];
 
   $social_optional_modules = \Drupal::state()->get('social_install_optional_modules');
   foreach ($social_optional_modules as $module => $module_name) {
     $batch['operations'][] = [
       '_social_install_module_batch',
-      array(array($module), $module_name),
+      [[$module], $module_name],
     ];
   }
   $demo_content = \Drupal::state()->get('social_install_demo_content');
   if ($demo_content === 1) {
     $batch['operations'][] = [
       '_social_install_module_batch',
-      array(array('social_demo'), 'social_demo'),
+      [['social_demo'], 'social_demo'],
     ];
 
     // Generate demo content.
@@ -297,14 +297,14 @@ function social_final_site_setup(array &$install_state) {
     foreach ($demo_content_types as $demo_type => $demo_description) {
       $batch['operations'][] = [
         '_social_add_demo_batch',
-        array($demo_type, $demo_description),
+        [$demo_type, $demo_description],
       ];
     }
 
     // Uninstall social_demo.
     $batch['operations'][] = [
       '_social_uninstall_module_batch',
-      array(array('social_demo'), 'social_demo'),
+      [['social_demo'], 'social_demo'],
     ];
   }
 
@@ -319,7 +319,7 @@ function social_final_site_setup(array &$install_state) {
   foreach ($final_batched as $process => $description) {
     $batch['operations'][] = [
       '_social_finalise_batch',
-      array($process, $description),
+      [$process, $description],
     ];
   }
 
@@ -338,9 +338,7 @@ function social_theme_setup(array &$install_state) {
 
   // Also install improved theme settings & color module, because it improves
   // the social blue theme settings page.
-  $modules = array(
-    'color',
-  );
+  $modules = ['color'];
   \Drupal::service('module_installer')->install($modules);
 
   $themes = ['socialblue'];
@@ -355,11 +353,8 @@ function social_theme_setup(array &$install_state) {
   // @see _drupal_maintenance_theme()
   \Drupal::service('theme.manager')->resetActiveTheme();
 
-  $modules = array(
-    'improved_theme_settings',
-  );
+  $modules = ['improved_theme_settings'];
   \Drupal::service('module_installer')->install($modules);
-
 }
 
 /**
@@ -381,7 +376,6 @@ function social_install_finished(array &$install_state) {
     $account = User::load(1);
     user_login_finalize($account);
   }
-
 }
 
 /**
@@ -485,15 +479,15 @@ function _social_finalise_batch($process, $description, &$context) {
 
         $packages = $manager->filterPackages($packages, $current_bundle->getMachineName());
 
-        $options = array();
+        $options = [];
         foreach ($packages as $package) {
           if ($package->getStatus() != FeaturesManagerInterface::STATUS_NO_EXPORT) {
             $missing = $manager->reorderMissing($manager->detectMissing($package));
             $overrides = $manager->detectOverrides($package, TRUE);
             if (!empty($overrides) || !empty($missing)) {
-              $options += array(
-                $package->getMachineName() => array(),
-              );
+              $options += [
+                $package->getMachineName() => [],
+              ];
             }
           }
         }
@@ -502,7 +496,7 @@ function _social_finalise_batch($process, $description, &$context) {
         $manager = \Drupal::service('features.manager');
         $packages = $manager->getPackages();
         $packages = $manager->filterPackages($packages, 'social');
-        $overridden = array();
+        $overridden = [];
 
         foreach ($packages as $package) {
           $overrides = $manager->detectOverrides($package);
@@ -536,7 +530,7 @@ function social_features_import($args) {
   $config_revert = \Drupal::service('features.config_update');
 
   // Parse list of arguments.
-  $modules = array();
+  $modules = [];
   foreach ($args as $arg) {
     $arg = explode(':', $arg);
     $module = array_shift($arg);
@@ -550,7 +544,7 @@ function social_features_import($args) {
       }
       elseif ($modules[$module] !== TRUE) {
         if (!isset($modules[$module])) {
-          $modules[$module] = array();
+          $modules[$module] = [];
         }
         $modules[$module][] = $component;
       }
