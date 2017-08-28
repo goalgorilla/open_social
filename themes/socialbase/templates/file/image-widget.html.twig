@@ -20,8 +20,8 @@
 {% endif %}
 
 {% if data.preview %}
-  {{ attach_library('image_widget_crop/cropper') }}
-  <div{{ attributes.addClass('image-widget margin-bottom-m').removeClass('clearfix') }}>
+  {{ attach_library('socialbase/image-widget') }}
+  <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
     <div class="preview">
       {{ data.preview }}
     </div>
@@ -37,19 +37,24 @@
 
     </div>
   </div>
-  {{ data.image_crop }}
 
   {% if in_post %}
     {# Render a "fake" remove button that triggers the actual (hidden) remove button. #}
     <div class="hidden">{{ data.remove_button }}</div>
-    <button type="button" id="post-photo-remove" class="waves-effect margin-top-s btn btn-default">
+    <button type="button" id="post-photo-remove" class="btn--post-remove-image">
       <svg class="btn-icon">
         <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-close"></use>
       </svg>
-      <span class="text hidden-for-phone-only">
+      <span class="sr-only">
         {% trans %}Remove image{% endtrans %}
       </span>
     </button>
+    
+  {% else %}
+  
+    {{ attach_library('image_widget_crop/cropper') }}
+    {{ data.image_crop }}
+  
   {% endif %}
 
 {% else %}
