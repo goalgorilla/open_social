@@ -14,14 +14,14 @@
 #}
 
 {% if data.upload['#id'] starts with "edit-field-post-image-0-upload" %}
-{% set in_post = true %}
+  {% set in_post = true %}
 {% else %}
-{% set in_post = false %}
+  {% set in_post = false %}
 {% endif %}
 
 {% if data.preview %}
   {{ attach_library('socialbase/image-widget') }}
-    <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
+  <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
     <div class="preview">
       {{ data.preview }}
     </div>
@@ -38,9 +38,6 @@
     </div>
   </div>
 
-  {{ attach_library('image_widget_crop/cropper') }}
-  {{ data.image_crop }}
-
   {% if in_post %}
     {# Render a "fake" remove button that triggers the actual (hidden) remove button. #}
     <div class="hidden">{{ data.remove_button }}</div>
@@ -52,6 +49,12 @@
         {% trans %}Remove image{% endtrans %}
       </span>
     </button>
+    
+  {% else %}
+  
+    {{ attach_library('image_widget_crop/cropper') }}
+    {{ data.image_crop }}
+  
   {% endif %}
 
 {% else %}
@@ -62,8 +65,8 @@
     <div{{ attributes.addClass(classes, 'hidden') }}>
       {{ data }}
     </div>
-    <button type="button" id="post-photo-add" class="waves-effect btn btn-default icon-before pull-left">
-      <svg class="icon-black icon-small">
+    <button type="button" id="post-photo-add" class="waves-effect btn btn-default">
+      <svg class="btn-icon">
         <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-plus"></use>
       </svg>
       <span>

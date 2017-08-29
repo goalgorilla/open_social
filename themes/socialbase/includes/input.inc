@@ -116,20 +116,3 @@ function socialbase_preprocess_textarea(&$variables) {
 
   }
 }
-
-/**
- * Implements hook_theme_suggestions_input_alter().
- */
-function socialbase_theme_suggestions_input_alter(array &$suggestions, array $variables) {
-  // Lets add the form element parent to the theme suggestions.
-  if (isset($variables['element']['#id'])) {
-    if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
-      $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
-    }
-  }
-
-  if (isset($variables['element']['#comment_button'])) {
-    $suggestions[] = 'input__button__comment';
-  }
-
-}

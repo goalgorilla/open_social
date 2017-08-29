@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -13,7 +12,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
  *
  * @BootstrapPreprocess("container")
  */
-class SocialbaseContainer extends PreprocessBase implements PreprocessInterface {
+class SocialbaseContainer extends PreprocessBase {
 
   /**
    * {@inheritdoc}
