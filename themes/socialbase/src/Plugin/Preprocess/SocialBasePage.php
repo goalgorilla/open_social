@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\node\Entity\Node;
 
 /**
@@ -13,7 +12,7 @@ use Drupal\node\Entity\Node;
  *
  * @BootstrapPreprocess("page")
  */
-class SocialBasePage extends PreprocessBase implements PreprocessInterface {
+class SocialBasePage extends PreprocessBase {
 
   /**
    * {@inheritdoc}

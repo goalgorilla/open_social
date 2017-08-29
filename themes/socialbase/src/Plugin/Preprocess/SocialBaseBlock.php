@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block\Entity\Block;
 use Drupal\file\Entity\File;
@@ -16,7 +15,7 @@ use Drupal\image\Entity\ImageStyle;
  *
  * @BootstrapPreprocess("block")
  */
-class SocialBaseBlock extends PreprocessBase implements PreprocessInterface {
+class SocialBaseBlock extends PreprocessBase {
 
   /**
    * {@inheritdoc}

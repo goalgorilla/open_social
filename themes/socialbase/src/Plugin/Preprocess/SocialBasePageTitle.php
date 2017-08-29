@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 
 /**
  * Pre-processes variables for the "page_title" theme hook.
@@ -12,7 +11,7 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
  *
  * @BootstrapPreprocess("page_title")
  */
-class SocialBasePageTitle extends PreprocessBase implements PreprocessInterface {
+class SocialBasePageTitle extends PreprocessBase {
 
   /**
    * {@inheritdoc}

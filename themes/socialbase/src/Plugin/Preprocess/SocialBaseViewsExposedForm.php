@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 
 /**
  * Pre-processes variables for the "views_exposed_form" theme hook.
@@ -12,7 +11,7 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
  *
  * @BootstrapPreprocess("views_exposed_form")
  */
-class SocialBaseViewsExposedForm extends PreprocessBase implements PreprocessInterface {
+class SocialBaseViewsExposedForm extends PreprocessBase {
 
   /**
    * {@inheritdoc}

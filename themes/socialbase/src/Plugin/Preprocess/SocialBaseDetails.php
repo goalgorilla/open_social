@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 
 /**
  * Pre-processes variables for the "details" theme hook.
@@ -12,7 +11,7 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
  *
  * @BootstrapPreprocess("details")
  */
-class SocialBaseDetails extends PreprocessBase implements PreprocessInterface {
+class SocialBaseDetails extends PreprocessBase {
 
   /**
    * {@inheritdoc}

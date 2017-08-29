@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 
 /**
  * Pre-processes variables for the "book_navigation" theme hook.
@@ -12,7 +11,7 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
  *
  * @BootstrapPreprocess("book_navigation")
  */
-class SocialBaseBookNavigation extends PreprocessBase implements PreprocessInterface {
+class SocialBaseBookNavigation extends PreprocessBase {
 
   /**
    * {@inheritdoc}

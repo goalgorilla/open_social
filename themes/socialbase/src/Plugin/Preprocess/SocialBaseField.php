@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessInterface;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 
@@ -16,7 +15,7 @@ use Drupal\bootstrap\Utility\Variables;
  *
  * @BootstrapPreprocess("field")
  */
-class SocialBaseField extends PreprocessBase implements PreprocessInterface {
+class SocialBaseField extends PreprocessBase {
 
   /**
    * {@inheritdoc}
@@ -46,8 +45,11 @@ class SocialBaseField extends PreprocessBase implements PreprocessInterface {
         if (isset($element[0])) {
           $element[0]['#url']->setOptions($url_options);
         }
+        $url_options_1 = array(
+          'attributes' => array('class' => array('btn btn-default waves-effect')),
+        );
         if (isset($element[1])) {
-          $element[1]['#url']->setOptions($url_options);
+          $element[1]['#url']->setOptions($url_options_1);
         }
         break;
     }
