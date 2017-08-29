@@ -281,7 +281,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
         $form['profile_privacy']['social_profile_show_email']['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
       }
       else {
-        // Submit function only when the data is actualy editable.
+        // Submit function only when the data is actually editable.
         $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
       }
     }
