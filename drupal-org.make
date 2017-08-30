@@ -69,3 +69,7 @@ libraries[waves][type] = library
 libraries[waves][download][type] = get
 libraries[waves][download][url] = https://github.com/fians/Waves/archive/v0.7.5.zip
 libraries[waves][destination] = libraries
+libraries[jquery-timepicker][type] = library
+libraries[jquery-timepicker][download][type] = get
+libraries[jquery-timepicker][download][url] = https://github.com/jonthornton/jquery-timepicker/archive/1.11.4.zip
+libraries[jquery-timepicker][destination] = libraries
