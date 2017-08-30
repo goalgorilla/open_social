@@ -9,6 +9,19 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "library-fians/Waves",
+                "version": "0.6.4",
+                "type": "drupal-library",
+                "source": {
+                    "url": "https://github.com/fians/Waves",
+                    "type": "git",
+                    "reference": "0.6.4"
+                }
+            }
         }
     ],
     "scripts": {
@@ -18,6 +31,11 @@
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
     },
     "extra": {
+        "installer-paths": {
+            "html/libraries/{$name}": [
+                "type:drupal-library"
+            ]
+        },
         "patches": {
             "drupal/core": {
                 "Clean up user input for exposed checkboxes": "https://www.drupal.org/files/issues/2687773-18-Cleanup-user-input-for-checkboxes-8.2.patch",
@@ -71,6 +89,7 @@
         "php-http/message": "^1.4",
         "happyr/linkedin-api-client": "^1.0",
         "abraham/twitteroauth": "^0.7.2",
-        "swiftmailer/swiftmailer" : "5.4.8"
+        "swiftmailer/swiftmailer" : "5.4.8",
+        "library-fians/Waves": "0.6.4"
     }
 }
