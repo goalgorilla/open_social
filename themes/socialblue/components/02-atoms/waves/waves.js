@@ -1,5 +1,8 @@
 (function ($) {
 
+  /**
+   * Attach waves effect to buttons.
+   */
   Drupal.behaviors.initWaves = {
     attach: function (context, settings) {
 
@@ -30,6 +33,6 @@
 
     }
 
-  }
+  };
 
 })(jQuery);
