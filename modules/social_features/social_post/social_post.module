@@ -23,7 +23,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post');
+  $form['actions']['submit']['#value'] = t('Post',array(),array('context' => 'Post button'));
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
     // For posting on the stream on the group stream.
@@ -52,7 +52,7 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
 
   // Set the action of the form to the current uri.
-  // This needs to be done, becuase we cannot override $form['#action']
+  // This needs to be done, because we cannot override $form['#action']
   // without breaking functionality.
   $uri = Url::fromRoute('<current>')->toString();
   // Store in a hidden field.

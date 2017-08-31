@@ -138,10 +138,6 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
   $form['actions']['#inline'] = TRUE;
   $form['field_visibility']['#inline'] = TRUE;
 
-  // Set an extra wrapper to display the dropdown and forms actions inline.
-  $form['field_visibility']['#prefix'] = '<div class="form-group-inline form-group-inline--right">';
-  $form['actions']['#suffix'] = '</div>';
-
   // Give the `delete` button correct classes.
   if (isset($form['actions']['delete']['#type']) && $form['actions']['delete']['#type'] == 'link') {
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
@@ -356,36 +352,4 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
 
-}
-
-/**
- * Implements hook_theme_suggestions_form_alter().
- */
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-
-  // Alter comment form.
-  if ($variables['element']['#form_id'] == 'comment_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment');
-    }
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions[] = $variables['theme_hook_original'] . '__comment';
-    }
-  }
-
-  // Add templates for post add/edit forms.
-  if ($variables['element']['#form_id'] == 'social_post_entity_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
-      $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
-    }
-  }
 }

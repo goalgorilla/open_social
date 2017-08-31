@@ -8,6 +8,7 @@ dependencies:
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
+    - core.entity_view_mode.group.teaser
     - core.entity_view_mode.node.search_index
     - core.entity_view_mode.profile.search_index
   module:
@@ -34,8 +35,8 @@ field_settings:
           page: default
           topic: search_index
         'entity:group':
-          closed_group: default
-          open_group: default
+          closed_group: teaser
+          open_group: teaser
         'entity:profile':
           profile: search_index
   node_grants:

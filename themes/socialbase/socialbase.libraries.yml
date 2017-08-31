@@ -24,7 +24,7 @@ alert:
     component:
       assets/css/alert.css: {}
   js:
-    assets/js/alert.min.js: {}
+    assets/js/alert.min.js: { minified: true }
 
 badge:
   css:
@@ -46,7 +46,7 @@ form-controls:
     component:
       assets/css/form-controls.css: {}
   js:
-    assets/js/textarea-autogrow.min.js: {}
+    assets/js/textarea-autogrow.min.js: { minified: true }
   dependencies:
     - core/drupal.form
 
@@ -77,7 +77,7 @@ dropdown:
     component:
       assets/css/dropdown.css: {}
   js:
-    assets/js/dropdown.min.js: {}
+    assets/js/dropdown.min.js: { minified: true }
 
 file:
   css:
@@ -100,7 +100,7 @@ form--datepicker:
     component:
       assets/css/datepicker.css: {}
   js:
-    assets/js/date-picker-init.min.js: {}
+    assets/js/date-picker-init.min.js: { minified: true }
   dependencies:
     - core/modernizr
 
@@ -125,17 +125,24 @@ form--timepicker:
     component:
       assets/css/timepicker.css: {}
   js:
-    assets/js/jquery.timepicker.min.js: {}
+    assets/js/jquery.timepicker.min.js: { minified: true }
 
 imagecrop:
   css:
     component:
       assets/css/imagecrop.css: {}
-      
+
+image-widget:
+  css:
+    component:
+      assets/css/image-widget.css: {}
+
 like:
   css:
     component:
       assets/css/like.css: {}
+  js:
+    assets/js/like_and_dislike_service.min.js: { minified: true }
 
 media:
   css:
@@ -157,16 +164,16 @@ nav-tabs:
     component:
       assets/css/nav-tabs.css: {}
   js:
-    assets/js/tab.min.js: {}
+    assets/js/tab.min.js: { minified: true }
 
 navbar:
   css:
     component:
       assets/css/navbar.css: {}
   js:
-    assets/js/navbar-collapse.min.js: {}
-    assets/js/navbar-resize.min.js: {}
-    assets/js/navbar-search.min.js: {}
+    assets/js/navbar-collapse.min.js: { minified: true }
+    assets/js/navbar-resize.min.js: { minified: true }
+    assets/js/navbar-search.min.js: { minified: true }
 
 pagination:
   css:
@@ -178,20 +185,20 @@ popover:
     component:
       assets/css/popover.css: {}
   js:
-    assets/js/tooltip.min.js: {}
-    assets/js/popover.min.js: {}
+    assets/js/tooltip.min.js: { minified: true }
+    assets/js/popover.min.js: { minified: true }
 
 tabledrag:
   js:
-    assets/js/tabledrag.min.js: {}
+    assets/js/tabledrag.min.js: { minified: true }
 
 tablesaw:
   css:
     component:
       assets/css/tablesaw.css: {}
   js:
-    assets/js/tablesaw.min.js: {}
-    assets/js/tablesaw-init.min.js: {}
+    assets/js/tablesaw.min.js: { minified: true }
+    assets/js/tablesaw-init.min.js: { minified: true }
 
 teaser:
   css:
@@ -214,6 +221,11 @@ comment:
     component:
       assets/css/comment.css: {}
 
+form-post-create:
+  css:
+    component:
+      assets/css/form-post-create.css: {}
+
 group-managers:
   css:
     component:
@@ -233,8 +245,6 @@ modal:
   css:
     component:
       assets/css/modal.css: {}
-  js:
-    assets/js/modal.min.js: {}
 
 offcanvas:
   css:
@@ -282,5 +292,5 @@ charts:
     component:
       assets/css/morrisjs.css: {}
   js:
-    assets/js/morris.min.js: {}
-    assets/js/raphael.min.js: {}
+    assets/js/morris.min.js: { minified: true }
+    assets/js/raphael.min.js: { minified: true }

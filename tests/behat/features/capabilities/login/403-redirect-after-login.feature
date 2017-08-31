@@ -1,4 +1,4 @@
-@login @security @stability @api
+@login @security @stability @api @stability-4
 Feature: Redirect AN user from 403 after login
   Benefit: In order to get fast to the content I want to see
   Role: An

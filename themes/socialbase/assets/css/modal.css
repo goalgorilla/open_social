@@ -1,3 +1,167 @@
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@-webkit-keyframes fadein_scale {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+@keyframes fadein_scale {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+  }
+}
+
+.ui-front {
+  z-index: 100;
+}
+
+/* Overlays */
+.ui-widget-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  opacity: 0.5;
+  -webkit-animation: fadein 0.3s;
+          animation: fadein 0.3s;
+}
+
+.ui-helper-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.ui-dialog {
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  max-width: 100%;
+  top: 0;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  padding: .2em;
+  outline: 0;
+  z-index: 1050;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  background-clip: padding-box;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-animation: fadein_scale 0.5s ease-out;
+          animation: fadein_scale 0.5s ease-out;
+}
+
+.ui-dialog-titlebar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.ui-dialog-title {
+  font-family: inherit;
+  font-weight: 500;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ui-dialog-titlebar-close {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: .5;
+  padding: 0 0 0 1em;
+  cursor: pointer;
+  background: 0 0;
+  border: 0;
+  outline: 0;
+  -webkit-appearance: none;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.ui-dialog-titlebar-close:before {
+  content: 'x';
+}
+
+.ui-dialog-titlebar-close:hover {
+  opacity: .75;
+}
+
+.ui-dialog-titlebar-close .ui-button-text {
+  position: absolute;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  word-wrap: normal;
+  margin: -1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.ui-dialog-content {
+  position: relative;
+  overflow: auto;
+  box-shadow: none;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  padding: 1rem;
+}
+
 .modal-open {
   overflow: hidden;
 }
@@ -51,107 +215,14 @@
   outline: 0;
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1040;
-  background-color: #000;
-}
-
-.modal-backdrop.fade {
-  opacity: 0;
-}
-
-.modal-backdrop.in {
-  opacity: 0.5;
-}
-
-.modal-header {
-  padding: 15px;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.modal-header:before, .modal-header:after {
-  content: " ";
-  display: table;
-}
-
-.modal-header:after {
-  clear: both;
-}
-
-.modal-header .close {
-  margin-top: -2px;
-}
-
-.modal-title {
-  margin: 0;
-  line-height: 1.5;
-}
-
-.modal-body {
-  position: relative;
-  padding: 15px;
-}
-
-.modal-footer {
-  padding: 15px;
-  text-align: right;
-  border-top: 1px solid #e5e5e5;
-}
-
-.modal-footer:before, .modal-footer:after {
-  content: " ";
-  display: table;
-}
-
-.modal-footer:after {
-  clear: both;
-}
-
-.modal-footer .btn + .btn {
-  margin-left: 5px;
-  margin-bottom: 0;
-}
-
-.modal-footer .btn-group .btn + .btn {
-  margin-left: -1px;
-}
-
-.modal-footer .btn-block + .btn-block {
-  margin-left: 0;
-}
-
-.modal-scrollbar-measure {
-  position: absolute;
-  top: -9999px;
-  width: 50px;
-  height: 50px;
-  overflow: scroll;
-}
-
-@media (min-width: 600px) {
-
-  .modal-dialog {
-    width: 600px;
-    margin: 30px auto;
-  }
-
-  .modal-content {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .modal-sm {
-    width: 300px;
-  }
-}
-
 @media (min-width: 900px) {
+  .ui-dialog-title {
+    font-size: 1.25rem;
+  }
+}
 
-  .modal-lg {
-    width: 900px;
+@media (max-width: 599px) {
+  .ui-dialog-content {
+    max-height: 60vh !important;
   }
 }
