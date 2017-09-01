@@ -73,3 +73,7 @@ libraries[jquery-timepicker][type] = library
 libraries[jquery-timepicker][download][type] = get
 libraries[jquery-timepicker][download][url] = https://github.com/jonthornton/jquery-timepicker/archive/1.11.4.zip
 libraries[jquery-timepicker][destination] = libraries
+libraries[tablesaw][type] = library
+libraries[tablesaw][download][type] = get
+libraries[tablesaw][download][url] = https://github.com/filamentgroup/tablesaw/archive/v2.0.3.zip
+libraries[tablesaw][destination] = libraries
