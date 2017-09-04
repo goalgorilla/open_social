@@ -23,13 +23,8 @@
     <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-menu--visibility">
       <li class="dropdown-header">{{ label }}</li>
       {% for key, child in items %}
-          {% if key == active %}
-              <li class="list-item list-item--visibility list-item--active">
-          {% else %}
-              <li class="list-item list-item--visibility">
-          {% endif %}
-                  {{ child }}
-              </li>
+        <li class="list-item list-item--visibility {% if key == active %}list-item--active{% endif %}">            {{ child }}
+        </li>
       {% endfor %}
     </ul>
     {% endif %}
