@@ -22,23 +22,6 @@
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
     },
     "extra": {
-        "installer-types": [
-            "bower-asset",
-            "npm-asset"
-        ],
-        "installer-paths": {
-            "html/core": [
-                "type:drupal-core"
-            ],
-            "html/libraries/{$name}": [
-                "type:drupal-library",
-                "type:bower-asset",
-                "type:npm-asset"
-            ],
-            "html/modules/contrib/{$name}": [
-                "type:drupal-module"
-            ]
-        },
         "patches": {
             "drupal/core": {
                 "Clean up user input for exposed checkboxes": "https://www.drupal.org/files/issues/2687773-18-Cleanup-user-input-for-checkboxes-8.2.patch",
