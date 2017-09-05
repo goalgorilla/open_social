@@ -140,7 +140,6 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     'social_event_type' => t('Categorize events in event types'),
     'social_sso' => t('Registration with social networks'),
     'social_file_private' => t('Use the private file system for uploaded files (highly recommended)'),
-    'social_profile_privacy' => t('Provide ability to set visibility of profile fields'),
   ];
 
   // Checkboxes to enable Optional modules.
