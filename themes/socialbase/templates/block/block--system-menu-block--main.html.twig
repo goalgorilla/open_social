@@ -39,10 +39,12 @@
       {{ content }}
     {% endblock %}
 
-    <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
-      <svg class="navbar-nav__icon">
+    <div class="navbar__open-search-control">
+      <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
+      </button>
+      <svg class="navbar-nav__icon navbar-nav__icon--search">
         <use xlink:href="#icon-search"></use>
       </svg>
-    </button>
+    </div>
 </div>
 

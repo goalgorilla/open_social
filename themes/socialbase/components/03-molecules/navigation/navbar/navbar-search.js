@@ -13,7 +13,7 @@
         $('.search-take-over .form-text').focus();
       });
 
-      $('.icon-search-form-close').on('click', function () {
+      $('.btn--close-search-take-over').on('click', function () {
         $('body').removeClass('mode-search');
         $('.search-take-over .form-text').blur();
       });

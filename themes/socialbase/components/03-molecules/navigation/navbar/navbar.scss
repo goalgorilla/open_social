@@ -177,8 +177,6 @@
   right: 0;
   left: 0;
   z-index: $zindex-navbar-fixed;
-  transform-origin: 50%;
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 
   .navbar-user .dropdown-menu {
     right: 0;
@@ -192,6 +190,7 @@
     }
 
   }
+
 }
 
 // Brand/project name
@@ -341,24 +340,37 @@
   right: 0;
 }
 
-
-.navbar__open-search-block {
+.navbar__open-search-control {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  cursor: pointer;
 
   @include for-tablet-landscape-down {
     display: none;
   }
+}
 
-  background-color: transparent;
+.navbar__open-search-block {
   border: 0;
-  border-radius: 50%;
-  width: 48px;
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
   padding: 0;
+  transform-origin: 50%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .navbar-nav__icon {
-    fill: #fff;
-    vertical-align: bottom;
-  }
+.navbar-nav__icon {
+  fill: #fff;
+}
 
+.navbar-nav__icon--search {
+  position: absolute;
+  top: 14px;
+  left: 13px;
+  transition: 0.2s ease-in-out;
+  pointer-events: none;
 }
 
 // Navbar form
@@ -419,13 +431,12 @@
   .search-take-over {
     height: 50px;
     position: fixed;
-    top: 50%;
-    background-color: #fff;
+    top: 20%;
+    left: 0;
     width: 100%;
     z-index: $zindex-modal;
     pointer-events: none;
     opacity: 0;
-    transform: translate(40px, 0);
     transition: all 0.3s ease-in-out;
 
     .form-group {
@@ -446,16 +457,19 @@
       border-bottom: 2px solid;
       font-weight: 500;
       max-width: none;
+      color: #fff;
     }
 
     .form-submit {
       width: 60px;
       height: 60px;
-      background-image: url('../images/icons/icon-search.svg');
+      min-width: 60px;
+      background-image: url('../images/icons/icon-search-white.svg');
       background-repeat: no-repeat;
       background-position: center center;
-      background-color: #fff;
       background-size: 50px auto;
+      background-color: transparent;
+      margin-left: 20px;
       padding: 0;
       font-size: 0;
       text-indent: -9999px;
@@ -475,10 +489,12 @@
     right: 80px;
     opacity: 0;
     transform: translate(10px, 0) rotate(90deg);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.5s ease-in-out 0.5s;
+    outline: 0;
 
     svg {
       height: 48px;
+      fill: #fff;
     }
   }
 
@@ -487,14 +503,17 @@
 
     .search-take-over {
       opacity: 1;
-      transform: none;
       pointer-events: all;
     }
 
-    .navbar-fixed-top {
-      z-index: $zindex-modal-background;
-      background: white;
+    .navbar__open-search-block {
       transform: scale(70);
+      -moz-transform: scale(70) rotate(0.02deg);
+      @include z-depth-3;
+    }
+
+    .navbar-nav__icon {
+      opacity: 0;
     }
 
     .main-container {
@@ -503,8 +522,8 @@
     }
 
     .btn--close-search-take-over {
-      opacity: 1;
       transform: none;
+      opacity: 1;
       pointer-events: all;
     }
 
