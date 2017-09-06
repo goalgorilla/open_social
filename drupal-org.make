@@ -97,3 +97,7 @@ libraries[eve-raphael][type] = library
 libraries[eve-raphael][download][type] = get
 libraries[eve-raphael][download][url] = https://github.com/adobe-webplatform/eve/archive/v0.5.1.zip
 libraries[eve-raphael][destination] = libraries
+libraries[bootstrap][type] = library
+libraries[bootstrap][download][type] = get
+libraries[bootstrap][download][url] = https://github.com/twbs/bootstrap/archive/v3.3.7.zip
+libraries[bootstrap][destination] = libraries
