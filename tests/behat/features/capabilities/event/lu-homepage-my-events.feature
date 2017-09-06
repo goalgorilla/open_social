@@ -10,7 +10,7 @@ Feature: See my upcoming events
 
     Given I am logged in as an "authenticated user"
     Then I should see "My upcoming events"
-    And I should see "No upcoming events"
+    And I should see "No upcoming events" in the 'My Upcoming Events Block'
 
     Given I am viewing my event:
       | title            | My Behat Event created |
@@ -26,9 +26,9 @@ Feature: See my upcoming events
     Then I should see "Enrolled"
 
     When I go to the homepage
-    Then I should not see "My Behat Event created" in the "Sidebar second"
-    And I should see "My Behat Event enrolled" in the "Sidebar second"
-    And I should see "Enrolled" in the "Sidebar second"
+    Then I should not see "My Behat Event created" in the 'My Upcoming Events Block'
+    And I should see "My Behat Event enrolled" in the 'My Upcoming Events Block'
+    And I should see "Enrolled" in the 'My Upcoming Events Block'
 
     When I am at "my-events"
     Then I should see "Events for this user"
