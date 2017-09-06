@@ -135,7 +135,7 @@ class SocialBaseBlock extends PreprocessBase {
       }
       elseif ($region == 'content_top') {
         $variables['content']['search_form']['#region'] = 'content-top';
-        $variables['content']['search_form']['search_input_content']['#attributes']['placeholder'] = t('What are looking for ?');
+        $variables['content']['search_form']['search_input_content']['#attributes']['placeholder'] = t('What are you looking for ?');
         $variables['content']['search_form']['search_input_content']['#attributes']['autocomplete'] = 'off';
       }
       else {
