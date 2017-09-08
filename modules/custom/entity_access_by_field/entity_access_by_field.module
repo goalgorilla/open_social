@@ -12,7 +12,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\social_post\Entity\PostInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 
 // @todo: Prevent creating multiple visibility fields on one node.
 // @todo: Add support for multiple entity types.
@@ -150,25 +150,6 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
         // Invalidate cache tags.
         Cache::invalidateTags(array('activity_list'));
       }
-
-      if ($node->get($field_name)->isEmpty()) {
-        $default_visibility = _entity_access_by_field_get_default_visibility($node);
-        $node->get($field_name)->setValue($default_visibility);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function entity_access_by_field_post_presave(PostInterface $post) {
-  $field_definitions = $post->getFieldDefinitions();
-
-  foreach ($field_definitions as $field_name => $field_definition) {
-    if ($field_definition->getType() == 'entity_access_field' && $post->get($field_name)->isEmpty()) {
-      $default_visibility = _entity_access_by_field_get_default_visibility($post);
-      $post->get($field_name)->setValue($default_visibility);
     }
   }
 }
@@ -203,8 +184,6 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
     return;
   }
 
-  $element['#default_value'] = _entity_access_by_field_get_default_visibility($entity);
-
   // Check if the option is enabled and the current user has no permission
   // to override disabled public visibility.
   if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
@@ -227,11 +206,13 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
  *
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity object to prepare correct value.
+ * @param \Drupal\Core\Field\FieldDefinitionInterface $definition
+ *   The field definition.
  *
  * @return string
  *   Default value of the field.
  */
-function _entity_access_by_field_get_default_visibility(EntityInterface $entity) {
+function _entity_access_by_field_get_default_visibility(EntityInterface $entity, FieldDefinitionInterface $definition) {
   $default_visibility = &drupal_static(__FUNCTION__ . '_' . $entity->getEntityTypeId());
 
   if ($default_visibility) {
