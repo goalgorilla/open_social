@@ -32,7 +32,7 @@
   {% if items %}
 
 
-  <ul{{ attributes.addClass('nav navbar-nav navbar-right') }} role="navigation">
+  <ul{{ attributes.addClass('nav navbar-nav navbar-user') }} role="navigation">
 
     <li class="dropdown profile not-logged-in">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" aria-haspopup="true" role="button" title="{% trans %} User menu {% endtrans %}">
@@ -43,7 +43,7 @@
       </a>
       <ul class="dropdown-menu">
         {% for item in items %}
-          <li>  {{ link(item.title, item.url)  }}
+          <li> {{ link(item.title, item.url) }}
             {% if item.below %}
               {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
             {% endif %}

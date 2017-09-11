@@ -93,9 +93,33 @@ gulp.task('styles', ['clean:css'], function () {
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.basetheme.css))
-    .pipe(browserSync.reload({stream:true}))
+    .pipe(browserSync.reload({stream:true}));
 });
 
+
+
+// #################
+//
+// Compile the Sass
+//
+// #################
+//
+// This task will look for all scss files and run postcss and rucksack.
+// For performance review we will display the file sizes
+// Then the files will be stored in the assets folder
+// At the end we check if we should inject new styles in the browser
+// ===================================================
+
+gulp.task('scripts', ['clean:js'], function () {
+  return gulp.src(options.basetheme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest(options.basetheme.js))
+    .pipe(browserSync.reload({stream:true}));
+});
 
 
 // #################
@@ -222,7 +246,7 @@ gulp.task('mime-image-icons', function () {
 
 gulp.task('watch', ['browser-sync']);
 
-gulp.task('browser-sync', ['watch:css', 'watch:icons'], function () {
+gulp.task('browser-sync', ['watch:css', 'watch:js', 'watch:icons'], function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -235,6 +259,12 @@ gulp.task('browser-sync', ['watch:css', 'watch:icons'], function () {
 gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.basetheme.components + '**/*.scss', ['styles']);
 });
+
+
+gulp.task('watch:js', ['scripts'], function () {
+  return gulp.watch(options.basetheme.components + '**/*.js', ['scripts']);
+});
+
 
 gulp.task('watch:icons', function () {
   return gulp.watch(options.icons.src + '**/*.svg', ['sprite-icons', 'image-icons'] );
