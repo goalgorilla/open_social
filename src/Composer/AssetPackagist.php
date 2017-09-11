@@ -87,10 +87,10 @@ final class AssetPackagist {
     );
 
     // Check if we need to add the bower and npm assets to the installer types.
-    if (!in_array('bower-asset', $package['extra']['installer-types'])) {
+    if (!isset($package['extra']['installer-types']) || !in_array('bower-asset', $package['extra']['installer-types'])) {
       $package['extra']['installer-types'][] = 'bower-asset';
     }
-    if (!in_array('bower-asset', $package['extra']['installer-types'])) {
+    if (!in_array('npm-asset', $package['extra']['installer-types'])) {
       $package['extra']['installer-types'][] = 'npm-asset';
     }
 
