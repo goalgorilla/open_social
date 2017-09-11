@@ -108,7 +108,7 @@ final class AssetPackagist {
         else {
           $parts = explode('/core', $path);
           if (!empty($parts)) {
-            $root_path = $parts[0];
+            $root_path = $parts[0] . '/';
           }
         }
 
