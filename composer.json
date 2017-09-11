@@ -16,7 +16,12 @@
             "@composer drupal-scaffold"
         ],
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
+        "enable-asset-packagist": "Social\\Composer\\AssetPackagist::execute"
+    },
+    "autoload": {
+        "psr-4": {
+            "Social\\": "src",
+        }
     },
     "extra": {
         "patches": {

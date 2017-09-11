@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social\Composer;
+namespace Social\Composer;
 
 use Composer\Json\JsonFile;
 use Composer\Script\Event;
