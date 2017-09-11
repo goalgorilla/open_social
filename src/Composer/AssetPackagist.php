@@ -72,7 +72,7 @@ final class AssetPackagist {
       }
 
       if (is_null($repository_key)) {
-        $package['repositories']['asset-packagist'] = [
+        $package['repositories'][] = [
           'type' => 'composer',
           'url' => 'https://asset-packagist.org',
         ];
