@@ -207,6 +207,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_pass_reset',
     'social_user_login_form',
     'user_register_form',
+    'profile_profile_add_form',
     'profile_profile_edit_form',
     'social_user_password_form',
     'user_cancel_form',
