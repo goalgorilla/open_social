@@ -140,3 +140,14 @@ function social_search_update_8103() {
     }
   }
 }
+
+/**
+ * Trigger a search_api re-index for social_all.
+ */
+function social_search_update_8104() {
+  $index = Index::load('social_all');
+  if ($index->status()) {
+    $index->clear();
+    $index->reindex();
+  }
+}
