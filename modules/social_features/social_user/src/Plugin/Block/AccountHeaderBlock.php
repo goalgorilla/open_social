@@ -228,6 +228,24 @@ class AccountHeaderBlock extends BlockBase {
               'user' => $account->id(),
             ]),
           ),
+          'divide_content' => array(
+            'divider' => 'true',
+            'classes' => 'divider',
+            'attributes' => 'role=separator',
+          ),
+          'my_content' => array(
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => $this->t('View content I\'m following'),
+            'label' => $this->t('Following'),
+            'title_classes' => '',
+            'url' => Url::fromRoute('view.following.following', [
+              'user' => $account->id(),
+            ]),
+          ),
           'divide_account' => array(
             'divider' => 'true',
             'classes' => 'divider',
