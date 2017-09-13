@@ -27,7 +27,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
       $user_profile = $storage->loadByUser($account, 'profile');
       if ($user_profile) {
         $content = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($user_profile, 'compact_notification');
-        $content['#attributes']['class'][] = 'avatar';
+        $content['#attributes']['class'][] = 'media-left avatar hidden-for-phone-only';
         // Add the avatar class and show it!
         $form['#prefix'] = render($content);
       }
