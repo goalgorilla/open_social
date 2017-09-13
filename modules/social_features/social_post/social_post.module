@@ -33,10 +33,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
       }
     }
   }
-
-  $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
-  $form['field_visibility']['#attributes']['class'][] = 'browser-default';
-
+  
   // Reset title display.
   $form['field_post']['widget'][0]['#title_display'] = '';
 
