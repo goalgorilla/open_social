@@ -50,10 +50,25 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       '#collapsed' => TRUE,
     );
 
+    $form['os_email_settings'] = array(
+      '#type' => 'details',
+      '#group' => 'open_social_settings',
+      '#title' => t('E-mail'),
+      '#weight' => 30,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+
     $form['os_color_settings']['border_radius'] = array(
       '#type' => 'textfield',
       '#title' => t('Border radius (px)'),
       '#default_value' => $config->get('border_radius'),
+    );
+
+    $form['os_email_settings']['email_logo'] = array(
+      '#type' => 'file',
+      '#title' => t('Logo for e-mails'),
+      '#description' => t('Upload a logo which is shown in e-mail sent by the platform'),
     );
 
     // Font tab.
