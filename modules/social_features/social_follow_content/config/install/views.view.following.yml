@@ -3,6 +3,10 @@ status: true
 dependencies:
   config:
     - flag.flag.follow_content
+    - node.type.book
+    - node.type.event
+    - node.type.page
+    - node.type.topic
     - user.role.authenticated
   module:
     - flag
@@ -53,7 +57,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 10
+          items_per_page: 20
           offset: 0
           id: 0
           total_pages: null
@@ -73,6 +77,43 @@ display:
           quantity: 9
       style:
         type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          override: true
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            title: title
+            type: type
+            link_flag: link_flag
+          info:
+            title:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            type:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            link_flag:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
       row:
         type: fields
       fields:
@@ -213,7 +254,7 @@ display:
           relationship: flag_relationship
           group_type: group
           admin_label: ''
-          label: Unfollow
+          label: Operations
           exclude: false
           alter:
             alter_text: false
@@ -256,21 +297,69 @@ display:
           hide_alter_empty: true
           entity_type: flagging
           plugin_id: flag_link
-      filters: {  }
-      sorts:
-        created:
-          id: created
+      filters:
+        type:
+          id: type
           table: node_field_data
-          field: created
+          field: type
           relationship: flag_follow_content
           group_type: group
-          admin_label: created
+          admin_label: ''
+          operator: in
+          value:
+            all: all
+            page: page
+            book: book
+            event: event
+            topic: topic
+          group: 1
+          exposed: true
+          expose:
+            operator_id: type_op
+            label: Type
+            description: ''
+            use_operator: false
+            operator: type_op
+            identifier: type
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+      sorts:
+        created_1:
+          id: created_1
+          table: flagging
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: sort_flag_created
           order: DESC
           exposed: false
           expose:
             label: ''
           granularity: second
-          entity_type: node
+          entity_type: flagging
           entity_field: created
           plugin_id: date
       title: 'Content I follow'
@@ -377,6 +466,7 @@ display:
     display_options:
       display_extenders: {  }
       path: following
+      exposed_block: true
     cache_metadata:
       max-age: 0
       contexts:
