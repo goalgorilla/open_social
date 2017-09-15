@@ -12,15 +12,6 @@
   background-clip: padding-box;
 }
 
-.card:before, .card:after {
-  content: " ";
-  display: table;
-}
-
-.card:after {
-  clear: both;
-}
-
 .card__title {
   position: relative;
   vertical-align: middle;
@@ -50,6 +41,10 @@
 
 .card__block + .card__block {
   padding-top: 0;
+}
+
+.card__block--table {
+  padding: 1.25rem 0;
 }
 
 .card__block--list:not(:first-child) {
