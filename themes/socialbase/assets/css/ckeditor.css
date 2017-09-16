@@ -14,7 +14,8 @@ kbd kbd {
   padding: 0;
   font-size: 100%;
   font-weight: bold;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 pre {
@@ -37,7 +38,8 @@ pre code {
 }
 
 *, *:before, *:after {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 html {
@@ -599,7 +601,6 @@ sub {
 
 .align-center {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 
@@ -759,45 +760,36 @@ body {
 }
 
 @media (min-width: 600px) {
-
   body {
     font-size: 16px;
   }
-
   .section-title {
     padding-left: 20px;
   }
-
   .section-title.section-title-stream {
     padding-left: 40px;
   }
-
   .section-title.section-title-node {
     padding-left: 48px;
   }
 }
 
 @media (min-width: 900px) {
-
   h1, .h1 {
     font-size: 3rem;
   }
-
   h2, .h2 {
     font-size: 2rem;
   }
-
   h3, .h3 {
     font-size: 1.5rem;
   }
-
   h4, .h4 {
     font-size: 1.25rem;
   }
 }
 
 @media (max-width: 599px) {
-
   .hidden-for-phone-only {
     display: none;
   }
