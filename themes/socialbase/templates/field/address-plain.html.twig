@@ -55,7 +55,7 @@
   {{- locality.name -}},
 {% elseif locality.code %}
   {{- locality.code -}},
-{% elseif locality|render is not empty %}
+{% elseif locality is not iterable %}
   {{- locality -}},
 {% endif %}
 

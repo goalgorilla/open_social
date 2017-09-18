@@ -16,9 +16,23 @@ use Drupal\Core\Access\AccessResult;
  * Implements hook_form_FORM_ID_alter().
  */
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['field_recipient_user']['#attributes']['class'][] = 'browser-default';
-  $form['field_visibility']['#attributes']['class'][] = 'browser-default';
 
+  // Load current user.
+  $account = \Drupal\user\Entity\User::load(Drupal::currentUser()->id());
+  // Load compact notification view mode of the attached profile.
+  if ($account) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($account, 'profile');
+      if ($user_profile) {
+        $content = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($user_profile, 'compact_notification');
+        $content['#attributes']['class'][] = 'media-left avatar hidden-for-phone-only';
+        // Add the avatar class and show it!
+        $form['#prefix'] = render($content);
+      }
+    }
+  }
+  
   // Reset title display.
   $form['field_post']['widget'][0]['#title_display'] = '';
 
