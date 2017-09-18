@@ -79,8 +79,6 @@ class Topic extends DemoNode {
       $entry['field_topic_image'] = $this->prepareImage($item['field_topic_image']);
     }
 
-    var_dump($entry['created']);
-
     return $entry;
   }
 
