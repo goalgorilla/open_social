@@ -90,7 +90,7 @@ abstract class DemoNode extends DemoContent {
       $item['uid'] = $account->id();
 
       if (isset($item['created'])) {
-        $item['created'] = strtotime($item['created']);
+        $item['created'] = $this->createDate($item['created']);
       }
       else {
         $item['created'] = REQUEST_TIME;
@@ -110,6 +110,28 @@ abstract class DemoNode extends DemoContent {
     }
 
     return $this->content;
+  }
+
+  /**
+   * Converts a date in the correct format.
+   *
+   * @param string $date_string
+   *    The date.
+   *
+   * @return int|false
+   *    Returns a timestamp on success, false otherwise.
+   */
+  protected function createDate($date_string) {
+    if ($date_string === 'now') {
+      return time();
+    }
+    // Split from delimiter.
+    $timestamp = explode('|', $date_string);
+
+    $date = strtotime($timestamp[0]);
+    $date = date('Y-m-d', $date) . 'T' . $timestamp[1] . ':00';
+
+    return strtotime($date);
   }
 
   /**
