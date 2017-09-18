@@ -1,0 +1,20 @@
+<?php
+/**
+ * Module file for activity_viewer.
+ */
+
+/**
+ * Implements hook_views_data().
+ */
+function activity_viewer_views_data() {
+  $data['activity']['activity_filter_personalised_homepage_filter'] = array(
+    'title' => t('Filter on activities for the personalised homepage.'),
+    'filter' => array(
+      'title' => t('Filter activities for personalised homepage'),
+      'help' => t('Filter on activities for personalised homepage.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_filter_personalised_homepage',
+    ),
+  );
+  return $data;
+}
