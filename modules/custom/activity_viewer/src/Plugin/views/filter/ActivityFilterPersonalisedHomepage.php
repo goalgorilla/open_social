@@ -166,4 +166,15 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $this->query->addWhere('visibility', $and_wrapper);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $contexts = parent::getCacheContexts();
+
+    $contexts[] = 'user';
+
+    return $contexts;
+  }
+
 }
