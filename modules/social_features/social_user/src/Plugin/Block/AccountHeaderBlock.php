@@ -242,9 +242,7 @@ class AccountHeaderBlock extends BlockBase {
             'title' => $this->t('View content I\'m following'),
             'label' => $this->t('Following'),
             'title_classes' => '',
-            'url' => Url::fromRoute('view.following.following', [
-              'user' => $account->id(),
-            ]),
+            'url' => Url::fromRoute('view.following.following'),
           ),
           'divide_account' => array(
             'divider' => 'true',
