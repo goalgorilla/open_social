@@ -29,7 +29,7 @@
 
 
   <nav class="navbar navbar-default navbar-fixed-top" id="top" role="banner">
-    <div class="container">
+    <div class="container container--navbar">
       <div class="navbar-header">
         <a class="navbar-brand" href="./" title="Home" rel="home">
           <img src="kss-assets/logo.svg" alt="{{ options.title }}" />
@@ -43,14 +43,12 @@
       </div>
 
       <div id="main-navigation" class="collapse navbar-collapse">
-        <div class="navbar-collapse-order">
-          <ul class="nav navbar-nav" role="navigation">
-            <li class="expanded dropdown"><a href="./">Home</a></li>
-            {% for menu_item in menu %}
-              <li class="expanded dropdown{% if menu_item.isActive %} active {% endif %}"><a href="section-{{ menu_item.referenceURI }}.html">{{ menu_item.header }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+        <ul class="nav navbar-nav" role="navigation">
+          <li class="expanded dropdown"><a href="./">Home</a></li>
+          {% for menu_item in menu %}
+            <li class="expanded dropdown{% if menu_item.isActive %} active {% endif %}"><a href="section-{{ menu_item.referenceURI }}.html">{{ menu_item.header }}</a></li>
+          {% endfor %}
+        </ul>
       </div>
 
 
@@ -113,8 +111,8 @@
 
               {% if 'Chart' in section.header %}
                 <script src="kss-assets/drupal-core.js"></script>
-                <script src="kss-assets/raphael.min.js"></script>
-                <script src="kss-assets/morris.min.js"></script>
+                <script src="kss-assets/js/raphael.min.js"></script>
+                <script src="kss-assets/js/morris.min.js"></script>
               {% endif %}
 
               {% set headerElement = (section.depth > 6) ? 'h6' : 'h' ~ section.depth %}
@@ -299,17 +297,9 @@
 
   <!-- SCRIPTS -->
 
-  <script src="kss-assets/drupal-core.js"></script>
-  <script src="kss-assets/affix.js"></script>
-  <script src="kss-assets/alert.js"></script>
-  <script src="kss-assets/collapse.js"></script>
-  <script src="kss-assets/dropdown.js"></script>
-  <script src="kss-assets/modal.js"></script>
-  <script src="kss-assets/tooltip.js"></script>
-  <script src="kss-assets/popover.js"></script>
-  <script src="kss-assets/scrollspy.js"></script>
-  <script src="kss-assets/tab.js"></script>
-  <script src="kss-assets/transition.js"></script>
+  <script src="kss-assets/js/drupal-core.js"></script>
+  <script src="kss-assets/js/bootstrap.min.js"></script>
+  <script src="kss-assets/js/waves.min.js"></script>
   <script src="kss-assets/prism.js"></script>
   <script src="kss-assets/kss-fullscreen.js"></script>
   <script src="kss-assets/kss-guides.js"></script>

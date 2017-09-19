@@ -39,7 +39,8 @@ options.rootPath = {
   styleGuide  : __dirname + '/styleguide/',
   theme       : __dirname + '/',
   basetheme   : __dirname + '/../socialbase/',
-  drupal      : __dirname + '/../../../../../core/'
+  drupal      : __dirname + '/../../../../../core/',
+  libraries   : __dirname + '/../../../../../libraries/'
 };
 
 options.theme = {
@@ -182,9 +183,6 @@ options.styleGuide = {
     // Styleguide stylesheets
     'kss-assets/css/styleguide.css'
   ],
-  'js': [
-    'kss-assets/js/waves.min.js'
-  ],
   'homepage': 'homepage.md',
   'title': 'Style Guide for Open Social Blue'
 };
@@ -260,7 +258,7 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 
 // Before deploying create a fresh build
 gulp.task('build-styleguide', function(done) {
-  runSequence('clean:styleguide', 'scripts-drupal', 'styleguide',
+  runSequence('clean:styleguide', 'scripts-drupal', 'libraries', 'styleguide',
     ['styleguide-assets-base', 'styleguide-assets', 'styleguide-mime-image-icons'],
     done);
 });
@@ -280,8 +278,20 @@ gulp.task('scripts-drupal', function() {
     options.rootPath.drupal + '/modules/file/file.js'
   ])
     .pipe( concat('drupal-core.js') )
-    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/') );
+    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/js/') );
 });
+
+// Copy libraries scripts from drupal libraries folder to make them available for the styleguide
+gulp.task('libraries', function() {
+  return gulp.src([
+    options.rootPath.libraries + 'bootstrap/dist/js/bootstrap.min.js',
+    options.rootPath.libraries + 'morris.js/morris.min.js',
+    options.rootPath.libraries + 'raphael/raphael.min.js',
+    options.rootPath.libraries + 'waves/dist/waves.min.js'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/js/'));
+});
+
 
 
 
