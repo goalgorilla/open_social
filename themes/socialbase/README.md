@@ -1,5 +1,5 @@
 # Base theme #
-The Social Base theme is designed as a base theme for Open Social. This base theme holds has a lot of sensible defaults. It doesn't however contain much styling. We expect every developer to want to change this for his/her project. As you can see there is also a theme called **socialblue**. Socialblue is the demo/styling sub theme for Open Social.
+The Social Base theme is designed as a base theme for Open Social. This base theme holds has a lot of sensible defaults. However, it doesn't contain much styling. We expect every developer to want to change this for his/her project. As you can see there is also a theme called **socialblue**. Socialblue is the demo/styling sub theme for Open Social.
 
 # Changing the style of the theme  #
 If you are a Drupal themer you know how to create a (sub)theme. There are no tricks in our setup you need to know for Open Social. The easiest way to start is to grab a copy of Social Blue and rename all instances of social Blue to your new theme name. Social Base and Social Blue will get updates each release, so it is best not to make changes in here you want to keep.
@@ -31,12 +31,8 @@ If you are a Drupal themer you know how to create a (sub)theme. There are no tri
 <dd>This is working folder. The folder is categorised following atomic design principles. Most re-usable css values are turned into variables for consistency.</dd>
 <dt># config</dt>
 <dd>Drupal installation files</dd>
-<dt># js - deprecated</dt>
-<dd>Old javascript folder, needs to cleaned up (all JS should be in components are generated to assets folder)</dd>
-<dt># libraries</dt>
-<dd>External libraries. Install via Gulp Bower task.</dd>
 <dt># src</dt>
-<dd>Drupal plugins - mainly overrides for the bootstrap base theme. @see [Drupal Bootstrap documentation](https://drupal-bootstrap.org/api/bootstrap/docs%21plugins%21README.md/group/plugins/8)</dd>
+<dd>Drupal plugins - contains most functions and template suggestions. @see [Drupal Bootstrap documentation](https://drupal-bootstrap.org/api/bootstrap/docs%21plugins%21README.md/group/plugins/8) on how to extend this in your subtheme.</dd>
 <dt># Templates</dt>
 <dd>This folder contains all twig templates for the theme.</dd>
 
@@ -45,7 +41,7 @@ If you are a Drupal themer you know how to create a (sub)theme. There are no tri
 # Contributing to socialbase #
 
 Social Base uses Gulp.js as a task runner, so that it can do many tasks automatically:
- - Build CSS from your Sass using libSass and node-sass.
+ - Build CSS from your Sass.
  - Add vendor prefixes for the browsers you want to support using Autoprefixer.
  - Watch all of your files as you develop and re-build everything on the fly.
 
@@ -80,6 +76,5 @@ Set up your front-end development build tools:
 
 # Notice
 We are constantly improving and updating the theme setup for Open Social. It might be the readme is not always up to date. Also check the changelog file for changes. You can report issues via the drupal.org [issue queue](https://www.drupal.org/project/issues/social?categories=All). The following items are on our roadmap:
-* Remove JS folder and make sure all scripts are placed in their corresponding component.
 * Add components library module and create twig templates in the components folder.
 * Provide a starterkit in favor a manual copying Social Blue to start a new theme.
