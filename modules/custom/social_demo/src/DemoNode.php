@@ -146,7 +146,7 @@ abstract class DemoNode extends DemoContent {
       'title' => $item['title'],
       'type' => $item['type'],
       'body' => [
-        'value' => $item['body'],
+        'value' => $this->checkMentionByUuid($item['body']),
         'format' => 'basic_html',
       ],
     ];
