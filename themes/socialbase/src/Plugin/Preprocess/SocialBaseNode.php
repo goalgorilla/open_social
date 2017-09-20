@@ -21,7 +21,6 @@ class SocialBaseNode extends PreprocessBase {
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
-
     $node = $variables['node'];
     $account = $node->getOwner();
     $variables['content_type'] = $node->bundle();

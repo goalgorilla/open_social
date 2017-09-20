@@ -21,7 +21,6 @@ class SocialBaseField extends PreprocessBase {
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
-
     // For each field that doesn't need a div to wrap the content in.
     switch ($element['#field_name']) {
       case 'field_profile_image':

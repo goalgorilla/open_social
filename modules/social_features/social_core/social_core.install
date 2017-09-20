@@ -57,6 +57,18 @@ function social_core_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_core_update_dependencies() {
+  // Update field schema only after Profile module bug fixed.
+  $dependencies['social_core'][8020] = [
+    'profile' => 8001,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Re-set permissions.
  */
 function social_core_update_8001(&$sandbox) {
