@@ -4,6 +4,8 @@ namespace Drupal\social_demo;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\profile\Entity\Profile;
+use Drupal\user\Entity\User;
 
 /**
  * Class DemoContent.
@@ -141,6 +143,31 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
     }
 
     return $entities;
+  }
+
+  /**
+   * Extract the mention from the content by [~Uuid].
+   *
+   * @param $content
+   *    The content that contains the mention.
+   */
+  protected function mentionByUuid($content) {
+    // Check if there's a mention in the given content.
+    if (strpos($content, '[~') !== FALSE) {
+      $input = $content;
+      // Strip the uuid from the content.
+      preg_match('/~(.*?)]/', $input, $output);
+
+      // Load the account by uuid.
+      $account = $this->loadByUuid('user', $output[1]);
+      if ($account instanceof User) {
+        // Load the profile by account id.
+        $profile = $this->loadByUuid('profile', $account->id());
+        if ($profile instanceof Profile) {
+          var_dump($profile->id());
+        }
+      }
+    }
   }
 
   /**
