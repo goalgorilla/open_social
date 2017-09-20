@@ -380,21 +380,27 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   // have access to the users profile.
   if (!$current_user->hasPermission('view any profile profile') && ($display->getMode() === 'compact' || $display->getMode() === 'compact_notification')) {
     // Try to load the profile picture.
-    $file = File::load($entity->get('field_profile_image')->target_id);
-    if ($file instanceof File) {
-      // Potentially the file is in the private file system. In that case,
-      // anonymous user don't have access to it.
-      if (!$file->access('view', $current_user)) {
-        // Load default data.
-        $replacement_data = social_profile_get_default_image();
-        /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
-        $imgitem = $build['field_profile_image'][0]['#item'];
-        // Time to override the data that going to be rendered.
-        $imgitem->set('target_id', $replacement_data['id']);
-        $imgitem->set('width', $replacement_data['width']);
-        $imgitem->set('height', $replacement_data['height']);
-        // Put replacement data back in the object that's about to be built.
-        $build['field_profile_image'][0]['#item'] = $imgitem;
+    $fid = $entity->get('field_profile_image')->target_id;
+    // Must have a value and not be NULL.
+    if (!is_null($fid)) {
+      // Load the file.
+      $file = File::load($fid);
+      // Check if it's a real file.
+      if ($file instanceof File) {
+        // Potentially the file is in the private file system. In that case,
+        // anonymous user don't have access to it.
+        if (!$file->access('view', $current_user)) {
+          // Load default data.
+          $replacement_data = social_profile_get_default_image();
+          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
+          $imgitem = $build['field_profile_image'][0]['#item'];
+          // Time to override the data that going to be rendered.
+          $imgitem->set('target_id', $replacement_data['id']);
+          $imgitem->set('width', $replacement_data['width']);
+          $imgitem->set('height', $replacement_data['height']);
+          // Put replacement data back in the object that's about to be built.
+          $build['field_profile_image'][0]['#item'] = $imgitem;
+        }
       }
     }
   }
