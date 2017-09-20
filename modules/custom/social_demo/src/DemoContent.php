@@ -163,9 +163,9 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
       $uuid = $output[1];
       // Uuid validation check.
       $isValidUuid = '/^[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
+      // If the uuid is not according the uuid v1 or v4 format
+      // then just return the content.
       if (!preg_match($isValidUuid, $uuid)) {
-        // If the uuid is not according the uuid v1 or v4 format
-        // then just return the content.
         return $content;
       }
       // Load the account by uuid.
