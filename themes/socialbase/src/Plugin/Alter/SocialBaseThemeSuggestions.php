@@ -21,7 +21,7 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
   public function alter(&$suggestions, &$context1 = NULL, &$hook = NULL) {
     parent::alter($suggestions, $context1, $hook);
 
-    $variables = Variables::create($context1);
+    $variables = $this->variables;
 
     switch ($hook) {
 

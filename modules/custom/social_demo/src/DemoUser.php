@@ -132,8 +132,11 @@ abstract class DemoUser extends DemoContent {
         'type' => ProfileType::load('profile')->id(),
       ]);
       $profile = array_pop($profiles);
-      $this->fillProfile($profile, $item);
-      $profile->save();
+
+      if ($profile instanceof ProfileInterface) {
+        $this->fillProfile($profile, $item);
+        $profile->save();
+      }
     }
 
     return $this->content;
