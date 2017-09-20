@@ -150,24 +150,36 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    *
    * @param $content
    *    The content that contains the mention.
+   *
+   * @return mixed
+   *    If nothing needs to be replaced, just return the same content.
    */
-  protected function mentionByUuid($content) {
+  protected function checkMentionByUuid($content) {
     // Check if there's a mention in the given content.
     if (strpos($content, '[~') !== FALSE) {
       $input = $content;
       // Strip the uuid from the content.
       preg_match('/~(.*?)]/', $input, $output);
-
+      $uuid = $output[1];
+      // Uuid validation check.
+      $isValidUuid = '/^[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
+      if (!preg_match($isValidUuid, $uuid)) {
+        // If the uuid is not according the uuid v1 or v4 format
+        // then just return the content.
+        return $content;
+      }
       // Load the account by uuid.
-      $account = $this->loadByUuid('user', $output[1]);
+      $account = $this->loadByUuid('user', $uuid);
       if ($account instanceof User) {
         // Load the profile by account id.
         $profile = $this->loadByUuid('profile', $account->id());
         if ($profile instanceof Profile) {
-          var_dump($profile->id());
+          $mention = preg_replace('/' . $uuid . '/', $profile->id(), $content);
+          return $mention;
         }
       }
     }
+    return $content;
   }
 
   /**

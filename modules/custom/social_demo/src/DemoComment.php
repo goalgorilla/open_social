@@ -110,6 +110,7 @@ abstract class DemoComment extends DemoContent {
 
       $item['entity_id'] = $entity->id();
       $entry = $this->getEntry($item);
+      var_dump($entry);
       $entity = $this->entityStorage->create($entry);
       $entity->save();
 
@@ -129,7 +130,7 @@ abstract class DemoComment extends DemoContent {
       'uuid' => $item['uuid'],
       'field_comment_body' => [
         [
-          'value' => $item['body'],
+          'value' => $this->checkMentionByUuid($item['body']),
           'format' => 'basic_html',
         ],
       ],
@@ -144,7 +145,7 @@ abstract class DemoComment extends DemoContent {
       'entity_type' => $item['entity_type'],
       'status' => 1,
     ];
-    $mention = $this->mentionByUuid($entry['field_comment_body'][0]['value']);
+
     return $entry;
   }
 
