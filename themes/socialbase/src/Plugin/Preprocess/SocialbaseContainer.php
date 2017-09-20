@@ -18,6 +18,7 @@ class SocialbaseContainer extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // For pages in search we would like to render containers without divs.
     $routename = \Drupal::request()

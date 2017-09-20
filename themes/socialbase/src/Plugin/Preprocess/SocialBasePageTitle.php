@@ -17,6 +17,7 @@ class SocialBasePageTitle extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Get the current path and if is it stream return a variable.
     $current_path = \Drupal::service('path.current')->getPath();

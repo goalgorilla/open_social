@@ -17,6 +17,8 @@ class SocialBaseBookNavigation extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
+
     // Disables the menu tree below the content on a
     // book node in full display mode.
     $variables['tree'] = '';
