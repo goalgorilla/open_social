@@ -144,7 +144,7 @@ abstract class DemoComment extends DemoContent {
       'entity_type' => $item['entity_type'],
       'status' => 1,
     ];
-
+    $mention = $this->mentionByUuid($entry['field_comment_body'][0]['value']);
     return $entry;
   }
 
