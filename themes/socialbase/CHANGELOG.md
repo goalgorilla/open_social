@@ -13,7 +13,7 @@
 ### v2.1.2 -- Mar 2017
 * Replaced Bootstrap list-group component with custom list component
 * Merge label component with badges and extend badge modifiers
-* Improve card documentation with seperation of `card__block` and `card__body`
+* Improve card documentation with separation of `card__block` and `card__body`
 * Document and rename alert, badge, list in style guide
 * Add Bar chart and Donut chart to MorrisJs documentation
 * Optimise small teaser templates

@@ -10,7 +10,7 @@
  * @see template_preprocess_dropdown()
  */
 #}
-<div{{ attributes.addClass('dropdown') }}>
+<div{{ attributes.addClass('dropdown field--name-field-post-visibility') }}>
     {# See PostForm.php we set edit_mode to true so people can't actually change the dropdown button for edit mode. #}
         <button id="post-visibility" type="button" {% if edit_mode %}disabled{% endif %} data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="waves-effect btn btn-default dropdown-toggle icon-before">
           <svg class="icon-black icon-small">
@@ -23,13 +23,8 @@
     <ul role="menu" aria-labelledby="post-visibility" class="dropdown-menu dropdown-menu--visibility">
       <li class="dropdown-header">{{ label }}</li>
       {% for key, child in items %}
-          {% if key == active %}
-              <li class="list-item list-item--visibility list-item--active">
-          {% else %}
-              <li class="list-item list-item--visibility">
-          {% endif %}
-                  {{ child }}
-              </li>
+        <li class="list-item list-item--visibility {% if key == active %}list-item--active{% endif %}">            {{ child }}
+        </li>
       {% endfor %}
     </ul>
     {% endif %}
