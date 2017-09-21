@@ -25,6 +25,7 @@ projects[field_group][type] = module
 projects[field_group][version] = 1.0-rc6
 projects[flag][type] = module
 projects[flag][version] = 4.0-alpha2
+projects[flag][patch][] = "https://www.drupal.org/files/issues/2723703_31.patch"
 projects[group][type] = module
 projects[group][version] = 1.0-rc1
 projects[image_effects][type] = module
