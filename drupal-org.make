@@ -64,3 +64,7 @@ projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha2
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.5
+libraries[bootstrap][type] = library
+libraries[bootstrap][download][type] = get
+libraries[bootstrap][download][url] = https://github.com/jackmoore/autosize/archive/4.0.0.zip
+libraries[bootstrap][destination] = libraries
