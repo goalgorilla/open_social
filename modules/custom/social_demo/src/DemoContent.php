@@ -36,6 +36,13 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   protected $parser;
 
   /**
+   * Profile.
+   *
+   * @var string
+   */
+  protected $profile = '';
+
+  /**
    * Contains the entity storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
@@ -53,9 +60,23 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * {@inheritdoc}
    */
+  public function setProfile($profile) {
+    $this->profile = $profile;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getModule() {
     $definition = $this->getPluginDefinition();
     return isset($definition['provider']) ? $definition['provider'] : NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProfile() {
+    return isset($this->profile) ? $this->profile : '';
   }
 
   /**
@@ -99,7 +120,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   protected function fetchData() {
     if (!$this->data) {
-      $this->data = $this->parser->parseFile($this->getSource(), $this->getModule());
+      $this->data = $this->parser->parseFile($this->getSource(), $this->getModule(), $this->getProfile());
     }
 
     return $this->data;
