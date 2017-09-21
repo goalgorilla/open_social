@@ -134,6 +134,14 @@ abstract class DemoSystem extends DemoContent {
 
       // Save the palette.
       $color->set('palette', $palette)->save();
+
+      // Remove the already generated css files.
+      //@todo: check if isset!!!
+      foreach ($color->get('stylesheets') as $file) {
+        file_unmanaged_delete($file);
+      }
+      // Flush all caches.
+      drupal_flush_all_caches();
     }
 
     // return something.
