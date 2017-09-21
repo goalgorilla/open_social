@@ -110,7 +110,6 @@ abstract class DemoComment extends DemoContent {
 
       $item['entity_id'] = $entity->id();
       $entry = $this->getEntry($item);
-      var_dump($entry);
       $entity = $this->entityStorage->create($entry);
       $entity->save();
 
