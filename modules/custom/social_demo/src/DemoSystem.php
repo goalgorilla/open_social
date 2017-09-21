@@ -73,7 +73,8 @@ abstract class DemoSystem extends DemoContent {
     // Fetch data from yml file.
     $data = $this->fetchData();
 
-    // System has three sections
+    // First let's load the active theme.
+    $active_theme = \Drupal::theme()->getActiveTheme()->getName();
 
     // Site.
     if (isset($data['site'])) {
@@ -88,7 +89,6 @@ abstract class DemoSystem extends DemoContent {
     if (isset($data['homepage'])) {
       $this->content['homepage'] = TRUE;
 
-      /** @var \Drupal\block_content\Entity\BlockContent $block */
       // This uuid can be used like this since it's defined in the code as well (@see social_core.install)
       $block = $this->blockStorage->loadByProperties(['uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4']);
       $block = current($block);
@@ -103,8 +103,7 @@ abstract class DemoSystem extends DemoContent {
     if (isset($data['theme'])) {
       $this->content['theme'] = TRUE;
       // Get theme settings.
-      $config = $this->configFactory->getEditable('socialblue.settings');
-
+      $config = $this->configFactory->getEditable($active_theme.'.settings');
       // Logo.
       $logo = $this->preparePicture($data['theme']['logo']);
       // Must be a valid file.
@@ -123,7 +122,7 @@ abstract class DemoSystem extends DemoContent {
       $config->set('border_radius', $data['theme']['border_radius'])->save();
 
       // Get the colors.
-      $color = $this->configFactory->getEditable('color.theme.socialblue');
+      $color = $this->configFactory->getEditable('color.theme.'.$active_theme);
       // Set as a palette.
       $palette = [
         'brand-bg-primary' => $data['theme']['color_primary'],
