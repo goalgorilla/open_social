@@ -17,6 +17,7 @@ class SocialBaseActivity extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Check if the view mode is one of the notification view modes.
     if (in_array($variables['content']['field_activity_output_text']['#view_mode'], array(

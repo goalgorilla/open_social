@@ -21,6 +21,7 @@ class SocialBaseBlock extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Early return because block missing ID, for example because
     // Rendered in panels display
