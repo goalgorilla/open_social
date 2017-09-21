@@ -1,4 +1,4 @@
-@api @event @stability @perfect @community @upcoming @overview @block @LU @critical @DS-1056 @stability-2
+@api @event @stability @perfect @community @upcoming @overview @block @LU @critical @DS-1056 @stability-2 @mytest
 Feature: See upcoming events in the community
   Benefit: In order to know which events I can join
   Role: LU
@@ -46,5 +46,5 @@ Feature: See upcoming events in the community
       | Behat Event 1 | -10 minutes      | 1      | public                   |
       | Behat Event 2 | -20 minutes      | 1      | public                   |
 
-    When I click radio button "Events that have started or are finished"
+    When I click radio button "Past events"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"

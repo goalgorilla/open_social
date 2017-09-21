@@ -12,7 +12,7 @@ Feature: Overview
     Then I should see "Events" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"
     And I should see "Upcoming events"
-    And I should see "Events that have started or are finished"
+    And I should see "Past events"
     And I should see text matching "Publish status"
 
     # Scenario: Successfully see the topic overview of another user
