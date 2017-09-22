@@ -27,6 +27,10 @@ function socialbase_preprocess_form(&$variables) {
     if ($element['#region'] === 'hero') {
       $variables['in_hero_region'] = TRUE;
     }
+
+    if ($element['#region'] === 'content-top') {
+      $variables['in_content_top_region'] = TRUE;
+    }
   }
 
   $variables['attributes']['class'][] = 'clearfix';

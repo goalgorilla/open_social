@@ -41,7 +41,7 @@ function socialbase_preprocess_input(&$variables) {
   }
 
   if (isset($variables['element']['#addsearchicon'])) {
-    $variables['add_search_icon'] = TRUE;
+    $variables['addsearchicon'] = TRUE;
   }
 
   // Button types are determined in the hook_form_alter and set to be

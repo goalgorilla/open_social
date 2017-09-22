@@ -24,7 +24,7 @@ class SocialBaseMenuLocalAction extends MenuLocalAction {
 
     if (\Drupal::routeMatch()->getRouteName() === 'entity.group_content.collection') {
 
-      $variables['link']['#options']['attributes']['class'] = 'btn waves-effect btn-primary btn-raised';
+      $variables['link']['#options']['attributes']['class'] = 'btn btn-primary btn-raised';
       $variables['attributes']['class'][] = 'margin-bottom-l';
 
     }
