@@ -9,13 +9,23 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
         }
     ],
     "scripts": {
         "post-install-cmd": [
             "@composer drupal-scaffold"
         ],
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "enable-asset-packagist": "Social\\Composer\\AssetPackagist::execute"
+    },
+    "autoload": {
+        "psr-4": {
+            "Social\\": "src"
+        }
     },
     "extra": {
         "patches": {
@@ -31,6 +41,7 @@
     "require": {
         "cweagans/composer-patches": "^1.5.0",
         "composer/installers": "^1.0",
+        "oomphinc/composer-installers-extender": "^1.1",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "drupal/core": "8.3.7",
         "drupal/crop": "1.2",
@@ -72,6 +83,12 @@
         "happyr/linkedin-api-client": "^1.0",
         "abraham/twitteroauth": "^0.7.2",
         "swiftmailer/swiftmailer" : "5.4.8",
-        "bower-asset/autosize": "3.3.7"
+        "bower-asset/waves": "0.7.5",
+        "bower-asset/timepicker": "1.11.4",
+        "bower-asset/tablesaw": "2.0.3",
+        "bower-asset/morris.js": "0.5.1",
+        "bower-asset/raphael": "2.2.7",
+        "bower-asset/bootstrap": "3.3.7",
+        "bower-asset/autosize": "4.0.0"
     }
 }
