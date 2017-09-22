@@ -102,12 +102,14 @@ function drush_social_demo_demo_content_add() {
 function drush_social_demo_demo_content_remove() {
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
+  $profile = drush_get_option('profile', '');
   $manager = \Drupal::service('plugin.manager.demo_content');
   $plugins = $manager->createInstances($content_types);
 
   /** @var \Drupal\social_demo\DemoContentInterface $plugin */
   foreach ($plugins as $plugin) {
     $definition = $plugin->getPluginDefinition();
+    $plugin->setProfile($profile);
     $plugin->removeContent();
     drush_log("{$definition['label']}(s) removed", LogLevel::SUCCESS);
   }
