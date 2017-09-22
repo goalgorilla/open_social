@@ -8,6 +8,7 @@
 use \Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 use \Drupal\block\Entity\Block;
+use Drupal\views\Views;
 
 /**
  * Social activity install function.
@@ -64,8 +65,18 @@ function social_activity_update_8001() {
  */
 function _social_activity_create_activity_homepage_block() {
   // Revert view so it has the block display.
-  $config_revert = \Drupal::service('features.config_update');
-  $config_revert->revert('view', 'activity_stream');
+  $config_update_service = \Drupal::service('features.config_update');
+
+  // Check if view exists.
+  $view = Views::getView('activity_stream');
+  if (is_object($view)) {
+    // If exists, we revert.
+    $config_update_service->revert('view', 'activity_stream');
+  }
+  else {
+    // Otherwise we import.
+    $config_update_service->import('view', 'activity_stream');
+  }
 
   $config = \Drupal::configFactory();
 
