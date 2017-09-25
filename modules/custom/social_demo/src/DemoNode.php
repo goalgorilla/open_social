@@ -106,6 +106,10 @@ abstract class DemoNode extends DemoContent {
         if (!empty($item['group'])) {
           $this->createGroupContent($entity, $item['group']);
         }
+
+        if (!empty($item['book'])) {
+          $this->createBookLink($entity, $item['book']);
+        }
       }
     }
 
@@ -180,6 +184,19 @@ abstract class DemoNode extends DemoContent {
       ]);
       $group_content->save();
     }
+  }
+
+  public function createBookLink(NodeInterface $entity, $book) {
+    // Load book by book ID. Set saveBookLink false if not a new book.
+
+//    $link = [
+//      'nid' => $nid,
+//      'bid' => $bid,
+//      'pid' => $pid,
+//      'weight' => $weight,
+//    ];
+//
+//    $this->bookManager->saveBookLink($link, TRUE);
   }
 
 }
