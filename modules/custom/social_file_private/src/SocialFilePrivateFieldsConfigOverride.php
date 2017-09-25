@@ -25,7 +25,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * report when there are fields of type image, file using public uri_scheme.
    *
    * @return array
-   *    Returns an array containing config_names.
+   *   Returns an array containing config_names.
    */
   public function getFileImageFieldsToProtect() {
     // We want to override all the known file and image uploads.
@@ -48,7 +48,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     if (PrivateStream::basePath()) {
       $config_names = $this->getFileImageFieldsToProtect();
       foreach ($config_names as $config_name) {

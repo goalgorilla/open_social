@@ -34,10 +34,10 @@ class FontListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.font.edit_form', array(
+        'entity.font.edit_form', [
           'font' => $entity->id(),
         )
-      )
+      ]
     );
     return $row + parent::buildRow($entity);
   }
