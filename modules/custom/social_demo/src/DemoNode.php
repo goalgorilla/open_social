@@ -214,6 +214,11 @@ abstract class DemoNode extends DemoContent {
       $pid = $book_parent->id();
     }
 
+    $weight = 0;
+    if (!empty($book['weight'])) {
+      $weight = $book['weight'];
+    }
+
     if ($entity->uuid() == $book['id']) {
       $pid = 0;
     }
@@ -222,7 +227,7 @@ abstract class DemoNode extends DemoContent {
       'nid' => $entity->id(),
       'bid' => $bid,
       'pid' => $pid,
-//      'weight' => $weight,
+      'weight' => $weight,
     ];
 
     $this->bookManager->saveBookLink($link, TRUE);
