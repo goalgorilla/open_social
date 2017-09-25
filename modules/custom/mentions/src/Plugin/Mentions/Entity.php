@@ -50,9 +50,9 @@ class Entity implements MentionsPluginInterface {
   public function outputCallback($mention, $settings) {
     $entity = $this->entityManager->getStorage($mention['target']['entity_type'])
       ->load($mention['target']['entity_id']);
-    $output['value'] = $this->tokenService->replace($settings['value'], array($mention['target']['entity_type'] => $entity));
+    $output['value'] = $this->tokenService->replace($settings['value'], [$mention['target']['entity_type'] => $entity]);
     if ($settings['renderlink']) {
-      $output['link'] = $this->tokenService->replace($settings['rendertextbox'], array($mention['target']['entity_type'] => $entity));
+      $output['link'] = $this->tokenService->replace($settings['rendertextbox'], [$mention['target']['entity_type'] => $entity]);
     }
     return $output;
   }

@@ -74,7 +74,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @var string
    */
-  protected $input = array();
+  protected $input = [];
 
   /**
    * What is looked for when mentions are parsed.
@@ -83,7 +83,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @var string
    */
-  protected $output = array();
+  protected $output = [];
 
   /**
    * {@inheritdoc}
