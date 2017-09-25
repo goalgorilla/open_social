@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo\Plugin\DemoContent;
 
+use Drupal\book\BookManagerInterface;
 use Drupal\social_demo\DemoNode;
 use Drupal\social_demo\DemoContentParserInterface;
 use Drupal\user\UserStorageInterface;
@@ -29,12 +30,20 @@ class Book extends DemoNode {
   protected $fileStorage;
 
   /**
+   * The book manager.
+   *
+   * @var \Drupal\book\BookManagerInterface
+   */
+  protected $bookManager;
+
+  /**
    * Page constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, BookManagerInterface $book_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage, $book_manager);
 
     $this->fileStorage = $file_storage;
+    $this->bookManager = $book_manager;
   }
 
   /**
@@ -48,7 +57,8 @@ class Book extends DemoNode {
       $container->get('social_demo.yaml_parser'),
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('file')
+      $container->get('entity.manager')->getStorage('file'),
+      $container->get('book.manager')
     );
   }
 
