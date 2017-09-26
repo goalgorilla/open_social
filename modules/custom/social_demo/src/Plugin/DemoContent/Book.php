@@ -2,7 +2,7 @@
 
 namespace Drupal\social_demo\Plugin\DemoContent;
 
-use Drupal\book\BookManagerInterface;
+use Drupal\book\BookManager;
 use Drupal\social_demo\DemoNode;
 use Drupal\social_demo\DemoContentParserInterface;
 use Drupal\user\UserStorageInterface;
@@ -32,14 +32,14 @@ class Book extends DemoNode {
   /**
    * The book manager.
    *
-   * @var \Drupal\book\BookManagerInterface
+   * @var \Drupal\book\BookManager
    */
   protected $bookManager;
 
   /**
    * Page constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, BookManagerInterface $book_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, BookManager $book_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage, $book_manager);
 
     $this->fileStorage = $file_storage;

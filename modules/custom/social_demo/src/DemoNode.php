@@ -2,7 +2,7 @@
 
 namespace Drupal\social_demo;
 
-use Drupal\book\BookManagerInterface;
+use Drupal\book\BookManager;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,14 +34,14 @@ abstract class DemoNode extends DemoContent {
   /**
    * The book manager.
    *
-   * @var \Drupal\book\BookManagerInterface
+   * @var \Drupal\book\BookManager
    */
   protected $bookManager;
 
   /**
    * DemoNode constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, BookManagerInterface $book_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, BookManager $book_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->parser = $parser;
@@ -61,7 +61,7 @@ abstract class DemoNode extends DemoContent {
       $container->get('social_demo.yaml_parser'),
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('book')
+      $container->get('book.manager')
     );
   }
 
