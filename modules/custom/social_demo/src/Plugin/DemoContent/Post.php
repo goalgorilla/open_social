@@ -43,7 +43,7 @@ class Post extends DemoEntity {
       'langcode' => $item['langcode'],
       'type' => $item['type'],
       'field_post' => [
-          'value' => $this->checkMentionByUuid($item['field_post']),
+          'value' => $this->checkMentionOrLinkByUuid($item['field_post']),
           'format' => 'basic_html',
         ],
       'field_visibility' => $item['field_visibility'],

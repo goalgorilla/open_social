@@ -160,7 +160,7 @@ abstract class DemoNode extends DemoContent {
       'title' => $item['title'],
       'type' => $item['type'],
       'body' => [
-        'value' => $this->checkMentionByUuid($item['body']),
+        'value' => $this->checkMentionOrLinkByUuid($item['body']),
         'format' => 'basic_html',
       ],
     ];
