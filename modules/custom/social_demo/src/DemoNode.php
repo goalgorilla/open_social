@@ -196,19 +196,24 @@ abstract class DemoNode extends DemoContent {
   public function createFollow($entity, $uuids) {
 
     foreach ($uuids as $uuid) {
-      // Check if user already follow this content.
+      // Load the user(s) by the given uuid(s).
       $account = $this->loadByUuid('user', $uuid);
+
       $properties = [
         'uid' => $account->id(),
         'entity_type' => 'node',
         'entity_id' => $entity->id(),
         'flag_id' => 'follow_content',
       ];
+
+      // Check the current flaggings.
       $flaggings = \Drupal::entityTypeManager()
         ->getStorage('flagging')
         ->loadByProperties($properties);
       $flagging = reset($flaggings);
 
+      // If the user is already following, then nothing happens.
+      // Else we create the flagging with the properties above.
       if (empty($flagging)) {
         $flagging = Flagging::create($properties);
         if ($flagging) {
