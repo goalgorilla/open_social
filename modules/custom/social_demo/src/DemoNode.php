@@ -3,6 +3,7 @@
 namespace Drupal\social_demo;
 
 use Drupal\book\BookManager;
+use Drupal\flag\Entity\Flagging;
 use Drupal\social_demo\Plugin\DemoContent\Book;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -112,6 +113,10 @@ abstract class DemoNode extends DemoContent {
         if (!empty($item['book'])) {
           Book::createBookLink($entity, $item['book']);
         }
+
+        if (isset($item['followed_by'])) {
+          $this->createFollow($entity, $item['followed_by']);
+        }
       }
     }
 
@@ -186,6 +191,32 @@ abstract class DemoNode extends DemoContent {
       ]);
       $group_content->save();
     }
+  }
+
+  public function createFollow($entity, $uuids) {
+
+    foreach ($uuids as $uuid) {
+      // Check if user already follow this content.
+      $account = $this->loadByUuid('user', $uuid);
+      $properties = [
+        'uid' => $account->id(),
+        'entity_type' => 'node',
+        'entity_id' => $entity->id(),
+        'flag_id' => 'follow_content',
+      ];
+      $flaggings = \Drupal::entityTypeManager()
+        ->getStorage('flagging')
+        ->loadByProperties($properties);
+      $flagging = reset($flaggings);
+
+      if (empty($flagging)) {
+        $flagging = Flagging::create($properties);
+        if ($flagging) {
+          $flagging->save();
+        }
+      }
+    }
+
   }
 
 }
