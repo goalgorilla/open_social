@@ -5,6 +5,3 @@ services:
   plugin.manager.demo_content:
     class: \Drupal\social_demo\DemoContentManager
     parent: default_plugin_manager
-  book.manager:
-    class: \Drupal\book\BookManager
-    arguments: ['@entity.manager', '@string_translation', '@config.factory', '@book.outline_storage', '@renderer']

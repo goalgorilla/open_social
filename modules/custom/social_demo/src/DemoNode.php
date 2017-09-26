@@ -3,6 +3,7 @@
 namespace Drupal\social_demo;
 
 use Drupal\book\BookManager;
+use Drupal\social_demo\Plugin\DemoContent\Book;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,22 +33,14 @@ abstract class DemoNode extends DemoContent {
   protected $groupStorage;
 
   /**
-   * The book manager.
-   *
-   * @var \Drupal\book\BookManager
-   */
-  protected $bookManager;
-
-  /**
    * DemoNode constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, BookManager $book_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->parser = $parser;
     $this->groupStorage = $group_storage;
     $this->userStorage = $user_storage;
-    $this->bookManager = $book_manager;
   }
 
   /**
@@ -60,8 +53,7 @@ abstract class DemoNode extends DemoContent {
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('group'),
-      $container->get('book.manager')
+      $container->get('entity.manager')->getStorage('group')
     );
   }
 
@@ -118,7 +110,7 @@ abstract class DemoNode extends DemoContent {
         }
 
         if (!empty($item['book'])) {
-          $this->createBookLink($entity, $item['book']);
+          Book::createBookLink($entity, $item['book']);
         }
       }
     }
@@ -194,43 +186,6 @@ abstract class DemoNode extends DemoContent {
       ]);
       $group_content->save();
     }
-  }
-
-  public function createBookLink(NodeInterface $entity, $book) {
-    // Load book by book ID. Set saveBookLink false if not a new book.
-
-    $bid = 0;
-    if ($entity->uuid() == $book['id']) {
-      $bid = $entity->id();
-    }
-    else {
-      $book_entity = $this->loadByUuid('node', $book['id']);
-      $bid = $book_entity->id();
-    }
-
-    $pid = $bid;
-    if (!empty($book['parent'])) {
-      $book_parent = $this->loadByUuid('node', $book['parent']);
-      $pid = $book_parent->id();
-    }
-
-    $weight = 0;
-    if (!empty($book['weight'])) {
-      $weight = $book['weight'];
-    }
-
-    if ($entity->uuid() == $book['id']) {
-      $pid = 0;
-    }
-
-    $link = [
-      'nid' => $entity->id(),
-      'bid' => $bid,
-      'pid' => $pid,
-      'weight' => $weight,
-    ];
-
-    $this->bookManager->saveBookLink($link, TRUE);
   }
 
 }

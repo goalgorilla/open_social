@@ -129,7 +129,7 @@ abstract class DemoComment extends DemoContent {
       'uuid' => $item['uuid'],
       'field_comment_body' => [
         [
-          'value' => $this->checkMentionByUuid($item['body']),
+          'value' => $this->checkMentionOrLinkByUuid($item['body']),
           'format' => 'basic_html',
         ],
       ],

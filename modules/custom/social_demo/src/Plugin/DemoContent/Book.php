@@ -3,6 +3,7 @@
 namespace Drupal\social_demo\Plugin\DemoContent;
 
 use Drupal\book\BookManager;
+use Drupal\node\Entity\Node;
 use Drupal\social_demo\DemoNode;
 use Drupal\social_demo\DemoContentParserInterface;
 use Drupal\user\UserStorageInterface;
@@ -112,6 +113,43 @@ class Book extends DemoNode {
     }
 
     return $value;
+  }
+
+  public function createBookLink(Node $entity, $book) {
+    // Load book by book ID. Set saveBookLink false if not a new book.
+
+    $bid = 0;
+    if ($entity->uuid() == $book['id']) {
+      $bid = $entity->id();
+    }
+    else {
+      $book_entity = $this->loadByUuid('node', $book['id']);
+      $bid = $book_entity->id();
+    }
+
+    $pid = $bid;
+    if (!empty($book['parent'])) {
+      $book_parent = $this->loadByUuid('node', $book['parent']);
+      $pid = $book_parent->id();
+    }
+
+    $weight = 0;
+    if (!empty($book['weight'])) {
+      $weight = $book['weight'];
+    }
+
+    if ($entity->uuid() == $book['id']) {
+      $pid = 0;
+    }
+
+    $link = [
+      'nid' => $entity->id(),
+      'bid' => $bid,
+      'pid' => $pid,
+      'weight' => $weight,
+    ];
+
+    $this->bookManager->saveBookLink($link, TRUE);
   }
 
 }

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_demo\Plugin\DemoContent;
 
-use Drupal\book\BookManager;
 use Drupal\social_demo\DemoNode;
 use Drupal\taxonomy\TermStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -40,8 +39,8 @@ class Topic extends DemoNode {
   /**
    * Topic constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage, BookManager $book_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage, $book_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
 
     $this->fileStorage = $file_storage;
     $this->termStorage = $term_storage;
@@ -59,8 +58,7 @@ class Topic extends DemoNode {
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity.manager')->getStorage('group'),
       $container->get('entity.manager')->getStorage('file'),
-      $container->get('entity.manager')->getStorage('taxonomy_term'),
-      $container->get('book.manager')
+      $container->get('entity.manager')->getStorage('taxonomy_term')
     );
   }
 
