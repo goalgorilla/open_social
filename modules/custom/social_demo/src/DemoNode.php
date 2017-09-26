@@ -193,7 +193,15 @@ abstract class DemoNode extends DemoContent {
     }
   }
 
-  public function createFollow($entity, $uuids) {
+  /**
+   * The function that checks and creates a follow on an entity.
+   *
+   * @param $entity
+   *    The related entity.
+   * @param array $uuids
+   *    The array containing uuids.
+   */
+  public function createFollow($entity, array $uuids) {
 
     foreach ($uuids as $uuid) {
       // Load the user(s) by the given uuid(s).

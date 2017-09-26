@@ -115,6 +115,14 @@ class Book extends DemoNode {
     return $value;
   }
 
+  /**
+   * The function for creating a book from the demo content.
+   *
+   * @param \Drupal\node\Entity\Node $entity
+   *    The related entity.
+   * @param $book
+   *    The book.
+   */
   public function createBookLink(Node $entity, $book) {
     // Load book by book ID. Set saveBookLink false if not a new book.
 
