@@ -42,13 +42,13 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   // Try to add a heading message.
   if ($user = user_load_by_mail($variables['message']['to'])) {
     $message = $variables['message'];
-    $options = array(
+    $options = [
       'langcode' => $message['langcode'],
-    );
+    ];
 
-    $replace = array(
+    $replace = [
       '%display_name' => $user->getDisplayName(),
-    );
+    ];
     $variables['heading'] = t('Hi %display_name', $replace, $options);
   }
 }

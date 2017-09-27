@@ -44,11 +44,11 @@ class PostBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $values = array();
+    $values = [];
     // Specify selected bundle if the entity has bundles.
     if (\Drupal::entityTypeManager()->getDefinition($this->entityType)->hasKey('bundle')) {
       $bundle_key = \Drupal::entityTypeManager()->getDefinition($this->entityType)->getKey('bundle');
-      $values = array($bundle_key => $this->bundle);
+      $values = [$bundle_key => $this->bundle];
     }
 
     $entity = \Drupal::entityTypeManager()
@@ -67,7 +67,7 @@ class PostBlock extends BlockBase {
       ->getFormObject($entity->getEntityTypeId(), 'default');
     $form_object->setEntity($entity);
 
-    $form_state = (new FormState())->setFormState(array());
+    $form_state = (new FormState())->setFormState([]);
     $form_state->set('form_display', $display);
     return \Drupal::formBuilder()->buildForm($form_object, $form_state);
   }
