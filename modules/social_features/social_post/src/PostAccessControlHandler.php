@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\group\Entity\Group;
 
 /**
  * Access controller for the Post entity.

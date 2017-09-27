@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -19,7 +20,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
 
   if ($form_state->getFormObject()->getEntity()->isNew()) {
     // Load current user.
-    $account = \Drupal\user\Entity\User::load(Drupal::currentUser()->id());
+    $account = User::load(Drupal::currentUser()->id());
     // Load compact notification view mode of the attached profile.
     if ($account) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -41,7 +42,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post',array(),array('context' => 'Post button'));
+  $form['actions']['submit']['#value'] = t('Post', array(), array('context' => 'Post button'));
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
     // For posting on the stream on the group stream.
