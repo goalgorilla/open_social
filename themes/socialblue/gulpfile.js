@@ -39,7 +39,8 @@ options.rootPath = {
   styleGuide  : __dirname + '/styleguide/',
   theme       : __dirname + '/',
   basetheme   : __dirname + '/../socialbase/',
-  drupal      : __dirname + '/../../../../../core/'
+  drupal      : __dirname + '/../../../../../core/',
+  libraries   : __dirname + '/../../../../../libraries/'
 };
 
 options.theme = {
@@ -110,80 +111,78 @@ options.styleGuide = {
   // The following paths are relative to the generated style guide.
   'css': [
     // Base stylesheets
-    'kss-assets/base/base.css',
-    'kss-assets/css/base.css',
+    'kss-assets/base/css/base.css',
+    'kss-assets/blue/css/base.css',
     // Atom stylesheets
-    'kss-assets/base/alert.css',
-    'kss-assets/css/alert.css',
-    'kss-assets/base/badge.css',
-    'kss-assets/css/badge.css',
-    'kss-assets/base/button.css',
-    'kss-assets/css/button.css',
-    'kss-assets/base/cards.css',
-    'kss-assets/css/cards.css',
-    'kss-assets/base/form-controls.css',
-    'kss-assets/css/form-controls.css',
-    'kss-assets/css/list.css',
-    'kss-assets/base/list.css',
-    'kss-assets/css/spinner.css',
-    'kss-assets/css/waves.css',
+    'kss-assets/base/css/alert.css',
+    'kss-assets/blue/css/alert.css',
+    'kss-assets/base/css/badge.css',
+    'kss-assets/blue/css/badge.css',
+    'kss-assets/base/css/button.css',
+    'kss-assets/blue/css/button.css',
+    'kss-assets/base/css/cards.css',
+    'kss-assets/blue/css/cards.css',
+    'kss-assets/base/css/form-controls.css',
+    'kss-assets/blue/css/form-controls.css',
+    'kss-assets/blue/css/list.css',
+    'kss-assets/base/css/list.css',
+    'kss-assets/blue/css/spinner.css',
+    'kss-assets/lib/waves.css',
+    'kss-assets/blue/css/waves.css',
     // Molecule stylesheets
-    'kss-assets/base/dropdown.css',
-    'kss-assets/css/dropdown.css',
-    'kss-assets/base/file.css',
-    'kss-assets/css/file.css',
-    'kss-assets/base/form-elements.css',
-    'kss-assets/css/form-elements.css',
-    'kss-assets/base/datepicker.css',
-    'kss-assets/css/datepicker.css',
-    'kss-assets/base/input-groups.css',
-    'kss-assets/css/input-groups.css',
-    'kss-assets/base/password.css',
-    'kss-assets/css/password.css',
-    'kss-assets/base/timepicker.css',
-    'kss-assets/css/timepicker.css',
-    'kss-assets/base/media.css',
-    'kss-assets/base/mention.css',
-    'kss-assets/css/mention.css',
-    'kss-assets/base/breadcrumb.css',
-    'kss-assets/css/breadcrumb.css',
-    'kss-assets/base/nav-book.css',
-    'kss-assets/css/nav-book.css',
-    'kss-assets/base/nav-tabs.css',
-    'kss-assets/css/nav-tabs.css',
-    'kss-assets/base/navbar.css',
-    'kss-assets/css/navbar.css',
-    'kss-assets/base/pagination.css',
-    'kss-assets/css/pagination.css',
-    'kss-assets/base/popover.css',
-    'kss-assets/css/popover.css',
-    'kss-assets/base/teaser.css',
-    'kss-assets/css/teaser.css',
-    'kss-assets/base/tour.css',
-    'kss-assets/css/tour.css',
+    'kss-assets/base/css/dropdown.css',
+    'kss-assets/blue/css/dropdown.css',
+    'kss-assets/base/css/file.css',
+    'kss-assets/blue/css/file.css',
+    'kss-assets/base/css/form-elements.css',
+    'kss-assets/blue/css/form-elements.css',
+    'kss-assets/base/css/datepicker.css',
+    'kss-assets/blue/css/datepicker.css',
+    'kss-assets/base/css/input-groups.css',
+    'kss-assets/blue/css/input-groups.css',
+    'kss-assets/base/css/password.css',
+    'kss-assets/blue/css/password.css',
+    'kss-assets/base/css/timepicker.css',
+    'kss-assets/blue/css/timepicker.css',
+    'kss-assets/base/css/media.css',
+    'kss-assets/base/css/mention.css',
+    'kss-assets/blue/css/mention.css',
+    'kss-assets/base/css/breadcrumb.css',
+    'kss-assets/blue/css/breadcrumb.css',
+    'kss-assets/base/css/nav-book.css',
+    'kss-assets/blue/css/nav-book.css',
+    'kss-assets/base/css/nav-tabs.css',
+    'kss-assets/blue/css/nav-tabs.css',
+    'kss-assets/base/css/navbar.css',
+    'kss-assets/blue/css/navbar.css',
+    'kss-assets/base/css/pagination.css',
+    'kss-assets/blue/css/pagination.css',
+    'kss-assets/base/css/popover.css',
+    'kss-assets/blue/css/popover.css',
+    'kss-assets/base/css/teaser.css',
+    'kss-assets/blue/css/teaser.css',
+    'kss-assets/base/css/tour.css',
+    'kss-assets/blue/css/tour.css',
     // Organisms stylesheets
-    'kss-assets/base/comment.css',
-    'kss-assets/css/comment.css',
-    'kss-assets/base/hero.css',
-    'kss-assets/css/hero.css',
-    'kss-assets/base/meta.css',
-    'kss-assets/css/meta.css',
-    'kss-assets/base/offcanvas.css',
-    'kss-assets/css/offcanvas.css',
-    'kss-assets/css/site-footer.css',
-    'kss-assets/base/stream.css',
-    'kss-assets/css/stream.css',
+    'kss-assets/base/css/comment.css',
+    'kss-assets/blue/css/comment.css',
+    'kss-assets/base/css/hero.css',
+    'kss-assets/blue/css/hero.css',
+    'kss-assets/base/css/meta.css',
+    'kss-assets/blue/css/meta.css',
+    'kss-assets/base/css/offcanvas.css',
+    'kss-assets/blue/css/offcanvas.css',
+    'kss-assets/blue/css/site-footer.css',
+    'kss-assets/base/css/stream.css',
+    'kss-assets/blue/css/stream.css',
     // Template stylesheets
-    'kss-assets/base/layout.css',
-    'kss-assets/base/page-node.css',
-    'kss-assets/css/page-node.css',
+    'kss-assets/base/css/layout.css',
+    'kss-assets/base/css/page-node.css',
+    'kss-assets/blue/css/page-node.css',
     // Javascript stylesheets
-    'kss-assets/base/morrisjs.css',
+    'kss-assets/base/css/morrisjs.css',
     // Styleguide stylesheets
-    'kss-assets/css/styleguide.css'
-  ],
-  'js': [
-    'kss-assets/js/waves.min.js'
+    'kss-assets/blue/css/styleguide.css'
   ],
   'homepage': 'homepage.md',
   'title': 'Style Guide for Open Social Blue'
@@ -236,21 +235,23 @@ gulp.task('styles', function () {
 // ##################
 
 // Compile and copy the socialbase styles to the style guide
-gulp.task('styleguide-assets-base', function() {
-  return gulp.src(options.basetheme.css +'*.css')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'))
+gulp.task('base-assets', function() {
+  return gulp.src(options.basetheme.build +'**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'));
 });
 
 // Compile and copy the subtheme assets to the style guide
-gulp.task('styleguide-assets', function() {
+gulp.task('blue-assets', function() {
   return gulp.src(options.theme.build +'**/*')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
 });
 
-// Copy the mime icons from the components folder to the styleguide assets folder (manual task)
-gulp.task('styleguide-mime-image-icons', function () {
-  return gulp.src(options.basetheme.components + '06-libraries/icons/source/mime-icons/*.png')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
+gulp.task('brand', function() {
+  return gulp.src([
+      'logo.svg',
+      'favicon.ico'
+    ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
 });
 
 // Main styleguide task
@@ -259,10 +260,8 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 });
 
 // Before deploying create a fresh build
-gulp.task('build-styleguide', function(done) {
-  runSequence('clean:styleguide', 'scripts-drupal', 'styleguide',
-    ['styleguide-assets-base', 'styleguide-assets', 'styleguide-mime-image-icons'],
-    done);
+gulp.task('build-styleguide', ['styleguide'], function() {
+  runSequence('base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal');
 });
 
 // Copy drupal scripts from drupal to make them available for the styleguide
@@ -274,14 +273,37 @@ gulp.task('scripts-drupal', function() {
     options.rootPath.drupal + '/misc/drupalSettingsLoader.js',
     options.rootPath.drupal + '/misc/drupal.js',
     options.rootPath.drupal + '/misc/debounce.js',
-    options.rootPath.drupal + '/misc/forms.js',
     options.rootPath.drupal + '/misc/tabledrag.js',
     options.rootPath.drupal + '/modules/user/user.js',
     options.rootPath.drupal + '/modules/file/file.js'
   ])
     .pipe( concat('drupal-core.js') )
-    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/') );
+    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/') );
 });
+
+// Copy libraries scripts from drupal libraries folder to make them available for the styleguide
+gulp.task('libraries', function() {
+  return gulp.src([
+    options.rootPath.libraries + 'bootstrap/dist/js/bootstrap.min.js',
+    options.rootPath.libraries + 'morris.js/morris.min.js',
+    options.rootPath.libraries + 'raphael/raphael.min.js',
+    options.rootPath.libraries + 'waves/dist/waves.min.js',
+    options.rootPath.libraries + 'waves/dist/waves.css'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
+});
+
+gulp.task('kss', function() {
+  return gulp.src([
+    'node_modules/kss/builder/twig/kss-assets/kss-fullscreen.js',
+    'node_modules/kss/builder/twig/kss-assets/kss-guides.js',
+    'node_modules/kss/builder/twig/kss-assets/kss-markup.js',
+    'node_modules/prismjs/prism.js',
+    'node_modules/prismjs/components/prism-scss.min.js'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/kss/'));
+});
+
 
 
 

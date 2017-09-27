@@ -215,49 +215,27 @@
   border: 2px solid white;
 }
 
-.navbar-form[role='search'] {
+.navbar-search {
 
   .form-group {
     border-radius: $input-border-radius;
   }
 
-  .form-submit,
-  .search-icon {
+  .form-submit {
     border-radius: 0 $input-border-radius $input-border-radius 0;
   }
 
-  .search-icon {
-    fill: $brand-primary;
-    background: white;
-  }
-
-  @include for-tablet-landscape-up {
-
-    .form-control {
-      background: white;
-    }
-
-    .form-submit {
-      background: white; // IE needs this
-    }
-
-    .search-icon {
-      border-radius: 0;
-      background: $navbar-default-bg;
-      fill: white;
-    }
-
-  }
 
 }
 
-#navbar-search.is-open,
-.no-js #navbar-search {
+.navbar__open-search-block {
+  background: rgba($navbar-default-bg, 0.95);
+}
 
-  .search-icon {
-  	background: white;
-  	fill: $brand-primary;
-    border-radius: 0 $input-border-radius $input-border-radius 0;
+@include for-tablet-landscape-up {
+
+  .search-take-over .form-text:focus {
+    @include form-control-focus(#fff)
   }
 
 }
