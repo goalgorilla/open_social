@@ -21,7 +21,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    *   An array keyed by configuration name of override data. Override data
    *   contains a nested array structure of overrides.
    */
-  public function loadOverrides($names) {
+  public function loadOverrides(array $names) {
     $overrides = array();
     $config_factory = \Drupal::service('config.factory');
 
