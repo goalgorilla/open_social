@@ -21,6 +21,8 @@ class FacebookAuthController extends ControllerBase {
 
   /**
    * Contains access token to work with API.
+   *
+   * @var string
    */
   protected $accessToken;
 
