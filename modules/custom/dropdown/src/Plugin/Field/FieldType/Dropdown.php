@@ -132,7 +132,7 @@ class Dropdown extends FieldItemBase {
    * {@inheritdoc}
    */
   public function isEmpty() {
-    return (!isset($this->values['value'])) || (empty($this->values['value']) && (string) $this->values['value'] !== '0');
+    return empty($this->values['value']);
   }
 
   /**
