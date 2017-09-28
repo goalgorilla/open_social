@@ -6,6 +6,7 @@ use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class AccountHeaderBlock extends BlockBase {
+class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * The module handler.
@@ -77,11 +78,16 @@ class AccountHeaderBlock extends BlockBase {
     $this->entityTypeManager = $entityTypeManager;
   }
 
-  public static function create(ContainerInterface $container) {
-    $container->get('module_handler');
-    $container->get('renderer');
-    $container->get('activity_creator.activity_notifications');
-    $container->get('entity_type_manager');
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('renderer'),
+      $container->get('activity_creator.activity_notifications'),
+      $container->get('entity_type.manager')
+    );
   }
 
   /**
