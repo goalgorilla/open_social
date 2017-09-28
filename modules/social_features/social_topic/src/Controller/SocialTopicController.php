@@ -20,6 +20,11 @@ class SocialTopicController extends ControllerBase {
    */
   protected $requestStack;
 
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
 
   /**

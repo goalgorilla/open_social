@@ -41,6 +41,9 @@ class SearchHeroBlock extends BlockBase implements ContainerFactoryPluginInterfa
     $this->formBuilder = $formBuilder;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,

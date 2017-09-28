@@ -53,7 +53,7 @@ class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('route_match')
+      $container->get('current_route_match')
     );
   }
 
