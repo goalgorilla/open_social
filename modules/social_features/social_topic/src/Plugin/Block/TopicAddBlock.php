@@ -11,7 +11,6 @@ use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 /**
  * Provides a 'TopicAddBlock' block.
  *
@@ -29,6 +28,18 @@ class TopicAddBlock extends BlockBase implements ContainerInjectionInterface {
    */
   protected $routeMatch;
 
+  /**
+   * TopicAddBlock constructor.
+   *
+   * @param array $configuration
+   *    The given configuration.
+   * @param string $plugin_id
+   *    The given plugin id.
+   * @param mixed $plugin_definition
+   *    The given plugin definition.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *    The route match.
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
