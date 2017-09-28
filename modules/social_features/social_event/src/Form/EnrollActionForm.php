@@ -108,8 +108,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $container->get('current_route_match'),
       $container->get('entity.manager')->getStorage('event_enrollment'),
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('current_user'),
       $container->get('entity_type.manager'),
+      $container->get('current_user'),
       $container->get('config.factory')
     );
   }
