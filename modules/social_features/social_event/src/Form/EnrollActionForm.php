@@ -3,11 +3,14 @@
 namespace Drupal\social_event\Form;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
@@ -23,13 +26,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
-
   /**
    * The routing matcher to get the nid.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMath;
+  protected $routeMatch;
 
   /**
    * The node storage for event enrollments.
@@ -46,6 +48,27 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $userStorage;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -54,11 +77,27 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
   /**
    * Constructs an Enroll Action Form.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *    The route match.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
+   *    The entity storage.
+   * @param \Drupal\user\UserStorageInterface $user_storage
+   *    The user storage.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *    The entity type manager.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *    The current user.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *    The config factory.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage) {
+  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_storage;
     $this->userStorage = $user_storage;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->currentUser = $currentUser;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -68,7 +107,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     return new static(
       $container->get('current_route_match'),
       $container->get('entity.manager')->getStorage('event_enrollment'),
-      $container->get('entity.manager')->getStorage('user')
+      $container->get('entity.manager')->getStorage('user'),
+      $container->get('entity_type.manager'),
+      $container->get('current_user'),
+      $container->get('config.factory')
     );
   }
 
@@ -77,14 +119,14 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $nid = $this->routeMatch->getRawParameter('node');
-    $current_user = \Drupal::currentUser();
+    $current_user = $this->currentUser;
     $uid = $current_user->id();
 
     // We check if the node is placed in a Group I am a member of. If not,
     // we are not going to build anything.
     if (!empty($nid)) {
       if (!is_object($nid) && !is_null($nid)) {
-        $node = \Drupal::service('entity_type.manager')
+        $node = $this->entityTypeManager
           ->getStorage('node')
           ->load($nid);
       }
@@ -206,7 +248,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $current_user = \Drupal::currentUser();
+    $current_user = $this->currentUser;
     $uid = $current_user->id();
 
     $nid = $form_state->getValue('event');
@@ -225,11 +267,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       );
 
       // Check if user can register accounts.
-      if (\Drupal::config('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+      if ($this->configFactory->get('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
         $log_in_url = Url::fromUserInput('/user/login');
-        $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)->toString();
+        $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $create_account_url = Url::fromUserInput('/user/register');
-        $create_account_link = Link::fromTextAndUrl(t('create a new account'), $create_account_url)->toString();
+        $create_account_link = Link::fromTextAndUrl($this->t('create a new account'), $create_account_url)->toString();
         $message = $this->t('Please @log_in or @create_account_link so that you can enroll to the event.', array(
           '@log_in' => $log_in_link,
           '@create_account_link' => $create_account_link,
@@ -237,7 +279,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
       else {
         $log_in_url = Url::fromUserInput('/user/login');
-        $log_in_link = Link::fromTextAndUrl(t('log in'), $log_in_url)->toString();
+        $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $message = $this->t('Please @log_in so that you can enroll to the event.', array(
           '@log_in' => $log_in_link,
         ));

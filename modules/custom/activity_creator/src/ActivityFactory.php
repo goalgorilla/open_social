@@ -16,10 +16,18 @@ use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 class ActivityFactory extends ControllerBase {
 
   /**
+   * Activity destination manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
   private $activityDestinationManager;
 
+  /**
+   * ActivityFactory constructor.
+   *
+   * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
+   *    The activity destination manager.
+   */
   public function __construct(ActivityDestinationManager $activityDestinationManager) {
     $this->activityDestinationManager = $activityDestinationManager;
   }
@@ -28,10 +36,10 @@ class ActivityFactory extends ControllerBase {
    * Create the activities based on a data array.
    *
    * @param array $data
-   *    An array of data to create activity from.
+   *   An array of data to create activity from.
    *
    * @return array
-   *    An array of created activities.
+   *   An array of created activities.
    */
   public function createActivities(array $data) {
     $activities = $this->buildActivities($data);
@@ -43,10 +51,10 @@ class ActivityFactory extends ControllerBase {
    * Build the activities based on a data array.
    *
    * @param array $data
-   *    An array of data to create activity from.
+   *   An array of data to create activity from.
    *
    * @return array
-   *    An array of created activities.
+   *   An array of created activities.
    */
   private function buildActivities(array $data) {
     $activities = [];
@@ -82,7 +90,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'destination' field from data array.
    */
-  private function getFieldDestinations(array $data, $allowed_destinations = array()) {
+  private function getFieldDestinations(array $data, $allowed_destinations = []) {
     $value = NULL;
     if (isset($data['destination'])) {
       $value = $data['destination'];
@@ -142,10 +150,10 @@ class ActivityFactory extends ControllerBase {
 
       // Add format.
       $value = [
-        '0' => array(
+        '0' => [
           'value' => $text,
           'format' => 'basic_html',
-        ),
+        ],
       ];
     }
 
@@ -230,7 +238,7 @@ class ActivityFactory extends ControllerBase {
    * Get related activities for activity aggregation.
    */
   private function getAggregationRelatedActivities($data) {
-    $activities = array();
+    $activities = [];
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
       if ($related_object['target_type'] === 'comment') {
@@ -329,7 +337,7 @@ class ActivityFactory extends ControllerBase {
     if (isset($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'group') {
         // Should be in an array for the field.
-        $value = array($data['recipient']);
+        $value = [$data['recipient']];
       }
     }
     return $value;
@@ -343,7 +351,7 @@ class ActivityFactory extends ControllerBase {
     if (isset($data['recipient']) && is_array($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'user') {
         // Should be in an array for the field.
-        $value = array($data['recipient']);
+        $value = [$data['recipient']];
       }
     }
     return $value;
@@ -353,10 +361,10 @@ class ActivityFactory extends ControllerBase {
    * Return the actor uid.
    *
    * @param array $data
-   *    Array of data.
+   *   Array of data.
    *
    * @return int
-   *    Value uid integer.
+   *   Value uid integer.
    */
   private function getActor(array $data) {
     $value = 0;
@@ -370,10 +378,9 @@ class ActivityFactory extends ControllerBase {
    * Get message text.
    *
    * @return array
-   *    Message text array.
+   *   Message text array.
    */
   public function getMessageText(Message $message) {
-
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
@@ -398,6 +405,8 @@ class ActivityFactory extends ControllerBase {
    *   Array with the arguments.
    * @param array $output
    *   Array with the templated text saved in the message template.
+   * @param Message $message
+   *   Message object.
    *
    * @return array
    *   The templated text, with the placeholders replaced with the actual value,
@@ -438,6 +447,8 @@ class ActivityFactory extends ControllerBase {
    *   The templated text to be replaced.
    * @param bool $clear
    *   Determine if unused token should be cleared.
+   * @param Message $message
+   *   Message object.
    *
    * @return array
    *   The output with placeholders replaced with the token value,

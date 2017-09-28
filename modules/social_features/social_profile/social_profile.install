@@ -276,7 +276,8 @@ function social_profile_update_8006(&$sandbox) {
       continue;
     }
     // Check if the user has a profile already.
-    if (!$profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE)) {
+    $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
+    if (!$profile) {
       try {
         Profile::create([
           'type' => ProfileType::load('profile')->id(),

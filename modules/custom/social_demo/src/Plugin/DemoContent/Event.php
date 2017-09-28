@@ -104,10 +104,10 @@ class Event extends DemoNode {
    * Prepares data about an image of node.
    *
    * @param string $uuid
-   *    The uuid for the image.
+   *   The uuid for the image.
    *
    * @return array|null
-   *    Returns an array or null.
+   *   Returns an array or null.
    */
   protected function prepareImage($uuid) {
     $value = NULL;
@@ -130,10 +130,10 @@ class Event extends DemoNode {
    * Returns taxonomy term id.
    *
    * @param string $uuid
-   *    The uuid.
+   *   The uuid.
    *
    * @return array|null
-   *    Returns an array or null.
+   *   Returns an array or null.
    */
   protected function prepareEventType($uuid) {
     $value = NULL;
