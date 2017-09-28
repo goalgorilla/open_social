@@ -26,6 +26,7 @@ class ActivityFactory extends ControllerBase {
    * ActivityFactory constructor.
    *
    * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
+   *    The activity destination manager.
    */
   public function __construct(ActivityDestinationManager $activityDestinationManager) {
     $this->activityDestinationManager = $activityDestinationManager;

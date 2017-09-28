@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\user\UserInterface;
-use Drupal\votingapi\Entity\Vote;
 
 /**
  * Defines the Activity entity.
