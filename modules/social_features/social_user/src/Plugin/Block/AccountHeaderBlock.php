@@ -78,6 +78,9 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     $this->entityTypeManager = $entityTypeManager;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,

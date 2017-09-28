@@ -4,7 +4,7 @@ namespace Drupal\social_topic\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  admin_label = @Translation("Topic add block"),
  * )
  */
-class TopicAddBlock extends BlockBase implements ContainerInjectionInterface {
+class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * The route match.
