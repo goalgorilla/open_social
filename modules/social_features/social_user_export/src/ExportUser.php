@@ -166,7 +166,7 @@ class ExportUser {
       }
     }
     else {
-      drupal_set_message('An error occurred', 'error');
+      drupal_set_message(t('An error occurred', 'error'));
     }
   }
 

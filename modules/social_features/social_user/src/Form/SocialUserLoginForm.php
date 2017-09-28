@@ -187,7 +187,8 @@ class SocialUserLoginForm extends UserLoginForm {
       if ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
         $this->flood->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
       }
-      if (!$flood_control_triggered = $form_state->get('flood_control_triggered')) {
+      $flood_control_triggered = $form_state->get('flood_control_triggered');
+      if (!$flood_control_triggered) {
         $name = $form_state->getValue('name_or_mail');
         $accounts = $this->userStorage->loadByProperties(array('mail' => $form_state->getValue('name_or_mail'), 'status' => 1));
         $account = reset($accounts);
