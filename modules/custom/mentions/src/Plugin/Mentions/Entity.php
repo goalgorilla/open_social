@@ -2,8 +2,11 @@
 
 namespace Drupal\mentions\Plugin\Mentions;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\mentions\MentionsPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,7 +84,7 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function mentionPresaveCallback($entity) {
+  public function mentionPresaveCallback(EntityInterface $entity) {
 
   }
 
@@ -95,14 +98,14 @@ class Entity implements MentionsPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function settingsCallback($form, $form_state, $type) {
+  public function settingsCallback(FormInterface $form, FormStateInterface $form_state, $type) {
 
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsSubmitCallback($form, $form_state, $type) {
+  public function settingsSubmitCallback(FormInterface $form, FormStateInterface $form_state, $type) {
 
   }
 
