@@ -2,14 +2,47 @@
 
 namespace Drupal\social_profile\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Database;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\Cache;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure social profile settings.
  */
-class SocialProfileSettingsForm extends ConfigFormBase {
+class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
+
+  /**
+   * The database.
+   *
+   * @var \Drupal\Core\Database\Database
+   */
+  protected $database;
+
+  /**
+   * SocialProfileSettingsForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *    The config factory.
+   * @param \Drupal\Core\Database\Database $database
+   *    The database.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, Database $database) {
+    parent::__construct($config_factory);
+    $this->database = $database;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('database')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -56,7 +89,7 @@ class SocialProfileSettingsForm extends ConfigFormBase {
       ->save();
 
     // Invalidate profile cache tags.
-    $query = \Drupal::database()->select('profile', 'p');
+    $query = $this->database->select('profile', 'p');
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
     $query->condition('p.status', 1);

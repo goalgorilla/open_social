@@ -97,8 +97,6 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
 function social_profile_privacy_admin_settings_form_submit($form, FormStateInterface $form_state) {
   $settings_forms = social_profile_privacy_get_settings_forms();
 
-  $form_values = $form_state->getValues();
-
   $data = [];
   foreach ($settings_forms as $settings_form_id => $settings_form) {
     $data[$settings_form_id] = $form_state->getValue($settings_form_id);
