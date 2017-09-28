@@ -256,7 +256,7 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
       break;
 
     default:
-      return;
+      return $default_visibility;
   }
 
   if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
