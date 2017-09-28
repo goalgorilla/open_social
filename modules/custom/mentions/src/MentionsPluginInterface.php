@@ -2,6 +2,9 @@
 
 namespace Drupal\mentions;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
@@ -48,10 +51,45 @@ interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
    */
   public function patternCallback($settings, $regex);
 
-  public function settingsCallback($form, $form_state, $type);
+  /**
+   * The settingsCallback function.
+   *
+   * @param FormInterface $form
+   *    The form.
+   * @param FormStateInterface $form_state
+   *    The form state.
+   * @param mixed $type
+   *    The type.
+   *
+   * @return mixed
+   *    Returns mixed.
+   */
+  public function settingsCallback(FormInterface $form, FormStateInterface $form_state, $type);
 
-  public function settingsSubmitCallback($form, $form_state, $type);
+  /**
+   * The settingsSubmitCallback function.
+   *
+   * @param FormInterface $form
+   *    The form.
+   * @param FormStateInterface $form_state
+   *    The form state.
+   * @param mixed $type
+   *    The type.
+   *
+   * @return mixed
+   *    Returns mixed.
+   */
+  public function settingsSubmitCallback(FormInterface $form, FormStateInterface $form_state, $type);
 
-  public function mentionPresaveCallback($entity);
+  /**
+   * The mentionPresaveCallback function.
+   *
+   * @param EntityInterface $entity
+   *    The entity.
+   *
+   * @return mixed
+   *    Returns mixed.
+   */
+  public function mentionPresaveCallback(EntityInterface $entity);
 
 }

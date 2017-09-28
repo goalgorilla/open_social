@@ -65,7 +65,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @var string
    */
-  protected $mention_type;
+  protected $mentionType;
 
   /**
    * What is looked for when mentions are parsed.
@@ -97,8 +97,8 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @todo: deprecate and change this function name.
    */
-  public function mention_type() {
-    return $this->mention_type;
+  public function mentionType() {
+    return $this->mentionType;
   }
 
   /**
