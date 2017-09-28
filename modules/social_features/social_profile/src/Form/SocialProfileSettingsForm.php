@@ -3,7 +3,7 @@
 namespace Drupal\social_profile\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Database;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,7 +18,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   /**
    * The database.
    *
-   * @var \Drupal\Core\Database\Database
+   * @var \Drupal\Core\Database\Connection
    */
   protected $database;
 
@@ -27,10 +27,10 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *    The config factory.
-   * @param \Drupal\Core\Database\Database $database
+   * @param \Drupal\Core\Database\Connection $database
    *    The database.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Database $database) {
+  public function __construct(ConfigFactoryInterface $config_factory, Connection $database) {
     parent::__construct($config_factory);
     $this->database = $database;
   }
@@ -40,6 +40,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('config.factory'),
       $container->get('database')
     );
   }
