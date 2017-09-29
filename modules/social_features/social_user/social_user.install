@@ -38,6 +38,14 @@ function social_user_update_8001(&$sandbox) {
 }
 
 /**
+ * Add view, block users permissions for the content,site managers.
+ */
+function social_user_update_8002() {
+  _social_user_set_permissions();
+}
+
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {
@@ -76,7 +84,10 @@ function _social_user_get_permissions($role) {
   ));
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+    'view users',
+    'block users',
+  ));
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
@@ -86,3 +97,4 @@ function _social_user_get_permissions($role) {
   }
   return [];
 }
+
