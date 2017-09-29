@@ -115,8 +115,11 @@ abstract class DemoUser extends DemoContent {
         'type' => ProfileType::load('profile')->id(),
       ]);
       $profile = array_pop($profiles);
-      $this->fillProfile($profile, $item);
-      $profile->save();
+
+      if ($profile instanceof ProfileInterface) {
+        $this->fillProfile($profile, $item);
+        $profile->save();
+      }
     }
 
     return $this->content;
@@ -145,10 +148,10 @@ abstract class DemoUser extends DemoContent {
    * Prepares data about an image of a profile.
    *
    * @param string $picture
-   *    The picture by uuid.
+   *   The picture by uuid.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function preparePicture($picture) {
     $value = NULL;
@@ -171,9 +174,9 @@ abstract class DemoUser extends DemoContent {
    * Fills the some fields of a profile.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
-   *    Type of ProfileInterface.
+   *   Type of ProfileInterface.
    * @param array $item
-   *    The profile field item.
+   *   The profile field item.
    */
   protected function fillProfile(ProfileInterface $profile, array $item) {
     $profile->field_profile_image = $item['picture'];

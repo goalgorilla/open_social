@@ -21,7 +21,7 @@ const ACTIVITY_STATUS_READ = 3;
  * Returns the allowed values for the activity status field.
  *
  * @return array
- *    Return an array of allowed values for status field.
+ *   Return an array of allowed values for status field.
  */
 function activity_creator_field_activity_status_allowed_values() {
 
@@ -38,7 +38,7 @@ function activity_creator_field_activity_status_allowed_values() {
  * Returns the allowed values for the activity destinations field.
  *
  * @return array
- *    Return an array of allowed values for destinations field.
+ *   Return an array of allowed values for destinations field.
  */
 function activity_creator_field_activity_destinations_allowed_values() {
 
@@ -128,40 +128,40 @@ function activity_creator_message_insert(Message $entity) {
  * Implements hook_views_data().
  */
 function activity_creator_views_data() {
-  $data['activity']['activity_visibility_access_filter'] = array(
+  $data['activity']['activity_visibility_access_filter'] = [
     'title' => t('Activity visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Activity visibility access'),
       'help' => t('Enable activity access control.'),
       'field' => 'field_visibility',
       'id' => 'activity_visibility_access',
-    ),
-  );
-  $data['activity']['activity_post_visibility_access_filter'] = array(
+    ],
+  ];
+  $data['activity']['activity_post_visibility_access_filter'] = [
     'title' => t('Activity post visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Activity post visibility access'),
       'help' => t('Enable activity access control for related post entities.'),
       'field' => 'field_visibility',
       'id' => 'activity_post_visibility_access',
-    ),
-  );
-  $data['activity']['activity_profile_argument'] = array(
+    ],
+  ];
+  $data['activity']['activity_profile_argument'] = [
     'title' => t('Activity profile argument'),
-    'argument' => array(
+    'argument' => [
       'title' => t('Activity profile argument'),
       'help' => t('Activity profile context argument.'),
       'id' => 'activity_profile_argument',
-    ),
-  );
-  $data['activity']['activity_group_argument'] = array(
+    ],
+  ];
+  $data['activity']['activity_group_argument'] = [
     'title' => t('Activity group argument'),
-    'argument' => array(
+    'argument' => [
       'title' => t('Activity group argument'),
       'help' => t('Activity group context argument.'),
       'id' => 'activity_group_argument',
-    ),
-  );
+    ],
+  ];
   return $data;
 }
 
@@ -183,7 +183,7 @@ function activity_creator_theme() {
  * Implements hook_theme_suggestions_HOOK().
  */
 function activity_creator_theme_suggestions_activity(array $variables) {
-  $suggestions = array();
+  $suggestions = [];
   $activity = $variables['elements']['#activity'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 

@@ -4,8 +4,8 @@ base:
     base:
       assets/css/base.css: {}
   js:
-    assets/js/transition.min.js: {}
-    assets/js/collapse.min.js: {}
+    /libraries/bootstrap/js/transition.js: {}
+    /libraries/bootstrap/js/collapse.js: {}
   dependencies:
     - core/drupal
     - core/jquery
@@ -24,7 +24,7 @@ alert:
     component:
       assets/css/alert.css: {}
   js:
-    assets/js/alert.min.js: { minified: true }
+    /libraries/bootstrap/js/alert.js: {}
 
 badge:
   css:
@@ -60,7 +60,6 @@ spinner:
     component:
       assets/css/spinner.css: {}
 
-
 ### 2.2 Molecules
 block--introtext:
   css:
@@ -77,7 +76,7 @@ dropdown:
     component:
       assets/css/dropdown.css: {}
   js:
-    assets/js/dropdown.min.js: { minified: true }
+    /libraries/bootstrap/js/dropdown.js: {}
 
 file:
   css:
@@ -116,7 +115,7 @@ form--password:
 
 form--timepicker:
   remote: https://github.com/jonthornton/jquery-timepicker
-  version: "1.11.3"
+  version: "1.11.4"
   license:
     name: MIT
     url: https://raw.githubusercontent.com/jonthornton/jquery-timepicker/master/README.md
@@ -125,7 +124,7 @@ form--timepicker:
     component:
       assets/css/timepicker.css: {}
   js:
-    assets/js/jquery.timepicker.min.js: { minified: true }
+    /libraries/timepicker/jquery.timepicker.min.js: { minified: true }
 
 imagecrop:
   css:
@@ -164,7 +163,7 @@ nav-tabs:
     component:
       assets/css/nav-tabs.css: {}
   js:
-    assets/js/tab.min.js: { minified: true }
+    /libraries/bootstrap/js/tab.js: {}
 
 navbar:
   css:
@@ -185,20 +184,12 @@ popover:
     component:
       assets/css/popover.css: {}
   js:
-    assets/js/tooltip.min.js: { minified: true }
-    assets/js/popover.min.js: { minified: true }
+    /libraries/bootstrap/js/tooltip.js: {}
+    /libraries/bootstrap/js/popover.js: {}
 
 tabledrag:
   js:
     assets/js/tabledrag.min.js: { minified: true }
-
-tablesaw:
-  css:
-    component:
-      assets/css/tablesaw.css: {}
-  js:
-    assets/js/tablesaw.min.js: { minified: true }
-    assets/js/tablesaw-init.min.js: { minified: true }
 
 teaser:
   css:
@@ -292,5 +283,7 @@ charts:
     component:
       assets/css/morrisjs.css: {}
   js:
-    assets/js/morris.min.js: { minified: true }
-    assets/js/raphael.min.js: { minified: true }
+    /libraries/morris.js/morris.min.js: { minified: true }
+    /libraries/mocha/mocha.js: {}
+    /libraries/raphael/raphael.min.js: { minified: true }
+    /libraries/eve-raphael/eve.js: {}

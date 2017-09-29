@@ -39,7 +39,7 @@ function social_like_views_pre_render(ViewExecutable $view) {
 /**
  * Implements hook_entity_insert().
  */
-function social_like_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+function social_like_entity_insert(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'vote') {
     social_like_invalidate_cache($entity);
   }
@@ -48,7 +48,7 @@ function social_like_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
 /**
  * Implements hook_entity_delete().
  */
-function social_like_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function social_like_entity_delete(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == 'vote') {
     social_like_invalidate_cache($entity);
   }
@@ -57,10 +57,10 @@ function social_like_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
 /**
  * Implements social_like_invalidate_cache().
  */
-function social_like_invalidate_cache(Drupal\Core\Entity\EntityInterface $entity) {
+function social_like_invalidate_cache(EntityInterface $entity) {
   $cache_tag = [
     $entity->getEntityTypeId() . ':' . $entity->id(),
-    'config:views.view.who_liked_this_entity'
+    'config:views.view.who_liked_this_entity',
   ];
   Cache::invalidateTags($cache_tag);
 }
@@ -73,5 +73,5 @@ function social_like_preprocess_like_and_dislike_icons(&$variables) {
   if ($variables['entity_type'] === 'node') {
     $bundle = \Drupal::entityTypeManager()->getStorage('node')->load($variables['entity_id'])->bundle();
   }
-  $variables['modal_title'] = t('Members who liked this @content',['@content' => $bundle]);
+  $variables['modal_title'] = t('Members who liked this @content', ['@content' => $bundle]);
 }

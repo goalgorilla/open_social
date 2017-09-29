@@ -14,7 +14,7 @@ use Drupal\Core\Render\Markup;
  */
 function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users.');
+  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
 
   // If user has the improved settings, we don't alter nothing.
   if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
@@ -256,7 +256,7 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
         }
 
-        div:not(.btn-group) > .btn {
+        :not(.btn-group) > .btn {
           border-radius: ' . $border_radius . 'px !important;
         }
 

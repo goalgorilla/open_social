@@ -156,10 +156,10 @@ abstract class DemoGroup extends DemoContent {
    * Converts a date in the correct format.
    *
    * @param string $date_string
-   *    The date.
+   *   The date.
    *
    * @return int|false
-   *    Returns a timestamp on success, false otherwise.
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     // Split from delimiter.
@@ -175,9 +175,9 @@ abstract class DemoGroup extends DemoContent {
    * Adds members to a group.
    *
    * @param array $members
-   *    The array of members.
+   *   The array of members.
    * @param \Drupal\group\Entity\GroupInterface $entity
-   *    The GroupInterface entity.
+   *   The GroupInterface entity.
    */
   protected function addMembers(array $members, GroupInterface $entity) {
     foreach ($members as $account_uuid) {
@@ -195,10 +195,10 @@ abstract class DemoGroup extends DemoContent {
    * Prepares data about an image of a group.
    *
    * @param string $image
-   *    The uuid of the image.
+   *   The uuid of the image.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function prepareImage($image) {
     $value = NULL;
@@ -221,10 +221,10 @@ abstract class DemoGroup extends DemoContent {
    * Prepares an array with list of files to set as field value.
    *
    * @param string $files
-   *    The uuid for the file.
+   *   The uuid for the file.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function prepareFiles($files) {
     $values = [];

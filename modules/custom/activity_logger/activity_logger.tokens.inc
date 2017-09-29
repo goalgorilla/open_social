@@ -102,7 +102,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
-                  $gurl = Url::fromRoute('entity.group.canonical', array('group' => $group->id()));
+                  $gurl = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
                   $replacements[$original] = $gurl->toString();
                 }
               }
@@ -110,8 +110,8 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               if ($name === 'recipient-user-url') {
                 if (!empty($recipient_user)) {
                   $target_stream_url = Url::fromRoute('entity.user.canonical',
-                    array('user' => $recipient_user->id()),
-                    array('absolute' => TRUE)
+                    ['user' => $recipient_user->id()],
+                    ['absolute' => TRUE]
                   );
                   $replacements[$original] = $target_stream_url->toString();
                 }

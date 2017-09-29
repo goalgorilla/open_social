@@ -21,6 +21,7 @@ class SocialBaseBlock extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Early return because block missing ID, for example because
     // Rendered in panels display
@@ -128,11 +129,15 @@ class SocialBaseBlock extends PreprocessBase {
       $variables['content']['search_form']['#attributes']['role'] = 'search';
       $variables['content']['search_form']['actions']['submit']['#is_button'] = FALSE;
       $variables['content']['search_form']['actions']['#addsearchicon'] = TRUE;
-      $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
-
       if ($region == 'hero') {
         $variables['content']['search_form']['#attributes']['class'][] = 'hero-form';
         $variables['content']['search_form']['#region'] = 'hero';
+        $variables['content']['search_form']['actions']['submit']['#addsearchicon'] = TRUE;
+      }
+      elseif ($region == 'content_top') {
+        $variables['content']['search_form']['#region'] = 'content-top';
+        $variables['content']['search_form']['search_input_content']['#attributes']['placeholder'] = t('What are you looking for ?');
+        $variables['content']['search_form']['search_input_content']['#attributes']['autocomplete'] = 'off';
       }
       else {
         $variables['content']['search_form']['#attributes']['class'][] = 'navbar-form';
