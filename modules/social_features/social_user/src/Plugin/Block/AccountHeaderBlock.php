@@ -314,7 +314,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => $this->t('View content I\'m following'),
+            'title' => $this->t("View content I'm following"),
             'label' => $this->t('Following'),
             'title_classes' => '',
             'url' => Url::fromRoute('view.following.following'),

@@ -75,7 +75,7 @@ class FieldDownloadCount extends GenericFileFormatter {
       ];
 
       $attributes = new Attribute(['class' => $classes]);
-      $link = Link::fromTextAndUrl(t($link_text), Url::fromUri($link_url, $options))
+      $link = Link::fromTextAndUrl($link_text, Url::fromUri($link_url, $options))
         ->toString();
 
       if (isset($file->download) && $file->download > 0) {
