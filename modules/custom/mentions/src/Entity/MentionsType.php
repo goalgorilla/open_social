@@ -79,7 +79,7 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
   /**
    * What is looked for when mentions are parsed.
    *
-   * Keys of array: outputvalue, renderlink .
+   * Keys of array: outputvalue, renderlink.
    *
    * @var string
    */
@@ -94,8 +94,6 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo: deprecate and change this function name.
    */
   public function mentionType() {
     return $this->mentionType;
