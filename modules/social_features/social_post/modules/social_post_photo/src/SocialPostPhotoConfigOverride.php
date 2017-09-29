@@ -22,7 +22,7 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
    *   contains a nested array structure of overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
     // Temporary override to allow only 1 photo.

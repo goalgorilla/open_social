@@ -86,7 +86,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // Or special handling for post entities.
               if ($entity->getEntityTypeId() === 'post') {
                 if (!empty($entity->get('field_recipient_group')->getValue())) {
-                  $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+                  $group = Group::load($entity->field_recipient_group->target_id);
                 }
                 if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
                   $target_id = $entity->field_recipient_user->target_id;

@@ -26,7 +26,7 @@ class Dropdown extends FormElement {
       '#process' => [
         [$class, 'processDropdown'],
       ],
-      '#description' => 'Dropdown element.',
+      '#description' => t('Dropdown element.'),
       '#theme_wrappers' => ['dropdown'],
       '#pre_render' => [
         [$class, 'preRenderDropdown'],

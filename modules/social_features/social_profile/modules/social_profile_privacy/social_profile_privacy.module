@@ -324,7 +324,7 @@ function social_profile_privacy_entity_field_access($operation, FieldDefinitionI
  * Get the list of settings forms which support our profile privacy config.
  *
  * @return array
- *    Returns an array containing the settings form.
+ *   Returns an array containing the settings form.
  */
 function social_profile_privacy_get_settings_forms() {
   return [
@@ -345,12 +345,12 @@ function social_profile_privacy_get_settings_forms() {
  * Get the list of privacy field groups enabled for the given form state.
  *
  * @param \Drupal\Core\Form\FormStateInterface $form_state
- *    The form state.
+ *   The form state.
  * @param \Drupal\Core\Config\ImmutableConfig $config
- *    The config.
+ *   The config.
  *
  * @return array|null
- *    Returns an array with the settings form id and field groups or NULL.
+ *   Returns an array with the settings form id and field groups or NULL.
  */
 function social_profile_privacy_get_field_groups_for_form_state(FormStateInterface $form_state, ImmutableConfig $config) {
   $storage = $form_state->getStorage();
@@ -421,7 +421,7 @@ function social_profile_privacy_form_display_options($entity_type_id, $bundle) {
  * Get the field group options to be used by the module.
  *
  * @return array
- *    Returns an array with the field groups.
+ *   Returns an array with the field groups.
  */
 function social_profile_privacy_form_field_group_options() {
   $field_groups = [];

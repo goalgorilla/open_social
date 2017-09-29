@@ -3,10 +3,10 @@
 namespace Drupal\social_user_export;
 
 use Drupal\Core\Url;
-use \Drupal\user\UserInterface;
-use \League\Csv\Writer;
-use \Drupal\Core\Link;
-use \Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
+use League\Csv\Writer;
+use Drupal\Core\Link;
+use Drupal\user\Entity\User;
 
 /**
  * Class ExportUser.

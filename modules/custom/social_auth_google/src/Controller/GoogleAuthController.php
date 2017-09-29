@@ -237,7 +237,7 @@ class GoogleAuthController extends ControllerBase {
     }
 
     // Get user's Google profile from Google API.
-    if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getId())) {
+    if (!($profile = $this->authManager->getProfile()) || !($profile->getId())) {
       drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Google'),
       ]), 'error');

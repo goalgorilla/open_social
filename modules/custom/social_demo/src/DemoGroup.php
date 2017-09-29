@@ -229,7 +229,7 @@ abstract class DemoGroup extends DemoContent {
   protected function prepareFiles($files) {
     $values = [];
 
-    foreach ($files as $key => $file_uuid) {
+    foreach ($files as $file_uuid) {
       $file = $this->fileStorage->loadByProperties([
         'uuid' => $file_uuid,
       ]);

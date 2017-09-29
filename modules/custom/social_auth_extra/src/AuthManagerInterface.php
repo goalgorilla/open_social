@@ -26,7 +26,7 @@ interface AuthManagerInterface {
    *   SDK instance.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function setSdk($sdk);
 
@@ -70,7 +70,7 @@ interface AuthManagerInterface {
    * Returns object of a user profile.
    *
    * @return mixed
-   *    Returns the profile.
+   *   Returns the profile.
    */
   public function getProfile();
 
@@ -100,7 +100,7 @@ interface AuthManagerInterface {
    *   Access token to use in API calls.
    *
    * @return null
-   *    Returns null.
+   *   Returns null.
    */
   public function setAccessToken($access_token);
 
@@ -143,7 +143,7 @@ interface AuthManagerInterface {
    *   The field definition containing the picture.
    *
    * @return null
-   *    Returns null.
+   *   Returns null.
    */
   public function setFieldPicture(FieldDefinitionInterface $field);
 

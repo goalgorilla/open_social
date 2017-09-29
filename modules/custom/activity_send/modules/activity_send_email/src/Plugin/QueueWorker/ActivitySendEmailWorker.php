@@ -58,8 +58,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
               $target_account->getEmail(),
               $langcode,
               $params,
-              $reply = NULL,
-              $send = TRUE
+              NULL,
+              TRUE
             );
           }
         }

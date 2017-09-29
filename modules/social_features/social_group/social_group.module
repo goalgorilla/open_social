@@ -98,7 +98,7 @@ function social_group_form_group_open_group_delete_form_alter(&$form, FormStateI
 function social_group_form_group_closed_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler to delete all content of the group.
   $group = _social_group_get_current_group();
-  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', array('@group' => $group->label()));
+  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', ['@group' => $group->label()]);
   $form['actions']['cancel'] = [
     '#type' => 'submit',
     '#value' => t('Cancel'),
@@ -227,7 +227,7 @@ function social_group_group_insert(GroupInterface $group) {
     $content->delete();
     $grant_group_admin = FALSE;
     // If the user has this permission inside a group.
-    if ($perms = $group->hasPermission('manage all groups', $account)) {
+    if ($group->hasPermission('manage all groups', $account)) {
       // Then we grant this user de Group Admin role.
       $grant_group_admin = TRUE;
     }
