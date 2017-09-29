@@ -38,11 +38,11 @@ class SocialTopicController extends ControllerBase {
    * SocialTopicController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *    The request stack.
+   *   The request stack.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *    The module handler.
+   *   The module handler.
    */
   public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, ModuleHandlerInterface $moduleHandler) {
     $this->requestStack = $requestStack;

@@ -42,7 +42,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post', array(), array('context' => 'Post button'));
+  $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
     // For posting on the stream on the group stream.
@@ -75,11 +75,11 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
   // without breaking functionality.
   $uri = Url::fromRoute('<current>')->toString();
   // Store in a hidden field.
-  $form['redirect_after_save'] = array(
+  $form['redirect_after_save'] = [
     '#type' => 'hidden',
     '#title' => t('Redir'),
     '#default_value' => $uri,
-  );
+  ];
 
   // Submit function to retrieve the action uri and redirect to it.
   $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
@@ -112,33 +112,33 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * Implements hook_views_data_alter().
  */
 function social_post_views_data_alter(array &$data) {
-  $data['post']['post_visibility_access_filter'] = array(
+  $data['post']['post_visibility_access_filter'] = [
     'title' => t('Post visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post visibility access'),
       'help' => t('Enable post access for public and community posts.'),
       'field' => 'field_visibility',
       'id' => 'post_visibility_access',
-    ),
-  );
-  $data['post']['post_account_stream_filter'] = array(
+    ],
+  ];
+  $data['post']['post_account_stream_filter'] = [
     'title' => t('Post account stream'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post account stream'),
       'help' => t('Enable post for the account stream.'),
       'field' => 'field_visibility',
       'id' => 'post_account_stream',
-    ),
-  );
-  $data['post']['post_group_stream_filter'] = array(
+    ],
+  ];
+  $data['post']['post_group_stream_filter'] = [
     'title' => t('Post group stream'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post group stream'),
       'help' => t('Enable post for the group stream.'),
       'field' => 'field_visibility',
       'id' => 'post_group_stream',
-    ),
-  );
+    ],
+  ];
 }
 
 /**

@@ -32,13 +32,13 @@ class ProfileHeroBlock extends BlockBase implements ContainerFactoryPluginInterf
    * ProfileHeroBlock constructor.
    *
    * @param array $configuration
-   *    The given configuration.
+   *   The given configuration.
    * @param string $plugin_id
-   *    The given plugin id.
+   *   The given plugin id.
    * @param mixed $plugin_definition
-   *    The given plugin definition.
+   *   The given plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

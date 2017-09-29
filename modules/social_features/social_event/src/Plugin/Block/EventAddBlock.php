@@ -32,13 +32,13 @@ class EventAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    * EventAddBlock constructor.
    *
    * @param array $configuration
-   *    The given configuration.
+   *   The given configuration.
    * @param string $plugin_id
-   *    The given plugin id.
+   *   The given plugin id.
    * @param mixed $plugin_definition
-   *    The given plugin definition.
+   *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *    The route match.
+   *   The route match.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -78,17 +78,17 @@ class EventAddBlock extends BlockBase implements ContainerFactoryPluginInterface
     $build = [];
 
     $url = Url::fromUserInput('/node/add/event');
-    $link_options = array(
-      'attributes' => array(
-        'class' => array(
+    $link_options = [
+      'attributes' => [
+        'class' => [
           'btn',
           'btn-primary',
           'btn-raised',
           'waves-effect',
           'brand-bg-primary',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     $url->setOptions($link_options);
 
     $build['content'] = Link::fromTextAndUrl($this->t('Create Event'), $url)

@@ -37,7 +37,6 @@ class SocialPageTitleBlock extends PageTitleBlock {
         $node->setTitle($translation->getTitle());
       }
       $title = $node->getTitle();
-      $group_link = NULL;
 
       return [
         '#theme' => 'page_hero_data',

@@ -139,9 +139,9 @@ class ActivityLoggerFactory {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = \Drupal::entityTypeManager()
         ->getStorage('field_config');
-      // Create field instances if they do not exits.
+      // Create field instances if they do not exists.
       if ($config_storage->load($id) === NULL) {
-        $field_instace = [
+        $field_instance = [
           'langcode' => 'en',
           'status' => TRUE,
           'config' => [
@@ -155,7 +155,7 @@ class ActivityLoggerFactory {
           'bundle' => $message_type,
           'label' => '',
           'description' => '',
-          'reqiured' => FALSE,
+          'required' => FALSE,
           'translatable' => FALSE,
           'default_value' => [],
           'default_value_callback' => '',
@@ -170,7 +170,7 @@ class ActivityLoggerFactory {
           $field_instance['module'] = ['dynamic_entity_reference'];
           $field_instance['settings'] = [];
         }
-        $config_storage->create($field_instace)->save();
+        $config_storage->create($field_instance)->save();
       }
     }
   }

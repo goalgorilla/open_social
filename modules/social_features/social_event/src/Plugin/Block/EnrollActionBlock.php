@@ -39,15 +39,15 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
    * EnrollActionBlock constructor.
    *
    * @param array $configuration
-   *    The given configuration.
+   *   The given configuration.
    * @param string $plugin_id
-   *    The given plugin id.
+   *   The given plugin id.
    * @param mixed $plugin_definition
-   *    The given plugin definition.
+   *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *    The route match.
+   *   The route match.
    * @param \Drupal\Core\Form\FormBuilderInterface $formBuilder
-   *    The form builder.
+   *   The form builder.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, FormBuilderInterface $formBuilder) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -112,17 +112,17 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
   public function build() {
     $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollActionForm');
 
-    $render_array = array(
+    $render_array = [
       'enroll_action_form' => $form,
-    );
+    ];
 
     $text = (string) $this->t('You have enrolled for this event.');
 
     // Add extra text to.
     if ($form['to_enroll_status']['#value'] === '0') {
-      $render_array['feedback_user_has_enrolled'] = array(
+      $render_array['feedback_user_has_enrolled'] = [
         '#markup' => '<div><strong>' . $text . '</strong></div>',
-      );
+      ];
     }
 
     return $render_array;
