@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social\Tests\SocialTest.
- */
-
 namespace Drupal\social\Tests;
 
 use Drupal\simpletest\WebTestBase;
@@ -21,7 +16,7 @@ class SocialTest extends WebTestBase {
   /**
    * Tests Social installation profile.
    */
-  function testSocial() {
+  public function testSocial() {
     $this->drupalGet('');
     // Check the login block is present.
     $this->assertLink(t('Create new account'));
@@ -43,4 +38,5 @@ class SocialTest extends WebTestBase {
     // Ensure that there are no pending entity updates after installation.
     $this->assertFalse($this->container->get('entity.definition_update_manager')->needsUpdates(), 'After installation, entity schema is up to date.');
   }
+
 }

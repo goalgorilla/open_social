@@ -60,7 +60,7 @@ function social_file_private_requirements($phase) {
         'title' => 'Social Private Files Unprotected',
         'value' => t('Private file system path not set for some fields'),
         'severity' => REQUIREMENT_ERROR,
-        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', array(':fields' => implode(',', $unprotected_fields))),
+        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', [':fields' => implode(',', $unprotected_fields)]),
       ];
     }
   }

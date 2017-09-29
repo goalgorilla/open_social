@@ -153,7 +153,7 @@ class ExportUser {
       $name = basename($results['file_path']);
       $path = 'private://csv';
 
-      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && ($file = file_save_data($data, $path . '/' . $name))) {
+      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
         $url = Url::fromUri(file_create_url($path . '/' . $name));
         $link = Link::fromTextAndUrl(t('Download file'), $url);
 
@@ -166,7 +166,7 @@ class ExportUser {
       }
     }
     else {
-      drupal_set_message('An error occurred', 'error');
+      drupal_set_message(t('An error occurred', 'error'));
     }
   }
 

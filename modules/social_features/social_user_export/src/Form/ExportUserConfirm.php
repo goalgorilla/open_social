@@ -110,7 +110,6 @@ class ExportUserConfirm extends ConfirmFormBase {
     // If not selected all items, show list of selected items,
     // else show quantity of all items.
     if (empty($data['apply_all'])) {
-      $root = NULL;
       $form['accounts'] = [
         '#prefix' => '<ul>',
         '#suffix' => '</ul>',
