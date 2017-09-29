@@ -185,8 +185,8 @@ class ActivityFactory extends ControllerBase {
    */
   private function buildAggregatedActivites($data, $activity_fields) {
     $activities = [];
-    $common_destinations = $this->activityDestinationManager->getListByProperties('is_common', TRUE);
-    $personal_destinations = $this->activityDestinationManager->getListByProperties('is_common', FALSE);
+    $common_destinations = $this->activityDestinationManager->getListByProperties('isCommon', TRUE);
+    $personal_destinations = $this->activityDestinationManager->getListByProperties('isCommon', FALSE);
 
     // Get related activities.
     $related_activities = $this->getAggregationRelatedActivities($data);
@@ -258,7 +258,7 @@ class ActivityFactory extends ControllerBase {
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
           // We exclude activities with email, platform_email and notifications
           // destinations from aggregation.
-          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('is_aggregatable', TRUE);
+          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('isAggregatable', TRUE);
           $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
