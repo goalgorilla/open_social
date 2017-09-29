@@ -46,7 +46,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * Returns quantity of created items.
    *
    * @return int
-   *    Returns quantity of created items.
+   *   Returns quantity of created items.
    */
   public function count();
 
@@ -54,7 +54,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * Set entity storage.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *    The EntityStorageInterface entity_storage.
+   *   The EntityStorageInterface entity_storage.
    */
   public function setEntityStorage(EntityStorageInterface $entity_storage);
 

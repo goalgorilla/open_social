@@ -2,8 +2,14 @@
 
 namespace Drupal\social_user\Plugin\Block;
 
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'AccountHeaderBlock' block.
@@ -16,7 +22,76 @@ use Drupal\Core\Url;
  *   }
  * )
  */
-class AccountHeaderBlock extends BlockBase {
+class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The module handler.
+   *
+   * @var ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * The activity notifications.
+   *
+   * @var \Drupal\activity_creator\ActivityNotifications
+   */
+  protected $activityNotifications;
+
+  /**
+   * The Entity Type Manager.
+   *
+   * @var EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * AccountHeaderBlock constructor.
+   *
+   * @param array $configuration
+   *    The configuration.
+   * @param string $plugin_id
+   *    The plugin id.
+   * @param mixed $plugin_definition
+   *    The plugin definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *    The module handler.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *    The renderer.
+   * @param \Drupal\activity_creator\ActivityNotifications $activity_notifications
+   *    The activity creator, activity notifications.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *    The Entity Type Manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->renderer = $renderer;
+    $this->activityNotifications = $activity_notifications;
+    $this->entityTypeManager = $entityTypeManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('renderer'),
+      $container->get('activity_creator.activity_notifications'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -91,7 +166,7 @@ class AccountHeaderBlock extends BlockBase {
       ];
 
       // Check if the current user is allowed to create new books.
-      if (\Drupal::moduleHandler()->moduleExists('social_book')) {
+      if ($this->moduleHandler->moduleExists('social_book')) {
         $links['add']['below']['add_book'] = array(
           'classes' => '',
           'link_attributes' => '',
@@ -109,7 +184,7 @@ class AccountHeaderBlock extends BlockBase {
       }
 
       // Check if the current user is allowed to create new pages.
-      if (\Drupal::moduleHandler()->moduleExists('social_page')) {
+      if ($this->moduleHandler->moduleExists('social_page')) {
         $links['add']['below']['add_page'] = array(
           'classes' => '',
           'link_attributes' => '',
@@ -125,11 +200,11 @@ class AccountHeaderBlock extends BlockBase {
         );
       }
 
-      if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
+      if ($this->moduleHandler->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-        $notifications = \Drupal::service('renderer')->render($notifications_view);
+        $notifications = $this->renderer->render($notifications_view);
 
-        $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+        $account_notifications = $this->activityNotifications;
         $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
 
         if ($num_notifications === 0) {
@@ -296,11 +371,11 @@ class AccountHeaderBlock extends BlockBase {
         ),
       );
 
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
 
       if ($profile) {
-        $content = \Drupal::entityTypeManager()
+        $content = $this->entityTypeManager
           ->getViewBuilder('profile')
           ->view($profile, 'small');
         $links['account_box']['icon_image'] = $content;

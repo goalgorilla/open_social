@@ -22,13 +22,13 @@ class DeleteGroup {
     // Load each node and delete it.
     foreach ($nids as $nid) {
       $node = Node::load($nid);
-      $message = t('Delete @type "@title"', array('@type' => $node->getType(), '@title' => $node->getTitle()));
+      $message = t('Delete @type "@title"', ['@type' => $node->getType(), '@title' => $node->getTitle()]);
       $results[] = $node->delete();
     }
     // Load each post and delete it.
     foreach ($posts as $post_id) {
       $post = Post::load($post_id);
-      $message = t("Deleting @type\'s", array('@type' => $post->bundle()));
+      $message = t("Deleting @type\'s", ['@type' => $post->bundle()]);
       $results[] = $post->delete();
     }
     $context['message'] = $message;

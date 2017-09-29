@@ -184,15 +184,15 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
           $target = $mention->targetCallback($match[1], $input_settings);
 
           if ($target !== FALSE) {
-            $mentions[$match[0]] = array(
+            $mentions[$match[0]] = [
               'type' => $mention_type,
-              'source' => array(
+              'source' => [
                 'string' => $match[0],
                 'match' => $match[1],
-              ),
+              ],
               'target' => $target,
               'config_name' => $config_name,
-            );
+            ];
           }
         }
       }
@@ -219,13 +219,13 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       if ($mention instanceof MentionsPluginInterface) {
         $output_settings = $this->outputSettings[$match['config_name']];
         $output = $mention->outputCallback($match, $output_settings);
-        $build = array(
+        $build = [
           '#theme' => 'mention_link',
           '#mention_id' => $match['target']['entity_id'],
           '#link' => $output['link'],
           '#render_link' => $output_settings['renderlink'],
           '#render_value' => $output['value'],
-        );
+        ];
         $mentions = $this->renderer->render($build);
         $text = str_replace($match['source']['string'], $mentions, $text);
       }
@@ -252,7 +252,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $configs = $this->config->listAll('mentions.mentions_type');
-    $candidate_entitytypes = array();
+    $candidate_entitytypes = [];
 
     foreach ($configs as $config) {
       $mentions_name = str_replace('mentions.mentions_type.', '', $config);
@@ -263,12 +263,12 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       return NULL;
     }
 
-    $form['mentions_filter'] = array(
+    $form['mentions_filter'] = [
       '#type' => 'checkboxes',
       '#options' => $candidate_entitytypes,
       '#default_value' => $this->settings['mentions_filter'],
       '#title' => $this->t('Mentions types'),
-    );
+    ];
 
     return $form;
   }

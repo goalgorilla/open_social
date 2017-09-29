@@ -121,7 +121,7 @@ function drush_social_demo_remove() {
  * Convert old keys of content types to new.
  *
  * @param array $content_types
- *    Array containing content types.
+ *   Array containing content types.
  */
 function _social_demo_convert_content_types(array &$content_types = []) {
   $replacements = [

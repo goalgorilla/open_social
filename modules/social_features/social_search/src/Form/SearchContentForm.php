@@ -2,17 +2,46 @@
 
 namespace Drupal\social_search\Form;
 
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SearchContentForm.
  *
  * @package Drupal\social_search\Form
  */
-class SearchContentForm extends FormBase {
+class SearchContentForm extends FormBase implements ContainerInjectionInterface {
+
+  /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
+   * SearchHeroForm constructor.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *    The route match.
+   */
+  public function __construct(RouteMatchInterface $routeMatch) {
+    $this->routeMatch = $routeMatch;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_route_match')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -55,7 +84,7 @@ class SearchContentForm extends FormBase {
     }
     $redirect_path = $search_content_page->toString();
 
-    $query = UrlHelper::filterQueryParameters(\Drupal::request()->query->all());
+    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
 
     $redirect = Url::fromUserInput($redirect_path, array('query' => $query));
 

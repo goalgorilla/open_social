@@ -22,20 +22,20 @@ function social_tour_form_alter(&$form, FormStateInterface $form_state, $form_id
         // if (\Drupal::service('user.data')->get('social_tour',
         // \Drupal::currentUser()->id(), 'onboarding_disabled')) {
         // Add the card.
-        $form['social_tour'] = array(
+        $form['social_tour'] = [
           '#type' => 'fieldset',
           '#title' => t('Other settings'),
           '#tree' => TRUE,
-        );
+        ];
         // Add the field.
-        $form['social_tour']['social_tour_onboarding'] = array(
+        $form['social_tour']['social_tour_onboarding'] = [
           '#type' => 'checkbox',
           '#title' => t('Show tips on how to use the community'),
           '#defaukt_value' => FALSE,
           '#attributes' => [
             'data-switch' => TRUE,
           ],
-        );
+        ];
         // Add a submit action.
         $form['actions']['submit']['#submit'][] = '_social_tour_form_user_form_submit';
       }

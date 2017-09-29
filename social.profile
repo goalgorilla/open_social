@@ -385,7 +385,7 @@ function social_install_finished(array &$install_state) {
  */
 function _social_install_module_batch($module, $module_name, &$context) {
   set_time_limit(0);
-  \Drupal::service('module_installer')->install($module, $dependencies = TRUE);
+  \Drupal::service('module_installer')->install($module);
   $context['results'][] = $module;
   $context['message'] = t('Install %module_name module.', array('%module_name' => $module_name));
 }
@@ -397,7 +397,7 @@ function _social_install_module_batch($module, $module_name, &$context) {
  */
 function _social_uninstall_module_batch($module, $module_name, &$context) {
   set_time_limit(0);
-  \Drupal::service('module_installer')->uninstall($module, $dependencies = FALSE);
+  \Drupal::service('module_installer')->uninstall($module);
   $context['results'][] = $module;
   $context['message'] = t('Uninstalled %module_name module.', array('%module_name' => $module_name));
 }

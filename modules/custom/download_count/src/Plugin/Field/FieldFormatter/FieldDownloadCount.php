@@ -11,6 +11,8 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 
 /**
+ * The FieldDownloadCount class.
+ *
  * @FieldFormatter(
  *  id = "FieldDownloadCount",
  *  label = @Translation("Generic file with download count"),

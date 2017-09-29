@@ -25,14 +25,14 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $view_mode = $this->getSetting('view_mode');
-    $elements = array();
+    $elements = [];
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $entity) {
       // Protect ourselves from recursive rendering.
       static $depth = 0;
       $depth++;
       if ($depth > 20) {
-        $this->loggerFactory->get('entity')->error('Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', array('@entity_type' => $entity->getEntityTypeId(), '@entity_id' => $entity->id()));
+        $this->loggerFactory->get('entity')->error('Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', ['@entity_type' => $entity->getEntityTypeId(), '@entity_id' => $entity->id()]);
         return $elements;
       }
 
@@ -44,12 +44,12 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
         // entity's url. Since we don't know what the markup of the entity will
         // be, we shouldn't rely on it for structured data such as RDFa.
         if (!empty($items[$delta]->_attributes)) {
-          $items[$delta]->_attributes += array('resource' => $entity->url());
+          $items[$delta]->_attributes += ['resource' => $entity->url()];
         }
       }
       else {
         // This is an "auto_create" item.
-        $elements[$delta] = array('#markup' => $entity->label());
+        $elements[$delta] = ['#markup' => $entity->label()];
       }
       $depth = 0;
     }
@@ -62,20 +62,20 @@ class ActivityEntityReferenceFormatter extends DynamicEntityReferenceEntityForma
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $options = $this->entityDisplayRepository->getAllViewModes();
-    $only_view_modes = array();
+    $only_view_modes = [];
     foreach ($options as $entity) {
       foreach ($entity as $key => $view_mode) {
         $only_view_modes[$key] = $view_mode['label'];
       }
     }
 
-    $elements['view_mode'] = array(
+    $elements['view_mode'] = [
       '#type' => 'select',
       '#options' => $only_view_modes,
       '#title' => t('View mode'),
       '#default_value' => $this->getSetting('view_mode'),
       '#required' => TRUE,
-    );
+    ];
 
     return $elements;
   }
