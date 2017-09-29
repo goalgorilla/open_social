@@ -63,7 +63,7 @@ projects[views_infinite_scroll][version] = 1.5
 projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha2
 projects[bootstrap][type] = theme
-projects[bootstrap][version] = 3.5
+projects[bootstrap][version] = 3.6
 
 libraries[waves][type] = library
 libraries[waves][download][type] = get
