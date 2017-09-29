@@ -13,10 +13,64 @@
   fill: transparent;
 }
 
+.view--who-liked .views-field-rendered-entity-1 img {
+  border-radius: 50%;
+}
+
+.view--who-liked .views-field-view-user a {
+  color: #29abe2;
+  background-color: transparent;
+  border-color: transparent;
+  fill: #29abe2;
+  fill: #29abe2;
+}
+
+.view--who-liked .views-field-view-user a:focus, .view--who-liked .views-field-view-user a.focus {
+  color: #29abe2;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.view--who-liked .views-field-view-user a:hover {
+  color: #29abe2;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.view--who-liked .views-field-view-user a:active, .view--who-liked .views-field-view-user a.active,
+.open > .view--who-liked .views-field-view-user a.dropdown-toggle {
+  color: #29abe2;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.view--who-liked .views-field-view-user a:active:hover, .view--who-liked .views-field-view-user a:active:focus, .view--who-liked .views-field-view-user a:active.focus, .view--who-liked .views-field-view-user a.active:hover, .view--who-liked .views-field-view-user a.active:focus, .view--who-liked .views-field-view-user a.active.focus,
+.open > .view--who-liked .views-field-view-user a.dropdown-toggle:hover,
+.open > .view--who-liked .views-field-view-user a.dropdown-toggle:focus,
+.open > .view--who-liked .views-field-view-user a.dropdown-toggle.focus {
+  color: #29abe2;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.view--who-liked .views-field-view-user a.disabled:hover, .view--who-liked .views-field-view-user a.disabled:focus, .view--who-liked .views-field-view-user a.disabled.focus, .view--who-liked .views-field-view-user a[disabled]:hover, .view--who-liked .views-field-view-user a[disabled]:focus, .view--who-liked .views-field-view-user a[disabled].focus,
+fieldset[disabled] .view--who-liked .views-field-view-user a:hover,
+fieldset[disabled] .view--who-liked .views-field-view-user a:focus,
+fieldset[disabled] .view--who-liked .views-field-view-user a.focus {
+  background-color: transparent;
+  border-color: transparent;
+}
+
 @media (min-width: 600px) {
 
+  .vote-widget a:hover:not(.disable-status) .icon-vote,
   .vote-widget a:hover:not(.voted-like) .icon-vote {
     stroke: #d9534f;
     fill: transparent;
+  }
+
+  .vote-widget a:hover.disable-status .icon-vote,
+  .vote-widget a:hover .voted-like .icon-vote {
+    stroke: #4d4d4d;
   }
 }

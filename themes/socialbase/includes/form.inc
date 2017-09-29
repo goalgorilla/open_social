@@ -20,17 +20,16 @@ function socialbase_preprocess_form(&$variables) {
     $variables['is_search_form'] = TRUE;
   }
 
-  // Add the custom search auto complete to search users for now only.
-  if ($element['#form_id'] === 'search_users_form') {
-    $variables['#attached']['library'][] = 'socialbase/form--search-autocomplete';
-  }
-
   // We have set the region via propress block, now pass this variable on
   // to be used in twig. In twig we can distinguish the nav bar form from
   // the hero form as they both have the same ID's.
   if (isset($element['#region'])) {
     if ($element['#region'] === 'hero') {
       $variables['in_hero_region'] = TRUE;
+    }
+
+    if ($element['#region'] === 'content-top') {
+      $variables['in_content_top_region'] = TRUE;
     }
   }
 
@@ -143,10 +142,6 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
   $form['actions']['#inline'] = TRUE;
   $form['field_visibility']['#inline'] = TRUE;
 
-  // Set an extra wrapper to display the dropdown and forms actions inline.
-  $form['field_visibility']['#prefix'] = '<div class="form-group-inline form-group-inline--right">';
-  $form['actions']['#suffix'] = '</div>';
-
   // Give the `delete` button correct classes.
   if (isset($form['actions']['delete']['#type']) && $form['actions']['delete']['#type'] == 'link') {
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
@@ -216,9 +211,11 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_pass_reset',
     'social_user_login_form',
     'user_register_form',
+    'profile_profile_add_form',
     'profile_profile_edit_form',
     'social_user_password_form',
     'user_cancel_form',
+    'social_group_add',
     'group_open_group_add_form',
     'group_open_group_edit_form',
     'group_closed_group_add_form',
@@ -229,10 +226,12 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-join_form',
     'group_content_closed_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_add_form',
     'group_content_closed_group-group_membership_edit_form',
+    'group_content_closed_group-group_membership_delete_form',
     'group_open_group_delete_form',
     'group_closed_group_delete_form',
     'comment_comment_delete_form',
@@ -307,7 +306,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_open_group-group_membership_group-leave_form',
+    'group_content_closed_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
   );
@@ -356,36 +357,4 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
 
-}
-
-/**
- * Implements hook_theme_suggestions_form_alter().
- */
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-
-  // Alter comment form.
-  if ($variables['element']['#form_id'] == 'comment_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment');
-    }
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions[] = $variables['theme_hook_original'] . '__comment';
-    }
-  }
-
-  // Add templates for post add/edit forms.
-  if ($variables['element']['#form_id'] == 'social_post_entity_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
-      $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
-    }
-  }
 }

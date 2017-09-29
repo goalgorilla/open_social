@@ -1,0 +1,74 @@
+@import 'settings';
+
+.form--post-create {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  .field--name-field-post {
+    flex: 1 0 100%;
+
+    .filter-wrapper {
+      margin-bottom: 0;
+    }
+
+    .form-control {
+      min-height: 4em;
+    }
+  }
+
+  .field--name-field-post-image {
+    flex: 1 1 100%;
+    position: relative;
+
+    .btn-default {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .preview {
+      display: inline-block;
+      @include z-depth-3;
+      width: auto;
+    }
+
+    .image-widget {
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    @include for-tablet-portrait-up {
+      flex-basis: auto;
+      margin-bottom: 0;
+
+      .btn-default {
+        width: auto;
+        margin-bottom: 0;
+      }
+    }
+
+  }
+
+  .field--name-field-post-visibility {
+    flex: 1 1 auto;
+    align-self: flex-end;
+
+    @include for-tablet-portrait-up {
+      flex-grow: 0;
+    }
+  }
+
+  .btn-primary {
+    flex: 0 1 auto;
+    margin-left: 0.5rem;
+    align-self: flex-end;
+
+    @include for-tablet-portrait-up {
+      flex-grow: 0;
+    }
+
+  }
+
+}

@@ -1,4 +1,4 @@
-@api @like @stability @DS-2971
+@api @like @stability @DS-2971 @stability-3
 Feature: Like post stream
   Benefit: In order to like a post in the stream
   Role: As a LU

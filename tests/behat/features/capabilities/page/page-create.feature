@@ -1,4 +1,4 @@
-@api @page @stability @perfect @critical @DS-1139
+@api @page @stability @perfect @critical @DS-1139 @stability-4
 Feature: Create Page
   Benefit: In order to share useful information with users
   Role: As an administrator

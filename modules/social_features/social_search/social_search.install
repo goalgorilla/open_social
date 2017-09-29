@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\views\Entity\View;
+use Drupal\search_api\Entity\Index;
 use \Drupal\user\Entity\Role;
 
 /**
@@ -120,4 +121,33 @@ function social_search_update_8102(array &$sandbox) {
     $view->delete();
   }
 
+}
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8103() {
+  $indexes = [
+    'social_all',
+    'social_groups',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
+  }
+}
+
+/**
+ * Trigger a search_api re-index for social_all.
+ */
+function social_search_update_8104() {
+  $index = Index::load('social_all');
+  if ($index->status()) {
+    $index->clear();
+    $index->reindex();
+  }
 }

@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\bootstrap\Bootstrap;
 use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\node\Entity\Node;
 
 // Include all files from the includes directory.
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
@@ -74,6 +75,43 @@ function _socialbase_get_visibility_icon($title) {
   }
 
   return $icon;
+}
+
+/**
+ * Get comment count for a node.
+ */
+function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
+  $count = 0;
+
+  $comment_count = $node->{$comment_field_name}->comment_count;
+
+  if ($comment_count) {
+    $count = $comment_count;
+  }
+
+  return $count;
+}
+
+/**
+ * Get like count for a node.
+ */
+function _socialbase_node_get_like_count($type, $id) {
+  $count = 0;
+
+  // The result function service needs entity type and entity id in order
+  // to get proper results.
+  if (!empty($type) && !empty($id)) {
+    $manager = Drupal::service('plugin.manager.votingapi.resultfunction');
+    $results = $manager->getResults($type, $id);
+
+    // Lets see if our results carry the sum of all votes.
+    if (!empty($results['like']['vote_sum'])) {
+      $count = $results['like']['vote_sum'];
+    }
+  }
+
+  return $count;
+
 }
 
 /**

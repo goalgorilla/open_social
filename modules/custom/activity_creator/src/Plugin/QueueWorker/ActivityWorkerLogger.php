@@ -22,7 +22,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
-  protected $context_plugin_manager;
+  protected $contextPluginManager;
 
   /**
    * The state.

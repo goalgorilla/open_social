@@ -38,14 +38,11 @@
  */
 #}
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
+
 {% if bare %}
   {% for item in items %}
-    {% if entity_type == "node" %}
-      {% if field_name == "body" and part_of_teaser %}
+    {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
         {{ item.content|render|striptags }}
-      {% else %}
-        {{ item.content }}
-      {% endif %}
     {% else %}
       {{ item.content }}
     {% endif %}

@@ -12,6 +12,7 @@ use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 
 /**
@@ -365,6 +366,13 @@ function social_core_element_info_alter(array &$info) {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_core_filter_process_format';
   }
+
+  if (isset($info['entity_autocomplete'])) {
+    $info['entity_autocomplete']['#value_callback'] = [
+      '\Drupal\social_core\Entity\Element\EntityAutocomplete',
+      'valueCallback',
+    ];
+  }
 }
 
 /**
@@ -409,4 +417,48 @@ function social_core_filter_process_format($element) {
   }
 
   return $element;
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+
+  if ($field_definition->getType() == 'path') {
+    $url = Url::fromRoute('<front>', [], [
+      'absolute' => TRUE,
+    ]);
+    $element['alias']['#field_prefix'] = '<div class="input-group input-group-expanded"><span class="input-group-addon">' . $url->toString() . '</span>';
+    $element['alias']['#field_suffix'] = '</div>';
+    $element['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
+
+    if (isset($element['alias']['#default_value'])) {
+      $element['alias']['#default_value'] = ltrim($element['alias']['#default_value'], '/');
+    }
+
+    $element['#element_validate'] = ['social_core_path_validate'];
+  }
+}
+
+/**
+ * Form element validation handler for URL alias form element.
+ *
+ * @param array $element
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function social_core_path_validate(array &$element, FormStateInterface $form_state) {
+  $alias = trim($element['alias']['#value'], " \\/");
+  $parsed_url = parse_url($alias);
+
+  if (isset($parsed_url['host']) || isset($parsed_url['scheme']) || !isset($parsed_url['path'])) {
+    $form_state->setError($element, t('The URL alias must be a relative URL.'));
+  }
+
+  if (!$form_state->getErrors()) {
+    $element['alias']['#value'] = '/' . ltrim($element['alias']['#value'], '/');
+    PathWidget::validateFormElement($element, $form_state);
+  }
 }
