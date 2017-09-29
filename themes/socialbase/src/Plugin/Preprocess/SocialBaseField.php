@@ -21,7 +21,6 @@ class SocialBaseField extends PreprocessBase {
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
-
     // For each field that doesn't need a div to wrap the content in.
     switch ($element['#field_name']) {
       case 'field_profile_image':
@@ -40,13 +39,13 @@ class SocialBaseField extends PreprocessBase {
 
       case 'field_call_to_action_link':
         $url_options = array(
-          'attributes' => array('class' => array('btn btn-primary waves-effect')),
+          'attributes' => array('class' => array('btn btn-primary')),
         );
         if (isset($element[0])) {
           $element[0]['#url']->setOptions($url_options);
         }
         $url_options_1 = array(
-          'attributes' => array('class' => array('btn btn-default waves-effect')),
+          'attributes' => array('class' => array('btn btn-default')),
         );
         if (isset($element[1])) {
           $element[1]['#url']->setOptions($url_options_1);

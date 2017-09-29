@@ -9,15 +9,26 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
         }
     ],
     "scripts": {
         "post-install-cmd": [
             "@composer drupal-scaffold"
         ],
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold"
+        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "enable-asset-packagist": "Social\\Composer\\AssetPackagist::execute"
+    },
+    "autoload": {
+        "psr-4": {
+            "Social\\": "src"
+        }
     },
     "extra": {
+        "enable-patching": true,
         "patches": {
             "drupal/core": {
                 "Clean up user input for exposed checkboxes": "https://www.drupal.org/files/issues/2687773-18-Cleanup-user-input-for-checkboxes-8.2.patch",
@@ -25,12 +36,16 @@
             },
             "drupal/like_and_dislike": {
                 "Fix preview on node": "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
+            },
+            "drupal/flag": {
+                "Add relationship to flagged entities when Flagging is base table": "https://www.drupal.org/files/issues/2723703_31.patch"
             }
         }
     },
     "require": {
         "cweagans/composer-patches": "^1.5.0",
         "composer/installers": "^1.0",
+        "oomphinc/composer-installers-extender": "^1.1",
         "drupal-composer/drupal-scaffold": "^2.0.0",
         "drupal/core": "8.3.7",
         "drupal/crop": "1.2",
@@ -71,6 +86,12 @@
         "php-http/message": "^1.4",
         "happyr/linkedin-api-client": "^1.0",
         "abraham/twitteroauth": "^0.7.2",
-        "swiftmailer/swiftmailer" : "5.4.8"
+        "swiftmailer/swiftmailer" : "5.4.8",
+        "bower-asset/waves": "0.7.5",
+        "bower-asset/timepicker": "1.11.4",
+        "bower-asset/tablesaw": "2.0.3",
+        "bower-asset/morris.js": "0.5.1",
+        "bower-asset/raphael": "2.2.7",
+        "bower-asset/bootstrap": "3.3.7"
     }
 }

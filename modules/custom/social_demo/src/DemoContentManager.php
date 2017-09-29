@@ -29,7 +29,7 @@ class DemoContentManager extends DefaultPluginManager {
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
+  public function createInstance($plugin_id, array $configuration = []) {
     /** @var \Drupal\social_demo\DemoContentInterface $plugin */
     $plugin = parent::createInstance($plugin_id, $configuration);
     $definition = $plugin->getPluginDefinition();

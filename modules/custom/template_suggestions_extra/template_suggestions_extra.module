@@ -35,7 +35,7 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
   }
 
   if (isset($node) && is_object($node)) {
-    $altered_suggestions = array();
+    $altered_suggestions = [];
 
     foreach ($suggestions as $suggestion) {
       $extra_suggeston = '';
@@ -62,7 +62,7 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
   $entity = $variables['elements']['#comment'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
-  $suggestions = array();
+  $suggestions = [];
   $suggestions[] = $original;
   $suggestions[] = $original . '__' . $sanitized_view_mode;
   $suggestions[] = $original . '__' . $entity->bundle();

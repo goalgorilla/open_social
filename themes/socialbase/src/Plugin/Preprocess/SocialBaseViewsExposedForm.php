@@ -17,6 +17,7 @@ class SocialBaseViewsExposedForm extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     if (isset($variables['theme_hook_original']) && $variables['theme_hook_original'] === 'views_exposed_form') {
 

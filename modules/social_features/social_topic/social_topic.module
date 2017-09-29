@@ -83,7 +83,8 @@ function social_topic_form_views_exposed_form_alter(&$form, FormStateInterface $
 
     $current_user = \Drupal::currentUser();
     $membership = FALSE;
-    if ($group_membership = $group_from_route->getMember($current_user)) {
+    $group_membership = $group_from_route->getMember($current_user);
+    if ($group_membership) {
       $membership = TRUE;
     }
 
@@ -146,7 +147,8 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     $group_from_route = _social_group_get_current_group();
     $current_user = \Drupal::currentUser();
     $membership = FALSE;
-    if ($group_membership = $group_from_route->getMember($current_user)) {
+    $group_membership = $group_from_route->getMember($current_user);
+    if ($group_membership) {
       $membership = TRUE;
     }
 

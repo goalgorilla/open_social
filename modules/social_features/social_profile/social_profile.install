@@ -250,19 +250,53 @@ function social_profile_update_8005() {
 /**
  * Create a profile for users that have none.
  */
-function social_profile_update_8006() {
-  /** @var \Drupal\user\Entity\User $account */
-  foreach (User::loadMultiple() as $account) {
+function social_profile_update_8006(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+    // This must be the first run. Initialize the sandbox.
+    $sandbox['progress'] = 0;
+    $sandbox['profiles_created'] = 0;
+    // We use array_values to get the entity_ids.
+    // Not interested in the revisions.
+    $sandbox['uids'] = array_values(\Drupal::entityQuery('user')
+      ->execute());
+    $sandbox['user_count'] = count($sandbox['uids']);
+
+    \Drupal::logger('social_profile')->info('Checking profile status for @count users', ['@count' => $sandbox['user_count']]);
+  }
+
+  // Try to do 5 each cycle. Never do more than are available.
+  for ($target = $sandbox['progress'] + 5; $sandbox['progress'] < $target && $sandbox['progress'] < $sandbox['user_count']; $sandbox['progress']++) {
+    $uid = $sandbox['uids'][$sandbox['progress']];
+
+    /** @var \Drupal\user\Entity\User $account */
+    $account = User::load($uid);
+
     // For anonymous we do nothing.
     if ($account->isAnonymous()) {
       continue;
     }
     // Check if the user has a profile already.
-    if (!$profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE)) {
-      Profile::create([
-        'type' => ProfileType::load('profile')->id(),
-        'uid' => $account->id(),
-      ])->save();
+    $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
+    if (!$profile) {
+      try {
+        Profile::create([
+          'type' => ProfileType::load('profile')->id(),
+          'uid' => $account->id(),
+        ])->save();
+        $sandbox['profiles_created']++;
+      }
+      catch (Exception $e) {
+        \Drupal::logger('social_profile')->error('Could not create profile for @user_id', ['@user_id' => $uid]);
+      }
     }
+  }
+
+  $sandbox['#finished'] = empty($sandbox['user_count']) ? 1 : ($sandbox['progress'] / $sandbox['user_count']);
+
+  if ($sandbox['#finished'] === 1) {
+    \Drupal::logger('social_profile')
+      ->info('Created profiles for @count users', [
+        '@count' => $sandbox['profiles'],
+      ]);
   }
 }

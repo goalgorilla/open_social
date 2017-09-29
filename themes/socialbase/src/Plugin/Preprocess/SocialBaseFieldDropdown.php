@@ -17,6 +17,7 @@ class SocialBaseFieldDropdown extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     if (isset($variables['active']) && is_numeric($variables['active'])) {
       $title = $variables['element'][$variables['active']]['#title'];

@@ -56,6 +56,27 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       '#default_value' => $config->get('border_radius'),
     );
 
+    $form['os_email_settings'] = array(
+      '#type' => 'details',
+      '#group' => 'open_social_settings',
+      '#title' => t('E-mail'),
+      '#weight' => 30,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+
+    $form['os_email_settings']['email_logo'] = array(
+      '#type' => 'managed_file',
+      '#title' => t('Logo for e-mails'),
+      '#description' => t('Upload a logo which is shown in e-mail sent by the platform. This overrides the default logo that is also used in e-mails when no logo is provided here.'),
+      '#default_value'   => $config->get('email_logo'),
+      '#upload_location' => 'public://',
+      '#upload_validators'    => [
+        'file_validate_is_image'      => array(),
+        'file_validate_extensions'    => array('gif png jpg jpeg')
+      ]
+    );
+
     // Font tab.
     $fonts = [];
     if (\Drupal::service('module_handler')->moduleExists('social_font')) {

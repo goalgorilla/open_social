@@ -123,9 +123,9 @@ abstract class DemoFile extends DemoContent {
    * Crops the images.
    *
    * @param array $item
-   *    The array with items.
+   *   The array with items.
    * @param \Drupal\file\FileInterface $entity
-   *    The FileInterface entity.
+   *   The FileInterface entity.
    */
   protected function applyCrops(array $item, FileInterface $entity) {
     // Add coordinates for cropping images.
