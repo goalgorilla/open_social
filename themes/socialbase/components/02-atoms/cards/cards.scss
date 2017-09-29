@@ -49,7 +49,6 @@
 @import 'settings';
 
 .card {
-  @include clearfix;
   @include z-depth-2;
   position: relative;
   display: flex;
@@ -90,6 +89,10 @@
     padding-top: 0;
   }
 
+}
+
+.card__block--table {
+  padding: $card-spacer-x 0;
 }
 
 .card__block--list:not(:first-child) {
