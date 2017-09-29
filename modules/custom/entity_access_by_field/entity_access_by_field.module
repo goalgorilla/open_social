@@ -3,6 +3,9 @@
 /**
  * @file
  * Entity Access By Field module file.
+ *
+ * @todo: Prevent creating multiple visibility fields on one node.
+ * @todo: Add support for multiple entity types.
  */
 
 use Drupal\entity_access_by_field\EntityAccessHelper;
@@ -13,9 +16,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_post\Entity\PostInterface;
-
-// @todo: Prevent creating multiple visibility fields on one node.
-// @todo: Add support for multiple entity types.
 
 /**
  * Here we define a constant for our node access grant ID.
@@ -68,7 +68,7 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
     if ($field_definition->getType() === 'entity_access_field') {
       $field_values = $node->get($field_name)->getValue();
       if (!empty($field_values)) {
-        foreach ($field_values as $key => $field_value) {
+        foreach ($field_values as $field_value) {
           if (isset($field_value['value'])) {
             $entityAccessPermissions = \Drupal::getContainer()
               ->get('entity_access_by_field.permissions');

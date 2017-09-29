@@ -34,7 +34,7 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
     $network_manager = \Drupal::service('plugin.network.manager');
     $networks = $network_manager->getDefinitions();
 
-    foreach ($networks as $key => $network) {
+    foreach ($networks as $network) {
       $instance = $network_manager->createInstance($network['id']);
 
       if ($instance->isActive() && $instance->getSocialNetworkKey() == $provider) {
@@ -165,7 +165,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
         $auth_manager->setSdk($sdk);
         $auth_manager->setAccessToken($access_token);
 
-        if ($social_profile = $auth_manager->getProfile()) {
+        if ($auth_manager->getProfile()) {
           /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
           $module_handler = \Drupal::service('module_handler');
           // Set id of social profile to account and save.

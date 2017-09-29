@@ -227,7 +227,7 @@ function social_group_group_insert(GroupInterface $group) {
     $content->delete();
     $grant_group_admin = FALSE;
     // If the user has this permission inside a group.
-    if ($perms = $group->hasPermission('manage all groups', $account)) {
+    if ($group->hasPermission('manage all groups', $account)) {
       // Then we grant this user de Group Admin role.
       $grant_group_admin = TRUE;
     }

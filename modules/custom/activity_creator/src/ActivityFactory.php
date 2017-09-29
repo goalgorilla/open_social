@@ -175,7 +175,6 @@ class ActivityFactory extends ControllerBase {
    * Get aggregation settings from message template.
    */
   private function getAggregationSettings(Message $message) {
-    $value = NULL;
     $message_template = $message->getTemplate();
     return $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL);
   }

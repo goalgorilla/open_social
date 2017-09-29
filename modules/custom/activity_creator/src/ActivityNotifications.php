@@ -60,7 +60,7 @@ class ActivityNotifications extends ControllerBase {
   public function markAllNotificationsAsSeen(AccountInterface $account) {
 
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, $status = [ACTIVITY_STATUS_RECEIVED]);
+    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]);
 
     foreach ($ids as $activity_id) {
       $activity = Activity::load($activity_id);
@@ -102,7 +102,7 @@ class ActivityNotifications extends ControllerBase {
   public function markEntityAsRead(AccountInterface $account, Entity $entity) {
 
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, $status = [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
+    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
 
     foreach ($ids as $activity_id) {
       $activity = Activity::load($activity_id);

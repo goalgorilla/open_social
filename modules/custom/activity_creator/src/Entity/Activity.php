@@ -232,7 +232,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
     $field_activity_destinations = $this->field_activity_destinations;
     if (isset($field_activity_destinations)) {
       $destinations = $field_activity_destinations->getValue();
-      foreach ($destinations as $key => $destination) {
+      foreach ($destinations as $destination) {
         $values[] = $destination['value'];
       }
     }
