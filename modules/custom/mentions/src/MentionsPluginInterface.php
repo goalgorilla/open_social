@@ -16,12 +16,12 @@ interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
    * The targetCallback function.
    *
    * @param string $value
-   *    The value.
+   *   The value.
    * @param array|string $settings
-   *    The settings.
+   *   The settings.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function targetCallback($value, $settings);
 
@@ -29,12 +29,12 @@ interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
    * The outputCallback function.
    *
    * @param string $mention
-   *    The mention.
+   *   The mention.
    * @param array|string $settings
-   *    The settings.
+   *   The settings.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function outputCallback($mention, $settings);
 
@@ -42,53 +42,53 @@ interface MentionsPluginInterface extends ContainerFactoryPluginInterface {
    * The patternCallback function.
    *
    * @param array|string $settings
-   *    The settings.
+   *   The settings.
    * @param string $regex
-   *    The pattern.
+   *   The pattern.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function patternCallback($settings, $regex);
 
   /**
    * The settingsCallback function.
    *
-   * @param FormInterface $form
-   *    The form.
-   * @param FormStateInterface $form_state
-   *    The form state.
+   * @param \Drupal\Core\Form\FormInterface $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    * @param mixed $type
-   *    The type.
+   *   The type.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function settingsCallback(FormInterface $form, FormStateInterface $form_state, $type);
 
   /**
    * The settingsSubmitCallback function.
    *
-   * @param FormInterface $form
-   *    The form.
-   * @param FormStateInterface $form_state
-   *    The form state.
+   * @param \Drupal\Core\Form\FormInterface $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    * @param mixed $type
-   *    The type.
+   *   The type.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function settingsSubmitCallback(FormInterface $form, FormStateInterface $form_state, $type);
 
   /**
    * The mentionPresaveCallback function.
    *
-   * @param EntityInterface $entity
-   *    The entity.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
    *
    * @return mixed
-   *    Returns mixed.
+   *   Returns mixed.
    */
   public function mentionPresaveCallback(EntityInterface $entity);
 

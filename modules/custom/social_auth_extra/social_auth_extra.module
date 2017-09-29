@@ -295,7 +295,7 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
             '#type' => 'link',
             '#title' => t('Unlink'),
             '#attributes' => [
-              'class' => array('btn btn-default btn-social-linking'),
+              'class' => ['btn btn-default btn-social-linking'],
             ],
             '#url' => Url::fromRoute($network['id'] . '.user_unlink'),
           ];

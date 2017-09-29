@@ -75,9 +75,9 @@ class ActivityNotifications extends ControllerBase {
    * Mark Notifications as Read for given account and entity..
    *
    * @param \Drupal\Core\Session\AccountInterface $account
-   *    Account object.
+   *   Account object.
    * @param \Drupal\Core\Entity\Entity $entity
-   *    Entity object.
+   *   Entity object.
    */
   public function markEntityNotificationsAsRead(AccountInterface $account, Entity $entity) {
 

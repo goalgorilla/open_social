@@ -26,7 +26,7 @@ class ActivityFactory extends ControllerBase {
    * ActivityFactory constructor.
    *
    * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
-   *    The activity destination manager.
+   *   The activity destination manager.
    */
   public function __construct(ActivityDestinationManager $activityDestinationManager) {
     $this->activityDestinationManager = $activityDestinationManager;
@@ -405,7 +405,7 @@ class ActivityFactory extends ControllerBase {
    *   Array with the arguments.
    * @param array $output
    *   Array with the templated text saved in the message template.
-   * @param Message $message
+   * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
    * @return array
@@ -447,7 +447,7 @@ class ActivityFactory extends ControllerBase {
    *   The templated text to be replaced.
    * @param bool $clear
    *   Determine if unused token should be cleared.
-   * @param Message $message
+   * @param \Drupal\message\Entity\Message $message
    *   Message object.
    *
    * @return array
