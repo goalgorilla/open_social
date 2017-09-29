@@ -50,11 +50,11 @@ class AutocompleteController extends ControllerBase {
    * AutocompleteController constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *    The config factory.
+   *   The config factory.
    * @param \Drupal\Core\Database\Connection $database
-   *    The database connection.
+   *   The database connection.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    */
   public function __construct(ConfigFactoryInterface $configFactory, Connection $database, EntityTypeManagerInterface $entityTypeManager) {
     $this->configFactory = $configFactory;
@@ -77,10 +77,10 @@ class AutocompleteController extends ControllerBase {
    * Function for suggestions.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
-   *    The request.
+   *   The request.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *    Returns a JsonResponse.
+   *   Returns a JsonResponse.
    */
   public function suggestions(Request $request) {
     $name = $request->get('term');
