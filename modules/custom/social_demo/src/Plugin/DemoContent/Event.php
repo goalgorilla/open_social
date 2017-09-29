@@ -69,8 +69,8 @@ class Event extends DemoNode {
     $entry = parent::getEntry($item);
 
     $entry['field_event_address'] = $item['field_event_address'];
-    $entry['field_event_date'] = $this->createDate($item['field_event_date']);
-    $entry['field_event_date_end'] = $this->createDate($item['field_event_date_end']);
+    $entry['field_event_date'] = $this->createEventDate($item['field_event_date']);
+    $entry['field_event_date_end'] = $this->createEventDate($item['field_event_date_end']);
     $entry['field_event_location'] = $item['field_event_location'];
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
@@ -94,7 +94,7 @@ class Event extends DemoNode {
   /**
    * Function to calculate the date.
    */
-  protected function createDate($date_string) {
+  protected function createEventDate($date_string) {
     // Split from delimiter.
     $timestamp = explode('|', $date_string);
 
