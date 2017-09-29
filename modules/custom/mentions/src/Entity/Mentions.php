@@ -35,10 +35,6 @@ use Drupal\mentions\MentionsInterface;
  *   field_ui_base_route = "entity.mentions_type.list",
  * )
  */
-
-/**
- * Class Mentions.
- */
 class Mentions extends ContentEntityBase implements MentionsInterface {
 
   /**
