@@ -86,6 +86,34 @@ class Book extends DemoNode {
       ];
     }
 
+    if (!empty($item['book'])) {
+      // Top level book.
+      if ($item['book']['id'] === $item['uuid']) {
+        $entry['book']['bid'] = 'new';
+        unset($entry['book']['id']);
+      }
+
+      $mainbook = $this->entityStorage->loadByProperties(['uuid' => $item['book']['id']]);
+      $mainbook = current($mainbook);
+      // Must be a valid node.
+      if ($mainbook instanceof Node) {
+        $entry['book']['bid'] = $mainbook->id();
+        $entry['book']['weight'] = $item['book']['weight'];
+
+        unset($entry['book']['id']);
+
+        if (isset($item['book']['parent'])) {
+          $parentbook = $this->entityStorage->loadByProperties(['uuid' => $item['book']['parent']]);
+          $parentbook = current($parentbook);
+          if ($parentbook instanceof Node) {
+            $entry['book']['pid'] = $parentbook->id();
+          }
+        }
+        else {
+          $entry['book']['pid'] = $mainbook->id();
+        }
+      }
+    }
     return $entry;
   }
 

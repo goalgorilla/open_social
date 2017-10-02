@@ -2,9 +2,7 @@
 
 namespace Drupal\social_demo;
 
-use Drupal\book\BookManager;
 use Drupal\flag\Entity\Flagging;
-use Drupal\social_demo\Plugin\DemoContent\Book;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,7 +32,7 @@ abstract class DemoNode extends DemoContent {
   protected $groupStorage;
 
   /**
-   * DemoNode constructor.
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -108,10 +106,6 @@ abstract class DemoNode extends DemoContent {
 
         if (!empty($item['group'])) {
           $this->createGroupContent($entity, $item['group']);
-        }
-
-        if (!empty($item['book'])) {
-          Book::createBookLink($entity, $item['book']);
         }
 
         if (isset($item['followed_by'])) {
