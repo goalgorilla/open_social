@@ -104,6 +104,19 @@ abstract class DemoSystem extends DemoContent {
       $this->content['theme'] = TRUE;
       // Get theme settings.
       $config = $this->configFactory->getEditable($active_theme.'.settings');
+
+      // Favicon
+      if (isset($data['theme']['favicon'])) {
+        $favicon = [
+          'mimetype' => $data['theme']['favicon']['mimetype'],
+          'path' => $data['theme']['favicon']['path'],
+          'url' => $data['theme']['favicon']['url'],
+          'use_default' => FALSE,
+        ];
+        // And save it.
+        $config->set('favicon', $favicon)->save();
+      }
+
       // Logo.
       $logo = $this->preparePicture($data['theme']['logo']);
       // Must be a valid file.
