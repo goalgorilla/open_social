@@ -313,3 +313,21 @@ function improved_theme_settings_page_attachments(array &$page) {
     }
   }
 }
+
+/**
+ * Implements hook_css_alter().
+ */
+function improved_theme_settings_css_alter(&$css, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+  // Remove the imported brand.css from theme. There's no need to use this file.
+  // Only in case of other colors, the generated brand.css needs to be used.
+  foreach ($css as $key => $singlecss) {
+    // First check if there's a brand.css file in there.
+    if (strpos($singlecss['data'], 'brand.css') > 0) {
+      // Must be public, otherwise remove it.
+      if (strpos($singlecss['data'],'public://') === FALSE) {
+        // Not pubic, so it must be unset.
+        unset($css[$key]);
+      }
+    }
+  }
+}

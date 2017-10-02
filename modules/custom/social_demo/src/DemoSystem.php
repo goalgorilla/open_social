@@ -139,8 +139,6 @@ abstract class DemoSystem extends DemoContent {
       foreach ($color->get('stylesheets') as $file) {
         file_unmanaged_delete($file);
       }
-      // Flush all caches.
-      drupal_flush_all_caches();
     }
 
     // return something.
