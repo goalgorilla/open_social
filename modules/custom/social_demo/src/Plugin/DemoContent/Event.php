@@ -4,6 +4,7 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 
 use Drupal\social_demo\DemoNode;
 use Drupal\taxonomy\TermStorageInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_demo\DemoContentParserInterface;
 use Drupal\user\UserStorageInterface;
@@ -37,7 +38,7 @@ class Event extends DemoNode {
   protected $termStorage;
 
   /**
-   * SocialDemoEvent constructor.
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, TermStorageInterface $term_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
@@ -86,6 +87,11 @@ class Event extends DemoNode {
 
     if (\Drupal::moduleHandler()->moduleExists('social_event_type') && !empty($item['field_event_type'])) {
       $entry['field_event_type'] = $this->prepareEventType($item['field_event_type']);
+    }
+
+    // Possibility to add event managers (if the module is enabled)
+    if (\Drupal::moduleHandler()->moduleExists('social_event_managers') && !empty($item['field_event_managers'])) {
+      $entry['field_event_managers'] = $this->prepareEventManagers($item['field_event_managers']);
     }
 
     return $entry;
@@ -196,6 +202,34 @@ class Event extends DemoNode {
     }
 
     return $value;
+  }
+
+  /**
+   * Returns event managers.
+   *
+   * @param array $managers
+   *   An array of uuids.
+   *
+   * @return array|null
+   *   Returns an array or null.
+   */
+  protected function prepareEventManagers($managers) {
+    $values = NULL;
+
+    foreach ($managers as $uuid) {
+      // Load the user(s) by the given uuid(s).
+      $load = $this->userStorage->loadByProperties(['uuid' => $uuid]);
+      $account = current($load);
+
+      if ($account instanceof User) {
+        $properties = [
+          'target_id' => $account->id(),
+        ];
+
+        $values[] = $properties;
+      }
+    }
+    return $values;
   }
 
 }
