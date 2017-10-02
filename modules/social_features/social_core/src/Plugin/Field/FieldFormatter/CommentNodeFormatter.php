@@ -33,18 +33,18 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'num_comments' => 2,
       'always_show_all_comments' => FALSE,
-    );
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
-    $output = array();
+    $elements = [];
+    $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
@@ -80,7 +80,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
-      !in_array($this->viewMode, array('search_result', 'search_index'))) {
+      !in_array($this->viewMode, ['search_result', 'search_index'])) {
       $comment_settings = $this->getFieldSettings();
 
       $comment_count = $entity->get($field_name)->comment_count;
@@ -104,18 +104,18 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         }
 
         // Prepare the show all comments link.
-        $t_args = array(':num_comments' => $comment_count);
+        $t_args = [':num_comments' => $comment_count];
 
         // Set link classes to be added to the button.
-        $more_link_options = array(
-          'attributes' => array(
-            'class' => array(
+        $more_link_options = [
+          'attributes' => [
+            'class' => [
               'btn',
               'btn-flat',
               'brand-text-primary',
-            ),
-          ),
-        );
+            ],
+          ],
+        ];
 
         // Set path to node.
         $link_url = $entity->urlInfo('canonical');
@@ -148,13 +148,13 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
       }
 
-      $elements[] = $output + array(
+      $elements[] = $output + [
         '#comment_type' => $this->getFieldSetting('comment_type'),
         '#comment_display_mode' => $this->getFieldSetting('default_mode'),
-        'comments' => array(),
-        'comment_form' => array(),
-        'more_link' => array(),
-      );
+        'comments' => [],
+        'comment_form' => [],
+        'more_link' => [],
+      ];
     }
 
     return $elements;
@@ -164,20 +164,20 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
-    $element['num_comments'] = array(
+    $element = [];
+    $element['num_comments'] = [
       '#type' => 'number',
       '#min' => 0,
       '#max' => 10,
       '#title' => $this->t('Number of comments'),
       '#default_value' => $this->getSetting('num_comments'),
-    );
-    $element['always_show_all_comments'] = array(
+    ];
+    $element['always_show_all_comments'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Always show all comments link'),
       '#description' => $this->t('If selected it will show a "all comments" link if there is at least 1 comment.'),
       '#default_value' => $this->getSetting('always_show_all_comments'),
-    );
+    ];
     return $element;
   }
 
@@ -185,7 +185,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    return array();
+    return [];
   }
 
   /**
@@ -230,7 +230,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $cids = $query->execute()->fetchCol();
 
-    $comments = array();
+    $comments = [];
     if ($cids) {
       $comments = entity_load_multiple('comment', $cids);
     }

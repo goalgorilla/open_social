@@ -47,17 +47,17 @@ class GroupAddEventBlock extends BlockBase {
     if (is_object($group)) {
       $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:event");
 
-      $link_options = array(
-        'attributes' => array(
-          'class' => array(
+      $link_options = [
+        'attributes' => [
+          'class' => [
             'btn',
             'btn-primary',
             'btn-raised',
             'waves-effect',
             'brand-bg-primary',
-          ),
-        ),
-      );
+          ],
+        ],
+      ];
       $url->setOptions($link_options);
 
       $build['content'] = Link::fromTextAndUrl(t('Create Event'), $url)->toRenderable();

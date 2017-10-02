@@ -18,7 +18,7 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
    * Returns config overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     // Add mentions filter to Basic HTML text format.
     $config_name = 'filter.format.basic_html';
     if (in_array($config_name, $names)) {

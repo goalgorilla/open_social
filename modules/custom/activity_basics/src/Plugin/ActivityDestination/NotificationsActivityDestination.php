@@ -10,8 +10,8 @@ use Drupal\activity_creator\Plugin\ActivityDestinationBase;
  * @ActivityDestination(
  *  id = "notifications",
  *  label = @Translation("Notifications"),
- *  is_aggregatable = FALSE,
- *  is_common = FALSE,
+ *  isAggregatable = FALSE,
+ *  isCommon = FALSE,
  * )
  */
 class NotificationsActivityDestination extends ActivityDestinationBase {

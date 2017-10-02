@@ -19,16 +19,16 @@ class RouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection) {
     // Set route for the login to point to the SocialUserLoginForm.
     if ($route = $collection->get('user.login')) {
-      $route->setDefaults(array(
+      $route->setDefaults([
         '_form' => '\Drupal\social_user\Form\SocialUserLoginForm',
         '_title' => t('Log in')->render(),
-      ));
+      ]);
     }
     if ($route = $collection->get('user.pass')) {
-      $route->setDefaults(array(
+      $route->setDefaults([
         '_form' => '\Drupal\social_user\Form\SocialUserPasswordForm',
         '_title' => t('Reset your password')->render(),
-      ));
+      ]);
     }
     if ($route = $collection->get('user.reset.form')) {
       $route->setDefault('_title', t('Set your password')->render());

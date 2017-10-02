@@ -8,6 +8,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\mentions\MentionsInterface;
 
 /**
+ * Mentions Class.
  *
  * @file
  * Mentions Entity.

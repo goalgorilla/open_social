@@ -19,18 +19,18 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * Get the request events.
    *
    * @return mixed
-   *    Returns request events.
+   *   Returns request events.
    */
   public static function getSubscribedEvents() {
-    $events[KernelEvents::REQUEST][] = array('checkForRedirection');
+    $events[KernelEvents::REQUEST][] = ['checkForRedirection'];
     return $events;
   }
 
   /**
    * This method is called when the KernelEvents::REQUEST event is dispatched.
    *
-   * @param GetResponseEvent $event
-   *    The event.
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   *   The event.
    */
   public function checkForRedirection(GetResponseEvent $event) {
     // Check if there is a group object on the current route.

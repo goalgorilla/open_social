@@ -11,8 +11,8 @@ use Drupal\message\Entity\Message;
  * @ActivityDestination(
  *  id = "email",
  *  label = @Translation("Email"),
- *  is_aggregatable = FALSE,
- *  is_common = FALSE,
+ *  isAggregatable = FALSE,
+ *  isCommon = FALSE,
  * )
  */
 class EmailActivityDestination extends SendActivityDestinationBase {

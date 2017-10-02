@@ -12,10 +12,10 @@ use Drupal\Core\Session\AccountInterface;
  * Defines the access control handler for the comment entity type.
  *
  * @see \Drupal\comment\Entity\Comment
+ *
+ * @todo: Implement setting to make it possible overridden on per-group basis.
  */
 class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
-
-  // @todo: Implement setting to make it possible overridden on per-group basis.
 
   /**
    * {@inheritdoc}

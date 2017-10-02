@@ -57,10 +57,10 @@ class Post extends DemoEntity {
    * Converts a date in the correct format.
    *
    * @param string $date_string
-   *    The date.
+   *   The date.
    *
    * @return int|false
-   *    Returns a timestamp on success, false otherwise.
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     if ($date_string === 'now') {

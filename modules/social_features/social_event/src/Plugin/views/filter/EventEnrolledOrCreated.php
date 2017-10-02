@@ -46,33 +46,33 @@ class EventEnrolledOrCreated extends FilterPluginBase {
     }
 
     // Join the event tables.
-    $configuration = array(
+    $configuration = [
       'table' => 'event_enrollment__field_event',
       'field' => 'field_event_target_id',
       'left_table' => 'node_field_data',
       'left_field' => 'nid',
       'operator' => '=',
-    );
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('event_enrollment__field_event', $join, 'node_field_data');
 
-    $configuration = array(
+    $configuration = [
       'table' => 'event_enrollment_field_data',
       'field' => 'id',
       'left_table' => 'event_enrollment__field_event',
       'left_field' => 'entity_id',
       'operator' => '=',
-    );
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('event_enrollment_field_data', $join, 'node_field_data');
 
-    $configuration = array(
+    $configuration = [
       'table' => 'event_enrollment__field_enrollment_status',
       'field' => 'entity_id',
       'left_table' => 'event_enrollment__field_event',
       'left_field' => 'entity_id',
       'operator' => '=',
-    );
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('event_enrollment__field_enrollment_status', $join, 'node_field_data');
 
