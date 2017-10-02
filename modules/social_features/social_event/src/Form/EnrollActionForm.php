@@ -79,17 +79,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * Constructs an Enroll Action Form.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *    The route match.
+   *   The route match.
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *    The entity storage.
+   *   The entity storage.
    * @param \Drupal\user\UserStorageInterface $user_storage
-   *    The user storage.
+   *   The user storage.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
-   *    The current user.
+   *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *    The config factory.
+   *   The config factory.
    */
   public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
     $this->routeMatch = $route_match;
@@ -141,10 +141,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
     }
 
-    $form['event'] = array(
+    $form['event'] = [
       '#type' => 'hidden',
       '#value' => $nid,
-    );
+    ];
 
     $submit_text = $this->t('Enroll');
     $enrollment_open = TRUE;
@@ -155,10 +155,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $enrollment_open = FALSE;
     }
 
-    $conditions = array(
+    $conditions = [
       'field_account' => $uid,
       'field_event' => $nid,
-    );
+    ];
 
     $to_enroll_status = '1';
 
@@ -172,43 +172,43 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
     }
 
-    $form['to_enroll_status'] = array(
+    $form['to_enroll_status'] = [
       '#type' => 'hidden',
       '#value' => $to_enroll_status,
-    );
+    ];
 
-    $form['enroll_for_this_event'] = array(
+    $form['enroll_for_this_event'] = [
       '#type' => 'submit',
       '#value' => $submit_text,
       '#disabled' => !$enrollment_open,
-    );
+    ];
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
     if (isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1') {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
-      $form['enroll_for_this_event']['#attributes'] = array(
-        'class' => array(
+      $form['enroll_for_this_event']['#attributes'] = [
+        'class' => [
           'btn',
           'btn-accent brand-bg-accent',
           'btn-lg btn-raised',
           'dropdown-toggle',
           'waves-effect',
-        ),
+        ],
         'autocomplete' => 'off',
         'data-toggle' => 'dropdown',
         'aria-haspopup' => 'true',
         'aria-expanded' => 'false',
         'data-caret' => 'true',
-      );
+      ];
 
       $cancel_text = $this->t('Cancel enrollment');
 
       // Add markup for the button so it will be a dropdown.
-      $form['feedback_user_has_enrolled'] = array(
+      $form['feedback_user_has_enrolled'] = [
         '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
-      );
+      ];
 
       $form['#attached']['library'][] = 'social_event/form_submit';
     }
@@ -219,11 +219,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   /**
    * Function to determine if an event has been finished.
    *
-   * @param Node $node
-   *    The event.
+   * @param \Drupal\node\Entity\Node $node
+   *   The event.
    *
    * @return bool
-   *    TRUE if the evens is finished / completed.
+   *   TRUE if the evens is finished / completed.
    */
   protected function eventHasBeenFinished(Node $node) {
     // Use the start date when the end date is not set to determine if the
@@ -258,12 +258,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
         ->getInternalPath();
       $form_state->setRedirect('user.login',
-        array(),
-        array(
-          'query' => array(
+        [],
+        [
+          'query' => [
             'destination' => $node_url,
-          ),
-        )
+          ],
+        ]
       );
 
       // Check if user can register accounts.
@@ -272,17 +272,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $create_account_url = Url::fromUserInput('/user/register');
         $create_account_link = Link::fromTextAndUrl($this->t('create a new account'), $create_account_url)->toString();
-        $message = $this->t('Please @log_in or @create_account_link so that you can enroll to the event.', array(
+        $message = $this->t('Please @log_in or @create_account_link so that you can enroll to the event.', [
           '@log_in' => $log_in_link,
           '@create_account_link' => $create_account_link,
-        ));
+        ]);
       }
       else {
         $log_in_url = Url::fromUserInput('/user/login');
         $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
-        $message = $this->t('Please @log_in so that you can enroll to the event.', array(
+        $message = $this->t('Please @log_in so that you can enroll to the event.', [
           '@log_in' => $log_in_link,
-        ));
+        ]);
       }
 
       drupal_set_message($message);
@@ -291,17 +291,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     $to_enroll_status = $form_state->getValue('to_enroll_status');
 
-    $conditions = array(
+    $conditions = [
       'field_account' => $uid,
       'field_event' => $nid,
-    );
+    ];
 
     $enrollments = $this->entityStorage->loadByProperties($conditions);
 
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
     $cache_tag = 'enrollment:' . $nid . '-' . $uid;
-    Cache::invalidateTags(array($cache_tag));
+    Cache::invalidateTags([$cache_tag]);
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;

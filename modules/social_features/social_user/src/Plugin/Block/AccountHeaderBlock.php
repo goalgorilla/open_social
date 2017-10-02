@@ -27,7 +27,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * The module handler.
    *
-   * @var ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
@@ -48,7 +48,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
   /**
    * The Entity Type Manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -56,19 +56,19 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    * AccountHeaderBlock constructor.
    *
    * @param array $configuration
-   *    The configuration.
+   *   The configuration.
    * @param string $plugin_id
-   *    The plugin id.
+   *   The plugin id.
    * @param mixed $plugin_definition
-   *    The plugin definition.
+   *   The plugin definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *    The module handler.
+   *   The module handler.
    * @param \Drupal\Core\Render\RendererInterface $renderer
-   *    The renderer.
+   *   The renderer.
    * @param \Drupal\activity_creator\ActivityNotifications $activity_notifications
-   *    The activity creator, activity notifications.
+   *   The activity creator, activity notifications.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The Entity Type Manager.
+   *   The Entity Type Manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -103,7 +103,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $account_name = $account->getAccountName();
 
       $links = [
-        'add' => array(
+        'add' => [
           'classes' => 'dropdown',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
@@ -112,8 +112,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'label' => $this->t('New content'),
           'title_classes' => 'sr-only',
           'url' => '#',
-          'below' => array(
-            'add_event' => array(
+          'below' => [
+            'add_event' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -125,8 +125,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
               'url' => Url::fromRoute('node.add', [
                 'node_type' => 'event',
               ]),
-            ),
-            'add_topic' => array(
+            ],
+            'add_topic' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -138,8 +138,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
               'url' => Url::fromRoute('node.add', [
                 'node_type' => 'topic',
               ]),
-            ),
-            'add_group' => array(
+            ],
+            'add_group' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -149,10 +149,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
               'label' => $this->t('New group'),
               'title_classes' => '',
               'url' => Url::fromRoute('entity.group.add_page'),
-            ),
-          ),
-        ),
-        'groups' => array(
+            ],
+          ],
+        ],
+        'groups' => [
           'classes' => '',
           'link_attributes' => '',
           'icon_classes' => 'icon-group',
@@ -162,12 +162,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'url' => Url::fromRoute('view.groups.page_user_groups', [
             'user' => $account->id(),
           ]),
-        ),
+        ],
       ];
 
       // Check if the current user is allowed to create new books.
       if ($this->moduleHandler->moduleExists('social_book')) {
-        $links['add']['below']['add_book'] = array(
+        $links['add']['below']['add_book'] = [
           'classes' => '',
           'link_attributes' => '',
           'link_classes' => '',
@@ -180,12 +180,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'node_type' => 'book',
           ]),
           'access' => $account->hasPermission('create new books'),
-        );
+        ];
       }
 
       // Check if the current user is allowed to create new pages.
       if ($this->moduleHandler->moduleExists('social_page')) {
-        $links['add']['below']['add_page'] = array(
+        $links['add']['below']['add_page'] = [
           'classes' => '',
           'link_attributes' => '',
           'link_classes' => '',
@@ -197,7 +197,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'url' => Url::fromRoute('node.add', [
             'node_type' => 'page',
           ]),
-        );
+        ];
       }
 
       if ($this->moduleHandler->moduleExists('activity_creator')) {
@@ -205,7 +205,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         $notifications = $this->renderer->render($notifications_view);
 
         $account_notifications = $this->activityNotifications;
-        $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
+        $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
 
         if ($num_notifications === 0) {
           $notifications_icon = 'icon-notifications_none';
@@ -220,7 +220,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           }
         }
 
-        $links['notifications'] = array(
+        $links['notifications'] = [
           'classes' => 'dropdown notification-bell',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
@@ -230,30 +230,30 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'title_classes' => $label_classes,
           'url' => '#',
           'below' => $notifications,
-        );
+        ];
       }
 
-      $links['account_box'] = array(
+      $links['account_box'] = [
         'classes' => 'dropdown profile',
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-account_circle',
-        'title' => $this->t('Profile of @account', array('@account' => $account_name)),
+        'title' => $this->t('Profile of @account', ['@account' => $account_name]),
         'label' => $account_name,
         'title_classes' => 'sr-only',
         'url' => '#',
-        'below' => array(
-          'signed_in_as' => array(
+        'below' => [
+          'signed_in_as' => [
             'classes' => 'dropdown-header header-nav-current-user',
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
-          ),
-          'divide_profile' => array(
+          ],
+          'divide_profile' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'my_profile' => array(
+          ],
+          'my_profile' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -263,8 +263,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'label' => $this->t('My profile'),
             'title_classes' => '',
             'url' => Url::fromRoute('user.page'),
-          ),
-          'my_events' => array(
+          ],
+          'my_events' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -276,8 +276,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'url' => Url::fromRoute('view.events.events_overview', [
               'user' => $account->id(),
             ]),
-          ),
-          'my_topics' => array(
+          ],
+          'my_topics' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -289,8 +289,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'url' => Url::fromRoute('view.topics.page_profile', [
               'user' => $account->id(),
             ]),
-          ),
-          'my_groups' => array(
+          ],
+          'my_groups' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -302,29 +302,29 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'url' => Url::fromRoute('view.groups.page_user_groups', [
               'user' => $account->id(),
             ]),
-          ),
-          'divide_content' => array(
+          ],
+          'divide_content' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'my_content' => array(
+          ],
+          'my_content' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
             'icon_classes' => '',
             'icon_label' => '',
-            'title' => $this->t('View content I\'m following'),
+            'title' => $this->t("View content I'm following"),
             'label' => $this->t('Following'),
             'title_classes' => '',
             'url' => Url::fromRoute('view.following.following'),
-          ),
-          'divide_account' => array(
+          ],
+          'divide_account' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'my_account' => array(
+          ],
+          'my_account' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -336,8 +336,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'url' => Url::fromRoute('entity.user.edit_form', [
               'user' => $account->id(),
             ]),
-          ),
-          'edit_profile' => array(
+          ],
+          'edit_profile' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -351,13 +351,13 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
               'profile_type' => 'profile',
             ]),
             'access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
-          ),
-          'divide_logout' => array(
+          ],
+          'divide_logout' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'logout' => array(
+          ],
+          'logout' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -367,9 +367,9 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'label' => $this->t('Logout'),
             'title_classes' => '',
             'url' => Url::fromRoute('user.logout'),
-          ),
-        ),
-      );
+          ],
+        ],
+      ];
 
       $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
@@ -383,7 +383,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     }
     else {
       $links = [
-        'home' => array(
+        'home' => [
           'classes' => 'hidden-xs',
           'link_attributes' => '',
           'icon_classes' => '',
@@ -392,7 +392,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'label' => $this->t('Home'),
           'title_classes' => '',
           'url' => Url::fromRoute('<front>'),
-        ),
+        ],
       ];
     }
 

@@ -71,7 +71,7 @@ class MentionsSettingsForm extends ConfigFormBase {
    */
   protected function getContentEntityTypes() {
     $options = [];
-    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_id => $entity_type) {
+    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
       if ($entity_type instanceof ContentEntityTypeInterface) {
         $options[$entity_type->id()] = $entity_type->getLabel();
       }

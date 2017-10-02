@@ -25,7 +25,7 @@ class EntityAccessTest extends UnitTestCase {
       ->method('getType')
       ->willReturn($this->fieldType);
 
-    $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getFieldDefinitions()->willReturn([$this->fieldType => $fieldDefinitionInterface]);
     $node = $node->reveal();
 
     $op = 'view';
@@ -60,10 +60,10 @@ class EntityAccessTest extends UnitTestCase {
     $fieldItemListInterface = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())
       ->method('getValue')
-      ->willReturn(array(0 => array('value' => 'public')));
+      ->willReturn([0 => ['value' => 'public']]);
 
     $node->get('entity_access_field')->willReturn($fieldItemListInterface);
-    $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getFieldDefinitions()->willReturn([$this->fieldType => $fieldDefinitionInterface]);
     $node->getOwnerId()->willReturn($this->nodeOwnerId);
     $node = $node->reveal();
 
@@ -106,10 +106,10 @@ class EntityAccessTest extends UnitTestCase {
     $fieldItemListInterface = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())
       ->method('getValue')
-      ->willReturn(array(0 => array('value' => $this->fieldValue)));
+      ->willReturn([0 => ['value' => $this->fieldValue]]);
 
     $node->get('entity_access_field')->willReturn($fieldItemListInterface);
-    $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getFieldDefinitions()->willReturn([$this->fieldType => $fieldDefinitionInterface]);
     $node->getCacheContexts()->willReturn(NULL);
     $node->getOwnerId()->willReturn($this->nodeOwnerId);
     $node = $node->reveal();
@@ -152,10 +152,10 @@ class EntityAccessTest extends UnitTestCase {
     $fieldItemListInterface = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
     $fieldItemListInterface->expects($this->any())
       ->method('getValue')
-      ->willReturn(array(0 => array('value' => $this->fieldValue)));
+      ->willReturn([0 => ['value' => $this->fieldValue]]);
 
     $node->get('entity_access_field')->willReturn($fieldItemListInterface);
-    $node->getFieldDefinitions()->willReturn(array($this->fieldType => $fieldDefinitionInterface));
+    $node->getFieldDefinitions()->willReturn([$this->fieldType => $fieldDefinitionInterface]);
     $node->getCacheContexts()->willReturn(NULL);
     $node->getOwnerId()->willReturn($this->nodeOwnerId);
     $node = $node->reveal();
