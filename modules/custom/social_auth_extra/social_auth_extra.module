@@ -17,15 +17,15 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
   if ($social_buttons = _social_auth_extra_get_buttons('register')) {
     $form += $social_buttons;
 
-    $form['account']['title'] = array(
+    $form['account']['title'] = [
       '#type' => 'html_tag',
       '#tag' => 'label',
-      '#attributes' => array(
-        'class' => array('form-wrapper__label'),
-      ),
+      '#attributes' => [
+        'class' => ['form-wrapper__label'],
+      ],
       '#weight' => -100,
       '#value' => t('Or sign up with email'),
-    );
+    ];
   }
 
   $request = \Drupal::request();
@@ -34,7 +34,7 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
     $network_manager = \Drupal::service('plugin.network.manager');
     $networks = $network_manager->getDefinitions();
 
-    foreach ($networks as $key => $network) {
+    foreach ($networks as $network) {
       $instance = $network_manager->createInstance($network['id']);
 
       if ($instance->isActive() && $instance->getSocialNetworkKey() == $provider) {
@@ -79,15 +79,15 @@ function social_auth_extra_form_social_user_login_form_alter(&$form, FormStateIn
   if ($social_buttons = _social_auth_extra_get_buttons('login')) {
     $form += $social_buttons;
 
-    $form['title'] = array(
+    $form['title'] = [
       '#type' => 'html_tag',
       '#tag' => 'label',
-      '#attributes' => array(
-        'class' => array('form-wrapper__label'),
-      ),
+      '#attributes' => [
+        'class' => ['form-wrapper__label'],
+      ],
       '#weight' => -10,
       '#value' => t('Or log in with username or email'),
-    );
+    ];
   }
 }
 
@@ -95,40 +95,40 @@ function social_auth_extra_form_social_user_login_form_alter(&$form, FormStateIn
  * Returns form array with social network auth buttons.
  */
 function _social_auth_extra_get_buttons($type = 'login') {
-  $form = array();
+  $form = [];
 
   $network_manager = \Drupal::service('plugin.network.manager');
   $networks = $network_manager->getDefinitions();
   $provider = \Drupal::request()->get('provider');
 
   if (!empty($networks)) {
-    $form['social_auth_extra'] = array(
+    $form['social_auth_extra'] = [
       '#type' => 'fieldset',
-      '#title' => t('%action with', array(
+      '#title' => t('%action with', [
         '%action' => $type == 'register' ? t('Sign up') : t('Log in'),
-      )),
+      ]),
       '#weight' => -100,
-    );
+    ];
 
     foreach ($networks as $key => $network) {
       $instance = $network_manager->createInstance($network['id']);
       $status = \Drupal::config("{$key}.settings")->get('status');
       $network_btnlabel = strtolower('btn--' . $network['social_network']);
-      $btn_attributes = array(
-        'class' => array('btn', 'btn--with-bgicon', $network_btnlabel),
-      );
+      $btn_attributes = [
+        'class' => ['btn', 'btn--with-bgicon', $network_btnlabel],
+      ];
 
       if ($provider && $provider != $instance->getSocialNetworkKey()) {
         $btn_attributes['disabled'] = 'disabled';
       }
 
       if ($status) {
-        $form['social_auth_extra'][$key] = array(
+        $form['social_auth_extra'][$key] = [
           '#type' => 'link',
           '#title' => $network['social_network'],
           '#url' => Url::fromRoute("{$key}.user_{$type}"),
           '#attributes' => $btn_attributes,
-        );
+        ];
       }
     }
 
@@ -165,7 +165,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
         $auth_manager->setSdk($sdk);
         $auth_manager->setAccessToken($access_token);
 
-        if ($social_profile = $auth_manager->getProfile()) {
+        if ($auth_manager->getProfile()) {
           /** @var \Drupal\Core\Extension\ModuleHandlerInterface $module_handler */
           $module_handler = \Drupal::service('module_handler');
           // Set id of social profile to account and save.
@@ -294,9 +294,9 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
           $form['social_login_connections'][$network['id']]['link'] = [
             '#type' => 'link',
             '#title' => t('Unlink'),
-            '#attributes' => array(
-              'class' => array('btn btn-default btn-social-linking'),
-            ),
+            '#attributes' => [
+              'class' => ['btn btn-default btn-social-linking'],
+            ],
             '#url' => Url::fromRoute($network['id'] . '.user_unlink'),
           ];
         }
@@ -304,9 +304,9 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
           $form['social_login_connections'][$network['id']]['link'] = [
             '#type' => 'link',
             '#title' => t('Link'),
-            '#attributes' => array(
-              'class' => array('btn btn-flat btn-social-linking'),
-            ),
+            '#attributes' => [
+              'class' => ['btn btn-flat btn-social-linking'],
+            ],
             '#url' => Url::fromRoute($network['id'] . '.user_link'),
           ];
         }
@@ -372,7 +372,7 @@ function social_auth_extra_mail($key, &$message, $params) {
   $token_service = \Drupal::token();
   $language_manager = \Drupal::languageManager();
   $langcode = $message['langcode'];
-  $variables = array('user' => $params['account']);
+  $variables = ['user' => $params['account']];
 
   $language = \Drupal::languageManager()->getLanguage($params['account']->getPreferredLangcode());
   $original_language = $language_manager->getConfigOverrideLanguage();

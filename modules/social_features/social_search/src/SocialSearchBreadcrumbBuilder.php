@@ -18,7 +18,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
-    $search_routes = array(
+    $search_routes = [
       'view.search_all.page',
       'view.search_all.page_no_value',
       'view.search_content.page',
@@ -27,7 +27,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       'view.search_users.page_no_value',
       'view.search_groups.page',
       'view.search_groups.page_no_value',
-    );
+    ];
     return in_array($route_match->getRouteName(), $search_routes);
   }
 

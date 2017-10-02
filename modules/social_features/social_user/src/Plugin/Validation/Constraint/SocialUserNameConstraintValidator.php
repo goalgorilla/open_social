@@ -42,7 +42,7 @@ class SocialUserNameConstraintValidator extends ConstraintValidator implements C
 
     if ($nameField = $items->first()) {
       $name = $nameField->__get('value');
-      $definition = DataDefinition::create('string')->setConstraints(array('Email' => array()));
+      $definition = DataDefinition::create('string')->setConstraints(['Email' => []]);
       $typed_data = $this->typedDataManager->create($definition, $name);
       $violations = $typed_data->validate();
       if (count($violations) == 0) {

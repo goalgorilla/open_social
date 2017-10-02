@@ -5,7 +5,7 @@
  * Install, update and uninstall functions for the social_comment module.
  */
 
-use \Drupal\user\Entity\Role;
+use Drupal\user\Entity\Role;
 
 /**
  * PROCEED WITH CARE HERE!
@@ -56,28 +56,28 @@ function _social_post_set_permissions() {
  */
 function _social_post_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
+  $permissions['anonymous'] = [
     'view public posts',
     'view published post entities',
-  );
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'add post entities',
     'delete own post entities',
     'edit own post entities',
     'view community posts',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'delete any post entities',
     'edit any post entities',
     'view unpublished post entities',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];

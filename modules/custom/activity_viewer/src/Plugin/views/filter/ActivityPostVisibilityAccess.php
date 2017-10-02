@@ -50,46 +50,46 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $this->query->addTable('activity__field_activity_entity');
 
-    $configuration = array(
+    $configuration = [
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
       'table' => 'post_field_data',
       'field' => 'id',
       'operator' => '=',
-      'extra' => array(
-        0 => array(
+      'extra' => [
+        0 => [
           'left_field' => 'field_activity_entity_target_type',
           'value' => 'post',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
 
-    $configuration = array(
+    $configuration = [
       'left_table' => 'post',
       'left_field' => 'id',
       'table' => 'post__field_visibility',
       'field' => 'entity_id',
       'operator' => '=',
-    );
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
     // Join node table.
-    $configuration = array(
+    $configuration = [
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
       'table' => 'node_access',
       'field' => 'nid',
       'operator' => '=',
-      'extra' => array(
-        0 => array(
+      'extra' => [
+        0 => [
           'left_field' => 'field_activity_entity_target_type',
           'value' => 'node',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 

@@ -16,11 +16,11 @@
  * For when a user is registering via social network.
  *
  * @param \Drupal\user\UserInterface $account
- *    The Account.
+ *   The Account.
  * @param \Drupal\social_auth_extra\AuthManagerInterface $auth_manager
- *    The AuthManagerInterface.
+ *   The AuthManagerInterface.
  * @param \Drupal\social_auth_extra\UserManagerInterface $user_manager
- *    The UserManagerInterface.
+ *   The UserManagerInterface.
  */
 function hook_social_auth_extra_user_presave(\Drupal\user\UserInterface $account, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
 
@@ -32,13 +32,13 @@ function hook_social_auth_extra_user_presave(\Drupal\user\UserInterface $account
  * For when a user is registering via social network.
  *
  * @param \Drupal\user\UserInterface $account
- *    The Account.
+ *   The Account.
  * @param \Drupal\profile\Entity\ProfileInterface $profile
- *    The Profile.
+ *   The Profile.
  * @param \Drupal\social_auth_extra\AuthManagerInterface $auth_manager
- *    The AuthManagerInterface.
+ *   The AuthManagerInterface.
  * @param \Drupal\social_auth_extra\UserManagerInterface $user_manager
- *    The UserManagerInterface.
+ *   The UserManagerInterface.
  */
 function hook_social_auth_extra_profile_presave(\Drupal\user\UserInterface $account, \Drupal\profile\Entity\ProfileInterface $profile, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
 
