@@ -7,11 +7,11 @@ Feature: Search
   Scenario: Successfully search groups
     Given users:
       | name           | status | pass   |
-      | tjakka user    | 1      | maxic  |
+      | tjakkauser     | 1      | maxic  |
     Given groups:
       | title             | description     | author        | type                  | language |
-      | Tjakka group      | Tjakka group    | chrishall   | closed_group          | en       |
-      | Tjakka grouptwo   | Tjakka group    | chrishall   | open_group            | en       |
+      | Tjakka group      | Tjakka group    | tjakkauser    | closed_group          | en       |
+      | Tjakka grouptwo   | Tjakka group    | tjakkauser    | open_group            | en       |
     Given "event" content:
       | title             | body          |
       | Tjakka event      | Description   |
@@ -24,4 +24,5 @@ Feature: Search
     And I should see "Tjakka grouptwo"
     And I should see "Tjakka event"
     And I should see "Tjakka topic"
-    And I should see "tjakka user"
+    And I break
+    And I should see "tjakkauser"
