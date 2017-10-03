@@ -24,5 +24,4 @@ Feature: Search
     And I should see "Tjakka grouptwo"
     And I should see "Tjakka event"
     And I should see "Tjakka topic"
-    And I break
     And I should see "tjakkauser"
