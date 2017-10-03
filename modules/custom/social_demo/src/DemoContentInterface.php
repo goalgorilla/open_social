@@ -22,6 +22,24 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
   public function getSource();
 
   /**
+   * Sets the used profile.
+   *
+   * @param $profile
+   *
+   * @return string void.
+   * void.
+   */
+  public function setProfile($profile);
+
+  /**
+   * Returns the profile.
+   *
+   * @return string
+   *   The used demo content profile.
+   */
+  public function getProfile();
+
+  /**
    * Returns the module name.
    *
    * @return string
