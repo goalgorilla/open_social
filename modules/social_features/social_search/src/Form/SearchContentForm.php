@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class SearchContentForm extends FormBase implements ContainerInjectionInterface {
 
   /**
-   * The route match.
+   * The request stack.
    *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
