@@ -132,7 +132,7 @@ class Dropdown extends FieldItemBase {
    * {@inheritdoc}
    */
   public function isEmpty() {
-    return empty($this->values['value']);
+    return empty($this->values['value']) && !is_int($this->values['value']);
   }
 
   /**
