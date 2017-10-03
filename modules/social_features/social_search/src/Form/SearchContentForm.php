@@ -5,10 +5,10 @@ namespace Drupal\social_search\Form;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class SearchContentForm.
@@ -22,16 +22,15 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected $requestStack;
 
   /**
    * SearchHeroForm constructor.
    *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *   The route match.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    */
-  public function __construct(RouteMatchInterface $routeMatch) {
-    $this->routeMatch = $routeMatch;
+  public function __construct(RequestStack $requestStack) {
+    $this->requestStack = $requestStack;
   }
 
   /**
@@ -39,7 +38,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('current_route_match')
+      $container->get('request_stack')
     );
   }
 
