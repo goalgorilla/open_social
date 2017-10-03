@@ -171,7 +171,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * Extract the mention from the content by [~Uuid].
    *
-   * @param $content
+   * @param string $content
    *    The content that contains the mention.
    *
    * @return mixed

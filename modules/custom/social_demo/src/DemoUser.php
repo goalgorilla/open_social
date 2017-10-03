@@ -196,7 +196,7 @@ abstract class DemoUser extends DemoContent {
    * @return array
    *    Returns an empty array or one filled with taxonomy terms.
    */
-  protected function prepareTerms($values) {
+  protected function prepareTerms(array $values) {
     $terms = [];
 
     foreach ($values as $uuid) {
