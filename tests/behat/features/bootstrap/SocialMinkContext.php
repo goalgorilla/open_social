@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 use Drupal\DrupalExtension\Context\MinkContext;
 use Behat\Behat\Context\Context;

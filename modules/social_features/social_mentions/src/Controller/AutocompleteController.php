@@ -2,11 +2,19 @@
 
 namespace Drupal\social_mentions\Controller;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+
+define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
+define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
+define('SOCIAL_MENTIONS_SUGGESTIONS_ALL', 'all');
 
 /**
  * Class AutocompleteController.
@@ -18,22 +26,70 @@ use Symfony\Component\HttpFoundation\Request;
 class AutocompleteController extends ControllerBase {
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * AutocompleteController constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   */
+  public function __construct(ConfigFactoryInterface $configFactory, Connection $database, EntityTypeManagerInterface $entityTypeManager) {
+    $this->configFactory = $configFactory;
+    $this->database = $database;
+    $this->entityTypeManager = $entityTypeManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('database'),
+      $container->get('entity_type.manager')
+    );
+  }
+
+  /**
    * Function for suggestions.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
-   *    The request.
+   *   The request.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *    Returns a JsonResponse.
+   *   Returns a JsonResponse.
    */
   public function suggestions(Request $request) {
     $name = $request->get('term');
-    $config = \Drupal::config('mentions.settings');
+    $config = $this->configFactory->get('mentions.settings');
     $connection = Database::getConnection();
     $name = $connection->escapeLike($name);
     $suggestion_format = $config->get('suggestions_format');
 
-    $query = \Drupal::database()->select('users', 'u');
+    $query = $this->database->select('users', 'u');
     $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
 
     switch ($suggestion_format) {
@@ -76,8 +132,8 @@ class AutocompleteController extends ControllerBase {
 
     $response = [];
     $accounts = User::loadMultiple($result);
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('profile');
+    $storage = $this->entityTypeManager->getStorage('profile');
+    $view_builder = $this->entityTypeManager->getViewBuilder('profile');
 
     /* @var \Drupal\Core\Session\AccountInterface $account */
     foreach ($accounts as $account) {

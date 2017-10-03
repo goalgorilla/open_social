@@ -77,10 +77,10 @@ class Page extends DemoNode {
    * Prepares data about an image of node.
    *
    * @param string $uuid
-   *    The uuid for the image.
+   *   The uuid for the image.
    *
    * @return array|null
-   *    Returns an array or null.
+   *   Returns an array or null.
    */
   protected function prepareImage($uuid) {
     $value = NULL;

@@ -6,8 +6,8 @@
  */
 
 use Drupal\file\Entity\File;
-use \Drupal\menu_link_content\Entity\MenuLinkContent;
-use \Drupal\user\Entity\Role;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\user\Entity\Role;
 use Drupal\block\Entity\Block;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
@@ -90,30 +90,30 @@ function _social_profile_set_permissions() {
  */
 function _social_profile_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array();
+  $permissions['anonymous'] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'add own profile profile',
     'update own profile profile',
     'view any profile profile',
     'view own profile profile',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'add any profile profile',
     'update any profile profile',
     'edit profile tags',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'delete terms in profile_tag',
     'edit terms in profile_tag',
     'administer profile settings',
     'view profile email',
-  ));
+  ]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -127,7 +127,7 @@ function _social_profile_get_permissions($role) {
 function _social_profile_create_menu_links() {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
-  /** @var MenuLinkContent $menu_link */
+  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
   foreach ($menu_links as $menu_link) {
     if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
       $parent = 'menu_link_content:' . $menu_link->uuid();
@@ -192,10 +192,10 @@ function social_profile_update_8003(&$sandbox) {
   // Add permission to view profile email and administer profile settings for
   // sitemanager role.
   $roles = Role::loadMultiple();
-  $permissions = array(
+  $permissions = [
     'administer profile settings',
     'view profile email',
-  );
+  ];
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
     if ($role->id() === 'sitemanager') {
@@ -209,12 +209,12 @@ function social_profile_update_8003(&$sandbox) {
  */
 function social_profile_update_8004(&$sandbox) {
   $roles = Role::loadMultiple();
-  $lu_permissions = array(
+  $lu_permissions = [
     'update own profile profile',
-  );
-  $cm_permissions = array(
+  ];
+  $cm_permissions = [
     'update any profile profile',
-  );
+  ];
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -276,7 +276,8 @@ function social_profile_update_8006(&$sandbox) {
       continue;
     }
     // Check if the user has a profile already.
-    if (!$profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE)) {
+    $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
+    if (!$profile) {
       try {
         Profile::create([
           'type' => ProfileType::load('profile')->id(),

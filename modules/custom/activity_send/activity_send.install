@@ -9,43 +9,43 @@
  * Implements hook_schema().
  */
 function activity_send_schema() {
-  $schema['user_activity_send'] = array(
-    'fields' => array(
-      'uid' => array(
+  $schema['user_activity_send'] = [
+    'fields' => [
+      'uid' => [
         'description' => 'The {user}.uid of user.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'destination' => array(
+      ],
+      'destination' => [
         'description' => 'The activity destination name.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'message_template' => array(
+      ],
+      'message_template' => [
         'description' => 'The message template name.',
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'status' => array(
+      ],
+      'status' => [
         'description' => 'A boolean indicating whether this type of notifications is enabled or not.',
         'type' => 'int',
         'size' => 'tiny',
         'not null' => TRUE,
         'default' => 0,
-      ),
-    ),
-    'indexes' => array(
-      'uas_uid' => array('uid'),
-      'uas_destination' => array('destination'),
-      'uas_message_template' => array('message_template'),
-      'uas_status' => array('status'),
-    ),
-  );
+      ],
+    ],
+    'indexes' => [
+      'uas_uid' => ['uid'],
+      'uas_destination' => ['destination'],
+      'uas_message_template' => ['message_template'],
+      'uas_status' => ['status'],
+    ],
+  ];
 
   return $schema;
 }

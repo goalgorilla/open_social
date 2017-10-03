@@ -51,20 +51,20 @@ class GoogleAuthSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Copy the Client ID here'),
     ];
 
-    $form['settings']['client_secret'] = array(
+    $form['settings']['client_secret'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('Client Secret'),
       '#default_value' => $config->get('client_secret'),
       '#description' => $this->t('Copy the Client Secret here'),
-    );
+    ];
 
-    $form['settings']['status'] = array(
+    $form['settings']['status'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Active'),
       '#default_value' => $config->get('status'),
       '#description' => $this->t('Determines whether this social network can be used.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

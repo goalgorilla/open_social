@@ -43,7 +43,7 @@ class EntityAccessHelper {
         if ($field_definition->getType() === 'entity_access_field') {
           $field_values = $node->get($field_name)->getValue();
           if (!empty($field_values)) {
-            foreach ($field_values as $key => $field_value) {
+            foreach ($field_values as $field_value) {
               if (isset($field_value['value'])) {
 
                 if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
