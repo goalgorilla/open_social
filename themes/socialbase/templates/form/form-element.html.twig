@@ -84,10 +84,6 @@
     {{ label }}
   {% endif %}
 
-  {% if prefix is not empty %}
-    {{ prefix }}
-  {% endif %}
-
   {% if description_display == 'before' and description.content %}
     <div{{ description.attributes }}>
       {{ description.content }}
@@ -96,12 +92,14 @@
 
   {{ children }}
 
-  {% if suffix is not empty %}
-    {{ suffix }}
-  {% endif %}
-
   {% if label_display == 'after' %}
     {{ label }}
+  {% endif %}
+
+  {% if errors %}
+    <div class="form-item--error-message alert alert-danger alert-sm">
+      {{ errors }}
+    </div>
   {% endif %}
 
   {% if description_display in ['after', 'invisible'] and description.content %}
