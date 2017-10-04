@@ -98,6 +98,7 @@ function _social_profile_get_permissions($role) {
     'update own profile profile',
     'view any profile profile',
     'view own profile profile',
+    'view profile',
   ]);
 
   // Content manager.
@@ -299,4 +300,11 @@ function social_profile_update_8006(&$sandbox) {
         '@count' => $sandbox['profiles'],
       ]);
   }
+}
+
+/**
+ * Reset profile permissions.
+ */
+function social_profile_update_8007(&$sandbox) {
+  _social_profile_set_permissions();
 }
