@@ -102,3 +102,7 @@ libraries[bootstrap][type] = library
 libraries[bootstrap][download][type] = get
 libraries[bootstrap][download][url] = https://github.com/twbs/bootstrap/archive/v3.3.7.zip
 libraries[bootstrap][destination] = libraries
+libraries[autosize][type] = library
+libraries[autosize][download][type] = get
+libraries[autosize][download][url] = https://github.com/jackmoore/autosize/archive/4.0.0.zip
+libraries[autosize][destination] = libraries

@@ -143,49 +143,4 @@ class Book extends DemoNode {
     return $value;
   }
 
-  /**
-   * The function for creating a book from the demo content.
-   *
-   * @param \Drupal\node\Entity\Node $entity
-   *    The related entity.
-   * @param $book
-   *    The book.
-   */
-  public function createBookLink(Node $entity, $book) {
-    // Load book by book ID. Set saveBookLink false if not a new book.
-
-    $bid = 0;
-    if ($entity->uuid() == $book['id']) {
-      $bid = $entity->id();
-    }
-    else {
-      $book_entity = $this->loadByUuid('node', $book['id']);
-      $bid = $book_entity->id();
-    }
-
-    $pid = $bid;
-    if (!empty($book['parent'])) {
-      $book_parent = $this->loadByUuid('node', $book['parent']);
-      $pid = $book_parent->id();
-    }
-
-    $weight = 0;
-    if (!empty($book['weight'])) {
-      $weight = $book['weight'];
-    }
-
-    if ($entity->uuid() == $book['id']) {
-      $pid = 0;
-    }
-
-    $link = [
-      'nid' => $entity->id(),
-      'bid' => $bid,
-      'pid' => $pid,
-      'weight' => $weight,
-    ];
-
-    $this->bookManager->saveBookLink($link, TRUE);
-  }
-
 }

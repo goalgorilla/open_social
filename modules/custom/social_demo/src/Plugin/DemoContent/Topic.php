@@ -122,7 +122,7 @@ class Topic extends DemoNode {
    * @return array|null
    *   Array containing related files or NULL.
    */
-  protected function prepareAttachment($files) {
+  protected function prepareAttachment(array $files) {
     $attachments = NULL;
 
     foreach ($files as $file) {
