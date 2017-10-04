@@ -122,10 +122,10 @@ abstract class DemoNode extends DemoContent {
    * Converts a date in the correct format.
    *
    * @param string $date_string
-   *    The date.
+   *   The date.
    *
    * @return int|false
-   *    Returns a timestamp on success, false otherwise.
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     if ($date_string === 'now') {
@@ -192,9 +192,9 @@ abstract class DemoNode extends DemoContent {
    * The function that checks and creates a follow on an entity.
    *
    * @param \Drupal\Core\Entity\Entity $entity
-   *    The related entity.
+   *   The related entity.
    * @param array $uuids
-   *    The array containing uuids.
+   *   The array containing uuids.
    */
   public function createFollow(Entity $entity, array $uuids) {
 

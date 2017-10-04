@@ -59,7 +59,7 @@ function socialbase_preprocess_form(&$variables) {
         $created_time_ago = \Drupal::service('date.formatter')
           ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
 
-        $submitted = t('@time ago', [('@time' => $created_time_ago->getString()]);
+        $submitted = t('@time ago', ['@time' => $created_time_ago->getString()]);
         $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
         $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
