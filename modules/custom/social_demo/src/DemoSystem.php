@@ -170,10 +170,10 @@ abstract class DemoSystem extends DemoContent {
    * Prepares data about an image.
    *
    * @param string $picture
-   *    The picture by uuid.
+   *   The picture by uuid.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function preparePicture($picture) {
     $value = NULL;
@@ -192,10 +192,10 @@ abstract class DemoSystem extends DemoContent {
    * Get or create the font.
    *
    * @param string $fontName
-   *    The font name.
+   *   The font name.
    *
    * @return int|mixed|null|string
-   *    Return the font.
+   *   Return the font.
    */
   private function getOrCreateFont($fontName) {
     /** @var \Drupal\social_font\Entity\Font $font_entities */
@@ -223,37 +223,37 @@ abstract class DemoSystem extends DemoContent {
    * Function to replace the AN homepage Block.
    *
    * @param \Drupal\block_content\Entity\BlockContent $block
-   *    The block.
+   *   The block.
    * @param array $data
-   *    The data.
+   *   The data.
    */
   private function replaceAnBlock(BlockContent $block, array $data) {
 
-    $block->field_text_block = array(
+    $block->field_text_block = [
       'value' => $data['textblock'],
       'format' => 'full_html',
-    );
+    ];
 
     /** @var File $file */
     $file = $this->preparePicture($data['image']);
 
-    $block_image = array(
+    $block_image = [
       'target_id' => $file->id(),
       'alt' => "Anonymous front page image homepage'",
-    );
+    ];
     $block->field_hero_image = $block_image;
 
     // Set the links.
-    $action_links = array(
-      array(
+    $action_links = [
+      [
         'uri' => 'internal:' . $data['cta1']['url'],
         'title' => $data['cta1']['text'],
-      ),
-      array(
+      ],
+      [
         'uri' => 'internal:' . $data['cta2']['url'],
         'title' => $data['cta2']['text'],
-      ),
-    );
+      ],
+    ];
     $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
     $itemList->setValue($action_links);
     $block->field_call_to_action_link = $itemList;
