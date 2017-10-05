@@ -303,8 +303,18 @@ function social_profile_update_8006(&$sandbox) {
 }
 
 /**
- * Reset profile permissions.
+ * Grant the 'view profile' permission.
  */
 function social_profile_update_8007(&$sandbox) {
-  _social_profile_set_permissions();
+  $roles = [
+    'authenticated',
+    'contentmanager',
+    'sitemanager',
+  ];
+  $permissions = [
+    'view profile'
+  ];
+  foreach ($roles as $role) {
+    user_role_grant_permissions($role, $permissions);
+  }
 }
