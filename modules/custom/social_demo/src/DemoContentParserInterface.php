@@ -13,11 +13,11 @@ interface DemoContentParserInterface {
    * Returns the path for the given file.
    *
    * @param string $file
-   *    The filename.
+   *   The filename.
    * @param string $module
-   *    The module where the Yaml file is placed.
+   *   The module where the Yaml file is placed.
    * @param string $profile
-   *    The profile used.
+   *   The profile used.
    *
    * @return string
    *   String with the full pathname including the file.
@@ -28,14 +28,14 @@ interface DemoContentParserInterface {
    * Parses YAML file into a PHP value.
    *
    * @param string $file
-   *    The filename.
+   *   The filename.
    * @param string $module
-   *    The module where the Yaml file is placed.
+   *   The module where the Yaml file is placed.
    * @param string $profile
-   *    The profile used.
+   *   The profile used.
    *
    * @return mixed
-   *    The YAML converted to a PHP value.
+   *   The YAML converted to a PHP value.
    */
   public function parseFile($file, $module, $profile);
 
