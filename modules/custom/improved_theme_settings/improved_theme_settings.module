@@ -252,7 +252,7 @@ function improved_theme_settings_page_attachments(array &$page) {
       if (!empty($card_radius) || $card_radius == 0) {
         $style_to_add .= '
         .card,
-        .alert,
+        .card-radius,
         .hero-canvas {
           border-radius: ' . $card_radius . 'px !important;
         }
@@ -296,6 +296,7 @@ function improved_theme_settings_page_attachments(array &$page) {
 
       if (!empty($form_control_radius) || $form_control_radius == 0) {
         $style_to_add .= '
+          .form-control-radius,
           .form-control {
             border-radius: ' . $form_control_radius . 'px !important;
           }

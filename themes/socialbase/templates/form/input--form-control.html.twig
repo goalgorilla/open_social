@@ -1,4 +1,4 @@
-{% extends "input.html.twig" %}
+
 {#
 /**
  * @file
@@ -20,13 +20,24 @@
  * @see template_preprocess_input()
  */
 #}
+{%
+  set classes = [
+    'form-control',
+  ]
+%}
+
 {% spaceless %}
-  {%
-    set classes = [
-      'form-control',
-    ]
-  %}
+
+  {% if prefix %}
+    {{ prefix }}
+  {% endif %}
+
   {% block input %}
     <input{{ attributes.addClass(classes) }} />
   {% endblock %}
+
+  {% if suffix %}
+    {{ suffix }}
+  {% endif %}
+
 {% endspaceless %}
