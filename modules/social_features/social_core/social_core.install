@@ -6,6 +6,8 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\crop\Entity\Crop;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -782,4 +784,54 @@ function social_core_update_8025() {
     'social_swiftmail',
   ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Automatically try to set a new crop for the anonymous hero image.
+ */
+function social_core_update_8026() {
+  // Load the anonymous hero block.
+  $block_storage = \Drupal::entityTypeManager()->getStorage('block_content');
+  $block = $block_storage->loadByProperties(['uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4']);
+  $block = current($block);
+
+  if ($block instanceof BlockContent) {
+    // Get the hero image file ID.
+    $hero_image = $block->get('field_hero_image')->getValue();
+
+    // Check if we already have a crop for the new hero_an style.
+    $query = \Drupal::entityQuery('crop')
+      ->condition('entity_type', 'file')
+      ->condition('entity_id', $hero_image[0]['target_id'])
+      ->condition('type', 'hero_an');
+    $hero_an_crop = $query->execute();
+
+    // No crop style found yet. Let's try to set one automatically.
+    if (!$hero_an_crop) {
+      // Find and load the current hero crop to get the dimensions.
+      $query = \Drupal::entityQuery('crop')
+        ->condition('entity_type', 'file')
+        ->condition('entity_id', $hero_image[0]['target_id'])
+        ->condition('type', 'hero')
+        ->sort('cid')
+        ->range(0, 1);
+      $crop = $query->execute();
+
+      /** @var \Drupal\crop\Entity\Crop $crop */
+      $crop = Crop::load(current($crop));
+
+      // Crop object found, set the crop type to hero_an.
+      if ($crop instanceof Crop) {
+        $size = $crop->size();
+
+        // We need to adjust the width, as this is the safest way to set the new
+        // crop automatically.
+        // Aspect ratio was 2.836879433 (width 1200, height 423). It became
+        // 2.448979592 (width 1200, height 490).
+        $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
+        $crop->set('type', 'hero_an');
+        $crop->save();
+      }
+    }
+  }
 }
