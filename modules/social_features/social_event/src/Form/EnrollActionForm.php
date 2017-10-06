@@ -256,7 +256,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     // Redirect anonymous use to login page before enrolling to an event.
     if ($uid === 0) {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
-        ->getInternalPath();
+        ->toString();
       $form_state->setRedirect('user.login',
         [],
         [
