@@ -27,6 +27,11 @@
 %}
 
 {% spaceless %}
+  {% if input_group %}
+    {{ attach_library('socialbase/form--input-groups') }}
+
+    <div class="input-group">
+  {% endif %}
 
   {% if prefix %}
     {{ prefix }}
@@ -38,6 +43,10 @@
 
   {% if suffix %}
     {{ suffix }}
+  {% endif %}
+
+  {% if input_group %}
+    </div>
   {% endif %}
 
 {% endspaceless %}
