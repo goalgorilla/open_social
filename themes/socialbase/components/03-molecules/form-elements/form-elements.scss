@@ -128,62 +128,33 @@ span.form-required {
   }
 }
 
-// Static form control text
-//
-// Apply class to a `p` element to make any string of text align with labels in
-// a horizontal form layout.
+// Inline Form Errors
 
-.form-control-static {
-  // Size it appropriately next to real form controls
-  padding-top: ($padding-base-vertical + 1);
-  padding-bottom: ($padding-base-vertical + 1);
-  // Remove default margin from `p`
-  margin-bottom: 0;
-  min-height: ($line-height-computed + $font-size-base);
-
-  &.input-lg,
-  &.input-sm {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-
-// Form control feedback states
-//
-// Apply contextual and semantic states to individual form controls.
-
-.has-feedback {
-  // Enable absolute positioning
+.form-item--error-message {
+  margin-top: 10px;
   position: relative;
+  font-size: $font-size-small;
+  display: inline-block;
+  margin-bottom: 5px;
+  padding-right: 3 * $alert-padding-x-sm;
 
-  // Ensure icons don't overlap text
-  .form-control {
-    padding-right: ($input-height-base * 1.25);
-  }
-}
-// Feedback icon (requires .glyphicon classes)
-.form-control-feedback {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2; // Ensure icon is above input groups
-  display: block;
-  width: $input-height-base;
-  height: $input-height-base;
-  line-height: $input-height-base;
-  text-align: center;
-  pointer-events: none;
-}
-
-// Reposition feedback icon if input has visible label above
-.has-feedback label {
-
-  & ~ .form-control-feedback {
-    top: ($line-height-computed + 5); // Height of the `label` and its margin
-  }
-  &.sr-only ~ .form-control-feedback {
+  .close {
+    float: none;
+    position: absolute;
+    right: 0;
     top: 0;
+    padding: $alert-padding-y-sm $alert-padding-x-sm;
+  }
+
+  &::before {
+    display: inline-block;
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: -7px;
+    border-bottom:  8px dashed;
+    border-right:   8px solid transparent;
+    border-left:    8px solid transparent;
   }
 }
 
@@ -224,9 +195,5 @@ span.form-required {
       vertical-align: middle;
     }
 
-    // Re-override the feedback icon.
-    .has-feedback .form-control-feedback {
-      top: 0;
-    }
   }
 }
