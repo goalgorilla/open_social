@@ -15,7 +15,7 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Skip User 1"),
  *   description = @Translation("Makes sure that user 1 is not added to the index."),
  *   stages = {
- *     "preprocess_query" = 30,
+ *     "alter_items" = 0,
  *   },
  * )
  */
@@ -43,12 +43,12 @@ class SuperUser extends ProcessorPluginBase {
       $object = $item->getOriginalObject()->getValue();
       if ($object instanceof ProfileInterface) {
         // Profile ownedId is the userId.
-        if ($object->getOwnerId() === 1) {
+        if ($object->getOwnerId() == '1') {
           unset($items[$item_id]);
         }
       }
       elseif ($object instanceof UserInterface) {
-        if ($object->id() === 1) {
+        if ($object->id() == '1') {
           unset($items[$item_id]);
         }
       }
