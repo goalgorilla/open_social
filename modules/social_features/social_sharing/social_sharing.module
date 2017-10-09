@@ -41,7 +41,7 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
             // Lets get all the values that we have for our
             // entity_access_fields.
             $field_values = $node->get($field_name)->getValue();
-            foreach ($field_values as $key => $field_value) {
+            foreach ($field_values as $field_value) {
               if (isset($field_value['value'])) {
                 // If we have a value, and if it's not public. We better remove
                 // our add to any block. We can't share any non public pages

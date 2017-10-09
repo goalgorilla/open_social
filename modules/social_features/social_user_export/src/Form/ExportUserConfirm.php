@@ -2,14 +2,14 @@
 
 namespace Drupal\social_user_export\Form;
 
-use \Drupal\Core\Form\ConfirmFormBase;
-use \Drupal\user\PrivateTempStoreFactory;
-use \Drupal\user\UserStorageInterface;
-use \Drupal\Core\Entity\EntityTypeManagerInterface;
-use \Symfony\Component\DependencyInjection\ContainerInterface;
-use \Drupal\Core\Url;
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\user\Entity\User;
+use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\user\PrivateTempStoreFactory;
+use Drupal\user\UserStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Class ExportUserConfirm.
@@ -110,7 +110,6 @@ class ExportUserConfirm extends ConfirmFormBase {
     // If not selected all items, show list of selected items,
     // else show quantity of all items.
     if (empty($data['apply_all'])) {
-      $root = NULL;
       $form['accounts'] = [
         '#prefix' => '<ul>',
         '#suffix' => '</ul>',

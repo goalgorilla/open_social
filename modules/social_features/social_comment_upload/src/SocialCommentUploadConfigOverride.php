@@ -19,7 +19,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
    * Returns config overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
     // Add field_group and field_comment_files.

@@ -23,14 +23,14 @@ class Dropdown extends FormElement {
     $class = get_class($this);
     return [
       '#label' => 'Default Label',
-      '#process' => array(
-        array($class, 'processDropdown'),
-      ),
-      '#description' => 'Dropdown element.',
-      '#theme_wrappers' => array('dropdown'),
-      '#pre_render' => array(
-        array($class, 'preRenderDropdown'),
-      ),
+      '#process' => [
+        [$class, 'processDropdown'],
+      ],
+      '#description' => t('Dropdown element.'),
+      '#theme_wrappers' => ['dropdown'],
+      '#pre_render' => [
+        [$class, 'preRenderDropdown'],
+      ],
     ];
   }
 
@@ -58,11 +58,11 @@ class Dropdown extends FormElement {
         // sub-elements.
         $weight += 0.001;
 
-        $element += array($key => array());
+        $element += [$key => []];
         // Generate the parents as the autogenerator does, so we will have a
         // unique id for each radio button.
-        $parents_for_id = array_merge($element['#parents'], array($key));
-        $element[$key] += array(
+        $parents_for_id = array_merge($element['#parents'], [$key]);
+        $element[$key] += [
           '#type' => 'radio',
           '#title' => $label,
           '#description' => $description,
@@ -79,7 +79,7 @@ class Dropdown extends FormElement {
           // Errors should only be shown on the parent radios element.
           '#error_no_message' => TRUE,
           '#weight' => $weight,
-        );
+        ];
       }
     }
 

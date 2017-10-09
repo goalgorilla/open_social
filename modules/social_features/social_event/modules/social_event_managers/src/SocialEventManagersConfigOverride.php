@@ -19,7 +19,7 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
    * Load overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
       $config = \Drupal::service('config.factory')->getEditable($config_name);

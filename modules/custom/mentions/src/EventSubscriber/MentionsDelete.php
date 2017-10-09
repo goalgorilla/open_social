@@ -13,8 +13,8 @@ class MentionsDelete implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events = array();
-    $events['mentions.delete'][] = array('onMentionsDelete', 0);
+    $events = [];
+    $events['mentions.delete'][] = ['onMentionsDelete', 0];
     return $events;
   }
 

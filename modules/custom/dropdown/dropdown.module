@@ -49,7 +49,7 @@ function dropdown_theme() {
  */
 function template_preprocess_dropdown(array &$variables) {
   $element = $variables['element'];
-  $variables['attributes'] = array();
+  $variables['attributes'] = [];
   if (isset($element['#id'])) {
     $variables['attributes']['id'] = $element['#id'];
   }

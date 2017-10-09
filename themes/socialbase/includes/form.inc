@@ -27,6 +27,10 @@ function socialbase_preprocess_form(&$variables) {
     if ($element['#region'] === 'hero') {
       $variables['in_hero_region'] = TRUE;
     }
+
+    if ($element['#region'] === 'content-top') {
+      $variables['in_content_top_region'] = TRUE;
+    }
   }
 
   $variables['attributes']['class'][] = 'clearfix';
@@ -53,9 +57,9 @@ function socialbase_preprocess_form(&$variables) {
       if (is_object($comment)) {
         // Display comment created date in format 'time ago'.
         $created_time_ago = \Drupal::service('date.formatter')
-          ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
+          ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
 
-        $submitted = t('@time ago', array('@time' => $created_time_ago->getString()));
+        $submitted = t('@time ago', ['@time' => $created_time_ago->getString()]);
         $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
         $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
@@ -75,10 +79,10 @@ function socialbase_preprocess_form(&$variables) {
           }
 
           // Author name.
-          $username = array(
+          $username = [
             '#theme' => 'username',
             '#account' => $account,
-          );
+          ];
           $variables['author'] = drupal_render($username);
         }
       }
@@ -94,11 +98,10 @@ function socialbase_preprocess_form(&$variables) {
       /** @var \Drupal\social_post\Entity\Post $post */
       $post = entity_load('post', $post_id);
 
-      $form['#post_id'] = $post->id();
       // Display post created date in format 'time ago'.
       $created_time_ago = \Drupal::service('date.formatter')
-        ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
-      $date = t('%time ago', array('%time' => $created_time_ago->getString()));
+        ->formatTimeDiffSince($post->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
+      $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
       $variables['date']['#markup'] = $date;
       $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
@@ -137,10 +140,6 @@ function socialbase_preprocess_form(&$variables) {
 function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['#inline'] = TRUE;
   $form['field_visibility']['#inline'] = TRUE;
-
-  // Set an extra wrapper to display the dropdown and forms actions inline.
-  $form['field_visibility']['#prefix'] = '<div class="form-group-inline form-group-inline--right">';
-  $form['actions']['#suffix'] = '</div>';
 
   // Give the `delete` button correct classes.
   if (isset($form['actions']['delete']['#type']) && $form['actions']['delete']['#type'] == 'link') {
@@ -206,11 +205,12 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   // These forms have a container with class form-action at the bottom and
   // we style it in a way that the primary/submit button is aligned right
   // Also we define the style of the buttons based on their function.
-  $default_forms = array(
+  $default_forms = [
     'user_form',
     'user_pass_reset',
     'social_user_login_form',
     'user_register_form',
+    'profile_profile_add_form',
     'profile_profile_edit_form',
     'social_user_password_form',
     'user_cancel_form',
@@ -240,7 +240,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
-  );
+  ];
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -275,7 +275,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   }
 
   // Here we list all the forms that need to be wrapped in cards.
-  $add_card_to_forms = array(
+  $add_card_to_forms = [
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_open_group-group_membership_edit_form',
@@ -286,7 +286,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_register_form',
     'user_pass_reset',
     'social_user_password_form',
-  );
+  ];
 
   if (in_array($form_id, $add_card_to_forms)) {
     $form['#attributes']['class'][] = 'card';
@@ -295,7 +295,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   // List all the confirmation forms here. We need to close the card
   // before showing the actions.
-  $confirm_forms = array(
+  $confirm_forms = [
     'user_cancel_form',
     'post_delete_form',
     'post_photo_delete_form',
@@ -310,7 +310,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_closed_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
-  );
+  ];
 
   if (in_array($form_id, $confirm_forms)) {
     $form['description']['#prefix'] = '<div class="clearfix">';
@@ -356,36 +356,4 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
 
-}
-
-/**
- * Implements hook_theme_suggestions_form_alter().
- */
-function socialbase_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-
-  // Alter comment form.
-  if ($variables['element']['#form_id'] == 'comment_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment');
-    }
-  }
-
-  if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-      $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
-    }
-    else {
-      $suggestions[] = $variables['theme_hook_original'] . '__comment';
-    }
-  }
-
-  // Add templates for post add/edit forms.
-  if ($variables['element']['#form_id'] == 'social_post_entity_form') {
-    if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
-      $suggestions[] = $variables['theme_hook_original'] . '__post_edit';
-    }
-  }
 }

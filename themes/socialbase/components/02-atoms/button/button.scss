@@ -67,7 +67,7 @@
 //
 // A circular button that lifts. It is used for page-wide actions.
 //
-// .btn-default.btn-floating.waves-circle - Floating button
+// .btn-default.btn-floating - Floating button
 //
 // Markup: button--floating.twig
 //
@@ -140,6 +140,11 @@
     cursor: $cursor-disabled;
     opacity: .65;
     box-shadow: none;
+  }
+
+  // If a link is inside a button, reset font-weight
+  a {
+    font-weight: $btn-font-weight;
   }
 
 }

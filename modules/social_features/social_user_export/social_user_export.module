@@ -5,10 +5,10 @@
  * The Social User Export module.
  */
 
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\Core\Database\Database;
-use \Drupal\Core\Database\Query\Select;
-use \Drupal\user\UserInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Database\Database;
+use Drupal\Core\Database\Query\Select;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_alter().
@@ -55,7 +55,7 @@ function social_user_export_views_data_alter(array &$data) {
 /**
  * Applies the additional filters for export.
  *
- * @var Select $query
+ * @var \Drupal\Core\Database\Query\Select $query
  * @var array $conditions
  */
 function social_user_export_user_apply_filter(Select $query, array $conditions) {
@@ -101,7 +101,7 @@ function social_user_export_user_apply_filter(Select $query, array $conditions) 
 /**
  * Returns quantity of comments posted by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -121,7 +121,7 @@ function social_user_export_comments_count(UserInterface $account) {
 /**
  * Returns quantity of posts created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -141,7 +141,7 @@ function social_user_export_posts_count(UserInterface $account) {
 /**
  * Returns quantity of nodes created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  * @param string $type
  *   The node type to filter on.
@@ -165,7 +165,7 @@ function social_user_export_nodes_count(UserInterface $account, $type) {
 /**
  * Returns quantity of enrollments of specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -185,7 +185,7 @@ function social_user_export_events_enrollments_count(UserInterface $account) {
 /**
  * Returns quantity of groups created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
