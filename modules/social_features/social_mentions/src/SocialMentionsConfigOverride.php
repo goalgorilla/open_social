@@ -5,6 +5,10 @@ namespace Drupal\social_mentions;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 
+define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
+define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
+define('SOCIAL_MENTIONS_SUGGESTIONS_ALL', 'all');
+
 /**
  * Class SocialMentionsConfigOverride.
  *

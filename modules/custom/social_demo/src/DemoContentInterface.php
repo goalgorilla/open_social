@@ -24,10 +24,11 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
   /**
    * Sets the used profile.
    *
-   * @param $profile
+   * @param string $profile
+   *   The profile.
    *
-   * @return string void.
-   * void.
+   * @return string
+   *   Void.
    */
   public function setProfile($profile);
 

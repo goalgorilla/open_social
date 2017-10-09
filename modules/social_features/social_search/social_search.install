@@ -151,3 +151,21 @@ function social_search_update_8104() {
     $index->reindex();
   }
 }
+
+/**
+ * Trigger a search_api re-index for indexes 'all' and 'users'.
+ */
+function social_search_update_8105() {
+  $indexes = [
+    'social_all',
+    'social_users',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
+  }
+}

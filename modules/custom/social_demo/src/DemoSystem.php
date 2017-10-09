@@ -21,14 +21,14 @@ abstract class DemoSystem extends DemoContent {
   /**
    * The user storage.
    *
-   * @var
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $blockStorage;
 
   /**
-   * the Config factory.
+   * The Config factory.
    *
-   * @var
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
 
@@ -89,13 +89,14 @@ abstract class DemoSystem extends DemoContent {
     if (isset($data['homepage'])) {
       $this->content['homepage'] = TRUE;
 
-      // This uuid can be used like this since it's defined in the code as well (@see social_core.install)
+      // This uuid can be used like this since it's defined
+      // in the code as well (@see social_core.install).
       $block = $this->blockStorage->loadByProperties(['uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4']);
       $block = current($block);
 
       if ($block instanceof BlockContent) {
 
-        $this->replaceANblock($block, $data['homepage']);
+        $this->replaceAnBlock($block, $data['homepage']);
       }
     }
 
@@ -103,9 +104,9 @@ abstract class DemoSystem extends DemoContent {
     if (isset($data['theme'])) {
       $this->content['theme'] = TRUE;
       // Get theme settings.
-      $config = $this->configFactory->getEditable($active_theme.'.settings');
+      $config = $this->configFactory->getEditable($active_theme . '.settings');
 
-      // Favicon
+      // Favicon.
       if (isset($data['theme']['favicon'])) {
         $favicon = [
           'mimetype' => $data['theme']['favicon']['mimetype'],
@@ -135,42 +136,44 @@ abstract class DemoSystem extends DemoContent {
       $config->set('border_radius', $data['theme']['border_radius'])->save();
 
       // Get the colors.
-      $color = $this->configFactory->getEditable('color.theme.'.$active_theme);
+      $color = $this->configFactory->getEditable('color.theme.' . $active_theme);
       // Set as a palette.
       $palette = [
         'brand-bg-primary' => $data['theme']['color_primary'],
         'brand-bg-secondary' => $data['theme']['color_secondary'],
         'brand-bg-accent' => $data['theme']['color_accents'],
-        'brand-text-primary' =>$data['theme']['color_link']
+        'brand-text-primary' => $data['theme']['color_link'],
       ];
 
       // Save the palette.
       $color->set('palette', $palette)->save();
 
       // Remove the already generated css files.
-      //@todo: check if isset!!!
+      // TODO: Check if isset.
       foreach ($color->get('stylesheets') as $file) {
         file_unmanaged_delete($file);
       }
     }
 
-    // return something.
+    // Return something.
     return $this->content;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getEntry(array $item) {
     // TODO: Implement getEntry() method.
-    return;
   }
 
   /**
    * Prepares data about an image.
    *
    * @param string $picture
-   *    The picture by uuid.
+   *   The picture by uuid.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function preparePicture($picture) {
     $value = NULL;
@@ -185,6 +188,15 @@ abstract class DemoSystem extends DemoContent {
     return $value;
   }
 
+  /**
+   * Get or create the font.
+   *
+   * @param string $fontName
+   *   The font name.
+   *
+   * @return int|mixed|null|string
+   *   Return the font.
+   */
   private function getOrCreateFont($fontName) {
     /** @var \Drupal\social_font\Entity\Font $font_entities */
     foreach (Font::loadMultiple() as $font_entities) {
@@ -194,7 +206,7 @@ abstract class DemoSystem extends DemoContent {
     }
 
     // Ok, so it doesn't exist.
-    /** @var Font $font */
+    /* @var Font $font */
     $font = Font::create([
       'name' => $fontName,
       'user_id' => 1,
@@ -207,36 +219,45 @@ abstract class DemoSystem extends DemoContent {
 
   }
 
-  private function replaceANblock(BlockContent $block, $data) {
+  /**
+   * Function to replace the AN homepage Block.
+   *
+   * @param \Drupal\block_content\Entity\BlockContent $block
+   *   The block.
+   * @param array $data
+   *   The data.
+   */
+  private function replaceAnBlock(BlockContent $block, array $data) {
 
-    $block->field_text_block = array(
+    $block->field_text_block = [
       'value' => $data['textblock'],
       'format' => 'full_html',
-    );
+    ];
 
     /** @var File $file */
     $file = $this->preparePicture($data['image']);
 
-    $block_image = array(
+    $block_image = [
       'target_id' => $file->id(),
       'alt' => "Anonymous front page image homepage'",
-    );
+    ];
     $block->field_hero_image = $block_image;
 
     // Set the links.
-    $action_links = array(
-      array(
+    $action_links = [
+      [
         'uri' => 'internal:' . $data['cta1']['url'],
         'title' => $data['cta1']['text'],
-      ),
-      array(
+      ],
+      [
         'uri' => 'internal:' . $data['cta2']['url'],
         'title' => $data['cta2']['text'],
-      ),
-    );
+      ],
+    ];
     $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
     $itemList->setValue($action_links);
     $block->field_call_to_action_link = $itemList;
     $block->save();
   }
+
 }

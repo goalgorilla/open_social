@@ -146,7 +146,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Array containing related files or NULL.
    */
-  protected function prepareAttachment($files) {
+  protected function prepareAttachment(array $files) {
     $attachments = NULL;
 
     foreach ($files as $file) {
@@ -213,7 +213,7 @@ class Event extends DemoNode {
    * @return array|null
    *   Returns an array or null.
    */
-  protected function prepareEventManagers($managers) {
+  protected function prepareEventManagers(array $managers) {
     $values = NULL;
 
     foreach ($managers as $uuid) {

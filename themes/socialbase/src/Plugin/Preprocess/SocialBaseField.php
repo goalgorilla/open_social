@@ -38,15 +38,15 @@ class SocialBaseField extends PreprocessBase {
         break;
 
       case 'field_call_to_action_link':
-        $url_options = array(
-          'attributes' => array('class' => array('btn btn-primary')),
-        );
+        $url_options = [
+          'attributes' => ['class' => ['btn btn-primary']],
+        ];
         if (isset($element[0])) {
           $element[0]['#url']->setOptions($url_options);
         }
-        $url_options_1 = array(
-          'attributes' => array('class' => array('btn btn-default')),
-        );
+        $url_options_1 = [
+          'attributes' => ['class' => ['btn btn-default']],
+        ];
         if (isset($element[1])) {
           $element[1]['#url']->setOptions($url_options_1);
         }

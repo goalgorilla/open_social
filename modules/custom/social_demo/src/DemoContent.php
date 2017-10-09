@@ -171,11 +171,11 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   /**
    * Extract the mention from the content by [~Uuid].
    *
-   * @param $content
-   *    The content that contains the mention.
+   * @param string $content
+   *   The content that contains the mention.
    *
    * @return mixed
-   *    If nothing needs to be replaced, just return the same content.
+   *   If nothing needs to be replaced, just return the same content.
    */
   protected function checkMentionOrLinkByUuid($content) {
     // Check if there's a mention in the given content.
