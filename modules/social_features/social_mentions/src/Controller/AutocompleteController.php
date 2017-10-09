@@ -12,10 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
-define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
-define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
-define('SOCIAL_MENTIONS_SUGGESTIONS_ALL', 'all');
-
 /**
  * Class AutocompleteController.
  *
