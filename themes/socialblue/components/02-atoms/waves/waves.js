@@ -13,7 +13,7 @@
         Waves.attach('.btn-primary:not(.btn-icon):not(.btn-float)', ['waves-btn', 'waves-light']);
         Waves.attach('.btn-secondary:not(.btn-icon):not(.btn-float)', ['waves-btn', 'waves-light']);
         Waves.attach('.btn-accent:not(.btn-icon):not(.btn-float)', ['waves-btn', 'waves-light']);
-        Waves.attach('.btn-icon-toggle, .btn-float');
+        Waves.attach('.btn-icon-toggle, .btn-float', ['waves-circle']);
 
         var config = {
           // How long Waves effect duration

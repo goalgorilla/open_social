@@ -152,7 +152,7 @@ Feature: See and get notified when content is created
     And I should see "Test group event"
 
     Given I am logged in as "SeeUser"
-    And I click "CreateUser"
+    And I am on the profile of "CreateUser"
     Then I should see "CreateUser created an event in Test open group"
     When I am on the homepage
     Then I should not see "CreateUser created an event in Test open group"

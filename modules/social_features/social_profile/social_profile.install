@@ -98,6 +98,7 @@ function _social_profile_get_permissions($role) {
     'update own profile profile',
     'view any profile profile',
     'view own profile profile',
+    'view profile',
   ]);
 
   // Content manager.
@@ -298,5 +299,22 @@ function social_profile_update_8006(&$sandbox) {
       ->info('Created profiles for @count users', [
         '@count' => $sandbox['profiles'],
       ]);
+  }
+}
+
+/**
+ * Grant the 'view profile' permission.
+ */
+function social_profile_update_8007(&$sandbox) {
+  $roles = [
+    'authenticated',
+    'contentmanager',
+    'sitemanager',
+  ];
+  $permissions = [
+    'view profile'
+  ];
+  foreach ($roles as $role) {
+    user_role_grant_permissions($role, $permissions);
   }
 }

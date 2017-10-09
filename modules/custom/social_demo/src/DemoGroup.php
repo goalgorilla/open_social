@@ -120,7 +120,8 @@ abstract class DemoGroup extends DemoContent {
       $this->content[$entity->id()] = $entity;
 
       if (!empty($item['members'])) {
-        $this->addMembers($item['members'], $entity);
+        $managers = !empty($item['managers']) ? $item['managers'] : [];
+        $this->addMembers($item['members'], $managers, $entity);
       }
     }
 
@@ -176,17 +177,24 @@ abstract class DemoGroup extends DemoContent {
    *
    * @param array $members
    *   The array of members.
+   * @param array $managers
+   *   A list of group managers.
    * @param \Drupal\group\Entity\GroupInterface $entity
    *   The GroupInterface entity.
    */
-  protected function addMembers(array $members, GroupInterface $entity) {
+  protected function addMembers(array $members, array $managers, GroupInterface $entity) {
     foreach ($members as $account_uuid) {
       $account = $this->userStorage->loadByProperties([
         'uuid' => $account_uuid,
       ]);
 
       if (($account = current($account)) && !$entity->getMember($account)) {
-        $entity->addMember($account);
+        $values = [];
+        // If the user should have the manager role, grant it to him now.
+        if (in_array($account_uuid, $managers)) {
+          $values = ['group_roles' => [$entity->bundle() . '-group_manager']];
+        }
+        $entity->addMember($account, $values);
       }
     }
   }
