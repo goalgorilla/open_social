@@ -81,7 +81,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
     else {
       // Redirect to the search content page with filters in the GET parameters.
       $search_input = Html::escape($form_state->getValue('search_input_content'));
-      $search_input = preg_replace('/[\W\s\/]+/', '', $search_input);
+      $search_input = preg_replace('/[\/]+/', '', $search_input);
       $search_content_page = Url::fromRoute("view.$search_all_view.page", ['keys' => $search_input]);
     }
     $redirect_path = $search_content_page->toString();
