@@ -20,7 +20,7 @@ function mentions_help($route_name, RouteMatchInterface $route_match) {
     case 'entity.mentions_type.list':
       $text_format_url = Url::fromRoute('filter.admin_overview');
       $text_format_link = Link::fromTextAndUrl(t('text formats'), $text_format_url)->toString();
-      $output = t("You can enable 'Mentions Filter' for the mentions type below for the appropriate @text_format", array('@text_format' => $text_format_link));
+      $output = t("You can enable 'Mentions Filter' for the mentions type below for the appropriate @text_format", ['@text_format' => $text_format_link]);
       return $output;
   }
 }
@@ -30,14 +30,14 @@ function mentions_help($route_name, RouteMatchInterface $route_match) {
  */
 function mentions_theme() {
   $items = [
-    'mention_link' => array(
-      'variables' => array(
+    'mention_link' => [
+      'variables' => [
         'mention_id' => NULL,
         'link' => NULL,
         'render_link' => FALSE,
         'render_value' => '',
-      ),
-    ),
+      ],
+    ],
   ];
   return $items;
 }
@@ -72,8 +72,8 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
 
   $type = $entity->getEntityTypeId();
   $field_definitions = $entity->getFieldDefinitions();
-  $fields_with_text = array();
-  $supported_field_types = array('text_with_summary', 'text_long', 'text');
+  $fields_with_text = [];
+  $supported_field_types = ['text_with_summary', 'text_long', 'text'];
   foreach ($field_definitions as $field_definition) {
     $field_type = $field_definition->getType();
     if (isset($field_type) && in_array($field_type, $supported_field_types)) {
@@ -87,7 +87,7 @@ function mentions_insert_or_update(EntityInterface $entity, $update) {
     $format = !empty($entity_text_field->format) ? $entity_text_field->format : 'basic_html';
 
     $container = \Drupal::getContainer();
-    $filter_mentions = MentionsFilter::create($container, array(), 'filter_mentions', array());
+    $filter_mentions = MentionsFilter::create($container, [], 'filter_mentions', []);
     $filter_mentions->setTextFormat($format);
     if ($filter_mentions->shouldApplyFilter()) {
       $mentions = $filter_mentions->getMentions($value);
@@ -121,8 +121,8 @@ function mentions_crud_update($type, $mentions, $id, $author) {
   $mentions_storage = \Drupal::entityTypeManager()->getStorage('mentions');
 
   // Build old array of mentions.
-  $old_users = array();
-  $old_mids = array();
+  $old_users = [];
+  $old_mids = [];
   $mention_ids = \Drupal::entityQuery('mentions')
     ->condition('entity_type', $type)
     ->condition('entity_id', $id)
@@ -135,7 +135,7 @@ function mentions_crud_update($type, $mentions, $id, $author) {
   }
 
   // Build array of new mentions.
-  $new_users = array();
+  $new_users = [];
   foreach ($mentions as $mention) {
     if ($mention['target']['entity_type'] == 'profile') {
       $storage = \Drupal::entityTypeManager()
@@ -152,12 +152,12 @@ function mentions_crud_update($type, $mentions, $id, $author) {
 
   // Add new mentions.
   foreach (array_diff($new_users, $old_users) as $uid) {
-    $mention_attributes = array(
+    $mention_attributes = [
       'entity_type' => $type,
       'entity_id' => $id,
       'uid' => $uid,
       'auid' => $author,
-    );
+    ];
     $mention = $mentions_storage->create($mention_attributes);
     $mention->save();
 

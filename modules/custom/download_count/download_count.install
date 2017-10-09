@@ -11,70 +11,70 @@ use Drupal\user\Entity\Role;
  * Implements hook_schema().
  */
 function download_count_schema() {
-  $schema['download_count'] = array(
-    'fields' => array(
-      'dcid' => array(
+  $schema['download_count'] = [
+    'fields' => [
+      'dcid' => [
         'description' => 'Primary Key: Unique download count id.',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'fid' => array(
+      ],
+      'fid' => [
         'description' => 'The {file_managed}.fid of the file downloaded.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'uid' => array(
+      ],
+      'uid' => [
         'description' => 'The {user}.uid of user who downloaded the file.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'type' => array(
+      ],
+      'type' => [
         'description' => 'The name of the entity type to which the file was attached when downloaded.',
         'type' => 'varchar',
         'length' => 64,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'id' => array(
+      ],
+      'id' => [
         'description' => 'The primary key of the entity to which the file was attached when downloaded.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-      'ip_address' => array(
+      ],
+      'ip_address' => [
         'description' => 'The IP address of the downloading user.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
-      ),
-      'referrer' => array(
+      ],
+      'referrer' => [
         'description' => 'Referrer URI.',
         'type' => 'text',
         'not null' => TRUE,
-      ),
-      'timestamp' => array(
+      ],
+      'timestamp' => [
         'description' => 'The date-time the file was downloaded.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
-      ),
-    ),
-    'primary key' => array('dcid'),
-    'indexes' => array(
-      'dc_fid' => array('fid'),
-      'dc_uid' => array('uid'),
-      'dc_type' => array('type'),
-      'dc_id' => array('id'),
-      'dc_ip' => array('ip_address'),
-      'dc_timestamp' => array('timestamp'),
-      'dc_fid_type_id' => array('fid', 'type', 'id'),
-    ),
-  );
+      ],
+    ],
+    'primary key' => ['dcid'],
+    'indexes' => [
+      'dc_fid' => ['fid'],
+      'dc_uid' => ['uid'],
+      'dc_type' => ['type'],
+      'dc_id' => ['id'],
+      'dc_ip' => ['ip_address'],
+      'dc_timestamp' => ['timestamp'],
+      'dc_fid_type_id' => ['fid', 'type', 'id'],
+    ],
+  ];
 
   return $schema;
 }
@@ -111,9 +111,9 @@ function _download_count_set_permissions() {
       continue;
     }
 
-    $permissions = array(
+    $permissions = [
       'view download counts',
-    );
+    ];
 
     user_role_grant_permissions($role->id(), $permissions);
   }

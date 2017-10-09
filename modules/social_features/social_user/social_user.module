@@ -106,11 +106,11 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
     if ($first_time_login) {
       $form_state->setRedirect(
         'entity.profile.type.user_profile_form',
-        array(
+        [
           'user' => $submitted_user_id,
           'profile_type' => 'profile',
-          array(),
-        ));
+          [],
+        ]);
       $form_state->set('first_time_login', FALSE);
     }
     else {
@@ -157,7 +157,7 @@ function social_user_entity_base_field_info_alter(&$fields, EntityTypeInterface 
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
 function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Fetch the current user.
@@ -173,13 +173,13 @@ function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $for
  * Implements hook_theme().
  */
 function social_user_theme() {
-  return array(
-    'account_header_links' => array(
-      'variables' => array(
+  return [
+    'account_header_links' => [
+      'variables' => [
         'links' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -223,11 +223,11 @@ function social_user_block_view_search_content_block_alter(array &$build, BlockP
  */
 function _social_user_search_content_pre_render(array $build) {
   // Attach the social_search library defined in social_search.libraries.yml.
-  $build['#attached'] = array(
-    'library' => array(
+  $build['#attached'] = [
+    'library' => [
       'social_search/navbar-search',
-    ),
-  );
+    ],
+  ];
 
   return $build;
 }
@@ -244,10 +244,10 @@ function social_user_user_format_name_alter(&$name, $account) {
   if (!empty($storage)) {
     // Returns false.
     if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = trim(t('@first @last', array(
+      $accountname = trim(t('@first @last', [
         '@first' => $user_profile->get('field_profile_first_name')->value,
         '@last' => $user_profile->get('field_profile_last_name')->value,
-      )));
+      ]));
     }
   }
   $name = ($accountname !== '') ? $accountname : $name;

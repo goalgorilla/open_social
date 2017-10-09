@@ -10,6 +10,7 @@ dependencies:
   module:
     - user
     - search_api
+    - social_search
     - profile
 id: social_users
 name: 'Social Users'
@@ -237,6 +238,9 @@ processor_settings:
         preprocess_index: -10
         preprocess_query: -10
     all_fields: false
+  super_user:
+    weights:
+      preprocess_query: 30
 tracker_settings:
   default:
     plugin_id: default

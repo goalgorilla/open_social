@@ -72,7 +72,7 @@ class FacebookLinkController extends ControllerBase {
     $this->authManager->setSdk($sdk);
 
     // Get the OAuth token from Facebook.
-    if (!$access_token = $this->authManager->getAccessToken('link')) {
+    if (!$this->authManager->getAccessToken('link')) {
       drupal_set_message($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('Facebook'),
       ]), 'error');
