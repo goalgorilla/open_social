@@ -46,7 +46,8 @@ form-controls:
     component:
       assets/css/form-controls.css: {}
   js:
-    assets/js/textarea-autogrow.min.js: { minified: true }
+    /libraries/autosize/dist/autosize.min.js: { minified: true }
+    assets/js/autosize.init.min.js: { minified: true }
   dependencies:
     - core/drupal.form
 
@@ -199,15 +200,6 @@ select2:
 tabledrag:
   js:
     assets/js/tabledrag.min.js: { minified: true }
-
-tablesaw:
-  css:
-    component:
-      assets/css/tablesaw.css: {}
-  js:
-    /libraries/tablesaw/dist/tablesaw.js: {}
-    /libraries/respond/dest/respond.min.js: { minified: true }
-    assets/js/tablesaw-init.min.js: { minified: true }
 
 teaser:
   css:

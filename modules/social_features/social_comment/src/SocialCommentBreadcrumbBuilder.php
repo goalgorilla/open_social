@@ -37,11 +37,11 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
-    $comments_routes = array(
+    $comments_routes = [
       'comment.reply',
       'entity.comment.edit_form',
       'entity.comment.delete_form',
-    );
+    ];
     return in_array($route_match->getRouteName(), $comments_routes);
   }
 

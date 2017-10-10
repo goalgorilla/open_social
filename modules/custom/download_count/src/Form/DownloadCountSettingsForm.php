@@ -29,38 +29,38 @@ class DownloadCountSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('download_count.settings');
-    $form['excluded file extensions'] = array(
+    $form['excluded file extensions'] = [
       '#type' => 'details',
       '#title' => $this->t('Excluded file extensions'),
       '#open' => TRUE,
-    );
-    $form['excluded file extensions']['download_count_excluded_file_extensions'] = array(
+    ];
+    $form['excluded file extensions']['download_count_excluded_file_extensions'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Excluded file extensions'),
       '#default_value' => $config->get('download_count_excluded_file_extensions'),
       '#maxlength' => 255,
       '#description' => $this->t("To exclude files of certain types, enter the extensions to exclude separated by spaces. This is useful if you have private image fields and don't wish to include them in download counts."),
-    );
+    ];
 
-    $form['download_count_flood_control'] = array(
+    $form['download_count_flood_control'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Flood Control Settings'),
       '#open' => FALSE,
-    );
-    $form['download_count_flood_control']['download_count_flood_limit'] = array(
+    ];
+    $form['download_count_flood_control']['download_count_flood_limit'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Flood control limit'),
       '#size' => 10,
       '#default_value' => $config->get('download_count_flood_limit'),
       '#description' => $this->t('Maximum number of times to count the file download per time window. Enter 0 for no flood control limits.'),
-    );
-    $form['download_count_flood_control']['download_count_flood_window'] = array(
+    ];
+    $form['download_count_flood_control']['download_count_flood_window'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Flood control window'),
       '#size' => 10,
       '#default_value' => $config->get('download_count_flood_window'),
       '#description' => $this->t('Number of seconds in the time window for counting a file download.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

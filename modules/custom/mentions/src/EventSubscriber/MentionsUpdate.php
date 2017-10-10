@@ -13,8 +13,8 @@ class MentionsUpdate implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events = array();
-    $events['mentions.update'][] = array('onMentionsUpdate', 0);
+    $events = [];
+    $events['mentions.update'][] = ['onMentionsUpdate', 0];
     return $events;
   }
 

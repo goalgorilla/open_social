@@ -30,19 +30,19 @@ class ActivitySendSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('activity_send.settings');
 
-    $form['activity_send_offline_control'] = array(
+    $form['activity_send_offline_control'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Offline Control Settings'),
       '#open' => FALSE,
-    );
-    $form['activity_send_offline_control']['activity_send_offline_window'] = array(
+    ];
+    $form['activity_send_offline_control']['activity_send_offline_window'] = [
       '#type' => 'number',
       '#title' => $this->t('Offline window'),
       '#size' => 10,
       '#default_value' => $config->get('activity_send_offline_window'),
       '#min' => 0,
       '#description' => $this->t('Number of seconds of inactivity after which we assume user is offline.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

@@ -5,8 +5,7 @@ Feature: Follow Content
   Goal/desire: I want to be able to subscribe to content
 
   Scenario: Follow content
-    Given I enable the module "social_follow_content"
-    And I am logged in as an "authenticated user"
+    Given I am logged in as an "authenticated user"
     And I am on "user"
     And I click "Topics"
     And I click "Create Topic"
@@ -19,14 +18,14 @@ Feature: Follow Content
     And I should see "Topic This is a follow topic has been created."
     And I should see "This is a follow topic" in the "Hero block"
     And I should see "Body description text" in the "Main content"
-    And I should see the link "Follow" in the "Main content"
-    And I should not see the link "Unfollow" in the "Main content"
-    And I click "Follow"
+    And I should see the link "Follow content" in the "Main content"
+    And I should not see the link "Unfollow content" in the "Main content"
+    And I click "Follow content"
     And I wait for AJAX to finish
-    And I should see the link "Unfollow" in the "Main content"
-    And I should not see the link "Follow" in the "Main content"
-    And I click "Unfollow"
+    And I should see the link "Unfollow content" in the "Main content"
+    And I should not see the link "Follow content" in the "Main content"
+    And I click "Unfollow content"
     And I wait for AJAX to finish
-    And I should see the link "Follow" in the "Main content"
-    And I should not see the link "Unfollow" in the "Main content"
+    And I should see the link "Follow content" in the "Main content"
+    And I should not see the link "Unfollow content" in the "Main content"
 

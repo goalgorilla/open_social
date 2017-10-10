@@ -8,7 +8,7 @@
 use Drupal\block\Entity\Block;
 use Drupal\views\Entity\View;
 use Drupal\search_api\Entity\Index;
-use \Drupal\user\Entity\Role;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_update_dependencies().
@@ -16,9 +16,9 @@ use \Drupal\user\Entity\Role;
 function social_search_update_dependencies() {
   // Necessary because we delete a view with geolocation filter.
   // Needs to be done before system_update_8200 and social_group_update_8005.
-  $dependencies['social_group'][8005] = array(
+  $dependencies['social_group'][8005] = [
     'social_search' => 8102,
-  );
+  ];
   return $dependencies;
 }
 
@@ -61,21 +61,21 @@ function _social_search_set_permissions() {
  */
 function _social_search_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
+  $permissions['anonymous'] = [
     'access content search',
-  );
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'access users search',
     'access group search',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -90,9 +90,9 @@ function _social_search_get_permissions($role) {
  */
 function social_search_update_8101(array &$sandbox) {
 
-  $modules = array(
+  $modules = [
     'search_api_views_taxonomy',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
 }
@@ -149,5 +149,23 @@ function social_search_update_8104() {
   if ($index->status()) {
     $index->clear();
     $index->reindex();
+  }
+}
+
+/**
+ * Trigger a search_api re-index for indexes 'all' and 'users'.
+ */
+function social_search_update_8105() {
+  $indexes = [
+    'social_all',
+    'social_users',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
   }
 }

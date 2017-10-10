@@ -22,7 +22,7 @@ class PostViewBuilder extends EntityViewBuilder {
 
     foreach ($entities as $id => $entity) {
 
-      $build[$id]['links'] = array(
+      $build[$id]['links'] = [
         '#lazy_builder' => [get_called_class() . '::renderLinks', [
           $entity->id(),
           $view_mode,
@@ -30,7 +30,7 @@ class PostViewBuilder extends EntityViewBuilder {
           !empty($entity->in_preview),
         ],
         ],
-      );
+      ];
     }
   }
 
@@ -50,21 +50,21 @@ class PostViewBuilder extends EntityViewBuilder {
    *   A renderable array representing the post links.
    */
   public static function renderLinks($post_entity_id, $view_mode, $langcode, $is_in_preview) {
-    $links = array(
+    $links = [
       '#theme' => 'links',
-      '#pre_render' => array('drupal_pre_render_links'),
-      '#attributes' => array('class' => array('links', 'inline')),
-    );
+      '#pre_render' => ['drupal_pre_render_links'],
+      '#attributes' => ['class' => ['links', 'inline']],
+    ];
 
     if (!$is_in_preview) {
       $entity = Post::load($post_entity_id)->getTranslation($langcode);
       $links['post'] = static::buildLinks($entity, $view_mode);
 
       // Allow other modules to alter the post links.
-      $hook_context = array(
+      $hook_context = [
         'view_mode' => $view_mode,
         'langcode' => $langcode,
-      );
+      ];
       \Drupal::moduleHandler()->alter('post_links', $links, $entity, $hook_context);
     }
     return $links;
@@ -82,30 +82,30 @@ class PostViewBuilder extends EntityViewBuilder {
    *   An array that can be processed by drupal_pre_render_links().
    */
   protected static function buildLinks(Post $entity, $view_mode) {
-    $links = array();
+    $links = [];
 
     if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {
-      $links['edit'] = array(
+      $links['edit'] = [
         'title' => t('Edit'),
         'weight' => 10,
         'url' => $entity->urlInfo('edit-form'),
-        'query' => array('destination' => \Drupal::destination()->get()),
-      );
+        'query' => ['destination' => \Drupal::destination()->get()],
+      ];
     }
     if ($entity->access('delete') && $entity->hasLinkTemplate('delete-form')) {
-      $links['delete'] = array(
+      $links['delete'] = [
         'title' => t('Delete'),
         'weight' => 100,
         'url' => $entity->urlInfo('delete-form'),
-        'query' => array('destination' => \Drupal::destination()->get()),
-      );
+        'query' => ['destination' => \Drupal::destination()->get()],
+      ];
     }
 
-    return array(
+    return [
       '#theme' => 'links',
       '#links' => $links,
-      '#attributes' => array('class' => array('links', 'inline')),
-    );
+      '#attributes' => ['class' => ['links', 'inline']],
+    ];
   }
 
 }

@@ -13,7 +13,7 @@ class MentionsInsert implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events['mentions.insert'][] = array('onMentionsInsert', 0);
+    $events['mentions.insert'][] = ['onMentionsInsert', 0];
     return $events;
   }
 

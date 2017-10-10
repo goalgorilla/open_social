@@ -25,7 +25,7 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
    * report when there are text editors using public scheme.
    *
    * @return array
-   *    Returns an array containing config_names.
+   *   Returns an array containing config_names.
    */
   public function getTextEditorsToProtect() {
     $config_names = [
@@ -39,7 +39,7 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     if (PrivateStream::basePath()) {
       $config_names = $this->getTextEditorsToProtect();
       foreach ($config_names as $config_name) {
