@@ -45,6 +45,13 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $all_email_message_keys[1] => $all_email_message_values[1],
     ];
 
+    $notification_options = [
+      0 => t('- None -'),
+      1 => t('Immediately'),
+      2 => t('Daily'),
+      3 => t('Weekly'),
+    ];
+
     // The email notification settings for Message to me.
     $form['email_notifications']['message_to_me'] = [
       '#type' => 'details',
@@ -58,12 +65,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $form['email_notifications']['message_to_me'][$key] = [
         '#type' => 'select',
         '#title' => $title,
-        '#options' => [
-          t('Immediately'),
-          t('Daily'),
-          t('Weekly'),
-        ],
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
+        '#options' => $notification_options,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
       ];
     }
     // The email notification settings for What I manage.
@@ -79,12 +82,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $form['email_notifications']['what_manage'][$key] = [
         '#type' => 'select',
         '#title' => $title,
-        '#options' => [
-          t('Immediately'),
-          t('Daily'),
-          t('Weekly'),
-        ],
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
+        '#options' => $notification_options,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
       ];
     }
 
@@ -101,12 +100,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $form['email_notifications']['what_follow'][$key] = [
         '#type' => 'select',
         '#title' => $title,
-        '#options' => [
-          t('Immediately'),
-          t('Daily'),
-          t('Weekly'),
-        ],
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
+        '#options' => $notification_options,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
       ];
     }
 
@@ -126,6 +121,12 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 function _activity_send_email_form_user_form_submit(array $form, FormStateInterface $form_state) {
   $account = \Drupal::routeMatch()->getParameter('user');
   $values = $form_state->getValue('email_notifications');
+
+  $values = array_merge(
+    $values['message_to_me'],
+    $values['what_manage'],
+    $values['what_follow']
+  );
 
   if (is_object($account) && !empty($values)) {
     EmailActivityDestination::setSendEmailUserSettings($account, $values);
