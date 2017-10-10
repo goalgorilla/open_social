@@ -2,6 +2,7 @@
 
 namespace Drupal\social_search\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -36,9 +37,9 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
    * SearchHeroForm constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *    The route match.
+   *   The route match.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *    The request stack.
+   *   The request stack.
    */
   public function __construct(RouteMatchInterface $routeMatch, RequestStack $requestStack) {
     $this->routeMatch = $routeMatch;
@@ -67,19 +68,19 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form['search_input'] = array(
+    $form['search_input'] = [
       '#type' => 'textfield',
-    );
+    ];
 
     // Pre-fill search input on the search group page.
     $form['search_input']['#default_value'] = $this->routeMatch
       ->getParameter('keys');
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Search'),
-    );
+    ];
     $form['#cache']['contexts'][] = 'url';
 
     return $form;
@@ -98,15 +99,16 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
     }
     else {
       // Redirect to the search page with filters in the GET parameters.
-      $search_input = $form_state->getValue('search_input');
+      $search_input = Html::escape($form_state->getValue('search_input'));
+      $search_input = preg_replace('/[\/]+/', '', $search_input);
       $new_route = "view.{$route_parts[1]}.page";
-      $search_group_page = Url::fromRoute($new_route, array('keys' => $search_input));
+      $search_group_page = Url::fromRoute($new_route, ['keys' => $search_input]);
     }
     $redirect_path = $search_group_page->toString();
 
     $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
 
-    $redirect = Url::fromUserInput($redirect_path, array('query' => $query));
+    $redirect = Url::fromUserInput($redirect_path, ['query' => $query]);
 
     $form_state->setRedirectUrl($redirect);
   }

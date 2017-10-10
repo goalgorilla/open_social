@@ -26,9 +26,9 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *    The config factory.
+   *   The config factory.
    * @param \Drupal\Core\Database\Connection $database
-   *    The database.
+   *   The database.
    */
   public function __construct(ConfigFactoryInterface $config_factory, Connection $database) {
     parent::__construct($config_factory);
@@ -65,17 +65,17 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_profile.settings');
 
-    $form['privacy'] = array(
+    $form['privacy'] = [
       '#type' => 'details',
       '#title' => $this->t('Privacy settings'),
       '#open' => TRUE,
-    );
-    $form['privacy']['social_profile_show_email'] = array(
+    ];
+    $form['privacy']['social_profile_show_email'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Show email on all user profiles'),
       '#default_value' => $config->get('social_profile_show_email'),
       '#description' => $this->t('When enabled, users are not able to hide their email address on their profile. When disabled, users will be able to control the visibility of their emailaddress.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

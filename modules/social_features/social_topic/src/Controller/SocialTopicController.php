@@ -38,11 +38,11 @@ class SocialTopicController extends ControllerBase {
    * SocialTopicController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *    The request stack.
+   *   The request stack.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
-   *    The module handler.
+   *   The module handler.
    */
   public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, ModuleHandlerInterface $moduleHandler) {
     $this->requestStack = $requestStack;
@@ -76,7 +76,7 @@ class SocialTopicController extends ControllerBase {
     if ($topic_type_id !== NULL) {
       // Topic type can be "All" will crash overview on /newest-topics.
       if (is_numeric($topic_type_id)) {
-        $term = $this->entityTypeManager->getStorage('topic')->load($topic_type_id);
+        $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($topic_type_id);
 
         if ($term->access('view') && $term->getVocabularyId() === 'topic_types') {
           $term_title = $term->getName();

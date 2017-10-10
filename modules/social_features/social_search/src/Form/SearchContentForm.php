@@ -2,13 +2,14 @@
 
 namespace Drupal\social_search\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class SearchContentForm.
@@ -18,20 +19,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SearchContentForm extends FormBase implements ContainerInjectionInterface {
 
   /**
-   * The route match.
+   * The request stack.
    *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $routeMatch;
+  protected $requestStack;
 
   /**
    * SearchHeroForm constructor.
    *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *    The route match.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
    */
-  public function __construct(RouteMatchInterface $routeMatch) {
-    $this->routeMatch = $routeMatch;
+  public function __construct(RequestStack $requestStack) {
+    $this->requestStack = $requestStack;
   }
 
   /**
@@ -39,7 +40,7 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('current_route_match')
+      $container->get('request_stack')
     );
   }
 
@@ -55,15 +56,15 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form['search_input_content'] = array(
+    $form['search_input_content'] = [
       '#type' => 'textfield',
-    );
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array(
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Search Content'),
-    );
+    ];
 
     return $form;
   }
@@ -79,14 +80,15 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
     }
     else {
       // Redirect to the search content page with filters in the GET parameters.
-      $search_input = $form_state->getValue('search_input_content');
-      $search_content_page = Url::fromRoute("view.$search_all_view.page", array('keys' => $search_input));
+      $search_input = Html::escape($form_state->getValue('search_input_content'));
+      $search_input = preg_replace('/[\/]+/', '', $search_input);
+      $search_content_page = Url::fromRoute("view.$search_all_view.page", ['keys' => $search_input]);
     }
     $redirect_path = $search_content_page->toString();
 
     $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
 
-    $redirect = Url::fromUserInput($redirect_path, array('query' => $query));
+    $redirect = Url::fromUserInput($redirect_path, ['query' => $query]);
 
     $form_state->setRedirectUrl($redirect);
   }

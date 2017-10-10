@@ -70,7 +70,7 @@ class AuthUnlinkForm extends ConfirmFormBase {
     $network_manager = \Drupal::service('plugin.network.manager');
     $is_connected = FALSE;
 
-    foreach ($network_manager->getDefinitions() as $key => $definition) {
+    foreach ($network_manager->getDefinitions() as $definition) {
       /** @var \Drupal\social_auth_extra\UserManagerInterface $user_manager */
       $user_manager = \Drupal::service($definition['id'] . '.user_manager');
       $user_manager->setAccount($account);

@@ -18,7 +18,7 @@ class SocialDownloadCountConfigOverride implements ConfigFactoryOverrideInterfac
    * Load overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
 
     // Set private file system to files field.
     $config_name = 'field.storage.node.field_files';

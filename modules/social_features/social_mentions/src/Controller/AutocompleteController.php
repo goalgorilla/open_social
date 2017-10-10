@@ -12,10 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 
-define('SOCIAL_MENTIONS_SUGGESTIONS_USERNAME', 'username');
-define('SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME', 'full_name');
-define('SOCIAL_MENTIONS_SUGGESTIONS_ALL', 'all');
-
 /**
  * Class AutocompleteController.
  *
@@ -50,11 +46,11 @@ class AutocompleteController extends ControllerBase {
    * AutocompleteController constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *    The config factory.
+   *   The config factory.
    * @param \Drupal\Core\Database\Connection $database
-   *    The database connection.
+   *   The database connection.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    The entity type manager.
+   *   The entity type manager.
    */
   public function __construct(ConfigFactoryInterface $configFactory, Connection $database, EntityTypeManagerInterface $entityTypeManager) {
     $this->configFactory = $configFactory;
@@ -77,10 +73,10 @@ class AutocompleteController extends ControllerBase {
    * Function for suggestions.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
-   *    The request.
+   *   The request.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *    Returns a JsonResponse.
+   *   Returns a JsonResponse.
    */
   public function suggestions(Request $request) {
     $name = $request->get('term');
