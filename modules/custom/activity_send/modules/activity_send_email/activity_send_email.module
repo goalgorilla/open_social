@@ -19,6 +19,9 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#type' => 'fieldset',
       '#title' => t('Email notifications'),
       '#tree' => TRUE,
+      '#attributes' => [
+        'class' => ['form-horizontal'],
+      ],
     ];
 
     $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
@@ -47,7 +50,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#type' => 'details',
       '#title' => t('<h5>Message to me</h5>'),
       '#attributes' => [
-        'class' => ['form-group'],
+        'class' => ['form-fieldset'],
       ],
     ];
     // Build the message to me section.
@@ -61,9 +64,6 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
           t('Weekly'),
         ],
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
-        '#attributes' => [
-          'class' => ['form-group-inline'],
-        ],
       ];
     }
     // The email notification settings for What I manage.
@@ -71,7 +71,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#type' => 'details',
       '#title' => t('<h5>What I manage</h5>'),
       '#attributes' => [
-        'class' => ['form-group'],
+        'class' => ['form-fieldset'],
       ],
     ];
     // Build the what I manage section.
@@ -85,9 +85,6 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
           t('Weekly'),
         ],
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
-        '#attributes' => [
-          'class' => ['form-group-inline'],
-        ],
       ];
     }
 
@@ -96,7 +93,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#type' => 'details',
       '#title' => t('<h5>What I follow</h5>'),
       '#attributes' => [
-        'class' => ['form-group'],
+        'class' => ['form-fieldset'],
       ],
     ];
     // Build the what I follow section.
@@ -110,9 +107,6 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
           t('Weekly'),
         ],
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : t('Immediately'),
-        '#attributes' => [
-          'class' => ['form-group-inline'],
-        ],
       ];
     }
 
