@@ -1,5 +1,41 @@
 @import 'settings';
 
+// Form elements
+//
+// All form elements are grouped in a class `.form-group`.
+// There can be a label, required astrix, input field and help text.
+//
+// markup: form-element.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.form-elements
+
+// Inline Form errors
+//
+// _Added in release 1.6_
+//
+// For this feature the module __Inline Form Errors__ should be enabled.
+//
+// ### Alerts
+// When a form is submitted the user receives an alert message with
+// either a confirmation the form is submitted successfully or with the feedback
+// that there is an error. The feedback will then contain a link to the inline form feedback.
+//
+// ### Inline feedback
+// The form-group div will get a class `has-error` which can be used
+// to style any form element (children). The feedback is placed in a small dismissable alert.
+// All the other fields remain in there original form.
+//
+// markup: inline-form-error.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.form-elements.inline-error
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+
 label {
   display: inline-block;
   max-width: 100%; // Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141)
