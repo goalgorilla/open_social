@@ -32,11 +32,11 @@ function activity_send_schema() {
         'default' => '',
       ],
       'status' => [
-        'description' => 'A boolean indicating whether this type of notifications is enabled or not.',
+        'description' => 'An integer value to determine if emails should be sent immediately, daily or weekly.',
         'type' => 'int',
         'size' => 'tiny',
         'not null' => TRUE,
-        'default' => 0,
+        'default' => 1,
       ],
     ],
     'indexes' => [
