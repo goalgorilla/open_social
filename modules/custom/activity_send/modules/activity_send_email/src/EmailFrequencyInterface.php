@@ -5,20 +5,20 @@ namespace Drupal\activity_send_email;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
- * Common interface for all EmailFrequencies.
+ * Common interface for all email frequencies.
  *
  */
 interface EmailFrequencyInterface extends PluginInspectionInterface {
 
   /**
-   * Return the name of the ice cream flavor.
+   * Return the name of the email frequency.
    *
    * @return string
    */
   public function getName();
 
   /**
-   * Returns the emailfrequency interval.
+   * Returns the email frequency interval.
    *
    * @return integer
    */
