@@ -265,8 +265,10 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 });
 
 // Before deploying create a fresh build
-gulp.task('build-styleguide', ['styleguide'], function () {
-  runSequence('base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal');
+gulp.task('build-styleguide', function (callback) {
+  runSequence('styleguide',
+    ['base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal'],
+    callback);
 });
 
 // Compile and copy the socialbase styles to the style guide
