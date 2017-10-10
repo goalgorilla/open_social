@@ -6,6 +6,7 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
+use Embed\Providers\OEmbed\Embedly;
 
 
 /**
@@ -47,21 +48,15 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       return FALSE;
     }
 
-    // @TODO: Make the whitelist come from EMBED.
-    $whitelisted = [
-      'twitter.com',
-      'instagram.com',
-      'facebook.com',
-    ];
+    // Fetch all patterns known by Embed/Embed.
+    $patterns = Embedly::getPatterns();
 
     // Check if the URL provided is from a whitelisted site.
-    foreach ($whitelisted as $url) {
-      if (strpos($text, $url) !== FALSE) {
+    foreach ($patterns as $pattern) {
+      if (strpos($text, $pattern) !== FALSE) {
         return TRUE;
       }
     }
-
     return FALSE;
   }
-
 }
