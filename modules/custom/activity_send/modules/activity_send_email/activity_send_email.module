@@ -128,6 +128,12 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
   $account = \Drupal::routeMatch()->getParameter('user');
   $values = $form_state->getValue('email_notifications');
 
+  $values = array_merge(
+    $values['message_to_me'],
+    $values['what_manage'],
+    $values['what_follow']
+  );
+
   if (is_object($account) && !empty($values)) {
     EmailActivityDestination::setSendEmailUserSettings($account, $values);
   }
