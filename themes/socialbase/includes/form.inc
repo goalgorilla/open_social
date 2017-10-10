@@ -193,6 +193,16 @@ function socialbase_form_profile_profile_edit_form_alter(&$form, FormStateInterf
 }
 
 /**
+ * Implements hook_form_user_form_alter().
+ */
+function socialbase_form_user_form_alter(&$form) {
+  if (isset($form['email_notifications'])) {
+    $form['#attached']['library'][] = 'socialbase/form-horizontal';
+    $form['timezone']['#attributes']['class'][] = 'form-horizontal';
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
