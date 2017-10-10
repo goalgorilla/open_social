@@ -40,9 +40,9 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
         ],
       ];
 
-      $filters['url_embed_convert_links'] = [
-        'id' => 'url_embed_convert_links',
-        'provider' => 'url_embed',
+      $filters['social_embed_convert_url'] = [
+        'id' => 'social_embed_convert_url',
+        'provider' => 'social_embed',
         'status' => TRUE,
         'weight' => (isset($filters['filter_url']['weight']) ? $filters['filter_url']['weight'] - 1 : $filters['url_embed']['weight'] - 1),
         'settings' => [
