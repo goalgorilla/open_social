@@ -9,19 +9,19 @@
 // ################################
 
 var importOnce  = require('node-sass-import-once'),
-    path        = require('path'),
-    gulp        = require('gulp'),
-    $           = require('gulp-load-plugins')(),
-    browserSync = require('browser-sync').create(),
-    del         = require('del'),
+  path        = require('path'),
+  gulp        = require('gulp'),
+  $           = require('gulp-load-plugins')(),
+  browserSync = require('browser-sync').create(),
+  del         = require('del'),
     // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
-    sass        = require('gulp-sass'),
-    kss         = require('kss'),
-    postcss     = require('gulp-postcss'),
-    autoprefixer= require('autoprefixer'),
-    mqpacker    = require('css-mqpacker'),
-    concat      = require('gulp-concat'),
-    runSequence = require('run-sequence');
+  sass        = require('gulp-sass'),
+  kss         = require('kss'),
+  postcss     = require('gulp-postcss'),
+  autoprefixer = require('autoprefixer'),
+  mqpacker    = require('css-mqpacker'),
+  concat      = require('gulp-concat'),
+  runSequence = require('run-sequence');
 
 var options = {};
 
@@ -65,13 +65,13 @@ options.basetheme = {
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
 options.drupalURL = '';
-//options.drupalURL = 'http://social.dev:32780';
+//options.drupalURL = 'http://social.dev';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
   importer: importOnce,
   includePaths: [
-    options.theme.components,
+    options.theme.components
   ],
   outputStyle: 'expanded'
 };
@@ -84,11 +84,11 @@ var sassFiles = [
 
 
 // On screen notification for errors while performing tasks
-var onError = function(err) {
+var onError = function (err) {
   notify.onError({
-    title:    "Gulp error in " + err.plugin,
-    message:  "<%= error.message %>",
-    sound: "Beep"
+    title:    'Gulp error in ' + err.plugin,
+    message:  '<%= error.message %>',
+    sound: 'Beep'
   })(err);
   this.emit('end');
 };
@@ -218,11 +218,11 @@ var sassProcessors = [
 gulp.task('styles', function () {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe($.plumber({errorHandler: onError}))
     // run autoprefixer and media-query packer
-    .pipe($.postcss(sassProcessors) )
+    .pipe($.postcss(sassProcessors))
     // run rucksack @see https://simplaio.github.io/rucksack/
-    .pipe($.rucksack() )
+    .pipe($.rucksack())
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.theme.css))
@@ -230,29 +230,34 @@ gulp.task('styles', function () {
 });
 
 
+
+// #################
+//
+// Minify scripts
+//
+// #################
+//
+// First clean the JS folder, then search all components for js files.
+// Then compress the files, give them an explicit .min filename and
+// save them to the assets folder.
+// ===================================================
+
+gulp.task('scripts', function () {
+  return gulp.src(options.theme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest(options.theme.js))
+    .pipe(browserSync.reload({stream:true}));
+});
+
+
+
 // ##################
 // Build style guide.
 // ##################
-
-// Compile and copy the socialbase styles to the style guide
-gulp.task('base-assets', function() {
-  return gulp.src(options.basetheme.build +'**/*')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'));
-});
-
-// Compile and copy the subtheme assets to the style guide
-gulp.task('blue-assets', function() {
-  return gulp.src(options.theme.build +'**/*')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
-});
-
-gulp.task('brand', function() {
-  return gulp.src([
-      'logo.svg',
-      'favicon.ico'
-    ])
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
-});
 
 // Main styleguide task
 gulp.task('styleguide', ['clean:styleguide'], function () {
@@ -260,12 +265,32 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 });
 
 // Before deploying create a fresh build
-gulp.task('build-styleguide', ['styleguide'], function() {
+gulp.task('build-styleguide', ['styleguide'], function () {
   runSequence('base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal');
 });
 
+// Compile and copy the socialbase styles to the style guide
+gulp.task('base-assets', function () {
+  return gulp.src(options.basetheme.build + '**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'));
+});
+
+// Compile and copy the subtheme assets to the style guide
+gulp.task('blue-assets', function () {
+  return gulp.src(options.theme.build + '**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
+});
+
+gulp.task('brand', function () {
+  return gulp.src([
+    'logo.svg',
+    'favicon.ico'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
+});
+
 // Copy drupal scripts from drupal to make them available for the styleguide
-gulp.task('scripts-drupal', function() {
+gulp.task('scripts-drupal', function () {
   return gulp.src([
     options.rootPath.drupal + 'assets/vendor/domready/ready.min.js',
     options.rootPath.drupal + 'assets/vendor/jquery/jquery.min.js',
@@ -277,23 +302,24 @@ gulp.task('scripts-drupal', function() {
     options.rootPath.drupal + '/modules/user/user.js',
     options.rootPath.drupal + '/modules/file/file.js'
   ])
-    .pipe( concat('drupal-core.js') )
-    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/') );
+    .pipe(concat('drupal-core.js'))
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
 });
 
 // Copy libraries scripts from drupal libraries folder to make them available for the styleguide
-gulp.task('libraries', function() {
+gulp.task('libraries', function () {
   return gulp.src([
     options.rootPath.libraries + 'bootstrap/dist/js/bootstrap.min.js',
     options.rootPath.libraries + 'morris.js/morris.min.js',
     options.rootPath.libraries + 'raphael/raphael.min.js',
     options.rootPath.libraries + 'waves/dist/waves.min.js',
-    options.rootPath.libraries + 'waves/dist/waves.css'
+    options.rootPath.libraries + 'waves/dist/waves.css',
+    options.rootPath.libraries + 'autosize/dist/autosize.min.js'
   ])
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
 });
 
-gulp.task('kss', function() {
+gulp.task('kss', function () {
   return gulp.src([
     'node_modules/kss/builder/twig/kss-assets/kss-fullscreen.js',
     'node_modules/kss/builder/twig/kss-assets/kss-guides.js',
@@ -351,9 +377,7 @@ gulp.task('lint:sass-with-fail', function () {
 //
 // ##############################
 
-gulp.task('watch', ['browser-sync', 'watch:styleguide', 'watch:js']);
-
-gulp.task('browser-sync', ['watch:css'], function () {
+gulp.task('watch', ['watch:css', 'watch:styleguide', 'watch:js'], function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -367,40 +391,16 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
+gulp.task('watch:js', ['scripts'], function () {
+  return gulp.watch(options.theme.components + '**/*.js', ['scripts']);
+});
+
 gulp.task('watch:styleguide', ['build-styleguide'], function () {
   return gulp.watch([
-    options.basetheme.components + '**/*.scss',
-    options.theme.components + '**/*.scss',
-    options.basetheme.components + '**/*.twig',
-    options.theme.components + '**/*.twig',
-    options.basetheme.components + '**/*.json',
-    options.theme.components + '**/*.json',
-    options.theme.components + '**/*.md'
+    options.basetheme.components + '**/*',
+    options.theme.components + '**/*',
   ], options.gulpWatchOptions, ['build-styleguide']);
 });
-
-// #################
-//
-// Minify JS
-//
-// #################
-//
-// First clean the JS folder, then search all components for js files.
-// Then compress the files, give them an explicit .min filename and
-// save them to the assets folder.
-// ===================================================
-
-gulp.task('watch:js', function () {
-  return gulp.src(options.theme.components + '**/*.js')
-    .pipe($.uglify())
-    .pipe($.flatten())
-    .pipe($.rename({
-      suffix: ".min"
-    }))
-    .pipe(gulp.dest(options.theme.js));
-});
-
-
 
 
 
@@ -439,23 +439,24 @@ gulp.task('clean:css', function () {
 // ===================================================
 
 var rsync         = require('gulp-rsync'),
-    prompt        = require('gulp-prompt');
+  prompt        = require('gulp-prompt');
 
 try {
   var deploy    = require('./deploy_config.json');
-} catch(error) {
+}
+catch (error) {
   console.log('Deploy config file missing');
 }
 
 // Before deploying create a fresh build
-gulp.task('deploy', ['build-styleguide'], function() {
+gulp.task('deploy', ['build-styleguide'], function () {
 
   // Default options for rsync
   var rsyncConf = {
     progress: true,
     incremental: true,
     emptyDirectories: true
-    //clean: true,
+    // clean: true,
   };
 
   // Load the settings from our deploy_config.json file
