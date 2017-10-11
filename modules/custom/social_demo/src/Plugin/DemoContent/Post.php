@@ -42,7 +42,10 @@ class Post extends DemoEntity {
     return $entry + [
       'langcode' => $item['langcode'],
       'type' => $item['type'],
-      'field_post' => $item['field_post'],
+      'field_post' => [
+        'value' => $this->checkMentionOrLinkByUuid($item['field_post']),
+        'format' => 'basic_html',
+      ],
       'field_visibility' => $item['field_visibility'],
       'field_recipient_user' => $recipient_id,
       'field_recipient_group' => $group_id,
@@ -57,10 +60,10 @@ class Post extends DemoEntity {
    * Converts a date in the correct format.
    *
    * @param string $date_string
-   *    The date.
+   *   The date.
    *
    * @return int|false
-   *    Returns a timestamp on success, false otherwise.
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     if ($date_string === 'now') {

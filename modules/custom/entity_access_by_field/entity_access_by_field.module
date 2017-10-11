@@ -3,6 +3,9 @@
 /**
  * @file
  * Entity Access By Field module file.
+ *
+ * @todo: Prevent creating multiple visibility fields on one node.
+ * @todo: Add support for multiple entity types.
  */
 
 use Drupal\entity_access_by_field\EntityAccessHelper;
@@ -13,9 +16,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_post\Entity\PostInterface;
-
-// @todo: Prevent creating multiple visibility fields on one node.
-// @todo: Add support for multiple entity types.
 
 /**
  * Here we define a constant for our node access grant ID.
@@ -46,7 +46,7 @@ function entity_access_by_field_node_grants(AccountInterface $account, $op) {
         if ($account->hasPermission($permission)) {
           $grants[$realm][] = ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM;
         }
-        $grants[$realm . '_author'] = array($account->id());
+        $grants[$realm . '_author'] = [$account->id()];
       }
     }
   }
@@ -68,29 +68,29 @@ function entity_access_by_field_node_access_records(NodeInterface $node) {
     if ($field_definition->getType() === 'entity_access_field') {
       $field_values = $node->get($field_name)->getValue();
       if (!empty($field_values)) {
-        foreach ($field_values as $key => $field_value) {
+        foreach ($field_values as $field_value) {
           if (isset($field_value['value'])) {
             $entityAccessPermissions = \Drupal::getContainer()
               ->get('entity_access_by_field.permissions');
             $realm = $entityAccessPermissions->getRealmForFieldValue('view', 'node', $node->getType(), $field_name, $field_value['value']);
             if ($node->isPublished()) {
-              $grants[] = array(
+              $grants[] = [
                 'realm' => $realm,
                 'gid' => ENTITY_ACCESS_BY_FIELD_ALLOWED_REALM,
                 'grant_view' => 1,
                 'grant_update' => 0,
                 'grant_delete' => 0,
                 'priority' => 0,
-              );
+              ];
             }
-            $grants[] = array(
+            $grants[] = [
               'realm' => $realm . '_author',
               'gid' => $node->getOwnerId(),
               'grant_view' => 1,
               'grant_update' => 1,
               'grant_delete' => 1,
               'priority' => 0,
-            );
+            ];
           }
         }
       }
@@ -148,7 +148,7 @@ function entity_access_by_field_node_presave(NodeInterface $node) {
     if ($field_definition->getType() === 'entity_access_field') {
       if (isset($node->status) && isset($original->status) && $node->status->value != $original->status->value) {
         // Invalidate cache tags.
-        Cache::invalidateTags(array('activity_list'));
+        Cache::invalidateTags(['activity_list']);
       }
 
       if ($node->get($field_name)->isEmpty()) {
@@ -256,7 +256,7 @@ function _entity_access_by_field_get_default_visibility(EntityInterface $entity)
       break;
 
     default:
-      return;
+      return $default_visibility;
   }
 
   if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {

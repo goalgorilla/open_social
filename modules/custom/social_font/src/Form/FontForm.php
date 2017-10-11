@@ -19,8 +19,6 @@ class FontForm extends ContentEntityForm {
     /* @var $entity \Drupal\social_font\Entity\Font */
     $form = parent::buildForm($form, $form_state);
 
-    $entity = $this->entity;
-
     return $form;
   }
 

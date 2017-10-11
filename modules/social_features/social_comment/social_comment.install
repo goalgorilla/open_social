@@ -39,30 +39,30 @@ function _social_comment_set_permissions() {
  * Build the permissions.
  *
  * @param string $role
- *    The role.
+ *   The role.
  *
  * @return array
- *    Returns an array containing the permissions.
+ *   Returns an array containing the permissions.
  */
 function _social_comment_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array();
+  $permissions['anonymous'] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'access comments',
     'post comments',
     'skip comment approval',
     'edit own comments',
     'delete own comments',
     'administer own comments',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array());
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -76,9 +76,9 @@ function _social_comment_get_permissions($role) {
 function social_comment_update_8001(&$sandbox) {
   $roles = Role::loadMultiple();
 
-  $permissions = array(
+  $permissions = [
     'administer own comments',
-  );
+  ];
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {

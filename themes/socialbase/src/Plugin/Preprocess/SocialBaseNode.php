@@ -21,7 +21,6 @@ class SocialBaseNode extends PreprocessBase {
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
-
     $node = $variables['node'];
     $account = $node->getOwner();
     $variables['content_type'] = $node->bundle();
@@ -48,10 +47,10 @@ class SocialBaseNode extends PreprocessBase {
       }
 
       // Author name.
-      $username = array(
+      $username = [
         '#theme' => 'username',
         '#account' => $account,
-      );
+      ];
       $variables['author'] = drupal_render($username);
     }
 
@@ -148,7 +147,7 @@ class SocialBaseNode extends PreprocessBase {
     }
 
     // Our node has a comment reference. Let's remove it from content array.
-    $variables['below_content'] = array();
+    $variables['below_content'] = [];
     if (!empty($comment_field_name)) {
       if (!empty($variables['content'][$comment_field_name])) {
         // Add it to our custom comments_section for the template purposes and
@@ -162,7 +161,7 @@ class SocialBaseNode extends PreprocessBase {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
-        $t_args = array(':num_comments' => $comment_count);
+        $t_args = [':num_comments' => $comment_count];
         $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
 
         // If it's closed, we only show the comment section when there are

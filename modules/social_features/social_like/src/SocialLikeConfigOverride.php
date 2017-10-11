@@ -19,7 +19,7 @@ class SocialLikeConfigOverride implements ConfigFactoryOverrideInterface {
    * Returns config overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
 
     $config_factory = \Drupal::service('config.factory');
 

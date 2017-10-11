@@ -38,6 +38,8 @@ class TwitterAuthController extends ControllerBase {
 
   /**
    * Contains access token to work with API.
+   *
+   * @var \Abraham\TwitterOAuth\TwitterOAuth
    */
   protected $accessToken;
 
@@ -251,10 +253,10 @@ class TwitterAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
-   *    The type.
+   *   The type.
    *
    * @return object
-   *    Returns an object.
+   *   Returns an object.
    */
   public function getProfile($type) {
     $sdk = $this->getSdk($type);

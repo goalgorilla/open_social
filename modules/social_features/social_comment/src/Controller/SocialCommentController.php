@@ -50,9 +50,9 @@ class SocialCommentController extends CommentController {
    *   Returns the Redirect Response.
    */
   public function redirectToOriginalEntity(Url $url, CommentInterface $comment = NULL, Entity $entity = NULL) {
-    $options = array();
+    $options = [];
     if (isset($comment)) {
-      $options = array('fragment' => 'comment-' . $comment->id());
+      $options = ['fragment' => 'comment-' . $comment->id()];
     }
     return $this->redirect($url->getRouteName(), $url->getRouteParameters(), $options);
   }

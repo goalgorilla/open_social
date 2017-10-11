@@ -18,6 +18,7 @@ class SocialBaseHtml extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Identify the difference between nodes and node/add & node/edit.
     if ($variables['root_path'] == 'node') {

@@ -17,12 +17,13 @@ class SocialBaseActivity extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Check if the view mode is one of the notification view modes.
-    if (in_array($variables['content']['field_activity_output_text']['#view_mode'], array(
+    if (in_array($variables['content']['field_activity_output_text']['#view_mode'], [
       'notification',
       'notification_archive',
-    ))) {
+    ])) {
       // Remove href from date.
       $variables['date'] = strip_tags($variables['date']->toString()->getGeneratedLink());
       // Remove href from output text.

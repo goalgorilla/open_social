@@ -1,4 +1,4 @@
-@wip @api @DS-1255 @activity_stream @topic @create
+@api @DS-1255 @activity_stream @topic @create @stability @stability-3
 Feature: See and get notified when content is created
   Benefit: So I can discover new content on the platform
   Role: As a LU
@@ -124,6 +124,8 @@ Feature: See and get notified when content is created
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
+    And I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible for non members as well." with the id "edit-group-type-open-group"
+    And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
@@ -150,20 +152,15 @@ Feature: See and get notified when content is created
     And I should see "Test group event"
 
     Given I am logged in as "SeeUser"
-    And I click "CreateUser"
+    And I am on the profile of "CreateUser"
     Then I should see "CreateUser created an event in Test open group"
-    And I should see "Test group event"
-    When I am on the homepage
-    Then I should see "CreateUser created an event in Test open group"
-    And I should see "Test group event"
-    When I go to "explore"
-    Then I should not see "CreateUser created an event"
-    And I should not see "Test group event"
-
-    Given I am an anonymous user
     When I am on the homepage
     Then I should not see "CreateUser created an event in Test open group"
-    And I should not see "Test group event"
+    When I go to "explore"
+    Then I should see "CreateUser created an event"
+    And I should see "Test group event"
+
+    Given I am an anonymous user
     When I go to "explore"
     Then I should not see "CreateUser created an event in Test open group"
     And I should not see "Test group event"

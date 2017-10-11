@@ -21,7 +21,7 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
   public function alter(&$suggestions, &$context1 = NULL, &$hook = NULL) {
     parent::alter($suggestions, $context1, $hook);
 
-    $variables = Variables::create($context1);
+    $variables = $this->variables;
 
     switch ($hook) {
 
@@ -37,7 +37,7 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         }
 
         $block_id = $variables['elements']['#derivative_plugin_id'];
-        $blocks_id = array(
+        $blocks_id = [
           'upcoming_events-block_my_upcoming_events',
           'upcoming_events-block_community_events',
           'latest_topics-block_latest_topics',
@@ -49,13 +49,13 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
           'group_members-block_newest_members',
           'upcoming_events-upcoming_events_group',
           'latest_topics-group_topics_block',
-        );
+        ];
         if (in_array($block_id, $blocks_id)) {
-          $suggestions = array($variables['theme_hook_original'] . '__' . 'views_block__sidebar');
+          $suggestions = [$variables['theme_hook_original'] . '__' . 'views_block__sidebar'];
         }
 
         if (isset($variables['elements']['kpi_analytics'])) {
-          $suggestions = array($variables['theme_hook_original'] . '__' . 'charts');
+          $suggestions = [$variables['theme_hook_original'] . '__' . 'charts'];
         }
 
         break;
@@ -111,16 +111,16 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         // Alter comment form.
         if ($variables['element']['#form_id'] == 'comment_comment_form') {
           if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
+            $suggestions = [$variables['theme_hook_original'] . '__' . 'comment_edit'];
           }
           else {
-            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment');
+            $suggestions = [$variables['theme_hook_original'] . '__' . 'comment'];
           }
         }
 
         if ($variables['element']['#form_id'] == 'comment_post_comment_form') {
           if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
-            $suggestions = array($variables['theme_hook_original'] . '__' . 'comment_edit');
+            $suggestions = [$variables['theme_hook_original'] . '__' . 'comment_edit'];
           }
           else {
             $suggestions[] = $variables['theme_hook_original'] . '__comment';

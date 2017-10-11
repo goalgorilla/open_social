@@ -29,6 +29,7 @@ class MenuLink extends DemoEntity {
       ],
       'menu_name' => $item['menu_name'],
       'expanded' => $item['expanded'],
+      'weight' => isset($item['weight']) ? $item['weight'] : 0,
     ];
   }
 

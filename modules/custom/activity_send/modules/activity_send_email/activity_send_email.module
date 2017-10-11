@@ -15,25 +15,25 @@ use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestinati
 function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
   $account = \Drupal::routeMatch()->getParameter('user');
   if (is_object($account)) {
-    $form['email_notifications'] = array(
+    $form['email_notifications'] = [
       '#type' => 'fieldset',
       '#title' => t('Email notifications'),
       '#tree' => TRUE,
-    );
+    ];
 
     $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
     $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
     // Build checkbox for each message template.
     foreach ($email_message_templates as $key => $title) {
-      $form['email_notifications'][$key] = array(
+      $form['email_notifications'][$key] = [
         '#type' => 'checkbox',
         '#title' => $title,
         '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : TRUE,
         '#attributes' => [
           'data-switch' => TRUE,
         ],
-      );
+      ];
     }
 
     // Submit function to save send email settings.
@@ -63,13 +63,13 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
  * Implements hook_mail().
  */
 function activity_send_email_mail($key, &$message, $params) {
-  $options = array(
+  $options = [
     'langcode' => $message['langcode'],
-  );
+  ];
 
-  $variables = array(
+  $variables = [
     '%site_name' => \Drupal::config('system.site')->get('name'),
-  );
+  ];
 
   switch ($key) {
     case 'activity_send_email':

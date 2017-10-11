@@ -16,7 +16,6 @@ use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
-use Drupal\group\GroupMembership;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\ViewExecutable;
@@ -99,13 +98,13 @@ function social_group_form_group_open_group_delete_form_alter(&$form, FormStateI
 function social_group_form_group_closed_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add custom submit handler to delete all content of the group.
   $group = _social_group_get_current_group();
-  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', array('@group' => $group->label()));
-  $form['actions']['cancel'] = array(
+  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', ['@group' => $group->label()]);
+  $form['actions']['cancel'] = [
     '#type' => 'submit',
     '#value' => t('Cancel'),
-    '#submit' => array('_social_group_cancel_join_leave_form'),
-    '#limit_validation_errors' => array(),
-  );
+    '#submit' => ['_social_group_cancel_join_leave_form'],
+    '#limit_validation_errors' => [],
+  ];
   array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
 }
 
@@ -121,7 +120,7 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
   // Set redirect to the group overview page when user saves a group.
   $form_state->setRedirect(
     'view.groups.page_user_groups',
-    array('user' => \Drupal::currentUser()->id(), array())
+    ['user' => \Drupal::currentUser()->id(), []]
   );
 }
 
@@ -137,7 +136,7 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_group_preprocess_group(array &$variables) {
-  /** @var GroupInterface $group */
+  /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
@@ -183,7 +182,7 @@ function social_group_preprocess_group(array &$variables) {
     // Get the current route name to check if
     // the user is on the edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
-    if (!in_array($route, array('entity.group.edit_form', 'entity.group.delete_form'))) {
+    if (!in_array($route, ['entity.group.edit_form', 'entity.group.delete_form'])) {
       if ($group->access('update', $account)) {
         $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
         $variables['#cache']['contexts'][] = 'route.name';
@@ -228,7 +227,7 @@ function social_group_group_insert(GroupInterface $group) {
     $content->delete();
     $grant_group_admin = FALSE;
     // If the user has this permission inside a group.
-    if ($perms = $group->hasPermission('manage all groups', $account)) {
+    if ($group->hasPermission('manage all groups', $account)) {
       // Then we grant this user de Group Admin role.
       $grant_group_admin = TRUE;
     }
@@ -316,22 +315,22 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $action_forms)) {
 
     // Add cancel option on join and leave form.
-    $form['actions']['cancel'] = array(
+    $form['actions']['cancel'] = [
       '#type' => 'submit',
       '#value' => t('Cancel'),
-      '#submit' => array('_social_group_cancel_join_leave_form'),
-      '#limit_validation_errors' => array(),
-    );
+      '#submit' => ['_social_group_cancel_join_leave_form'],
+      '#limit_validation_errors' => [],
+    ];
 
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
   }
 
-  $membership_forms = array(
+  $membership_forms = [
     'group_content_open_group-group_membership_edit_form',
     'group_content_open_group-group_membership_add_form',
     'group_content_closed_group-group_membership_add_form',
     'group_content_closed_group-group_membership_edit_form',
-  );
+  ];
   if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
@@ -369,16 +368,16 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  $group_forms = array(
-    'edit' => array(
+  $group_forms = [
+    'edit' => [
       'group_open_group_edit_form',
       'group_closed_group_edit_form',
-    ),
-    'add' => array(
+    ],
+    'add' => [
       'group_open_group_add_form',
       'group_closed_group_add_form',
-    ),
-  );
+    ],
+  ];
   if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
     $form['path']['#type'] = 'hidden';
     $form['actions']['submit']['#value'] = t('Save');
@@ -409,7 +408,7 @@ function _social_membership_delete_form_submit($form, FormStateInterface $form_s
     // Invalidate cache tags.
     $cache_tags = _social_group_cache_tags($group);
     foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags(array($cache_tag));
+      Cache::invalidateTags([$cache_tag]);
     }
   }
 }
@@ -424,7 +423,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Invalidate cache tags.
     $cache_tags = _social_group_cache_tags($group);
     foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags(array($cache_tag));
+      Cache::invalidateTags([$cache_tag]);
     }
 
     // Get form that was submitted.
@@ -434,7 +433,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
-        array('group' => $group->id(), array())
+        ['group' => $group->id(), []]
       );
     }
     else {
@@ -442,7 +441,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
       // when a user saves their profile.
       $form_state->setRedirect(
         'view.groups.page_user_groups',
-        array('user' => \Drupal::currentUser()->id(), array())
+        ['user' => \Drupal::currentUser()->id(), []]
       );
     }
   }
@@ -467,7 +466,7 @@ function _social_group_grant_admin_role($uid, $gid) {
     }
     // Check if the user is already a member in the group
     // (could be in update mode here).
-    /** @var GroupMembership $membership */
+    /** @var \Drupal\group\GroupMembership $membership */
     $admin_role = $group->bundle() . '-group_admin';
     $membership = $group->getMember($account);
 
@@ -489,7 +488,7 @@ function _social_group_grant_admin_role($uid, $gid) {
  * When creating a new group membership.
  *
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *    The group content.
+ *   The group content.
  */
 function social_group_group_content_insert(GroupContentInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() == 'user') {
@@ -503,7 +502,7 @@ function social_group_group_content_insert(GroupContentInterface $group_content)
  * When updating a group membership.
  *
  * @param \Drupal\group\Entity\GroupContentInterface $group_content
- *    The group content.
+ *   The group content.
  */
 function social_group_group_content_update(GroupContentInterface $group_content) {
   if ($group_content->getEntity()->getEntityTypeId() == 'user') {
@@ -518,7 +517,7 @@ function social_group_group_content_update(GroupContentInterface $group_content)
  *
  * @param array $form
  *   Membership edit form.
- * @param FormStateInterface $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
 function _social_group_membership_edit_form_submit(array $form, FormStateInterface $form_state) {
@@ -528,7 +527,7 @@ function _social_group_membership_edit_form_submit(array $form, FormStateInterfa
     // Set redirect to the Group overview page when a user saves their profile.
     $form_state->setRedirect(
       'entity.group_content.collection',
-      array('group' => $group->id(), array())
+      ['group' => $group->id(), []]
     );
   }
 }
@@ -538,7 +537,7 @@ function _social_group_membership_edit_form_submit(array $form, FormStateInterfa
  *
  * @param array $form
  *   Join and leave form.
- * @param FormStateInterface $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
 function _social_group_cancel_join_leave_form(array $form, FormStateInterface $form_state) {
@@ -549,7 +548,7 @@ function _social_group_cancel_join_leave_form(array $form, FormStateInterface $f
     // Set redirect only for cancel buttons. Just go back to the group page.
     $form_state->setRedirect(
       'entity.group.canonical',
-      array('group' => $group->id(), array())
+      ['group' => $group->id(), []]
     );
   }
 }
@@ -559,7 +558,7 @@ function _social_group_cancel_join_leave_form(array $form, FormStateInterface $f
  *
  * @param array $form
  *   Group node form.
- * @param FormStateInterface $form_state
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
 function _social_group_node_form_submit(array $form, FormStateInterface $form_state) {
@@ -567,7 +566,7 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
   // Set redirect.
   $form_state->setRedirect(
     'entity.node.canonical',
-    array('node' => $nid)
+    ['node' => $nid]
   );
 }
 
@@ -654,7 +653,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Get the Group object from the route.
   $group = Drupal::routeMatch()->getParameter('group');
 
-  if ($group) {
+  if ($group instanceof GroupInterface) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
     // Check if it's a closed group.
@@ -735,7 +734,7 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  * Get current Group entity from the route.
  *
  * @return \Drupal\group\Entity\GroupInterface
- *    Returns the group object.
+ *   Returns the group object.
  */
 function _social_group_get_current_group() {
   $group = \Drupal::routeMatch()->getParameter('group');
@@ -769,10 +768,10 @@ function _social_group_get_current_group() {
  * Get group cache tags.
  *
  * @param \Drupal\group\Entity\GroupInterface $group
- *    The GroupInterface.
+ *   The GroupInterface.
  *
  * @return array
- *    An array of cache tags related to groups.
+ *   An array of cache tags related to groups.
  */
 function _social_group_cache_tags(GroupInterface $group) {
   // Group views.

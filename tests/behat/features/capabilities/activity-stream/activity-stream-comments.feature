@@ -106,14 +106,14 @@ Feature: See comments in activity stream
     And I press "Comment"
 
     Given I am logged in as "SeeUser"
-    And I click "CreateUser"
+    And I am on the profile of "CreateUser"
     Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     And I should see "This is a third event comment"
     And I should not see "This is a first event comment"
     And I should not see "This is a reply event comment"
 
-    And I click "Test open group"
+    And I am on the stream of group "Test open group"
     Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
     And I should see "This is a third event comment"
@@ -121,9 +121,8 @@ Feature: See comments in activity stream
     And I should not see "This is a reply event comment"
 
     When I am on the homepage
-    Then I should see "CreateUser created an event in Test open group"
-    And I should see "Test group event"
-    And I should see "This is a third event comment"
+    Then I should not see "CreateUser created an event in Test open group"
+    And I should not see "This is a third event comment"
     And I should not see "This is a first event comment"
     And I should not see "This is a reply event comment"
 

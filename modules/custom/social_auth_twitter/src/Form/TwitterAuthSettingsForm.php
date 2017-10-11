@@ -14,7 +14,7 @@ class TwitterAuthSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return array('social_auth_twitter.settings');
+    return ['social_auth_twitter.settings'];
   }
 
   /**
@@ -30,34 +30,34 @@ class TwitterAuthSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_auth_twitter.settings');
 
-    $form['twitter_settings'] = array(
+    $form['twitter_settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Twitter OAuth settings'),
       '#open' => TRUE,
-    );
+    ];
 
-    $form['twitter_settings']['consumer_key'] = array(
+    $form['twitter_settings']['consumer_key'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('Consumer Key'),
       '#default_value' => $config->get('consumer_key'),
       '#description' => $this->t('Copy the Consumer Key here'),
-    );
+    ];
 
-    $form['twitter_settings']['consumer_secret'] = array(
+    $form['twitter_settings']['consumer_secret'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('Consumer Secret'),
       '#default_value' => $config->get('consumer_secret'),
       '#description' => $this->t('Copy the Consumer Secret here'),
-    );
+    ];
 
-    $form['twitter_settings']['status'] = array(
+    $form['twitter_settings']['status'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Active'),
       '#default_value' => $config->get('status'),
       '#description' => $this->t('Determines whether this social network can be used.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

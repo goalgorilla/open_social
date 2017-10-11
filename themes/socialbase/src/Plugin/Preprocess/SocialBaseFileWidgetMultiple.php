@@ -17,6 +17,7 @@ class SocialBaseFileWidgetMultiple extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Remove duplicated ajax wrapper for topic/events files field,
     // because one is already rendered in container.html.twig.

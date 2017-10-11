@@ -11,7 +11,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
  * Implements hook_toolbar_alter().
  */
 function social_admin_menu_toolbar_alter(&$items) {
-  $items['administration']['tray']['toolbar_administration']['#pre_render'] = array('social_admin_menu_prerender_toolbar_administration_tray');
+  $items['administration']['tray']['toolbar_administration']['#pre_render'] = ['social_admin_menu_prerender_toolbar_administration_tray'];
 }
 
 /**
@@ -33,12 +33,12 @@ function social_admin_menu_prerender_toolbar_administration_tray(array $element)
   $parameters = new MenuTreeParameters();
   $parameters->setRoot('system.admin')->excludeRoot()->setMaxDepth(4)->onlyEnabledLinks();
   $tree = $menu_tree->load(NULL, $parameters);
-  $manipulators = array(
-    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
-    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
-    array('callable' => 'toolbar_tools_menu_navigation_links'),
-    array('callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'),
-  );
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ['callable' => 'toolbar_tools_menu_navigation_links'],
+    ['callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'],
+  ];
   $tree = $menu_tree->transform($tree, $manipulators);
   $element['administration_menu'] = $menu_tree->build($tree);
   $element['administration_menu']['#cache']['contexts'][] = 'user.roles';
