@@ -53,7 +53,7 @@ function activity_send_schema() {
 /**
  * Add a new database column to user_activity_send, migrate the old settings.
  */
-function social_core_update_8001(&$sandbox) {
+function social_core_update_8001() {
   // Declare the spec.
   $spec = [
     'fields' => [
@@ -70,19 +70,23 @@ function social_core_update_8001(&$sandbox) {
     ],
   ];
 
+  // Setup DB connection and schema.
+  $db = Database::getConnection();
+  $schema = $db->schema();
+
   // Add field and index.
-  $schema = Database::getConnection()->schema();
   $schema->addField('user_activity_send', 'frequency', $spec['fields']['frequency']);
   $schema->addIndex('user_activity_send', 'uas_frequency', $spec['indexes']['uas_frequency'], $spec);
 
-  // @todo: add sandbox around acquiring and migrating settings.
-
-  // Get old settings.
-
-  // Migrate old settings into new column.
-  \Drupal::database()->insert('user_activity_send')
-    ->fields(['frequency'])
-    ->values(['value value value migrated'])
+  // Update old status value of 0 to none.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'none'])
+    ->condition('status', 0)
+    ->execute();
+  // Update old status value of 1 to immediately.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'immediately'])
+    ->condition('status', 1)
     ->execute();
 
   // Drop old column and index.
