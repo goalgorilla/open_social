@@ -5,6 +5,8 @@
  * Installation code for the activity_send module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_schema().
  */
@@ -53,7 +55,7 @@ function activity_send_schema() {
 /**
  * Add a new database column to user_activity_send, migrate the old settings.
  */
-function social_core_update_8001() {
+function activity_send_update_8001() {
   // Declare the spec.
   $spec = [
     'fields' => [
