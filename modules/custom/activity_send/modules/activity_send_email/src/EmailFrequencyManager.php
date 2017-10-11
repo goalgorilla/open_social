@@ -6,6 +6,9 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
+/**
+ * Class EmailFrequencyManager.
+ */
 class EmailFrequencyManager extends DefaultPluginManager {
 
   /**
@@ -24,4 +27,5 @@ class EmailFrequencyManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'emailfrequency');
 
   }
+
 }

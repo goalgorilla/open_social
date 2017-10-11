@@ -31,21 +31,61 @@ function activity_send_schema() {
         'not null' => TRUE,
         'default' => '',
       ],
-      'status' => [
-        'description' => 'An integer value to determine if emails should be sent immediately, daily or weekly.',
-        'type' => 'int',
-        'size' => 'tiny',
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'size' => 255,
         'not null' => TRUE,
-        'default' => 1,
+        'default' => 'immediately',
       ],
     ],
     'indexes' => [
       'uas_uid' => ['uid'],
       'uas_destination' => ['destination'],
       'uas_message_template' => ['message_template'],
-      'uas_status' => ['status'],
+      'uas_frequency' => ['frequency'],
     ],
   ];
 
   return $schema;
+}
+
+/**
+ * Add a new database column to user_activity_send, migrate the old settings.
+ */
+function social_core_update_8001(&$sandbox) {
+  // Declare the spec.
+  $spec = [
+    'fields' => [
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'size' => 255,
+        'not null' => TRUE,
+        'default' => 'immediately',
+      ],
+    ],
+    'indexes' => [
+      'uas_frequency' => ['frequency'],
+    ],
+  ];
+
+  // Add field and index.
+  $schema = Database::getConnection()->schema();
+  $schema->addField('user_activity_send', 'frequency', $spec['fields']['frequency']);
+  $schema->addIndex('user_activity_send', 'uas_frequency', $spec['indexes']['uas_frequency'], $spec);
+
+  // @todo: add sandbox around acquiring and migrating settings.
+
+  // Get old settings.
+
+  // Migrate old settings into new column.
+  \Drupal::database()->insert('user_activity_send')
+    ->fields(['frequency'])
+    ->values(['value value value migrated'])
+    ->execute();
+
+  // Drop old column and index.
+  $schema->dropField('user_activity_send', 'status');
+  $schema->dropIndex('user_activity_send', 'uasstatus');
 }

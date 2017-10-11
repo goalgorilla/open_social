@@ -28,10 +28,10 @@ class EmailFrequency extends Plugin {
   public $name;
 
   /**
-   * The frequency.
+   * The weight of the frequency option.
    *
    * @var integer
    */
-  public $interval;
+  public $weight;
 
 }

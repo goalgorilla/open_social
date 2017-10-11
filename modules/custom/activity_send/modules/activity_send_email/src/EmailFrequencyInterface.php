@@ -18,9 +18,10 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
   public function getName();
 
   /**
-   * Returns the email frequency interval.
+   * Return the weight of the frequency option.
    *
    * @return integer
    */
-  public function getInterval();
+  public function getWeight();
+
 }

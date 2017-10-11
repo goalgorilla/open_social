@@ -45,12 +45,30 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $all_email_message_keys[1] => $all_email_message_values[1],
     ];
 
-    $notification_options = [
-      0 => t('- None -'),
-      1 => t('Immediately'),
-      2 => t('Daily'),
-      3 => t('Weekly'),
-    ];
+    $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+    $plugins = $emailfrequencymanager->getDefinitions();
+
+    $emailfrequencies = [];
+
+    // Fill a sortable array with the data about the email frequency.
+    foreach ($plugins as $frequency) {
+      $instance = $emailfrequencymanager->createInstance($frequency['id']);
+      $emailfrequencies[] = [
+        'id' => $frequency['id'],
+        'name' => $instance->getName(),
+        'weight' => $instance->getWeight(),
+      ];
+    }
+
+    // Sort the email frequencies by their weight.
+    uasort($emailfrequencies, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+
+    $notification_options = [];
+
+    // Place the sorted data in an actual form option.
+    foreach ($emailfrequencies as $option) {
+      $notification_options[$option['id']] = $option['name'];
+    }
 
     // The email notification settings for Message to me.
     $form['email_notifications']['message_to_me'] = [
@@ -66,7 +84,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         '#type' => 'select',
         '#title' => $title,
         '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
       ];
     }
     // The email notification settings for What I manage.
@@ -83,7 +101,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         '#type' => 'select',
         '#title' => $title,
         '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
       ];
     }
 
@@ -101,7 +119,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         '#type' => 'select',
         '#title' => $title,
         '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 1,
+        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
       ];
     }
 
