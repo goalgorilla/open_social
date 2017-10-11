@@ -41,11 +41,6 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
   }
 
   public function whiteList($text) {
-    // First check if the string is a valid URL.
-    if (!UrlHelper::isValid($text, TRUE)) {
-      return FALSE;
-    }
-
     // Fetch allowed patterns.
     $patterns = $this->getPatterns();
 
