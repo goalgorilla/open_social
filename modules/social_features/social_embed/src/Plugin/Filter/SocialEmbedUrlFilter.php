@@ -6,8 +6,6 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
-use Embed\Providers\OEmbed\Embedly;
-
 
 /**
  * Provides a filter to display embedded entities based on data attributes.
@@ -48,15 +46,37 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       return FALSE;
     }
 
-    // Fetch all patterns known by Embed/Embed.
-    $patterns = Embedly::getPatterns();
+    // Fetch allowed patterns.
+    $patterns = $this->getPatterns();
 
     // Check if the URL provided is from a whitelisted site.
     foreach ($patterns as $pattern) {
-      if (strpos($text, $pattern) !== FALSE) {
+      // Testing pattern.
+      $testing_pattern = '/'.$pattern.'/';
+      // Check if it matches.
+      if (preg_match($testing_pattern, $text)) {
         return TRUE;
       }
     }
     return FALSE;
+  }
+
+  /**
+   * @return array
+   */
+  private function getPatterns() {
+    return [
+      'facebook.com\/(.*)\/videos\/(.*)',
+      'facebook.com\/(.*)\/photos\/(.*)',
+      'facebook.com\/(.*)\/posts\/(.*)',
+      'flickr.com\/photos\/(.*)',
+      'instagram.com\/p\/(.*)',
+      'open.spotify.com\/track\/(.*)',
+      'twitter.com\/(.*)\/status\/(.*)',
+      'vimeo.com\/\d{9}',
+      'youtube.com\/watch[?]v=(.*)',
+      'youtu.be\/(.*)',
+      'linkedin.com\/in\/(.*)',
+    ];
   }
 }
