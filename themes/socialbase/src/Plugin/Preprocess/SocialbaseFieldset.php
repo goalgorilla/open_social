@@ -11,8 +11,6 @@ use Drupal\bootstrap\Utility\Variables;
  *
  * @ingroup plugins_preprocess
  *
- * @see image-widget.html.twig
- *
  * @BootstrapPreprocess("fieldset")
  */
 class SocialbaseFieldset extends PreprocessBase {

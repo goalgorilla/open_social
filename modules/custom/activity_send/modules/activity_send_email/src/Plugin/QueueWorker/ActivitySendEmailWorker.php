@@ -40,6 +40,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
 
         // Check if email notifications is enabled for this kind of activity.
         // If user don't change it's enabled by default.
+        // @todo: this check for 1 isn't correct anymore!
         if ((!isset($user_email_settings[$message_template_id])
             || (isset($user_email_settings[$message_template_id]) && $user_email_settings[$message_template_id] == 1))
           && isset($activity->field_activity_output_text)

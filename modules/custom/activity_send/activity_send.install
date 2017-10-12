@@ -5,6 +5,8 @@
  * Installation code for the activity_send module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_schema().
  */
@@ -31,21 +33,53 @@ function activity_send_schema() {
         'not null' => TRUE,
         'default' => '',
       ],
-      'status' => [
-        'description' => 'A boolean indicating whether this type of notifications is enabled or not.',
-        'type' => 'int',
-        'size' => 'tiny',
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
         'not null' => TRUE,
-        'default' => 0,
+        'default' => 'immediately',
       ],
     ],
     'indexes' => [
       'uas_uid' => ['uid'],
       'uas_destination' => ['destination'],
       'uas_message_template' => ['message_template'],
-      'uas_status' => ['status'],
+      'uas_frequency' => ['frequency'],
     ],
   ];
 
   return $schema;
+}
+
+/**
+ * Add a new database column to user_activity_send, migrate the old settings.
+ */
+function activity_send_update_8001() {
+  // Get the full table spec (needed for $schema->addIndex()).
+  $spec = activity_send_schema();
+  $spec = $spec['user_activity_send'];
+
+  // Setup DB connection and schema.
+  $db = Database::getConnection();
+  $schema = $db->schema();
+
+  // Add field and index.
+  $schema->addField('user_activity_send', 'frequency', $spec['fields']['frequency']);
+  $schema->addIndex('user_activity_send', 'uas_frequency', $spec['indexes']['uas_frequency'], $spec);
+
+  // Update old status value of 0 to none.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'none'])
+    ->condition('status', 0)
+    ->execute();
+  // Update old status value of 1 to immediately.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'immediately'])
+    ->condition('status', 1)
+    ->execute();
+
+  // Drop old column and index.
+  $schema->dropField('user_activity_send', 'status');
+  $schema->dropIndex('user_activity_send', 'uasstatus');
 }
