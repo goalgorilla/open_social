@@ -56,9 +56,9 @@ function activity_send_email_cron() {
           $queue->createItem($queue_item);
 
           // Remove activities from digest table that we just put it in the queue.
-          $db->delete('user_activity_digest', 'uad')
-            ->condition('uad.uid', $queue_item['uid'])
-            ->condition('uad.activity', $queue_item['activities'], 'IN')
+          $db->delete('user_activity_digest')
+            ->condition('uid', $queue_item['uid'])
+            ->condition('activity', $queue_item['activities'], 'IN')
             ->execute();
         }
       }
