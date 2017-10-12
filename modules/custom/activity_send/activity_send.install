@@ -36,7 +36,7 @@ function activity_send_schema() {
       'frequency' => [
         'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
         'type' => 'varchar',
-        'size' => 255,
+        'length' => 255,
         'not null' => TRUE,
         'default' => 'immediately',
       ],
@@ -56,21 +56,9 @@ function activity_send_schema() {
  * Add a new database column to user_activity_send, migrate the old settings.
  */
 function activity_send_update_8001() {
-  // Declare the spec.
-  $spec = [
-    'fields' => [
-      'frequency' => [
-        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
-        'type' => 'varchar',
-        'size' => 255,
-        'not null' => TRUE,
-        'default' => 'immediately',
-      ],
-    ],
-    'indexes' => [
-      'uas_frequency' => ['frequency'],
-    ],
-  ];
+  // Get the full table spec (needed for $schema->addIndex()).
+  $spec = activity_send_schema();
+  $spec = $spec['user_activity_send'];
 
   // Setup DB connection and schema.
   $db = Database::getConnection();
