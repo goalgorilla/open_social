@@ -3,6 +3,9 @@
 namespace Drupal\activity_send_email;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\activity_creator\Entity\Activity;
+use Drupal\message\Entity\Message;
+use Drupal\user\Entity\User;
 
 /**
  * Common interface for all email frequencies.
@@ -23,5 +26,17 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * @return integer
    */
   public function getWeight();
+
+  /**
+   * Processes an activity item.
+   *
+   * @param \Drupal\activity_creator\Entity\Activity $activity
+   *   The Activity object.
+   * @param \Drupal\message\Entity\Message $message
+   *   The Message object.
+   * @param \Drupal\user\Entity\User $target
+   *   The target user account.
+   */
+  public function processItem(Activity $activity, Message $message, User $target);
 
 }
