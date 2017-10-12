@@ -65,12 +65,14 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       'facebook.com\/(.*)\/photos\/(.*)',
       'facebook.com\/(.*)\/posts\/(.*)',
       'flickr.com\/photos\/(.*)',
+      'flic.kr\/p\/(.*)',
       'instagram.com\/p\/(.*)',
       'open.spotify.com\/track\/(.*)',
       'twitter.com\/(.*)\/status\/(.*)',
       'vimeo.com\/\d{9}',
       'youtube.com\/watch[?]v=(.*)',
       'youtu.be\/(.*)',
+      'ted.com\/talks\/(.*)',
       'linkedin.com\/in\/(.*)',
     ];
   }
