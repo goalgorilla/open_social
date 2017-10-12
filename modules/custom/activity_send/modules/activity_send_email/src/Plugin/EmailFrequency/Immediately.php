@@ -14,7 +14,7 @@ use Drupal\user\Entity\User;
  * @EmailFrequency(
  *   id = "immediately",
  *   name = @Translation("Immediately"),
- *   weight = 10
+ *   weight = 10,
  *   interval = 0
  * )
  */

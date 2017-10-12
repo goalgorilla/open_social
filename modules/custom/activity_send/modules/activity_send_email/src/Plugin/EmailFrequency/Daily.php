@@ -10,7 +10,7 @@ use Drupal\activity_send_email\EmailFrequencyBase;
  * @EmailFrequency(
  *   id = "daily",
  *   name = @Translation("Daily"),
- *   weight = 20
+ *   weight = 20,
  *   interval = 86400
  * )
  */
