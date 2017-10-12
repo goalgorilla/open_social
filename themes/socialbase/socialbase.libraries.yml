@@ -51,6 +51,15 @@ form-controls:
   dependencies:
     - core/drupal.form
 
+fitframe:
+  css:
+    component:
+      /libraries/fitframe/fitframe.css: {}
+      assets/css/fitframe.css: {}
+  js:
+    /libraries/fitframe/fitframe.min.js: { minified: true }
+    assets/js/fitframe.init.min.js: { minified: true }
+
 list:
   css:
     component:
@@ -212,6 +221,8 @@ comment:
   css:
     component:
       assets/css/comment.css: {}
+  dependencies:
+    - socialbase/fitframe
 
 form-post-create:
   css:
