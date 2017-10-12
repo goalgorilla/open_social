@@ -40,22 +40,23 @@ function activity_send_email_cron() {
       $activitities = $query->execute()->fetchAll();
 
       if (!empty($activitities)) {
-        // Start defining the queue item.
-        $queue_item = [
-          'frequency' => $frequency['id'],
-        ];
+        $queue_items = [];
 
-        // Fill the queue item.
+        // Fill the queue items.
         foreach ($activitities as $activitity) {
-          $queue_item['uid'] = $activitity->uid;
-          $queue_item['activities'][] = $activitity->activity;
+          $queue_items[$activitity->uid]['uid'] = $activitity->uid;
+          $queue_items[$activitity->uid]['frequency'] = $frequency['id'];
+          $queue_items[$activitity->uid]['activities'][] = $activitity->activity;
         }
 
-        // Add the item to the queue.
-        $queue = \Drupal::queue('activity_digest_worker');
-        $queue->createItem($queue_item);
+        // Add queue items to the queue worker.
+        foreach ($queue_items as $queue_item) {
+          // Add the item to the queue.
+          $queue = \Drupal::queue('activity_digest_worker');
+          $queue->createItem($queue_item);
 
-        // Delete items we now have in queue.
+          // Remove activities from digest table that we just put it in the queue.
+        }
       }
 
       // Update last run.
