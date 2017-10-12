@@ -64,28 +64,6 @@ function activity_send_email_schema() {
     ],
   ];
 
-  $schema['user_activity_digest_time'] = [
-    'fields' => [
-      'frequency' => [
-        'description' => 'The frequency for this activity. It should match the EmailFrequency plugin id.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ],
-      'timestamp' => [
-        'description' => 'The timestamp of when we last processed this frequency.',
-        'type' => 'int',
-        'length' => 11,
-        'not null' => TRUE,
-        'default' => 0,
-        'unsigned' => TRUE,
-      ],
-    ],
-    'indexes' => [
-      'uadt_frequency' => ['frequency'],
-    ],
-  ];
-
   return $schema;
 }
 
@@ -129,31 +107,7 @@ function activity_send_email_update_8001() {
     ],
   ];
 
-  // Get the full spec for the new table.
-  $spec['user_activity_digest_time'] = [
-    'fields' => [
-      'frequency' => [
-        'description' => 'The frequency for this activity. It should match the EmailFrequency plugin id.',
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-      ],
-      'timestamp' => [
-        'description' => 'The timestamp of when we last processed this frequency.',
-        'type' => 'int',
-        'length' => 11,
-        'not null' => TRUE,
-        'default' => 0,
-        'unsigned' => TRUE,
-      ],
-    ],
-    'indexes' => [
-      'uadt_frequency' => ['frequency'],
-    ],
-  ];
-
   // Add the two tables.
   $schema = Database::getConnection()->schema();
   $schema->createTable('user_activity_digest', $spec['user_activity_digest']);
-  $schema->createTable('user_activity_digest_time', $spec['user_activity_digest_time']);
 }

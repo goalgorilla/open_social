@@ -5,9 +5,55 @@
  * Contains activity_basics.module..
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+
+/**
+ * Implements hook_cron().
+ *
+ * This cronjob handles creating digest queue items to process.
+ */
+function activity_send_email_cron() {
+  // Get plugins and their intervals.
+  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $emailfrequencymanager->getDefinitions();
+
+  // Fill a sortable array with the data about the email frequency.
+  foreach ($plugins as $frequency) {
+    $instance = $emailfrequencymanager->createInstance($frequency['id']);
+    $interval = $instance->getInterval();
+
+    // Get last run time.
+    $last_run = \Drupal::state()->get('digest.' . $frequency['id'] . '.last_run', 0);
+
+    // If interval of frequency passed since last time, try to create queue
+    // items.
+    if ((time() - $last_run) > $interval) {
+      // Query to get the data to process per user per frequency. That should actually be sent...
+      $db = Database::getConnection();
+      $query = $db->select('user_activity_digest', 'uad')
+        ->fields('uad', ['uid', 'activity'])
+        ->condition('uad.frequency', $frequency['id'])
+        ->condition('uad.timestamp', time() - $interval,'<=');
+      $activitities = $query->execute()->fetchAll();
+
+      foreach ($activitities as $activitity) {
+
+      }
+
+
+
+      // Update last run.
+      \Drupal::state()->set('example.last_run', time());
+    }
+  }
+
+  // Create queue items *per user*.
+
+  // Think about how to remove items from the digest table. ;D
+}
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
