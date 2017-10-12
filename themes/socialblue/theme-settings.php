@@ -88,8 +88,8 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       '#upload_location' => 'public://',
       '#upload_validators'    => [
         'file_validate_is_image'      => array(),
-        'file_validate_extensions'    => array('gif png jpg jpeg')
-      ]
+        'file_validate_extensions'    => array('gif png jpg jpeg'),
+      ],
     );
 
     // Font tab.
