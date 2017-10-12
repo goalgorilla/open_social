@@ -32,7 +32,9 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
       // Make sure we have an actual user account to work with.
       if ($target instanceof User) {
         $langcode = $target->getPreferredLangcode();
-        $params['body'] = '';
+        $digest_notifications = [
+          '#theme' => 'digestmail',
+        ];
 
         foreach ($data['activities'] as $activity_id) {
           $activity = Activity::load($activity_id);
@@ -44,13 +46,29 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
             $body_text = EmailActivityDestination::getSendEmailOutputText($message);
 
             if ($langcode && !empty($body_text)) {
-              $params['body'] .= $body_text;
+              $digest_notifications['#notifications'][] = $body_text;
             }
           }
         }
 
-        // If we have text to send, let's do it now.
-        if (!empty($params['body'])) {
+        if (!empty($digest_notifications['#notifications'])) {
+          // Get the notification count for the email template.
+          $digest_notifications['#notification_count'] = t('You have received <strong>:count notifications</strong>', [':count' => count($digest_notifications['#notifications'])]);
+
+          // @todo use dependency injection for this.
+          $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+          $instance = $emailfrequencymanager->createInstance($data['frequency']);
+
+          // Get the notification settings for the email template.
+          $digest_notifications['#notification_settings'] = t('Based on your :settings, the notifications above are sent to you as <strong>:frequency digest</strong>', [
+            ':settings' => 'hier een link',
+            ':frequency' => $instance->getName(),
+          ]);
+
+          // Render the notifications using the digestmail.html.twig template.
+          $params['body'] = \Drupal::service('renderer')->renderRoot($digest_notifications);
+
+          // Send the email.
           $mail_manager = \Drupal::service('plugin.manager.mail');
           $mail_manager->mail(
             'activity_send_email',

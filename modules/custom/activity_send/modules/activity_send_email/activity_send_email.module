@@ -76,6 +76,23 @@ function activity_send_email_cron() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function activity_send_email_theme() {
+  $items = [
+    'digestmail' => [
+      'template' => 'digestmail',
+      'variables' => [
+        'notification_count' => NULL,
+        'notifications' => NULL,
+        'notification_settings' => NULL,
+      ]
+    ],
+  ];
+  return $items;
+}
+
+/**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
 function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
