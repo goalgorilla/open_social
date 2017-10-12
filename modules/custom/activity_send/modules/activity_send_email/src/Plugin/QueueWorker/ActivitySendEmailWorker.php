@@ -46,6 +46,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
         }
 
         // Send item to EmailFrequency instance.
+        // @todo use dependency injection for this.
         $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
         $instance = $emailfrequencymanager->createInstance($frequency);
         $instance->processItem($activity, $message, $target_account);

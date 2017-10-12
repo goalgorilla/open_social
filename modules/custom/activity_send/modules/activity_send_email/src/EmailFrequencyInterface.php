@@ -28,6 +28,13 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
   public function getWeight();
 
   /**
+   * Return the interval of the email frequency in seconds.
+   *
+   * @return integer
+   */
+  public function getInterval();
+
+  /**
    * Processes an activity item.
    *
    * @param \Drupal\activity_creator\Entity\Activity $activity

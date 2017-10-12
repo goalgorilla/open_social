@@ -15,6 +15,7 @@ use Drupal\user\Entity\User;
  *   id = "immediately",
  *   name = @Translation("Immediately"),
  *   weight = 10
+ *   interval = 0
  * )
  */
 class Immediately extends EmailFrequencyBase {

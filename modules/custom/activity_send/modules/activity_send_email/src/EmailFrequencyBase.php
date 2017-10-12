@@ -31,6 +31,13 @@ class EmailFrequencyBase extends PluginBase implements EmailFrequencyInterface {
   /**
    * {@inheritdoc}
    */
+  public function getInterval() {
+    return $this->pluginDefinition['interval'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function processItem(Activity $activity, Message $message, User $target) {}
 
 }

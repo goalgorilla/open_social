@@ -11,6 +11,7 @@ use Drupal\activity_send_email\EmailFrequencyBase;
  *   id = "none",
  *   name = @Translation("- None -"),
  *   weight = 0
+ *   interval = 0
  * )
  */
 class None extends EmailFrequencyBase {}

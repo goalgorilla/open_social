@@ -57,8 +57,43 @@ function activity_send_schema() {
  */
 function activity_send_update_8001() {
   // Get the full table spec (needed for $schema->addIndex()).
-  $spec = activity_send_schema();
-  $spec = $spec['user_activity_send'];
+  $spec = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'destination' => [
+        'description' => 'The activity destination name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'message_template' => [
+        'description' => 'The message template name.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'immediately',
+      ],
+    ],
+    'indexes' => [
+      'uas_uid' => ['uid'],
+      'uas_destination' => ['destination'],
+      'uas_message_template' => ['message_template'],
+      'uas_frequency' => ['frequency'],
+    ],
+  ];
 
   // Setup DB connection and schema.
   $db = Database::getConnection();

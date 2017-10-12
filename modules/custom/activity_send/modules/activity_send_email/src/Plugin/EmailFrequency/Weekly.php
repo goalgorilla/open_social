@@ -11,6 +11,7 @@ use Drupal\activity_send_email\EmailFrequencyBase;
  *   id = "weekly",
  *   name = @Translation("Weekly"),
  *   weight = 30
+ *   interval = 604800
  * )
  */
 class Weekly extends EmailFrequencyBase {}
