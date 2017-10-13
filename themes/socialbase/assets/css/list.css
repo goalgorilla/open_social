@@ -91,6 +91,24 @@
   background-color: rgba(0, 0, 0, 0.12);
 }
 
+.item-list__comma-list,
+.item-list__comma-list li {
+  display: inline;
+}
+
+.item-list__comma-list {
+  margin: 0;
+  padding: 0;
+}
+
+.item-list__comma-list li:after {
+  content: ", ";
+}
+
+.item-list__comma-list li:last-child:after {
+  content: "";
+}
+
 @media (min-width: 600px) {
   .list-item__label {
     -ms-flex-preferred-size: 180px;
