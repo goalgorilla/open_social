@@ -11,6 +11,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
+ * Time in seconds between a time of creating user and time of update user when
+ * this user defined as a new user.
+ */
+define('SOCIAL_USER_LIFETIME', 5);
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * @see \Drupal\user\RegisterForm
@@ -65,7 +71,7 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
     // So it's actually the first time the user logs in and we can do our
     // redirect.
     $user = \Drupal::routeMatch()->getParameter('user');
-    if ($user->getCreatedTime() == $user->getChangedTime()) {
+    if ($user->getChangedTime() - $user->getCreatedTime() < SOCIAL_USER_LIFETIME) {
 
       // Remove unwanted message.
       $message = 'You have just used your one-time login link. It is no longer necessary to use this link to log in. Please change your password.';
