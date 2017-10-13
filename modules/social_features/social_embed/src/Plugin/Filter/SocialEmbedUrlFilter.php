@@ -69,11 +69,10 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       'instagram.com\/p\/(.*)',
       'open.spotify.com\/track\/(.*)',
       'twitter.com\/(.*)\/status\/(.*)',
-      'vimeo.com\/\d{9}',
+      'vimeo.com\/\d{7,9}',
       'youtube.com\/watch[?]v=(.*)',
       'youtu.be\/(.*)',
       'ted.com\/talks\/(.*)',
-      'linkedin.com\/in\/(.*)',
     ];
   }
 }
