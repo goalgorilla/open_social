@@ -23,6 +23,7 @@ function activity_send_email_cron() {
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
     $instance = $emailfrequencymanager->createInstance($frequency['id']);
+    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $interval = $instance->getInterval();
 
     // If the interval of the EmailFrequency plugin is more than 0, we should
@@ -142,6 +143,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
     // Fill a sortable array with the data about the email frequency.
     foreach ($plugins as $frequency) {
+      /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
       $instance = $emailfrequencymanager->createInstance($frequency['id']);
       $emailfrequencies[] = [
         'id' => $frequency['id'],

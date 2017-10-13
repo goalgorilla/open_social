@@ -53,19 +53,18 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           }
         }
 
+        // If we have notification to send continue preparing the email.
         if (!empty($digest_notifications['#notifications'])) {
           // Get the notification count for the email template.
           $digest_notifications['#notification_count'] = t('You have received <strong>:count notifications</strong>', [':count' => count($digest_notifications['#notifications'])]);
 
-          // @todo use dependency injection for this.
           $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
           /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $emailfrequencymanager->createInstance($data['frequency']);
 
           // Get the notification settings for the email template.
-          // @todo Add the constructed link to the user settings page here.
           $digest_notifications['#notification_settings'] = t('Based on your @settings, the notifications above are sent to you as <strong>:frequency mail</strong>', [
-            '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])),
+            '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute()),
             ':frequency' => $instance->getName(),
           ]);
 

@@ -53,13 +53,14 @@ class Immediately extends EmailFrequencyBase {
       '#theme' => 'directmail',
       '#notification' => $body_text,
       '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
-        '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()]))->toString(),
+        '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
         ':frequency' => $this->getName(),
       ]),
     ];
 
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
+    // Send the email.
     $mail_manager = \Drupal::service('plugin.manager.mail');
     $mail_manager->mail(
       'activity_send_email',
