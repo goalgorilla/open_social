@@ -46,7 +46,17 @@ class Immediately extends EmailFrequencyBase {
    *  The target account to send the email to.
    */
   protected function sendEmail($body_text, $langcode, User $target) {
-    $params['body'] = $body_text;
+    // Construct the render array.
+    $notification = [
+      '#theme' => 'directmail',
+      '#notification' => $body_text,
+      '#notification_settings' => t('Based on your :settings, the notification above is sent to you <strong>:frequency</strong>', [
+        ':settings' => 'hier een link',
+        ':frequency' => $this->getName(),
+      ]),
+    ];
+
+    $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
     $mail_manager = \Drupal::service('plugin.manager.mail');
     $mail_manager->mail(

@@ -61,7 +61,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
 
           // Get the notification settings for the email template.
           // @todo Add the constructed link to the user settings page here.
-          $digest_notifications['#notification_settings'] = t('Based on your :settings, the notifications above are sent to you as <strong>:frequency digest</strong>', [
+          $digest_notifications['#notification_settings'] = t('Based on your :settings, the notifications above are sent to you as <strong>:frequency mail</strong>', [
             ':settings' => 'hier een link',
             ':frequency' => $instance->getName(),
           ]);
