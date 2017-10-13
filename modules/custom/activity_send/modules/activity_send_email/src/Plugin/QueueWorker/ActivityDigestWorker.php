@@ -55,16 +55,18 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
 
         // If we have notification to send continue preparing the email.
         if (!empty($digest_notifications['#notifications'])) {
+          $notification_count = count($digest_notifications['#notifications']);
+
           // Get the notification count for the email template.
-          $digest_notifications['#notification_count'] = t('You have received <strong>:count notifications</strong>', [':count' => count($digest_notifications['#notifications'])]);
+          $digest_notifications['#notification_count'] = \Drupal::translation()->formatPlural($notification_count, 'You have received <strong>:count</strong> notification', 'You have received <strong>:count</strong> notifications', array(':count' => $notification_count));
 
           $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
           /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $emailfrequencymanager->createInstance($data['frequency']);
 
           // Get the notification settings for the email template.
-          $digest_notifications['#notification_settings'] = t('Based on your @settings, the notifications above are sent to you as <strong>:frequency mail</strong>', [
-            '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute()),
+          $digest_notifications['#notification_settings'] = \Drupal::translation()->formatPlural($notification_count, 'Based on your @settings, the notification above is sent to you as a <strong>:frequency mail</strong>', 'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>', [
+            '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
             ':frequency' => $instance->getName(),
           ]);
 

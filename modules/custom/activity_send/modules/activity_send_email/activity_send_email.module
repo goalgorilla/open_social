@@ -41,7 +41,8 @@ function activity_send_email_cron() {
         $query = $db->select('user_activity_digest', 'uad')
           ->fields('uad', ['uid', 'activity'])
           ->condition('uad.frequency', $frequency['id'])
-          ->condition('uad.timestamp', time() - $interval, '<=');
+          ->condition('uad.timestamp', time() - $interval, '<=')
+          ->orderBy('uad.timestamp', 'DESC');
         $activitities = $query->execute()->fetchAll();
 
         if (!empty($activitities)) {
@@ -113,6 +114,10 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       '#attributes' => [
         'class' => ['form-horizontal'],
       ],
+    ];
+
+    $form['email_notifications']['description'] = [
+      '#markup' => t('This requires a nice description.'),
     ];
 
     $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
