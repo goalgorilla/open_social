@@ -5,6 +5,8 @@ namespace Drupal\activity_send_email\Plugin\QueueWorker;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
@@ -57,12 +59,13 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
 
           // @todo use dependency injection for this.
           $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+          /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $emailfrequencymanager->createInstance($data['frequency']);
 
           // Get the notification settings for the email template.
           // @todo Add the constructed link to the user settings page here.
-          $digest_notifications['#notification_settings'] = t('Based on your :settings, the notifications above are sent to you as <strong>:frequency mail</strong>', [
-            ':settings' => 'hier een link',
+          $digest_notifications['#notification_settings'] = t('Based on your @settings, the notifications above are sent to you as <strong>:frequency mail</strong>', [
+            '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])),
             ':frequency' => $instance->getName(),
           ]);
 

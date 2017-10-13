@@ -5,6 +5,8 @@ namespace Drupal\activity_send_email\Plugin\EmailFrequency;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
@@ -50,8 +52,8 @@ class Immediately extends EmailFrequencyBase {
     $notification = [
       '#theme' => 'directmail',
       '#notification' => $body_text,
-      '#notification_settings' => t('Based on your :settings, the notification above is sent to you <strong>:frequency</strong>', [
-        ':settings' => 'hier een link',
+      '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
+        '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()]))->toString(),
         ':frequency' => $this->getName(),
       ]),
     ];
