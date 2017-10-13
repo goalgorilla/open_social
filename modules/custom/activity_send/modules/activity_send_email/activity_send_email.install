@@ -26,6 +26,22 @@ function activity_send_email_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ *
+ * Removes keys from the State API.
+ */
+function activity_send_email_uninstall() {
+  // Get plugins and their intervals.
+  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $emailfrequencymanager->getDefinitions();
+
+  // Remove all cron last run times from the State API.
+  foreach ($plugins as $frequency) {
+    \Drupal::state()->delete('digest.' . $frequency['id'] . '.last_run');
+  }
+}
+
+/**
  * Implements hook_schema().
  */
 function activity_send_email_schema() {

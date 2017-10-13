@@ -9,7 +9,6 @@
 // ################################
 
 var importOnce  = require('node-sass-import-once'),
-    path        = require('path'),
     gulp        = require('gulp'),
     $           = require('gulp-load-plugins')(),
     browserSync = require('browser-sync').create(),
@@ -17,7 +16,6 @@ var importOnce  = require('node-sass-import-once'),
     // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
     sass        = require('gulp-sass'),
     kss         = require('kss'),
-    postcss     = require('gulp-postcss'),
     autoprefixer= require('autoprefixer'),
     mqpacker    = require('css-mqpacker'),
     concat      = require('gulp-concat'),
