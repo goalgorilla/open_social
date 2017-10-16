@@ -92,24 +92,17 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_route = $this->routeMatch->getRouteName();
     $route_parts = explode('.', $current_route);
-    if (!empty($form_state->getValue('search_input'))) {
+    if (empty($form_state->getValue('search_input'))) {
+      // Redirect to the search page with empty search values.
+      $new_route = "view.{$route_parts[1]}.page_no_value";
+      $search_group_page = Url::fromRoute($new_route);
+    }
+    else {
       // Redirect to the search page with filters in the GET parameters.
       $search_input = Html::escape($form_state->getValue('search_input'));
       $search_input = preg_replace('/[\/]+/', '', $search_input);
       $new_route = "view.{$route_parts[1]}.page";
-      if (!empty($search_input)) {
-        $search_group_page = Url::fromRoute($new_route, ['keys' => $search_input]);
-      }
-      else {
-        // Redirect to the search page with empty search values.
-        $new_route = "view.{$route_parts[1]}.page_no_value";
-        $search_group_page = Url::fromRoute($new_route);
-      }
-    }
-    else {
-      // Redirect to the search page with empty search values.
-      $new_route = "view.{$route_parts[1]}.page_no_value";
-      $search_group_page = Url::fromRoute($new_route);
+      $search_group_page = Url::fromRoute($new_route, ['keys' => $search_input]);
     }
     $redirect_path = $search_group_page->toString();
 
