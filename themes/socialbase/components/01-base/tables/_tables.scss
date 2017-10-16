@@ -3,6 +3,8 @@
 // Tables
 //
 // The `<table>` element displays tabular data in rows, columns, and cells.
+// Add a class `.table` to each table for uniform styling. We do not provide styling on
+// HTML tag, so you are flexible to create other styles without having to override much css.
 //
 // markup: table.twig
 //
@@ -12,10 +14,17 @@
 
 table {
   border-collapse: collapse;
-  border-spacing: 0;
-  background-color: $table-bg;
 }
 
+caption {
+  padding-top: $table-cell-padding;
+  padding-bottom: $table-cell-padding;
+  color: $text-muted;
+  text-align: left;
+  caption-side: bottom;
+}
+
+// Matches default `<td>` alignment
 th {
   text-align: left;
 }
@@ -23,46 +32,54 @@ th {
 
 // Baseline styles
 
-table {
+.table {
   width: 100%;
   max-width: 100%;
-  margin-bottom: $line-height-computed;
+  margin-bottom: $spacer;
+  background-color: $table-bg;
   font-size: 0.875rem;
 
   th,
   td {
     padding: $table-cell-padding;
-    line-height: $line-height-base;
     vertical-align: top;
-    word-break: break-word;
+    word-wrap: break-word;
   }
 
   // Bottom align for column headings
   thead th {
+    text-transform: uppercase;
+    font-weight: $font-weight-strong;
+    font-size: $font-size-xs;
     vertical-align: bottom;
-    border-bottom: 2px solid $table-border-color;
+    border-bottom: (2 * $table-border-width) solid $table-border-color;
   }
 
   // Account for multiple tbody instances
   tbody + tbody {
-    border-top: 2px solid $table-border-color;
+    border-top: (2 * $table-border-width) solid $table-border-color;
+  }
+
+  // allow columns to have their own alignment
+  .views-align-left {
+    text-align: left;
+  }
+  .views-align-right {
+    text-align: right;
+  }
+  .views-align-center {
+    text-align: center;
   }
 
 }
 
-// @todo: move these styles to another section as they are not base styles
+
 // Condensed table w/ half padding
 
-.table-condensed {
-  > thead,
-  > tbody,
-  > tfoot {
-    > tr {
-      > th,
-      > td {
-        padding: $table-condensed-cell-padding;
-      }
-    }
+.table-sm {
+  th,
+  td {
+    padding: $table-cell-padding-sm;
   }
 }
 
@@ -73,19 +90,15 @@ table {
 
 .table-bordered {
   border: 1px solid $table-border-color;
-  > thead,
-  > tbody,
-  > tfoot {
-    > tr {
-      > th,
-      > td {
-        border: 1px solid $table-border-color;
-      }
-    }
+
+  th,
+  td {
+    border: 1px solid $table-border-color;
   }
-  > thead > tr {
-    > th,
-    > td {
+
+  thead {
+    th,
+    td {
       border-bottom-width: 2px;
     }
   }
@@ -97,8 +110,8 @@ table {
 // Default zebra-stripe styles (alternating gray and transparent backgrounds)
 
 .table-striped {
-  > tbody > tr:nth-of-type(odd) {
-    background-color: $table-bg-accent;
+  tbody tr:nth-of-type(odd) {
+    background-color: $table-accent-bg;
   }
 }
 
@@ -108,12 +121,31 @@ table {
 // Placed here since it has to come after the potential zebra striping
 
 .table-hover {
-  > tbody > tr:hover {
-    background-color: $table-bg-hover;
+  tbody tr:hover {
+    background-color: $table-hover-bg;
   }
 }
 
+.thead-default {
+  th {
+    color: $table-head-color;
+    background-color: $table-head-bg;
+  }
+}
 
+// Table sort
+.tablesort {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.icon-tablesort {
+  width: 20px;
+  height: 20px;
+}
+
+// Table drag
 .tabledrag-handle {
   color: $gray-light;
   cursor: move;
@@ -126,4 +158,21 @@ table {
     display: block;
     padding-left: 24px;
   }
+}
+
+// Responsive tables
+//
+// Add `.table-responsive` around table`s and we'll make them mobile friendly by enabling horizontal scrolling.
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  // Prevent double border on horizontal scroll due to use of `display: block;`
+  .table-bordered {
+    border: 0;
+  }
+
 }

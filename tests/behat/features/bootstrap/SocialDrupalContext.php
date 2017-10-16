@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Mink\Element\Element;

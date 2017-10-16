@@ -2,8 +2,8 @@
 
 namespace Drupal\social_user_export\Plugin\views\field;
 
-use \Drupal\user\Plugin\views\field\UserBulkForm as BaseUserBulkForm;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Plugin\views\field\UserBulkForm as BaseUserBulkForm;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines a user operations bulk form element.

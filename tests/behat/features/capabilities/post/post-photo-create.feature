@@ -1,4 +1,4 @@
-@api @post @ @stability @perfect @critical @DS-1136 @database
+@api @post @ @stability @perfect @critical @DS-1136 @database @stability-3
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
   Role: As a LU

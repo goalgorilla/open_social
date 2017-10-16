@@ -27,12 +27,12 @@ function social_install() {
   $user->save();
 
   // Create the content manager role.
-  $data = array('id' => 'contentmanager', 'label' => 'Content manager');
+  $data = ['id' => 'contentmanager', 'label' => 'Content manager'];
   $role = Role::create($data);
   $role->save();
 
   // Create the site manager role.
-  $data = array('id' => 'sitemanager', 'label' => 'Site manager');
+  $data = ['id' => 'sitemanager', 'label' => 'Site manager'];
   $role = Role::create($data);
   $role->save();
 

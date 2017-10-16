@@ -31,8 +31,8 @@ function template_preprocess_post(array &$variables) {
 
   // Display Post created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($post->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
-  $date = t('%time ago', array('%time' => $created_time_ago->getString()));
+    ->formatTimeDiffSince($post->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
+  $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
   $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 

@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @community @newest @overview @block @LU @critical @DS-1057
+@api @topic @stability @perfect @community @newest @overview @block @LU @critical @DS-1057 @stability-3
 Feature: See newest topics in the community
   Benefit: In order to discover content
   Role: LU

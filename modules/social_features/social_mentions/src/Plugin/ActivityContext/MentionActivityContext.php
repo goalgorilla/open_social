@@ -3,7 +3,6 @@
 namespace Drupal\social_mentions\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\User;
 
 /**

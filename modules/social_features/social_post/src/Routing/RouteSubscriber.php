@@ -16,11 +16,11 @@ class RouteSubscriber extends RouteSubscriberBase {
   public function alterRoutes(RouteCollection $collection) {
     /** @var \Symfony\Component\Routing\Route $route */
     if ($route = $collection->get('comment.reply')) {
-      $route->setDefaults(array(
+      $route->setDefaults([
         '_controller' => '\Drupal\social_post\Controller\PostCommentController::getReplyForm',
         '_title' => t('Add new comment')->render(),
         'pid' => NULL,
-      ));
+      ]);
     }
   }
 

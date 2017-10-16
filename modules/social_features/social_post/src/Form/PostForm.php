@@ -13,9 +13,9 @@ use Drupal\Core\Form\FormStateInterface;
  */
 class PostForm extends ContentEntityForm {
 
-  private $post_view_default;
-  private $post_view_profile;
-  private $post_view_group;
+  private $postViewDefault;
+  private $postViewProfile;
+  private $postViewGroup;
 
   /**
    * {@inheritdoc}
@@ -46,17 +46,28 @@ class PostForm extends ContentEntityForm {
       }
       else {
         $visibility_value = $this->entity->get('field_visibility')->value;
-        $display_id = ($visibility_value === '0') ? $this->post_view_profile : $this->post_view_default;
+        $display_id = ($visibility_value === '0') ? $this->postViewProfile : $this->postViewDefault;
         $display = EntityFormDisplay::load($display_id);
         // Set the custom display in the form.
         $this->setFormDisplay($display, $form_state);
       }
 
       if (isset($display) && ($display_id = $display->get('id'))) {
-        if ($display_id === $this->post_view_default) {
+        if ($display_id === $this->postViewDefault) {
           // Set default value to community.
           unset($form['field_visibility']['widget'][0]['#options'][0]);
-          $form['field_visibility']['widget'][0]['#default_value'] = "2";
+
+          if (isset($form['field_visibility']['widget'][0]['#default_value'])) {
+            $default_value = $form['field_visibility']['widget'][0]['#default_value'];
+
+            if ((string) $default_value !== '1') {
+              $form['field_visibility']['widget'][0]['#default_value'] = '2';
+            }
+          }
+          else {
+            $form['field_visibility']['widget'][0]['#default_value'] = '2';
+          }
+
           unset($form['field_visibility']['widget'][0]['#options'][3]);
         }
         else {
@@ -121,11 +132,11 @@ class PostForm extends ContentEntityForm {
     $display = $this->getFormDisplay($form_state);
 
     if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === $this->post_view_profile) {
+      if ($display_id === $this->postViewProfile) {
         $account_profile = \Drupal::routeMatch()->getParameter('user');
         $this->entity->get('field_recipient_user')->setValue($account_profile);
       }
-      elseif ($display_id === $this->post_view_group) {
+      elseif ($display_id === $this->postViewGroup) {
         $group = \Drupal::routeMatch()->getParameter('group');
         $this->entity->get('field_recipient_group')->setValue($group);
       }
@@ -155,9 +166,9 @@ class PostForm extends ContentEntityForm {
     $bundle = $this->getBundleEntity()->id();
 
     // Set as variables, since the bundle might be different.
-    $this->post_view_default = 'post.' . $bundle . '.default';
-    $this->post_view_profile = 'post.' . $bundle . '.profile';
-    $this->post_view_group = 'post.' . $bundle . '.group';
+    $this->postViewDefault = 'post.' . $bundle . '.default';
+    $this->postViewProfile = 'post.' . $bundle . '.profile';
+    $this->postViewGroup = 'post.' . $bundle . '.group';
   }
 
 }

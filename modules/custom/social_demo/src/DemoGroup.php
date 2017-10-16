@@ -120,7 +120,8 @@ abstract class DemoGroup extends DemoContent {
       $this->content[$entity->id()] = $entity;
 
       if (!empty($item['members'])) {
-        $this->addMembers($item['members'], $entity);
+        $managers = !empty($item['managers']) ? $item['managers'] : [];
+        $this->addMembers($item['members'], $managers, $entity);
       }
     }
 
@@ -156,10 +157,10 @@ abstract class DemoGroup extends DemoContent {
    * Converts a date in the correct format.
    *
    * @param string $date_string
-   *    The date.
+   *   The date.
    *
    * @return int|false
-   *    Returns a timestamp on success, false otherwise.
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     // Split from delimiter.
@@ -175,18 +176,25 @@ abstract class DemoGroup extends DemoContent {
    * Adds members to a group.
    *
    * @param array $members
-   *    The array of members.
+   *   The array of members.
+   * @param array $managers
+   *   A list of group managers.
    * @param \Drupal\group\Entity\GroupInterface $entity
-   *    The GroupInterface entity.
+   *   The GroupInterface entity.
    */
-  protected function addMembers(array $members, GroupInterface $entity) {
+  protected function addMembers(array $members, array $managers, GroupInterface $entity) {
     foreach ($members as $account_uuid) {
       $account = $this->userStorage->loadByProperties([
         'uuid' => $account_uuid,
       ]);
 
       if (($account = current($account)) && !$entity->getMember($account)) {
-        $entity->addMember($account);
+        $values = [];
+        // If the user should have the manager role, grant it to him now.
+        if (in_array($account_uuid, $managers)) {
+          $values = ['group_roles' => [$entity->bundle() . '-group_manager']];
+        }
+        $entity->addMember($account, $values);
       }
     }
   }
@@ -195,10 +203,10 @@ abstract class DemoGroup extends DemoContent {
    * Prepares data about an image of a group.
    *
    * @param string $image
-   *    The uuid of the image.
+   *   The uuid of the image.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function prepareImage($image) {
     $value = NULL;
@@ -221,15 +229,15 @@ abstract class DemoGroup extends DemoContent {
    * Prepares an array with list of files to set as field value.
    *
    * @param string $files
-   *    The uuid for the file.
+   *   The uuid for the file.
    *
    * @return array
-   *    Returns an array.
+   *   Returns an array.
    */
   protected function prepareFiles($files) {
     $values = [];
 
-    foreach ($files as $key => $file_uuid) {
+    foreach ($files as $file_uuid) {
       $file = $this->fileStorage->loadByProperties([
         'uuid' => $file_uuid,
       ]);

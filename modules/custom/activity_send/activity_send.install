@@ -5,47 +5,116 @@
  * Installation code for the activity_send module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_schema().
  */
 function activity_send_schema() {
-  $schema['user_activity_send'] = array(
-    'fields' => array(
-      'uid' => array(
+  $schema['user_activity_send'] = [
+    'fields' => [
+      'uid' => [
         'description' => 'The {user}.uid of user.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
-      'destination' => array(
+      ],
+      'destination' => [
         'description' => 'The activity destination name.',
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'message_template' => array(
+      ],
+      'message_template' => [
         'description' => 'The message template name.',
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
         'default' => '',
-      ),
-      'status' => array(
-        'description' => 'A boolean indicating whether this type of notifications is enabled or not.',
-        'type' => 'int',
-        'size' => 'tiny',
+      ],
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
         'not null' => TRUE,
-        'default' => 0,
-      ),
-    ),
-    'indexes' => array(
-      'uas_uid' => array('uid'),
-      'uas_destination' => array('destination'),
-      'uas_message_template' => array('message_template'),
-      'uas_status' => array('status'),
-    ),
-  );
+        'default' => 'immediately',
+      ],
+    ],
+    'indexes' => [
+      'uas_uid' => ['uid'],
+      'uas_destination' => ['destination'],
+      'uas_message_template' => ['message_template'],
+      'uas_frequency' => ['frequency'],
+    ],
+  ];
 
   return $schema;
+}
+
+/**
+ * Add a new database column to user_activity_send, migrate the old settings.
+ */
+function activity_send_update_8001() {
+  // Get the full table spec (needed for $schema->addIndex()).
+  $spec = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'destination' => [
+        'description' => 'The activity destination name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'message_template' => [
+        'description' => 'The message template name.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      'frequency' => [
+        'description' => 'The frequency the emails should be sent. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'immediately',
+      ],
+    ],
+    'indexes' => [
+      'uas_uid' => ['uid'],
+      'uas_destination' => ['destination'],
+      'uas_message_template' => ['message_template'],
+      'uas_frequency' => ['frequency'],
+    ],
+  ];
+
+  // Setup DB connection and schema.
+  $db = Database::getConnection();
+  $schema = $db->schema();
+
+  // Add field and index.
+  $schema->addField('user_activity_send', 'frequency', $spec['fields']['frequency']);
+  $schema->addIndex('user_activity_send', 'uas_frequency', $spec['indexes']['uas_frequency'], $spec);
+
+  // Update old status value of 0 to none.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'none'])
+    ->condition('status', 0)
+    ->execute();
+  // Update old status value of 1 to immediately.
+  $db->update('user_activity_send')
+    ->fields(['frequency' => 'immediately'])
+    ->condition('status', 1)
+    ->execute();
+
+  // Drop old column and index.
+  $schema->dropField('user_activity_send', 'status');
+  $schema->dropIndex('user_activity_send', 'uasstatus');
 }

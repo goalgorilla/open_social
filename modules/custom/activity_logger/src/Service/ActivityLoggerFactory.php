@@ -17,9 +17,9 @@ class ActivityLoggerFactory {
    * Create message entities.
    *
    * @param \Drupal\Core\Entity\Entity $entity
-   *    Entity object to create a message for.
+   *   Entity object to create a message for.
    * @param string $action
-   *    Action string. Defaults to 'create'.
+   *   Action string. Defaults to 'create'.
    */
   public function createMessages(Entity $entity, $action) {
     // Get all messages that are responsible for creating items.
@@ -31,7 +31,7 @@ class ActivityLoggerFactory {
       $destinations = [];
       if (!empty($message_values['destinations']) && is_array($message_values['destinations'])) {
         foreach ($message_values['destinations'] as $destination) {
-          $destinations[] = array('value' => $destination);
+          $destinations[] = ['value' => $destination];
         }
       }
 
@@ -72,16 +72,16 @@ class ActivityLoggerFactory {
    * Get message templates for action and entity.
    *
    * @param string $action
-   *    Action string, e.g. 'create'.
+   *   Action string, e.g. 'create'.
    * @param \Drupal\Core\Entity\Entity $entity
-   *    Entity object.
+   *   Entity object.
    *
    * @return array
-   *    Array of message types.
+   *   Array of message types.
    */
   public function getMessageTypes($action, Entity $entity) {
     // Init.
-    $messagetypes = array();
+    $messagetypes = [];
 
     // We need the entitytype manager.
     $entity_type_manager = \Drupal::service('entity_type.manager');
@@ -89,7 +89,7 @@ class ActivityLoggerFactory {
     $message_storage = $entity_type_manager->getStorage('message_template');
 
     // Check all enabled messages.
-    foreach ($message_storage->loadByProperties(array('status' => '1')) as $key => $messagetype) {
+    foreach ($message_storage->loadByProperties(['status' => '1']) as $key => $messagetype) {
       $mt_entity_bundles = $messagetype->getThirdPartySetting('activity_logger', 'activity_bundle_entities', NULL);
       $mt_action = $messagetype->getThirdPartySetting('activity_logger', 'activity_action', NULL);
       $mt_context = $messagetype->getThirdPartySetting('activity_logger', 'activity_context', NULL);
@@ -114,12 +114,12 @@ class ActivityLoggerFactory {
         && $entity_condition
         && $action === $mt_action
       ) {
-        $messagetypes[$key] = array(
+        $messagetypes[$key] = [
           'messagetype' => $messagetype,
           'bundle' => $entity_bundle_name,
           'destinations' => $mt_destinations,
           'context' => $mt_context,
-        );
+        ];
       }
     }
     // Return the message types that belong to the requested action.
@@ -139,9 +139,9 @@ class ActivityLoggerFactory {
       $id = 'message.' . $message_type . '.' . $field['name'];
       $config_storage = \Drupal::entityTypeManager()
         ->getStorage('field_config');
-      // Create field instances if they do not exits.
+      // Create field instances if they do not exists.
       if ($config_storage->load($id) === NULL) {
-        $field_instace = [
+        $field_instance = [
           'langcode' => 'en',
           'status' => TRUE,
           'config' => [
@@ -155,7 +155,7 @@ class ActivityLoggerFactory {
           'bundle' => $message_type,
           'label' => '',
           'description' => '',
-          'reqiured' => FALSE,
+          'required' => FALSE,
           'translatable' => FALSE,
           'default_value' => [],
           'default_value_callback' => '',
@@ -170,7 +170,7 @@ class ActivityLoggerFactory {
           $field_instance['module'] = ['dynamic_entity_reference'];
           $field_instance['settings'] = [];
         }
-        $config_storage->create($field_instace)->save();
+        $config_storage->create($field_instance)->save();
       }
     }
   }
