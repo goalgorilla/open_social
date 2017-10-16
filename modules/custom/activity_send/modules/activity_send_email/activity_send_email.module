@@ -117,7 +117,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     ];
 
     $form['email_notifications']['description'] = [
-      '#markup' => t('This requires a nice description.'),
+      '#markup' => '<p>' . t('If enabled, the following notifications will be sent to you via email, when you are not active in the platform.') . '</p>',
     ];
 
     $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
