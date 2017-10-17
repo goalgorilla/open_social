@@ -94,14 +94,13 @@ gulp.task('styles', ['clean:css'], function () {
 
 // #################
 //
-// Compile the Sass
+// Compile the Javascript
 //
 // #################
 //
-// This task will look for all scss files and run postcss and rucksack.
-// For performance review we will display the file sizes
-// Then the files will be stored in the assets folder
-// At the end we check if we should inject new styles in the browser
+// This task will look for all js files, minifies theme
+// and puts them in assets folder. When browsersync is enabled
+// the browser will fetch the changes.
 // ===================================================
 
 gulp.task('scripts', ['clean:js'], function () {
