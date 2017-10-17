@@ -40,22 +40,22 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     switch ($route_match->getRouteName()) {
       case 'view.search_content.page':
       case 'view.search_content.page_no_value':
-        $page_title = $this->t('Search content');
+        // No value because of duplicate words.
         break;
 
       case 'view.search_users.page':
       case 'view.search_users.page_no_value':
-        $page_title = $this->t('Search users');
+      // No value because of duplicate words.
         break;
 
       case 'view.search_groups.page':
       case 'view.search_groups.page_no_value':
-        $page_title = $this->t('Search groups');
+      // No value because of duplicate words.
         break;
 
       case 'view.search_all.page':
       case 'view.search_all.page_no_value':
-        $page_title = $this->t('Search all');
+      // No value because of duplicate words.
         break;
 
       default:
