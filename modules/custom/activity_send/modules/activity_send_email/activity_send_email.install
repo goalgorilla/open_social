@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the activity_send_email module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_install().
  *
@@ -21,4 +23,107 @@ function activity_send_email_install() {
     $config->set('third_party_settings.activity_logger.activity_destinations', $activity_destinations);
     $config->save();
   }
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Removes keys from the State API.
+ */
+function activity_send_email_uninstall() {
+  // Get plugins and their intervals.
+  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $emailfrequencymanager->getDefinitions();
+
+  // Remove all cron last run times from the State API.
+  foreach ($plugins as $frequency) {
+    \Drupal::state()->delete('digest.' . $frequency['id'] . '.last_run');
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function activity_send_email_schema() {
+  $schema['user_activity_digest'] = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of the target user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'activity' => [
+        'description' => 'The {activity}.id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'frequency' => [
+        'description' => 'The frequency for this activity. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'timestamp' => [
+        'description' => 'The timestamp of when this item was inserted.',
+        'type' => 'int',
+        'length' => 11,
+        'not null' => TRUE,
+        'default' => 0,
+        'unsigned' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'uad_uid' => ['uid'],
+      'uad_frequency' => ['frequency'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Add new database tables to store digest activities and digest timings in.
+ */
+function activity_send_email_update_8001() {
+  // Get the full spec for the new table.
+  $spec['user_activity_digest'] = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of the target user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'activity' => [
+        'description' => 'The {activity}.id.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'frequency' => [
+        'description' => 'The frequency for this activity. It should match the EmailFrequency plugin id.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'timestamp' => [
+        'description' => 'The timestamp of when this item was inserted.',
+        'type' => 'int',
+        'length' => 11,
+        'not null' => TRUE,
+        'default' => 0,
+        'unsigned' => TRUE,
+      ],
+    ],
+    'indexes' => [
+      'uad_uid' => ['uid'],
+      'uad_frequency' => ['frequency'],
+    ],
+  ];
+
+  // Add the two tables.
+  $schema = Database::getConnection()->schema();
+  $schema->createTable('user_activity_digest', $spec['user_activity_digest']);
 }
