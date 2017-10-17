@@ -28,7 +28,7 @@ function social_swiftmail_install() {
 /**
  * Set which theme to use when sending emails.
  */
-function social_swiftmail_update_8002(&$sandbox) {
+function social_swiftmail_update_8001(&$sandbox) {
   // Alter mailsystem settings.
   $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
   $mailsystem_settings->set('theme','default')->save();
