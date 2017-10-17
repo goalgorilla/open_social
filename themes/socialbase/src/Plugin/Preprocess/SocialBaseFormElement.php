@@ -20,6 +20,11 @@ class SocialBaseFormElement extends FormElement {
    */
   public function preprocessElement(Element $element, Variables $variables) {
 
+    // Check if form element is part of email_notifications and add class to label
+    if (in_array('email_notifications', $element['#parents'])) {
+      $variables['label']['#attributes']['class'][] = 'control-label--wide';
+    }
+
     // Tell the label it is in a switch form element.
     if (!empty($variables['element']['#attributes']['data-switch'])) {
       $variables['label']['#switch'] = TRUE;

@@ -37,7 +37,8 @@
 
 .form--post-create .field--name-field-post-image .preview {
   display: inline-block;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   width: auto;
 }
 
@@ -70,27 +71,23 @@
 }
 
 @media (min-width: 600px) {
-
   .form--post-create .field--name-field-post-image {
     -ms-flex-preferred-size: auto;
-    flex-basis: auto;
+        flex-basis: auto;
     margin-bottom: 0;
   }
-
   .form--post-create .field--name-field-post-image .btn-default {
     width: auto;
     margin-bottom: 0;
   }
-
   .form--post-create .field--name-field-post-visibility {
     -webkit-box-flex: 0;
-    -ms-flex-positive: 0;
-    flex-grow: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
   }
-
   .form--post-create .btn-primary {
     -webkit-box-flex: 0;
-    -ms-flex-positive: 0;
-    flex-grow: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
   }
 }

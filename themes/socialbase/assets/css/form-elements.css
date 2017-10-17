@@ -125,82 +125,68 @@ span.form-required {
           order: 10;
 }
 
-.form-control-static {
-  padding-top: 7px;
-  padding-bottom: 7px;
-  margin-bottom: 0;
-  min-height: 40px;
-}
-
-.form-control-static.input-lg, .form-control-static.input-sm {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.has-feedback {
+.form-item--error-message {
+  margin-top: 10px;
   position: relative;
+  font-size: 0.75rem;
+  display: inline-block;
+  margin-bottom: 5px;
+  padding-right: 2.25rem;
 }
 
-.has-feedback .form-control {
-  padding-right: 47.5px;
-}
-
-.form-control-feedback {
+.form-item--error-message .close {
+  float: none;
   position: absolute;
-  top: 0;
   right: 0;
-  z-index: 2;
-  display: block;
-  width: 38px;
-  height: 38px;
-  line-height: 38px;
-  text-align: center;
-  pointer-events: none;
-}
-
-.has-feedback label ~ .form-control-feedback {
-  top: 29px;
-}
-
-.has-feedback label.sr-only ~ .form-control-feedback {
   top: 0;
+  line-height: 16px;
+  padding: 0.25rem 0.75rem;
+}
+
+.form-item--error-message::before {
+  display: inline-block;
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: -7px;
+  border-bottom: 8px dashed;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+.fieldset-wrapper .form-item--error-message {
+  margin-top: 0;
+}
+
+.has-error .form-inline {
+  margin-bottom: 0;
 }
 
 @media (min-width: 600px) {
-
   .form-inline .form-group {
     display: inline-block;
     margin-bottom: 0;
     vertical-align: middle;
   }
-
   .form-inline .form-control {
     display: inline-block;
     width: auto;
     vertical-align: middle;
   }
-
   .form-inline .input-group {
     display: inline-table;
     vertical-align: middle;
   }
-
   .form-inline .input-group .input-group-addon,
   .form-inline .input-group .input-group-btn,
   .form-inline .input-group .form-control {
     width: auto;
   }
-
   .form-inline .input-group > .form-control {
     width: 100%;
   }
-
   .form-inline .control-label {
     margin-bottom: 0;
     vertical-align: middle;
-  }
-
-  .form-inline .has-feedback .form-control-feedback {
-    top: 0;
   }
 }
