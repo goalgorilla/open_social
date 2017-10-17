@@ -20,6 +20,8 @@ class GoogleAuthController extends ControllerBase {
 
   /**
    * Contains access token to work with API.
+   *
+   * @var string
    */
   protected $accessToken;
 
@@ -220,10 +222,10 @@ class GoogleAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
-   *    The type.
+   *   The type.
    *
    * @return object
-   *    Returns an object.
+   *   Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from Google.
@@ -235,7 +237,7 @@ class GoogleAuthController extends ControllerBase {
     }
 
     // Get user's Google profile from Google API.
-    if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getId())) {
+    if (!($profile = $this->authManager->getProfile()) || !($profile->getId())) {
       drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Google'),
       ]), 'error');

@@ -21,6 +21,8 @@ class FacebookAuthController extends ControllerBase {
 
   /**
    * Contains access token to work with API.
+   *
+   * @var string
    */
   protected $accessToken;
 
@@ -222,10 +224,10 @@ class FacebookAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
-   *    The type.
+   *   The type.
    *
    * @return object
-   *    Returns an object.
+   *   Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from Facebook.
@@ -237,7 +239,7 @@ class FacebookAuthController extends ControllerBase {
     }
 
     // Get user's Facebook profile from Facebook API.
-    if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getField('id'))) {
+    if (!($profile = $this->authManager->getProfile()) || !($profile->getField('id'))) {
       drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Facebook'),
       ]), 'error');

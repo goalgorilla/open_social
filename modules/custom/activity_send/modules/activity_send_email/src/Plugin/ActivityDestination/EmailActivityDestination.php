@@ -11,8 +11,8 @@ use Drupal\message\Entity\Message;
  * @ActivityDestination(
  *  id = "email",
  *  label = @Translation("Email"),
- *  is_aggregatable = FALSE,
- *  is_common = FALSE,
+ *  isAggregatable = FALSE,
+ *  isCommon = FALSE,
  * )
  */
 class EmailActivityDestination extends SendActivityDestinationBase {
@@ -40,6 +40,12 @@ class EmailActivityDestination extends SendActivityDestinationBase {
 
   /**
    * Get field value for 'output_text' field from data array.
+   *
+   * @param \Drupal\message\Entity\Message $message
+   *   The Message object.
+   *
+   * @return string|null
+   *   If we have message text we return the text, otherwise null.
    */
   public static function getSendEmailOutputText(Message $message) {
     $text = NULL;

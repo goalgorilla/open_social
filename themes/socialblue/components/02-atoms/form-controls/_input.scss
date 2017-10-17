@@ -5,7 +5,11 @@
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
 
   // Customize the `:focus` state to imitate native WebKit styles.
-  @include form-control-focus;
+  &:focus {
+    border-color: $input-border-focus;
+    outline: 0;
+    box-shadow: 0 2px 0 0 $input-border-focus;
+  }
 
   &::-moz-placeholder {
     color: $input-color-placeholder;

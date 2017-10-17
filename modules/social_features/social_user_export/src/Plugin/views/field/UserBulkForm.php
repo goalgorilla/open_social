@@ -2,8 +2,8 @@
 
 namespace Drupal\social_user_export\Plugin\views\field;
 
-use \Drupal\user\Plugin\views\field\UserBulkForm as BaseUserBulkForm;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Plugin\views\field\UserBulkForm as BaseUserBulkForm;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines a user operations bulk form element.
@@ -27,7 +27,7 @@ class UserBulkForm extends BaseUserBulkForm {
       if ($action->getPlugin()->getPluginId() == 'social_user_export_user_action') {
         $plugin = $action->getPlugin();
         $plugin->setApplyAll((bool) $form_state->getValue('select_all'));
-        $plugin->setQuery($form_state->getValue('query', []));
+        $plugin->setQuery($form_state->get('query', []));
       }
 
       foreach ($selected as $bulk_form_key) {

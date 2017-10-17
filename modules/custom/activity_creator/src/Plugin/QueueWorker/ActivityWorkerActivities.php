@@ -53,14 +53,12 @@ class ActivityWorkerActivities extends ActivityWorkerBase implements ContainerFa
 
   /**
    * {@inheritdoc}
+   *
+   * @TODO Can one item have multiple destinations; if not: split.
    */
   public function processItem($data) {
-
-    // @TODO Can one item have multiple destinations; if not: split
-
     // Let the factory work.
     $this->activityFactory->createActivities($data);
-
   }
 
 }

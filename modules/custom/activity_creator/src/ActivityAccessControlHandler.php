@@ -82,10 +82,10 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
    * Check if this is a personal notification.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
-   *    Entity object.
+   *   Entity object.
    *
    * @return bool
-   *    Returns TRUE if entity is personal notification, FALSE if it isn't.
+   *   Returns TRUE if entity is personal notification, FALSE if it isn't.
    */
   protected function checkIfPersonalNotification(EntityInterface $entity) {
     $recipient = $entity->getRecipient();

@@ -2,14 +2,14 @@
 
 namespace Drupal\social_user_export\Form;
 
-use \Drupal\Core\Form\ConfirmFormBase;
-use \Drupal\user\PrivateTempStoreFactory;
-use \Drupal\user\UserStorageInterface;
-use \Drupal\Core\Entity\EntityTypeManagerInterface;
-use \Symfony\Component\DependencyInjection\ContainerInterface;
-use \Drupal\Core\Url;
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\user\Entity\User;
+use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\user\PrivateTempStoreFactory;
+use Drupal\user\UserStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Class ExportUserConfirm.
@@ -107,10 +107,15 @@ class ExportUserConfirm extends ConfirmFormBase {
       return $this->redirect('entity.user.collection');
     }
 
+    $export_params = [
+      'apply_all' => !empty($data['apply_all']),
+      'accounts' => [],
+      'query' => [],
+    ];
+
     // If not selected all items, show list of selected items,
     // else show quantity of all items.
     if (empty($data['apply_all'])) {
-      $root = NULL;
       $form['accounts'] = [
         '#prefix' => '<ul>',
         '#suffix' => '</ul>',
@@ -118,71 +123,30 @@ class ExportUserConfirm extends ConfirmFormBase {
       ];
 
       foreach ($data['entities'] as $account) {
-        $uid = $account->id();
-        $form['accounts'][$uid] = [
-          '#type' => 'hidden',
-          '#value' => $uid,
-          '#prefix' => '<li>',
-          '#suffix' => $account->label() . "</li>\n",
+        $export_params['accounts'][] = $account->id();
+        $form['accounts'][] = [
+          '#type' => 'markup',
+          '#markup' => '<li>' . $account->getDisplayName() . '</li>',
         ];
       }
     }
     else {
-      $query = \Drupal::database()
-        ->select('users', 'u')
-        ->condition('u.uid', 0, '<>');
-
-      if (!empty($data['query'])) {
-        // Apply received conditions to query for getting correct quantity of
-        // exported items.
-        social_user_export_user_apply_filter($query, $data['query']);
-
-        // Create hidden fields with applied filters to store and use later.
-        $form['query'] = [
-          '#tree' => TRUE,
-        ];
-
-        foreach ($data['query'] as $key => $value) {
-          if (is_array($value)) {
-            foreach ($value as $key2 => $value2) {
-              $form['query'][$key][$key2] = [
-                '#type' => 'hidden',
-                '#value' => $value2,
-              ];
-            }
-          }
-          else {
-            $form['query'][$key] = [
-              '#type' => 'hidden',
-              '#value' => $value,
-            ];
-          }
-        }
+      if (empty($data['query'])) {
+        $data['query'] = [];
       }
 
-      $count = $query
-        ->countQuery()
-        ->execute()
-        ->fetchField();
+      $export_params['query'] = $data['query'];
 
+      $view = _social_user_export_get_view($data['query']);
       $form['message'] = [
         '#type' => 'item',
         '#markup' => t('@count users will be exported', [
-          '@count' => $count,
+          '@count' => $view->total_rows,
         ]),
       ];
     }
 
-    $form['select_all'] = [
-      '#type' => 'hidden',
-      '#value' => !empty($data['apply_all']),
-    ];
-
-    $form['operation'] = [
-      '#type' => 'hidden',
-      '#value' => 'export',
-    ];
-
+    $form_state->set('export_params', $export_params);
     $form = parent::buildForm($form, $form_state);
 
     return $form;
@@ -192,6 +156,8 @@ class ExportUserConfirm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $export_params = $form_state->get('export_params');
+
     if ($form_state->getValue('confirm')) {
       // Define the batch.
       $batch = [
@@ -205,23 +171,19 @@ class ExportUserConfirm extends ConfirmFormBase {
 
       // If selected all users, add single massive operation,
       // else add one operation for each user.
-      if ($form_state->getValue('select_all')) {
-        if (!$query = $form_state->getValue('query')) {
-          $query = [];
-        }
-
+      if ($export_params['apply_all']) {
         $batch['operations'][] = [
           [
             '\Drupal\social_user_export\ExportUser',
             'exportUsersAllOperation',
           ],
-          [$query],
+          [
+            $export_params['query'],
+          ],
         ];
       }
       else {
-        $accounts = $form_state->getValue('accounts');
-
-        foreach ($accounts as $uid) {
+        foreach ($export_params['accounts'] as $uid) {
           $batch['operations'][] = [
             [
               '\Drupal\social_user_export\ExportUser',

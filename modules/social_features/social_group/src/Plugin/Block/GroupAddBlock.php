@@ -44,17 +44,17 @@ class GroupAddBlock extends BlockBase {
 
     // TODO: Change url and add caching when closed groups will be added.
     $url = Url::fromUserInput('/group/add');
-    $link_options = array(
-      'attributes' => array(
-        'class' => array(
+    $link_options = [
+      'attributes' => [
+        'class' => [
           'btn',
           'btn-primary',
           'btn-raised',
           'waves-effect',
           'brand-bg-primary',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
     $url->setOptions($link_options);
 
     $build['content'] = Link::fromTextAndUrl(t('Add a group'), $url)
