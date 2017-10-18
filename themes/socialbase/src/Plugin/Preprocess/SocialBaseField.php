@@ -22,6 +22,7 @@ class SocialBaseField extends PreprocessBase {
    */
   protected function preprocessElement(Element $element, Variables $variables) {
     // For each field that doesn't need a div to wrap the content in.
+
     switch ($element['#field_name']) {
       case 'field_profile_image':
       case 'field_profile_function':
@@ -51,6 +52,7 @@ class SocialBaseField extends PreprocessBase {
           $element[1]['#url']->setOptions($url_options_1);
         }
         break;
+
     }
 
     if ($element['#view_mode'] == 'teaser') {

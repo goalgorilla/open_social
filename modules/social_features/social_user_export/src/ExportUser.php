@@ -17,6 +17,9 @@ class ExportUser {
 
   /**
    * Callback of one operation.
+   *
+   * @param \Drupal\user\UserInterface $entity
+   * @param $context
    */
   public static function exportUserOperation(UserInterface $entity, &$context) {
     if (empty($context['results']['file_path'])) {
@@ -96,45 +99,44 @@ class ExportUser {
 
   /**
    * Callback of massive operations.
+   *
+   * @param array $conditions
+   * @param array $context
    */
   public static function exportUsersAllOperation($conditions, &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['current_id'] = 0;
-      $query = \Drupal::database()
-        ->select('users', 'u')
-        ->condition('u.uid', 0, '<>');
 
-      if ($conditions) {
-        social_user_export_user_apply_filter($query, $conditions);
-      }
-
-      $context['sandbox']['max'] = $query
-        ->countQuery()
-        ->execute()
-        ->fetchField();
+      // Get max uid.
+      $view = _social_user_export_get_view($conditions);
+      $context['sandbox']['max'] = $view->total_rows;
     }
 
-    $query = \Drupal::database()
-      ->select('users', 'u')
-      ->fields('u', ['uid'])
-      ->condition('u.uid', $context['sandbox']['current_id'], '>');
+    $view = _social_user_export_get_view($conditions, FALSE);
+    $view->initQuery();
+    $view->query->orderby = [
+      [
+        'field' => 'users_field_data.uid',
+        'direction' => 'ASC',
+      ],
+    ];
+    $view->setOffset(0);
+    $view->setItemsPerPage(1);
+    $view->query->addWhere(1, 'users_field_data.uid', $context['sandbox']['current_id'], '>');
+    $view->preExecute();
+    $view->execute();
 
-    if ($conditions) {
-      social_user_export_user_apply_filter($query, $conditions);
+    if (empty($view->result[0])) {
+      $context['finished'] = 1;
+      return;
     }
 
-    $uid = $query
-      ->orderBy('u.uid')
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-
-    $account = User::load($uid);
+    $account = $view->result[0]->_entity;
 
     if ($account) {
       self::exportUserOperation($account, $context);
-      $context['sandbox']['current_id'] = $uid;
+      $context['sandbox']['current_id'] = $account->id();
     }
 
     $context['sandbox']['progress']++;
@@ -146,6 +148,10 @@ class ExportUser {
 
   /**
    * Callback when batch is complete.
+   *
+   * @param bool $success
+   * @param array $results
+   * @param array $operations
    */
   public static function finishedCallback($success, $results, $operations) {
     if ($success && !empty($results['file_path'])) {
