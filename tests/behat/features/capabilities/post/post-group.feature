@@ -1,4 +1,4 @@
-@api @group @DS-677 @DS-642 @stability
+@api @group @DS-677 @DS-642 @stability @stability-3
 Feature: Create Post on Group
   Benefit: In order to share knowledge with people in group
   Role: As a LU

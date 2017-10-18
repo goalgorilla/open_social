@@ -16,11 +16,11 @@ class PostViewsData extends EntityViewsData implements EntityViewsDataInterface 
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['post_field_data']['table']['base'] = array(
+    $data['post_field_data']['table']['base'] = [
       'field' => 'id',
       'title' => $this->t('Post'),
       'help' => $this->t('The Post ID.'),
-    );
+    ];
 
     return $data;
   }

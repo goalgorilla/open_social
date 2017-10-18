@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Theme override for a views infinite scroll pager.
+ *
+ * Available variables:
+ * - items: List of pager items.
+ *
+ * @ingroup templates
+ *
+ * @see template_preprocess_views_infinite_scroll_pager()
+ */
+#}
+{{ attach_library('socialbase/pagination') }}
+{% if items.next %}
+  <nav aria-labelledby="pagination-heading">
+    <h4 class="sr-only">{{ 'Pagination'|t }}</h4>
+    <ul{{ attributes.addClass('mini-pager') }}>
+      <li class="pager__item pager__item--next">
+        <a class="btn btn-flat" href="{{ items.next.href }}" title="{{ 'Go to next page'|t }}" rel="next"{{ items.next.attributes|without('href', 'title', 'rel') }}>
+          <span>{{ options.button_text }}</span>
+          <span aria-hidden="true">
+            <svg class="icon-small">
+              <use xlink:href="#icon-expand_more"> </use>
+            </svg>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+{% endif %}
+

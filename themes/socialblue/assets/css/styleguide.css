@@ -16,7 +16,7 @@
   height: 30px;
   text-align: left;
   border-radius: 5px 5px 0 0;
-  background: -webkit-linear-gradient(#f3f3f3, #e6e6e6);
+  background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#e6e6e6));
   background: linear-gradient(#f3f3f3, #e6e6e6);
 }
 
@@ -207,7 +207,8 @@
 }
 
 #kss-node .kss-toolbar a {
-  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -246,7 +247,8 @@
   margin-bottom: 5px;
   border: solid 1px #666;
   padding: 8px 10px 6px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+          box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
   white-space: nowrap;
   color: #000;
   background: #fff;
@@ -407,7 +409,8 @@
 #kss-node.kss-guides-mode .kss-modifier__example-footer:before,
 #kss-node.kss-guides-mode .kss-modifier__example-footer:after {
   z-index: -1;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   content: '';
   position: absolute;
   width: 5px;
@@ -688,17 +691,20 @@ pre[class*="language-"] code {
   }
   .toc-wrapper .nav > .active > ul {
     display: block;
-  }/* Widen the fixed sidebar */
+  }
+  /* Widen the fixed sidebar */
   .toc-wrapper.affix,
   .toc-wrapper.affix-bottom {
     width: 320px;
   }
   .toc-wrapper.affix {
-    position: fixed;/* Undo the static from mobile first approach */
+    position: fixed;
+    /* Undo the static from mobile first approach */
     top: 74px;
   }
   .toc-wrapper.affix-bottom {
-    position: absolute;/* Undo the static from mobile first approach */
+    position: absolute;
+    /* Undo the static from mobile first approach */
   }
   .toc-wrapper.affix-bottom .table-of-contents,
   .toc-wrapper.affix .table-of-contents {

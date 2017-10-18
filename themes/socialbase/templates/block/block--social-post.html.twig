@@ -45,11 +45,15 @@
  * @ingroup templates
  */
 #}
-
-<div class="card card--stream brand-border-radius">
+<div class="card card--stream">
   <div class="card__block">
-    {% block content %}
-      {{content}}
-    {% endblock %}
+    <div class="media">
+      <div class="media-left avatar hidden-for-phone-only">
+        {{ content.current_user_image }}
+      </div>
+      <div class="media-body">
+        {{ content|without('current_user_image') }}
+      </div>
+    </div>
   </div>
 </div>

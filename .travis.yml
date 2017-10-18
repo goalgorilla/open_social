@@ -1,4 +1,9 @@
+dist: trusty
 sudo: required
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
 
 addons:
   artifacts:
@@ -18,41 +23,49 @@ env:
     # Docker Hub token.
     secure: "YUkomj6ieyi6AqrMnFyhPTORMvBhvMtZolvMZmckiAUaEV+Kiwb6TU6BsxARU1LeAfeSDuu5Ay69yib20AHe/OI8m7DmzZhhmnfRcV5aE09/xIdS7DN55g0a+9rWMHuYreeX7Xc8KX6DAEEcmW7EotyCO1pf8ljMD7wHuO+HpeydCLEGM200r1pSLCZpPCCTnHQXJBQ8MwSZu6tcPiVNnrmYs/fbbWOxB8QIv330SaF/i8trFDGJBUFLRw/7cIStA5Ye9EJp7AS7e+nR+kuCs/GPsRxSNH8BNtbk78iPwFILCH+xPhjRQ/hVL4St7DeN/F0PXn13GPAXkfrUXqrOgpDcpqPgtucEJekyDW9+YBuz2AJDynaIuWqjIWW1gheCVPSrsF7a9l7u/RVoQbeuSmGkbQXWzQuUaOkhVM6bq28qzRraeq/gNidV1ZikwoV7oi57HBxBQPZpVlKrLmNJ4Tsa9FkFwzjt55NV8VtxV8rav3r4zeQ3C/6yLAXr0Z3hX8bJdPCTgE4k+4dbA9nLjgZh6YV5yXwoIXNq8tF/A/rctpAA491AOk57qfLOH8Xi+y9kOPjshG5dNSprfIL/yZxz5CgED5OPNhh2veH9GrXlUcNzyO2+BI7kMQ8ipc+wy39Hw0xOu2JF40x4TVQuphc9flh/OQLDRludDY3aJd4="
 
+matrix:
+  include:
+  - env: TEST_SUITE=install_stability_1
+  - env: TEST_SUITE=install_stability_2
+  - env: TEST_SUITE=install_stability_3-4-5
+  - env: TEST_SUITE=install_update
+  - env: TEST_SUITE=drush_make
+
 services:
   - docker
 
 before_install:
-  # Lets install Docker first.
-  - sudo apt-get clean
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-  - docker --version
+  # Kill the install_update and drush_make jobs if it is not a PR build.
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then exit 0; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
+  - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
-  - phpenv config-rm xdebug.ini
-  # Change this back to composer require goalgorilla/open_social dev-8.x-1.x#${TRAVIS_COMMIT} before merge to 8.x-1.x!!!
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
-  - composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT}
-  # Lets install via docker-compose.
-  - sudo rm /usr/local/bin/docker-compose || true
-  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:1.0.0 --prefer-dist; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT} --prefer-dist; fi
+  # Install docker and our docker containers.
+  - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
-  - docker ps -a
+
+install:
+  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $TRAVIS_COMMIT; fi
+  - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
 script:
   - docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh
-  - docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh
-  - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
   - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
-  - docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh
+  - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1; fi
+  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
+  - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 stability-2 stability-3 stability-4 "stability-5&&~DS-1136&&~DS-3605"; fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
-  - bash scripts/social/trigger_travis.sh
+

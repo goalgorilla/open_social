@@ -1,4 +1,4 @@
-@api @like @stability @DS-2969
+@api @like @stability @DS-2969 @stability-4
 Feature: Create topic like
   Benefit: In order to like a topic
   Role: As a LU

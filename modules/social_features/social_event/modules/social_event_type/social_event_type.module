@@ -27,7 +27,7 @@ function social_event_type_form_node_event_edit_form_alter(&$form, FormStateInte
  * Function that does some magic to the event type field.
  *
  * @param array $form
- *    Form array.
+ *   Form array.
  */
 function social_event_type_widget_alter(array &$form) {
   /** @var \Drupal\Core\Config\ConfigFactory $config */
@@ -56,7 +56,7 @@ function social_event_type_widget_alter(array &$form) {
  * Preprocess event node.
  *
  * @param array $variables
- *    Array with variables of a node.
+ *   Array with variables of a node.
  */
 function social_event_type_preprocess_node(array &$variables) {
   /* @var \Drupal\node\NodeInterface $node */
@@ -67,7 +67,7 @@ function social_event_type_preprocess_node(array &$variables) {
     if (count($event_type_entities) === 1) {
       /** @var \Drupal\node\Entity\Node $event */
       foreach ($event_type_entities as $event) {
-        $variables['metadata'] = t('in @event', array('@event' => $event->link()));
+        $variables['metadata'] = t('in @event', ['@event' => $event->link()]);
         // Set event type link.
         $now = strtotime("now");
         $end = strtotime($node->get('field_event_date_end')->getString());
@@ -75,10 +75,10 @@ function social_event_type_preprocess_node(array &$variables) {
         // 2 are ones that have started or are finished.
         $datetype = ($now > $end) ? 2 : 1;
 
-        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', array(
+        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
           'field_event_date_value' => $datetype,
           'event_type_id' => $event->id(),
-        ));
+        ]);
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
         $variables['event_type'] = $event_type_link;

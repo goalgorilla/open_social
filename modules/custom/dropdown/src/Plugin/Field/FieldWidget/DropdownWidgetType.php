@@ -43,7 +43,7 @@ class DropdownWidgetType extends WidgetBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array() + parent::defaultSettings();
+    return [] + parent::defaultSettings();
   }
 
   /**
@@ -74,16 +74,16 @@ class DropdownWidgetType extends WidgetBase {
     $this->has_value = isset($items[$delta]->{$this->column});
 
     // Add our custom validator.
-    $element['#element_validate'][] = array(get_class($this), 'validateElement');
+    $element['#element_validate'][] = [get_class($this), 'validateElement'];
     $element['#key_column'] = $this->column;
 
     $options = $this->getOptions($items->getEntity());
 
-    $element += array(
+    $element += [
       '#type' => 'dropdown',
       '#default_value' => (isset($items[$delta]->value) && isset($options[$items[$delta]->value])) ? $items[$delta]->value : NULL,
       '#options' => $options,
-    );
+    ];
 
     return $element;
   }
@@ -105,13 +105,13 @@ class DropdownWidgetType extends WidgetBase {
         ->getSetting('allowed_values');
 
       $module_handler = \Drupal::moduleHandler();
-      $context = array(
+      $context = [
         'fieldDefinition' => $this->fieldDefinition,
         'entity' => $entity,
-      );
+      ];
       $module_handler->alter('dropdown_list', $options, $context);
 
-      array_walk_recursive($options, array($this, 'sanitizeLabel'));
+      array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
       $this->options = $options;
     }
@@ -128,12 +128,12 @@ class DropdownWidgetType extends WidgetBase {
    */
   public static function validateElement(array $element, FormStateInterface $form_state) {
     if ($element['#required'] && $element['#value'] == '_none') {
-      $form_state->setError($element, t('@name field is required.', array('@name' => $element['#title'])));
+      $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
     }
 
     // Save the value in the element key_column.
     // Note: there is only one item because the field is not multiple value.
-    $items = array($element['#key_column'] => $element['#value']);
+    $items = [$element['#key_column'] => $element['#value']];
 
     $form_state->setValueForElement($element, $items);
   }
@@ -153,7 +153,7 @@ class DropdownWidgetType extends WidgetBase {
     // We need to check against a flat list of options.
     $options = $this->getOptions($items->getEntity());
 
-    $selected_options = array();
+    $selected_options = [];
     foreach ($items as $item) {
       $value = $item->{$this->column};
       // Keep the value if it actually is in the list of options (needs to be

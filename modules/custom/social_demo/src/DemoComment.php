@@ -102,9 +102,13 @@ abstract class DemoComment extends DemoContent {
         continue;
       }
 
-      $item['created'] += $entity->get('created')->value;
-
-      if ($item['created'] > REQUEST_TIME) {
+      if (!empty($item['created'])) {
+        $item['created'] = $this->createDate($item['created']);
+        if ($item['created'] < $entity->get('created')->value) {
+          $item['created'] = REQUEST_TIME;
+        }
+      }
+      else {
         $item['created'] = REQUEST_TIME;
       }
 
@@ -122,6 +126,28 @@ abstract class DemoComment extends DemoContent {
   }
 
   /**
+   * Converts a date in the correct format.
+   *
+   * @param string $date_string
+   *   The date.
+   *
+   * @return int|false
+   *   Returns a timestamp on success, false otherwise.
+   */
+  protected function createDate($date_string) {
+    if ($date_string === 'now') {
+      return time();
+    }
+    // Split from delimiter.
+    $timestamp = explode('|', $date_string);
+
+    $date = strtotime($timestamp[0]);
+    $date = date('Y-m-d', $date) . 'T' . $timestamp[1] . ':00';
+
+    return strtotime($date);
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function getEntry(array $item) {
@@ -129,7 +155,7 @@ abstract class DemoComment extends DemoContent {
       'uuid' => $item['uuid'],
       'field_comment_body' => [
         [
-          'value' => $item['body'],
+          'value' => $this->checkMentionOrLinkByUuid($item['body']),
           'format' => 'basic_html',
         ],
       ],

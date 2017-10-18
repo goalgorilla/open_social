@@ -5,6 +5,7 @@
  * Improved theme settings module file.
  */
 
+use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Markup;
@@ -14,7 +15,7 @@ use Drupal\Core\Render\Markup;
  */
 function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users.');
+  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
 
   // If user has the improved settings, we don't alter nothing.
   if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
@@ -82,7 +83,7 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $primary !important;
     }
 
-    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus {
+    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus, .card__link {
       color: $link !important;
     }
 
@@ -125,6 +126,14 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $primary !important;
       border-bottom-color: $primary !important;
       box-shadow: 0 2px 0 0 $primary !important;
+    }
+    
+    .select2-container--social .select2-results__option--highlighted[aria-selected], .select2-container--social .select2-results__option[aria-selected=true] {
+      background-color: $primary !important;
+    }
+    
+    .select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
+      border-color: $primary !important;
     }
 
     .brand-secondary {
@@ -245,47 +254,87 @@ function improved_theme_settings_page_attachments(array &$page) {
         $style_to_add .= social_font_render();
       }
 
-      $border_radius = Xss::filter(theme_get_setting('border_radius', $system_theme_settings));
-      if (!empty($border_radius) || $border_radius == 0) {
+      $card_radius = Xss::filter(theme_get_setting('card_radius', $system_theme_settings));
+      $form_control_radius = Xss::filter(theme_get_setting('form_control_radius', $system_theme_settings));
+      $button_radius = Xss::filter(theme_get_setting('button_radius', $system_theme_settings));
+
+      if (!empty($card_radius) || $card_radius == 0) {
         $style_to_add .= '
-        .brand-border-radius {
-          border-radius: ' . $border_radius . 'px !important;
+        .card,
+        .card-radius,
+        .hero-canvas {
+          border-radius: ' . $card_radius . 'px !important;
         }
 
         .tabs-left .vertical-tabs-list {
-          border-radius: ' . $border_radius . 'px 0 0 ' . $border_radius . 'px !important;
-        }
-
-        div:not(.btn-group) > .btn {
-          border-radius: ' . $border_radius . 'px !important;
+          border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
 
         .teaser--stream:last-child {
-          border-bottom-left-radius: ' . $border_radius . 'px !important;
-          border-bottom-right-radius: ' . $border_radius . 'px !important;
+          border-bottom-left-radius: ' . $card_radius . 'px !important;
+          border-bottom-right-radius: ' . $card_radius . 'px !important;
         }
 
         .teaser--stream:last-child .teaser__image {
-          border-bottom-left-radius: ' . $border_radius . 'px !important;
+          border-bottom-left-radius: ' . $card_radius . 'px !important;
         }
-
+        
+        .card__block:first-child {
+          border-top-left-radius: ' . $card_radius . 'px !important;
+          border-top-right-radius: ' . $card_radius . 'px !important;
+        }
+        
+        .card__block:last-child,
         .card__nested-section:last-child {
-          border-bottom-left-radius: ' . $border_radius . 'px !important;
-          border-bottom-right-radius: ' . $border_radius . 'px !important;
+          border-bottom-left-radius: ' . $card_radius . 'px !important;
+          border-bottom-right-radius: ' . $card_radius . 'px !important;
         }
 
         @media (min-width: 600px) {
           .teaser__teaser-type {
-            border-radius: 0 0 ' . $border_radius . 'px 0 !important;
+            border-radius: 0 0 ' . $card_radius . 'px 0 !important;
           }
           
           .off-canvas-xs-only {
-            border-radius: ' . $border_radius . 'px !important;
+            border-radius: ' . $card_radius . 'px !important;
           }
         }
 
         ';
       }
+
+      if (!empty($form_control_radius) || $form_control_radius == 0) {
+        $style_to_add .= '
+          .form-control-radius,
+          .form-control {
+            border-radius: ' . $form_control_radius . 'px !important;
+          }
+          
+          .search-take-over .form-control {
+            border-radius: 0 !important;
+          }
+          
+          .input-group .form-control:first-child, .input-group-addon:first-child {
+            border-bottom-right-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+          }
+          
+          .input-group .form-control:last-child, .input-group-addon:last-child {
+            border-bottom-left-radius: 0 !important;
+            border-top-left-radius: 0 !important;
+          }
+        ';
+      }
+
+      if (!empty($button_radius) || $button_radius == 0) {
+        $style_to_add .= '
+          :not(.btn-group) > .btn {
+            border-radius: ' . $button_radius . 'px !important;
+          }
+
+        ';
+      }
+
 
       // Get the color palette saved for custom social blue.
       $colors = color_get_palette($system_theme_settings);
@@ -309,6 +358,24 @@ function improved_theme_settings_page_attachments(array &$page) {
           // altering.
           'social_theme_preprocess',
         ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_css_alter().
+ */
+function improved_theme_settings_css_alter(&$css, AttachedAssetsInterface $assets) {
+  // Remove the imported brand.css from theme. There's no need to use this file.
+  // Only in case of other colors, the generated brand.css needs to be used.
+  foreach ($css as $key => $singlecss) {
+    // First check if there's a brand.css file in there.
+    if (strpos($singlecss['data'], 'brand.css') > 0) {
+      // Must be public, otherwise remove it.
+      if (strpos($singlecss['data'], 'public://') === FALSE) {
+        // Not pubic, so it must be unset.
+        unset($css[$key]);
       }
     }
   }

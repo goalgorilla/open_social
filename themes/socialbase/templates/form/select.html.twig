@@ -23,11 +23,16 @@
     {{ prefix }}
   {% endif %}
 
-  {# Browsers do not recognize pseudo :after selectors, we must create a wrapper
-   # around the select element to style it properly.
-   # @see http://stackoverflow.com/q/21103542
-   #}
-  <div class="select-wrapper">
+  {% if multiselect %}
+    {{ attach_library('socialbase/select2') }}
+  {% else %}
+    {# Browsers do not recognize pseudo :after selectors, we must create a wrapper
+     # around the select element to style it properly.
+     # @see http://stackoverflow.com/q/21103542
+     #}
+    <div class="select-wrapper">
+  {% endif %}
+
     {% set classes = ['form-control'] %}
     <select{{ attributes.addClass(classes) }}>
       {% for option in options %}
@@ -44,7 +49,10 @@
         {% endif %}
       {% endfor %}
     </select>
-  </div>
+
+  {% if not multiselect %}
+    </div>
+  {% endif %}
 
   {% if suffix %}
     {{ suffix }}

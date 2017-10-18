@@ -1,5 +1,41 @@
 @import 'settings';
 
+// Form elements
+//
+// All form elements are grouped in a class `.form-group`.
+// There can be a label, required astrix, input field and help text.
+//
+// markup: form-element.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.form-elements
+
+// Inline Form errors
+//
+// _Added in release 1.6_
+//
+// For this feature the module __Inline Form Errors__ should be enabled.
+//
+// ### Alerts
+// When a form is submitted the user receives an alert message with
+// either a confirmation the form is submitted successfully or with the feedback
+// that there is an error. The feedback will then contain a link to the inline form feedback.
+//
+// ### Inline feedback
+// The form-group div will get a class `has-error` which can be used
+// to style any form element (children). The feedback is placed in a small dismissable alert.
+// All the other fields remain in there original form.
+//
+// markup: inline-form-error.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.form-elements.inline-error
+
+// Browsers do not recognize pseudo :after selectors, we must create a wrapper
+// around the select element to style it properly.
+
 label {
   display: inline-block;
   max-width: 100%; // Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141)
@@ -128,63 +164,39 @@ span.form-required {
   }
 }
 
-// Static form control text
-//
-// Apply class to a `p` element to make any string of text align with labels in
-// a horizontal form layout.
+// Inline Form Errors
 
-.form-control-static {
-  // Size it appropriately next to real form controls
-  padding-top: ($padding-base-vertical + 1);
-  padding-bottom: ($padding-base-vertical + 1);
-  // Remove default margin from `p`
-  margin-bottom: 0;
-  min-height: ($line-height-computed + $font-size-base);
-
-  &.input-lg,
-  &.input-sm {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-
-// Form control feedback states
-//
-// Apply contextual and semantic states to individual form controls.
-
-.has-feedback {
-  // Enable absolute positioning
+.form-item--error-message {
+  margin-top: 10px;
   position: relative;
+  font-size: 0.75rem;
+  display: inline-block;
+  margin-bottom: 5px;
+  padding-right: 3 * $alert-padding-x-sm;
 
-  // Ensure icons don't overlap text
-  .form-control {
-    padding-right: ($input-height-base * 1.25);
-  }
-}
-// Feedback icon (requires .glyphicon classes)
-.form-control-feedback {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 2; // Ensure icon is above input groups
-  display: block;
-  width: $input-height-base;
-  height: $input-height-base;
-  line-height: $input-height-base;
-  text-align: center;
-  pointer-events: none;
-}
-
-// Reposition feedback icon if input has visible label above
-.has-feedback label {
-
-  & ~ .form-control-feedback {
-    top: ($line-height-computed + 5); // Height of the `label` and its margin
-  }
-  &.sr-only ~ .form-control-feedback {
+  .close {
+    float: none;
+    position: absolute;
+    right: 0;
     top: 0;
+    line-height: 16px;
+    padding: $alert-padding-y-sm $alert-padding-x-sm;
   }
+
+  &::before {
+    display: inline-block;
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: -7px;
+    border-bottom:  8px dashed;
+    border-right:   8px solid transparent;
+    border-left:    8px solid transparent;
+  }
+}
+
+.fieldset-wrapper .form-item--error-message {
+  margin-top: 0;
 }
 
 .form-inline {
@@ -224,9 +236,9 @@ span.form-required {
       vertical-align: middle;
     }
 
-    // Re-override the feedback icon.
-    .has-feedback .form-control-feedback {
-      top: 0;
-    }
+  }
+
+  .has-error & {
+    margin-bottom: 0;
   }
 }

@@ -35,36 +35,36 @@ class SocialUserLoginForm extends UserLoginForm {
     $config = $this->config('system.site');
 
     // Display login form:
-    $form['name_or_mail'] = array(
+    $form['name_or_mail'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Username or email address'),
       '#size' => 60,
       '#maxlength' => USERNAME_MAX_LENGTH,
-      '#description' => $this->t('Enter your @s username or email.', array('@s' => $config->get('name'))),
+      '#description' => $this->t('Enter your @s username or email.', ['@s' => $config->get('name')]),
       '#required' => TRUE,
-      '#attributes' => array(
+      '#attributes' => [
         'autocorrect' => 'none',
         'autocapitalize' => 'none',
         'spellcheck' => 'false',
         'autofocus' => 'autofocus',
-      ),
-    );
+      ],
+    ];
 
     $reset_pass_url = Url::fromRoute('user.pass');
     $reset_pass_link = Link::createFromRoute($this->t('Forgot password?'), $reset_pass_url->getRouteName());
     $generated_reset_pass_link = $reset_pass_link->toString();
     $pass_description = $generated_reset_pass_link->getGeneratedLink();
 
-    $form['pass'] = array(
+    $form['pass'] = [
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#size' => 60,
       '#description' => $pass_description,
       '#required' => TRUE,
-    );
+    ];
 
-    $form['actions'] = array('#type' => 'actions');
-    $form['actions']['submit'] = array('#type' => 'submit', '#value' => $this->t('Log in'));
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Log in')];
 
     // Validates account and sets the form state uid that is used in the
     // submit function.
@@ -108,7 +108,7 @@ class SocialUserLoginForm extends UserLoginForm {
         $this->setGeneralErrorMessage($form, $form_state);
       }
       else {
-        $form_state->setErrorByName('name_or_mail', $this->t('The username %name has not been activated or is blocked.', array('%name' => $form_state->getValue('name_or_mail'))));
+        $form_state->setErrorByName('name_or_mail', $this->t('The username %name has not been activated or is blocked.', ['%name' => $form_state->getValue('name_or_mail')]));
       }
     }
   }
@@ -134,13 +134,13 @@ class SocialUserLoginForm extends UserLoginForm {
 
       // Try to retrieve the account with the mail address.
       $name = $form_state->getValue('name_or_mail');
-      $accounts = $this->userStorage->loadByProperties(array('mail' => $form_state->getValue('name_or_mail'), 'status' => 1));
+      $accounts = $this->userStorage->loadByProperties(['mail' => $form_state->getValue('name_or_mail'), 'status' => 1]);
       $account = reset($accounts);
       if ($account) {
         $name = $account->getAccountName();
       }
 
-      $accounts = $this->userStorage->loadByProperties(array('name' => $name, 'status' => 1));
+      $accounts = $this->userStorage->loadByProperties(['name' => $name, 'status' => 1]);
       $account = reset($accounts);
       if ($account) {
         if ($flood_config->get('uid_only')) {
@@ -187,21 +187,22 @@ class SocialUserLoginForm extends UserLoginForm {
       if ($flood_control_user_identifier = $form_state->get('flood_control_user_identifier')) {
         $this->flood->register('user.failed_login_user', $flood_config->get('user_window'), $flood_control_user_identifier);
       }
-      if (!$flood_control_triggered = $form_state->get('flood_control_triggered')) {
+      $flood_control_triggered = $form_state->get('flood_control_triggered');
+      if (!$flood_control_triggered) {
         $name = $form_state->getValue('name_or_mail');
-        $accounts = $this->userStorage->loadByProperties(array('mail' => $form_state->getValue('name_or_mail'), 'status' => 1));
+        $accounts = $this->userStorage->loadByProperties(['mail' => $form_state->getValue('name_or_mail'), 'status' => 1]);
         $account = reset($accounts);
         if ($account) {
           $name = $account->getAccountName();
         }
-        $accounts = $this->userStorage->loadByProperties(array('name' => $name));
+        $accounts = $this->userStorage->loadByProperties(['name' => $name]);
         if (!empty($accounts)) {
-          $this->logger('user')->notice('Login attempt failed for %user.', array('%user' => $name));
+          $this->logger('user')->notice('Login attempt failed for %user.', ['%user' => $name]);
         }
         else {
           // If the username entered is not a valid user,
           // only store the IP address.
-          $this->logger('user')->notice('Login attempt failed from %ip.', array('%ip' => $this->getRequest()->getClientIp()));
+          $this->logger('user')->notice('Login attempt failed from %ip.', ['%ip' => $this->getRequest()->getClientIp()]);
         }
       }
     }
@@ -222,7 +223,7 @@ class SocialUserLoginForm extends UserLoginForm {
         - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
         - Too many failed login attempts from your IP address. This IP address is temporarily blocked. <br> <br>
         To solve the issue try other credentials, try again later or <a href=":url">request a new password</a>',
-      array('%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass'))));
+      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass')]));
   }
 
 }

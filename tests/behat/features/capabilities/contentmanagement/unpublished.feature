@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-486
+@api @topic @stability @perfect @critical @DS-486 @stability-3
 Feature: Un/publish a node
   Benefit: In order to make drafts
   Role: as a LU

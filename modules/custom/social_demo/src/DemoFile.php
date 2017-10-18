@@ -80,7 +80,7 @@ abstract class DemoFile extends DemoContent {
 
       // Copy file from module.
       $item['uri'] = file_unmanaged_copy(
-        $this->parser->getPath($item['path'], $this->getModule()),
+        $this->parser->getPath($item['path'], $this->getModule(), $this->getProfile()),
         $item['uri'],
         FILE_EXISTS_REPLACE
       );
@@ -123,9 +123,9 @@ abstract class DemoFile extends DemoContent {
    * Crops the images.
    *
    * @param array $item
-   *    The array with items.
+   *   The array with items.
    * @param \Drupal\file\FileInterface $entity
-   *    The FileInterface entity.
+   *   The FileInterface entity.
    */
   protected function applyCrops(array $item, FileInterface $entity) {
     // Add coordinates for cropping images.

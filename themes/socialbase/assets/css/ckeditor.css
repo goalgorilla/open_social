@@ -14,7 +14,8 @@ kbd kbd {
   padding: 0;
   font-size: 100%;
   font-weight: bold;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 pre {
@@ -37,7 +38,8 @@ pre code {
 }
 
 *, *:before, *:after {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 html {
@@ -215,44 +217,61 @@ dd {
 
 table {
   border-collapse: collapse;
-  border-spacing: 0;
-  background-color: transparent;
+}
+
+caption {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  color: #777777;
+  text-align: left;
+  caption-side: bottom;
 }
 
 th {
   text-align: left;
 }
 
-table {
+.table {
   width: 100%;
   max-width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 1rem;
+  background-color: transparent;
   font-size: 0.875rem;
 }
 
-table th,
-table td {
+.table th,
+.table td {
   padding: 0.75rem;
-  line-height: 1.5;
   vertical-align: top;
-  word-break: break-word;
+  word-wrap: break-word;
 }
 
-table thead th {
+.table thead th {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 12px;
   vertical-align: bottom;
   border-bottom: 2px solid #e6e6e6;
 }
 
-table tbody + tbody {
+.table tbody + tbody {
   border-top: 2px solid #e6e6e6;
 }
 
-.table-condensed > thead > tr > th,
-.table-condensed > thead > tr > td,
-.table-condensed > tbody > tr > th,
-.table-condensed > tbody > tr > td,
-.table-condensed > tfoot > tr > th,
-.table-condensed > tfoot > tr > td {
+.table .views-align-left {
+  text-align: left;
+}
+
+.table .views-align-right {
+  text-align: right;
+}
+
+.table .views-align-center {
+  text-align: center;
+}
+
+.table-sm th,
+.table-sm td {
   padding: 0.3rem;
 }
 
@@ -260,26 +279,38 @@ table tbody + tbody {
   border: 1px solid #e6e6e6;
 }
 
-.table-bordered > thead > tr > th,
-.table-bordered > thead > tr > td,
-.table-bordered > tbody > tr > th,
-.table-bordered > tbody > tr > td,
-.table-bordered > tfoot > tr > th,
-.table-bordered > tfoot > tr > td {
+.table-bordered th,
+.table-bordered td {
   border: 1px solid #e6e6e6;
 }
 
-.table-bordered > thead > tr > th,
-.table-bordered > thead > tr > td {
+.table-bordered thead th,
+.table-bordered thead td {
   border-bottom-width: 2px;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) {
+.table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.table-hover > tbody > tr:hover {
+.table-hover tbody tr:hover {
   background-color: rgba(0, 0, 0, 0.075);
+}
+
+.thead-default th {
+  color: #555555;
+  background-color: #e6e6e6;
+}
+
+.tablesort {
+  display: inline-block;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.icon-tablesort {
+  width: 20px;
+  height: 20px;
 }
 
 .tabledrag-handle {
@@ -294,6 +325,17 @@ table tbody + tbody {
 .tabledrag-handle ~ .form-managed-file {
   display: block;
   padding-left: 24px;
+}
+
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.table-responsive .table-bordered {
+  border: 0;
 }
 
 b,
@@ -599,7 +641,6 @@ sub {
 
 .align-center {
   -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
       align-self: center;
 }
 
@@ -627,6 +668,16 @@ sub {
 
 .img-bordered {
   border: 3px solid white;
+}
+
+.img-elevated {
+  display: inline-block;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+}
+
+p + p .img-elevated {
+  margin-top: -0.5rem;
 }
 
 .img-circle {
@@ -759,45 +810,36 @@ body {
 }
 
 @media (min-width: 600px) {
-
   body {
     font-size: 16px;
   }
-
   .section-title {
     padding-left: 20px;
   }
-
   .section-title.section-title-stream {
     padding-left: 40px;
   }
-
   .section-title.section-title-node {
     padding-left: 48px;
   }
 }
 
 @media (min-width: 900px) {
-
   h1, .h1 {
     font-size: 3rem;
   }
-
   h2, .h2 {
     font-size: 2rem;
   }
-
   h3, .h3 {
     font-size: 1.5rem;
   }
-
   h4, .h4 {
     font-size: 1.25rem;
   }
 }
 
 @media (max-width: 599px) {
-
   .hidden-for-phone-only {
     display: none;
   }

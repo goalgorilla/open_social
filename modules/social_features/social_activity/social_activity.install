@@ -5,9 +5,10 @@
  * The Social activity install.
  */
 
-use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
-use \Drupal\block\Entity\Block;
+use Drupal\block\Entity\Block;
+use Drupal\views\Views;
 
 /**
  * Social activity install function.
@@ -18,10 +19,10 @@ function social_activity_install() {
 
   // We can't add this as dependency, because this modules should be installed
   // after config and other activity modules installation.
-  $modules = array(
+  $modules = [
     'activity_basics',
     'activity_send_email',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
   _social_activity_create_activity_homepage_block();
@@ -33,7 +34,7 @@ function social_activity_install() {
 function _social_activity_create_menu_links() {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
-  /** @var MenuLinkContent $menu_link */
+  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
   foreach ($menu_links as $menu_link) {
     if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
       $parent = 'menu_link_content:' . $menu_link->uuid();
@@ -64,24 +65,34 @@ function social_activity_update_8001() {
  */
 function _social_activity_create_activity_homepage_block() {
   // Revert view so it has the block display.
-  $config_revert = \Drupal::service('features.config_update');
-  $config_revert->revert('view', 'activity_stream');
+  $config_update_service = \Drupal::service('features.config_update');
+
+  // Check if view exists.
+  $view = Views::getView('activity_stream');
+  if (is_object($view)) {
+    // If exists, we revert.
+    $config_update_service->revert('view', 'activity_stream');
+  }
+  else {
+    // Otherwise we import.
+    $config_update_service->import('view', 'activity_stream');
+  }
 
   $config = \Drupal::configFactory();
 
   // Do not add a new block if it already exists.
   $block = Block::load('views_block__activity_stream_block_stream_homepage');
   if (!isset($block)) {
-    $visibility = array(
-      'request_path' => array(
+    $visibility = [
+      'request_path' => [
         'id' => 'request_path',
         'pages' => '/stream',
         'negate' => FALSE,
-        'context_mapping' => array(),
-      ),
-    );
+        'context_mapping' => [],
+      ],
+    ];
 
-    $settings = array(
+    $settings = [
       'plugin' => 'views_block:activity_stream-block_stream_homepage',
       'region' => 'content',
       'id' => 'views_block__activity_stream_block_stream_homepage',
@@ -89,10 +100,10 @@ function _social_activity_create_activity_homepage_block() {
       'label' => '',
       'visibility' => $visibility,
       'weight' => NULL,
-    );
+    ];
 
     $values = [];
-    foreach (array('region', 'id', 'theme', 'plugin', 'weight', 'visibility') as $key) {
+    foreach (['region', 'id', 'theme', 'plugin', 'weight', 'visibility'] as $key) {
       $values[$key] = $settings[$key];
       // Remove extra values that do not belong in the settings array.
       unset($settings[$key]);
@@ -101,14 +112,14 @@ function _social_activity_create_activity_homepage_block() {
       $values['visibility'][$id]['id'] = $id;
     }
 
-    $settings = array(
+    $settings = [
       'id' => 'views_block:activity_stream-block_stream_homepage',
       'label' => '',
       'provider' => 'views',
       'label_display' => '0',
       'views_label' => '',
       'items_per_page' => 'none',
-    );
+    ];
     $values['settings'] = $settings;
     $block = Block::create($values);
 
@@ -180,7 +191,7 @@ function social_activity_update_8003() {
  * Get entity view mode settings for Dynamic Entity Reference update.
  *
  * @return array
- *    View mode settings, keyed by entity machine name.
+ *   View mode settings, keyed by entity machine name.
  */
 function social_activity_get_der_settings() {
   $result = [];

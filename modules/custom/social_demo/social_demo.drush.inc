@@ -19,8 +19,10 @@ function social_demo_drush_command() {
     ],
     'options' => [
       'module' => dt('The module name that provides content data.'),
+      'profile' => dt('The content profile to add.'),
     ],
     'required-arguments' => TRUE,
+    'aliases' => ['dca'],
   ];
 
   $items['demo-content-remove'] = [
@@ -30,8 +32,10 @@ function social_demo_drush_command() {
     ],
     'options' => [
       'module' => dt('The module name that provides content data.'),
+      'profile' => dt('The content profile to remove.'),
     ],
     'required-arguments' => TRUE,
+    'aliases' => ['dcr'],
   ];
 
   $items['social-demo-add'] = [
@@ -39,8 +43,12 @@ function social_demo_drush_command() {
     'arguments' => [
       'content_types' => dt('A space-separated list of content types.'),
     ],
+    'options' => [
+      'module' => dt('The module name that provides content data.'),
+      'profile' => dt('The content profile to add.'),
+    ],
     'examples' => [
-      'drush social-demo-add user topic' => dt('Generates demo content for users and topics.'),
+      'drush social-demo-add user topic --profile=EEA' => dt('Generates demo content for users and topics from the EEA profile.'),
     ],
     'required-arguments' => 1,
     'aliases' => ['sda'],
@@ -51,8 +59,12 @@ function social_demo_drush_command() {
     'arguments' => [
       'content_types' => dt('A space-separated list of content types.'),
     ],
+    'options' => [
+      'module' => dt('The module name that provides content data.'),
+      'profile' => dt('The content profile to remove.'),
+    ],
     'examples' => [
-      'drush social-demo-remove user topic' => dt('Removes demo content for users and topics.'),
+      'drush social-demo-remove user topic --profile=EEA' => dt('Removes demo content for users and topics from the EEA profile.'),
     ],
     'required-arguments' => 1,
     'aliases' => ['sdr'],
@@ -67,12 +79,14 @@ function social_demo_drush_command() {
 function drush_social_demo_demo_content_add() {
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
+  $profile = drush_get_option('profile', '');
   $manager = \Drupal::service('plugin.manager.demo_content');
   $plugins = $manager->createInstances($content_types);
 
   /** @var \Drupal\social_demo\DemoContentInterface $plugin */
   foreach ($plugins as $plugin) {
     $definition = $plugin->getPluginDefinition();
+    $plugin->setProfile($profile);
     $plugin->createContent();
     $count = $plugin->count();
 
@@ -88,12 +102,14 @@ function drush_social_demo_demo_content_add() {
 function drush_social_demo_demo_content_remove() {
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
+  $profile = drush_get_option('profile', '');
   $manager = \Drupal::service('plugin.manager.demo_content');
   $plugins = $manager->createInstances($content_types);
 
   /** @var \Drupal\social_demo\DemoContentInterface $plugin */
   foreach ($plugins as $plugin) {
     $definition = $plugin->getPluginDefinition();
+    $plugin->setProfile($profile);
     $plugin->removeContent();
     drush_log("{$definition['label']}(s) removed", LogLevel::SUCCESS);
   }
@@ -121,7 +137,7 @@ function drush_social_demo_remove() {
  * Convert old keys of content types to new.
  *
  * @param array $content_types
- *    Array containing content types.
+ *   Array containing content types.
  */
 function _social_demo_convert_content_types(array &$content_types = []) {
   $replacements = [

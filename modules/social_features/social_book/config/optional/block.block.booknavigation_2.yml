@@ -3,12 +3,13 @@ status: true
 dependencies:
   module:
     - book
+    - node
   theme:
     - socialblue
 id: booknavigation_2
 theme: socialblue
 region: complementary_top
-weight: null
+weight: 0
 provider: null
 plugin: book_navigation
 settings:
@@ -17,4 +18,11 @@ settings:
   provider: book
   label_display: visible
   block_mode: 'book pages'
-visibility: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      book: book
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

@@ -47,9 +47,9 @@ interface UserManagerInterface {
    * Download and set the picture to profile.
    *
    * @param string $url
-   *    Absolute URL of a picture.
+   *   Absolute URL of a picture.
    * @param string $account_id
-   *    Identifier of account on social network.
+   *   Identifier of account on social network.
    *
    * @return bool
    *   Returns TRUE if the picture was saved successfully, FALSE if it didn't.

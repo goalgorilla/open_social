@@ -6,7 +6,12 @@ use Drupal\Core\Entity\EntityAutocompleteMatcher as EntityAutocompleteMatcherBas
 use Drupal\Component\Utility\Tags;
 use Drupal\Component\Utility\Html;
 
-class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase{
+/**
+ * Class EntityAutocompleteMatcher.
+ *
+ * @package Drupal\social_core\Entity
+ */
+class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
 
   /**
    * {@inheritdoc}

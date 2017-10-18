@@ -1,4 +1,4 @@
-@api @event-management @stability @javascript @DS-1258
+@api @event-management @stability @javascript @DS-1258 @stability-2
 Feature: Event Management
   Benefit: In order to organise an event
   Role: As a LU
