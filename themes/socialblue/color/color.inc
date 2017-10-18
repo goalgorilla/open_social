@@ -25,12 +25,8 @@ $info = array(
       ),
     ),
   ),
-
-  // CSS files (excluding @import) to rewrite with new color scheme.
-  // @TODO make sure we rewrite the correct color.css
-  'css' => array(
-    'assets/css/brand.css',
-  ),
+  
+  'css' => '',
 
   // Files to copy.
   'copy' => array(
