@@ -1,0 +1,11 @@
+<h3>{{ notification_count }}</h3>
+
+<ul>
+    {% for notification in notifications %}
+        <li>{{ notification|striptags('<a><strong>')|raw }}</li>
+    {% endfor %}
+</ul>
+
+<p>&nbsp;</p>
+
+<p><small>{{ notification_settings|striptags('<a><strong>')|raw }}</small></p>
