@@ -54,9 +54,68 @@ svg:not(:root) {
 }
 
 //
-// Address margin not present in IE 8/9 and Safari.
+// Alignment of Figures and limiting
+// captions to the width of their images
 //
 
 figure {
-  margin: 1.5rem 0;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  display: table;
+
+  img {
+    line-height: 1;
+  }
+
+  figcaption {
+    font-size: 90%;
+    color: $gray-light;
+    text-align: center;
+    display: table-caption;
+    caption-side: bottom;
+    margin-top: 5px;
+    word-break: break-word;
+  }
+
+  &.align-right {
+    float: right;
+    padding-top: 0.1rem;
+    padding-left: 1rem;
+
+    figcaption {
+      padding-left: 1rem;
+    }
+  }
+
+  &.align-left {
+    float: left;
+    padding-top: 0.1rem;
+    padding-right: 1rem;
+
+    figcaption {
+      padding-right: 1rem;
+    }
+  }
+
+  &.align-center {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  @include for-phone-only {
+    &.align-left,
+    &.align-right,
+    &.align-center {
+      float: none;
+      width: 100%;
+      text-align: center;
+      padding: 0;
+      margin-bottom: 1rem;
+
+      figcaption {
+        padding: 0;
+      }
+    }
+  }
+
 }
