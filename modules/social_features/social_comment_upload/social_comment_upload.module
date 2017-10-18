@@ -65,11 +65,11 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
  * Implements hook_comment_delete().
  */
 function social_comment_upload_comment_delete(EntityInterface $entity) {
-  if (empty($entity->field_comment_files)) {
+  // If this comment has any files, delete those as well.
+  if (!$entity->hasField('field_comment_files') || $entity->get('field_comment_files')->isEmpty()) {
     return;
   }
 
-  // Loop through the files in the comment.
   foreach ($entity->field_comment_files as $filefield) {
     // Try to load the actual file object.
     $file = File::load($filefield->target_id);
