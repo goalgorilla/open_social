@@ -66,7 +66,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
     $inputsettings = $entity->get('input');
     $entity_id = isset($entity) ? $entity->id() : '';
     $all_entitytypes = array_keys($this->entityManager->getEntityTypeLabels());
-    $candidate_entitytypes = array();
+    $candidate_entitytypes = [];
     foreach ($all_entitytypes as $entity_type) {
       $entitytype_info = $this->entityManager->getDefinition($entity_type);
       $configentityclassname = ContentEntityType::class;
@@ -87,68 +87,68 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
 
     $config = $this->config('mentions.mentions_type.' . $entity_id);
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Name'),
       '#required' => TRUE,
       '#description' => $this->t('The human-readable name of this mention type. It is recommended that this name begin with a capital letter and contain only letters, numbers, and spaces. This name must be unique.'),
       '#default_value' => $config->get('name'),
-    );
+    ];
 
-    $form['mention_type'] = array(
+    $form['mention_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Mention Type'),
       '#options' => $plugin_names,
       '#default_value' => $config->get('mention_type'),
-    );
+    ];
 
-    $form['description'] = array(
+    $form['description'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Description'),
       '#description' => $this->t('Describe this mention type.'),
       '#default_value' => $config->get('description'),
-    );
+    ];
 
-    $form['input'] = array(
+    $form['input'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Input Settings'),
       '#tree' => TRUE,
-    );
+    ];
 
-    $form['input']['prefix'] = array(
+    $form['input']['prefix'] = [
       '#type' => 'textfield',
       '#title' => t('Prefix'),
       '#default_value' => $config->get('input.prefix'),
       '#size' => 2,
-    );
+    ];
 
-    $form['input']['suffix'] = array(
+    $form['input']['suffix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Suffix'),
       '#default_value' => $config->get('input.suffix'),
       '#size' => 2,
-    );
+    ];
 
     $entitytype_selection = $config->get('input.entity_type');
 
-    $form['input']['entity_type'] = array(
+    $form['input']['entity_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Entity Type'),
       '#options' => $candidate_entitytypes,
       '#default_value' => $entitytype_selection,
       '#ajax' => [
-        'callback' => array($this, 'changeEntityTypeInForm'),
+        'callback' => [$this, 'changeEntityTypeInForm'],
         'wrapper' => 'edit-input-value-wrapper',
         'event' => 'change',
-        'progress' => array(
+        'progress' => [
           'type' => 'throbber',
           'message' => $this->t('Please wait...'),
-        ),
+        ],
       ],
-    );
+    ];
 
     if (!isset($candidate_entitytypefields)) {
-      $inputvalue_options = array();
+      $inputvalue_options = [];
     }
     elseif (isset($entitytype_selection)) {
       $inputvalue_options = $candidate_entitytypefields[$entitytype_selection];
@@ -159,7 +159,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
 
     $inputvalue_default_value = count($inputsettings) == 0 ? 0 : $inputsettings['inputvalue'];
 
-    $form['input']['inputvalue'] = array(
+    $form['input']['inputvalue'] = [
       '#type' => 'select',
       '#title' => $this->t('Value'),
       '#options' => $inputvalue_options,
@@ -167,46 +167,46 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
       '#prefix' => '<div id="edit-input-value-wrapper">',
       '#suffix ' => '</div>',
       '#validated' => 1,
-    );
+    ];
 
-    $form['output'] = array(
+    $form['output'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Output Settings'),
       '#tree' => TRUE,
-    );
+    ];
 
-    $form['output']['outputvalue'] = array(
+    $form['output']['outputvalue'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Value'),
       '#description' => $this->t('This field supports tokens.'),
       '#default_value' => $config->get('output.outputvalue'),
-    );
+    ];
 
-    $form['output']['renderlink'] = array(
+    $form['output']['renderlink'] = [
       '#type' => 'checkbox',
       '#title' => 'Render as link',
       '#default_value' => $config->get('output.renderlink'),
-    );
+    ];
 
-    $form['output']['renderlinktextbox'] = array(
+    $form['output']['renderlinktextbox'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link'),
       '#description' => $this->t('This field supports tokens.'),
       '#default_value' => $config->get('output.renderlinktextbox'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="output[renderlink]"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="output[renderlink]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
 
     if (\Drupal::moduleHandler()->moduleExists('token')) {
-      $form['output']['tokens'] = array(
+      $form['output']['tokens'] = [
         '#theme' => 'token_tree_link',
         '#token_types' => 'all',
         '#show_restricted' => TRUE,
         '#theme_wrappers' => ['form_element'],
-      );
+      ];
     }
 
     return parent::buildForm($form, $form_state);
@@ -233,7 +233,7 @@ class MentionsTypeForm extends EntityForm implements ContainerInjectionInterface
    * {@inheritdoc}
    */
   public function changeEntityTypeInForm(array &$form, FormStateInterface $form_state) {
-    $entitytype_state = $form_state->getValue(array('input', 'entity_type'));
+    $entitytype_state = $form_state->getValue(['input', 'entity_type']);
     $entitytype_info = $this->entityManager->getDefinition($entitytype_state);
     $id = $entitytype_info->getKey('id');
     $label = $entitytype_info->getKey('label');

@@ -11,6 +11,8 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 
 /**
+ * The FieldDownloadCount class.
+ *
  * @FieldFormatter(
  *  id = "FieldDownloadCount",
  *  label = @Translation("Generic file with download count"),
@@ -23,7 +25,7 @@ class FieldDownloadCount extends GenericFileFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $element = array();
+    $element = [];
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();
     $access = \Drupal::currentUser()->hasPermission('view download counts');
@@ -33,11 +35,11 @@ class FieldDownloadCount extends GenericFileFormatter {
 
       if ($access) {
         $download = Database::getConnection()
-          ->query('SELECT COUNT(fid) from {download_count} where fid = :fid AND type = :type AND id = :id', array(
+          ->query('SELECT COUNT(fid) from {download_count} where fid = :fid AND type = :type AND id = :id', [
             ':fid' => $file->id(),
             ':type' => $entity_type,
             ':id' => $entity->id(),
-          ))
+          ])
           ->fetchField();
         $file->download = $download;
       }
@@ -45,11 +47,11 @@ class FieldDownloadCount extends GenericFileFormatter {
       $link_url = file_create_url($file->getFileUri());
       $file_size = $file->getSize();
 
-      $options = array(
-        'attributes' => array(
+      $options = [
+        'attributes' => [
           'type' => $file->getMimeType() . '; length=' . $file->getSize(),
-        ),
-      );
+        ],
+      ];
 
       // Use the description as the link text if available.
       if (empty($item->description)) {
@@ -61,19 +63,19 @@ class FieldDownloadCount extends GenericFileFormatter {
       }
 
       // Classes to add to the file field for icons.
-      $classes = array(
+      $classes = [
         'file',
         // Add a specific class for each and every mime type.
-        'file--mime-' . strtr($file->getMimeType(), array(
+        'file--mime-' . strtr($file->getMimeType(), [
           '/' => '-',
           '.' => '-',
-        )),
+        ]),
         // Add a more general class for groups of well known mime types.
         'file--' . file_icon_class($file->getMimeType()),
-      );
+      ];
 
-      $attributes = new Attribute(array('class' => $classes));
-      $link = Link::fromTextAndUrl(t($link_text), Url::fromUri($link_url, $options))
+      $attributes = new Attribute(['class' => $classes]);
+      $link = Link::fromTextAndUrl($link_text, Url::fromUri($link_url, $options))
         ->toString();
 
       if (isset($file->download) && $file->download > 0) {
@@ -140,7 +142,7 @@ class FieldDownloadCount extends GenericFileFormatter {
 
       }
 
-      $element[$delta] = array(
+      $element[$delta] = [
         '#theme' => !$access ? 'file_link' : 'download_count_file_field_formatter',
         '#file' => $file,
         '#link' => $link,
@@ -151,19 +153,19 @@ class FieldDownloadCount extends GenericFileFormatter {
         '#file_size' => format_size($file_size),
         '#path_to_socialbase' => $path_to_socialbase,
         '#node_icon' => $node_icon,
-        '#attached' => array(
-          'library' => array(
+        '#attached' => [
+          'library' => [
             'classy/file',
-          ),
-        ),
-        '#cache' => array(
+          ],
+        ],
+        '#cache' => [
           'tags' => $file->getCacheTags(),
-        ),
-      );
+        ],
+      ];
 
       // Pass field item attributes to the theme function.
       if (isset($item->_attributes)) {
-        $element[$delta] += array('#attributes' => array());
+        $element[$delta] += ['#attributes' => []];
         $element[$delta]['#attributes'] += $item->_attributes;
         // Unset field item attributes since they have been included in the
         // formatter output and should not be rendered in the field template.

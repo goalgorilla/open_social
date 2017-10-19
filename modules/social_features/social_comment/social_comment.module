@@ -49,6 +49,14 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
       $form['actions']['submit']['#attributes']['value'] = t('Submit');
       $form['actions']['submit']['#value'] = t('Submit');
       break;
+
+    default:
+      // Redirect to the current url. We should not use this change for posts.
+      // See social_post_form_comment_post_comment_form_alter for posts.
+      if ($form_id !== 'comment_post_comment_form') {
+        $form['#action'] = \Drupal::request()->getRequestUri();
+      }
+      break;
   }
 
   $form['#attached']['library'][] = 'social_post/keycode-submit';
@@ -121,8 +129,8 @@ function social_comment_preprocess_comment(&$variables) {
   $comment = $variables['elements']['#comment'];
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
-    ->formatTimeDiffSince($comment->getCreatedTime(), array('granularity' => 1, 'return_as_object' => TRUE));
-  $date = t('%time ago', array('%time' => $created_time_ago->getString()));
+    ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
+  $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
 
   $variables['submitted'] = Link::fromTextAndUrl($date, $comment->urlInfo('canonical'));
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
@@ -195,34 +203,34 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       elseif ($commented_entity_type === 'node') {
         $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
         // Prepare the "Comments" link.
-        $link_options = array(
+        $link_options = [
           'fragment' => 'comment-form',
-          'attributes' => array(
-            'class' => array(
+          'attributes' => [
+            'class' => [
               'btn btn-block btn-link brand-text-primary',
-            ),
-          ),
-        );
+            ],
+          ],
+        ];
         $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
         $build['comment_link'] = Link::fromTextAndUrl(t('Comment'), $commented_entity_url)->toRenderable();
       }
 
       $comment_count = $commented_entity->{$comment_field_name}->comment_count;
-      $t_args = array(':num_comments' => $comment_count);
+      $t_args = [':num_comments' => $comment_count];
 
       if ($comment_count > 1) {
         $more_link = t('Show all :num_comments comments', $t_args);
 
         // Set link classes to be added to the button.
-        $more_link_options = array(
-          'attributes' => array(
-            'class' => array(
+        $more_link_options = [
+          'attributes' => [
+            'class' => [
               'btn',
               'btn-flat',
               'brand-text-primary',
-            ),
-          ),
-        );
+            ],
+          ],
+        ];
 
         // Set path to post node.
         $link_url = $commented_entity->urlInfo('canonical');

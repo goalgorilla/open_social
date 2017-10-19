@@ -27,8 +27,8 @@ button:
     theme:
       assets/css/button.css: {}
       assets/css/waves.css: {}
-  js:
-    assets/js/waves.min.js: {}
+  dependencies:
+    - socialblue/waves
 
 cards:
   css:
@@ -49,6 +49,14 @@ spinner:
   css:
     theme:
       assets/css/spinner.css: {}
+
+waves:
+  css:
+    theme:
+      /libraries/waves/dist/waves.css: {}
+  js:
+    /libraries/waves/dist/waves.min.js: { minified: true }
+    assets/js/waves.min.js: { minified: true }
 
 ### 2.2 Molecules
 
@@ -121,6 +129,11 @@ popover:
   css:
     theme:
       assets/css/popover.css: {}
+
+select2:
+  css:
+    theme:
+      assets/css/select2.css: {}
 
 teaser:
   css:

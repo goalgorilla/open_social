@@ -9,7 +9,6 @@
 // ################################
 
 var importOnce  = require('node-sass-import-once'),
-    path        = require('path'),
     gulp        = require('gulp'),
     $           = require('gulp-load-plugins')(),
     browserSync = require('browser-sync').create(),
@@ -17,7 +16,6 @@ var importOnce  = require('node-sass-import-once'),
     // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
     sass        = require('gulp-sass'),
     kss         = require('kss'),
-    postcss     = require('gulp-postcss'),
     autoprefixer= require('autoprefixer'),
     mqpacker    = require('css-mqpacker'),
     concat      = require('gulp-concat'),
@@ -39,7 +37,8 @@ options.rootPath = {
   styleGuide  : __dirname + '/styleguide/',
   theme       : __dirname + '/',
   basetheme   : __dirname + '/../socialbase/',
-  drupal      : __dirname + '/../../../../../core/'
+  drupal      : __dirname + '/../../../../../core/',
+  libraries   : __dirname + '/../../../../../libraries/'
 };
 
 options.theme = {
@@ -64,13 +63,13 @@ options.basetheme = {
 // Set the URL used to access the Drupal website under development. This will
 // allow Browser Sync to serve the website and update CSS changes on the fly.
 options.drupalURL = '';
-//options.drupalURL = 'http://social.dev:32780';
+//options.drupalURL = 'http://social.dev';
 
 // Define the node-sass configuration. The includePaths is critical!
 options.sass = {
   importer: importOnce,
   includePaths: [
-    options.theme.components,
+    options.theme.components
   ],
   outputStyle: 'expanded'
 };
@@ -83,11 +82,11 @@ var sassFiles = [
 
 
 // On screen notification for errors while performing tasks
-var onError = function(err) {
+var onError = function (err) {
   notify.onError({
-    title:    "Gulp error in " + err.plugin,
-    message:  "<%= error.message %>",
-    sound: "Beep"
+    title:    'Gulp error in ' + err.plugin,
+    message:  '<%= error.message %>',
+    sound: 'Beep'
   })(err);
   this.emit('end');
 };
@@ -110,80 +109,78 @@ options.styleGuide = {
   // The following paths are relative to the generated style guide.
   'css': [
     // Base stylesheets
-    'kss-assets/base/base.css',
-    'kss-assets/css/base.css',
+    'kss-assets/base/css/base.css',
+    'kss-assets/blue/css/base.css',
     // Atom stylesheets
-    'kss-assets/base/alert.css',
-    'kss-assets/css/alert.css',
-    'kss-assets/base/badge.css',
-    'kss-assets/css/badge.css',
-    'kss-assets/base/button.css',
-    'kss-assets/css/button.css',
-    'kss-assets/base/cards.css',
-    'kss-assets/css/cards.css',
-    'kss-assets/base/form-controls.css',
-    'kss-assets/css/form-controls.css',
-    'kss-assets/css/list.css',
-    'kss-assets/base/list.css',
-    'kss-assets/css/spinner.css',
-    'kss-assets/css/waves.css',
+    'kss-assets/base/css/alert.css',
+    'kss-assets/blue/css/alert.css',
+    'kss-assets/base/css/badge.css',
+    'kss-assets/blue/css/badge.css',
+    'kss-assets/base/css/button.css',
+    'kss-assets/blue/css/button.css',
+    'kss-assets/base/css/cards.css',
+    'kss-assets/blue/css/cards.css',
+    'kss-assets/base/css/form-controls.css',
+    'kss-assets/blue/css/form-controls.css',
+    'kss-assets/blue/css/list.css',
+    'kss-assets/base/css/list.css',
+    'kss-assets/blue/css/spinner.css',
+    'kss-assets/lib/waves.css',
+    'kss-assets/blue/css/waves.css',
     // Molecule stylesheets
-    'kss-assets/base/dropdown.css',
-    'kss-assets/css/dropdown.css',
-    'kss-assets/base/file.css',
-    'kss-assets/css/file.css',
-    'kss-assets/base/form-elements.css',
-    'kss-assets/css/form-elements.css',
-    'kss-assets/base/datepicker.css',
-    'kss-assets/css/datepicker.css',
-    'kss-assets/base/input-groups.css',
-    'kss-assets/css/input-groups.css',
-    'kss-assets/base/password.css',
-    'kss-assets/css/password.css',
-    'kss-assets/base/timepicker.css',
-    'kss-assets/css/timepicker.css',
-    'kss-assets/base/media.css',
-    'kss-assets/base/mention.css',
-    'kss-assets/css/mention.css',
-    'kss-assets/base/breadcrumb.css',
-    'kss-assets/css/breadcrumb.css',
-    'kss-assets/base/nav-book.css',
-    'kss-assets/css/nav-book.css',
-    'kss-assets/base/nav-tabs.css',
-    'kss-assets/css/nav-tabs.css',
-    'kss-assets/base/navbar.css',
-    'kss-assets/css/navbar.css',
-    'kss-assets/base/pagination.css',
-    'kss-assets/css/pagination.css',
-    'kss-assets/base/popover.css',
-    'kss-assets/css/popover.css',
-    'kss-assets/base/teaser.css',
-    'kss-assets/css/teaser.css',
-    'kss-assets/base/tour.css',
-    'kss-assets/css/tour.css',
+    'kss-assets/base/css/dropdown.css',
+    'kss-assets/blue/css/dropdown.css',
+    'kss-assets/base/css/file.css',
+    'kss-assets/blue/css/file.css',
+    'kss-assets/base/css/form-elements.css',
+    'kss-assets/blue/css/form-elements.css',
+    'kss-assets/base/css/datepicker.css',
+    'kss-assets/blue/css/datepicker.css',
+    'kss-assets/base/css/input-groups.css',
+    'kss-assets/blue/css/input-groups.css',
+    'kss-assets/base/css/password.css',
+    'kss-assets/blue/css/password.css',
+    'kss-assets/base/css/timepicker.css',
+    'kss-assets/blue/css/timepicker.css',
+    'kss-assets/base/css/media.css',
+    'kss-assets/base/css/mention.css',
+    'kss-assets/blue/css/mention.css',
+    'kss-assets/base/css/breadcrumb.css',
+    'kss-assets/blue/css/breadcrumb.css',
+    'kss-assets/base/css/nav-book.css',
+    'kss-assets/blue/css/nav-book.css',
+    'kss-assets/base/css/nav-tabs.css',
+    'kss-assets/blue/css/nav-tabs.css',
+    'kss-assets/base/css/navbar.css',
+    'kss-assets/blue/css/navbar.css',
+    'kss-assets/base/css/pagination.css',
+    'kss-assets/blue/css/pagination.css',
+    'kss-assets/base/css/popover.css',
+    'kss-assets/blue/css/popover.css',
+    'kss-assets/base/css/teaser.css',
+    'kss-assets/blue/css/teaser.css',
+    'kss-assets/base/css/tour.css',
+    'kss-assets/blue/css/tour.css',
     // Organisms stylesheets
-    'kss-assets/base/comment.css',
-    'kss-assets/css/comment.css',
-    'kss-assets/base/hero.css',
-    'kss-assets/css/hero.css',
-    'kss-assets/base/meta.css',
-    'kss-assets/css/meta.css',
-    'kss-assets/base/offcanvas.css',
-    'kss-assets/css/offcanvas.css',
-    'kss-assets/css/site-footer.css',
-    'kss-assets/base/stream.css',
-    'kss-assets/css/stream.css',
+    'kss-assets/base/css/comment.css',
+    'kss-assets/blue/css/comment.css',
+    'kss-assets/base/css/hero.css',
+    'kss-assets/blue/css/hero.css',
+    'kss-assets/base/css/meta.css',
+    'kss-assets/blue/css/meta.css',
+    'kss-assets/base/css/offcanvas.css',
+    'kss-assets/blue/css/offcanvas.css',
+    'kss-assets/blue/css/site-footer.css',
+    'kss-assets/base/css/stream.css',
+    'kss-assets/blue/css/stream.css',
     // Template stylesheets
-    'kss-assets/base/layout.css',
-    'kss-assets/base/page-node.css',
-    'kss-assets/css/page-node.css',
+    'kss-assets/base/css/layout.css',
+    'kss-assets/base/css/page-node.css',
+    'kss-assets/blue/css/page-node.css',
     // Javascript stylesheets
-    'kss-assets/base/morrisjs.css',
+    'kss-assets/base/css/morrisjs.css',
     // Styleguide stylesheets
-    'kss-assets/css/styleguide.css'
-  ],
-  'js': [
-    'kss-assets/js/waves.min.js'
+    'kss-assets/blue/css/styleguide.css'
   ],
   'homepage': 'homepage.md',
   'title': 'Style Guide for Open Social Blue'
@@ -219,11 +216,11 @@ var sassProcessors = [
 gulp.task('styles', function () {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.plumber({ errorHandler: onError }) )
+    .pipe($.plumber({errorHandler: onError}))
     // run autoprefixer and media-query packer
-    .pipe($.postcss(sassProcessors) )
+    .pipe($.postcss(sassProcessors))
     // run rucksack @see https://simplaio.github.io/rucksack/
-    .pipe($.rucksack() )
+    .pipe($.rucksack())
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.theme.css))
@@ -231,27 +228,34 @@ gulp.task('styles', function () {
 });
 
 
+
+// #################
+//
+// Minify scripts
+//
+// #################
+//
+// First clean the JS folder, then search all components for js files.
+// Then compress the files, give them an explicit .min filename and
+// save them to the assets folder.
+// ===================================================
+
+gulp.task('scripts', function () {
+  return gulp.src(options.theme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest(options.theme.js))
+    .pipe(browserSync.reload({stream:true}));
+});
+
+
+
 // ##################
 // Build style guide.
 // ##################
-
-// Compile and copy the socialbase styles to the style guide
-gulp.task('styleguide-assets-base', function() {
-  return gulp.src(options.basetheme.css +'*.css')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'))
-});
-
-// Compile and copy the subtheme assets to the style guide
-gulp.task('styleguide-assets', function() {
-  return gulp.src(options.theme.build +'**/*')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
-});
-
-// Copy the mime icons from the components folder to the styleguide assets folder (manual task)
-gulp.task('styleguide-mime-image-icons', function () {
-  return gulp.src(options.basetheme.components + '06-libraries/icons/source/mime-icons/*.png')
-    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/'))
-});
 
 // Main styleguide task
 gulp.task('styleguide', ['clean:styleguide'], function () {
@@ -259,14 +263,34 @@ gulp.task('styleguide', ['clean:styleguide'], function () {
 });
 
 // Before deploying create a fresh build
-gulp.task('build-styleguide', function(done) {
-  runSequence('clean:styleguide', 'scripts-drupal', 'styleguide',
-    ['styleguide-assets-base', 'styleguide-assets', 'styleguide-mime-image-icons'],
-    done);
+gulp.task('build-styleguide', function (callback) {
+  runSequence('styleguide',
+    ['base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal'],
+    callback);
+});
+
+// Compile and copy the socialbase styles to the style guide
+gulp.task('base-assets', function () {
+  return gulp.src(options.basetheme.build + '**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/base/'));
+});
+
+// Compile and copy the subtheme assets to the style guide
+gulp.task('blue-assets', function () {
+  return gulp.src(options.theme.build + '**/*')
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
+});
+
+gulp.task('brand', function () {
+  return gulp.src([
+    'logo.svg',
+    'favicon.ico'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/blue/'));
 });
 
 // Copy drupal scripts from drupal to make them available for the styleguide
-gulp.task('scripts-drupal', function() {
+gulp.task('scripts-drupal', function () {
   return gulp.src([
     options.rootPath.drupal + 'assets/vendor/domready/ready.min.js',
     options.rootPath.drupal + 'assets/vendor/jquery/jquery.min.js',
@@ -274,14 +298,38 @@ gulp.task('scripts-drupal', function() {
     options.rootPath.drupal + '/misc/drupalSettingsLoader.js',
     options.rootPath.drupal + '/misc/drupal.js',
     options.rootPath.drupal + '/misc/debounce.js',
-    options.rootPath.drupal + '/misc/forms.js',
     options.rootPath.drupal + '/misc/tabledrag.js',
     options.rootPath.drupal + '/modules/user/user.js',
     options.rootPath.drupal + '/modules/file/file.js'
   ])
-    .pipe( concat('drupal-core.js') )
-    .pipe( gulp.dest(options.rootPath.styleGuide + 'kss-assets/') );
+    .pipe(concat('drupal-core.js'))
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
 });
+
+// Copy libraries scripts from drupal libraries folder to make them available for the styleguide
+gulp.task('libraries', function () {
+  return gulp.src([
+    options.rootPath.libraries + 'bootstrap/dist/js/bootstrap.min.js',
+    options.rootPath.libraries + 'morris.js/morris.min.js',
+    options.rootPath.libraries + 'raphael/raphael.min.js',
+    options.rootPath.libraries + 'waves/dist/waves.min.js',
+    options.rootPath.libraries + 'waves/dist/waves.css',
+    options.rootPath.libraries + 'autosize/dist/autosize.min.js'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
+});
+
+gulp.task('kss', function () {
+  return gulp.src([
+    'node_modules/kss/builder/twig/kss-assets/kss-fullscreen.js',
+    'node_modules/kss/builder/twig/kss-assets/kss-guides.js',
+    'node_modules/kss/builder/twig/kss-assets/kss-markup.js',
+    'node_modules/prismjs/prism.js',
+    'node_modules/prismjs/components/prism-scss.min.js'
+  ])
+    .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/kss/'));
+});
+
 
 
 
@@ -329,9 +377,7 @@ gulp.task('lint:sass-with-fail', function () {
 //
 // ##############################
 
-gulp.task('watch', ['browser-sync', 'watch:styleguide', 'watch:js']);
-
-gulp.task('browser-sync', ['watch:css'], function () {
+gulp.task('watch', ['watch:css', 'watch:styleguide', 'watch:js'], function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -345,40 +391,16 @@ gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
 });
 
+gulp.task('watch:js', ['scripts'], function () {
+  return gulp.watch(options.theme.components + '**/*.js', ['scripts']);
+});
+
 gulp.task('watch:styleguide', ['build-styleguide'], function () {
   return gulp.watch([
-    options.basetheme.components + '**/*.scss',
-    options.theme.components + '**/*.scss',
-    options.basetheme.components + '**/*.twig',
-    options.theme.components + '**/*.twig',
-    options.basetheme.components + '**/*.json',
-    options.theme.components + '**/*.json',
-    options.theme.components + '**/*.md'
+    options.basetheme.components + '**/*',
+    options.theme.components + '**/*',
   ], options.gulpWatchOptions, ['build-styleguide']);
 });
-
-// #################
-//
-// Minify JS
-//
-// #################
-//
-// First clean the JS folder, then search all components for js files.
-// Then compress the files, give them an explicit .min filename and
-// save them to the assets folder.
-// ===================================================
-
-gulp.task('watch:js', function () {
-  return gulp.src(options.theme.components + '**/*.js')
-    .pipe($.uglify())
-    .pipe($.flatten())
-    .pipe($.rename({
-      suffix: ".min"
-    }))
-    .pipe(gulp.dest(options.theme.js));
-});
-
-
 
 
 
@@ -417,23 +439,24 @@ gulp.task('clean:css', function () {
 // ===================================================
 
 var rsync         = require('gulp-rsync'),
-    prompt        = require('gulp-prompt');
+  prompt        = require('gulp-prompt');
 
 try {
   var deploy    = require('./deploy_config.json');
-} catch(error) {
+}
+catch (error) {
   console.log('Deploy config file missing');
 }
 
 // Before deploying create a fresh build
-gulp.task('deploy', ['build-styleguide'], function() {
+gulp.task('deploy', ['build-styleguide'], function () {
 
   // Default options for rsync
   var rsyncConf = {
     progress: true,
     incremental: true,
     emptyDirectories: true
-    //clean: true,
+    // clean: true,
   };
 
   // Load the settings from our deploy_config.json file

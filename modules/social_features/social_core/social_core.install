@@ -6,12 +6,14 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\crop\Entity\Crop;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\StreamWrapper\PrivateStream;
 use Drupal\file\Entity\File;
-use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
@@ -57,6 +59,18 @@ function social_core_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_core_update_dependencies() {
+  // Update field schema only after Profile module bug fixed.
+  $dependencies['social_core'][8020] = [
+    'profile' => 8001,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Re-set permissions.
  */
 function social_core_update_8001(&$sandbox) {
@@ -85,26 +99,26 @@ function _social_core_set_permissions() {
  * Build the permissions.
  *
  * @param string $role
- *    The role.
+ *   The role.
  *
  * @return array
- *    Returns an array containing the permissions.
+ *   Returns an array containing the permissions.
  */
 function _social_core_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
+  $permissions['anonymous'] = [
     'access content',
-  );
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'view own unpublished content',
     'use text format basic_html',
     'use text format simple_text',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'access content overview',
     'access toolbar',
     'administer nodes',
@@ -117,10 +131,10 @@ function _social_core_get_permissions($role) {
     'create url aliases',
     'use text format full_html',
     'view the administration theme',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer taxonomy',
     'delete terms in expertise',
     'edit terms in expertise',
@@ -133,7 +147,7 @@ function _social_core_get_permissions($role) {
     'administer account settings',
     'administer themes',
     'administer blocks',
-  ));
+  ]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -151,12 +165,12 @@ function _social_core_create_an_homepage_block() {
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
   $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
 
-  $media = File::create(array(
+  $media = File::create([
     'langcode' => 'en',
     'uid' => 1,
     'status' => 1,
     'uri' => $uri,
-  ));
+  ]);
   $media->save();
 
   $fid = $media->id();
@@ -181,33 +195,33 @@ function _social_core_create_an_homepage_block() {
 
   // Create a block with a specific uuid so we can use it in the config
   // to load it into the theme see block.block.anhomepageheroblock.yml.
-  $block = \Drupal::entityTypeManager()->getStorage('block_content')->create(array(
+  $block = \Drupal::entityTypeManager()->getStorage('block_content')->create([
     'type' => 'hero_call_to_action_block',
     'info' => 'AN homepage hero block',
     'uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4',
-  ));
-  $block->field_text_block = array(
+  ]);
+  $block->field_text_block = [
     'value' => '<h3>Become a member or log in to your community</h3><p>This community is powered by Open Social, the plug-and-play community solution for NGOs and semi-governmental organisations.</p>',
     'format' => 'full_html',
-  );
+  ];
 
-  $block_image = array(
+  $block_image = [
     'target_id' => $fid,
     'alt' => "Anonymous front page image homepage'",
-  );
+  ];
   $block->field_hero_image = $block_image;
 
   // Set the links.
-  $action_links = array(
-    array(
+  $action_links = [
+    [
       'uri' => 'internal:/user/register',
       'title' => t('Sign up'),
-    ),
-    array(
+    ],
+    [
       'uri' => 'internal:/user/login',
       'title' => t('Login'),
-    ),
-  );
+    ],
+  ];
   $itemList = new FieldItemList($block->field_call_to_action_link->getFieldDefinition());
   $itemList->setValue($action_links);
   $block->field_call_to_action_link = $itemList;
@@ -245,9 +259,9 @@ function _social_core_create_menu_links() {
 function social_core_update_8002() {
   $roles = Role::loadMultiple();
 
-  $permissions = array(
+  $permissions = [
     'use text format full_html',
-  );
+  ];
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -262,9 +276,9 @@ function social_core_update_8002() {
  */
 function social_core_update_8003() {
 
-  $modules = array(
+  $modules = [
     'image_widget_crop',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
 }
@@ -275,9 +289,9 @@ function social_core_update_8003() {
 function social_core_update_8004() {
   $roles = Role::loadMultiple();
 
-  $permissions = array(
+  $permissions = [
     'view the administration theme',
-  );
+  ];
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -436,9 +450,9 @@ function social_core_update_8005(&$sandbox) {
  * Install social_follow_content module.
  */
 function social_core_update_8006(&$sandbox) {
-  $modules = array(
+  $modules = [
     'social_follow_content',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -462,9 +476,9 @@ function _social_core_set_image_quality() {
  * Install social_mentions module.
  */
 function social_core_update_8008() {
-  $modules = array(
+  $modules = [
     'social_mentions',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -489,10 +503,10 @@ function social_core_update_8009() {
     // @see _drupal_maintenance_theme()
     \Drupal::service('theme.manager')->resetActiveTheme();
 
-    drupal_set_message('Installed socialblue theme and made this the default. Please check release notes.');
+    drupal_set_message(t('Installed socialblue theme and made this the default. Please check release notes.'));
   }
   else {
-    drupal_set_message('Skipped installing socialblue theme. Please check release notes.');
+    drupal_set_message(t('Skipped installing socialblue theme. Please check release notes.'));
   }
 }
 
@@ -500,9 +514,9 @@ function social_core_update_8009() {
  * Install social_font module.
  */
 function social_core_update_8010() {
-  $modules = array(
+  $modules = [
     'social_font',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -510,10 +524,10 @@ function social_core_update_8010() {
  * Install color & improved theme settings module.
  */
 function social_core_update_8011() {
-  $modules = array(
+  $modules = [
     'color',
     'improved_theme_settings',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -521,9 +535,9 @@ function social_core_update_8011() {
  * Install social_like module.
  */
 function social_core_update_8012() {
-  $modules = array(
+  $modules = [
     'social_like',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -573,9 +587,9 @@ function social_core_update_8015(&$sandbox) {
  * Install social_tour module.
  */
 function social_core_update_8018(&$sandbox) {
-  $modules = array(
+  $modules = [
     'social_tour',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -586,14 +600,14 @@ function social_core_update_8019() {
   $file_private_path_base_path = PrivateStream::basePath();
 
   if ($file_private_path_base_path !== NULL) {
-    $modules = array(
+    $modules = [
       'social_file_private',
-    );
+    ];
     \Drupal::service('module_installer')->install($modules);
-    drupal_set_message('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files');
+    drupal_set_message(t('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files'));
   }
   else {
-    drupal_set_message('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning');
+    drupal_set_message(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', 'warning'));
   }
 }
 
@@ -660,13 +674,13 @@ function social_core_update_8021(&$sandbox) {
   $database->truncate($table_data)->execute();
 
   // Add new field to tables.
-  $spec = array(
+  $spec = [
     'type' => 'varchar',
     'length' => 32,
     'not null' => TRUE,
     'default' => 'post',
     'description' => 'The ID of the target entity.',
-  );
+  ];
   $schema = Database::getConnection()->schema();
 
   if ($schema->fieldExists($table_post, 'type')) {
@@ -726,9 +740,9 @@ function social_core_update_8021(&$sandbox) {
  * Install social_post_photo module.
  */
 function social_core_update_8022() {
-  $modules = array(
+  $modules = [
     'social_post_photo',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -756,9 +770,9 @@ function social_core_update_8023() {
  * Install image_effects module.
  */
 function social_core_update_8024() {
-  $modules = array(
+  $modules = [
     'image_effects',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
 
@@ -766,8 +780,58 @@ function social_core_update_8024() {
  * Install social_swiftmail module.
  */
 function social_core_update_8025() {
-  $modules = array(
+  $modules = [
     'social_swiftmail',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Automatically try to set a new crop for the anonymous hero image.
+ */
+function social_core_update_8026() {
+  // Load the anonymous hero block.
+  $block_storage = \Drupal::entityTypeManager()->getStorage('block_content');
+  $block = $block_storage->loadByProperties(['uuid' => '8bb9d4bb-f182-4afc-b138-8a4b802824e4']);
+  $block = current($block);
+
+  if ($block instanceof BlockContent) {
+    // Get the hero image file ID.
+    $hero_image = $block->get('field_hero_image')->getValue();
+
+    // Check if we already have a crop for the new hero_an style.
+    $query = \Drupal::entityQuery('crop')
+      ->condition('entity_type', 'file')
+      ->condition('entity_id', $hero_image[0]['target_id'])
+      ->condition('type', 'hero_an');
+    $hero_an_crop = $query->execute();
+
+    // No crop style found yet. Let's try to set one automatically.
+    if (!$hero_an_crop) {
+      // Find and load the current hero crop to get the dimensions.
+      $query = \Drupal::entityQuery('crop')
+        ->condition('entity_type', 'file')
+        ->condition('entity_id', $hero_image[0]['target_id'])
+        ->condition('type', 'hero')
+        ->sort('cid')
+        ->range(0, 1);
+      $crop = $query->execute();
+
+      /** @var \Drupal\crop\Entity\Crop $crop */
+      $crop = Crop::load(current($crop));
+
+      // Crop object found, set the crop type to hero_an.
+      if ($crop instanceof Crop) {
+        $size = $crop->size();
+
+        // We need to adjust the width, as this is the safest way to set the new
+        // crop automatically.
+        // Aspect ratio was 2.836879433 (width 1200, height 423). It became
+        // 2.448979592 (width 1200, height 490).
+        $crop->set('width', ($size['width'] / 2.836879433) * 2.448979592);
+        $crop->set('type', 'hero_an');
+        $crop->save();
+      }
+    }
+  }
 }

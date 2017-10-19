@@ -50,10 +50,46 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       '#collapsed' => TRUE,
     );
 
-    $form['os_color_settings']['border_radius'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Border radius (px)'),
-      '#default_value' => $config->get('border_radius'),
+    $form['os_color_settings']['card_radius'] = array(
+      '#type' => 'number',
+      '#title' => t('Card border radius (px)'),
+      '#default_value' => $config->get('card_radius'),
+      '#description' => t('Define the roundness of cards corners.'),
+    );
+
+    $form['os_color_settings']['form_control_radius'] = array(
+      '#type' => 'number',
+      '#title' => t('Form control border radius (px)'),
+      '#default_value' => $config->get('form_control_radius'),
+      '#description' => t('Define the roundness of the corners of form-controls, like <code>input</code>, <code>textarea</code> and <code>select</code>'),
+    );
+
+    $form['os_color_settings']['button_radius'] = array(
+      '#type' => 'number',
+      '#title' => t('Button border radius (px)'),
+      '#default_value' => $config->get('button_radius'),
+      '#description' => t('Define the roundness of buttons corners.'),
+    );
+
+    $form['os_email_settings'] = array(
+      '#type' => 'details',
+      '#group' => 'open_social_settings',
+      '#title' => t('E-mail'),
+      '#weight' => 30,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+
+    $form['os_email_settings']['email_logo'] = array(
+      '#type' => 'managed_file',
+      '#title' => t('Logo for e-mails'),
+      '#description' => t('Upload a logo which is shown in e-mail sent by the platform. This overrides the default logo that is also used in e-mails when no logo is provided here.'),
+      '#default_value'   => $config->get('email_logo'),
+      '#upload_location' => 'public://',
+      '#upload_validators'    => [
+        'file_validate_is_image'      => array(),
+        'file_validate_extensions'    => array('gif png jpg jpeg'),
+      ],
     );
 
     // Font tab.

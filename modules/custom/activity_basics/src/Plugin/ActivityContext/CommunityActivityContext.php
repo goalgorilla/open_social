@@ -39,7 +39,7 @@ class CommunityActivityContext extends ActivityContextBase {
     }
 
     // Check if it's placed in a group (regardless off content type).
-    if ($group_entity = GroupContent::loadByEntity($entity)) {
+    if (GroupContent::loadByEntity($entity)) {
       return FALSE;
     }
     if ($entity->getEntityTypeId() === 'post') {

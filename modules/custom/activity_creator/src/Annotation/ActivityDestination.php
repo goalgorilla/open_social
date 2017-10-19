@@ -35,13 +35,13 @@ class ActivityDestination extends Plugin {
    *
    * @var bool
    */
-  public $is_aggregatable = FALSE;
+  public $isAggregatable = FALSE;
 
   /**
    * Whether this destination is common or not.
    *
    * @var bool
    */
-  public $is_common = FALSE;
+  public $isCommon = FALSE;
 
 }

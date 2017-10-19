@@ -72,6 +72,15 @@
   border: 3px solid white;
 }
 
+.img-elevated {
+  display: inline-block;
+  @include z-depth-3;
+}
+
+p + p .img-elevated {
+  margin-top: -0.5rem; // not too much space between text and image
+}
+
 // Perfect circle
 .img-circle {
   border-radius: 50%; // set radius in percents

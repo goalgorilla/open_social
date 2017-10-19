@@ -17,12 +17,12 @@
   #}
 
 {{ attach_library('socialbase/comment') }}
-<div class="card brand-border-radius">
+<div class="card">
   <div class="card__block">
 
     <div class="media-wrapper">
       <div class="media">
-        <div class="media-left">
+        <div class="media-left avatar">
           {% if author_picture %}
             {{ author_picture }}
           {% endif %}
@@ -40,14 +40,14 @@
       {{ content.links }}
   </div>
 
-    <div class="margin-top-s">
+    <div class="margin-top-s iframe-container">
 
       {% if content.field_post %}
         {{ content.field_post }}
       {% endif %}
 
       {% if content.field_post_image|render %}
-        <p>{{- content.field_post_image -}}</p>
+        <p>{{ content.field_post_image }}</p>
       {% endif %}
 
       {% if content.like_and_dislike %}
@@ -55,10 +55,14 @@
       {% endif %}
     </div>
 
-    <div class="card__nested-section">
-      {% if content.field_post_comments %}
-        {{ content.field_post_comments }}
-      {% endif %}
-    </div>
+
+    {% if logged_in %}
+      <div class="card__nested-section">
+        {% if content.field_post_comments %}
+          {{ content.field_post_comments }}
+        {% endif %}
+      </div>
+    {% endif %}
+
   </div>
 </div>

@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Default theme implementation for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('socialbase/form-post-create') }}
+{{ attach_library('socialbase/comment')}}
+<div class="card">
+  <div class="card__block">
+    <div class="comment">
+      <div class="comment__avatar">
+        {{ author_picture }}
+      </div>
+      <div class="comment__content">
+        <h5 class="media-heading">
+          {{ author_name }}<br>
+          <small>{{ date }}</small>
+        </h5>
+      </div>
+    </div>
+    <div class="margin-top-m">
+      <form{{ attributes.addClass('form--post-create').removeClass('clearfix') }}>
+        {{ children }}
+      </form>
+    </div>
+
+  </div>
+</div>

@@ -6,6 +6,7 @@ use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestinati
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\message\Entity\Message;
+use Drupal\user\Entity\User;
 
 /**
  * An activity send email worker.
@@ -24,48 +25,33 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($data) {
-
     // First make sure it's an actual Activity entity.
     if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
       // Get target account.
       $target_account = EmailActivityDestination::getSendTargetUser($activity);
-      // Check if user last activity was more than few minutes ago.
-      if (is_object($target_account) && EmailActivityDestination::isUserOffline($target_account)) {
+
+      if ($target_account instanceof User) {
         // Get Message Template id.
         $message = Message::load($activity->field_activity_message->target_id);
         $message_template_id = $message->getTemplate()->id();
 
-        // Get email notification settings of active user.
+        // Retrieve the users email settings.
         $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
 
-        // Check if email notifications is enabled for this kind of activity.
-        // If user don't change it's enabled by default.
-        if ((!isset($user_email_settings[$message_template_id])
-            || (isset($user_email_settings[$message_template_id]) && $user_email_settings[$message_template_id] == 1))
-          && isset($activity->field_activity_output_text)
-        ) {
-          // Send Email.
-          $langcode = \Drupal::currentUser()->getPreferredLangcode();
-
-          $body_text = EmailActivityDestination::getSendEmailOutputText($message);
-          if ($body_text !== NULL) {
-            $params['body'] = EmailActivityDestination::getSendEmailOutputText($message);
-
-            $mail_manager = \Drupal::service('plugin.manager.mail');
-            $mail_manager->mail(
-              'activity_send_email',
-              'activity_send_email',
-              $target_account->getEmail(),
-              $langcode,
-              $params,
-              $reply = NULL,
-              $send = TRUE
-            );
-          }
+        // Determine email frequency to use, defaults to immediately.
+        // @todo make these frequency constants?
+        $frequency = 'immediately';
+        if (!empty($user_email_settings[$message_template_id])) {
+          $frequency = $user_email_settings[$message_template_id];
         }
+
+        // Send item to EmailFrequency instance.
+        // @todo use dependency injection for this.
+        $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+        $instance = $emailfrequencymanager->createInstance($frequency);
+        $instance->processItem($activity, $message, $target_account);
       }
     }
-
   }
 
 }

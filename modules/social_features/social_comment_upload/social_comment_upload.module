@@ -30,7 +30,7 @@ function social_comment_upload_form_comment_comment_form_alter(&$form, FormState
  * Removes the select list with "weight" value.
  */
 function social_comment_upload_form_comment_comment_form_after_build($form, FormStateInterface $form_state) {
-  foreach ($form['field_comment_files']['widget'] as $key => &$element) {
+  foreach ($form['field_comment_files']['widget'] as &$element) {
     if (is_array($element) && isset($element['_weight'])) {
       unset($element['_weight']);
     }
