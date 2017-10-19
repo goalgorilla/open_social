@@ -13,6 +13,10 @@
  */
 #}
 
+{% if attributes.hasClass('form--default') %}
+  {{ attach_library('socialbase/form-default') }}
+{% endif %}
+
 {% if attributes.hasClass('card') %}
   <form{{ attributes.removeClass('card') }}>
     <div class="card">
