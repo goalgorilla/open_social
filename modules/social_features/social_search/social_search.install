@@ -169,3 +169,76 @@ function social_search_update_8105() {
     }
   }
 }
+
+/**
+ * Set all existing profiles as default to fix search indexing.
+ */
+function social_search_update_8106(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+    // This must be the first run. Initialize the sandbox.
+    $sandbox['progress'] = 0;
+    $sandbox['profiles_updated'] = 0;
+
+    // We check for any profiles that do not have is_default set.
+    $sandbox['pids'] = array_values(\Drupal::entityQuery('profile')
+      ->notExists('is_default')
+      ->execute());
+
+    $sandbox['profile_count'] = count($sandbox['pids']);
+
+    \Drupal::logger('sdgc_search')->info('Checking profile status for @count profiles', ['@count' => $sandbox['profile_count']]);
+  }
+
+  $batch_size = Settings::get('entity_update_batch_size', 50);
+
+  // Try to do 50 each cycle. Never do more than are available.
+  for ($target = $sandbox['progress'] + $batch_size; $sandbox['progress'] < $target && $sandbox['progress'] < $sandbox['profile_count']; $sandbox['progress']++) {
+    $pid = $sandbox['pids'][$sandbox['progress']];
+    $profileStorage = \Drupal::entityTypeManager()->getStorage('profile');
+
+    // Check if the user has a profile already.
+    /** @var \Drupal\profile\Entity\Profile $profile **/
+    $profile = $profileStorage->load($pid);
+    if ($profile) {
+      try {
+        $profile->setDefault(TRUE);
+        $profile->save();
+        $sandbox['profiles_updated']++;
+      } catch (Exception $e) {
+        \Drupal::logger('sdgc_search')
+          ->error('Could not update profile for @profile_id', ['@profile_id' => $pid]);
+      }
+    }
+  }
+
+  $sandbox['#finished'] = empty($sandbox['profile_count']) ? 1 : ($sandbox['progress'] / $sandbox['profile_count']);
+
+  // We ran through all of them.
+  if ($sandbox['#finished'] === 1) {
+    \Drupal::logger('social_profile')
+      ->info('Updated profiles for @count profiles', [
+        '@count' => $sandbox['profiles_updated'],
+      ]);
+
+    // If any profiles were updated we might also need to disable and enable the
+    // user search index.
+    if ($sandbox['profiles_updated']) {
+      $index = Index::load('social_users');
+      $status = $index->status();
+
+      // If currently enabled we will first disabled and enable the index.
+      if ($status) {
+        $index->disable()->save();
+        $index->enable()->save();
+
+        \Drupal::logger('social_profile')
+          ->info('Disabled and enabled the user search index');
+      }
+      $index->clear();
+      $index->reindex();
+
+      \Drupal::logger('social_profile')
+        ->info('Reindexed the user search index');
+    }
+  }
+}
