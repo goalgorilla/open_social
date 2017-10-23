@@ -13,27 +13,6 @@ form {
   }
 }
 
-.form-inline {
-  margin-bottom: $form-group-margin-bottom;
-
-  @include for-tablet-portrait-up {
-
-    .radio input[type="radio"],
-    .checkbox input[type="checkbox"] {
-      position: absolute;
-    }
-
-    .radio label,
-    .checkbox label {
-      padding-left: ($radio-width - 3);
-      margin-right: $radio-width;
-    }
-
-  }
-
-}
-
-
 // Inline forms
 //
 // Make forms appear inline(-block) by adding the `.form-inline` class. Inline
@@ -51,7 +30,7 @@ form {
   // Kick in the inline
   @include for-tablet-portrait-up {
     // Inline-block all the things for "inline"
-    .form-group {
+    .form-item {
       display: inline-block;
       margin-bottom: 0;
       vertical-align: middle;
@@ -115,7 +94,25 @@ form {
     }
   }
 }
-// [converter] extracted as `@mixin form-inline` for libsass compatibility
+
+
 .form-inline {
   @include form-inline;
+  margin-bottom: $form-group-margin-bottom;
+
+  @include for-tablet-portrait-up {
+
+    .radio input[type="radio"],
+    .checkbox input[type="checkbox"] {
+      position: absolute;
+    }
+
+    .radio label,
+    .checkbox label {
+      padding-left: ($radio-width - 3);
+      margin-right: $radio-width;
+    }
+
+  }
+
 }

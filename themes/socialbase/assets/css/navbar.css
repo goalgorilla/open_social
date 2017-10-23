@@ -81,7 +81,8 @@
 }
 
 .navbar-fixed-top {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   position: fixed;
   top: 0;
   right: 0;
@@ -221,7 +222,8 @@
 }
 
 .navbar-secondary {
-  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+          box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
   z-index: 1;
   min-height: 46px;
 }
@@ -252,29 +254,24 @@
 }
 
 @media (min-width: 900px) {
-
   .navbar-user {
     -webkit-box-ordinal-group: 11;
-    -ms-flex-order: 10;
-    order: 10;
+        -ms-flex-order: 10;
+            order: 10;
   }
-
   .navbar-search {
     display: none;
   }
-
   .navbar-nav > li > a {
     padding-top: 13px;
     padding-bottom: 13px;
   }
-
   .navbar-collapse {
     width: auto;
     border-top: 0;
     padding-left: 0;
     padding-right: 0;
   }
-
   .navbar-collapse.collapse {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -283,23 +280,18 @@
     padding-bottom: 0;
     overflow: visible !important;
   }
-
   .navbar-collapse.in {
     overflow-y: visible;
   }
-
   .navbar-fixed-top .navbar-nav {
     padding-left: 10px;
   }
-
   .navbar-toggle {
     display: none;
   }
-
   .not-logged-in.dropdown.profile .dropdown-toggle {
     display: none;
   }
-
   .search-take-over {
     height: 50px;
     position: fixed;
@@ -312,7 +304,6 @@
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
   }
-
   .search-take-over .form-group {
     margin: auto;
     width: 80%;
@@ -321,7 +312,6 @@
     display: -ms-flexbox;
     display: flex;
   }
-
   .search-take-over .form-text {
     font-size: 1.625em;
     height: 54px;
@@ -335,7 +325,6 @@
     max-width: none;
     color: #fff;
   }
-
   .search-take-over .form-submit {
     width: 60px;
     height: 60px;
@@ -351,7 +340,6 @@
     text-indent: -9999px;
     cursor: pointer;
   }
-
   .btn--close-search-take-over {
     background-color: transparent;
     border: 0;
@@ -363,61 +351,54 @@
     right: 80px;
     opacity: 0;
     -webkit-transform: translate(10px, 0) rotate(90deg);
-    transform: translate(10px, 0) rotate(90deg);
+            transform: translate(10px, 0) rotate(90deg);
     -webkit-transition: all 0.5s ease-in-out 0.5s;
     transition: all 0.5s ease-in-out 0.5s;
     outline: 0;
   }
-
   .btn--close-search-take-over svg {
     height: 48px;
     fill: #fff;
   }
-
   .mode-search {
     overflow: hidden;
   }
-
   .mode-search .search-take-over {
     opacity: 1;
     pointer-events: all;
   }
-
   .mode-search .navbar__open-search-block {
     -webkit-transform: scale(70);
-    transform: scale(70);
+            transform: scale(70);
     -moz-transform: scale(70) rotate(0.02deg);
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   }
-
   .mode-search .navbar-nav__icon {
     opacity: 0;
   }
-
   .mode-search .main-container {
     z-index: auto;
     pointer-events: none;
   }
-
   .mode-search .btn--close-search-take-over {
     -webkit-transform: none;
-    transform: none;
+            transform: none;
     opacity: 1;
     pointer-events: all;
   }
 }
 
 @media (max-width: 899px) {
-
   .container--navbar {
     -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
+        flex-wrap: wrap;
   }
-
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
     background-color: #fff;
     border: 0;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+    -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
     position: fixed;
     top: auto;
     margin: 0;
@@ -430,34 +411,29 @@
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+            backface-visibility: hidden;
   }
-
   .navbar-collapse {
     -webkit-box-flex: 1;
-    -ms-flex: 1 0 100%;
-    flex: 1 0 100%;
+        -ms-flex: 1 0 100%;
+            flex: 1 0 100%;
   }
-
   .navbar-collapse .navbar-nav {
     margin: 6.5px 0;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
     -webkit-box-ordinal-group: 2;
-    -ms-flex-order: 1;
-    order: 1;
+        -ms-flex-order: 1;
+            order: 1;
   }
-
   .navbar-collapse .navbar-nav > li > a {
     padding: 5px 15px;
   }
-
   .navbar-collapse .navbar-nav > li > a.dropdown-toggle {
     pointer-events: none;
   }
-
   .navbar-collapse .dropdown-menu {
     display: block;
     position: relative;
@@ -466,17 +442,15 @@
     float: none;
     max-width: none;
     padding-top: 0;
-    box-shadow: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
   }
-
   .navbar-collapse .dropdown-menu li a {
     padding: 5px 15px 5px 30px;
   }
-
   .navbar__open-search-control {
     display: none;
   }
-
   .region--content-top .search-take-over,
   .btn--close-search-take-over {
     display: none;
@@ -484,21 +458,18 @@
 }
 
 @media screen and (max-height: 480px) {
-
   .navbar-collapse {
     max-height: 420px;
   }
 }
 
 @media (max-width: 599px) {
-
   .navbar-scrollable {
     overflow: hidden;
     position: relative;
     width: 100%;
     height: 46px;
   }
-
   .navbar-scrollable .navbar-nav {
     position: absolute;
     left: 0;
@@ -506,20 +477,18 @@
     width: 100%;
     -webkit-overflow-scrolling: touch;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
     overflow-x: scroll;
     overflow-y: hidden;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
   }
-
   .navbar-scrollable .navbar-nav::-webkit-scrollbar {
     display: none;
   }
-
   .navbar-scrollable:after {
     content: '';
     display: block;

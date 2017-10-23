@@ -22,6 +22,13 @@
   ]
 %}
 
+{%
+  set classes = [
+    errors ? 'error has-error',
+  ]
+%}
+
+<div{{ attributes.addClass(classes) }}>
 {% if title %}
   <label{{ title_attributes.addClass(title_classes) }}>{{ title }}</label>
   {% if required %}
@@ -29,6 +36,14 @@
   {% endif %}
 {% endif %}
 {{ content }}
+{% if errors %}
+  <div class="form-item--error-message alert alert-danger alert-sm alert-dismissible form-control-radius">
+    <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
+    {{ errors }}
+  </div>
+  <br />
+{% endif %}
 {% if description %}
   <div class="help-block">{{ description }}</div>
 {% endif %}
+</div>
