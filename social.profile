@@ -204,6 +204,7 @@ function social_install_profile_modules(array &$install_state) {
     'social_like' => 'social_like',
     'social_post_photo' => 'social_post_photo',
     'social_swiftmail' => 'social_swiftmail',
+    'social_private_message' => 'social_private_message',
   ];
   $social_modules = $modules;
   // Always install required modules first. Respect the dependencies between
