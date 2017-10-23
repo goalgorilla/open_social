@@ -6,6 +6,7 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\Core\Site\Settings;
 use Drupal\views\Entity\View;
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
@@ -171,9 +172,27 @@ function social_search_update_8105() {
 }
 
 /**
+ * Revert the Social Search feature so the 'Skip user 1' processor is used.
+ */
+function social_search_update_8106() {
+  // Import the Social Search feature.
+  \Drupal::service('features.manager')->import(['social_search']);
+
+  /** @var \Drupal\search_api\Entity\Index $index */
+  $index = Index::load('social_users');
+
+  // Reindex the user index to ensure for the 'Skip user 1' is also taken care
+  // of for updates.
+  if ($index->status()) {
+    $index->clear();
+    $index->reindex();
+  }
+}
+
+/**
  * Set all existing profiles as default to fix search indexing.
  */
-function social_search_update_8106(&$sandbox) {
+function social_search_update_8107(&$sandbox) {
   if (!isset($sandbox['progress'])) {
     // This must be the first run. Initialize the sandbox.
     $sandbox['progress'] = 0;
@@ -223,22 +242,24 @@ function social_search_update_8106(&$sandbox) {
     // If any profiles were updated we might also need to disable and enable the
     // user search index.
     if ($sandbox['profiles_updated']) {
+      /** @var \Drupal\search_api\Entity\Index $index */
       $index = Index::load('social_users');
-      $status = $index->status();
 
       // If currently enabled we will first disabled and enable the index.
-      if ($status) {
+      if ($index->status()) {
         $index->disable()->save();
         $index->enable()->save();
 
         \Drupal::logger('social_profile')
           ->info('Disabled and enabled the user search index');
-      }
-      $index->clear();
-      $index->reindex();
 
-      \Drupal::logger('social_profile')
-        ->info('Reindexed the user search index');
+        // Clear and reindex.
+        $index->clear();
+        $index->reindex();
+
+        \Drupal::logger('social_profile')
+          ->info('Reindexed the user search index');
+      }
     }
   }
 }
