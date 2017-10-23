@@ -183,7 +183,7 @@ function social_search_update_8106() {
 
   // Reindex the user index to ensure for the 'Skip user 1' is also taken care
   // of for updates.
-  if ($index->status()) {
+  if ($index !== NULL && $index->status()) {
     $index->clear();
     $index->reindex();
   }
@@ -246,7 +246,7 @@ function social_search_update_8107(&$sandbox) {
       $index = Index::load('social_users');
 
       // If currently enabled we will first disabled and enable the index.
-      if ($index->status()) {
+      if ($index !== NULL && $index->status()) {
         $index->disable()->save();
         $index->enable()->save();
 
