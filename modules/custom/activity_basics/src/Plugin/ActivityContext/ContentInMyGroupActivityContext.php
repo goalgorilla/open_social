@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\nwo_tweaks\Plugin\ActivityContext;
+namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\Group;
