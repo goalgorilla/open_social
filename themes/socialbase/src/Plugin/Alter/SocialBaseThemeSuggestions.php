@@ -91,11 +91,18 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         if ($route_name == 'entity.node.canonical') {
           $file_id = $context1['file']->id();
           $node = \Drupal::routeMatch()->getParameter('node');
-          $files = $node->get('field_files')->getValue();
-          foreach ($files as $file) {
-            if ($file['target_id'] == $file_id) {
-              $suggestions[] = 'file_link__card';
-              break;
+          // We do not know the name of the file fields. These can be custom.
+          $field_definitions = $node->getFieldDefinitions();
+          // Loop over all fields and target only file fields.
+          foreach ($field_definitions as $field_name => $field_definition) {
+            if ($field_definition->getType() == 'file') {
+              $files = $node->get($field_name)->getValue();
+              foreach ($files as $file) {
+                if ($file['target_id'] == $file_id) {
+                  $suggestions[] = 'file_link__card';
+                  break 2;
+                }
+              }
             }
           }
         }
