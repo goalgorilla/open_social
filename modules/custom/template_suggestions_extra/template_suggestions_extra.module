@@ -77,7 +77,7 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
  */
 function template_suggestions_extra_theme_suggestions_field_alter(array &$suggestions, array $variables) {
   $element = $variables['element'];
-  $suggestions[] = 'field__' . $element['#entity_type'] . '__field_' . $element['#field_type'];
+  $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'];
 
   return $suggestions;
 }
