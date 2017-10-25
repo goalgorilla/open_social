@@ -152,7 +152,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             ],
           ],
         ],
-        'groups' => [
+      ];
+
+      if ($this->moduleHandler->moduleExists('social_group')) {
+        $links['groups'] = [
           'classes' => '',
           'link_attributes' => '',
           'icon_classes' => 'icon-group',
@@ -162,8 +165,20 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'url' => Url::fromRoute('view.groups.page_user_groups', [
             'user' => $account->id(),
           ]),
-        ],
-      ];
+        ];
+      }
+
+      if ($this->moduleHandler->moduleExists('social_private_message')) {
+        $links['messages'] = [
+          'classes' => '',
+          'link_attributes' => '',
+          'icon_classes' => 'icon-mail_outline',
+          'title' => $this->t('Inbox'),
+          'label' => $this->t('Inbox'),
+          'title_classes' => 'sr-only',
+          'url' => Url::fromRoute('private_message.private_message_page'),
+        ];
+      }
 
       // Check if the current user is allowed to create new books.
       if ($this->moduleHandler->moduleExists('social_book')) {
