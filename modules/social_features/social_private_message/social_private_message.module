@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * The Social Privagte Message module.
+ */
+
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_private_message_element_info_alter(array &$info) {
+  if (isset($info['text_format']['#process'])) {
+    $info['text_format']['#process'][] = 'social_private_message_filter_process_format';
+  }
+}
+
+/**
+ * Implements hook_filter_format_disable().
+ */
+function social_private_message_filter_process_format($element) {
+  // Only supported format is plain text.
+  $element['#format'] = 'plain_text';
+  $element['format']['format']['#access'] = FALSE;
+  $element['format']['format']['#value'] = 'plain_text';
+  $element['format']['help']['#access'] = FALSE;
+  $element['format']['format']['#options'] = ['plain_text' => 'Plain Text'];
+
+  return $element;
+}
