@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - private_message
+    - system
+    - user
+  theme:
+    - socialblue
+id: privatemessageinbox_2
+theme: socialblue
+region: content
+weight: 0
+provider: null
+plugin: private_message_inbox_block
+settings:
+  id: private_message_inbox_block
+  label: Inbox
+  provider: private_message
+  label_display: '0'
+  thread_count: '20'
+  ajax_load_count: '20'
+  ajax_refresh_rate: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: /user/inbox
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
