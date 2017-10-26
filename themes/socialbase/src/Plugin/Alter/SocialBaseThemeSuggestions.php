@@ -27,9 +27,16 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
       case 'block':
 
-        if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
-          $menu_name = $variables['elements']['content']['#menu_name'];
-          $suggestions[] = 'block__block_menu__' . $menu_name;
+        if (isset($variables['elements']['#base_plugin_id'])) {
+
+          if ($variables['elements']['#base_plugin_id'] == 'system_menu_block') {
+            $menu_name = $variables['elements']['content']['#menu_name'];
+            $suggestions[] = 'block__block_menu__' . $menu_name;
+          }
+
+          if ($variables['elements']['#base_plugin_id'] == 'private_message_inbox_block') {
+            $suggestions[] = 'block__card';
+          }
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {
