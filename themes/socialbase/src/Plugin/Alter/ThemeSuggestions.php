@@ -88,13 +88,23 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
         // If the file link is part of a node field, suggest another template.
         if ($route_name == 'entity.node.canonical') {
-          $file_id = $context1['file']->id();
+          /** @var \Drupal\file\Entity\File $c_file */
+          $c_file = $context1['file'];
+          $file_id = $c_file->id();
           $node = \Drupal::routeMatch()->getParameter('node');
-          $files = $node->get('field_files')->getValue();
-          foreach ($files as $file) {
-            if ($file['target_id'] == $file_id) {
-              $suggestions[] = 'file_link__card';
-              break;
+          // We do not know the name of the file fields. These can be custom.
+          $field_definitions = $node->getFieldDefinitions();
+          // Loop over all fields and target only file fields.
+          foreach ($field_definitions as $field_name => $field_definition) {
+            /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+            if ($field_definition->getType() == 'file') {
+              $files = $node->get($field_name)->getValue();
+              foreach ($files as $file) {
+                if ($file['target_id'] == $file_id) {
+                  $suggestions[] = 'file_link__card';
+                  break 2;
+                }
+              }
             }
           }
         }
