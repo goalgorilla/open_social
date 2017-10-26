@@ -12,7 +12,7 @@ Feature: Receive email notifications
       | user_2   | mail_2@example.com | 1      | Cathy                    | Willis                  |
     And I am logged in as "user_1"
     And I am on the homepage
-    And I fill in "Say something to the Community" with "Hello [~user_2], [~user_3]!"
+    And I fill in "Say something to the Community" with "Hello [~user_2]!"
     And I press "Post"
     And I wait for the queue to be empty
     Then I should have an email with subject "Notification from Open Social" and "Christopher Conway mentioned you" in the body

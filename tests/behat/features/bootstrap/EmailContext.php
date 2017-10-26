@@ -112,9 +112,14 @@ class EmailContext implements Context {
         $email_subject = $email->getSubject();
         $email_body = $email->getBody();
 
-        var_dump($email_body);
+        // Make it a traversable HTML doc.
+        $doc = new DOMDocument();
+        $doc->loadHTML($email_body);
+        $xpath = new DOMXPath($doc);
+        // Find the notifications in the HTML file.
+        $notifications = $xpath->evaluate('string(//*[contains(@class,"main")])');
 
-        if ($email_subject == $subject) {
+        if ($email_subject == $subject && strpos($notifications, $body)) {
           $found_email = TRUE;
         }
       }
