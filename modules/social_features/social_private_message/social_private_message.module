@@ -34,6 +34,7 @@ function social_private_message_filter_process_format($element) {
  * Implements hook_js_alter().
  */
 function social_private_message_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+  // Remove Js coming from the private_message module.
   if (isset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js'])) {
     unset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js']);
   }
