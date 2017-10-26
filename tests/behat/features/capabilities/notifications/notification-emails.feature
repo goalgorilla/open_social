@@ -15,3 +15,4 @@ Feature: Receive email notifications
     And I fill in "Say something to the Community" with "Hello [~user_2], [~user_3]!"
     And I press "Post"
     And I wait for the queue to be empty
+    Then I should have an email with subject "Notification from Open Social" and "Christopher Conway mentioned you" in the body

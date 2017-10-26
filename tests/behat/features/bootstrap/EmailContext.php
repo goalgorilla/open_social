@@ -38,7 +38,10 @@ class EmailContext implements Context {
   }
 
   /**
-   * @return Finder
+   * Get a list of spooled emails.
+   *
+   * @return Finder|null
+   *   Returns a Finder if the directory exists.
    */
   public function getSpooledEmails() {
     $finder = new Finder();
@@ -54,16 +57,23 @@ class EmailContext implements Context {
   }
 
   /**
-   * @param $file
+   * Get content of email.
+   *
+   * @param string $file
+   *   Path to the file.
    *
    * @return string
+   *   An unserialized email.
    */
   public function getEmailContent($file) {
     return unserialize(file_get_contents($file));
   }
 
   /**
+   * Get the path where the spooled emails are stored.
+   *
    * @return string
+   *   The path where the spooled emails are stored.
    */
   protected function getSpoolDir() {
     return '/var/www/html/swiftmailer-spool';
@@ -81,6 +91,37 @@ class EmailContext implements Context {
       foreach ($finder as $file) {
         $filesystem->remove($file->getRealPath());
       }
+    }
+  }
+
+  /**
+   * I read an email.
+   *
+   * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   */
+  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
+    $finder = $this->getSpooledEmails();
+
+    $found_email = FALSE;
+
+    if ($finder) {
+      /** @var File $file */
+      foreach ($finder as $file) {
+        /** @var Swift_Message $email */
+        $email = $this->getEmailContent($file);
+        $email_subject = $email->getSubject();
+        $email_body = $email->getBody();
+
+        var_dump($email_body);
+
+        if ($email_subject == $subject) {
+          $found_email = TRUE;
+        }
+      }
+    }
+
+    if (!$found_email) {
+      throw new \Exception(sprintf('There is no email with that subject and body.'));
     }
   }
 }
