@@ -101,7 +101,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
           if ($user_profile) {
             $content = \Drupal::entityTypeManager()
               ->getViewBuilder('profile')
-              ->view($user_profile, 'compact_notification');
+              ->view($user_profile, 'compact_private_message');
             // Add to a new field, so twig can render it.
             $profile_picture = $content;
           }
