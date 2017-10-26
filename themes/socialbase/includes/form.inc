@@ -250,6 +250,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
+    'private_message_add_form',
   ];
 
   if (in_array($form_id, $default_forms)) {
@@ -296,6 +297,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_register_form',
     'user_pass_reset',
     'social_user_password_form',
+    'private_message_add_form',
   ];
 
   if (in_array($form_id, $add_card_to_forms)) {
