@@ -53,6 +53,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
     $thread = $entity;
     $members = $thread->getMembers();
+    $members_string = '';
 
     // Remove myself from the array.
     /* @var Drupal\user\Entity\User $member */
@@ -68,7 +69,6 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     $member_count = count($members);
 
     $profile_picture = [];
-    $members_string = '';
 
     if ($member_count === 1) {
       $recipient = end($members);
