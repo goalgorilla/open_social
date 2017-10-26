@@ -7,6 +7,8 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 
 
@@ -17,6 +19,25 @@ function social_private_message_element_info_alter(array &$info) {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_private_message_filter_process_format';
   }
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function social_private_message_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#value'] = t('Next');
+  $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
+}
+
+/**
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Redirects the form to the inbox
+ */
+function social_private_message_redirect($form, FormStateInterface $form_state) {
+  // Force redirect to the inbox.
+  $url = Url::fromRoute('social_private_message.inbox');
+  $form_state->setRedirectUrl($url);
 }
 
 /**
