@@ -28,7 +28,7 @@ function _social_private_message_set_permissions() {
       continue;
     }
 
-    $permissions = _social_group_get_permissions($role->id());
+    $permissions = _social_private_message_get_permissions($role->id());
     user_role_grant_permissions($role->id(), $permissions);
   }
 }
@@ -42,7 +42,7 @@ function _social_private_message_set_permissions() {
  * @return array
  *   Returns an array containing the permissions.
  */
-function _social_group_get_permissions($role) {
+function _social_private_message_get_permissions($role) {
   // Anonymous.
   $permissions['anonymous'] = [];
 
