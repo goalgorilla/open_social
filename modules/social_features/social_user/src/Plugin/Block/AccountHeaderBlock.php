@@ -176,7 +176,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'title' => $this->t('Inbox'),
           'label' => $this->t('Inbox'),
           'title_classes' => 'sr-only',
-          'url' => Url::fromRoute('private_message.private_message_page'),
+          'url' => Url::fromRoute('social_private_message.inbox'),
         ];
       }
 
