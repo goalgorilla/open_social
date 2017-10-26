@@ -34,9 +34,6 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
             $suggestions[] = 'block__block_menu__' . $menu_name;
           }
 
-          if ($variables['elements']['#base_plugin_id'] == 'private_message_inbox_block') {
-            $suggestions[] = 'block__card';
-          }
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {
