@@ -5,6 +5,9 @@
  * The Social Privagte Message module.
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+
 
 /**
  * Implements hook_element_info_alter().
@@ -37,5 +40,39 @@ function social_private_message_js_alter(&$javascript, \Drupal\Core\Asset\Attach
   // Remove Js coming from the private_message module.
   if (isset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js'])) {
     unset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js']);
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function social_private_message_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  // Threads.
+  if ($entity->getEntityTypeId() === 'private_message_thread') {
+    /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
+    $thread = $entity;
+    $members = $thread->getMembers();
+
+    // Remove myself from the array.
+    foreach ($members as $key => $member) {
+      if (Drupal::currentUser()->id() === $member->id()) {
+        unset($members[$key]);
+      }
+    }
+    // Count the amount of members.
+    $member_count = count($members);
+
+    $profile_picture = '';
+
+    $build['members']['#markup'] = (($member_count > 1) ? '<span class=“group-icon”></span>' : $profile_picture);
+    // Add classes so the thread shows up in a card.
+    $classes = [
+      'private-message-thread-inbox',
+      'private-message-thread',
+      'card'
+    ];
+    // Overwrite the prefix/suffix from the view builder.
+    $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '"><div class="card__block">';
+    $build['#suffix'] = '</div></div>';
   }
 }
