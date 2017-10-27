@@ -17,7 +17,7 @@ Feature: Receive email notifications and choose frequency
     And I press "Post"
     And I wait for the queue to be empty
 
-    Then I am logged in as "admin"
+    Then I am logged in as an "administrator"
     And I am on "admin/config/swiftmailer/transport"
     And I make a screenshot with the name "transport-settings"
     And I am on "admin/reports/dblog"
