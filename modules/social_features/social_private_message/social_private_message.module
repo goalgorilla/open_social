@@ -75,6 +75,8 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
  * Redirects the form to the inbox
  */
 function social_private_message_redirect($form, FormStateInterface $form_state) {
+  // Set a nice mesasge.
+  drupal_set_message('Your message has been created.');
   // Force redirect to the inbox.
   $url = Url::fromRoute('social_private_message.inbox');
   $form_state->setRedirectUrl($url);
