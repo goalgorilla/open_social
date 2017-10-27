@@ -53,6 +53,8 @@ class EmailContext implements Context {
       return $finder;
     }
     catch (InvalidArgumentException $exception) {
+      $this->saveDebugToFile(serialize($exception), 'spooledemails-exception-' . rand());
+
       return NULL;
     }
   }
@@ -109,13 +111,17 @@ class EmailContext implements Context {
   protected function findSubjectAndBody($subject, $body) {
     $finder = $this->getSpooledEmails();
 
+    $this->saveDebugToFile(serialize($finder), 'finder-' . rand());
+
     $found_email = FALSE;
 
     if ($finder) {
       /** @var File $file */
       foreach ($finder as $file) {
+        $this->saveDebugToFile(serialize($file), 'file-' . rand());
         /** @var Swift_Message $email */
         $email = $this->getEmailContent($file);
+        $this->saveDebugToFile(serialize($email), 'file-contents-' . rand());
         $email_subject = $email->getSubject();
         $email_body = $email->getBody();
 
@@ -127,6 +133,8 @@ class EmailContext implements Context {
         $content = $xpath->evaluate('string(//*[contains(@class,"postheader")])');
         $content .= $xpath->evaluate('string(//*[contains(@class,"main")])');
         $content_found = 0;
+
+        $this->saveDebugToFile(serialize($content), 'email-content-' . rand());
 
         foreach ($body as $string) {
           if (strpos($content, $string)) {
@@ -141,6 +149,19 @@ class EmailContext implements Context {
     }
 
     return $found_email;
+  }
+
+  /**
+   * Save debug information to a file.
+   *
+   * @param string $content
+   *   The content to save.
+   * @param string $filename
+   *   The filename.
+   */
+  protected function saveDebugToFile($content, $filename) {
+    $file_and_path = '/var/www/travis_artifacts/' . $filename . '.debug';
+    file_put_contents($file_and_path, $content);
   }
 
   /**

@@ -58,7 +58,6 @@ class SocialMinkContext extends MinkContext{
     file_put_contents($file_and_path, $screenshot);
   }
 
-
   /**
    * @AfterStep
    */
