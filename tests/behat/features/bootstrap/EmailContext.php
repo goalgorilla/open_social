@@ -159,8 +159,6 @@ class EmailContext implements Context {
     \Drupal::state()->set('digest.' . $frequency . '.last_run', 1);
 
     \Drupal::service('cron')->run();
-
-    //throw new \Exception('There is no email with that subject and body.');
   }
 
   /**
