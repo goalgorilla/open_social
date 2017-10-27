@@ -77,7 +77,7 @@ class EmailContext implements Context {
    *   The path where the spooled emails are stored.
    */
   protected function getSpoolDir() {
-    return '/var/www/html/swiftmailer-spool';
+    return '/var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool';
   }
 
   /**
