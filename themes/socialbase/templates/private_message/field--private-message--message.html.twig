@@ -1,4 +1,10 @@
+{%
+  set classes = [
+    view_mode == 'full' ? 'message__message-body'
+  ]
+%}
+
 {% for item in items %}
-  <span{{ attributes }}>{{ item.content }}</span>
+  <span{{ attributes.addClass(classes) }}>{{ item.content }}</span>
 {% endfor %}
 
