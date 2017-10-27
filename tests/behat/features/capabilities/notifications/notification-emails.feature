@@ -6,7 +6,6 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
-    And I enable the module "dblog"
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name |
       | user_1   | mail_1@example.com | 1      | Christopher              | Conway                  |
@@ -16,13 +15,6 @@ Feature: Receive email notifications and choose frequency
     And I fill in "Say something to the Community" with "Hello [~user_2]!"
     And I press "Post"
     And I wait for the queue to be empty
-
-    Then I am logged in as "admin"
-    And I am on "admin/config/swiftmailer/transport"
-    And I make a screenshot with the name "transport-settings"
-    And I am on "admin/reports/dblog"
-    And I make a screenshot with the name "log-messages"
-
     Then I should have an email with subject "Notification from Open Social" and in the content:
       | content                                           |
       | Hi Cathy Willis                                   |
