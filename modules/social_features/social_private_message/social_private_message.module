@@ -176,8 +176,8 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       /* @var \Drupal\private_message\Entity\PrivateMessage $entity */
       if (Drupal::currentUser()->id() === $entity->getOwnerId()) {
         // @TODO mark the message as my message.
-        $build['#prefix'] .= '<div class="message__by-me">';
-        $build['#suffix'] .= '</div>';
+        $build['#prefix'] = '<div class="message__by-me">' . $build['#prefix'];
+        $build['#suffix'] = '</div>' . $build['#suffix'];
       }
     }
   }
@@ -199,4 +199,17 @@ function social_private_message_thread_view_alter(array &$build, EntityInterface
   }
   // Also add the back to inbox link, but just the link since it's a dropdown with icon.
   $build['back_to_inbox']['#markup'] = Url::fromRoute('social_private_message.inbox')->toString();
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_private_message_preprocess_field(&$variables) {
+  if (isset($variables['element']['#view_mode']) && $variables['element']['#view_mode'] == "full") {
+    if ($variables['field_name'] == "message") {
+      $variables['view_mode'] = "full";
+    }
+
+  }
+
 }
