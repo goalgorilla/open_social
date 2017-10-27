@@ -21,12 +21,21 @@
 }
 
 //cover the whole card
-.private-message-inbox-thread-link {
-  display: block;
-  position: absolute;
-  z-index: 10;
-  top: -1.25rem;
-  left: -1.25rem;
-  right: -1.25rem;
-  bottom: -1.25rem;
+.message {
+  font-weight: 300;
+  transition: box-shadow 0.3s;
+
+  &:hover,
+  &:focus {
+    @include z-depth-3;
+  }
 }
+
+.message__excerpt {
+  display: flex;
+
+  .message__owner {
+    padding-right: 0.5em;
+  }
+}
+
