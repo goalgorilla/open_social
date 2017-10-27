@@ -48,8 +48,7 @@
 
 .message__back-btn {
   flex: 0 0 44px;
-  height: 44px;
-  margin-right: 1em;
+  margin-top: 4px;
 }
 
 .private-message-thread-messages {
@@ -65,16 +64,17 @@
   font-weight: $font-weight-strong;
 }
 
-.message__thread-member {
-  display: inline-block;
-}
-
 .private-message-full {
-  max-width: 550px;
   margin-bottom: 2rem;
+
+  @include for-tablet-portrait-up {
+    width: 70%;
+    max-width: 550px;
+  }
 
   .message__owner {
     font-weight: $font-weight-strong;
+    padding-right: 1em;
   }
 }
 
