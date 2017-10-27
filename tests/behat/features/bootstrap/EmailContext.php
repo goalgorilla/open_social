@@ -21,7 +21,7 @@ class EmailContext implements Context {
     $swiftmailer_config->save();
 
     // Clean up emails that were left behind.
-//    $this->purgeSpool();
+    $this->purgeSpool();
   }
 
   /**
@@ -35,7 +35,7 @@ class EmailContext implements Context {
     $swiftmailer_config->save();
 
     // Clean up emails after us.
-//    $this->purgeSpool();
+    $this->purgeSpool();
   }
 
   /**
