@@ -21,7 +21,7 @@ class EmailContext implements Context {
     $swiftmailer_config->save();
 
     // Clean up emails that were left behind.
-    $this->purgeSpool();
+//    $this->purgeSpool();
   }
 
   /**
@@ -53,6 +53,8 @@ class EmailContext implements Context {
       return $finder;
     }
     catch (InvalidArgumentException $exception) {
+      $this->saveDebugToFile(serialize($exception), 'spooledemails-exception-' . rand());
+
       return NULL;
     }
   }
@@ -116,9 +118,10 @@ class EmailContext implements Context {
     if ($finder) {
       /** @var File $file */
       foreach ($finder as $file) {
-        $this->saveDebugToFile(file_get_contents($file), 'file-contents' . rand());
+        $this->saveDebugToFile(serialize($file), 'file-' . rand());
         /** @var Swift_Message $email */
         $email = $this->getEmailContent($file);
+        $this->saveDebugToFile(serialize($email), 'file-contents-' . rand());
         $email_subject = $email->getSubject();
         $email_body = $email->getBody();
 
@@ -177,6 +180,8 @@ class EmailContext implements Context {
     \Drupal::state()->set('digest.' . $frequency . '.last_run', 1);
 
     \Drupal::service('cron')->run();
+
+    //throw new \Exception('There is no email with that subject and body.');
   }
 
   /**
