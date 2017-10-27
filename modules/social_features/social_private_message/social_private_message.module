@@ -126,7 +126,8 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       'card'
     ];
     // Overwrite the prefix/suffix from the view builder.
-    $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '"><div class="card__block"><div class="media">';
-    $build['#suffix'] = '</div></div></div>';
+    $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '"><div class="card__block"><div class="media-wrapper"><div class="media">';
+    $build['#suffix'] = '</div></div></div></div>';
   }
+
 }

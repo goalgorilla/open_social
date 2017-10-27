@@ -21,5 +21,11 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/message') }}
+
 {{ content.members }}
+<div class="media-body">
+{{ content.members_name }}
 {{ content.last_message }}
+</div>
+{{ kint(content.last_message) }}
