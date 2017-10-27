@@ -20,8 +20,15 @@
  * @ingroup themeable
  */
 #}
-<div class="media-body">
+{% if view_mode == 'inbox' %}
+
+  {{ content.created }}
+  <div class="message__excerpt">
+    {{ content.owner }}
+    {{ content.message }}
+  </div>
+{% else %}
+
   {{ content }}
-</div>
 
-
+{% endif %}

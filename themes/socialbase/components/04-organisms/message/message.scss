@@ -1,0 +1,41 @@
+@import 'settings';
+
+// make sure the date is positioned top right of the message
+.message__created {
+  font-size: $font-size-xs;
+  color: $gray-light;
+  line-height: $line-height-base * $font-size-base;
+
+  @include for-tablet-portrait-up {
+    float: right;
+  }
+
+}
+
+.field--name-message {
+  margin-top: 5px;
+
+  p {
+    margin: 0;
+  }
+}
+
+//cover the whole card
+.message {
+  font-weight: 300;
+  transition: box-shadow 0.3s;
+
+  &:hover,
+  &:focus {
+    @include z-depth-3;
+  }
+}
+
+.message__excerpt {
+  display: flex;
+
+  .message__owner {
+    padding-right: 0.5em;
+  }
+}
+

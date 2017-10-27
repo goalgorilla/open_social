@@ -106,6 +106,7 @@ function socialbase_preprocess_textarea(&$variables) {
     $autogrow_areas = [
       'field_post',
       'field_comment_body',
+      'message'
     ];
 
     $c = array_intersect($context, $autogrow_areas);

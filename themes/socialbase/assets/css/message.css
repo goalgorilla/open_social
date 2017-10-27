@@ -1,0 +1,42 @@
+.message__created {
+  font-size: 12px;
+  color: #777777;
+  line-height: 24px;
+}
+
+.field--name-message {
+  margin-top: 5px;
+}
+
+.field--name-message p {
+  margin: 0;
+}
+
+.message {
+  font-weight: 300;
+  -webkit-transition: -webkit-box-shadow 0.3s;
+  transition: -webkit-box-shadow 0.3s;
+  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
+}
+
+.message:hover, .message:focus {
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+}
+
+.message__excerpt {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.message__excerpt .message__owner {
+  padding-right: 0.5em;
+}
+
+@media (min-width: 600px) {
+  .message__created {
+    float: right;
+  }
+}

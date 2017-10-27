@@ -21,5 +21,21 @@
  * @ingroup themeable
  */
 #}
-{{ content.members }}
-{{ content.last_message }}
+{{ attach_library('socialbase/message') }}
+{% if view_mode == 'inbox' %}
+<a href="{{ url }}" title="{{ 'View thread'|t }}" class="card message">
+  <div class="card__block">
+    <div class="media-wrapper">
+      <div class="media">
+        {{ content.members }}
+        <div class="media-body">
+          {{ content.membernames }}
+          {{ content.last_message }}
+        </div>
+      </div>
+    </div>
+  </div>
+</a>
+{% else %}
+  {{ content }}
+{% endif %}
