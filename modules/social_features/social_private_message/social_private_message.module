@@ -73,6 +73,8 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
   if ($entity->getEntityTypeId() === 'private_message_thread') {
     // View mode inbox.
     if ($build['#view_mode'] === 'inbox') {
+      // Update the time so the message count icon will be removed.
+      Drupal::service('private_message.service')->updateLastCheckTime();
       /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
       $thread = $entity;
       $members = $thread->getMembers();
