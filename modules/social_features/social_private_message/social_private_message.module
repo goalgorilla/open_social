@@ -147,3 +147,19 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
   }
 
 }
+
+/**
+ * Implements hook_thread_view_alter().
+ */
+function social_private_message_thread_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if ($display->getComponent('delete_link')) {
+    $url = Url::fromRoute('entity.private_message_thread.delete_form', ['private_message_thread' => $entity->id()]);
+    $build['delete_link'] = [
+      '#prefix' => '',
+      '#suffix' => '',
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => t('Delete thread'),
+    ];
+  }
+}
