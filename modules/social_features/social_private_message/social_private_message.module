@@ -71,64 +71,76 @@ function social_private_message_js_alter(&$javascript, \Drupal\Core\Asset\Attach
 function social_private_message_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
   // Threads.
   if ($entity->getEntityTypeId() === 'private_message_thread') {
+    // View mode inbox.
+    if ($build['#view_mode'] === 'inbox') {
+      /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
+      $thread = $entity;
+      $members = $thread->getMembers();
+      $members_string = [];
+      $display_name = '';
 
-    /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
-    $thread = $entity;
-    $members = $thread->getMembers();
-    $members_string = [];
-    $display_name = '';
-
-    // Remove myself from the array.
-    /* @var Drupal\user\Entity\User $member */
-    foreach ($members as $key => $member) {
-      if (Drupal::currentUser()->id() === $member->id()) {
-        unset($members[$key]);
+      // Remove myself from the array.
+      /* @var Drupal\user\Entity\User $member */
+      foreach ($members as $key => $member) {
+        if (Drupal::currentUser()->id() === $member->id()) {
+          unset($members[$key]);
+        }
+        else {
+          $members_string[]= $member->getDisplayName();
+        }
       }
-      else {
-        $members_string[]= $member->getDisplayName();
-      }
-    }
-    // Count the amount of members.
-    $member_count = count($members);
+      // Count the amount of members.
+      $member_count = count($members);
 
-    $profile_picture = [];
+      $profile_picture = [];
 
-    if ($member_count === 1) {
-      $recipient = end($members);
-      // Load compact notification view mode of the attached profile.
-      if ($recipient instanceof User) {
-        $display_name = $recipient->getDisplayName();
-        $storage = \Drupal::entityTypeManager()->getStorage('profile');
-        if (!empty($storage)) {
-          $user_profile = $storage->loadByUser($recipient, 'profile');
-          if ($user_profile) {
-            $content = \Drupal::entityTypeManager()
-              ->getViewBuilder('profile')
-              ->view($user_profile, 'compact_notification');
-            // Add to a new field, so twig can render it.
-            $profile_picture = $content;
+      if ($member_count === 1) {
+        $recipient = end($members);
+        // Load compact notification view mode of the attached profile.
+        if ($recipient instanceof User) {
+          $display_name = $recipient->getDisplayName();
+          $storage = \Drupal::entityTypeManager()->getStorage('profile');
+          if (!empty($storage)) {
+            $user_profile = $storage->loadByUser($recipient, 'profile');
+            if ($user_profile) {
+              $content = \Drupal::entityTypeManager()
+                ->getViewBuilder('profile')
+                ->view($user_profile, 'compact_notification');
+              // Add to a new field, so twig can render it.
+              $profile_picture = $content;
+            }
           }
         }
       }
-    }
-    // Add either the profile picture or the group picture.
-    if ($member_count > 1) {
-      $build['members']['#markup'] = '<span class="group-icon"></span>';
-      // Add members names.
-      $build['membernames']['#markup'] = implode(', ', $members_string);
-      $build['membernames']['#prefix'] = '<strong>';
-      $build['membernames']['#suffix'] = '</strong>';
-    }
-    else {
-      $build['members'] = $profile_picture;
-      $build['members']['#prefix'] = '<div class="media-left avatar">';
-      $build['members']['#suffix'] = '</div>';
-      // Add members name.
-      $build['membernames']['#markup'] = $display_name;
-      $build['membernames']['#prefix'] = '<strong>';
-      $build['membernames']['#suffix'] = '</strong>';
+      // Add either the profile picture or the group picture.
+      if ($member_count > 1) {
+        $build['members']['#markup'] = '<span class="group-icon"></span>';
+        // Add members names.
+        $build['membernames']['#markup'] = implode(', ', $members_string);
+        $build['membernames']['#prefix'] = '<strong>';
+        $build['membernames']['#suffix'] = '</strong>';
+      }
+      else {
+        $build['members'] = $profile_picture;
+        $build['members']['#prefix'] = '<div class="media-left avatar">';
+        $build['members']['#suffix'] = '</div>';
+        // Add members name.
+        $build['membernames']['#markup'] = $display_name;
+        $build['membernames']['#prefix'] = '<strong>';
+        $build['membernames']['#suffix'] = '</strong>';
 
+      }
+      // Add classes so the thread shows up in a card.
+      $classes = [
+        'private-message-thread-inbox',
+        'private-message-thread',
+        'card'
+      ];
+      // Overwrite the prefix/suffix from the view builder.
+      $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '">';
+      $build['#suffix'] = '</div>';
     }
+
     // Add classes so the thread shows up in a card.
     $classes = [
       'private-message-thread-inbox',
@@ -138,6 +150,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     // Overwrite the prefix/suffix from the view builder.
     $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '">';
     $build['#suffix'] = '</div>';
+
   }
 
   // Private message entity.
