@@ -55,21 +55,8 @@
     {{ page.content_top }}
   {% endif %}
 
-  {# Content, see Style guide Templates for documentation #}
-  {%
-    set content_classes = [
-      'row',
-      'container',
-      page.title and display_page_title ? 'with-title-region',
-      page.complementary_top or page.complementary_bottom ? 'layout--with-complementary',
-      page.sidebar_first is empty and page.sidebar_second is empty ? 'layout--with-complementary',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first and page.sidebar_second ? 'layout--with-three-columns',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_second is empty and page.sidebar_first ? 'layout--with-two-columns',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first is empty and page.sidebar_second ? 'layout--with-two-columns',
-    ]
-  %}
-
-  <section{{ content_attributes.addClass(content_classes) }}>
+  {# Content attributes, see Style guide Templates for documentation #}
+  <section{{ content_attributes }}>
 
     {% if page.title and display_page_title %}
       {{ page.title }}
