@@ -2,6 +2,7 @@
 // @codingStandardsIgnoreFile
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\File;
@@ -95,11 +96,17 @@ class EmailContext implements Context {
   }
 
   /**
-   * I read an email.
+   * Find an email with the given subject and body.
    *
-   * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   * @param string $subject
+   *   The subject of the email.
+   * @param array $body
+   *   Text that should be in the email.
+   *
+   * @return bool
+   *   Email was found or not.
    */
-  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
+  protected function findSubjectAndBody($subject, $body) {
     $finder = $this->getSpooledEmails();
 
     $found_email = FALSE;
@@ -117,16 +124,104 @@ class EmailContext implements Context {
         $doc->loadHTML($email_body);
         $xpath = new DOMXPath($doc);
         // Find the notifications in the HTML file.
-        $notifications = $xpath->evaluate('string(//*[contains(@class,"main")])');
+        $content = $xpath->evaluate('string(//*[contains(@class,"main")])');
+        $content_found = 0;
 
-        if ($email_subject == $subject && strpos($notifications, $body)) {
+        foreach ($body as $string) {
+          if (strpos($content, $string)) {
+            $content_found++;
+          }
+        }
+
+        if ($email_subject == $subject && $content_found === count($body)) {
           $found_email = TRUE;
         }
       }
     }
 
+    return $found_email;
+  }
+
+  /**
+   * I run the digest cron.
+   *
+   * @Then I run the :arg1 digest cron
+   */
+  public function iRunTheDigestCron($frequency) {
+    // Update the timings in the digest table.
+    $query =  \Drupal::database()->update('user_activity_digest');
+    $query->fields(['timestamp' => 1]);
+    $query->execute();
+
+    // Update last run time to make sure we can run the digest cron.
+    \Drupal::state()->set('digest.' . $frequency . '.last_run', 1);
+
+    \Drupal::service('cron')->run();
+
+    //throw new \Exception('There is no email with that subject and body.');
+  }
+
+  /**
+   * I read an email.
+   *
+   * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   */
+  public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
+    $found_email = $this->findSubjectAndBody($subject, [$body]);
+
     if (!$found_email) {
-      throw new \Exception(sprintf('There is no email with that subject and body.'));
+      throw new \Exception('There is no email with that subject and body.');
+    }
+  }
+
+  /**
+   * I read an email with multiple content.
+   *
+   * @Then I should have an email with subject :arg1 and in the content:
+   */
+  public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+    $body = [];
+    $hash = $table->getHash();
+    foreach ($hash as $row) {
+      $body[] = $row['content'];
+    }
+
+    $found_email = $this->findSubjectAndBody($subject, $body);
+
+    if (!$found_email) {
+      throw new \Exception('There is no email with that subject and body.');
+    }
+  }
+
+  /**
+   * I do not have an email.
+   *
+   * @Then /^(?:|I )should not have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   */
+  public function iShouldNotHaveAnEmailWithTitleAndBody($subject, $body) {
+    $found_email = $this->findSubjectAndBody($subject, [$body]);
+
+    if ($found_email) {
+      throw new \Exception('There is an email with that subject and body.');
+    }
+  }
+
+  /**
+   * I do not have an email with multiple content.
+   *
+   * @Then I should not have an email with subject :arg1 and in the content:
+   */
+  public function iShouldNotHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
+    $body = [];
+    $hash = $table->getHash();
+    foreach ($hash as $row) {
+      $body[] = $row['content'];
+    }
+
+    $found_email = $this->findSubjectAndBody($subject, $body);
+
+    if ($found_email) {
+      throw new \Exception('There is an email with that subject and body.');
     }
   }
 }
