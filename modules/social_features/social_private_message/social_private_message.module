@@ -102,7 +102,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
           if ($user_profile) {
             $content = \Drupal::entityTypeManager()
               ->getViewBuilder('profile')
-              ->view($user_profile, 'compact_private_message');
+              ->view($user_profile, 'compact_notification');
             // Add to a new field, so twig can render it.
             $profile_picture = $content;
           }
@@ -111,12 +111,16 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     }
     // Add either the profile picture or the group picture.
     if ($member_count > 1) {
-      $build['members']['#markup'] = '<span class="group-icon"></span>' . implode(', ', $members_string);
+      $build['members']['#markup'] = '<span class="group-icon"></span>';
+      // Add members names.
+      $build['membernames'] =  implode(', ', $members_string);
     }
     else {
       $build['members'] = $profile_picture;
       $build['members']['#prefix'] = '<div class="media-left avatar">';
       $build['members']['#suffix'] = '</div>';
+      // Add members name.
+      $build['membernames'] =  $recipient->getDisplayName();
 
     }
     // Add classes so the thread shows up in a card.
@@ -128,6 +132,16 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     // Overwrite the prefix/suffix from the view builder.
     $build['#prefix'] = '<div id="private-message-thread-' . $thread->id() . '" class="' . implode(' ', $classes) . '" data-thread-id="' . $thread->id() . '" data-last-update="' . $thread->get('updated')->value . '"><div class="card__block"><div class="media-wrapper"><div class="media">';
     $build['#suffix'] = '</div></div></div></div>';
+  }
+
+  // Private message entity.
+  if ($entity->getEntityTypeId() === 'private_message') {
+    // View mode inbox.
+    if ($build['#view_mode'] === 'inbox') {
+      // Remove prefix and suffix.
+      $build['#prefix'] = '';
+      $build['#suffix'] = '';
+    }
   }
 
 }
