@@ -2,10 +2,31 @@
 
 // make sure the date is positioned top right of the message
 .message__created {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: $font-size-small;
+  font-size: $font-size-xs;
   color: $gray-light;
   line-height: $line-height-base * $font-size-base;
+
+  @include for-tablet-portrait-up {
+    float: right;
+  }
+
+}
+
+.field--name-message {
+  margin-top: 5px;
+
+  p {
+    margin: 0;
+  }
+}
+
+//cover the whole card
+.private-message-inbox-thread-link {
+  display: block;
+  position: absolute;
+  z-index: 10;
+  top: -1.25rem;
+  left: -1.25rem;
+  right: -1.25rem;
+  bottom: -1.25rem;
 }

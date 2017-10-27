@@ -1,8 +1,29 @@
 .message__created {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #777777;
   line-height: 24px;
+}
+
+.field--name-message {
+  margin-top: 5px;
+}
+
+.field--name-message p {
+  margin: 0;
+}
+
+.private-message-inbox-thread-link {
+  display: block;
+  position: absolute;
+  z-index: 10;
+  top: -1.25rem;
+  left: -1.25rem;
+  right: -1.25rem;
+  bottom: -1.25rem;
+}
+
+@media (min-width: 600px) {
+  .message__created {
+    float: right;
+  }
 }
