@@ -27,6 +27,14 @@ function social_private_message_element_info_alter(array &$info) {
 function social_private_message_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['submit']['#value'] = t('Next');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
+
+  // Determine where the form is rendered (PM or PMT).
+  $form_class = 'message__thread_edit';
+  $thread_members = $form_state->get('thread_members');
+  if (is_null($thread_members)) {
+    $form_class = 'message__thread_create';
+  }
+  $form['#attributes']['class'][] = $form_class;
 }
 
 /**
