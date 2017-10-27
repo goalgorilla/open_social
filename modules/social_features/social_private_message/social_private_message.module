@@ -76,6 +76,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     $thread = $entity;
     $members = $thread->getMembers();
     $members_string = [];
+    $display_name = '';
 
     // Remove myself from the array.
     /* @var Drupal\user\Entity\User $member */
@@ -96,6 +97,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       $recipient = end($members);
       // Load compact notification view mode of the attached profile.
       if ($recipient instanceof User) {
+        $display_name = $recipient->getDisplayName();
         $storage = \Drupal::entityTypeManager()->getStorage('profile');
         if (!empty($storage)) {
           $user_profile = $storage->loadByUser($recipient, 'profile');
@@ -120,7 +122,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       $build['members']['#prefix'] = '<div class="media-left avatar">';
       $build['members']['#suffix'] = '</div>';
       // Add members name.
-      $build['membernames']['#markup'] = $recipient->getDisplayName();
+      $build['membernames']['#markup'] = $display_name;
       $build['membernames']['#prefix'] = '<strong>';
       $build['membernames']['#suffix'] = '</strong>';
 
