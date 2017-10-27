@@ -1,8 +1,8 @@
-@api @notifications @stability @DS-4323 @stability-3
-Feature: Receive email notifications
+@api @notifications @stability @DS-4323 @stability-2
+Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
   Role: As a LU
-  Goal/desire: I want to be able to receive email notifications
+  Goal/desire: I want to be able to receive email notifications and configure their frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
@@ -17,6 +17,7 @@ Feature: Receive email notifications
     And I wait for the queue to be empty
     Then I should have an email with subject "Notification from Open Social" and in the content:
       | content                                           |
+      | Hi Cathy Willis                                   |
       | Christopher Conway mentioned you in a post        |
       | the notification above is sent to you Immediately |
 
@@ -67,6 +68,7 @@ Feature: Receive email notifications
     And I wait for the queue to be empty
     Then I should have an email with subject "Notification from Open Social" and in the content:
       | content                                                    |
+      | Hi Christopher Conway                                      |
       | Cathy Willis mentioned you in a post                       |
       | Thomas Miller mentioned you in a post                      |
       | the notifications above are sent to you as a Daily mail    |
@@ -99,6 +101,7 @@ Feature: Receive email notifications
     And I wait for the queue to be empty
     Then I should have an email with subject "Notification from Open Social" and in the content:
       | content                                                    |
+      | Hi Christopher Conway                                      |
       | Cathy Willis mentioned you in a post                       |
       | Thomas Miller mentioned you in a post                      |
       | the notifications above are sent to you as a Weekly mail   |

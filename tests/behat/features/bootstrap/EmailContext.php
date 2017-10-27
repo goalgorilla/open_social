@@ -123,8 +123,9 @@ class EmailContext implements Context {
         $doc = new DOMDocument();
         $doc->loadHTML($email_body);
         $xpath = new DOMXPath($doc);
-        // Find the notifications in the HTML file.
-        $content = $xpath->evaluate('string(//*[contains(@class,"main")])');
+        // Find the post header and email content in the HTML file.
+        $content = $xpath->evaluate('string(//*[contains(@class,"postheader")])');
+        $content .= $xpath->evaluate('string(//*[contains(@class,"main")])');
         $content_found = 0;
 
         foreach ($body as $string) {
@@ -151,6 +152,7 @@ class EmailContext implements Context {
     // Update the timings in the digest table.
     $query =  \Drupal::database()->update('user_activity_digest');
     $query->fields(['timestamp' => 1]);
+    $query->condition('frequency', $frequency);
     $query->execute();
 
     // Update last run time to make sure we can run the digest cron.
