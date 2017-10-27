@@ -25,6 +25,18 @@ function social_private_message_element_info_alter(array &$info) {
  * Implements hook_form_FORMID_alter().
  */
 function social_private_message_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // There's an alternative submit. We need to change its value.
+  foreach($form['actions'] as $key => &$actions) {
+    // Must be pretty sure it's a submit button.
+    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit']))
+      // Key must have submit in it.
+      if (strpos($key, 'submit-') !== FALSE) {
+        $actions['#value'] = t('Send');
+      }
+  }
+
+  // Normal submit button shoud say 'Next'
   $form['actions']['submit']['#value'] = t('Next');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
 
