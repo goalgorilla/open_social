@@ -158,6 +158,6 @@ class SocialDrupalContext extends DrupalContext {
    * @When I enable the tour setting
    */
   public function iEnableTheTourSetting() {
-    \Drupal::configFactory()->getEditable('swiftmailer.transport')->set('social_tour_enabled', 1)->save();
+    \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
   }
 }

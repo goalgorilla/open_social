@@ -15,14 +15,6 @@ class EmailContext implements Context {
    * @BeforeScenario @email-spool
    */
   public function enableEmailSpool() {
-    // Update folder permissions, create it if doesn't yet exist.
-    if (!file_exists($this->getSpoolDir())) {
-      mkdir($this->getSpoolDir(), 0777, true);
-    }
-    else {
-      chmod($this->getSpoolDir(), 0777);
-    }
-
     // Update Drupal configuration.
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'spool');
@@ -39,6 +31,7 @@ class EmailContext implements Context {
    * @AfterScenario @email-spool
    */
   public function disableEmailSpool() {
+    // Update Drupal configuration.
     $swiftmailer_config = \Drupal::configFactory()->getEditable('swiftmailer.transport');
     $swiftmailer_config->set('transport', 'native');
     $swiftmailer_config->save();
