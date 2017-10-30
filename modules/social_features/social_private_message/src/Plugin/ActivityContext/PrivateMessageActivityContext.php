@@ -3,10 +3,7 @@
 namespace Drupal\social_private_message\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageService;
 
 /**
  * Provides a 'PrivateMessageActivityContext' activity context.
@@ -28,26 +25,25 @@ class PrivateMessageActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_object = $data['related_object'][0];
       if ($related_object['target_type'] == 'private_message') {
-        $privateMessageId = $data['related_object'][0]['target_id'];
 
-        $pmService = \Drupal::service('private_message.service');
-        $thread = $pmService->getThreadFromMessage(PrivateMessage::load(32));
+        $related_object = $data['related_object'][0];
+        $pm_storage = \Drupal::entityTypeManager()->getStorage('private_message');
 
-        /** @var PrivateMessageThreadInterface $members */
-        $members = $thread->getMembers();
-
-//        dpm($thread);
-//        $vote = $vote_storage->load($related_object['target_id']);
-//        if ($vote instanceof Vote) {
-//          $entity_storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
-//          /** @var \Drupal\Core\Entity\Entity $entity */
-//          $entity = $entity_storage->load($vote->getVotedEntityId());
+        if ($related_object['target_type'] == 'private_message') {
+          $private_message = $pm_storage->load($related_object['target_id']);
+          $pmService = \Drupal::service('private_message.service');
+          $thread = $pmService->getThreadFromMessage($private_message);
+          /** @var PrivateMessageThreadInterface $members */
+          $members = $thread->getMembers();
+        }
+//        $privateMessageId = $data['related_object'][0]['target_id'];
 //
-//          $recipients[] = [
-//            'target_type' => 'user',
-//            'target_id' => $entity->getOwnerId(),
-//          ];
-//        }
+//        $pmService = \Drupal::service('private_message.service');
+//        $thread = $pmService->getThreadFromMessage(PrivateMessage::load(4));
+//
+//        /** @var PrivateMessageThreadInterface $members */
+//        $members = $thread->getMembers();
+
       }
     }
     return $recipients;
