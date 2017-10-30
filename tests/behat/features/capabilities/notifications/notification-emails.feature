@@ -1,4 +1,4 @@
-@api @notifications @stability @DS-4323 @stability-2
+@api @notifications @stability @DS-4323
 Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
   Role: As a LU
