@@ -2,16 +2,12 @@
 
 namespace Drupal\socialbase\Plugin\Alter;
 
-use Drupal\Component\Utility\Html as HtmlUtility;
-use Drupal\bootstrap\Utility\Variables;
-use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions;
-
 /**
  * Implements hook_theme_suggestions_alter().
  *
  * @ingroup plugins_alter
- *
- * @BootstrapAlter("theme_suggestions")
+ * @deprecated
+ * @see \Drupal\socialbase\Plugin\Alter\ThemeSuggestions
  */
 class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
@@ -85,6 +81,18 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
         }
 
         break;
+
+      case 'field':
+
+        if (isset($variables['element']['#view_mode']) && $variables['element']['#view_mode'] == "compact_private_message") {
+          if ($variables['element']['#field_name'] == 'field_profile_image') {
+            $suggestions[] = 'field__message__thread_members_avatar';
+          }
+
+        }
+
+        break;
+
 
       case 'file_link':
 

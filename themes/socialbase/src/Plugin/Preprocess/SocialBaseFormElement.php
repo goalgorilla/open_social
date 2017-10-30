@@ -2,16 +2,12 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
-use Drupal\bootstrap\Plugin\Preprocess\FormElement;
-use Drupal\bootstrap\Utility\Element;
-use Drupal\bootstrap\Utility\Variables;
-
 /**
  * Pre-processes variables for the "form_element" theme hook.
  *
  * @ingroup plugins_preprocess
- *
- * @BootstrapPreprocess("form_element")
+ * @deprecated
+ * @see \Drupal\socialbase\Plugin\Preprocess\FormElement
  */
 class SocialBaseFormElement extends FormElement {
 

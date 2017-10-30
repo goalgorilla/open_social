@@ -2,16 +2,12 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
-use Drupal\bootstrap\Plugin\Preprocess\MenuLocalAction;
-use Drupal\bootstrap\Utility\Element;
-use Drupal\bootstrap\Utility\Variables;
-
 /**
  * Pre-processes variables for the "menu_local_action" theme hook.
  *
  * @ingroup plugins_preprocess
- *
- * @BootstrapPreprocess("menu_local_action")
+ * @deprecated
+ * @see \Drupal\socialbase\Plugin\Preprocess\MenuLocalAction
  */
 class SocialBaseMenuLocalAction extends MenuLocalAction {
 
