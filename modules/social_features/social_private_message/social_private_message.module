@@ -33,6 +33,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
       // Key must have submit in it.
       if (strpos($key, 'submit-') !== FALSE) {
         $actions['#value'] = t('Send');
+        unset($actions['#ajax']);
       }
   }
 
