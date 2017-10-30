@@ -2,14 +2,17 @@
 
 namespace Drupal\socialbase\Plugin\Alter;
 
+use Drupal\Component\Utility\Html;
+use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions as BaseThemeSuggestions;
+
 /**
  * Implements hook_theme_suggestions_alter().
  *
  * @ingroup plugins_alter
- * @deprecated
- * @see \Drupal\socialbase\Plugin\Alter\ThemeSuggestions
+ *
+ * @BootstrapAlter("theme_suggestions")
  */
-class SocialBaseThemeSuggestions extends ThemeSuggestions {
+class ThemeSuggestions extends BaseThemeSuggestions {
 
   /**
    * {@inheritdoc}
@@ -23,13 +26,9 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
       case 'block':
 
-        if (isset($variables['elements']['#base_plugin_id'])) {
-
-          if ($variables['elements']['#base_plugin_id'] == 'system_menu_block') {
-            $menu_name = $variables['elements']['content']['#menu_name'];
-            $suggestions[] = 'block__block_menu__' . $menu_name;
-          }
-
+        if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
+          $menu_name = $variables['elements']['content']['#menu_name'];
+          $suggestions[] = 'block__block_menu__' . $menu_name;
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {
@@ -82,18 +81,6 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         break;
 
-      case 'field':
-
-        if (isset($variables['element']['#view_mode']) && $variables['element']['#view_mode'] == "compact_private_message") {
-          if ($variables['element']['#field_name'] == 'field_profile_image') {
-            $suggestions[] = 'field__message__thread_members_avatar';
-          }
-
-        }
-
-        break;
-
-
       case 'file_link':
 
         // Get the route name for file links.
@@ -101,13 +88,23 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         // If the file link is part of a node field, suggest another template.
         if ($route_name == 'entity.node.canonical') {
-          $file_id = $context1['file']->id();
+          /** @var \Drupal\file\Entity\File $c_file */
+          $c_file = $context1['file'];
+          $file_id = $c_file->id();
           $node = \Drupal::routeMatch()->getParameter('node');
-          $files = $node->get('field_files')->getValue();
-          foreach ($files as $file) {
-            if ($file['target_id'] == $file_id) {
-              $suggestions[] = 'file_link__card';
-              break;
+          // We do not know the name of the file fields. These can be custom.
+          $field_definitions = $node->getFieldDefinitions();
+          // Loop over all fields and target only file fields.
+          foreach ($field_definitions as $field_name => $field_definition) {
+            /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+            if ($field_definition->getType() == 'file') {
+              $files = $node->get($field_name)->getValue();
+              foreach ($files as $file) {
+                if ($file['target_id'] == $file_id) {
+                  $suggestions[] = 'file_link__card';
+                  break 2;
+                }
+              }
             }
           }
         }
@@ -155,7 +152,7 @@ class SocialBaseThemeSuggestions extends ThemeSuggestions {
 
         // Lets add the form element parent to the theme suggestions.
         if (isset($variables['element']['#parents'][0])) {
-          $hook = HtmlUtility::escape($variables['element']['#parents'][0]);
+          $hook = Html::escape($variables['element']['#parents'][0]);
           $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
         }
 

@@ -2,20 +2,25 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
+use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
+use Drupal\bootstrap\Utility\Element;
+use Drupal\bootstrap\Utility\Variables;
+
 /**
  * Pre-processes variables for the "field" theme hook.
  *
  * @ingroup plugins_preprocess
- * @deprecated
- * @see \Drupal\socialbase\Plugin\Preprocess\Field
+ *
+ * @see image-widget.html.twig
+ *
+ * @BootstrapPreprocess("field")
  */
-class SocialBaseField extends PreprocessBase {
+class Field extends PreprocessBase {
 
   /**
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
-
     // For each field that doesn't need a div to wrap the content in.
     switch ($element['#field_name']) {
       case 'field_profile_image':
@@ -28,8 +33,6 @@ class SocialBaseField extends PreprocessBase {
       case 'field_topic_image':
       case 'field_comment_body':
       case 'field_activity_output_text':
-      case 'field_profile_first_name':
-      case 'field_profile_last_name':
       case 'field_activity_entity':
         $variables['bare'] = TRUE;
         break;
