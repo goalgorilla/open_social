@@ -34,6 +34,8 @@ class SocialBaseField extends PreprocessBase {
       case 'field_topic_image':
       case 'field_comment_body':
       case 'field_activity_output_text':
+      case 'field_profile_first_name':
+      case 'field_profile_last_name':
       case 'field_activity_entity':
         $variables['bare'] = TRUE;
         break;

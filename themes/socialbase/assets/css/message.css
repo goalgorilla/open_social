@@ -48,8 +48,7 @@
   -webkit-box-flex: 0;
       -ms-flex: 0 0 44px;
           flex: 0 0 44px;
-  height: 44px;
-  margin-right: 1em;
+  margin-top: 4px;
 }
 
 .private-message-thread-messages {
@@ -65,17 +64,13 @@
   font-weight: 500;
 }
 
-.message__thread-member {
-  display: inline-block;
-}
-
 .private-message-full {
-  max-width: 550px;
   margin-bottom: 2rem;
 }
 
 .private-message-full .message__owner {
   font-weight: 500;
+  padding-right: 1em;
 }
 
 .message__by-me {
@@ -106,5 +101,9 @@
 @media (min-width: 600px) {
   .message__created {
     float: right;
+  }
+  .private-message-full {
+    width: 70%;
+    max-width: 550px;
   }
 }
