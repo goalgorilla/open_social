@@ -345,7 +345,48 @@ svg:not(:root) {
 }
 
 figure {
-  margin: 1.5rem 0;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  display: table;
+}
+
+figure img {
+  line-height: 1;
+}
+
+figure figcaption {
+  font-size: 90%;
+  color: #777777;
+  text-align: center;
+  display: table-caption;
+  caption-side: bottom;
+  margin-top: 5px;
+  word-break: break-word;
+}
+
+figure.align-right {
+  float: right;
+  padding-top: 0.1rem;
+  padding-left: 1rem;
+}
+
+figure.align-right figcaption {
+  padding-left: 1rem;
+}
+
+figure.align-left {
+  float: left;
+  padding-top: 0.1rem;
+  padding-right: 1rem;
+}
+
+figure.align-left figcaption {
+  padding-right: 1rem;
+}
+
+figure.align-center {
+  margin-right: auto;
+  margin-left: auto;
 }
 
 a {
@@ -559,12 +600,6 @@ em.placeholder {
 
 .light {
   font-weight: 300;
-}
-
-.caption {
-  font-size: 1.2em;
-  font-weight: 500;
-  margin-bottom: 30px;
 }
 
 .section-title {
@@ -1161,6 +1196,16 @@ button.close {
 }
 
 @media (max-width: 599px) {
+  figure.align-left, figure.align-right, figure.align-center {
+    float: none;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  figure.align-left figcaption, figure.align-right figcaption, figure.align-center figcaption {
+    padding: 0;
+  }
   .hidden-for-phone-only {
     display: none;
   }
