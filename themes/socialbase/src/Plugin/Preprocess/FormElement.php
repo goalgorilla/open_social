@@ -2,22 +2,25 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
+use Drupal\bootstrap\Plugin\Preprocess\FormElement as BaseFormElement;
+use Drupal\bootstrap\Utility\Element;
+use Drupal\bootstrap\Utility\Variables;
+
 /**
  * Pre-processes variables for the "form_element" theme hook.
  *
  * @ingroup plugins_preprocess
- * @deprecated
- * @see \Drupal\socialbase\Plugin\Preprocess\FormElement
+ *
+ * @BootstrapPreprocess("form_element")
  */
-class SocialBaseFormElement extends FormElement {
+class FormElement extends BaseFormElement {
 
   /**
    * {@inheritdoc}
    */
   public function preprocessElement(Element $element, Variables $variables) {
 
-    // Check if form element is part of
-    // email_notifications and add class to label.
+    // If form element is part of email_notification add class to label.
     if (in_array('email_notifications', $element['#parents'])) {
       $variables['label']['#attributes']['class'][] = 'control-label--wide';
     }
