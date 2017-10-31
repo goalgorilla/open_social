@@ -34,7 +34,8 @@
   font-size: 0.875rem;
   text-align: left;
   background-color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
   background-clip: padding-box;
 }
 
@@ -170,7 +171,7 @@
 }
 
 .dropdown.profile .header-nav-current-user {
-  padding: 4px 15px 0;
+  padding: 4px 10px 0;
 }
 
 .dropdown-header {
@@ -179,7 +180,7 @@
 }
 
 .scrollable-menu {
-  height: calc(100vh - 148px);
+  height: calc(100vh - 156px);
   overflow-x: hidden;
   list-style-type: none;
   padding: 0;
@@ -195,19 +196,15 @@
 }
 
 @media (min-width: 600px) {
-
   .dropdown-menu li > a {
     padding: 4px 10px 4px 15px;
   }
-
   .dropdown-menu .media-left {
     padding-right: 8px;
   }
-
   .dropdown-menu--visibility {
     right: 0;
   }
-
   .scrollable-menu {
     height: auto;
     max-height: 450px;
@@ -215,12 +212,10 @@
 }
 
 @media (min-width: 900px) {
-
   .navbar-right .dropdown-menu {
     right: 0;
     left: auto;
   }
-
   .navbar-right .dropdown-menu-left {
     left: 0;
     right: auto;

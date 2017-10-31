@@ -28,7 +28,7 @@ class MentionsPluginManager extends DefaultPluginManager {
    */
   public function getPluginNames() {
     $definitions = $this->getDefinitions();
-    $plugin_names = array();
+    $plugin_names = [];
 
     foreach ($definitions as $definition) {
       $name = $definition['name']->getUntranslatedString();

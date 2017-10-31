@@ -13,9 +13,13 @@
  */
 #}
 
+{% if attributes.hasClass('form--default') %}
+  {{ attach_library('socialbase/form-default') }}
+{% endif %}
+
 {% if attributes.hasClass('card') %}
   <form{{ attributes.removeClass('card') }}>
-    <div class="card brand-border-radius">
+    <div class="card">
       <div class="card__block">
         {{ children }}
     </form>
@@ -34,10 +38,23 @@
       </div>
     </form>
 
+  {% elseif in_content_top_region %}
+
+    <form{{ attributes.addClass('search-take-over') }}>
+      <div class="form-group">
+        <button class="btn--close-search-take-over" type="button">
+          <svg class="icon-search-form-close">
+            <use xlink:href="#icon-close"></use>
+          </svg>
+        </button>
+        {{ children }}
+      </div>
+    </form>
+
   {% else %}
 
     <form{{ attributes }}>
-      <div class="form-group" id="navbar-search">
+      <div class="form-group form--navbar-search" id="navbar-search">
         {{ children }}
       </div>
     </form>

@@ -11,6 +11,11 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\user\UserInterface;
 
+/**
+ * Class UserRouteContext.
+ *
+ * @package Drupal\social_user\ContextProvider
+ */
 class UserRouteContext implements ContextProviderInterface {
 
   use StringTranslationTrait;

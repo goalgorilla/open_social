@@ -12,15 +12,16 @@ use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 
 /**
  * Implements hook_theme().
  */
 function social_core_theme() {
-  return array(
-    'page_hero_data' => array(
-      'variables' => array(
+  return [
+    'page_hero_data' => [
+      'variables' => [
         'title' => NULL,
         'hero_node' => NULL,
         'node' => NULL,
@@ -28,9 +29,9 @@ function social_core_theme() {
         'section_class' => NULL,
         'event_enrollment' => NULL,
         'hero_styled_image_url' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
 }
 
 /**
@@ -66,9 +67,9 @@ function template_preprocess_page_hero_data(array &$variables) {
         $form = \Drupal::formBuilder()
           ->getForm('Drupal\social_event\Form\EnrollActionForm');
 
-        $render_array = array(
+        $render_array = [
           'enroll_action_form' => $form,
-        );
+        ];
 
         $variables['event_enrollment'] = $render_array;
       }
@@ -79,7 +80,7 @@ function template_preprocess_page_hero_data(array &$variables) {
       // Get the current route name to check if the user is on the
       // edit or delete page.
       $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, array('entity.node.edit_form', 'entity.node.delete_form'))) {
+      if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
         if ($node->access('update', $account)) {
           $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
         }
@@ -122,17 +123,17 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
     // Add a readmore link.
     $node_title_stripped = strip_tags($entity->label());
-    $links['node']['#links']['node-readmore'] = array(
-      'title' => t('Read more<span class="visually-hidden"> about @title</span>', array(
+    $links['node']['#links']['node-readmore'] = [
+      'title' => t('Read more<span class="visually-hidden"> about @title</span>', [
         '@title' => $node_title_stripped,
-      )),
+      ]),
       'url' => $entity->urlInfo(),
       'language' => $entity->language(),
-      'attributes' => array(
+      'attributes' => [
         'rel' => 'tag',
         'title' => $node_title_stripped,
-      ),
-    );
+      ],
+    ];
   }
 }
 
@@ -177,13 +178,13 @@ function social_core_preprocess_block(&$variables) {
   switch ($variables['elements']['#derivative_plugin_id']) {
     case 'upcoming_events-block_my_upcoming_events':
       $variables['view_all_path'] = 'my-events';
-      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
+      $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       break;
 
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = 'community-events';
-      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
+      $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       break;
 
     case 'latest_topics-block_latest_topics':
@@ -210,15 +211,15 @@ function social_core_preprocess_block(&$variables) {
     case 'events-block_events_on_profile':
       if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
-        $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', array('user' => $account->id()));
-        $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
+        $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', ['user' => $account->id()]);
+        $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       }
       break;
 
     case 'topics-block_user_topics':
       if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
-        $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', array('user' => $account->id()));
+        $variables['view_all_path'] = Url::fromRoute('view.topics.page_profile', ['user' => $account->id()]);
         $variables['button_text'] = $more_link;
         $link->setOption('use_more', FALSE);
       }
@@ -227,7 +228,7 @@ function social_core_preprocess_block(&$variables) {
     case 'groups-block_user_groups':
       if ($account instanceof User) {
         $variables['subtitle'] = t('for this user');
-        $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', array('user' => $account->id()));
+        $variables['view_all_path'] = Url::fromRoute('view.groups.page_user_groups', ['user' => $account->id()]);
         $variables['button_text'] = $more_link;
         $link->setOption('use_more', FALSE);
       }
@@ -243,7 +244,7 @@ function social_core_preprocess_block(&$variables) {
     case 'upcoming_events-upcoming_events_group':
       $variables['subtitle'] = t('in the group');
       $variables['view_all_path'] = Url::fromUserInput('/group/' . $group->id() . '/events');
-      $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
+      $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       break;
 
     case 'latest_topics-group_topics_block':
@@ -333,14 +334,14 @@ function social_core_form_taxonomy_vocabulary_confirm_delete_alter(&$form, FormS
  * Implements hook_form_alter().
  */
 function social_core_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $formfield = array(
+  $formfield = [
     'node_topic_edit_form' => 'field_topic_image',
     'node_topic_event_form' => 'field_event_image',
     'profile_profile_edit_form' => 'field_profile_image',
     'node_topic_form' => 'field_topic_image',
     'node_event_form' => 'field_event_image',
     'block_content_hero_call_to_action_block_edit_form' => 'field_hero_image',
-  );
+  ];
 
   if (array_key_exists($form_id, $formfield)) {
     $fieldname = $formfield[$form_id];
@@ -416,4 +417,48 @@ function social_core_filter_process_format($element) {
   }
 
   return $element;
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+
+  if ($field_definition->getType() == 'path') {
+    $url = Url::fromRoute('<front>', [], [
+      'absolute' => TRUE,
+    ]);
+    $element['alias']['#field_prefix'] = '<div class="input-group input-group-expanded"><span class="input-group-addon">' . $url->toString() . '</span>';
+    $element['alias']['#field_suffix'] = '</div>';
+    $element['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
+
+    if (isset($element['alias']['#default_value'])) {
+      $element['alias']['#default_value'] = ltrim($element['alias']['#default_value'], '/');
+    }
+
+    $element['#element_validate'] = ['social_core_path_validate'];
+  }
+}
+
+/**
+ * Form element validation handler for URL alias form element.
+ *
+ * @param array $element
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function social_core_path_validate(array &$element, FormStateInterface $form_state) {
+  $alias = trim($element['alias']['#value'], " \\/");
+  $parsed_url = parse_url($alias);
+
+  if (isset($parsed_url['host']) || isset($parsed_url['scheme']) || !isset($parsed_url['path'])) {
+    $form_state->setError($element, t('The URL alias must be a relative URL.'));
+  }
+
+  if (!$form_state->getErrors()) {
+    $element['alias']['#value'] = '/' . ltrim($element['alias']['#value'], '/');
+    PathWidget::validateFormElement($element, $form_state);
+  }
 }

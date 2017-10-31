@@ -101,7 +101,7 @@ class TwitterLinkController extends ControllerBase {
     ]);
 
     // Get user's profile from Twitter API.
-    if (!($profile = $this->authManager->getProfile()) || !($account_id = $this->authManager->getAccountId())) {
+    if (!($this->authManager->getProfile()) || !($account_id = $this->authManager->getAccountId())) {
       drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('Twitter'),
       ]), 'error');

@@ -14,11 +14,8 @@
   margin-bottom: 0;
   padding-left: 0; // Override default ul/ol
   list-style: none;
-  @include clearfix;
 
   > li {
-    position: relative;
-    display: block;
 
     > a {
       position: relative;
@@ -60,25 +57,64 @@
   min-height: $navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
   margin-bottom: $navbar-margin-bottom;
   font-size: $navbar-font-size;
-
-  // Prevent floats from breaking the navbar
-  @include clearfix;
-
 }
 
+.container--navbar {
+  display: flex;
 
-// Navbar heading
-//
-// Groups `.navbar-brand` and `.navbar-toggle` into a single component for easy
-// styling of responsive aspects.
-
-.navbar-header {
-
-  @include for-tablet-landscape-up {
-    float: left;
+  @include for-tablet-landscape-down {
+    flex-wrap: wrap;
   }
 }
 
+// align this item last
+.navbar-user {
+  margin-left: auto;
+  order: 1;
+
+  @include for-tablet-landscape-up {
+    order: 10;
+  }
+
+}
+
+.navbar-header {
+  order: 0;
+}
+
+.navbar-search {
+  @include for-tablet-landscape-up {
+    display: none;
+  }
+}
+
+.navbar-nav {
+  display: flex;
+  flex-wrap: wrap;
+
+  > li > a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: $line-height-computed;
+  }
+
+  // Uncollapse the nav
+  @include for-tablet-landscape-up {
+
+    > li > a {
+      padding-top: $navbar-padding-vertical;
+      padding-bottom: $navbar-padding-vertical;
+    }
+
+  }
+
+}
+
+.navbar-user > li > a,
+.navbar-user .navbar-nav > li > a {
+  padding: 13px 10px 8px;
+  height: 50px;
+}
 
 // Navbar collapse (body)
 //
@@ -93,8 +129,13 @@
 .navbar-collapse {
   overflow-x: visible;
   border-top: 1px solid transparent;
-  @include clearfix;
   -webkit-overflow-scrolling: touch;
+  order: 2;
+  max-height: $navbar-collapse-max-height;
+
+  @media screen and (max-height: 480px) {
+    max-height: 420px;
+  }
 
   &.in {
     overflow-y: auto;
@@ -103,9 +144,11 @@
   @include for-tablet-landscape-up {
     width: auto;
     border-top: 0;
+    padding-left: 0;
+    padding-right: 0;
 
     &.collapse {
-      display: block !important;
+      display: flex !important;
       height: auto !important;
       padding-bottom: 0; // Override default setting
       overflow: visible !important;
@@ -115,27 +158,8 @@
       overflow-y: visible;
     }
 
-    // Undo the collapse side padding for navbars with containers to ensure
-    // alignment of right-aligned contents.
-    .navbar-fixed-top &,
-    .navbar-static-top &,
-    .navbar-fixed-bottom & {
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 }
-
-.navbar-fixed-top {
-  .navbar-collapse {
-    max-height: $navbar-collapse-max-height;
-
-    @media screen and (max-height: 480px) {
-      max-height: 200px;
-    }
-  }
-}
-
 
 
 //
@@ -153,6 +177,20 @@
   right: 0;
   left: 0;
   z-index: $zindex-navbar-fixed;
+
+  .navbar-user .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+
+  @include for-tablet-landscape-up {
+
+    .navbar-nav {
+      padding-left: 10px;
+    }
+
+  }
+
 }
 
 // Brand/project name
@@ -163,11 +201,6 @@
   height: $navbar-height;
   max-width: 200px;
   overflow: hidden;
-
-  &:hover,
-  &:focus {
-    text-decoration: none;
-  }
 
   > img {
     display: block;
@@ -207,63 +240,12 @@
 }
 
 
-// Navbar nav links
-//
-// Builds on top of the `.nav` components with its own modifier class to make
-// the nav the full height of the horizontal nav (above 768px).
-
-.navbar-nav {
-
-  > li > a {
-    padding-top:    10px;
-    padding-bottom: 10px;
-    line-height: $line-height-computed;
-  }
-
-  // Uncollapse the nav
-  @include for-tablet-landscape-up {
-    float: left;
-    margin: 0;
-
-    > li {
-      float: left;
-      > a {
-        padding-top:    $navbar-padding-vertical;
-        padding-bottom: $navbar-padding-vertical;
-      }
-    }
-  }
-}
-
 // Icons in the navbar
 
 .navbar-nav__icon {
   width: 24px;
   height: 24px;
   display: inline-block;
-}
-
-
-// Navbar form
-//
-// Extension of the `.form-inline` with some extra flavor for optimum display in
-// our navbars.
-
-.navbar-form {
-  padding: $nav-link-padding;
-  border: 0;
-
-  .form-group {
-    margin-bottom: 0;
-  }
-
-  // Undo 100% width for pull classes
-  @include for-tablet-landscape-up {
-    width: auto;
-    margin: 6px 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
 }
 
 
@@ -278,46 +260,6 @@
   margin-bottom: 0;
 }
 
-
-
-// Component alignment
-//
-// Repurpose the pull utilities as their own navbar utilities to avoid specificity
-// issues with parents and chaining. Only do this when the navbar is uncollapsed
-// though so that navbar contents properly stack and align in mobile.
-//
-// Declared after the navbar components to ensure more specificity on the margins.
-
-@include for-tablet-landscape-up {
-  .navbar-left {
-    float: left !important;
-  }
-  .navbar-right {
-    float: right !important;
-  }
-}
-
-
-// Layout and behaviour overrides
-
-.navbar-fixed-top {
-
-  .navbar-right .dropdown-menu {
-    right: 0;
-    left: auto;
-  }
-
-  @include for-tablet-landscape-up {
-
-    .navbar-nav {
-      margin-left: 10px;
-    }
-
-  }
-
-}
-
-//
 
 @include for-tablet-landscape-down {
   // Dropdowns get same display when collapsed
@@ -341,15 +283,12 @@
   }
 
   .navbar-collapse {
+    flex: 1 0 100%;
 
     .navbar-nav {
       margin: ($navbar-padding-vertical / 2) 0;
+      flex-direction: column;
       order: 1;
-    }
-
-    .navbar-collapse-order {
-      display: flex;
-      flex-flow: column;
     }
 
     .navbar-nav > li > a {
@@ -380,12 +319,6 @@
 
 }
 
-// Style overrides
-
-.profile .dropdown-toggle img {
-  border: 2px solid white;
-}
-
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:focus,
 .navbar-default .navbar-nav > .open > a:hover {
@@ -401,54 +334,61 @@
 
 }
 
-// Hacking into responsive bootstrap behaviour
-.navbar-fixed-top .navbar-right {
-  margin-top: 0;
-  margin-bottom: 0;
-  float: right;
-
-  > li {
-    float: left;
-
-    > a {
-      padding: 13px 10px 8px;
-      height: 50px;
-    }
-  }
-
-
-  @include for-desktop-up {
-    margin-right: 0;
-  }
-
-}
-
-@include for-tablet-landscape-up {
-
-  .navbar-search {
-    float: right;
-  }
-
-  .navbar-collapse {
-    float: left;
-  }
-
-  .navbar-right {
-    margin-right: 0;
-  }
-}
-
 .navbar .dropdown .badge {
   position: absolute;
   top: 8px;
   right: 0;
 }
 
+.navbar__open-search-control {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  cursor: pointer;
 
-.navbar-form[role='search'] {
+  @include for-tablet-landscape-down {
+    display: none;
+  }
+}
 
-  .form-group {
+.navbar__open-search-block {
+  border: 0;
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  transform-origin: 50%;
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-nav__icon {
+  fill: #fff;
+}
+
+.navbar-nav__icon--search {
+  position: absolute;
+  top: 14px;
+  left: 13px;
+  transition: 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+// Navbar form
+//
+// Extension of the `.form-inline` with some extra flavor for optimum display in
+// our navbars.
+
+.navbar-search {
+
+  .search-content-form {
+    padding: 10px 10px 5px;
+    border: 0;
     position: relative;
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
   }
 
   .form-control {
@@ -457,8 +397,7 @@
     border: 0;
   }
 
-  .form-submit,
-  .search-icon {
+  .form-submit {
     width: 38px;
     height: 38px;
     display: block;
@@ -468,83 +407,129 @@
     top: 0;
     line-height: 38px;
     cursor: pointer;
-    text-align: center;
-	}
-
-  .search-icon {
-    line-height: 38px;
-    speak: none;
-    pointer-events: none;
-
-    svg {
-      width: 24px;
-      height: 24px;
-      vertical-align: middle;
-    }
-
+    font-size: 0;
+    text-indent: -9999px;
+    background-image: url('../images/icons/icon-search.svg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #fff;
+    background-size: 30px auto;
+    padding: 0;
   }
 
-  @include for-tablet-landscape-up {
+}
+
+.region--content-top .search-take-over,
+.btn--close-search-take-over {
+  @include for-tablet-landscape-down {
+    display: none;
+  }
+}
+
+@include for-tablet-landscape-up {
+
+  .search-take-over {
+    height: 50px;
+    position: fixed;
+    top: 20%;
+    left: 0;
+    width: 100%;
+    z-index: $zindex-modal;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
 
     .form-group {
-      width: 0%;
-      min-width: 38px;
-      height: 38px;
-      transition: width 0.3s;
-      -webkit-backface-visibility: hidden;
+      margin: auto;
+      width: 80%;
+      max-width: 600px;
+      display: flex;
     }
 
-		.form-control {
-      position: absolute;
-      right: 0;
-      border: none;
-      outline: none;
-      width: 100%;
-      height: 38px;
-      margin: 0;
-      z-index: 10;
-      padding-left: 0;
-      transition: padding 0.3s;
-		}
+    .form-text {
+      font-size: 1.625em;
+      height: 54px;
+      border: 0;
+      background: transparent;
+      -webkit-appearance: none;
+      outline: 0;
+      border-radius: 0;
+      border-bottom: 2px solid;
+      font-weight: 500;
+      max-width: none;
+      color: #fff;
+    }
 
     .form-submit {
+      width: 60px;
+      height: 60px;
+      min-width: 60px;
+      background-image: url('../images/icons/icon-search-white.svg');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 50px auto;
+      background-color: transparent;
+      margin-left: 20px;
+      padding: 0;
+      font-size: 0;
+      text-indent: -9999px;
+      cursor: pointer;
+    }
+
+  }
+
+  .btn--close-search-take-over {
+    background-color: transparent;
+    border: 0;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    position: fixed;
+    top: 80px;
+    right: 80px;
+    opacity: 0;
+    transform: translate(10px, 0) rotate(90deg);
+    transition: all 0.5s ease-in-out 0.5s;
+    outline: 0;
+
+    svg {
+      height: 48px;
+      fill: #fff;
+    }
+  }
+
+  .mode-search {
+    overflow: hidden;
+
+    .search-take-over {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .navbar__open-search-block {
+      transform: scale(70);
+      -moz-transform: scale(70) rotate(0.02deg);
+      @include z-depth-3;
+    }
+
+    .navbar-nav__icon {
       opacity: 0;
-    	color: transparent;
-    	border: none;
-    	outline: none;
-    	z-index: -1;
     }
 
-    .search-icon {
-      z-index: 90;
-      pointer-events: initial;
-      transition: border-radius 0.3s, background-color 0.3s, color 0.3s;;
+    .main-container {
+      z-index: auto;
+      pointer-events: none;
+    }
+
+    .btn--close-search-take-over {
+      transform: none;
+      opacity: 1;
+      pointer-events: all;
     }
 
   }
 
 }
-
-
-// Open state
-#navbar-search.is-open,
-.no-js #navbar-search {
-	width: 180px;
-
-  .form-control {
-    padding-left: $padding-base-horizontal;
-  }
-
-  .search-icon {
-  	z-index: 11;
-  }
-
-  .form-submit {
-  	z-index: 90;
-  }
-
-}
-
 
 // Navbar secondary
 //
@@ -563,34 +548,26 @@
 
   // Centers the navbar items
   .navbar-nav {
-    text-align: center;
-    float: none;
+    justify-content: center;
     font-size: $font-size-base;
 
-    li {
-      display: inline-block;
+    a {
+      transition: all 0.3s;
       white-space: nowrap;
+      color: white;
+      opacity: 0.75;
+      border-bottom: 2px solid transparent;
+    }
 
-      a {
-        transition: all 0.3s;
-        color: white;
-        opacity: 0.75;
-        border-bottom: 2px solid transparent;
+    li.active a {
+      border-bottom: 2px solid #fff;
+      opacity: 1;
+
+      &:hover,
+      &:focus {
+        cursor: default;
       }
 
-      &.active a {
-        border-bottom: 2px solid #fff;
-        opacity: 1;
-
-        &:hover,
-        &:focus {
-          cursor: default;
-        }
-      }
-
-      @include for-tablet-landscape-up {
-        float: none;
-      }
     }
 
   }

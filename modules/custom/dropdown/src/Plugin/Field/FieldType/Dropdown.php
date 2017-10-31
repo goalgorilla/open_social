@@ -25,9 +25,9 @@ class Dropdown extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function defaultStorageSettings() {
-    return array(
-      'allowed_values' => array(),
-    ) + parent::defaultStorageSettings();
+    return [
+      'allowed_values' => [],
+    ] + parent::defaultStorageSettings();
   }
 
   /**
@@ -36,7 +36,7 @@ class Dropdown extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['value'] = DataDefinition::create('string')
       ->setLabel(t('Text value'))
-      ->addConstraint('Length', array('max' => 255))
+      ->addConstraint('Length', ['max' => 255])
       ->setRequired(TRUE);
 
     return $properties;
@@ -46,17 +46,17 @@ class Dropdown extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array(
-      'columns' => array(
-        'value' => array(
+    return [
+      'columns' => [
+        'value' => [
           'type' => 'varchar',
           'length' => 255,
-        ),
-      ),
-      'indexes' => array(
-        'value' => array('value'),
-      ),
-    );
+        ],
+      ],
+      'indexes' => [
+        'value' => ['value'],
+      ],
+    ];
   }
 
   /**
@@ -65,18 +65,18 @@ class Dropdown extends FieldItemBase {
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
     $allowed_values = $this->getSetting('allowed_values');
 
-    $element['allowed_values'] = array(
+    $element['allowed_values'] = [
       '#type' => 'textarea',
       '#title' => t('Allowed values list'),
       '#default_value' => $this->allowedValuesString($allowed_values),
       '#rows' => 10,
       '#access' => TRUE,
-      '#element_validate' => array(array(get_class($this), 'validateAllowedValues')),
+      '#element_validate' => [[get_class($this), 'validateAllowedValues']],
       '#field_has_data' => $has_data,
       '#field_name' => $this->getFieldDefinition()->getName(),
       '#entity_type' => $this->getEntity()->getEntityTypeId(),
       '#allowed_values' => $allowed_values,
-    );
+    ];
 
     $element['allowed_values']['#description'] = $this->allowedValuesDescription();
 
@@ -124,15 +124,10 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function setValue($values, $notify = TRUE) {
-    parent::setValue($values, $notify);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function isEmpty() {
-    return empty($this->values['value']) && (string) $this->values['value'] !== '0';
+    // We're empty if we have no value set,
+    // or we have a value that's neither a string nor an integer.
+    return !isset($this->values['value']) || (!is_int($this->values['value']) && !is_string($this->values['value']));
   }
 
   /**
@@ -150,7 +145,7 @@ class Dropdown extends FieldItemBase {
    *    - Each value is in the format "value|label" or "value".
    */
   protected function allowedValuesString(array $values) {
-    $lines = array();
+    $lines = [];
     foreach ($values as $key => $value) {
       if (is_array($value)) {
         $lines[$key] = implode("|", $value);;
@@ -173,7 +168,7 @@ class Dropdown extends FieldItemBase {
    * @see \Drupal\options\Plugin\Field\FieldType\ListTextItem::allowedValuesString()
    */
   protected static function extractAllowedValues($string, $has_data) {
-    $values = array();
+    $values = [];
 
     $list = explode("\n", $string);
     $list = array_map('trim', $list);
@@ -181,7 +176,7 @@ class Dropdown extends FieldItemBase {
 
     foreach ($list as $position => $text) {
       // Check for an explicit key.
-      $matches = array();
+      $matches = [];
       // @TODO Explicit key is necessary !
       if (preg_match('/(.*)\|(.*)\|(.*)/', $text, $matches)) {
         // Trim key and value to avoid unwanted spaces issues.
@@ -189,20 +184,20 @@ class Dropdown extends FieldItemBase {
         $label = trim($matches[2]);
         $description = trim($matches[3]);
 
-        $values[$value] = array(
+        $values[$value] = [
           'value' => $value,
           'label' => $label,
           'description' => $description,
-        );
+        ];
       }
       elseif (preg_match('/(.*)\|(.*)/', $text, $matches)) {
         // Trim key and value to avoid unwanted spaces issues.
         $value = trim($matches[1]);
         $label = trim($matches[2]);
-        $values[$value] = array(
+        $values[$value] = [
           'value' => $value,
           'label' => $label,
-        );
+        ];
       }
     }
 

@@ -35,7 +35,7 @@ function template_suggestions_extra_theme_suggestions_page_alter(array &$suggest
   }
 
   if (isset($node) && is_object($node)) {
-    $altered_suggestions = array();
+    $altered_suggestions = [];
 
     foreach ($suggestions as $suggestion) {
       $extra_suggeston = '';
@@ -62,12 +62,22 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
   $entity = $variables['elements']['#comment'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
-  $suggestions = array();
+  $suggestions = [];
   $suggestions[] = $original;
   $suggestions[] = $original . '__' . $sanitized_view_mode;
   $suggestions[] = $original . '__' . $entity->bundle();
   $suggestions[] = $original . '__' . $entity->bundle() . '__' . $sanitized_view_mode;
   $suggestions[] = 'comment__' . $sanitized_view_mode;
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function template_suggestions_extra_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+  $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'];
 
   return $suggestions;
 }

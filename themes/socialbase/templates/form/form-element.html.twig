@@ -53,13 +53,12 @@
     'js-form-type-' ~ type|clean_class,
     'form-item-' ~ name|clean_class,
     'js-form-item-' ~ name|clean_class,
-    'brand-border-radius',
     title_display not in ['after', 'before'] ? 'form-no-label',
     disabled == 'disabled' ? 'form-disabled',
     is_form_group ? 'form-group',
     type == 'textarea' ? 'form-group',
-    is_radio ? 'radio',
-    is_checkbox ? 'checkbox',
+    is_radio ? 'radio form-group',
+    is_checkbox ? 'checkbox form-group',
     is_autocomplete ? 'form-autocomplete',
     errors ? 'error has-error',
     name == 'pass' and logged_in ? 'section-password',
@@ -84,10 +83,6 @@
     {{ label }}
   {% endif %}
 
-  {% if prefix is not empty %}
-    {{ prefix }}
-  {% endif %}
-
   {% if description_display == 'before' and description.content %}
     <div{{ description.attributes }}>
       {{ description.content }}
@@ -96,12 +91,15 @@
 
   {{ children }}
 
-  {% if suffix is not empty %}
-    {{ suffix }}
-  {% endif %}
-
   {% if label_display == 'after' %}
     {{ label }}
+  {% endif %}
+
+  {% if errors %}
+    <div class="form-item--error-message alert alert-danger alert-sm alert-dismissible form-control-radius">
+      <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
+      {{ errors }}
+    </div>
   {% endif %}
 
   {% if description_display in ['after', 'invisible'] and description.content %}

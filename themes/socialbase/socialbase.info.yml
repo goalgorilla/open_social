@@ -30,10 +30,6 @@ base theme: bootstrap
 # The supported Drupal version.
 core: 8.x
 
-# The version number for the theme is optional. Quotes are needed because the
-# format is intepreted as a number and the trailing zero is lost when displayed.
-version: '2.1'
-
 # Libraries-extend is used to attach libraries to other libraries. If the
 # original library is conditionally included, the library it is extended with
 # will be included under the same conditions.
@@ -51,9 +47,9 @@ libraries-extend:
   # attach the bootstrap library script and css component
   bootstrap/popover:
     - socialbase/popover
-  # Extend the bootstrap modal with our own implementation
-  bootstrap/modal:
+  core/drupal.dialog.ajax:
     - socialbase/modal
+
 
 stylesheets-remove:
   - like_and_dislike.icons.css
@@ -65,27 +61,37 @@ stylesheets-remove:
 libraries-override:
   # The library name.
   core/normalize: false
-  # Remove jQuery UI datepicker
-  core/jquery.ui.datepicker:
-    # CSS files are always labeled as such. This format is required.
-    css:
-      # The SMACSS category is required. See https://www.drupal.org/node/1887922
-      component:
-        # The path to the file. It is not a path relative to your theme. This
-        # should be the same as the path specified in the library file where it
-        # was defined. Setting to 'false' prevents the file from being
-        # included.
-        assets/vendor/jquery.ui/themes/base/datepicker.css: false
+  # Remove jQuery UI styles
   core/jquery.ui:
     css:
       component:
         assets/vendor/jquery.ui/themes/base/core.css: false
       theme:
         assets/vendor/jquery.ui/themes/base/theme.css: false
-
+  core/jquery.ui.button:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/button.css: false
+  core/jquery.ui.datepicker:
+      # CSS files are always labeled as such. This format is required.
+      css:
+        # The SMACSS category is required. See https://www.drupal.org/node/1887922
+        component:
+          # The path to the file. It is not a path relative to your theme. This
+          # should be the same as the path specified in the library file where it
+          # was defined. Setting to 'false' prevents the file from being
+          # included.
+          assets/vendor/jquery.ui/themes/base/datepicker.css: false
+  core/jquery.ui.dialog:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/dialog.css: false
   system/base: false
   views/views.module: false
   classy/file: false
+  like_and_dislike/behavior:
+    js:
+      js/like_and_dislike_service.js: false
   like_and_dislike/icons: false
 
 # Libraries contain CSS and JavaScript files. The libraries setting is used to
