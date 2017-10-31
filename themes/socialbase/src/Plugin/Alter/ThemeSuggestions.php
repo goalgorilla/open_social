@@ -137,7 +137,9 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         }
 
         if ($variables['element']['#form_id'] == 'private_message_add_form') {
+          if(!\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create') {
             $suggestions = [$variables['theme_hook_original'] . '__' . 'private_message_thread'];
+          }
         }
 
         // Add templates for post add/edit forms.
