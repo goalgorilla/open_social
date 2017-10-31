@@ -11,6 +11,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+/**
+ * Class EntityAutocompleteController.
+ *
+ * @package Drupal\social_core\Controller
+ */
 class EntityAutocompleteController extends EntityAutocompleteControllerBase {
 
   /**

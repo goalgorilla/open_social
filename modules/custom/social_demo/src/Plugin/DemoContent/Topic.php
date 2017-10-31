@@ -79,6 +79,11 @@ class Topic extends DemoNode {
       $entry['field_topic_image'] = $this->prepareImage($item['field_topic_image']);
     }
 
+    // Load attachments to node.
+    if (!empty($item['field_files'])) {
+      $entry['field_files'] = $this->prepareAttachment($item['field_files']);
+    }
+
     return $entry;
   }
 
@@ -106,6 +111,47 @@ class Topic extends DemoNode {
     }
 
     return $value;
+  }
+
+  /**
+   * Returns reference to attachment, possibly with a description.
+   *
+   * @param array $files
+   *   Array with UUIDs of files.
+   *
+   * @return array|null
+   *   Array containing related files or NULL.
+   */
+  protected function prepareAttachment(array $files) {
+    $attachments = NULL;
+
+    foreach ($files as $file) {
+      $description = '';
+
+      // If it is an array, this means we also have a description.
+      if (is_array($file)) {
+        $uuid = key($file);
+        $description = current($file);
+      }
+      else {
+        $uuid = $file;
+      }
+
+      $object = $this->fileStorage->loadByProperties([
+        'uuid' => $uuid,
+      ]);
+
+      if ($object) {
+        $properties = [
+          'target_id' => current($object)->id(),
+          'description' => $description,
+        ];
+
+        $attachments[] = $properties;
+      }
+    }
+
+    return $attachments;
   }
 
   /**

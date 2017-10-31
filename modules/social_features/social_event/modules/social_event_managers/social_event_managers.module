@@ -30,7 +30,7 @@ function social_event_managers_preprocess_block(&$variables) {
       // Show "All" button only when there are more than 10 organisers.
       if ($node->field_event_managers->count() > 10) {
         $variables['view_all_path'] = Url::fromUserInput('/node/' . $node->id() . '/organisers');
-        $variables['button_text'] = t('All @label', array('@label' => $variables['label']['#markup']));
+        $variables['button_text'] = t('All @label', ['@label' => $variables['label']['#markup']]);
       }
       break;
   }
@@ -92,13 +92,13 @@ function social_event_managers_node_access_records(NodeInterface $node) {
         // to view the record in the first place.
         if ($node->access('view', $account)) {
           // Add grant.
-          $grants[] = array(
+          $grants[] = [
             'realm' => 'social_event_managers:' . $node->id(),
             'gid' => $eventmanager['target_id'],
             'grant_view' => 1,
             'grant_update' => 1,
             'grant_delete' => 0,
-          );
+          ];
         }
       }
     }
@@ -207,7 +207,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
 function social_event_managers_form_node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Set author of event as event organiser automatically.

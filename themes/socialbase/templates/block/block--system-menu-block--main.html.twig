@@ -34,13 +34,17 @@
  */
 #}
 <div id="main-navigation" class="collapse navbar-collapse">
-  <div class="navbar-collapse-order">
+  <div class="navbar-search">{{ content.links.search_block }}</div>
     {% block content %}
       {{ content }}
     {% endblock %}
-    <div class='navbar-search' title='{% trans %} Click to open {% endtrans %}'>{{ content.links.search_block }}</div>
-  </div>
+
+    <div class="navbar__open-search-control">
+      <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
+      </button>
+      <svg class="navbar-nav__icon navbar-nav__icon--search">
+        <use xlink:href="#icon-search"></use>
+      </svg>
+    </div>
 </div>
 
-{# We attach a library for the search block. #}
-{{ attach_library('social_core/navbar-search') }}

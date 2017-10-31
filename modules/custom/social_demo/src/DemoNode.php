@@ -2,6 +2,8 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\Entity\Entity;
+use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,7 +33,7 @@ abstract class DemoNode extends DemoContent {
   protected $groupStorage;
 
   /**
-   * DemoNode constructor.
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -90,7 +92,7 @@ abstract class DemoNode extends DemoContent {
       $item['uid'] = $account->id();
 
       if (isset($item['created'])) {
-        $item['created'] = strtotime($item['created']);
+        $item['created'] = $this->createDate($item['created']);
       }
       else {
         $item['created'] = REQUEST_TIME;
@@ -106,10 +108,36 @@ abstract class DemoNode extends DemoContent {
         if (!empty($item['group'])) {
           $this->createGroupContent($entity, $item['group']);
         }
+
+        if (isset($item['followed_by'])) {
+          $this->createFollow($entity, $item['followed_by']);
+        }
       }
     }
 
     return $this->content;
+  }
+
+  /**
+   * Converts a date in the correct format.
+   *
+   * @param string $date_string
+   *   The date.
+   *
+   * @return int|false
+   *   Returns a timestamp on success, false otherwise.
+   */
+  protected function createDate($date_string) {
+    if ($date_string === 'now') {
+      return time();
+    }
+    // Split from delimiter.
+    $timestamp = explode('|', $date_string);
+
+    $date = strtotime($timestamp[0]);
+    $date = date('Y-m-d', $date) . 'T' . $timestamp[1] . ':00';
+
+    return strtotime($date);
   }
 
   /**
@@ -124,7 +152,7 @@ abstract class DemoNode extends DemoContent {
       'title' => $item['title'],
       'type' => $item['type'],
       'body' => [
-        'value' => $item['body'],
+        'value' => $this->checkMentionOrLinkByUuid($item['body']),
         'format' => 'basic_html',
       ],
     ];
@@ -158,6 +186,45 @@ abstract class DemoNode extends DemoContent {
       ]);
       $group_content->save();
     }
+  }
+
+  /**
+   * The function that checks and creates a follow on an entity.
+   *
+   * @param \Drupal\Core\Entity\Entity $entity
+   *   The related entity.
+   * @param array $uuids
+   *   The array containing uuids.
+   */
+  public function createFollow(Entity $entity, array $uuids) {
+
+    foreach ($uuids as $uuid) {
+      // Load the user(s) by the given uuid(s).
+      $account = $this->loadByUuid('user', $uuid);
+
+      $properties = [
+        'uid' => $account->id(),
+        'entity_type' => 'node',
+        'entity_id' => $entity->id(),
+        'flag_id' => 'follow_content',
+      ];
+
+      // Check the current flaggings.
+      $flaggings = \Drupal::entityTypeManager()
+        ->getStorage('flagging')
+        ->loadByProperties($properties);
+      $flagging = reset($flaggings);
+
+      // If the user is already following, then nothing happens.
+      // Else we create the flagging with the properties above.
+      if (empty($flagging)) {
+        $flagging = Flagging::create($properties);
+        if ($flagging) {
+          $flagging->save();
+        }
+      }
+    }
+
   }
 
 }

@@ -58,6 +58,11 @@
   flex-basis: 44px;
 }
 
+.list-item--withlabel {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
 .list-item__label {
   margin-right: 20px;
   font-weight: 500;
@@ -70,6 +75,7 @@
 
 .list-item__text {
   flex-grow: 1;
+  max-width: 100%;
   margin: 0;
   line-height: 1.25;
 
@@ -111,4 +117,23 @@
   &:focus {
     background-color: rgba(0,0,0,0.12);
   }
+}
+
+
+// core module
+// this is used in summary of form errors in an alert component
+
+.item-list__comma-list,
+.item-list__comma-list li {
+  display: inline;
+}
+.item-list__comma-list {
+  margin: 0;
+  padding: 0;
+}
+.item-list__comma-list li:after {
+  content: ", ";
+}
+.item-list__comma-list li:last-child:after {
+  content: "";
 }

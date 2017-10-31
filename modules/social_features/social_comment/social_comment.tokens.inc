@@ -83,18 +83,25 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
             if (isset($message->field_message_related_object)) {
               $target_type = $message->field_message_related_object->target_type;
               $target_id = $message->field_message_related_object->target_id;
+              /** @var \Drupal\comment\Entity\Comment $comment */
               $comment = \Drupal::entityTypeManager()
                 ->getStorage($target_type)
                 ->load($target_id);
 
               if (!empty($comment)) {
                 if ($comment->getEntityTypeId() == 'comment') {
-                  if (!empty($comment->getCommentedEntity())) {
-                    $node = $comment->getCommentedEntity();
-                    $bundle = $node->bundle();
+                  /** @var \Drupal\Core\Entity\Entity $entity */
+                  $entity = $comment->getCommentedEntity();
+                  if (!empty($entity)) {
+                    if (is_callable([$entity, 'getDisplayName'])) {
+                      $display_name = $entity->getDisplayName();
+                    }
+                    else {
+                      $display_name = $entity->bundle();
+                    }
 
-                    if (!empty($bundle)) {
-                      $replacements[$original] = $bundle;
+                    if (!empty($display_name)) {
+                      $replacements[$original] = $display_name;
                     }
                   }
                 }

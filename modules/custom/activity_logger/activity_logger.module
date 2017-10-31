@@ -34,7 +34,7 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
  */
 function _activity_logger_get_content_entities() {
   $entitity_type_manager = \Drupal::service('entity_type.manager');
-  $options = array();
+  $options = [];
   foreach ($entitity_type_manager->getDefinitions() as $entity_id => $entity_type) {
     if ($entity_type instanceof ContentEntityTypeInterface
       && $entity_id !== 'activity'
@@ -61,7 +61,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
   $wrapper_id = 'edit-activity-entity-condition-ajax-wrapper';
 
   $config_entity_bundles = _activity_logger_get_content_entities();
-  $form['activity_bundle_entities'] = array(
+  $form['activity_bundle_entities'] = [
     '#type' => 'select',
     '#required' => TRUE,
     '#multiple' => TRUE,
@@ -73,7 +73,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
       'callback' => '_activity_logger_form_message_template_entity_ajax_callback',
       'wrapper' => $wrapper_id,
     ],
-  );
+  ];
 
   $form['activity_entity_condition_wrapper'] = [
     '#type' => 'container',
@@ -82,7 +82,7 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
 
   $activity_bundle_entities = $form_state->getValue('activity_bundle_entities');
   if (empty($activity_bundle_entities)) {
-    $activity_bundle_entities = $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entities', array());
+    $activity_bundle_entities = $message_template->getThirdPartySetting('activity_logger', 'activity_bundle_entities', []);
   }
 
   $activity_entity_condition_options = \Drupal::service('plugin.manager.activity_entity_condition.processor');
@@ -95,43 +95,43 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     $activity_entity_condition_value = $message_template->getThirdPartySetting('activity_logger', 'activity_entity_condition', NULL);
   }
 
-  $form['activity_entity_condition_wrapper']['activity_entity_condition'] = array(
+  $form['activity_entity_condition_wrapper']['activity_entity_condition'] = [
     '#type' => 'select',
     '#title' => t('The entity condition that are affected for this message'),
     '#description' => t('Select a entity condition for this message.'),
     '#default_value' => $activity_entity_condition_value,
     '#options' => $activity_entity_condition_options,
     '#access' => !empty($activity_entity_condition_options),
-  );
+  ];
 
   $activity_actions = \Drupal::service('plugin.manager.activity_action.processor');
   $activity_actions = $activity_actions->getOptionsList();
 
-  $form['activity_action'] = array(
+  $form['activity_action'] = [
     '#type' => 'select',
     '#required' => TRUE,
     '#title' => t('The activity actions for this message'),
     '#description' => t('Select a action for when to display this message.'),
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_action', NULL),
     '#options' => $activity_actions,
-  );
+  ];
 
   $activity_recipient_manager = \Drupal::service('plugin.manager.activity_context.processor');
   $context_options = $activity_recipient_manager->getOptionsList();
 
-  $form['activity_context'] = array(
+  $form['activity_context'] = [
     '#type' => 'select',
     '#required' => TRUE,
     '#title' => t('The activity context for this message'),
     '#description' => t('Select a context where to display this message.'),
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_context', NULL),
     '#options' => $context_options,
-  );
+  ];
 
   $activity_recipient_manager = \Drupal::service('plugin.manager.activity_destination.processor');
   $destination_options = $activity_recipient_manager->getOptionsList();
 
-  $form['activity_destinations'] = array(
+  $form['activity_destinations'] = [
     '#type' => 'select',
     '#title' => t('The activity destinations for this message'),
     '#multiple' => TRUE,
@@ -140,24 +140,24 @@ function activity_logger_form_message_template_form_alter(&$form, FormStateInter
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_destinations', NULL),
     // @TODO activity_creator allowed_values function overlap (should be plugin)
     '#options' => $destination_options,
-  );
+  ];
 
-  $form['activity_create_direct'] = array(
+  $form['activity_create_direct'] = [
     '#type' => 'checkbox',
     '#required' => FALSE,
     '#title' => t('Create activity items direct instead of in Queue'),
     '#description' => t('Select if items should be created directly instead of in the queue. Warning: performance implications!'),
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_create_direct', NULL),
-  );
+  ];
 
   $form['#entity_builders'][] = 'activity_logger_form_message_template_form_builder';
-  $form['activity_aggregate'] = array(
+  $form['activity_aggregate'] = [
     '#type' => 'checkbox',
     '#required' => FALSE,
     '#title' => t('Aggregate activity'),
     '#description' => t('Select if items should be aggregated instead of displaying separately.'),
     '#default_value' => $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL),
-  );
+  ];
 
   // Add titles to output text fields for clarity.
   if (isset($form['text'][0])) {

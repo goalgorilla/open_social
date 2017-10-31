@@ -14,10 +14,10 @@ use Drupal\Core\Form\FormStateInterface;
  * Enhance the Views exposed filter blocks forms.
  */
 function social_search_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $filter_forms = array(
+  $filter_forms = [
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-users-page',
-  );
+  ];
 
   if (in_array($form['#id'], $filter_forms)) {
     // Set current path as form action, in order to keep search input.
@@ -41,16 +41,16 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
  * Enhance the Views exposed filter blocks.
  */
 function social_search_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
-  $filter_blocks = array(
+  $filter_blocks = [
     'search_content-page',
     'search_users-page',
-  );
+  ];
 
   if (in_array($build['#derivative_plugin_id'], $filter_blocks)) {
     // Disable cache for exposed filter block to get correct current path,
     // which is used in $form['#action'].
-    $build['#cache'] = array(
+    $build['#cache'] = [
       'max-age' => 0,
-    );
+    ];
   }
 }

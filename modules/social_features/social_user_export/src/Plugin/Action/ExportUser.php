@@ -2,11 +2,11 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
-use \Drupal\Core\Action\ActionBase;
-use \Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use \Drupal\Core\Session\AccountInterface;
-use \Drupal\user\PrivateTempStoreFactory;
-use \Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Action\ActionBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\user\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Exports a user accounts to CSV.
@@ -39,7 +39,7 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
    *
    * @var bool
    */
-  protected $apply_all;
+  protected $applyAll;
 
   /**
    * The query.
@@ -59,7 +59,7 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
    *   The plugin implementation definition.
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
-   * @param AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountInterface $current_user
    *   Current user.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, PrivateTempStoreFactory $temp_store_factory, AccountInterface $current_user) {
@@ -86,7 +86,7 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function executeMultiple(array $entities) {
-    if ($this->apply_all) {
+    if ($this->applyAll) {
       $this->tempStoreFactory->get('user_operations_export')->set($this->currentUser->id(), [
         'apply_all' => TRUE,
         'query' => $this->query,
@@ -117,11 +117,11 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
   /**
    * Set the apply_all property.
    *
-   * @param bool $apply_all
+   * @param bool $applyAll
    *   Boolean that determines if this applies for all or not.
    */
-  public function setApplyAll($apply_all) {
-    $this->apply_all = $apply_all;
+  public function setApplyAll($applyAll) {
+    $this->applyAll = $applyAll;
   }
 
   /**

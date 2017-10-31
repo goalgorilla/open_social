@@ -71,7 +71,7 @@
 {%
   set classes = [
     'teaser',
-    view_mode == 'teaser' ? 'card brand-border-radius',
+    view_mode == 'teaser' ? 'card',
     view_mode == 'activity' ? 'teaser--stream',
     view_mode == 'activity_comment' ? 'teaser--stream',
     node.isPromoted() ? 'promoted',
@@ -80,15 +80,30 @@
   ]
 %}
 
-<div {{ attributes.addClass(classes) }}>
+<div{{ attributes.addClass(classes) }}>
 
   <div class='teaser__image'>
 
     {% if view_mode == 'teaser' %}
-      {% block card_teaser_type %} {% endblock %}
+      {% block card_teaser_type %}
+
+        <div class="teaser__teaser-type">
+          <svg class="teaser__teaser-type-icon">
+            <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+          </svg>
+        </div>
+
+      {% endblock %}
     {% endif %}
 
-    {% block card_image %} {% endblock %}
+    {# allows for new content types to just use the plain field_image name #}
+    {% block card_image %}
+      {{ content.field_event_image }}
+      {{ content.field_topic_image }}
+      {{ content.field_page_image }}
+      {{ content.field_book_image }}
+      {{ content.field_image }}
+    {% endblock %}
 
     {% if status_label %}
       <div class="status">
@@ -109,7 +124,28 @@
       {{ title_suffix }}
 
       {% block card_body %}
-        {{ content }}
+
+        {% embed "node--teaser__field.html.twig" %}
+          {%- block field_icon -%} account_circle {%- endblock -%}
+          {%- block field_value %}
+            <div class="teaser__published">
+              <div class="teaser__published-date"> {{ date }} &bullet; </div>
+              <div class="teaser__published-author"> {{ author_name }} </div>
+            </div>
+          {%- endblock -%}
+        {% endembed %}
+
+        {% if content.group_name %}
+          {% embed "node--teaser__field.html.twig" %}
+            {%- block field_icon -%} group {%- endblock -%}
+            {%- block field_value -%} {{ content.group_name }} {%- endblock -%}
+          {% endembed %}
+        {% endif %}
+
+        {% embed "node--teaser__body.html.twig" %}
+          {% block field_body %} {{ content.body }} {% endblock %}
+        {% endembed %}
+
       {% endblock %}
     </div>
 

@@ -50,13 +50,13 @@
   set classes = [
     'block-' ~ configuration.provider|clean_class,
     'block-' ~ plugin_id|clean_class,
-    card ? 'card brand-border-radius' : '',
+    card ? 'card',
   ]
 %}
 
 {%
   set title_classes = [
-  card ? 'card__title' : 'block-title',
+    card ? 'card__title' : 'block-title',
   ]
 %}
 

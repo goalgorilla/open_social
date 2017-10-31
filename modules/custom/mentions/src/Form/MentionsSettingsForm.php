@@ -31,11 +31,11 @@ class MentionsSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('mentions.settings');
 
-    $form['general'] = array(
+    $form['general'] = [
       '#type' => 'details',
       '#title' => t('General configuration'),
       '#open' => TRUE,
-    );
+    ];
 
     $form['general']['supported_entity_types'] = [
       '#title' => t('Supported entity types'),
@@ -71,7 +71,7 @@ class MentionsSettingsForm extends ConfigFormBase {
    */
   protected function getContentEntityTypes() {
     $options = [];
-    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_id => $entity_type) {
+    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
       if ($entity_type instanceof ContentEntityTypeInterface) {
         $options[$entity_type->id()] = $entity_type->getLabel();
       }

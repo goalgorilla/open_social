@@ -33,9 +33,9 @@ class EventEnrollmentListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.event_enrollment.edit_form', array(
+        'entity.event_enrollment.edit_form', [
           'event_enrollment' => $entity->id(),
-        )
+        ]
       )
     );
     return $row + parent::buildRow($entity);

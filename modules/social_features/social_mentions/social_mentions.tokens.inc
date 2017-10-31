@@ -55,10 +55,10 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
             case SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME:
             case SOCIAL_MENTIONS_SUGGESTIONS_ALL:
               if (!empty($profile->field_profile_first_name->value) && !empty($profile->field_profile_last_name->value)) {
-                $user_name = t('@first @last', array(
+                $user_name = t('@first @last', [
                   '@first' => $profile->field_profile_first_name->value,
                   '@last' => $profile->field_profile_last_name->value,
-                ));
+                ]);
               }
           }
           if (empty($user_name)) {

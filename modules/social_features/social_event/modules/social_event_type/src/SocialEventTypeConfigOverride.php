@@ -19,7 +19,7 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
    * Load overrides.
    */
   public function loadOverrides($names) {
-    $overrides = array();
+    $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
     // Override event form display.
@@ -153,7 +153,10 @@ class SocialEventTypeConfigOverride implements ConfigFactoryOverrideInterface {
           ],
         ];
       }
+    }
 
+    if (isset($overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id'])) {
+      $overrides['views.view.group_events']['display']['default']['display_options']['filters']['field_event_type_target_id']['relationship'] = 'gc__node';
     }
 
     return $overrides;

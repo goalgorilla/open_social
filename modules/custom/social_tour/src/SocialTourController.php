@@ -66,7 +66,7 @@ class SocialTourController extends ControllerBase {
    * Check if onboarding is enabled.
    *
    * @return bool
-   *    Returns either TRUE or FALSE.
+   *   Returns either TRUE or FALSE.
    */
   public function onboardingEnabled() {
     // Check if tour is enabled by SM setting.
@@ -90,7 +90,7 @@ class SocialTourController extends ControllerBase {
    * Toggle onboarding.
    *
    * @param array $account
-   *    Array containing the account.
+   *   Array containing the account.
    */
   public function toggleOnboarding(array $account = NULL) {
 
@@ -136,7 +136,7 @@ class SocialTourController extends ControllerBase {
    * Set onboarding data value.
    *
    * @param bool $disabled
-   *    Type of bool, either TRUE or FALSE.
+   *   Type of bool, either TRUE or FALSE.
    */
   private function setData($disabled = TRUE) {
     $this->userData->set('social_tour', $this->currentUser->id(), 'onboarding_disabled', $disabled);

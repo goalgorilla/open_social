@@ -3,6 +3,7 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\file\Entity\File;
+use Drupal\bootstrap\Plugin\Preprocess\FileLink as BaseFileLink;
 
 /**
  * Pre-processes variables for the "file_link" theme hook.
@@ -13,7 +14,7 @@ use Drupal\file\Entity\File;
  *   replace = "template_preprocess_file_link"
  * )
  */
-class FileLink extends \Drupal\bootstrap\Plugin\Preprocess\FileLink {
+class FileLink extends BaseFileLink {
 
   /**
    * {@inheritdoc}
