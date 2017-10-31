@@ -94,8 +94,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     $this->renderer = $renderer;
     $this->activityNotifications = $activity_notifications;
     $this->entityTypeManager = $entityTypeManager;
-    $this->privateMessage = $privateMessageService;
     $this->configFactory = $configFactory;
+    $this->privateMessage = $privateMessageService;
   }
 
   /**
@@ -110,8 +110,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $container->get('renderer'),
       $container->get('activity_creator.activity_notifications'),
       $container->get('entity_type.manager'),
-      $container->get('private_message.service'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('private_message.service')
     );
   }
 
