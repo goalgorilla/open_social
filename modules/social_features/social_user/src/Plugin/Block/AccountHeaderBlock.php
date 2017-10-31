@@ -4,6 +4,7 @@ namespace Drupal\social_user\Plugin\Block;
 
 use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -53,7 +54,19 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   protected $entityTypeManager;
 
+  /**
+   * The Private Message Service.
+   *
+   * @var \Drupal\private_message\Service\PrivateMessageService
+   */
   protected $privateMessage;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
 
   /**
    * AccountHeaderBlock constructor.
@@ -72,14 +85,17 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    *   The activity creator, activity notifications.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Entity Type Manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The Config Factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, PrivateMessageService $privateMessageService) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, PrivateMessageService $privateMessageService) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
     $this->renderer = $renderer;
     $this->activityNotifications = $activity_notifications;
     $this->entityTypeManager = $entityTypeManager;
     $this->privateMessage = $privateMessageService;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -94,7 +110,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $container->get('renderer'),
       $container->get('activity_creator.activity_notifications'),
       $container->get('entity_type.manager'),
-      $container->get('private_message.service')
+      $container->get('private_message.service'),
+      $container->get('config.factory')
     );
   }
 
@@ -103,6 +120,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function build() {
     $account = $this->getContextValue('user');
+    $navigation_settings_config = $this->configFactory->get('social_user_navigation.settings');
 
     if ($account->id() !== 0) {
       $account_name = $account->getAccountName();
@@ -160,17 +178,19 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       ];
 
       if ($this->moduleHandler->moduleExists('social_group')) {
-        $links['groups'] = [
-          'classes' => '',
-          'link_attributes' => '',
-          'icon_classes' => 'icon-group',
-          'title' => $this->t('My Groups'),
-          'label' => $this->t('My Groups'),
-          'title_classes' => 'sr-only',
-          'url' => Url::fromRoute('view.groups.page_user_groups', [
-            'user' => $account->id(),
-          ]),
-        ];
+        if ($navigation_settings_config->get('display_my_groups_icon') === 1) {
+          $links['groups'] = [
+            'classes' => '',
+            'link_attributes' => '',
+            'icon_classes' => 'icon-group',
+            'title' => $this->t('My Groups'),
+            'label' => $this->t('My Groups'),
+            'title_classes' => 'sr-only',
+            'url' => Url::fromRoute('view.groups.page_user_groups', [
+              'user' => $account->id(),
+            ]),
+          ];
+        }
       }
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
@@ -185,15 +205,17 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           $label_classes = 'badge badge-accent badge--pill';
         }
 
-        $links['messages'] = [
-          'classes' => '',
-          'link_attributes' => '',
-          'icon_classes' => $message_icon,
-          'title' => $this->t('Inbox'),
-          'label' => (string) $num_account_messages,
-          'title_classes' => $label_classes,
-          'url' => Url::fromRoute('social_private_message.inbox'),
-        ];
+        if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
+          $links['messages'] = [
+            'classes' => '',
+            'link_attributes' => '',
+            'icon_classes' => $message_icon,
+            'title' => $this->t('Inbox'),
+            'label' => (string) $num_account_messages,
+            'title_classes' => $label_classes,
+            'url' => Url::fromRoute('social_private_message.inbox'),
+          ];
+        }
       }
 
       // Check if the current user is allowed to create new books.

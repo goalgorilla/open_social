@@ -98,6 +98,36 @@
   margin-bottom: 0;
 }
 
+.card--message-thread .card__block {
+  padding-top: 0;
+}
+
+.card--message-thread .comment {
+  font-size: 0.875rem;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+
+.card--message-thread .comment__avatar {
+  margin-right: 8px;
+  width: 44px;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+
+.card--message-thread .comment__content {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.private-message-form textarea.form-control {
+  height: 38px;
+}
+
 @media (min-width: 600px) {
   .message__created {
     float: right;
@@ -105,5 +135,23 @@
   .private-message-full {
     width: 70%;
     max-width: 550px;
+  }
+  .card--message-thread .comment__avatar {
+    margin-right: 12px;
+  }
+  .private-message-form .btn-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .private-message-form .btn--comment-submit {
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-bottom: 0;
+  }
+  .private-message-form .btn--comment-submit .label {
+    font-size: 0;
+    text-indent: -9999px;
   }
 }

@@ -38,33 +38,38 @@
 </a>
 
 {% else %}
-
   <div class="card card--message-thread">
-    <div class="media-wrapper">
-      <div class="media message__heading">
-        <div class="message__back-btn">
-          <a href="{{ content.back_to_inbox }}" class="btn btn-icon-toggle">
-            <svg class="btn-icon icon-gray">
-              <use xlink:href="#icon-navigate_before"></use>
-            </svg>
-          </a>
-        </div>
-        {{ content.members }}
+    <div class="card__block">
+      <div class="media-wrapper">
+        <div class="media message__heading">
+          <div class="message__back-btn">
+            <a href="{{ content.back_to_inbox }}" class="btn btn-icon-toggle">
+              <svg class="btn-icon icon-gray">
+                <use xlink:href="#icon-navigate_before"></use>
+              </svg>
+            </a>
+          </div>
+          {{ content.members }}
 
-        <div class="message__thread-actions btn-group">
-          <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
-            <svg class="btn-icon icon-gray">
-              <use xlink:href="#icon-expand_more"></use>
-            </svg>
-          </button>
-          <ul class="dropdown-menu">
-            <li>{{ content.delete_link }}</li>
-          </ul>
-        </div>
+          <div class="message__thread-actions btn-group">
+            <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
+              <svg class="btn-icon icon-gray">
+                <use xlink:href="#icon-expand_more"></use>
+              </svg>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li>{{ content.delete_link }}</li>
+            </ul>
+          </div>
 
+        </div>
+      </div>
+      {{ content.private_messages }}
+      <div class="card__nested-section">
+        <div class="comment comment-form__wrapper">
+          {{ content.private_message_form }}
+        </div>
       </div>
     </div>
-    {{ content.private_messages }}
-    {{ content.private_message_form }}
   </div>
 {% endif %}
