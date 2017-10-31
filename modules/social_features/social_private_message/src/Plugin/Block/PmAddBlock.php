@@ -40,7 +40,6 @@ class PmAddBlock extends BlockBase {
           'btn',
           'btn-primary',
           'btn-raised',
-          'waves-effect',
           'brand-bg-primary',
         ],
       ],
