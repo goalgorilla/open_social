@@ -315,6 +315,17 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'social_user_password_form',
   ];
 
+  if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {
+    $form['#attributes']['class'][] = 'card';
+    $form['#attributes']['class'][] = 'form--default';
+    $form['actions']['#prefix'] = '</div></div>';
+
+    if (isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#button_type'] = 'primary';
+      $form['actions']['submit']['#button_level'] = 'raised';
+    }
+  }
+
   if (in_array($form_id, $add_card_to_forms)) {
     $form['#attributes']['class'][] = 'card';
     $form['actions']['#prefix'] = '</div></div>';
