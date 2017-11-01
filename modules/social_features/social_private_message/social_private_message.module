@@ -38,6 +38,19 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
     }
   }
 
+  // Alter the users widget.
+  $form['members']['widget']['#required'] = TRUE;
+  $form['members']['widget']['#description'] = '';
+  // Add the required tag.
+  $form['members']['widget']['#attributes']['required'] = 'required';
+  // Unset the empty option.
+  unset($form['members']['widget']['#options']['_none']);
+  // Unset current user.
+  unset($form['members']['widget']['#options'][Drupal::currentUser()->id()]);
+
+  // Alter the message widget.
+  // Add the required tag.
+  $form['message']['widget']['#attributes']['required'] = 'required';
   // Normal submit button shoud say 'Next'
   $form['actions']['submit']['#value'] = t('Next');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
@@ -52,6 +65,8 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form['#attributes']['class'][] = $form_class;
 
   if ($form_is_edit_form) {
+    // In edit mode, remove the label from the message field.
+    $form['message']['widget'][0]['#title'] = '';
     // Add the profile image if the current user.
     $account = User::load(Drupal::currentUser()->id());
     // Load compact notification view mode of the attached profile.
