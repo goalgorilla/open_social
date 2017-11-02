@@ -29,12 +29,24 @@
   &:focus {
     @include z-depth-3;
   }
+
+  .avatar {
+    flex: 64px 0 0;
+  }
+}
+
+.message__inbox-body {
+  overflow: hidden;
 }
 
 .message__excerpt {
-  display: flex;
   margin-top: 0.3em;
   line-height: 1;
+
+  @include for-tablet-landscape-up {
+    display: flex;
+  }
+
 
   p {
     margin: 0;
@@ -42,6 +54,17 @@
 
   .message__owner {
     padding-right: 0.5em;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+.message__message-excerpt {
+  @include for-tablet-landscape-up {
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
 
