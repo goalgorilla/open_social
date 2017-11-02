@@ -123,10 +123,21 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               }
 
               if ($name === 'pmt-url') {
-                // Load the private message (from the related object)
-                // Load the private message thread from the pm
-                // Replace with PMT cannonical URL (replace the id)
-                // Return replacements
+                // Get the related message.
+                $target_type = $message->field_message_related_object->target_type;
+                $target_id = $message->field_message_related_object->target_id;
+                $entity = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
+                // Use the mapper service to get the ID of the thread.
+                $pmService = \Drupal::service('private_message.mapper');
+                $thread_id = $pmService->getThreadIdFromMessage($entity);
+                // Build the url.
+                $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
+                  ['private_message_thread' => $thread_id],
+                  ['absolute' => TRUE]
+                );
+                $replacements[$original] = $thread_url->toString();
               }
 
             }
