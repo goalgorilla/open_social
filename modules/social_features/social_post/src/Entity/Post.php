@@ -167,9 +167,6 @@ class Post extends ContentEntityBase implements PostInterface {
     if (!in_array('user', $defaults)) {
       $defaults[] = 'user';
     }
-    if (!in_array('timezone', $defaults)) {
-      $defaults[] = 'timezone';
-    }
 
     return $defaults;
   }
