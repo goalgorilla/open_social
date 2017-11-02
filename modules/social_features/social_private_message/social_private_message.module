@@ -12,7 +12,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 
-
 /**
  * Implements hook_element_info_alter().
  */
@@ -20,6 +19,36 @@ function social_private_message_element_info_alter(array &$info) {
   if (isset($info['text_format']['#process'])) {
     $info['text_format']['#process'][] = 'social_private_message_filter_process_format';
   }
+}
+
+/**
+ * Remove ability of selecting format on private message (use plain_text only).
+ */
+function social_private_message_filter_process_format($element) {
+  // Fields listed here will have plain_text format only.
+  $plain_text_fields = [
+    'edit-message-0',
+  ];
+
+  if ($element['#type'] == 'text_format' && in_array($element['#id'], $plain_text_fields)) {
+    $element['#format'] = 'plain_text';
+    $element['format']['format']['#access'] = FALSE;
+    $element['format']['format']['#value'] = 'plain_text';
+    $element['format']['help']['#access'] = FALSE;
+    $element['format']['format']['#options'] = ['plain_text' => 'Plain Text'];
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function social_private_message_form_private_message_thread_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Redirect cancel to our inbox.
+  $form['actions']['cancel']['#url'] = Url::fromRoute('social_private_message.inbox');
+  // Redirect delete to our inbox.
+  $form['actions']['submit']['#submit'][] = 'social_private_message_thread_delete_redirect';
 }
 
 /**
@@ -93,28 +122,26 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  * Redirects the form to the inbox
  */
-function social_private_message_redirect($form, FormStateInterface $form_state) {
+function social_private_message_thread_delete_redirect($form, FormStateInterface $form_state) {
   // Set a nice mesasge.
-  drupal_set_message('Your message has been created.');
+  drupal_set_message(t('Your message has been deleted.'));
   // Force redirect to the inbox.
   $url = Url::fromRoute('social_private_message.inbox');
   $form_state->setRedirectUrl($url);
 }
 
 /**
- * Implements hook_filter_format_disable().
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * Redirects the form to the inbox
  */
-function social_private_message_filter_process_format($element) {
-  // Only supported format is plain text.
-  $element['#format'] = 'plain_text';
-  $element['format']['format']['#access'] = FALSE;
-  $element['format']['format']['#value'] = 'plain_text';
-  $element['format']['help']['#access'] = FALSE;
-  $element['format']['format']['#options'] = ['plain_text' => 'Plain Text'];
-
-  return $element;
+function social_private_message_redirect($form, FormStateInterface $form_state) {
+  // Set a nice mesasge.
+  drupal_set_message(t('Your message has been created.'));
+  // Force redirect to the inbox.
+  $url = Url::fromRoute('social_private_message.inbox');
+  $form_state->setRedirectUrl($url);
 }
-
 
 /**
  * Implements hook_js_alter().
