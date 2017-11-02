@@ -32,7 +32,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
 
         if ($related_object['target_type'] === 'private_message') {
           $private_message = PrivateMessage::load($related_object['target_id']);
-          // Must be a Prtivatemessage.
+          // Must be a Private Message.
           if ($private_message instanceof PrivateMessage) {
             $pmService = \Drupal::service('private_message.service');
             // Get the thread of this message.
