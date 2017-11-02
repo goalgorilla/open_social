@@ -158,7 +158,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       }
       // Add either the profile picture or the group picture.
       if ($member_count > 1) {
-        $build['members']['#markup'] = '<span class="group-icon"></span>';
+        $build['members']['#markup'] = '<div class="avatar-icon avatar-group-icon avatar-group-icon--medium"></div>';
         // Add members names.
         $build['membernames']['#markup'] = implode(', ', $members_string);
         $build['membernames']['#prefix'] = '<strong>';
@@ -166,8 +166,6 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       }
       else {
         $build['members'] = $profile_picture;
-        $build['members']['#prefix'] = '<div class="media-left avatar">';
-        $build['members']['#suffix'] = '</div>';
         // Add members name.
         $build['membernames']['#markup'] = $display_name;
         $build['membernames']['#prefix'] = '<strong>';
