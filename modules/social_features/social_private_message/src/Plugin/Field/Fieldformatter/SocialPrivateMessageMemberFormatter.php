@@ -202,7 +202,7 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
       $participants = $profile_picture;
     }
     else {
-      $participants['#markup'] = '<span class="group-icon"></span>' . implode($separator, $users);
+      $participants['#markup'] = '<div class="media-left avatar"><span class="avatar-icon avatar-group-icon avatar-group-icon--small"></span></div>' . implode($separator, $users);
     }
 
     $element = [
