@@ -5,6 +5,7 @@
  * The Social Privagte Message module.
  */
 
+use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -118,7 +119,7 @@ function social_private_message_filter_process_format($element) {
 /**
  * Implements hook_js_alter().
  */
-function social_private_message_js_alter(&$javascript, \Drupal\Core\Asset\AttachedAssetsInterface $assets) {
+function social_private_message_js_alter(&$javascript, AttachedAssetsInterface $assets) {
   // Remove Js coming from the private_message module.
   if (isset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js'])) {
     unset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js']);
