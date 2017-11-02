@@ -29,6 +29,12 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  margin-top: 0.3em;
+  line-height: 1;
+}
+
+.message__excerpt p {
+  margin: 0;
 }
 
 .message__excerpt .message__owner {
@@ -39,16 +45,15 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  padding: 0.5rem 1.25rem;
+  padding: 1.25rem 0 0.5rem;
   border-bottom: 1px solid #e6e6e6;
   margin-bottom: 0.5rem;
 }
 
 .message__back-btn {
   -webkit-box-flex: 0;
-      -ms-flex: 0 0 44px;
-          flex: 0 0 44px;
-  margin-top: 4px;
+      -ms-flex: 0 0 38px;
+          flex: 0 0 38px;
 }
 
 .private-message-thread-messages {
@@ -126,6 +131,29 @@
 
 .private-message-form textarea.form-control {
   height: 38px;
+}
+
+.avatar-group-icon {
+  display: inline-block;
+  background-color: #adadad;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-image: url(../images/icons/icon-group-white.svg);
+  background-position: 50% 50%;
+}
+
+.avatar-group-icon--medium {
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  background-size: 28px 28px;
+}
+
+.avatar-group-icon--small {
+  width: 34px;
+  height: 34px;
+  padding: 6px;
+  background-size: 22px 22px;
 }
 
 @media (min-width: 600px) {

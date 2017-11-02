@@ -33,11 +33,25 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
       // Key must have submit in it.
       if (strpos($key, 'submit-') !== FALSE) {
         $actions['#value'] = t('Send');
+        $actions['#submit'][] = 'social_private_message_redirect';
         unset($actions['#ajax']);
       }
     }
   }
 
+  // Alter the users widget.
+  $form['members']['widget']['#required'] = TRUE;
+  $form['members']['widget']['#description'] = '';
+  // Add the required tag.
+  $form['members']['widget']['#attributes']['required'] = 'required';
+  // Unset the empty option.
+  unset($form['members']['widget']['#options']['_none']);
+  // Unset current user.
+  unset($form['members']['widget']['#options'][Drupal::currentUser()->id()]);
+
+  // Alter the message widget.
+  // Add the required tag.
+  $form['message']['widget']['#attributes']['required'] = 'required';
   // Normal submit button shoud say 'Next'
   $form['actions']['submit']['#value'] = t('Next');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
@@ -52,6 +66,8 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form['#attributes']['class'][] = $form_class;
 
   if ($form_is_edit_form) {
+    // In edit mode, remove the label from the message field.
+    $form['message']['widget'][0]['#title'] = '';
     // Add the profile image if the current user.
     $account = User::load(Drupal::currentUser()->id());
     // Load compact notification view mode of the attached profile.
@@ -159,7 +175,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
 
       // Add either the profile picture or the group picture.
       if ($member_count > 1) {
-        $build['members']['#markup'] = '<span class="group-icon"></span>';
+        $build['members']['#markup'] = '<div class="avatar-icon avatar-group-icon avatar-group-icon--medium"></div>';
         // Add members names.
         $build['membernames']['#markup'] = implode(', ', $members_string);
         $build['membernames']['#prefix'] = '<strong>';
@@ -167,8 +183,6 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       }
       else {
         $build['members'] = $profile_picture;
-        $build['members']['#prefix'] = '<div class="media-left avatar">';
-        $build['members']['#suffix'] = '</div>';
         // Add members name.
         $build['membernames']['#markup'] = $display_name;
         $build['membernames']['#prefix'] = '<strong>';
