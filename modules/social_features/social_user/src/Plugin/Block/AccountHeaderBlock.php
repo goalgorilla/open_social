@@ -194,7 +194,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
-        $num_account_messages = $this->privateMessage->getUnreadThreadCount();
+        $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
 
         if ($num_account_messages === 0) {
           $message_icon = 'icon-mail_outline';
