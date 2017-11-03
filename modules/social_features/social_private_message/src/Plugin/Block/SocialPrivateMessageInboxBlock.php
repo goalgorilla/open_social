@@ -60,6 +60,15 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+    $cache_contexts[] = 'user';
+    return $cache_contexts;
+  }
+
   public function custom_sort($pmt1, $pmt2) {
 
     /* @var \Drupal\private_message\Entity\PrivateMessageThread $pmt1 */
