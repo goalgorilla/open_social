@@ -10,6 +10,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Drupal\private_message\Service\PrivateMessageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -53,6 +54,18 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   protected $entityTypeManager;
 
+  /**
+   * The Private Message Service.
+   *
+   * @var \Drupal\private_message\Service\PrivateMessageService
+   */
+  protected $privateMessage;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   protected $configFactory;
 
   /**
@@ -75,13 +88,14 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The Config Factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, PrivateMessageService $privateMessageService) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
     $this->renderer = $renderer;
     $this->activityNotifications = $activity_notifications;
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
+    $this->privateMessage = $privateMessageService;
   }
 
   /**
@@ -96,7 +110,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $container->get('renderer'),
       $container->get('activity_creator.activity_notifications'),
       $container->get('entity_type.manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('private_message.service')
     );
   }
 
@@ -179,14 +194,25 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
+        $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+        if ($num_account_messages === 0) {
+          $message_icon = 'icon-mail_outline';
+          $label_classes = 'hidden';
+        }
+        else {
+          $message_icon = 'icon-mail';
+          $label_classes = 'badge badge-accent badge--pill';
+        }
+
         if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
           $links['messages'] = [
             'classes' => '',
             'link_attributes' => '',
-            'icon_classes' => 'icon-mail_outline',
+            'icon_classes' => $message_icon,
             'title' => $this->t('Inbox'),
-            'label' => $this->t('Inbox'),
-            'title_classes' => 'sr-only',
+            'label' => (string) $num_account_messages,
+            'title_classes' => $label_classes,
             'url' => Url::fromRoute('social_private_message.inbox'),
           ];
         }
