@@ -38,8 +38,6 @@ class FormElementLabel extends BaseFormElementLabel {
 
     }
 
-    //dpm($variables);
-
     parent::preprocessElement($element, $variables);
 
   }
