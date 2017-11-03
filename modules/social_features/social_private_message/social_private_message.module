@@ -99,22 +99,6 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   if ($form_is_edit_form) {
     // In edit mode, remove the label from the message field.
     $form['message']['widget'][0]['#title'] = '';
-    // Add the profile image if the current user.
-    $account = User::load(Drupal::currentUser()->id());
-    // Load compact notification view mode of the attached profile.
-    if ($account) {
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($account, 'profile');
-        if ($user_profile) {
-          $content = \Drupal::entityTypeManager()
-            ->getViewBuilder('profile')
-            ->view($user_profile, 'compact_notification');
-          // Add to a new field, so twig can render it.
-          $form['current_user_image'] = $content;
-        }
-      }
-    }
   }
 }
 
