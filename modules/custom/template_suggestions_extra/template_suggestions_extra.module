@@ -71,3 +71,13 @@ function template_suggestions_extra_theme_suggestions_comment_alter(array &$sugg
 
   return $suggestions;
 }
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function template_suggestions_extra_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+  $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'];
+
+  return $suggestions;
+}
