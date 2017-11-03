@@ -16,6 +16,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * Return the name of the email frequency.
    *
    * @return string
+   *   The name of the email frequency.
    */
   public function getName();
 
@@ -23,6 +24,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * Return the weight of the frequency option.
    *
    * @return int
+   *   The weight of the frequency option.
    */
   public function getWeight();
 
@@ -30,6 +32,7 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * Return the interval of the email frequency in seconds.
    *
    * @return int
+   *   The interval in seconds.
    */
   public function getInterval();
 
