@@ -37,30 +37,6 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
         foreach ($threads as $thread) {
           $block[$thread->id()] = $view_builder->view($thread, 'inbox');
         }
-
-        $block['#attached']['library'][] = 'private_message/inbox_block';
-        if (count($threads) && $thread_info['next_exists']) {
-          $prev_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'get_old_inbox_threads']);
-          $prev_token = $this->csrfToken->get($prev_url->getInternalPath());
-          $prev_url->setOptions(['absolute' => TRUE, 'query' => ['token' => $prev_token]]);
-
-          $new_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'get_new_inbox_threads']);
-          $new_token = $this->csrfToken->get($new_url->getInternalPath());
-          $new_url->setOptions(['absolute' => TRUE, 'query' => ['token' => $new_token]]);
-
-          $last_thread = array_pop($threads);
-          $block['#attached']['drupalSettings']['privateMessageInboxBlock'] = [
-            'oldestTimestamp' => $last_thread->get('updated')->value,
-            'loadPrevUrl' => $prev_url->toString(),
-            'loadNewUrl' => $new_url->toString(),
-            'threadCount' => $config['ajax_load_count'],
-          ];
-        }
-        else {
-          $block['#attached']['drupalSettings']['privateMessageInboxBlock'] = [
-            'oldestTimestamp' => FALSE,
-          ];
-        }
       }
       else {
         $block['no_threads'] = [
@@ -74,11 +50,6 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
       $new_token = $this->csrfToken->get($new_url->getInternalPath());
       $new_url->setOptions(['absolute' => TRUE, 'query' => ['token' => $new_token]]);
 
-      $block['#attached']['drupalSettings']['privateMessageInboxBlock']['loadNewUrl'] = $new_url->toString();
-
-      $config = $this->getConfiguration();
-      $block['#attached']['drupalSettings']['privateMessageInboxBlock']['ajaxRefreshRate'] = $config['ajax_refresh_rate'];
-
       // Add the default classes, as these are not added when the block output is overridden with
       // a template
       $block['#attributes']['class'][] = 'block';
@@ -87,6 +58,15 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
 
       return $block;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+    $cache_contexts[] = 'user';
+    return $cache_contexts;
   }
 
   public function custom_sort($pmt1, $pmt2) {

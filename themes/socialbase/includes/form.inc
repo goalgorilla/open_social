@@ -224,9 +224,21 @@ function socialbase_form_user_form_alter(&$form) {
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  // Clientside validation is not consistent accross devices. Disable for now.
+  // Client side validation is not consistent accross devices. Disable for now.
   if (!isset($form['#attributes']['novalidate'])) {
     $form['#attributes']['novalidate'] = 'novalidate';
+  }
+
+  // In the code above we disable HTML5 native validation, for the following forms
+  // enable validating. These forms only have required attributes.
+  $validate_forms = [
+    'private_message_add_form',
+    'comment_post_comment_form',
+    'social_post_entity_form',
+  ];
+
+  if (in_array($form_id, $validate_forms)) {
+    unset($form['#attributes']['novalidate']);
   }
 
   // These forms have a container with class form-action at the bottom and
