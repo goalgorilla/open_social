@@ -10,9 +10,6 @@ use Drupal\mentions\MentionsInterface;
 /**
  * Mentions Class.
  *
- * @file
- * Mentions Entity.
- *
  * @ContentEntityType(
  *   id = "mentions",
  *   label = @Translation("Mentions"),

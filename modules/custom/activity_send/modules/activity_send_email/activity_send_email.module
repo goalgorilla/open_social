@@ -88,14 +88,14 @@ function activity_send_email_theme() {
         'notification_count' => NULL,
         'notifications' => NULL,
         'notification_settings' => NULL,
-      ]
+      ],
     ],
     'directmail' => [
       'template' => 'directmail',
       'variables' => [
         'notification' => NULL,
         'notification_settings' => NULL,
-      ]
+      ],
     ],
   ];
   return $items;
@@ -257,7 +257,7 @@ function sortEmailFrequencyOptions() {
   }
 
   // Sort the email frequencies by their weight.
-  uasort($emailfrequencies, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+  uasort($emailfrequencies, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
 
   return $emailfrequencies;
 }
