@@ -34,7 +34,7 @@
       <p class="help-block">{{ description }}</p>
     {%- endif -%}
   </label>
-  {%- if required -%}
+  {%- if required and title_display != 'invisible' -%}
     <span class="form-required">*</span>
   {%- endif -%}
 {%- endif -%}
