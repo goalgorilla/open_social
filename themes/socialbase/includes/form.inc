@@ -35,7 +35,7 @@ function socialbase_preprocess_form(&$variables) {
 
   $variables['attributes']['class'][] = 'clearfix';
 
-  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
+  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form' || $element['#form_id'] === 'private_message_add_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
