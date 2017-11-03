@@ -45,6 +45,16 @@ class SocialPrivateMessageService extends PrivateMessageService {
   }
 
   /**
+   * Remove the thread info from the user_data.
+   *
+   * @param $entity
+   *    The thread entity.
+   */
+  public function deleteUserDataThreadInfo($entity) {
+    $this->userData->delete('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id());
+  }
+
+  /**
    * Update the unread thread count.
    *
    * @return int

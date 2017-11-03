@@ -275,9 +275,17 @@ function social_private_message_menu_local_actions_alter(&$local_actions) {
 /**
  * When the user creates a message, mark this thread as read for the author.
  *
- * Implements hook_ENTITY_TYPE_create().
+ * Implements hook_ENTITY_TYPE_insert().
  */
 function social_private_message_private_message_thread_insert(EntityInterface $entity) {
   $socialPrivateMessageService = Drupal::service('social_private_message.service');
   $socialPrivateMessageService->updateLastThreadCheckTime($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_private_message_pm_thread_delete_time_update(Drupal\Core\Entity\EntityInterface $entity) {
+  $socialPrivateMessageService = Drupal::service('social_private_message.service');
+  $socialPrivateMessageService->deleteUserDataThreadInfo($entity);
 }
