@@ -25,8 +25,6 @@ $info = array(
       ),
     ),
   ),
-  
-  'css' => '',
 
   // Files to copy.
   'copy' => array(
