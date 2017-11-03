@@ -95,12 +95,22 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-bottom-color: transparent !important;
     }
 
-    .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-      background-color: $primary !important;
-    }
-
+    .read-indicator,
+    .navbar-default .navbar-nav > li > a:hover,
+    .navbar-default .navbar-nav > li > a:focus,
     .navbar-default .navbar-brand:hover,
-    .navbar-default .navbar-brand:focus {
+    .navbar-default .navbar-brand:focus,
+    .navbar-default .dropdown-menu > .active > a,
+    .navbar-default .dropdown-menu > .active > a:hover,
+    .navbar-default .dropdown-menu > .active > a:focus,
+    .select2-container--social .select2-results__option--highlighted[aria-selected],
+    .select2-container--social .select2-results__option[aria-selected=true],
+    .pagination > .active > a,
+    .pagination > .active > a:hover,
+    .pagination > .active > a:focus,
+    .pagination > .active > span,
+    .pagination > .active > span:hover,
+    .pagination > .active > span:focus {
       background-color: $primary !important;
     }
 
@@ -116,9 +126,7 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       }
     }
 
-    .hero-form[role='search'] .search-icon,
-    #navbar-search.is-open .search-icon,
-    .no-js #navbar-search .search-icon {
+    .hero-form[role='search'] .search-icon {
       fill: $primary !important;
     }
 
@@ -126,10 +134,6 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $primary !important;
       border-bottom-color: $primary !important;
       box-shadow: 0 2px 0 0 $primary !important;
-    }
-    
-    .select2-container--social .select2-results__option--highlighted[aria-selected], .select2-container--social .select2-results__option[aria-selected=true] {
-      background-color: $primary !important;
     }
     
     .select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
@@ -143,10 +147,6 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
 
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
-    }
-
-    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
-      background-color: $primary !important;
     }
 
     .btn-primary {
@@ -186,11 +186,9 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $accent !important;
     }
 
-    .body-text a {
-      color: $link !important;
-    }
-
-    .body-text a:hover {
+    .body-text a,
+    .body-text a:hover,
+    .book-menu .list-item--active-trail > a {
       color: $link !important;
     }
 
@@ -198,19 +196,9 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-left-color: $link !important;
     }
 
-    .book-menu .list-item--active-trail > a {
-      color: $link !important;
-    }
-
     .input-group .form-control:focus ~ .input-group-addon {
       border-color: $primary !important;
       box-shadow: 0 2px 0 0 $primary !important;
-    }
-
-    .navbar-default .dropdown-menu > .active > a,
-    .navbar-default .dropdown-menu > .active > a:hover,
-    .navbar-default .dropdown-menu > .active > a:focus {
-      background-color: $primary !important;
     }
 
     .navbar-scrollable:before {
@@ -274,7 +262,9 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
 
-        .teaser--stream:last-child {
+        .teaser--stream:last-child,
+        .card__block:last-child,
+        .card__nested-section:last-child {
           border-bottom-left-radius: ' . $card_radius . 'px !important;
           border-bottom-right-radius: ' . $card_radius . 'px !important;
         }
@@ -288,12 +278,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-top-right-radius: ' . $card_radius . 'px !important;
         }
         
-        .card__block:last-child,
-        .card__nested-section:last-child {
-          border-bottom-left-radius: ' . $card_radius . 'px !important;
-          border-bottom-right-radius: ' . $card_radius . 'px !important;
-        }
-
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;

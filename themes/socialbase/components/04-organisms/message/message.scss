@@ -13,7 +13,6 @@
 }
 
 .field--name-message {
-  margin-top: 5px;
 
   p {
     margin: 0;
@@ -29,12 +28,24 @@
   &:focus {
     @include z-depth-3;
   }
+
+  .avatar {
+    flex: 64px 0 0;
+  }
+}
+
+.message__inbox-body {
+  overflow: hidden;
 }
 
 .message__excerpt {
-  display: flex;
   margin-top: 0.3em;
   line-height: 1;
+
+  @include for-tablet-landscape-up {
+    display: flex;
+  }
+
 
   p {
     margin: 0;
@@ -42,6 +53,17 @@
 
   .message__owner {
     padding-right: 0.5em;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+.message__message-excerpt {
+  @include for-tablet-landscape-up {
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
 
@@ -110,28 +132,6 @@
     padding-top: 0;
   }
 
-  .comment {
-    font-size: 0.875rem;
-    position: relative;
-    display: flex;
-    width: 100%;
-  }
-
-  .comment__avatar {
-    margin-right: 8px;
-    width: 44px;
-    flex-shrink: 0;
-
-    @include for-tablet-portrait-up {
-      margin-right: 12px;
-    }
-
-  }
-
-  .comment__content {
-    flex: 1;
-  }
-
 }
 
 .private-message-form {
@@ -185,4 +185,15 @@
   height: 34px;
   padding: 6px;
   background-size: 22px 22px;
+}
+
+// Unread thread styling
+.unread-thread {
+  .read-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+  }
 }
