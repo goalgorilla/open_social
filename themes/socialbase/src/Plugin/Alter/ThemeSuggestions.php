@@ -138,7 +138,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
         // Distinguish message create form from thread form.
         if ($variables['element']['#form_id'] == 'private_message_add_form') {
-          if(\Drupal::routeMatch()->getRouteName() === 'entity.private_message_thread.canonical ') {
+          if(\Drupal::routeMatch()->getRouteName() === 'entity.private_message_thread.canonical') {
             $suggestions = [$variables['theme_hook_original'] . '__' . 'private_message_thread'];
           }
           else {
