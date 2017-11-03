@@ -22,5 +22,10 @@ class RouteSubscriber extends RouteSubscriberBase {
       // Deny access to this route.
       $route->setRequirement('_access', 'FALSE');
     }
+    // Route the private message thread page.
+    if ($route = $collection->get('entity.private_message_thread.canonical')) {
+      // Remove the page title.
+      $route->setDefault('_title', '');
+    }
   }
 }
