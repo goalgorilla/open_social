@@ -54,7 +54,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
         if ($group && $request->attributes->get('_route') == 'entity.group_content.create_form') {
           return [
             '#type' => 'page_title',
-            '#title' => t('@title blaat @group', [
+            '#title' => t('@title in @group', [
               '@title' => $title,
               '@group' => $group->label(),
             ], ['context' => 'social_page_title']),
