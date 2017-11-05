@@ -62,10 +62,10 @@ script:
   - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
   - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1; fi
+  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 stability-2 stability-3 stability-4 "stability-5&&~DS-1136&&~DS-3605"; fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
-

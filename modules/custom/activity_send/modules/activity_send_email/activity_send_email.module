@@ -141,24 +141,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $all_email_message_keys[1] => $all_email_message_values[1],
     ];
 
-    $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
-    $plugins = $emailfrequencymanager->getDefinitions();
-
-    $emailfrequencies = [];
-
-    // Fill a sortable array with the data about the email frequency.
-    foreach ($plugins as $frequency) {
-      /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
-      $instance = $emailfrequencymanager->createInstance($frequency['id']);
-      $emailfrequencies[] = [
-        'id' => $frequency['id'],
-        'name' => $instance->getName(),
-        'weight' => $instance->getWeight(),
-      ];
-    }
-
-    // Sort the email frequencies by their weight.
-    uasort($emailfrequencies, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+    // Sort a list of email frequencies by weight.
+    $emailfrequencies = sortEmailFrequencyOptions();
 
     $notification_options = [];
 
@@ -247,6 +231,35 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
     EmailActivityDestination::setSendEmailUserSettings($account, $values);
   }
 
+}
+
+/**
+ * Sort the email frequencies by weight.
+ *
+ * @return array
+ *   A sorted array of frequency options by weight.
+ */
+function sortEmailFrequencyOptions() {
+  $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+  $plugins = $emailfrequencymanager->getDefinitions();
+
+  $emailfrequencies = [];
+
+  // Fill a sortable array with the data about the email frequency.
+  foreach ($plugins as $frequency) {
+    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+    $instance = $emailfrequencymanager->createInstance($frequency['id']);
+    $emailfrequencies[] = [
+      'id' => $frequency['id'],
+      'name' => $instance->getName(),
+      'weight' => $instance->getWeight(),
+    ];
+  }
+
+  // Sort the email frequencies by their weight.
+  uasort($emailfrequencies, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+
+  return $emailfrequencies;
 }
 
 /**
