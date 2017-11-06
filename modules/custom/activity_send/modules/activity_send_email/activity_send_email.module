@@ -36,7 +36,8 @@ function activity_send_email_cron() {
       // If interval of frequency passed since last time, try to create queue
       // items.
       if ((time() - $last_run) > $interval) {
-        // Query to get the data to process per user per frequency. That should actually be sent...
+        // Query to get the data to process per user per frequency. And we make
+        // sure to check only for items that need to be sent.
         $db = Database::getConnection();
         $query = $db->select('user_activity_digest', 'uad')
           ->fields('uad', ['uid', 'activity'])
@@ -61,7 +62,8 @@ function activity_send_email_cron() {
             $queue = \Drupal::queue('activity_digest_worker');
             $queue->createItem($queue_item);
 
-            // Remove activities from digest table that we just put it in the queue.
+            // Remove activities from digest table that we just put it in the
+            // queue.
             $db->delete('user_activity_digest')
               ->condition('uid', $queue_item['uid'])
               ->condition('activity', $queue_item['activities'], 'IN')
@@ -88,14 +90,14 @@ function activity_send_email_theme() {
         'notification_count' => NULL,
         'notifications' => NULL,
         'notification_settings' => NULL,
-      ]
+      ],
     ],
     'directmail' => [
       'template' => 'directmail',
       'variables' => [
         'notification' => NULL,
         'notification_settings' => NULL,
-      ]
+      ],
     ],
   ];
   return $items;
@@ -142,7 +144,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     ];
 
     // Sort a list of email frequencies by weight.
-    $emailfrequencies = sortEmailFrequencyOptions();
+    $emailfrequencies = sort_email_frequency_options();
 
     $notification_options = [];
 
@@ -239,7 +241,7 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
  * @return array
  *   A sorted array of frequency options by weight.
  */
-function sortEmailFrequencyOptions() {
+function sort_email_frequency_options() {
   $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
   $plugins = $emailfrequencymanager->getDefinitions();
 
@@ -257,7 +259,7 @@ function sortEmailFrequencyOptions() {
   }
 
   // Sort the email frequencies by their weight.
-  uasort($emailfrequencies, array('Drupal\Component\Utility\SortArray', 'sortByWeightElement'));
+  uasort($emailfrequencies, ['Drupal\Component\Utility\SortArray', 'sortByWeightElement']);
 
   return $emailfrequencies;
 }

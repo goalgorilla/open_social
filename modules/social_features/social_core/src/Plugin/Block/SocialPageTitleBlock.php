@@ -52,10 +52,12 @@ class SocialPageTitleBlock extends PageTitleBlock {
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = \Drupal::service('title_resolver')->getTitle($request, $route);
         if ($group && $request->attributes->get('_route') == 'entity.group_content.create_form') {
-          // @todo pass the variables via placeholders in the t() function.
           return [
             '#type' => 'page_title',
-            '#title' => t($title . ' in ' . $group->label()),
+            '#title' => t('@title in @group', [
+              '@title' => $title,
+              '@group' => $group->label(),
+            ], ['context' => 'social_page_title']),
           ];
         }
         else {
