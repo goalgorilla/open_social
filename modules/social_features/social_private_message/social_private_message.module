@@ -59,7 +59,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 
   // There's an alternative submit. We need to change its value.
-  foreach($form['actions'] as $key => &$actions) {
+  foreach ($form['actions'] as $key => &$actions) {
     // Must be pretty sure it's a submit button.
     if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit'])) {
       // Key must have submit in it.
@@ -84,7 +84,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   // Alter the message widget.
   // Add the required tag.
   $form['message']['widget']['#attributes']['required'] = 'required';
-  // Normal submit button shoud say 'Next'
+  // Normal submit button shoud say 'Next'.
   $form['actions']['submit']['#value'] = t('Next');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
 
@@ -106,10 +106,12 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
 /**
  * Redirects the form to the inbox.
  *
- * @param $form
+ * @param array $form
+ *   The form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
  */
-function social_private_message_thread_delete_redirect($form, FormStateInterface $form_state) {
+function social_private_message_thread_delete_redirect(array $form, FormStateInterface $form_state) {
   // Set a nice message.
   drupal_set_message(t('Your message has been deleted.'));
   // Force redirect to the inbox.
@@ -120,10 +122,12 @@ function social_private_message_thread_delete_redirect($form, FormStateInterface
 /**
  * Redirects the form to the inbox.
  *
- * @param $form
+ * @param array $form
+ *   The form.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
  */
-function social_private_message_redirect($form, FormStateInterface $form_state) {
+function social_private_message_redirect(array $form, FormStateInterface $form_state) {
   // Set a nice message.
   drupal_set_message(t('Your message has been created.'));
   // Force redirect to the inbox.
@@ -162,7 +166,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
           unset($members[$key]);
         }
         else {
-          $members_string[]= $member->getDisplayName();
+          $members_string[] = $member->getDisplayName();
         }
       }
       // Count the amount of members.
@@ -285,7 +289,7 @@ function social_private_message_private_message_thread_insert(EntityInterface $e
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function social_private_message_pm_thread_delete_time_update(Drupal\Core\Entity\EntityInterface $entity) {
+function social_private_message_pm_thread_delete_time_update(EntityInterface $entity) {
   $socialPrivateMessageService = Drupal::service('social_private_message.service');
   $socialPrivateMessageService->deleteUserDataThreadInfo($entity);
 }

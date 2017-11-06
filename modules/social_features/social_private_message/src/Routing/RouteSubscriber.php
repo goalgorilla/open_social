@@ -28,4 +28,5 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefault('_title', '');
     }
   }
+
 }

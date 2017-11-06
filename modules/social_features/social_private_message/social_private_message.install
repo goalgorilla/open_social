@@ -20,7 +20,6 @@ function social_private_message_install() {
   $config->set('send_by_default', FALSE)->save();
 }
 
-
 /**
  * Function to set permissions.
  */
@@ -57,14 +56,10 @@ function _social_private_message_get_permissions($role) {
   ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
-
-  ]);
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
-
-  ]);
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];

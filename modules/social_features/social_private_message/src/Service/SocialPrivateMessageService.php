@@ -4,6 +4,7 @@ namespace Drupal\social_private_message\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Service\PrivateMessageService;
@@ -25,7 +26,6 @@ class SocialPrivateMessageService extends PrivateMessageService {
    */
   protected $database;
 
-
   /**
    * {@inheritdoc}
    */
@@ -37,20 +37,20 @@ class SocialPrivateMessageService extends PrivateMessageService {
   /**
    * Update the last time the thread was checked by the user.
    *
-   * @param $entity
-   *    The thread entity.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *   The thread entity.
    */
-  public function updateLastThreadCheckTime($entity) {
+  public function updateLastThreadCheckTime(Entity $entity) {
     $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), REQUEST_TIME);
   }
 
   /**
    * Remove the thread info from the user_data.
    *
-   * @param $entity
-   *    The thread entity.
+   * @param \Drupal\Core\Entity\Entity $entity
+   *   The thread entity.
    */
-  public function deleteUserDataThreadInfo($entity) {
+  public function deleteUserDataThreadInfo(Entity $entity) {
     $this->userData->delete('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id());
   }
 
@@ -58,7 +58,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    * Update the unread thread count.
    *
    * @return int
-   *    The number of unread threads.
+   *   The number of unread threads.
    */
   public function updateUnreadCount() {
     // Get the user.

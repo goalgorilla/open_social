@@ -29,8 +29,9 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
         $threads = $thread_info['threads'];
 
         /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
-        // This custom sort, sorts based on newestmessage timestamp in the thread.
-        uasort($threads, array($this, "custom_sort"));
+        // This custom sort, sorts based on newestmessage timestamp in the
+        // thread.
+        uasort($threads, [$this, "customSort"]);
         // The above sorts ascending... so:
         $threads = array_reverse($threads);
 
@@ -50,8 +51,8 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
       $new_token = $this->csrfToken->get($new_url->getInternalPath());
       $new_url->setOptions(['absolute' => TRUE, 'query' => ['token' => $new_token]]);
 
-      // Add the default classes, as these are not added when the block output is overridden with
-      // a template
+      // Add the default classes, as these are not added when the block
+      // output is overridden with a template.
       $block['#attributes']['class'][] = 'block';
       $block['#attributes']['class'][] = 'block-private-message';
       $block['#attributes']['class'][] = 'block-private-message-inbox-block';
@@ -69,7 +70,10 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
     return $cache_contexts;
   }
 
-  public function custom_sort($pmt1, $pmt2) {
+  /**
+   * Sorts the inbox based on last updated time.
+   */
+  public function customSort($pmt1, $pmt2) {
 
     /* @var \Drupal\private_message\Entity\PrivateMessageThread $pmt1 */
     /* @var \Drupal\private_message\Entity\PrivateMessageThread $pmt2 */

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_private_message\Plugin\Field\FieldFormatter;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FormatterBase;
@@ -10,11 +9,12 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Class SocialPrivateMessageMemberFormatter.
+ *
  * @FieldFormatter(
  *   id = "social_private_message_member_formatter",
  *   label = @Translation("Social Private Message Members"),
@@ -26,26 +26,43 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialPrivateMessageMemberFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager service
+   * The entity manager service.
    *
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
   /**
-   * The current user
+   * The current user.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $currentUser;
 
   /**
-   * Construct a PrivateMessageThreadFormatter object
+   * Construct a PrivateMessageThreadFormatter object.
    *
+   * @param string $plugin_id
+   *   The plugin_id for the formatter.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the formatter is associated.
+   * @param array $settings
+   *   The formatter settings.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array $third_party_settings
+   *   Any third party settings.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
-   *   The entity manager service
-   * @param |Drupal\Core\Session\AccountProxyInterface $currentUser
-   *   The current user
+   *   The entity manager service.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current logged in user.
+   *
+   * @internal param $ |Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, EntityManagerInterface $entityManager, AccountProxyInterface $currentUser) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
@@ -102,9 +119,9 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
    */
   public static function defaultSettings() {
     return [
-        'display_type' => 'label',
-        'entity_display_mode' => 'private_message_author',
-      ] + parent::defaultSettings();
+      'display_type' => 'label',
+      'entity_display_mode' => 'private_message_author',
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -135,7 +152,13 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
     }
 
     $setting_key = 'display_type';
-    if ($value = $form_state->getValue(['fields', $this->getFieldName(), 'settings_edit_form', 'settings', $setting_key])) {
+    if ($value = $form_state->getValue([
+      'fields',
+      $this->getFieldName(),
+      'settings_edit_form',
+      'settings',
+      $setting_key,
+    ])) {
       $display_type = $value;
     }
     else {
@@ -156,7 +179,7 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
   }
 
   /**
-   * Ajax callback for settings form
+   * Ajax callback for settings form.
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state) {
     return $form['fields'][$this->getFieldName()]['plugin']['settings_edit_form']['settings']['entity_display_mode'];
@@ -208,13 +231,17 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
     $element = [
       '#prefix' => '<div class="private-message-recipients">',
       '#suffix' => '</div>',
-      $participants
     ];
+    $element += $participants;
 
     return $element;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function getFieldName() {
     return $this->fieldDefinition->getItemDefinition()->getFieldDefinition()->getName();
   }
+
 }
