@@ -228,7 +228,6 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     elseif ($build['#view_mode'] === 'full') {
       /* @var \Drupal\private_message\Entity\PrivateMessage $entity */
       if (Drupal::currentUser()->id() === $entity->getOwnerId()) {
-        // @TODO mark the message as my message.
         $build['#prefix'] = '<div class="message__by-me">' . $build['#prefix'];
         $build['#suffix'] = '</div>' . $build['#suffix'];
         // Current user is 'You'.
