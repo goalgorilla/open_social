@@ -8,9 +8,7 @@ use Drupal\Core\Entity\Entity;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Entity\PrivateMessageThread;
 use Drupal\private_message\Service\PrivateMessageService;
-use Drupal\user\Entity\User;
 use Drupal\user\UserDataInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Class SocialPrivateMessageService.
@@ -62,9 +60,9 @@ class SocialPrivateMessageService extends PrivateMessageService {
    */
   public function updateUnreadCount() {
     // Get the user.
-    $user = User::load($this->currentUser->id());
+    $uid = $this->currentUser->id();
     // Get all the thread id's for this user.
-    $thread_info = $this->getAllThreadIdsForUser($user);
+    $thread_info = $this->getAllThreadIdsForUser($uid);
     // Load these threads.
     $threads = PrivateMessageThread::loadMultiple($thread_info);
 
@@ -87,7 +85,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    *
    * {@inheritdoc}
    */
-  public function getAllThreadIdsForUser(UserInterface $user) {
+  public function getAllThreadIdsForUser($uid) {
     $query = 'SELECT DISTINCT(thread.id), MAX(thread.updated) ' .
       'FROM {private_message_threads} AS thread ' .
       'JOIN {private_message_thread__members} AS member ' .
@@ -101,7 +99,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
       'JOIN {pm_thread_delete_time} as owner_delete_time ' .
       'ON owner_delete_time.id = thread_delete_time.last_delete_time_target_id AND owner_delete_time.owner = :uid ' .
       'WHERE owner_delete_time.delete_time <= messages.created ';
-    $vars = [':uid' => $user->id()];
+    $vars = [':uid' => $uid];
 
     $query .= 'GROUP BY thread.id ORDER BY MAX(thread.updated) ASC, thread.id';
 

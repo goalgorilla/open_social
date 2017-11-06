@@ -55,13 +55,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
   protected $entityTypeManager;
 
   /**
-   * The Private Message Service.
-   *
-   * @var \Drupal\private_message\Service\PrivateMessageService
-   */
-  protected $privateMessage;
-
-  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
@@ -192,18 +185,18 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
-        $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
-
-        if ($num_account_messages === 0) {
-          $message_icon = 'icon-mail_outline';
-          $label_classes = 'hidden';
-        }
-        else {
-          $message_icon = 'icon-mail';
-          $label_classes = 'badge badge-accent badge--pill';
-        }
-
         if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
+          $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+          if ($num_account_messages === 0) {
+            $message_icon = 'icon-mail_outline';
+            $label_classes = 'hidden';
+          }
+          else {
+            $message_icon = 'icon-mail';
+            $label_classes = 'badge badge-accent badge--pill';
+          }
+
           $links['messages'] = [
             'classes' => '',
             'link_attributes' => '',
