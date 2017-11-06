@@ -186,13 +186,14 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
         if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
+          // Fetch the amount of unread items.
           $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
 
-          if ($num_account_messages === 0) {
-            $message_icon = 'icon-mail_outline';
-            $label_classes = 'hidden';
-          }
-          else {
+          // Default icon values.
+          $message_icon = 'icon-mail_outline';
+          $label_classes = 'hidden';
+          // Override icons when there are unread items.
+          if ($num_account_messages > 0) {
             $message_icon = 'icon-mail';
             $label_classes = 'badge badge-accent badge--pill';
           }
