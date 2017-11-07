@@ -62,12 +62,15 @@ function social_user_export_views_data_alter(array &$data) {
 }
 
 /**
+ * Returns the user admin people view.
+ *
  * @param array $query
  *   Query parameters for exposed filters.
  * @param bool $execute
  *   If TRUE, views query will be executed.
  *
  * @return \Drupal\views\ViewExecutable
+ *   The requested view.
  */
 function _social_user_export_get_view(array $query = [], $execute = TRUE) {
   $view = Views::getView('user_admin_people');

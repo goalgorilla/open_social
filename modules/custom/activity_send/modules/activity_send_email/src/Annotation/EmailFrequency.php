@@ -30,14 +30,14 @@ class EmailFrequency extends Plugin {
   /**
    * The weight of the frequency option.
    *
-   * @var integer
+   * @var int
    */
   public $weight;
 
   /**
-   * The send interval of the email frequency in seconds
+   * The send interval of the email frequency in seconds.
    *
-   * @var integer
+   * @var int
    */
   public $interval;
 

@@ -49,7 +49,8 @@ principles. Most re-usable css values are turned into variables for consistency.
 <dd>Drupal installation files</dd>
 <dt># src</dt>
 <dd>Drupal plugins - contains most functions and template suggestions. 
-@see [Drupal Bootstrap documentation](https://drupal-bootstrap.org/api/bootstrap/docs%21plugins%21README.md/group/plugins/8) on how to extend this in your subtheme.</dd>
+@see [Drupal Bootstrap documentation](https://drupal-bootstrap.org/api/bootstrap/docs%21plugins%21README.md/group/plugins/8)
+on how to extend this in your subtheme.</dd>
 
 <dt># Templates</dt>
 <dd>This folder contains all twig templates for the theme.</dd>
@@ -99,7 +100,10 @@ gulpfile with the task itself. To run a gulp task, type:
 # Notice
 We are constantly improving and updating the theme setup for Open Social. It
 might be the readme is not always up to date. Also check the changelog file for
-changes. You can report issues via the drupal.org [issue queue](https://www.drupal.org/project/issues/social?categories=All).
+changes. You can report issues via the drupal.org
+[issue queue](https://www.drupal.org/project/issues/social?categories=All).
 The following items are on our roadmap:
-* Add components library module and create twig templates in the components folder.
-* Provide a starterkit in favor a manual copying Social Blue to start a new theme.
+* Add components library module and create twig templates in the components
+folder.
+* Provide a starterkit in favor a manual copying Social Blue to start a new
+theme.

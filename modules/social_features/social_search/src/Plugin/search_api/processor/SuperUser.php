@@ -19,7 +19,6 @@ use Drupal\user\UserInterface;
  *   },
  * )
  */
-
 class SuperUser extends ProcessorPluginBase {
 
   /**
@@ -54,4 +53,5 @@ class SuperUser extends ProcessorPluginBase {
       }
     }
   }
+
 }
