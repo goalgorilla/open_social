@@ -124,15 +124,10 @@ class Dropdown extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
-  public function setValue($values, $notify = TRUE) {
-    parent::setValue($values, $notify);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function isEmpty() {
-    return (!isset($this->values['value'])) || (empty($this->values['value']) && (string) $this->values['value'] !== '0');
+    // We're empty if we have no value set,
+    // or we have a value that's neither a string nor an integer.
+    return !isset($this->values['value']) || (!is_int($this->values['value']) && !is_string($this->values['value']));
   }
 
   /**

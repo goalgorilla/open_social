@@ -126,12 +126,6 @@ function socialbase_preprocess_form(&$variables) {
       }
     }
   }
-
-  if ($element['#form_id'] === 'social_user_password_form') {
-    $form['mail']['#prefix'] = '<div class="help-block">';
-    $form['mail']['#suffix'] = '</div>';
-  }
-
 }
 
 /**
