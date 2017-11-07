@@ -225,11 +225,11 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
       $participants = $profile_picture;
     }
     else {
-      $participants['#markup'] = '<div class="media-left avatar"><span class="avatar-icon avatar-group-icon avatar-group-icon--small"></span></div>' . implode($separator, $users);
+      $participants['#markup'] = '<div class="media-left avatar"><span class="avatar-icon avatar-group-icon avatar-group-icon--small"></span></div><div class="media-body">' . implode($separator, $users) . '</div>';
     }
 
     $element = [
-      '#prefix' => '<div class="private-message-recipients">',
+      '#prefix' => '<div class="media message__recipients">',
       '#suffix' => '</div>',
     ];
     $element += $participants;
