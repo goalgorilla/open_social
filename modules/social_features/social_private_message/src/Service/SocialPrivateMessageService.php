@@ -67,13 +67,15 @@ class SocialPrivateMessageService extends PrivateMessageService {
     $threads = PrivateMessageThread::loadMultiple($thread_info);
 
     $unread = 0;
+    /* @var PrivateMessageThread $thread */
     foreach ($threads as $thread) {
-      // Check if the user has a timestamp on the thread.
-      $user_last_check = $this->userData->get('private_message', $this->currentUser->id(), 'private_message_thread:' . $thread->id());
-      // Compare the user_last_check timestamp with the latest updated
-      // timestamp from the thread itself.
-      /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
-      if ($thread->getUpdatedTime() > $user_last_check) {
+      // Check if the user has a timestamp on the thread and.
+      $thread_last_check_user = $this->userData->get('private_message', $uid, 'private_message_thread:' . $thread->id());
+      // Check the last time someone other than the current user added
+      // something to this thread.
+      $thread_last_message = $this->getLastMessageFromOtherUser($uid, $thread->id());
+      // Compare  those two.
+      if ($thread_last_message > $thread_last_check_user) {
         $unread++;
       }
     }
@@ -109,6 +111,37 @@ class SocialPrivateMessageService extends PrivateMessageService {
     )->fetchCol();
 
     return is_array($thread_ids) ? $thread_ids : [];
+  }
+
+  /**
+   * Last time a message was added to the thread by another user than current.
+   *
+   * @param int $uid
+   *   The user id.
+   * @param int $theadid
+   *   The thread id.
+   *
+   * @return int
+   *   The timestamp.
+   */
+  public function getLastMessageFromOtherUser($uid, $theadid) {
+    $query = "SELECT MAX(`pm`.`created`) FROM `private_message_thread__private_messages` `pmt`  JOIN `private_messages` `pm` ON `pm`.`id` = `pmt`.`private_messages_target_id` WHERE `pmt`.`entity_id` = :pmt AND `pm`.`owner` <> :uid";
+    $vars = [
+      ':uid' => $uid,
+      ':pmt' => $theadid,
+    ];
+
+    $timestamp = $this->database->query(
+      $query,
+      $vars
+    )->fetchCol();
+
+    // Chop of the head.
+    if (is_array($timestamp)) {
+      $timestamp = $timestamp[0];
+    }
+
+    return $timestamp;
   }
 
 }
