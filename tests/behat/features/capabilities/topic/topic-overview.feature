@@ -6,7 +6,11 @@ Feature: Topic Overview
 
   @perfect @critical
   Scenario: Successfully see the topic overview
-    Given I am logged in as an "authenticated user"
+    Given users:
+      | name       | pass       | mail                   | status |
+      | toverview1 | toverview1 | toverview1@example.com | 1      |
+      | toverview2 | toverview2 | toverview2@example.com | 1      |
+    And I am logged in as "toverview1"
     And I am on "user"
     When I click "Topics"
      Then I should see "Topics" in the "Page title block"
@@ -15,8 +19,11 @@ Feature: Topic Overview
     And I should see text matching "has the publish status of"
 
   # Scenario: Successfully see the topic overview of another user
-    Given I am on "user/1"
-    When I click "Topics"
+    Given I am logged in as "toverview2"
+    And I am on "all-members"
+    Then I should see "toverview1"
+    When I click "toverview1"
+    And I click "Topics"
     Then I should see "Topics" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"
     And I should not see text matching "has the publish status of"

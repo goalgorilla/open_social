@@ -5,37 +5,31 @@
  * Lists available colors and color schemes for the Social Blue theme.
  */
 
-$info = array(
+$info = [
   // Available colors and color labels used in theme.
-  'fields' => array(
+  'fields' => [
     'brand-bg-primary' => t('Primary color'),
     'brand-bg-secondary' => t('Secondary color'),
     'brand-bg-accent' => t('Accent color'),
     'brand-text-primary' => t('Link color'),
-  ),
+  ],
   // Pre-defined color schemes.
-  'schemes' => array(
-    'default' => array(
+  'schemes' => [
+    'default' => [
       'title' => t('Social Blue (default)'),
-      'colors' => array(
+      'colors' => [
         'brand-bg-primary' => '#29abe2',
         'brand-bg-secondary' => '#1f80aa',
         'brand-bg-accent' => '#ffc142',
         'brand-text-primary' => '#33b5e5',
-      ),
-    ),
-  ),
-
-  // CSS files (excluding @import) to rewrite with new color scheme.
-  // @TODO make sure we rewrite the correct color.css
-  'css' => array(
-    'assets/css/brand.css',
-  ),
+      ],
+    ],
+  ],
 
   // Files to copy.
-  'copy' => array(
+  'copy' => [
     'logo.svg',
-  ),
+  ],
 
   /**
    * Gradient definitions.
@@ -70,4 +64,4 @@ $info = array(
       ],
     ],
   ],
-);
+];
