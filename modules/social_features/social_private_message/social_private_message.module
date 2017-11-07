@@ -85,7 +85,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   // Add the required tag.
   $form['message']['widget']['#attributes']['required'] = 'required';
   // Normal submit button shoud say 'Next'.
-  $form['actions']['submit']['#value'] = t('Next');
+  $form['actions']['submit']['#value'] = t('Send');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
 
   // Determine if the form is an PMT edit form.
