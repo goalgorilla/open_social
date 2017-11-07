@@ -6,7 +6,6 @@ use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 use League\Csv\Writer;
 use Drupal\Core\Link;
-use Drupal\user\Entity\User;
 
 /**
  * Class ExportUser.
@@ -19,9 +18,11 @@ class ExportUser {
    * Callback of one operation.
    *
    * @param \Drupal\user\UserInterface $entity
-   * @param $context
+   *   UserInterface entity.
+   * @param array $context
+   *   Context of the operation.
    */
-  public static function exportUserOperation(UserInterface $entity, &$context) {
+  public static function exportUserOperation(UserInterface $entity, array &$context) {
     if (empty($context['results']['file_path'])) {
       $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
@@ -101,9 +102,11 @@ class ExportUser {
    * Callback of massive operations.
    *
    * @param array $conditions
+   *   Conditions of the operation.
    * @param array $context
+   *   Context of the operation.
    */
-  public static function exportUsersAllOperation($conditions, &$context) {
+  public static function exportUsersAllOperation(array $conditions, array &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['current_id'] = 0;
@@ -150,10 +153,13 @@ class ExportUser {
    * Callback when batch is complete.
    *
    * @param bool $success
+   *   Boolean to indicate success of the batch.
    * @param array $results
+   *   The results.
    * @param array $operations
+   *   Operations that the batch performed.
    */
-  public static function finishedCallback($success, $results, $operations) {
+  public static function finishedCallback($success, array $results, array $operations) {
     if ($success && !empty($results['file_path'])) {
       $data = @file_get_contents($results['file_path']);
       $name = basename($results['file_path']);

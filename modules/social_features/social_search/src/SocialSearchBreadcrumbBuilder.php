@@ -45,17 +45,17 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
       case 'view.search_users.page':
       case 'view.search_users.page_no_value':
-      // No value because of duplicate words.
+        // No value because of duplicate words.
         break;
 
       case 'view.search_groups.page':
       case 'view.search_groups.page_no_value':
-      // No value because of duplicate words.
+        // No value because of duplicate words.
         break;
 
       case 'view.search_all.page':
       case 'view.search_all.page_no_value':
-      // No value because of duplicate words.
+        // No value because of duplicate words.
         break;
 
       default:

@@ -6,7 +6,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
-
 /**
  * Class SocialEmbedConfigOverride.
  *
@@ -36,8 +35,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
         'provider' => 'url_embed',
         'status' => TRUE,
         'weight' => 100,
-        'settings' => [
-        ],
+        'settings' => [],
       ];
 
       $filters['social_embed_convert_url'] = [
@@ -46,7 +44,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
         'status' => TRUE,
         'weight' => (isset($filters['filter_url']['weight']) ? $filters['filter_url']['weight'] - 1 : $filters['url_embed']['weight'] - 1),
         'settings' => [
-          'url_prefix' => ''
+          'url_prefix' => '',
         ],
       ];
 
