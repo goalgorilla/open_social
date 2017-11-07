@@ -26,12 +26,6 @@ $info = [
     ],
   ],
 
-  // CSS files (excluding @import) to rewrite with new color scheme.
-  // @TODO make sure we rewrite the correct color.css
-  'css' => [
-    'assets/css/brand.css',
-  ],
-
   // Files to copy.
   'copy' => [
     'logo.svg',
