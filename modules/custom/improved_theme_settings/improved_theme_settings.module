@@ -5,7 +5,6 @@
  * Improved theme settings module file.
  */
 
-use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Markup;
@@ -140,6 +139,14 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       background-color: $secondary !important;
       border-color: $secondary !important;
     }
+    
+    .badge-secondary {
+      background-color: $secondary !important;
+    }
+    
+    .badge-accent {
+      background-color: $accent !important;
+    }
 
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
@@ -153,16 +160,26 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       background-color: $primary !important;
       border-color: $primary !important;
     }
+    
+    .btn-accent {
+      background-color: $accent !important;
+      border-color: $accent !important;
+    }
 
-    .btn-flat {
+    .btn-flat,
+    .btn-link,
+    .card__link,
+    .view--who-liked .views-field-view-user a {
       color: $link !important;
       fill: $link !important;
     }
 
+    .btn-link:hover,
     .btn-flat:hover {
       color: inherit !important;
     }
 
+    .list-item--active, .list-item--active:hover, .list-item--active:focus,
     .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
       background-color: $secondary !important;
       border-color: $secondary !important;
@@ -174,7 +191,7 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
     }
 
     .stream-icon-new {
-      background: $secondary !important;
+      background-color: $secondary !important;
     }
 
     .comment__reply-btn {
@@ -209,7 +226,17 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
 
     .navbar-default .dropdown-menu > .active > a,
     .navbar-default .dropdown-menu > .active > a:hover,
-    .navbar-default .dropdown-menu > .active > a:focus {
+    .navbar-default .dropdown-menu > .active > a:focus,
+    .site-footer {
+      background-color: $primary !important;
+    }
+
+    .navbar-secondary {
+      background-color: $secondary !important;
+    }
+    
+    .cover,
+    .navbar-brand {
       background-color: $primary !important;
     }
 
@@ -220,6 +247,10 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
     .navbar-scrollable:after {
       background: linear-gradient(-90deg, $secondary, transparent) !important;
     }
+    
+    .ui-datepicker-calendar > tbody > tr > td .ui-state-active {
+      background-color: $secondary !important;
+     }
 
   ";
 
@@ -246,7 +277,7 @@ function improved_theme_settings_page_attachments(array &$page) {
   // We render our color & font settings in the head. Only if socialblue is
   // the default theme. And only if the current active theme is socialblue.
   // Otherwise we also render it on all admin pages.
-  if ($system_theme_settings === 'socialblue' || $system_theme_settings === 'socialsaas') {
+  if (array_key_exists('socialbase', \Drupal::service('theme.manager')->getActiveTheme()->getBaseThemes())) {
     if ($active_theme == $system_theme_settings) {
       $style_to_add = '';
       if (\Drupal::moduleHandler()->moduleExists('social_font')) {
@@ -335,7 +366,6 @@ function improved_theme_settings_page_attachments(array &$page) {
         ';
       }
 
-
       // Get the color palette saved for custom social blue.
       $colors = color_get_palette($system_theme_settings);
       $default = color_get_palette($system_theme_settings, TRUE);
@@ -358,24 +388,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           // altering.
           'social_theme_preprocess',
         ];
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_css_alter().
- */
-function improved_theme_settings_css_alter(&$css, AttachedAssetsInterface $assets) {
-  // Remove the imported brand.css from theme. There's no need to use this file.
-  // Only in case of other colors, the generated brand.css needs to be used.
-  foreach ($css as $key => $singlecss) {
-    // First check if there's a brand.css file in there.
-    if (strpos($singlecss['data'], 'brand.css') > 0) {
-      // Must be public, otherwise remove it.
-      if (strpos($singlecss['data'], 'public://') === FALSE) {
-        // Not pubic, so it must be unset.
-        unset($css[$key]);
       }
     }
   }
