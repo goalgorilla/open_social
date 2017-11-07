@@ -31,7 +31,7 @@ function socialbase_preprocess_input(&$variables) {
 
   if (isset($variables['element']['#array_parents'])) {
     if (in_array('save_modal', $variables['element']['#array_parents'], TRUE)) {
-     $variables['button_type'] = 'primary';
+      $variables['button_type'] = 'primary';
     }
   }
 
@@ -108,7 +108,7 @@ function socialbase_preprocess_textarea(&$variables) {
     $autogrow_areas = [
       'field_post',
       'field_comment_body',
-      'message'
+      'message',
     ];
 
     $c = array_intersect($context, $autogrow_areas);

@@ -10,7 +10,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
-use Drupal\private_message\Service\PrivateMessageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

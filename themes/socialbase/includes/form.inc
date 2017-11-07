@@ -157,19 +157,20 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function socialbase_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  foreach($form['actions'] as $key => &$actions) {
+  foreach ($form['actions'] as $key => &$actions) {
     // Must be pretty sure it's a submit button.
-    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit']))
+    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit'])) {
       // Key must have submit in it.
       if (strpos($key, 'submit-') !== FALSE) {
         $actions['#button_type'] = 'flat';
         $actions['#comment_button'] = TRUE;
       }
-      else {
-        // @TODO for new message
-      }
+    }
   }
 
 }
@@ -223,8 +224,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['#attributes']['novalidate'] = 'novalidate';
   }
 
-  // In the code above we disable HTML5 native validation, for the following forms
-  // enable validating. These forms only have required attributes.
+  // In the code above we disable HTML5 native validation,
+  // for the following forms enable validating.
+  // These forms only have required attributes.
   $validate_forms = [
     'private_message_add_form',
     'comment_post_comment_form',

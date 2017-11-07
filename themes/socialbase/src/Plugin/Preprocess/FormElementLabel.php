@@ -35,7 +35,6 @@ class FormElementLabel extends BaseFormElementLabel {
         $variables['title_display'] = 'invisible';
       }
 
-
     }
 
     parent::preprocessElement($element, $variables);

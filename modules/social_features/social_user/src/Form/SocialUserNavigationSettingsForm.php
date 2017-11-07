@@ -66,7 +66,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
     $form['navigation_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Display icon configuration'),
-      '#description' => $this->t('Select which icons you want to show or hide in the main (top) navigation bar.')
+      '#description' => $this->t('Select which icons you want to show or hide in the main (top) navigation bar.'),
     ];
 
     // Check if the module is enabled before we show the setting.
