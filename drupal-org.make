@@ -66,6 +66,7 @@ projects[views_infinite_scroll][version] = 1.5
 projects[url_embed][type] = module
 projects[url_embed][version] = 1.0-alpha1
 projects[url_embed][patch][] = "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch"
+projects[url_embed][patch][] = "https://www.drupal.org/files/issues/caching_layer_url_embed_2867668-14.patch"
 projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha2
 projects[bootstrap][type] = theme
