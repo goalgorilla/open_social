@@ -1,25 +1,61 @@
 /*!
- * This will only work with
+ * This will only work with javascript
  */
 
 @import 'settings';
+
+// Multiselect
+//
+// For multi select we use the Select2 library together with our custom theme.
+// Select2 is a jQuery-based replacement for select boxes. It supports searching,
+// remote data sets, and pagination of results.
+//
+// To enable Select2 you need to initialize the script. You can see a simple example below.
+//
+//```javascript
+//(function ($) {
+//
+//  'use strict';
+//
+//  Drupal.behaviors.initSelect2 = {
+//    attach: function (context, settings) {
+//      $('select[multiple]').once('select2').each(function () {
+//        var options = {
+//          theme: 'social',
+//          placeholder: Drupal.t('Select an option')
+//        };
+//
+//        $(this).select2(options);
+//
+//      });
+//    }
+//  };
+//
+//})(jQuery);
+//```
+//
+// Markup: multiselect.twig
+//
+// Weight: 10
+//
+// Style guide: molecules.form-elements.multi-select
+
+
 
 .select2-container--social {
   display: block;
 }
 
 .select2-container--social .select2-selection {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: #555555;
-  font-size: 14px;
   outline: 0;
-}
 
-.select2-container--social .select2-selection.form-control {
-  border-radius: 4px;
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    font-size: $font-size-base;
+  }
+
+  @include for-tablet-landscape-up {
+    font-size: $font-size-base;
+  }
 }
 
 .select2-container--social .select2-search--dropdown .select2-search__field {
