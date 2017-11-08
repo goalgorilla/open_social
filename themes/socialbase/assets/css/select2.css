@@ -1,26 +1,17 @@
 /*!
- * This will only work with
+ * This will only work with javascript
  */
 .select2-container--social {
   display: block;
 }
 
 .select2-container--social .select2-selection {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: #555555;
-  font-size: 14px;
   outline: 0;
 }
 
-.select2-container--social .select2-selection.form-control {
-  border-radius: 4px;
-}
-
 .select2-container--social .select2-search--dropdown .select2-search__field {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -109,9 +100,12 @@
 }
 
 .select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
-  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
 }
 
 .select2-container--social.select2-container--open .select2-selection .select2-selection__arrow b {
@@ -145,6 +139,7 @@
 
 .select2-container--social.select2-container--disabled .select2-selection {
   border-color: #ccc;
+  -webkit-box-shadow: none;
   box-shadow: none;
 }
 
@@ -164,13 +159,15 @@
 }
 
 .select2-container--social .select2-dropdown {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   overflow-x: hidden;
   margin-top: -1px;
 }
 
 .select2-container--social .select2-dropdown--above {
-  box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.175);
+  -webkit-box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.175);
+          box-shadow: 0px -6px 12px rgba(0, 0, 0, 0.175);
   margin-top: 1px;
 }
 
@@ -234,6 +231,7 @@
 }
 
 .select2-container--social .select2-selection--multiple .select2-selection__rendered {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   display: block;
   line-height: 1.42857143;
@@ -463,6 +461,7 @@
 
 .has-warning .select2-container--focus .select2-selection,
 .has-warning .select2-container--open .select2-selection {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
   border-color: #66512c;
 }
@@ -482,6 +481,7 @@
 
 .has-error .select2-container--focus .select2-selection,
 .has-error .select2-container--open .select2-selection {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
   border-color: #843534;
 }
@@ -501,6 +501,7 @@
 
 .has-success .select2-container--focus .select2-selection,
 .has-success .select2-container--open .select2-selection {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
   border-color: #2b542c;
 }
@@ -594,5 +595,17 @@
 @media (min-width: 768px) {
   .form-inline .select2-container--social {
     display: inline-block;
+  }
+}
+
+@media (min-width: 900px) {
+  .select2-container--social .select2-selection {
+    font-size: 16px;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .select2-container--social .select2-selection {
+    font-size: 16px;
   }
 }
