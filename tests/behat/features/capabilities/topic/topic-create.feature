@@ -28,6 +28,6 @@ Feature: Create Topic
     Then I should not see "Enrollments"
     When I fill in the following:
       | Title | This is a test topic - edit |
-    And I press "Save and keep published"
+    And I press "Save"
     Then I should see "Topic This is a test topic - edit has been updated"
     And I should see "This is a test topic - edit" in the "Hero block"
