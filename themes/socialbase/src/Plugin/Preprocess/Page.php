@@ -19,6 +19,7 @@ class Page extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    parent::preprocess($variables, $hook, $info);
 
     // Add needed attributes so later in template we can manipulate with them.
     $attributes = new Attribute();
@@ -27,6 +28,7 @@ class Page extends PreprocessBase {
     // If page has title.
     if ($variables['page']['title']) {
       $attributes->addClass('with-title-region');
+      $variables['display_page_title'] = TRUE;
     }
 
     // If we have the admin toolbar permission.
@@ -65,6 +67,7 @@ class Page extends PreprocessBase {
       // If there is a title and node type is excluded remove class.
       if (in_array($node->bundle(), $page_to_exclude, TRUE)) {
         $attributes->removeClass('with-title-region');
+        $variables['display_page_title'] = FALSE;
       }
 
     }

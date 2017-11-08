@@ -40,29 +40,20 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     switch ($route_match->getRouteName()) {
       case 'view.search_content.page':
       case 'view.search_content.page_no_value':
-        // No value because of duplicate words.
-        break;
-
       case 'view.search_users.page':
       case 'view.search_users.page_no_value':
-      // No value because of duplicate words.
-        break;
-
       case 'view.search_groups.page':
       case 'view.search_groups.page_no_value':
-      // No value because of duplicate words.
-        break;
-
       case 'view.search_all.page':
       case 'view.search_all.page_no_value':
-      // No value because of duplicate words.
+        // No value because of duplicate words.
         break;
 
       default:
         $page_title = $this->t('Search');
+        $breadcrumb->addLink(Link::createFromRoute($page_title, '<none>'));
     }
 
-    $breadcrumb->addLink(Link::createFromRoute($page_title, '<none>'));
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
 
     // This breadcrumb builder is based on a route parameter, and hence it

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_embed\Plugin\Filter;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterProcessResult;
 use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
@@ -21,6 +20,7 @@ use Drupal\url_embed\Plugin\Filter\ConvertUrlToEmbedFilter;
  * )
  */
 class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
+
   /**
    * {@inheritdoc}
    */
@@ -40,6 +40,15 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
     return new FilterProcessResult($text);
   }
 
+  /**
+   * Checks if item is on the whitelist.
+   *
+   * @param string $text
+   *   The item to check for.
+   *
+   * @return bool
+   *   Return if the item is on the whitelist or not.
+   */
   public function whiteList($text) {
     // Fetch allowed patterns.
     $patterns = $this->getPatterns();
@@ -47,7 +56,7 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
     // Check if the URL provided is from a whitelisted site.
     foreach ($patterns as $pattern) {
       // Testing pattern.
-      $testing_pattern = '/'.$pattern.'/';
+      $testing_pattern = '/' . $pattern . '/';
       // Check if it matches.
       if (preg_match($testing_pattern, $text)) {
         return TRUE;
@@ -57,7 +66,10 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
   }
 
   /**
+   * A list of whitelisted patterns.
+   *
    * @return array
+   *   The list of patterns.
    */
   private function getPatterns() {
     return [
@@ -75,4 +87,5 @@ class SocialEmbedUrlFilter extends ConvertUrlToEmbedFilter {
       'ted.com\/talks\/(.*)',
     ];
   }
+
 }
