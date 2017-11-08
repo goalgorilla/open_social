@@ -55,57 +55,46 @@
     {{ page.content_top }}
   {% endif %}
 
-  {# Content, see Style guide Templates for documentation #}
-  {%
-    set content_classes = [
-      'row',
-      'container',
-      page.title and display_page_title ? 'with-title-region',
-      page.complementary_top or page.complementary_bottom ? 'layout--with-complementary',
-      page.sidebar_first is empty and page.sidebar_second is empty ? 'layout--with-complementary',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first and page.sidebar_second ? 'layout--with-three-columns',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_second is empty and page.sidebar_first ? 'layout--with-two-columns',
-      page.complementary_top is empty and page.complementary_bottom is empty and page.sidebar_first is empty and page.sidebar_second ? 'layout--with-two-columns',
-    ]
-  %}
+  {# Content attributes, see Style guide Templates for documentation #}
+  {% block section %}
+    <section{{ content_attributes }}>
 
-  <section{{ content_attributes.addClass(content_classes) }}>
+      {% if page.title and display_page_title %}
+        {{ page.title }}
+      {% endif %}
 
-    {% if page.title and display_page_title %}
-      {{ page.title }}
-    {% endif %}
+      {% if page.complementary_top or page.complementary_bottom %}
+        <aside class="region--complementary" role="complementary">
+          {% if page.complementary_top %}
+            {{ page.complementary_top }}
+          {% endif %}
+          {% if page.complementary_bottom %}
+            {{ page.complementary_bottom }}
+          {% endif %}
+        </aside>
+      {% endif %}
 
-    {% if page.complementary_top or page.complementary_bottom %}
-      <aside class="region--complementary" role="complementary">
-        {% if page.complementary_top %}
-          {{ page.complementary_top }}
-        {% endif %}
-        {% if page.complementary_bottom %}
-          {{ page.complementary_bottom }}
-        {% endif %}
-      </aside>
-    {% endif %}
-
-    {% block content %}
-      <a id="main-content" tabindex="-1"></a>
-      {{ page.content }}
-    {% endblock %}
-
-    {# an extra check for complementary regions to be empty #}
-    {% if page.sidebar_first and not page.complementary_top and not page.complementary_bottom %}
-      {% block sidebar_first %}
-        {{ page.sidebar_first }}
+      {% block content %}
+        <a id="main-content" tabindex="-1"></a>
+        {{ page.content }}
       {% endblock %}
-    {% endif %}
 
-    {# an extra check for complementary regions to be empty #}
-    {% if page.sidebar_second and not page.complementary_top and not page.complementary_bottom %}
-      {% block sidebar_second %}
-        {{ page.sidebar_second }}
-      {% endblock %}
-    {% endif %}
+      {# an extra check for complementary regions to be empty #}
+      {% if page.sidebar_first and not page.complementary_top and not page.complementary_bottom %}
+        {% block sidebar_first %}
+          {{ page.sidebar_first }}
+        {% endblock %}
+      {% endif %}
 
-  </section>
+      {# an extra check for complementary regions to be empty #}
+      {% if page.sidebar_second and not page.complementary_top and not page.complementary_bottom %}
+        {% block sidebar_second %}
+          {{ page.sidebar_second }}
+        {% endblock %}
+      {% endif %}
+
+    </section>
+  {% endblock %}
 
   {% if page.content_bottom %}
     {{ page.content_bottom }}

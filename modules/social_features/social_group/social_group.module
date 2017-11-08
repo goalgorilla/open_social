@@ -736,7 +736,7 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  * @return \Drupal\group\Entity\GroupInterface
  *   Returns the group object.
  */
-function _social_group_get_current_group() {
+function _social_group_get_current_group($node = NULL) {
   $group = \Drupal::routeMatch()->getParameter('group');
 
   if (!is_object($group) && !is_null($group)) {
@@ -745,8 +745,7 @@ function _social_group_get_current_group() {
       ->load($group);
   }
   else {
-    $node = \Drupal::routeMatch()->getParameter('node');
-
+    $node = is_object($node) ? $node : \Drupal::routeMatch()->getParameter('node');
     if (is_object($node) && !is_null($node)) {
       $node_entity = [
         'target_type' => 'node',

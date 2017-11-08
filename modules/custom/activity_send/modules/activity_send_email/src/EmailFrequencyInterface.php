@@ -9,7 +9,6 @@ use Drupal\user\Entity\User;
 
 /**
  * Common interface for all email frequencies.
- *
  */
 interface EmailFrequencyInterface extends PluginInspectionInterface {
 
@@ -17,20 +16,23 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    * Return the name of the email frequency.
    *
    * @return string
+   *   The name of the email frequency.
    */
   public function getName();
 
   /**
    * Return the weight of the frequency option.
    *
-   * @return integer
+   * @return int
+   *   The weight of the frequency option.
    */
   public function getWeight();
 
   /**
    * Return the interval of the email frequency in seconds.
    *
-   * @return integer
+   * @return int
+   *   The interval in seconds.
    */
   public function getInterval();
 

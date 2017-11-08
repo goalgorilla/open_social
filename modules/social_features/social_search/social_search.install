@@ -216,14 +216,15 @@ function social_search_update_8107(&$sandbox) {
     $profileStorage = \Drupal::entityTypeManager()->getStorage('profile');
 
     // Check if the user has a profile already.
-    /** @var \Drupal\profile\Entity\Profile $profile **/
+    /** @var \Drupal\profile\Entity\Profile $profile */
     $profile = $profileStorage->load($pid);
     if ($profile) {
       try {
         $profile->setDefault(TRUE);
         $profile->save();
         $sandbox['profiles_updated']++;
-      } catch (Exception $e) {
+      }
+      catch (Exception $e) {
         \Drupal::logger('sdgc_search')
           ->error('Could not update profile for @profile_id', ['@profile_id' => $pid]);
       }

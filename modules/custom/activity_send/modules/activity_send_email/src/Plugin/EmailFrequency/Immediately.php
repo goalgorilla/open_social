@@ -45,7 +45,7 @@ class Immediately extends EmailFrequencyBase {
    * @param string $langcode
    *   The langcode of the target user.
    * @param \Drupal\user\Entity\User $target
-   *  The target account to send the email to.
+   *   The target account to send the email to.
    */
   protected function sendEmail($body_text, $langcode, User $target) {
     // Construct the render array.
