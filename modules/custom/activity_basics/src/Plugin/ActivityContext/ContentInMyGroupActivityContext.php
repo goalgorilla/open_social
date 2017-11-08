@@ -7,7 +7,6 @@ use Drupal\group\Entity\Group;
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\social_post\Entity\Post;
 
-
 /**
  * Provides a 'ContentInMyGroupActivityContext' acitivy context.
  *
@@ -16,7 +15,6 @@ use Drupal\social_post\Entity\Post;
  *  label = @Translation("Content in my group activity context"),
  * )
  */
-
 class ContentInMyGroupActivityContext extends ActivityContextBase {
 
   /**
@@ -28,7 +26,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
-      $gid = FALSE;
       $owner_id = '';
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] == 'post') {
@@ -36,9 +33,9 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $gid = $post->get('field_recipient_group')->getValue();
         $owner_id = $post->getOwnerId();
       }
-      else{
+      else {
         $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
-        $gid =  $group_content_entity->get('gid')->getValue();
+        $gid = $group_content_entity->get('gid')->getValue();
 
       }
 
@@ -52,8 +49,8 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $memberships = $group->getMembers();
 
         foreach ($memberships as $membership) {
-          // Check if this not the created user
-          if( $owner_id != $membership->getUser()->id() ) {
+          // Check if this not the created user.
+          if ($owner_id != $membership->getUser()->id()) {
             $recipients[] = [
               'target_type' => 'user',
               'target_id' => $membership->getUser()->id(),
@@ -62,7 +59,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         }
       }
     }
-
     return $recipients;
   }
 
@@ -79,7 +75,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         return TRUE;
       }
     }
-
     return FALSE;
   }
 
