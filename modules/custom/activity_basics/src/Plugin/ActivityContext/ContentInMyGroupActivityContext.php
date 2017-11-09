@@ -4,10 +4,8 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContent;
-use Drupal\group\GroupMembership;
-use Drupal\social_group\SocialGroupHelperService;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\social_post\Entity\Post;
 
 /**
  * Provides a 'ContentInMyGroupActivityContext' acitivy context.
@@ -27,25 +25,40 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $owner_id = '';
 
-      if ($gid = SocialGroupHelperService::getGroupFromEntity($referenced_entity)) {
+      if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] == 'post') {
+        $post = Post::load($referenced_entity['target_id']);
+        $gid = $post->get('field_recipient_group')->getValue();
+        $owner_id = $post->getOwnerId();
+      }
+      else {
+        $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
+        $gid = $group_content_entity->get('gid')->getValue();
+
+      }
+
+      if ($gid && isset($gid[0]['target_id'])) {
+        $target_id = $gid[0]['target_id'];
         $recipients[] = [
           'target_type' => 'group',
-          'target_id' => $gid,
+          'target_id' => $target_id,
         ];
-        $group = Group::load($gid);
-        $memberships = GroupMembership::loadByGroup($group);
+        $group = Group::load($target_id);
+        $memberships = $group->getMembers();
+
         foreach ($memberships as $membership) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $membership->getUser()->id(),
-          ];
+          // Check if this not the created user.
+          if ($owner_id != $membership->getUser()->id()) {
+            $recipients[] = [
+              'target_type' => 'user',
+              'target_id' => $membership->getUser()->id(),
+            ];
+          }
         }
       }
     }
-
     return $recipients;
   }
 
@@ -54,7 +67,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
    */
   public function isValidEntity($entity) {
     // Check if it's placed in a group (regardless off content type).
-    if (GroupContent::loadByEntity($entity)) {
+    if ($entity->getEntityTypeId() === 'group_content') {
       return TRUE;
     }
     if ($entity->getEntityTypeId() === 'post') {
