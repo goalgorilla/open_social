@@ -11,8 +11,6 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\group\Entity\GroupContent;
-use Drupal\group\Entity\GroupContentInterface;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -215,9 +213,9 @@ function social_event_flagging_insert(EntityInterface $entity) {
   $nid = $entity->entity_id->value;
   $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
-  /** @var GroupContentInterface $groupcontent */
+  /** @var \Drupal\group\Entity\GroupContentInterface $groupcontent */
   foreach (GroupContent::loadByEntity($node) as $groupcontent) {
-    /** @var GroupInterface $group */
+    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = $groupcontent->getGroup();
 
     $allowed_type = in_array($group->bundle(), $group_type_ids);
