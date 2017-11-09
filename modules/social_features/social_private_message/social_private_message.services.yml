@@ -1,0 +1,14 @@
+services:
+  social_private_message.route_subscriber:
+    class: Drupal\social_private_message\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  social_private_message.service:
+    class: Drupal\social_private_message\Service\SocialPrivateMessageService
+    arguments:
+      - '@private_message.mapper'
+      - '@current_user'
+      - '@config.factory'
+      - '@user.data'
+      - '@database'

@@ -1,0 +1,8 @@
+social_private_message.inbox:
+  path: 'user/inbox'
+  defaults:
+    _controller: '\Drupal\social_private_message\Controller\SocialPrivateMessageController::inbox'
+    _title: 'Inbox'
+  requirements:
+    _permission: 'use private messaging system'
+    _user_is_logged_in: 'TRUE'

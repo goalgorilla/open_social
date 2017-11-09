@@ -234,7 +234,7 @@ abstract class DemoSystem extends DemoContent {
       'format' => 'full_html',
     ];
 
-    /** @var \Drupal\file\Entity\File $file */
+    /* @var \Drupal\file\Entity\File $file */
     $file = $this->preparePicture($data['image']);
 
     $block_image = [
