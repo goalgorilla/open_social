@@ -133,12 +133,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       $groups = $this->getGroups($node);
       if (!empty($groups)) {
-        $group_type_ids = $this->configFactory->get('social_event.settings')
+        $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
-
-        if (!is_array($group_type_ids)) {
-          $group_type_ids = [];
-        }
 
         foreach ($groups as $group) {
           $group_type_id = $group->bundle();

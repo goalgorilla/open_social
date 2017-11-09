@@ -19,6 +19,8 @@ function social_event_install() {
   _social_event_set_permissions();
   // Add menu links.
   _social_event_create_menu_links();
+  // Enable event enrolling of some group types for not member.
+  _social_event_enroll_group_types();
 }
 
 /**
@@ -111,4 +113,20 @@ function _social_event_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
+}
+
+/**
+ * Allow enrolling to an event of an open group for not a member.
+ */
+function _social_event_enroll_group_types() {
+  \Drupal::configFactory()->getEditable('social_event.settings')
+    ->set('enroll', ['open_group'])
+    ->save();
+}
+
+/**
+ * Enable event enrolling of open groups for not member.
+ */
+function social_event_update_8001() {
+  _social_event_enroll_group_types();
 }

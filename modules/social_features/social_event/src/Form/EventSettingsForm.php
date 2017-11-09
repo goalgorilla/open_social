@@ -33,7 +33,8 @@ class EventSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $group_type_ids = $this->configFactory->getEditable('social_event.settings')->get('enroll');
+    $group_type_ids = $this->configFactory->getEditable('social_event.settings')
+      ->get('enroll');
 
     $form['enroll'] = [
       '#type' => 'checkboxes',
