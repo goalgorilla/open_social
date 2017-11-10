@@ -1,9 +1,21 @@
+jquery.caret:
+  js:
+    /libraries/jquery.caret/dist/jquery.caret.js: {}
+  dependencies:
+    - core/jquery
+
+diff_chars:
+  js:
+    js/diff_chars.js: {}
+
 jquery.mentions:
   js:
     js/jquery.mentions.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete
+    - social_mentions/diff_chars
+    - social_mentions/jquery.caret
 
 social_mentions:
   js:
