@@ -17,7 +17,7 @@ use Drupal\social_user\Plugin\Action\SocialBlockUser;
  *
  * @see hook_action_info_alter()
  */
-function social_user_action_info_alter(&$definitions){
+function social_user_action_info_alter(&$definitions) {
   // Swaps stadard block user action with our implementation.
   // If another module has already swapped out those classes,
   // though, we'll be polite and do nothing.
@@ -144,7 +144,7 @@ function social_user_form_views_form_user_admin_people_page_1_alter(&$form, Form
     $actions = $form['header']['user_bulk_form']['action']['#options'];
     $block_action = ['user_block_user_action' => $actions['user_block_user_action']];
     $current_user = \Drupal::currentUser();
-    if(!$current_user->hasPermission('administer users')){
+    if (!$current_user->hasPermission('administer users')) {
       $actions = [];
     }
     if (empty($actions) && $current_user->hasPermission('block users')) {

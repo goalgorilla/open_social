@@ -35,17 +35,17 @@ class SocialUserController extends ControllerBase {
       return $user->getDisplayName();
     }
   }
-  
+
   /**
    * Checks access for a user list page request.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
-   * @return AccessResult
+   * @return \Drupal\Core\Access\AccessResult
+   *   Check standard and custom permissions.
    */
   public function access(AccountInterface $account) {
-    // Check standard and our custom permissions.
     return AccessResult::allowedIfHasPermissions($account, ['administer users', 'view users'], 'OR');
   }
 
