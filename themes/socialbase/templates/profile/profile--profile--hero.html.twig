@@ -22,14 +22,14 @@
 {{ attach_library('socialbase/hero')}}
 
 {% if profile_hero_styled_image_url %}
-<div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient brand-bg-primary">
+<div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
 {% else %}
-<div class="cover brand-bg-primary">
+<div class="cover">
 {% endif %}
 {% if profile_edit_url %}
   <div class="hero-action-button">
     <a href="{{ profile_edit_url }}" title="Edit profile information" class="btn btn-raised btn-default btn-floating">
-      <svg class="icon-gray icon-medium">
+      <svg class="icon-medium">
         <use xlink:href="#icon-edit"></use>
       </svg>
     </a>
@@ -38,10 +38,9 @@
 
   <div class="cover-wrap">
     <header>
-    <h1 class="page-title">
-      {{ profile_name }}
-    </h1>
-
+      <h1 class="page-title">
+        {{ profile_name }}
+      </h1>
       {{ content.field_profile_image }}
     </header>
 
