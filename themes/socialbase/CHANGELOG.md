@@ -1,12 +1,16 @@
 ### Release 1.5
 * Updated Gulptasks. 
-* All 3rd party libraries are removed from the theme and need to be included via composer (or drush). Libraries now refer to files in html/libraries folder. 
+* All 3rd party libraries are removed from the theme and need to be included via
+composer (or drush). Libraries now refer to files in html/libraries folder. 
 * Gulp task `minify-js` has been removed and the `scripts` task has been added.
 * All gulp plugins are updated to the latest version.  
 
 
 ### Release 1.4
-* Moved rounded avatars style from socialbase to socialblue. For existing installations: Add border-radius properties to base/utilities/images, atoms/list and molecules/navigation/navbar components in your subtheme to keep rounded styles.
+* Moved rounded avatars style from socialbase to socialblue. For existing
+installations: Add border-radius properties to base/utilities/images, atoms/list
+and molecules/navigation/navbar components in your subtheme to keep rounded
+styles.
 
 ### v2.1.4 -- May 2017
 * Added method for autogrow behaviour and changed event triggers.
