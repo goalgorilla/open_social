@@ -30,6 +30,11 @@ class FormElementLabel extends BaseFormElementLabel {
         // Set the materialize icon.
         $variables['icon'] = _socialbase_get_visibility_icon($element['#title']);
       }
+
+      if ($element['#id'] == 'edit-message-0-value') {
+        $variables['title_display'] = 'invisible';
+      }
+
     }
 
     parent::preprocessElement($element, $variables);

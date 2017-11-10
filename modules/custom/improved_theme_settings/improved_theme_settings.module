@@ -5,7 +5,6 @@
  * Improved theme settings module file.
  */
 
-use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Markup;
@@ -95,12 +94,22 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-bottom-color: transparent !important;
     }
 
-    .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-      background-color: $primary !important;
-    }
-
+    .read-indicator,
+    .navbar-default .navbar-nav > li > a:hover,
+    .navbar-default .navbar-nav > li > a:focus,
     .navbar-default .navbar-brand:hover,
-    .navbar-default .navbar-brand:focus {
+    .navbar-default .navbar-brand:focus,
+    .navbar-default .dropdown-menu > .active > a,
+    .navbar-default .dropdown-menu > .active > a:hover,
+    .navbar-default .dropdown-menu > .active > a:focus,
+    .select2-container--social .select2-results__option--highlighted[aria-selected],
+    .select2-container--social .select2-results__option[aria-selected=true],
+    .pagination > .active > a,
+    .pagination > .active > a:hover,
+    .pagination > .active > a:focus,
+    .pagination > .active > span,
+    .pagination > .active > span:hover,
+    .pagination > .active > span:focus {
       background-color: $primary !important;
     }
 
@@ -116,9 +125,7 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       }
     }
 
-    .hero-form[role='search'] .search-icon,
-    #navbar-search.is-open .search-icon,
-    .no-js #navbar-search .search-icon {
+    .hero-form[role='search'] .search-icon {
       fill: $primary !important;
     }
 
@@ -126,10 +133,6 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $primary !important;
       border-bottom-color: $primary !important;
       box-shadow: 0 2px 0 0 $primary !important;
-    }
-    
-    .select2-container--social .select2-results__option--highlighted[aria-selected], .select2-container--social .select2-results__option[aria-selected=true] {
-      background-color: $primary !important;
     }
     
     .select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
@@ -140,29 +143,43 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       background-color: $secondary !important;
       border-color: $secondary !important;
     }
+    
+    .badge-secondary {
+      background-color: $secondary !important;
+    }
+    
+    .badge-accent {
+      background-color: $accent !important;
+    }
 
     .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
       background-color: rgba(0,0,0,0.5) !important;
-    }
-
-    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
-      background-color: $primary !important;
     }
 
     .btn-primary {
       background-color: $primary !important;
       border-color: $primary !important;
     }
+    
+    .btn-accent {
+      background-color: $accent !important;
+      border-color: $accent !important;
+    }
 
-    .btn-flat {
+    .btn-flat,
+    .btn-link,
+    .card__link,
+    .view--who-liked .views-field-view-user a {
       color: $link !important;
       fill: $link !important;
     }
 
+    .btn-link:hover,
     .btn-flat:hover {
       color: inherit !important;
     }
 
+    .list-item--active, .list-item--active:hover, .list-item--active:focus,
     .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
       background-color: $secondary !important;
       border-color: $secondary !important;
@@ -174,7 +191,7 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
     }
 
     .stream-icon-new {
-      background: $secondary !important;
+      background-color: $secondary !important;
     }
 
     .comment__reply-btn {
@@ -186,20 +203,14 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
       border-color: $accent !important;
     }
 
-    .body-text a {
-      color: $link !important;
-    }
-
-    .body-text a:hover {
+    .body-text a,
+    .body-text a:hover,
+    .book-menu .list-item--active-trail > a {
       color: $link !important;
     }
 
     blockquote {
       border-left-color: $link !important;
-    }
-
-    .book-menu .list-item--active-trail > a {
-      color: $link !important;
     }
 
     .input-group .form-control:focus ~ .input-group-addon {
@@ -209,7 +220,16 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
 
     .navbar-default .dropdown-menu > .active > a,
     .navbar-default .dropdown-menu > .active > a:hover,
-    .navbar-default .dropdown-menu > .active > a:focus {
+    .navbar-default .dropdown-menu > .active > a:focus,
+    .site-footer {
+      background-color: $primary !important;
+    }
+
+    .navbar-secondary {
+      background-color: $secondary !important;
+    }
+    
+    .cover {
       background-color: $primary !important;
     }
 
@@ -220,6 +240,10 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
     .navbar-scrollable:after {
       background: linear-gradient(-90deg, $secondary, transparent) !important;
     }
+    
+    .ui-datepicker-calendar > tbody > tr > td .ui-state-active {
+      background-color: $secondary !important;
+     }
 
   ";
 
@@ -265,12 +289,18 @@ function improved_theme_settings_page_attachments(array &$page) {
         .hero-canvas {
           border-radius: ' . $card_radius . 'px !important;
         }
+        
+        .message__message-body {
+          border-radius: ' . $card_radius / 2 . 'px !important;
+        }
 
         .tabs-left .vertical-tabs-list {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
 
-        .teaser--stream:last-child {
+        .teaser--stream:last-child,
+        .card__block:last-child,
+        .card__nested-section:last-child {
           border-bottom-left-radius: ' . $card_radius . 'px !important;
           border-bottom-right-radius: ' . $card_radius . 'px !important;
         }
@@ -284,12 +314,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-top-right-radius: ' . $card_radius . 'px !important;
         }
         
-        .card__block:last-child,
-        .card__nested-section:last-child {
-          border-bottom-left-radius: ' . $card_radius . 'px !important;
-          border-bottom-right-radius: ' . $card_radius . 'px !important;
-        }
-
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;
@@ -331,10 +355,13 @@ function improved_theme_settings_page_attachments(array &$page) {
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
           }
+          
+          .btn.btn-icon-toggle {
+            border-radius: 50% !important;
+          }
 
         ';
       }
-
 
       // Get the color palette saved for custom social blue.
       $colors = color_get_palette($system_theme_settings);
@@ -358,24 +385,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           // altering.
           'social_theme_preprocess',
         ];
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_css_alter().
- */
-function improved_theme_settings_css_alter(&$css, AttachedAssetsInterface $assets) {
-  // Remove the imported brand.css from theme. There's no need to use this file.
-  // Only in case of other colors, the generated brand.css needs to be used.
-  foreach ($css as $key => $singlecss) {
-    // First check if there's a brand.css file in there.
-    if (strpos($singlecss['data'], 'brand.css') > 0) {
-      // Must be public, otherwise remove it.
-      if (strpos($singlecss['data'], 'public://') === FALSE) {
-        // Not pubic, so it must be unset.
-        unset($css[$key]);
       }
     }
   }

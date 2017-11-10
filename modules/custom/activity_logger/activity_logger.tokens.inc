@@ -33,6 +33,10 @@ function activity_logger_token_info() {
     'name' => t("Groups url"),
     'description' => t("The related group url."),
   ];
+  $message['pmt-url'] = [
+    'name' => t("Private Message Thread url"),
+    'description' => t("The URL of the private message thread group url."),
+  ];
 
   $message['recipient-user-url'] = [
     'name' => t("Recipient user url"),
@@ -63,6 +67,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
         case 'gtitle':
         case 'gurl':
         case 'recipient-user-url':
+        case 'pmt-url':
 
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
@@ -115,6 +120,24 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   );
                   $replacements[$original] = $target_stream_url->toString();
                 }
+              }
+
+              if ($name === 'pmt-url') {
+                // Get the related message.
+                $target_type = $message->field_message_related_object->target_type;
+                $target_id = $message->field_message_related_object->target_id;
+                $entity = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
+                // Use the mapper service to get the ID of the thread.
+                $pmService = \Drupal::service('private_message.mapper');
+                $thread_id = $pmService->getThreadIdFromMessage($entity);
+                // Build the url.
+                $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
+                  ['private_message_thread' => $thread_id],
+                  ['absolute' => TRUE]
+                );
+                $replacements[$original] = $thread_url->toString();
               }
 
             }
