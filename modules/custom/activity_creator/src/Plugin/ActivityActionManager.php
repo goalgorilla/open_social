@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityActionManager.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -43,7 +38,7 @@ class ActivityActionManager extends DefaultPluginManager {
    *   their labels.
    */
   public function getOptionsList() {
-    $options = array();
+    $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
       $options[$plugin_id] = Html::escape($plugin_definition['label']);
     }

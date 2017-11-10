@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * Post Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "post",
  *   label = @Translation("Post"),
@@ -17,7 +19,7 @@ class Post extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry($item) {
+  public function getEntry(array $item) {
     $recipient_id = NULL;
     $group_id = NULL;
     $file_id = NULL;
@@ -40,7 +42,10 @@ class Post extends DemoEntity {
     return $entry + [
       'langcode' => $item['langcode'],
       'type' => $item['type'],
-      'field_post' => $item['field_post'],
+      'field_post' => [
+        'value' => $this->checkMentionOrLinkByUuid($item['field_post']),
+        'format' => 'basic_html',
+      ],
       'field_visibility' => $item['field_visibility'],
       'field_recipient_user' => $recipient_id,
       'field_recipient_group' => $group_id,
@@ -55,7 +60,10 @@ class Post extends DemoEntity {
    * Converts a date in the correct format.
    *
    * @param string $date_string
+   *   The date.
+   *
    * @return int|false
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     if ($date_string === 'now') {

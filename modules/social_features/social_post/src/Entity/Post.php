@@ -134,7 +134,6 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
-
   public function getType() {
     return $this->bundle();
   }
@@ -145,6 +144,17 @@ class Post extends ContentEntityBase implements PostInterface {
   public function setType($type) {
     $this->set('type', $this->bundle());
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayName() {
+    if ($this->hasField('field_post_image') && !$this->get('field_post_image')->isEmpty()) {
+      return t('photo');
+    }
+
+    return t('post');
   }
 
   /**
@@ -193,7 +203,7 @@ class Post extends ContentEntityBase implements PostInterface {
         'type' => 'author',
         'weight' => 0,
       ])
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
         'settings' => [
@@ -202,7 +212,7 @@ class Post extends ContentEntityBase implements PostInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ],
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
@@ -214,10 +224,10 @@ class Post extends ContentEntityBase implements PostInterface {
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Post entity.'))
-      ->setDisplayOptions('form', array(
+      ->setDisplayOptions('form', [
         'type' => 'language_select',
         'weight' => 10,
-      ))
+      ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')

@@ -1,14 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\socialbase\Plugin\Preprocess\InputButton.
- */
-
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\bootstrap\Plugin\Preprocess\InputButton as BaseInputButton;
 
 /**
  * Pre-processes variables for the "input__button" theme hook.
@@ -17,7 +13,7 @@ use Drupal\bootstrap\Utility\Variables;
  *
  * @BootstrapPreprocess("input__button")
  */
-class InputButton extends \Drupal\bootstrap\Plugin\Preprocess\InputButton {
+class InputButton extends BaseInputButton {
 
   /**
    * {@inheritdoc}

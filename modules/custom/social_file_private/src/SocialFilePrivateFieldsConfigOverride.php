@@ -1,18 +1,18 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride.
- */
-
 namespace Drupal\social_file_private;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StreamWrapper\PrivateStream;
 
 /**
+ * Class SocialFilePrivateFieldsConfigOverride.
+ *
  * Override the field.storage configuration and set private uri_scheme.
+ *
+ * @package Drupal\social_file_private
  */
 class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInterface {
 
@@ -25,6 +25,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * report when there are fields of type image, file using public uri_scheme.
    *
    * @return array
+   *   Returns an array containing config_names.
    */
   public function getFileImageFieldsToProtect() {
     // We want to override all the known file and image uploads.
@@ -47,8 +48,8 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
-    $overrides = array();
-    if (\Drupal\Core\StreamWrapper\PrivateStream::basePath()) {
+    $overrides = [];
+    if (PrivateStream::basePath()) {
       $config_names = $this->getFileImageFieldsToProtect();
       foreach ($config_names as $config_name) {
         if (in_array($config_name, $names)) {

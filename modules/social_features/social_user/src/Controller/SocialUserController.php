@@ -21,7 +21,7 @@ class SocialUserController extends ControllerBase {
    *   Return Redirect to the user account.
    */
   public function otherUserPage(UserInterface $user) {
-    return $this->redirect('entity.user.canonical', array('user' => $user->id()));
+    return $this->redirect('entity.user.canonical', ['user' => $user->id()]);
   }
 
   /**
@@ -29,9 +29,8 @@ class SocialUserController extends ControllerBase {
    *
    * @return string
    *   The first and/or last name with the AccountName as a fallback.
-   *
    */
-  function setUserStreamTitle(UserInterface $user = NULL) {
+  public function setUserStreamTitle(UserInterface $user = NULL) {
     if ($user instanceof UserInterface) {
       return $user->getDisplayName();
     }

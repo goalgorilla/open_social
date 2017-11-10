@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\ActivityListBuilder.
- */
-
 namespace Drupal\activity_creator;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -19,6 +14,7 @@ use Drupal\Core\Url;
  */
 class ActivityListBuilder extends EntityListBuilder {
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -37,9 +33,9 @@ class ActivityListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.activity.edit_form', array(
+        'entity.activity.edit_form', [
           'activity' => $entity->id(),
-        )
+        ]
       )
     );
     return $row + parent::buildRow($entity);

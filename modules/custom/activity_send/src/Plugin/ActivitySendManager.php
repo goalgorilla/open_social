@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_send\Plugin\ActivitySendManager.
- */
-
 namespace Drupal\activity_send\Plugin;
 
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -43,7 +38,7 @@ class ActivitySendManager extends DefaultPluginManager {
    *   their labels.
    */
   public function getOptionsList() {
-    $options = array();
+    $options = [];
     foreach ($this->getDefinitions() as $plugin_id => $plugin_definition) {
       $options[$plugin_id] = Html::escape($plugin_definition['label']);
     }

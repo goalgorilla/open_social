@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the activity_basics module.
@@ -9,9 +10,9 @@
  */
 function activity_basics_update_8101(&$sandbox) {
 
-  $modules = array(
+  $modules = [
     'token',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
 }
@@ -21,15 +22,15 @@ function activity_basics_update_8101(&$sandbox) {
  */
 function activity_basics_update_8102() {
 
-  $modules = array(
+  $modules = [
     'activity_send_email',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
 }
 
 /**
- * Replace message template single value field activity_bundle_entity with multiple values activity_bundle_entities.
+ * Replace message template activity_bundle_entity single value with multiple.
  */
 function activity_basics_update_8103() {
 

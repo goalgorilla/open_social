@@ -1,4 +1,4 @@
-{% extends "block.html.twig" %}
+
 {#
 /**
  * @file
@@ -15,21 +15,29 @@
  * @ingroup templates
  */
 #}
+{%
+  set classes = [
+    'block-' ~ plugin_id|clean_class,
+    'navbar-header',
+  ]
+%}
 
-{% block content %}
+<div {{ attributes.addClass(classes) }}>
+
   {% if site_logo %}
-  <div class="navbar-header">
-    <a class="navbar-brand brand-bg-primary" href="{{ path('<front>') }}" title="{% trans %} Home {% endtrans %}" rel="home">
+    <a class="navbar-brand" href="{{ path('<front>') }}" title="{% trans %} Home {% endtrans %}" rel="home">
       <img src="{{ site_logo }}" alt="{{ site_name }}" />
     </a>
-    <button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
-      <span>{% trans %} Menu {% endtrans %}</span>
-      <span class="sr-only">
-        {% trans %} Toggle navigation {% endtrans %}
-      </span>
-
-    </button>
-
-  </div>
   {% endif %}
-{% endblock %}
+
+  <button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-expanded="false" class="navbar-toggle collapsed">
+    <span>{% trans %} Menu {% endtrans %}</span>
+    <span class="sr-only">
+      {% trans %} Toggle navigation {% endtrans %}
+    </span>
+
+  </button>
+
+</div>
+
+

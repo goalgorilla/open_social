@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_like\Plugin\ActivityContext\LikeActivityContext.
- */
-
 namespace Drupal\social_like\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\Core\Entity\Entity;
 use Drupal\votingapi\Entity\Vote;
-
 
 /**
  * Provides a 'VoteActivityContext' activity context.
@@ -37,7 +30,7 @@ class VoteActivityContext extends ActivityContextBase {
         $vote = $vote_storage->load($related_object['target_id']);
         if ($vote instanceof Vote) {
           $entity_storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
-          /** @var Entity $entity */
+          /** @var \Drupal\Core\Entity\Entity $entity */
           $entity = $entity_storage->load($vote->getVotedEntityId());
 
           $recipients[] = [
@@ -51,8 +44,7 @@ class VoteActivityContext extends ActivityContextBase {
   }
 
   /**
-   * @param $entity Entity
-   * @return bool
+   * Check if it's valid.
    */
   public function isValidEntity($entity) {
     if ($entity->getEntityTypeId() === 'vote') {
@@ -61,4 +53,5 @@ class VoteActivityContext extends ActivityContextBase {
 
     return FALSE;
   }
+
 }

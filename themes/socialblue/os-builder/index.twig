@@ -8,7 +8,9 @@
   <title>{{ options.title }}</title>
   <meta name="description" content="">
   <meta name="generator" content="kss-node">
-  <link rel="shortcut icon" href="kss-assets/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="shortcut icon" href="kss-assets/blue/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="stylesheet" href="kss-assets/lib/menu.css">
+  <link rel="stylesheet" href="kss-assets/lib/autocomplete.css">
   {{ styles|raw }}
 </head>
 
@@ -17,22 +19,22 @@
 <noscript>
   <iframe src="//www.googletagmanager.com/ns.html?id=GTM-5BGZV3" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-<script>
-  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5BGZV3');
-</script>
+{#<script>#}
+  {#(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':#}
+    {#new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],#}
+    {#j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=#}
+    {#'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);#}
+  {#})(window,document,'script','dataLayer','GTM-5BGZV3');#}
+{#</script>#}
 <!-- End Google Tag Manager-->
   <a href="#main-content" class="sr-only sr-only-focusable"> Skip to main content </a>
 
 
   <nav class="navbar navbar-default navbar-fixed-top" id="top" role="banner">
-    <div class="container">
+    <div class="container container--navbar">
       <div class="navbar-header">
         <a class="navbar-brand" href="./" title="Home" rel="home">
-          <img src="kss-assets/logo.svg" alt="{{ options.title }}" />
+          <img src="kss-assets/blue/logo.svg" alt="{{ options.title }}" />
         </a>
         <button href="#" data-toggle="collapse" data-target="#main-navigation" type="button" aria-haspopup="true" aria-expanded="false" class="navbar-toggle collapsed">
           <span> Menu</span>
@@ -43,14 +45,12 @@
       </div>
 
       <div id="main-navigation" class="collapse navbar-collapse">
-        <div class="navbar-collapse-order">
-          <ul class="nav navbar-nav" role="navigation">
-            <li class="expanded dropdown"><a href="./">Home</a></li>
-            {% for menu_item in menu %}
-              <li class="expanded dropdown{% if menu_item.isActive %} active {% endif %}"><a href="section-{{ menu_item.referenceURI }}.html">{{ menu_item.header }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+        <ul class="nav navbar-nav" role="navigation">
+          <li class="expanded dropdown"><a href="./">Home</a></li>
+          {% for menu_item in menu %}
+            <li class="expanded dropdown{% if menu_item.isActive %} active {% endif %}"><a href="section-{{ menu_item.referenceURI }}.html">{{ menu_item.header }}</a></li>
+          {% endfor %}
+        </ul>
       </div>
 
 
@@ -112,9 +112,9 @@
             <{{ sectionElement }} id="kssref-{{ section.referenceURI }}" class="kss-section kss-section--depth-{{ section.depth }} {% if template.isItem %}is-fullscreen{% endif %}">
 
               {% if 'Chart' in section.header %}
-                <script src="kss-assets/drupal-core.js"></script>
-                <script src="kss-assets/raphael.min.js"></script>
-                <script src="kss-assets/morris.min.js"></script>
+                <script src="kss-assets/lib/drupal-core.js"></script>
+                <script src="kss-assets/lib/raphael.min.js"></script>
+                <script src="kss-assets/lib/morris.min.js"></script>
               {% endif %}
 
               {% set headerElement = (section.depth > 6) ? 'h6' : 'h' ~ section.depth %}
@@ -295,27 +295,26 @@
     </div>
   </footer>
 
-  {% include 'kss-assets/icons.svg' %}
+  {% include '../../socialbase/assets/icons/icons.svg' %}
 
   <!-- SCRIPTS -->
 
-  <script src="kss-assets/drupal-core.js"></script>
-  <script src="kss-assets/affix.js"></script>
-  <script src="kss-assets/alert.js"></script>
-  <script src="kss-assets/collapse.js"></script>
-  <script src="kss-assets/dropdown.js"></script>
-  <script src="kss-assets/modal.js"></script>
-  <script src="kss-assets/tooltip.js"></script>
-  <script src="kss-assets/popover.js"></script>
-  <script src="kss-assets/scrollspy.js"></script>
-  <script src="kss-assets/tab.js"></script>
-  <script src="kss-assets/transition.js"></script>
-  <script src="kss-assets/prism.js"></script>
-  <script src="kss-assets/kss-fullscreen.js"></script>
-  <script src="kss-assets/kss-guides.js"></script>
-  <script src="kss-assets/kss-markup.js"></script>
+  <script src="kss-assets/lib/drupal-core.js"></script>
+  <script src="kss-assets/lib/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="kss-assets/lib/waves.min.js"></script>
+  <script src="kss-assets/custom/js/waves.js"></script>
+  <script src="kss-assets/kss/kss-fullscreen.js"></script>
+  <script src="kss-assets/kss/kss-guides.js"></script>
+  <script src="kss-assets/kss/kss-markup.js"></script>
+  <script src="kss-assets/kss/prism.js"></script>
+  <script src="kss-assets/kss/prism-scss.min.js"></script>
   <script src="kss-assets/styleguide.js"></script>
-  <script src="kss-assets/textarea-autogrow.min.js"></script>
+  <script src="kss-assets/lib/autosize.min.js"></script>
+  <script src="kss-assets/custom/js/textarea-autogrow.js"></script>
+  <script src="kss-assets/lib/select2.min.js"></script>
+  <script src="kss-assets/custom/js/multiselect.js"></script>
+  <script src="kss-assets/custom/js/autocomplete.js"></script>
   <script>
     // Escape code
     // ============================================================

@@ -1,20 +1,22 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_comment module.
  */
 
+use Drupal\user\Entity\Role;
 
 /**
- * PROCEED WITH CARE HERE
+ * PROCEED WITH CARE HERE!
+ *
  * The below issue causes updates from the social_post module to be recognizes
  * as post updates from the social profile.
  *
  * Therefore don't create update hooks here!!!!
  *
  * https://www.drupal.org/node/2880361
- *
- **/
+ */
 
 /**
  * Implements hook_install().
@@ -22,7 +24,6 @@
  * Perform actions related to the installation of social_post.
  */
 function social_post_install() {
-
   // Set some default permissions.
   _social_post_set_permissions();
 }
@@ -31,7 +32,7 @@ function social_post_install() {
  * Function to set permissions.
  */
 function _social_post_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -45,36 +46,38 @@ function _social_post_set_permissions() {
 }
 
 /**
- * @param $role
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
  * @return array
+ *   A list of permissions.
  */
 function _social_post_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
+  $permissions['anonymous'] = [
     'view public posts',
     'view published post entities',
-  );
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'add post entities',
     'delete own post entities',
     'edit own post entities',
     'view community posts',
-  ));
-
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'delete any post entities',
     'edit any post entities',
     'view unpublished post entities',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
-
-  ));
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];

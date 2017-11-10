@@ -1,8 +1,14 @@
 <?php
+
 /**
  * @file
  * Activity Creator module file.
  */
+
+use Drupal\message\Entity\Message;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Url;
 
 /**
  * Activity statuses.
@@ -15,7 +21,7 @@ const ACTIVITY_STATUS_READ = 3;
  * Returns the allowed values for the activity status field.
  *
  * @return array
- *    Return an array of allowed values for status field.
+ *   Return an array of allowed values for status field.
  */
 function activity_creator_field_activity_status_allowed_values() {
 
@@ -32,7 +38,7 @@ function activity_creator_field_activity_status_allowed_values() {
  * Returns the allowed values for the activity destinations field.
  *
  * @return array
- *    Return an array of allowed values for destinations field.
+ *   Return an array of allowed values for destinations field.
  */
 function activity_creator_field_activity_destinations_allowed_values() {
 
@@ -50,7 +56,7 @@ function activity_creator_field_activity_destinations_allowed_values() {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function activity_creator_message_insert(\Drupal\message\Entity\Message $entity) {
+function activity_creator_message_insert(Message $entity) {
   if ($entity) {
     // TODO Move all this logic to services (also in Queue).
     $mid = $entity->id();
@@ -122,40 +128,40 @@ function activity_creator_message_insert(\Drupal\message\Entity\Message $entity)
  * Implements hook_views_data().
  */
 function activity_creator_views_data() {
-  $data['activity']['activity_visibility_access_filter'] = array(
+  $data['activity']['activity_visibility_access_filter'] = [
     'title' => t('Activity visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Activity visibility access'),
       'help' => t('Enable activity access control.'),
       'field' => 'field_visibility',
       'id' => 'activity_visibility_access',
-    ),
-  );
-  $data['activity']['activity_post_visibility_access_filter'] = array(
+    ],
+  ];
+  $data['activity']['activity_post_visibility_access_filter'] = [
     'title' => t('Activity post visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Activity post visibility access'),
       'help' => t('Enable activity access control for related post entities.'),
       'field' => 'field_visibility',
       'id' => 'activity_post_visibility_access',
-    ),
-  );
-  $data['activity']['activity_profile_argument'] = array(
+    ],
+  ];
+  $data['activity']['activity_profile_argument'] = [
     'title' => t('Activity profile argument'),
-    'argument' => array(
+    'argument' => [
       'title' => t('Activity profile argument'),
       'help' => t('Activity profile context argument.'),
       'id' => 'activity_profile_argument',
-    ),
-  );
-  $data['activity']['activity_group_argument'] = array(
+    ],
+  ];
+  $data['activity']['activity_group_argument'] = [
     'title' => t('Activity group argument'),
-    'argument' => array(
+    'argument' => [
       'title' => t('Activity group argument'),
       'help' => t('Activity group context argument.'),
       'id' => 'activity_group_argument',
-    ),
-  );
+    ],
+  ];
   return $data;
 }
 
@@ -177,7 +183,7 @@ function activity_creator_theme() {
  * Implements hook_theme_suggestions_HOOK().
  */
 function activity_creator_theme_suggestions_activity(array $variables) {
-  $suggestions = array();
+  $suggestions = [];
   $activity = $variables['elements']['#activity'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
@@ -195,7 +201,7 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  *
  * TODO: Maybe this should be an event subscriber service
  */
-function activity_creator_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display, $view_mode) {
+function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($view_mode === 'full') {
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
@@ -210,7 +216,7 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
   $view = $variables['view'];
   $view_name = $view->storage->id();
   if ($view_name == 'activity_stream_notifications') {
-    $notification_url = \Drupal\Core\Url::fromRoute('view.activity_stream_notifications.page_1');
+    $notification_url = Url::fromRoute('view.activity_stream_notifications.page_1');
     $variables['notification_url'] = $notification_url;
   }
 }
@@ -223,9 +229,9 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
  * @TODO: When group is deleted delete activities where group is recipient.
  * @TODO: When user is deleted delete activities where user is recipient.
  */
-function activity_creator_entity_delete(Drupal\Core\Entity\EntityInterface $entity) {
+function activity_creator_entity_delete(EntityInterface $entity) {
 
-  // TODO Move this into a service
+  // TODO Move this into a service.
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
@@ -275,7 +281,9 @@ function activity_creator_empty_queue() {
   // The workermanager.
   $workerManager = \Drupal::service('plugin.manager.queue_worker');
 
-  /** @var Drupal\Core\Queue\QueueFactory; $queue */
+  /*
+   * @var Drupal\Core\Queue\QueueFactory; $queue
+   */
   $queue = \Drupal::service('queue');
 
   for ($i = 0; $i < 5; $i++) {

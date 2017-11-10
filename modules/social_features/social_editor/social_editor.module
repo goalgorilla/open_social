@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The Social editor module.
@@ -37,11 +38,11 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
   $disable_fields = FALSE;
 
   // Forms.
-  $forms = array(
+  $forms = [
     "social_post_entity_form",
     "comment_post_comment_form",
     "comment_comment_form",
-  );
+  ];
   // Allowed formats.
   $allowed_format = 'simple_text';
 

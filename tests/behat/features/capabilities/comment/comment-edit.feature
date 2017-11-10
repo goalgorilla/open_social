@@ -1,4 +1,4 @@
-@api @comment @stability @edit @comment-edit
+@api @comment @stability @edit @comment-edit @stability-4
 Feature: Edit Comment
   Benefit: Correct mistakes I made when adding comments
   Role: As a LU

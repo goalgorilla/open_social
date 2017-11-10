@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-1544
+@api @topic @stability @perfect @critical @DS-1544 @stability-4
 Feature: Preview Topic
   Benefit: In order to see how the page would look before saving changes
   Role: As a LU

@@ -35,18 +35,19 @@
       form_group ? 'control-label',
       required ? 'js-form-required',
       required ? 'form-required',
+      title_display == 'invisible' ? 'sr-only',
     ]
   %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
   <label{{ legend.attributes.addClass(label_classes) }}>
     <span{{ legend_span.attributes }}>{{ legend.title }}</span>
   </label>
+
+  {%- if required -%}
+    <span class="form-required">*</span>
+  {%- endif -%}
+
   <div class="fieldset-wrapper">
-    {% if errors %}
-      <div>
-        {{ errors }}
-      </div>
-    {% endif %}
     {% if prefix %}
       <span class="field-prefix">{{ prefix }}</span>
     {% endif %}
@@ -54,8 +55,17 @@
     {% if suffix %}
       <span class="field-suffix">{{ suffix }}</span>
     {% endif %}
-    {% if description.content %}
-      <div{{ description.attributes.addClass('description') }}>{{ description.content }}</div>
-    {% endif %}
   </div>
+
+  {% if errors %}
+    <div class="form-item--error-message alert alert-danger alert-sm alert-dismissible form-control-radius">
+      <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
+      {{ errors }}
+    </div>
+  {% endif %}
+
+  {% if description.content %}
+    <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>
+  {% endif %}
+
 </fieldset>

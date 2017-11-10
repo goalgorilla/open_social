@@ -21,15 +21,15 @@
 {{ attach_library('socialbase/hero')}}
 
 {% if hero_styled_image_url %}
-<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient brand-bg-primary">
+<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
     {% else %}
-    <div class="cover brand-bg-primary">
+    <div class="cover">
         {% endif %}
 
         {% if node %}
         {% if node_edit_url %}
             <div class="hero-action-button">
-                <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+                <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="btn btn-raised btn-default btn-floating">
                     <svg class="icon-gray icon-medium">
                         <use xlink:href="#icon-edit"></use>
                     </svg>

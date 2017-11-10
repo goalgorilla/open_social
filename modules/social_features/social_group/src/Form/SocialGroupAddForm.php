@@ -1,7 +1,4 @@
 <?php
-/**
- * Group add form.
- */
 
 namespace Drupal\social_group\Form;
 
@@ -11,9 +8,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 /**
- * GroupAddForm
+ * Class SocialGroupAddForm.
+ *
+ * GroupAddForm.
+ *
+ * @package Drupal\social_group\Form
  */
 class SocialGroupAddForm extends FormBase {
 
@@ -26,15 +26,6 @@ class SocialGroupAddForm extends FormBase {
 
   /**
    * Constructs a new GroupContentController.
-   *
-   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
-   *   The private store factory.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
-   *   The entity form builder.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->entityTypeManager = $entity_type_manager;
@@ -69,7 +60,7 @@ class SocialGroupAddForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if ($group_type = $form_state->getValue('group_type')) {
-      $url = Url::fromUserInput('/group/add/'. $group_type);
+      $url = Url::fromUserInput('/group/add/' . $group_type);
 
       $form_state->setRedirectUrl($url);
     }
@@ -88,18 +79,18 @@ class SocialGroupAddForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'form--default';
-    $form['group_settings'] = array(
+    $form['group_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Settings'),
-    );
+    ];
     $form['group_settings']['group_type'] = $this->getGroupTypeElement();
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#prefix' => '<div class="form-actions">',
       '#suffix' => '</div>',
       '#type' => 'submit',
       '#value' => $this->t('Continue'),
       '#button_type' => 'primary',
-    );
+    ];
 
     $form['#cache']['contexts'][] = 'user';
 
@@ -112,6 +103,7 @@ class SocialGroupAddForm extends FormBase {
    * Note this element is also used in the edit group form.
    *
    * @return array
+   *   Returns an array containing the group type element and descriptions.
    */
   public function getGroupTypeElement() {
 
@@ -125,14 +117,14 @@ class SocialGroupAddForm extends FormBase {
     }
     arsort($group_types_options);
 
-    $element = array(
+    $element = [
       '#type' => 'radios',
       '#title' => $this->t('Group type'),
       '#description' => $this->t('Can not be changed once a group is created.'),
       '#default_value' => 'open_group',
       '#options' => $group_types_options,
       '#required' => TRUE,
-    );
+    ];
 
     return $element + $group_types_descriptions;
   }

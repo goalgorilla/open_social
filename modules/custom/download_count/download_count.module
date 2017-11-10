@@ -11,11 +11,12 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
  */
-function download_count_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match) {
+function download_count_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case 'help.page.download_count':
       return '<p>' . t('Counts file downloads for private core file fields and
@@ -35,7 +36,7 @@ function download_count_file_access($entity, $operation, $account) {
 
     // Invalidate file field formatter.
     $cache_tag = 'file:' . $entity->id();
-    Cache::invalidateTags(array($cache_tag));
+    Cache::invalidateTags([$cache_tag]);
 
     if ($account->hasPermission('skip download counts')) {
       return;
@@ -44,9 +45,7 @@ function download_count_file_access($entity, $operation, $account) {
     // Check flood control.
     $flood_limit = $config->get('download_count_flood_limit');
     if ($flood_limit > 0) {
-      if (!$flood->isAllowed('download_count-fid_' . $entity->id(), $flood_limit
-        , $flood_window)
-      ) {
+      if (!$flood->isAllowed('download_count-fid_' . $entity->id(), $flood_limit, $flood_window)) {
         return;
       }
     }
@@ -64,8 +63,8 @@ function download_count_file_access($entity, $operation, $account) {
     $ip = Drupal::request()->getClientIp();
     $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : t('Direct download');
     $references = file_get_file_references($entity, NULL, EntityStorageInterface::FIELD_LOAD_REVISION, NULL);
-    foreach ($references as $field_name => $entity_map) {
-      foreach ($entity_map as $referencing_entity_type => $referencing_entities) {
+    foreach ($references as $entity_map) {
+      foreach ($entity_map as $referencing_entities) {
         foreach ($referencing_entities as $referencing_entity) {
           $entity_type = $referencing_entity->getEntityTypeId();
           $entity_id = $referencing_entity->id();
@@ -75,7 +74,7 @@ function download_count_file_access($entity, $operation, $account) {
     if (!empty($entity_type) && !empty($entity_id)) {
       $connection = Database::getConnection();
       $connection->insert('download_count')
-        ->fields(array(
+        ->fields([
           'fid' => $entity->id(),
           'uid' => $account->id(),
           'type' => $entity_type,
@@ -83,7 +82,7 @@ function download_count_file_access($entity, $operation, $account) {
           'ip_address' => $ip,
           'referrer' => $referrer,
           'timestamp' => $time,
-        ))
+        ])
         ->execute();
 
       $flood->register('download_count-fid_' . $entity->id(), $flood_window);
@@ -95,9 +94,9 @@ function download_count_file_access($entity, $operation, $account) {
  * Implements hook_theme().
  */
 function download_count_theme() {
-  $theme = array(
-    'download_count_file_field_formatter' => array(
-      'variables' => array(
+  $theme = [
+    'download_count_file_field_formatter' => [
+      'variables' => [
         'file' => NULL,
         'link' => NULL,
         'link_url' => NULL,
@@ -107,8 +106,8 @@ function download_count_theme() {
         'file_size' => NULL,
         'path_to_socialbase' => NULL,
         'node_icon' => NULL,
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
   return $theme;
 }

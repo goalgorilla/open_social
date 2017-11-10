@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Row style plugin for Views.
- */
 
 namespace Drupal\activity_viewer\Plugin\views\row;
 
@@ -33,7 +29,7 @@ class ActivityRow extends EntityRow {
       $destination_plugin_manager = \Drupal::service('plugin.manager.activity_destination.processor');
 
       foreach ($result as $row) {
-        $render_result = array();
+        $render_result = [];
         $render_result[] = $row;
         $entity = $row->_entity;
 

@@ -6,6 +6,11 @@ use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoComment.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoComment extends DemoContent {
 
   /**
@@ -17,11 +22,6 @@ abstract class DemoComment extends DemoContent {
 
   /**
    * DemoComment constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -82,7 +82,7 @@ abstract class DemoComment extends DemoContent {
       $item['uid'] = $account->id();
       $item['pid'] = NULL;
 
-      // Set parent comment if it is present
+      // Set parent comment if it is present.
       if (!empty($item['parent'])) {
         $comments = $this->entityStorage->loadByProperties([
           'uuid' => $item['parent'],
@@ -102,9 +102,13 @@ abstract class DemoComment extends DemoContent {
         continue;
       }
 
-      $item['created'] += $entity->get('created')->value;
-
-      if ($item['created'] > REQUEST_TIME) {
+      if (!empty($item['created'])) {
+        $item['created'] = $this->createDate($item['created']);
+        if ($item['created'] < $entity->get('created')->value) {
+          $item['created'] = REQUEST_TIME;
+        }
+      }
+      else {
         $item['created'] = REQUEST_TIME;
       }
 
@@ -114,7 +118,7 @@ abstract class DemoComment extends DemoContent {
       $entity->save();
 
       if ($entity->id()) {
-        $this->content[ $entity->id() ] = $entity;
+        $this->content[$entity->id()] = $entity;
       }
     }
 
@@ -122,14 +126,36 @@ abstract class DemoComment extends DemoContent {
   }
 
   /**
+   * Converts a date in the correct format.
+   *
+   * @param string $date_string
+   *   The date.
+   *
+   * @return int|false
+   *   Returns a timestamp on success, false otherwise.
+   */
+  protected function createDate($date_string) {
+    if ($date_string === 'now') {
+      return time();
+    }
+    // Split from delimiter.
+    $timestamp = explode('|', $date_string);
+
+    $date = strtotime($timestamp[0]);
+    $date = date('Y-m-d', $date) . 'T' . $timestamp[1] . ':00';
+
+    return strtotime($date);
+  }
+
+  /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'field_comment_body' => [
         [
-          'value' => $item['body'],
+          'value' => $this->checkMentionOrLinkByUuid($item['body']),
           'format' => 'basic_html',
         ],
       ],

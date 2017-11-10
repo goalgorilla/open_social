@@ -1,16 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\mentions\Entity\MentionsType
- *
- * Mentions type class used in the admin UI to specify mentions types.
- *
- */
 namespace Drupal\mentions\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\mentions\Entity\MentionsTypeInterface;
 
 /**
  * Defines the Mentions Type entity.
@@ -46,6 +38,7 @@ use Drupal\mentions\Entity\MentionsTypeInterface;
  * )
  */
 class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
+
   /**
    * The Mentions Type ID.
    *
@@ -72,37 +65,45 @@ class MentionsType extends ConfigEntityBase implements MentionsTypeInterface {
    *
    * @var string
    */
-  protected $mention_type;
-
-  /**
-   * What is looked for when mentions are parsed
-   * Keys of array: prefix, entity_type, inputvalue, suffix,
-   *
-   * @var string
-   */
-  protected $input = array();
+  protected $mentionType;
 
   /**
    * What is looked for when mentions are parsed.
    *
-   * Keys of array: outputvalue, renderlink .
+   * Keys of array: prefix, entity_type, inputvalue, suffix.
    *
    * @var string
    */
-  protected $output = array();
+  protected $input = [];
 
+  /**
+   * What is looked for when mentions are parsed.
+   *
+   * Keys of array: outputvalue, renderlink.
+   *
+   * @var string
+   */
+  protected $output = [];
 
+  /**
+   * {@inheritdoc}
+   */
   public function id() {
     return $this->name;
   }
 
-  public function mention_type() {
-    return $this->mention_type;
+  /**
+   * {@inheritdoc}
+   */
+  public function mentionType() {
+    return $this->mentionType;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getInputSettings() {
     return $this->input;
   }
 
 }
-

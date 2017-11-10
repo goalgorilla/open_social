@@ -6,6 +6,11 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 
+/**
+ * Interface DemoContentInterface.
+ *
+ * @package Drupal\social_demo
+ */
 interface DemoContentInterface extends PluginInspectionInterface, ContainerFactoryPluginInterface {
 
   /**
@@ -15,6 +20,25 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    *   The source filename where are data.
    */
   public function getSource();
+
+  /**
+   * Sets the used profile.
+   *
+   * @param string $profile
+   *   The profile.
+   *
+   * @return string
+   *   Void.
+   */
+  public function setProfile($profile);
+
+  /**
+   * Returns the profile.
+   *
+   * @return string
+   *   The used demo content profile.
+   */
+  public function getProfile();
 
   /**
    * Returns the module name.
@@ -41,6 +65,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * Returns quantity of created items.
    *
    * @return int
+   *   Returns quantity of created items.
    */
   public function count();
 
@@ -48,6 +73,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    * Set entity storage.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
+   *   The EntityStorageInterface entity_storage.
    */
   public function setEntityStorage(EntityStorageInterface $entity_storage);
 

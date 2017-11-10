@@ -1,18 +1,18 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\social_file_private\SocialFilePrivateTextEditorConfigOverride.
- */
-
 namespace Drupal\social_file_private;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\StreamWrapper\PrivateStream;
 
 /**
+ * Class SocialFilePrivateTextEditorConfigOverride.
+ *
  * Override the text editor configuration and set private scheme for files.
+ *
+ * @package Drupal\social_file_private
  */
 class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverrideInterface {
 
@@ -25,6 +25,7 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
    * report when there are text editors using public scheme.
    *
    * @return array
+   *   Returns an array containing config_names.
    */
   public function getTextEditorsToProtect() {
     $config_names = [
@@ -38,8 +39,8 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
-    $overrides = array();
-    if (\Drupal\Core\StreamWrapper\PrivateStream::basePath()) {
+    $overrides = [];
+    if (PrivateStream::basePath()) {
       $config_names = $this->getTextEditorsToProtect();
       foreach ($config_names as $config_name) {
         if (in_array($config_name, $names)) {

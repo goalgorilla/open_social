@@ -6,7 +6,8 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class FacebookAuthSettingsForm
+ * Class FacebookAuthSettingsForm.
+ *
  * @package Drupal\social_auth_facebook\Form
  */
 class FacebookAuthSettingsForm extends ConfigFormBase {
@@ -50,20 +51,20 @@ class FacebookAuthSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Copy the App ID of your Facebook App here. This value can be found from your App Dashboard.'),
     ];
 
-    $form['settings']['app_secret'] = array(
+    $form['settings']['app_secret'] = [
       '#type' => 'textfield',
       '#required' => TRUE,
       '#title' => $this->t('Application Secret'),
       '#default_value' => $config->get('app_secret'),
       '#description' => $this->t('Copy the App Secret of your Facebook App here. This value can be found from your App Dashboard.'),
-    );
+    ];
 
-    $form['settings']['status'] = array(
+    $form['settings']['status'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Active'),
       '#default_value' => $config->get('status'),
       '#description' => $this->t('Determines whether this social network can be used.'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
   }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_basics\Plugin\ActivityContext\CommunityActivityContext.
- */
-
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
@@ -29,6 +24,9 @@ class CommunityActivityContext extends ActivityContextBase {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntity($entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
@@ -41,7 +39,7 @@ class CommunityActivityContext extends ActivityContextBase {
     }
 
     // Check if it's placed in a group (regardless off content type).
-    if ($group_entity = GroupContent::loadByEntity($entity)) {
+    if (GroupContent::loadByEntity($entity)) {
       return FALSE;
     }
     if ($entity->getEntityTypeId() === 'post') {

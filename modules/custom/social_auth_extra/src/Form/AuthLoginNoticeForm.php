@@ -7,7 +7,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Class AuthLoginNoticeForm
+ * Class AuthLoginNoticeForm.
+ *
  * @package Drupal\social_auth_extra\Form
  */
 class AuthLoginNoticeForm extends ConfirmFormBase {

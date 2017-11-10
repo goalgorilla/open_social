@@ -5,6 +5,8 @@ namespace Drupal\social_demo\Plugin\DemoContent;
 use Drupal\social_demo\DemoEntity;
 
 /**
+ * MenuLink Plugin for demo content.
+ *
  * @DemoContent(
  *   id = "link",
  *   label = @Translation("Menu link"),
@@ -17,7 +19,7 @@ class MenuLink extends DemoEntity {
   /**
    * {@inheritdoc}
    */
-  public function getEntry($item) {
+  public function getEntry(array $item) {
     $entry = parent::getEntry($item);
 
     return $entry + [
@@ -27,6 +29,7 @@ class MenuLink extends DemoEntity {
       ],
       'menu_name' => $item['menu_name'],
       'expanded' => $item['expanded'],
+      'weight' => isset($item['weight']) ? $item['weight'] : 0,
     ];
   }
 

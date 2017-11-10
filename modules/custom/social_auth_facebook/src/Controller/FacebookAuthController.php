@@ -10,7 +10,8 @@ use Drupal\Core\Routing\TrustedRedirectResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class FacebookAuthController
+ * Class FacebookAuthController.
+ *
  * @package Drupal\social_auth_facebook\Controller
  */
 class FacebookAuthController extends ControllerBase {
@@ -20,13 +21,13 @@ class FacebookAuthController extends ControllerBase {
 
   /**
    * Contains access token to work with API.
+   *
+   * @var string
    */
   protected $accessToken;
 
   /**
    * FacebookAuthController constructor.
-   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
-   * @param \Drupal\social_auth_facebook\FacebookAuthManager $auth_manager
    */
   public function __construct(NetworkManager $network_manager, FacebookAuthManager $auth_manager) {
     $this->networkManager = $network_manager;
@@ -46,9 +47,11 @@ class FacebookAuthController extends ControllerBase {
   /**
    * Returns the redirect response.
    *
-   * @param $type
+   * @param string $type
    *   Type of action. "login" or "register".
+   *
    * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   protected function getRedirectResponse($type) {
     $sdk = $this->getSdk($type);
@@ -76,6 +79,7 @@ class FacebookAuthController extends ControllerBase {
    * Authorizes the user after redirect from Facebook.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a RedirectResponse.
    */
   public function userLoginCallback() {
     $sdk = $this->getSdk('login');
@@ -133,6 +137,7 @@ class FacebookAuthController extends ControllerBase {
    * Registers the new account after redirect from Facebook.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Return a RedirectResponse.
    */
   public function userRegisterCallback() {
     $sdk = $this->getSdk('register');
@@ -170,8 +175,8 @@ class FacebookAuthController extends ControllerBase {
       ]);
     }
 
-
-    // Save email and name to storage to use for auto fill the registration form.
+    // Save email and name to storage to use for auto fill the registration
+    // form.
     $data_handler = $this->networkManager->createInstance('social_auth_facebook')->getDataHandler();
     $data_handler->set('access_token', $this->accessToken);
     $data_handler->set('mail', $profile->getField('email'));
@@ -190,9 +195,10 @@ class FacebookAuthController extends ControllerBase {
    * Returns the SDK instance or RedirectResponse when error occurred.
    *
    * @param string $type
-   *   Type of action. "login" or "register".
+   *   Type of action, "login" or "register".
    *
    * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns an instance of the SDK or a Redirect Response.
    */
   public function getSdk($type) {
     $network_manager = $this->networkManager->createInstance('social_auth_facebook');
@@ -218,8 +224,10 @@ class FacebookAuthController extends ControllerBase {
    * Loads access token, then loads profile.
    *
    * @param string $type
+   *   The type.
    *
    * @return object
+   *   Returns an object.
    */
   public function getProfile($type) {
     // Get the OAuth token from Facebook.
@@ -231,7 +239,7 @@ class FacebookAuthController extends ControllerBase {
     }
 
     // Get user's Facebook profile from Facebook API.
-    if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getField('id'))) {
+    if (!($profile = $this->authManager->getProfile()) || !($profile->getField('id'))) {
       drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Facebook'),
       ]), 'error');

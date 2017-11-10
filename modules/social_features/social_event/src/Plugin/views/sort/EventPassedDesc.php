@@ -18,4 +18,5 @@ class EventPassedDesc extends Date {
     $order = ($this->view->exposed_data["{$this->realField}_op"] == '>=') ? 'ASC' : 'DESC';
     $this->query->addOrderBy($this->tableAlias, $this->realField, $order);
   }
+
 }

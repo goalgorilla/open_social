@@ -8,8 +8,10 @@
   font-size: inherit;
   line-height: 1.5;
   background-image: none;
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
 }
 
 .form-control::-moz-placeholder {
@@ -26,8 +28,20 @@ fieldset[disabled] .form-control {
   cursor: not-allowed;
 }
 
+.form-control--autogrow {
+  resize: none;
+  min-height: 38px;
+  overflow: hidden;
+  max-width: none;
+}
+
+textarea.form-control {
+  height: auto;
+}
+
 input[type="search"] {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 input[type="radio"],
@@ -55,10 +69,6 @@ input[type="checkbox"]:focus {
 
 input[type="search"] {
   -webkit-appearance: none;
-}
-
-textarea.form-control {
-  height: auto;
 }
 
 .radio,
@@ -323,7 +333,8 @@ textarea.form-control {
 }
 
 .switch .lever:after {
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+          box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
   content: "";
   position: absolute;
   display: inline-block;
@@ -333,12 +344,15 @@ textarea.form-control {
   border-radius: 21px;
   left: -5px;
   top: -3px;
-  -webkit-transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
+  -webkit-transition: left 0.3s ease, background .3s ease, -webkit-box-shadow 0.1s ease;
+  transition: left 0.3s ease, background .3s ease, -webkit-box-shadow 0.1s ease;
   transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease;
+  transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease, -webkit-box-shadow 0.1s ease;
 }
 
 input[type=checkbox]:not(:disabled) ~ .lever:active:after {
-  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
+  -webkit-box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(0, 0, 0, 0.08);
 }
 
 .switch input[type=checkbox]:checked + .lever:after {
@@ -365,7 +379,8 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 }
 
 [type='range']:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 [type='range']:focus::-moz-range-thumb {
@@ -388,7 +403,8 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
 }
 
 [type='range']::-webkit-slider-thumb {
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+          box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
   border-radius: 12px;
   cursor: pointer;
   height: 24px;
@@ -482,35 +498,35 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   position: absolute;
   right: 0;
   top: 50%;
-  z-index: 10;
+  z-index: 2;
 }
 
-@media (min-width: 600px){
+@media (min-width: 600px) {
   .form-inline .radio input[type="radio"],
-  .form-inline .checkbox input[type="checkbox"]{
+  .form-inline .checkbox input[type="checkbox"] {
     position: absolute;
   }
   .form-inline .radio label,
-  .form-inline .checkbox label{
+  .form-inline .checkbox label {
     padding-left: 22px;
     margin-right: 25px;
   }
 }
 
-@media (min-width: 900px){
-  .form-control{
+@media (min-width: 900px) {
+  .form-control {
     font-size: 16px;
   }
 }
 
-@media screen and (-webkit-min-device-pixel-ratio: 0){
-  .form-control{
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .form-control {
     font-size: 16px;
   }
   input[type="date"].form-control,
   input[type="time"].form-control,
   input[type="datetime-local"].form-control,
-  input[type="month"].form-control{
+  input[type="month"].form-control {
     line-height: 24px;
   }
 }

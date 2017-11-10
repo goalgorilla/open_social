@@ -5,7 +5,8 @@ namespace Drupal\social_auth_extra;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
- * Interface AuthManagerInterface
+ * Interface AuthManagerInterface.
+ *
  * @package Drupal\social_auth_extra
  */
 interface AuthManagerInterface {
@@ -14,6 +15,7 @@ interface AuthManagerInterface {
    * Returns key-name of a social network.
    *
    * @return string
+   *   Key-name of a social network.
    */
   public function getSocialNetworkKey();
 
@@ -21,8 +23,10 @@ interface AuthManagerInterface {
    * Set instance of SDK.
    *
    * @param object $sdk
+   *   SDK instance.
    *
    * @return mixed
+   *   Returns mixed.
    */
   public function setSdk($sdk);
 
@@ -54,10 +58,11 @@ interface AuthManagerInterface {
   /**
    * Returns URL to authorize/registration depending on type.
    *
-   * @param $type
+   * @param string $type
    *   Type of action. "login" or "register".
    *
    * @return \Drupal\Core\GeneratedUrl|string
+   *   A generated URL or a string containing an URL.
    */
   public function getRedirectUrl($type);
 
@@ -65,6 +70,7 @@ interface AuthManagerInterface {
    * Returns object of a user profile.
    *
    * @return mixed
+   *   Returns the profile.
    */
   public function getProfile();
 
@@ -91,15 +97,18 @@ interface AuthManagerInterface {
    * Set access token to AuthManager to use it for API calls.
    *
    * @param mixed $access_token
+   *   Access token to use in API calls.
    *
    * @return null
+   *   Returns null.
    */
   public function setAccessToken($access_token);
 
   /**
    * Returns an account ID on a social network.
    *
-   * @return integer|string
+   * @return int|string
+   *   The account ID on a social network.
    */
   public function getAccountId();
 
@@ -107,6 +116,7 @@ interface AuthManagerInterface {
    * Returns first name on a social network if it possible.
    *
    * @return string|null
+   *   The first name on a social network or null.
    */
   public function getFirstName();
 
@@ -114,6 +124,7 @@ interface AuthManagerInterface {
    * Returns last name on a social network if it possible.
    *
    * @return string|null
+   *   The last name on a social network or null.
    */
   public function getLastName();
 
@@ -121,6 +132,7 @@ interface AuthManagerInterface {
    * Returns user on a social network if it possible.
    *
    * @return string|false
+   *   The user name on a social network or false.
    */
   public function getUsername();
 
@@ -128,7 +140,10 @@ interface AuthManagerInterface {
    * Set an instance of a field definition that contains picture.
    *
    * @param \Drupal\Core\Field\FieldDefinitionInterface $field
+   *   The field definition containing the picture.
+   *
    * @return null
+   *   Returns null.
    */
   public function setFieldPicture(FieldDefinitionInterface $field);
 

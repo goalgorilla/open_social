@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Event Handler when a mention is updated.
- */
-
 namespace Drupal\mentions\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -13,15 +8,19 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * MentionsUpdate handles event 'mentions.update'.
  */
 class MentionsUpdate implements EventSubscriberInterface {
+
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events = array();
-    $events['mentions.update'][] = array('onMentionsUpdate', 0);
+    $events = [];
+    $events['mentions.update'][] = ['onMentionsUpdate', 0];
     return $events;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function onMentionsUpdate($event) {
     $config = \Drupal::config('mentions.mentions');
     $config_mentions_events = $config->get('mentions_events');

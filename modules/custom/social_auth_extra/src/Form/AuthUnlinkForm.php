@@ -8,7 +8,8 @@ use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 
 /**
- * Class AuthUnlinkForm
+ * Class AuthUnlinkForm.
+ *
  * @package Drupal\social_auth_extra\Form
  */
 class AuthUnlinkForm extends ConfirmFormBase {
@@ -69,7 +70,7 @@ class AuthUnlinkForm extends ConfirmFormBase {
     $network_manager = \Drupal::service('plugin.network.manager');
     $is_connected = FALSE;
 
-    foreach ($network_manager->getDefinitions() as $key => $definition) {
+    foreach ($network_manager->getDefinitions() as $definition) {
       /** @var \Drupal\social_auth_extra\UserManagerInterface $user_manager */
       $user_manager = \Drupal::service($definition['id'] . '.user_manager');
       $user_manager->setAccount($account);
@@ -113,7 +114,7 @@ class AuthUnlinkForm extends ConfirmFormBase {
     foreach ($definitions as $definition) {
       $instance = $network_manager->createInstance($definition['id']);
 
-      if ($network == $instance->getSocialNetworkKey())  {
+      if ($network == $instance->getSocialNetworkKey()) {
         $this->socialNetwork = $definition;
         break;
       }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\activity_creator\Plugin\ActivityEntityConditionManager.
- */
-
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -45,8 +40,8 @@ class ActivityEntityConditionManager extends DefaultPluginManager {
    *   An associative array mapping the IDs of all available tracker plugins to
    *   their labels.
    */
-  public function getOptionsList($entities = array()) {
-    $options = array();
+  public function getOptionsList(array $entities = []) {
+    $options = [];
 
     if (!empty($entities)) {
       foreach ($entities as $entity) {

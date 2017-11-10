@@ -8,6 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drush\Log\LogLevel;
 
+/**
+ * Class DemoGroup.
+ *
+ * @package Drupal\social_demo
+ */
 abstract class DemoGroup extends DemoContent {
 
   /**
@@ -26,12 +31,6 @@ abstract class DemoGroup extends DemoContent {
 
   /**
    * DemoGroup constructor.
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\social_demo\DemoContentParserInterface $parser
-   * @param \Drupal\user\UserStorageInterface $user_storage
-   * @param \Drupal\file\FileStorageInterface $file_storage
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, FileStorageInterface $file_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -95,7 +94,8 @@ abstract class DemoGroup extends DemoContent {
         $item['image'] = $this->prepareImage($item['image']);
       }
       else {
-        // Set "null" to exclude errors during saving (in cases when image will equal  to "false").
+        // Set "null" to exclude errors during saving
+        // (in cases when image will equal  to "false").
         $item['image'] = NULL;
       }
 
@@ -104,7 +104,8 @@ abstract class DemoGroup extends DemoContent {
         $item['files'] = $this->prepareFiles($item['files']);
       }
       else {
-        // Set "null" to exclude errors during saving (in cases when array with files will empty).
+        // Set "null" to exclude errors during saving
+        // (in cases when array with files will empty).
         $item['files'] = NULL;
       }
 
@@ -116,10 +117,11 @@ abstract class DemoGroup extends DemoContent {
         continue;
       }
 
-      $this->content[ $entity->id() ] = $entity;
+      $this->content[$entity->id()] = $entity;
 
       if (!empty($item['members'])) {
-        $this->addMembers($item['members'], $entity);
+        $managers = !empty($item['managers']) ? $item['managers'] : [];
+        $this->addMembers($item['members'], $managers, $entity);
       }
     }
 
@@ -129,7 +131,7 @@ abstract class DemoGroup extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  protected function getEntry($item) {
+  protected function getEntry(array $item) {
     $entry = [
       'uuid' => $item['uuid'],
       'langcode' => $item['langcode'],
@@ -139,7 +141,7 @@ abstract class DemoGroup extends DemoContent {
         [
           'value' => $item['description'],
           'format' => 'basic_html',
-        ]
+        ],
       ],
       'uid' => $item['uid'],
       'created' => $item['created'],
@@ -155,7 +157,10 @@ abstract class DemoGroup extends DemoContent {
    * Converts a date in the correct format.
    *
    * @param string $date_string
+   *   The date.
+   *
    * @return int|false
+   *   Returns a timestamp on success, false otherwise.
    */
   protected function createDate($date_string) {
     // Split from delimiter.
@@ -171,16 +176,25 @@ abstract class DemoGroup extends DemoContent {
    * Adds members to a group.
    *
    * @param array $members
+   *   The array of members.
+   * @param array $managers
+   *   A list of group managers.
    * @param \Drupal\group\Entity\GroupInterface $entity
+   *   The GroupInterface entity.
    */
-  protected function addMembers(array $members, GroupInterface $entity) {
+  protected function addMembers(array $members, array $managers, GroupInterface $entity) {
     foreach ($members as $account_uuid) {
       $account = $this->userStorage->loadByProperties([
         'uuid' => $account_uuid,
       ]);
 
       if (($account = current($account)) && !$entity->getMember($account)) {
-        $entity->addMember($account);
+        $values = [];
+        // If the user should have the manager role, grant it to him now.
+        if (in_array($account_uuid, $managers)) {
+          $values = ['group_roles' => [$entity->bundle() . '-group_manager']];
+        }
+        $entity->addMember($account, $values);
       }
     }
   }
@@ -188,8 +202,11 @@ abstract class DemoGroup extends DemoContent {
   /**
    * Prepares data about an image of a group.
    *
-   * @param $image
+   * @param string $image
+   *   The uuid of the image.
+   *
    * @return array
+   *   Returns an array.
    */
   protected function prepareImage($image) {
     $value = NULL;
@@ -211,13 +228,16 @@ abstract class DemoGroup extends DemoContent {
   /**
    * Prepares an array with list of files to set as field value.
    *
-   * @param $files
+   * @param string $files
+   *   The uuid for the file.
+   *
    * @return array
+   *   Returns an array.
    */
   protected function prepareFiles($files) {
     $values = [];
 
-    foreach ($files as $key => $file_uuid) {
+    foreach ($files as $file_uuid) {
       $file = $this->fileStorage->loadByProperties([
         'uuid' => $file_uuid,
       ]);

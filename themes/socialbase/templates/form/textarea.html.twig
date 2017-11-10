@@ -13,5 +13,10 @@
  * @see template_preprocess_textarea()
  */
 #}
-
-<textarea {{ attributes.addClass('form-control form-control--autogrow js-textarea-autogrow').setAttribute('data-min-rows', '2').removeAttribute('rows') }}>{{ value }}</textarea>
+{% set classes =
+  [
+    'form-control',
+    autogrow ? 'form-control--autogrow'
+  ]
+%}
+<textarea {{ attributes.addClass(classes).removeAttribute('rows') }}>{{ value }}</textarea>

@@ -1,8 +1,11 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the social_page module.
  */
+
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -19,7 +22,7 @@ function social_page_install() {
  * Function to set permissions.
  */
 function _social_page_set_permissions() {
-  $roles = \Drupal\user\Entity\Role::loadMultiple();
+  $roles = Role::loadMultiple();
 
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -33,23 +36,21 @@ function _social_page_set_permissions() {
 }
 
 /**
- * @param $role
- * @return array
+ * Build the permissions.
  */
 function _social_page_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array(
+  $permissions['anonymous'] = [
     'view node.page.field_content_visibility:public content',
-  );
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'view node.page.field_content_visibility:community content',
-  ));
-
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'create page content',
     'delete any page content',
     'delete own page content',
@@ -65,15 +66,14 @@ function _social_page_get_permissions($role) {
     'override page promote to front page option',
     'override page revision option',
     'override page sticky option',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array(
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
-  ));
+  ]);
   if (isset($permissions[$role])) {
     return $permissions[$role];
   }
   return [];
 }
-

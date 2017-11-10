@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Define the entity Mention used to create the base and data tables in DB.
- *
- * Also used for views.
- */
-
 namespace Drupal\mentions\Entity;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -15,9 +8,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\mentions\MentionsInterface;
 
 /**
- *
- * @file
- * Mentions Entity.
+ * Mentions Class.
  *
  * @ContentEntityType(
  *   id = "mentions",
@@ -42,6 +33,7 @@ use Drupal\mentions\MentionsInterface;
  * )
  */
 class Mentions extends ContentEntityBase implements MentionsInterface {
+
   /**
    * {@inheritdoc}
    */

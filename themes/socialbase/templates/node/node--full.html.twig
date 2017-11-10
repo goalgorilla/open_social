@@ -69,7 +69,6 @@
 {%
   set classes = [
     'card',
-    'brand-border-radius',
     node.isPromoted() ? 'node--promoted',
     not node.isPublished() ? 'node--unpublished',
   ]
@@ -89,35 +88,36 @@
       <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
     {% endif %}
 
+    {% if display_submitted %}
+      {% block metainfo %}
+        <header class="metainfo">
 
-    {% block metainfo %}
-      <header class="metainfo">
-
-        <div class="metainfo__avatar">
-          {{ author_picture }}
-        </div>
-
-        <div class="metainfo__content">
-
-          {{ author }}
-          <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-          <div>
-            {% if event_type %}
-              {{ event_type }}
-            {% endif %}
-            {% if topic_type %}
-              {{ topic_type }}
-            {% endif %}
-            {% if group_link %}
-              {% trans %} in group {% endtrans %}
-              {{ group_link }}
-            {% endif %}
+          <div class="metainfo__avatar">
+            {{ author_picture }}
           </div>
 
-        </div>
+          <div class="metainfo__content">
 
-      </header>
-    {% endblock %}
+            {{ author }}
+            <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+            <div>
+              {% if event_type %}
+                {{ event_type }}
+              {% endif %}
+              {% if topic_type %}
+                {{ topic_type }}
+              {% endif %}
+              {% if group_link %}
+                {% trans %} in group {% endtrans %}
+                {{ group_link }}
+              {% endif %}
+            </div>
+
+          </div>
+
+        </header>
+      {% endblock %}
+    {% endif %}
 
     {% if event_date %}
       {% block nodefull_specialfields %}
@@ -137,7 +137,7 @@
           {% endif %}
 
           {% if node.isSticky() %}
-            <span class="badge badge-accent badge--large brand-bg-accent">{% trans %}Featured{% endtrans %}</span>
+            <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
           {% endif %}
 
           {% if comment_field_status is not empty %}

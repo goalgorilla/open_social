@@ -10,11 +10,17 @@
   &:first-child {
     margin-top: 0;
   }
+
+  .form-actions .btn {
+    margin-bottom: 0;
+  }
+
 }
 
 .comment__avatar {
   margin-right: 8px;
-  width: 44px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
 
   @include for-tablet-portrait-up {
@@ -51,7 +57,10 @@
 
   p {
     word-break: break-word;
-    margin-bottom: 0;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
   }
 
   // like badge
@@ -75,7 +84,7 @@
     margin-top: 0;
   }
 
-  // avatars in replies shoudl be smaller
+  // avatars in replies should be smaller
   .comment__avatar {
     width: 34px;
 
@@ -84,6 +93,7 @@
       height: 34px;
     }
   }
+
 }
 
 
@@ -102,6 +112,46 @@
   margin-right: 10px;
 }
 
+// Comment form needs to have usable layout on mobile
+
+.comment__avatar {
+  display: none;
+
+  @include for-tablet-portrait-up {
+    display: block;
+  }
+}
+
+.comment-form {
+
+  @include for-phone-only {
+
+    .btn--comment-submit {
+      padding-left: 6px;
+      padding-right: 6px;
+      margin-bottom: 0;
+
+      .label {
+        font-size: 0;
+        text-indent: -9999px;
+      }
+
+    }
+
+  }
+
+  @include for-tablet-portrait-up {
+    .btn-icon {
+      display: none;
+    }
+  }
+
+  textarea.form-control {
+    height: $input-height-base;
+  }
+
+
+}
 
 // when optional module social_comment_upload is enabled
 .comment-attachments {
