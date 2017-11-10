@@ -1,11 +1,11 @@
 @account @profile @stability @perfect @api @2840664
-Feature: View and block people page as content manager
+Feature: View and block users as site manager
   Benefit: In order to see user list at
-  Role: CM
+  Role: SM
   Goal/desire: See user list
 
   Scenario: Successfully see user list
-    Given I am logged in as an "contentmanager"
+    Given I am logged in as an "sitemanager"
     And I am on "admin/people"
     And I should see "Name or email contains"
     And I should see "Block the selected user(s)"

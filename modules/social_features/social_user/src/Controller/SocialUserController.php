@@ -41,10 +41,12 @@ class SocialUserController extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
+   *
+   * @return AccessResult
    */
   public function access(AccountInterface $account) {
-    // Check standart permission and our custom.
-    return AccessResult::allowedIfHasPermissions($account, array('administer users', 'view users'), 'OR');
+    // Check standard and our custom permissions.
+    return AccessResult::allowedIfHasPermissions($account, ['administer users', 'view users'], 'OR');
   }
 
 }

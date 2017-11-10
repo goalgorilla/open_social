@@ -144,10 +144,10 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
 function social_user_form_views_form_user_admin_people_page_1_alter(&$form, FormStateInterface $form_state){
   if(!empty($form['header']['user_bulk_form']['action']['#options'])){
     $actions = $form['header']['user_bulk_form']['action']['#options'];
-    $block_action = array('user_block_user_action' => $actions['user_block_user_action']);
+    $block_action = ['user_block_user_action' => $actions['user_block_user_action']];
     $current_user = \Drupal::currentUser();
     if(!$current_user->hasPermission('administer users')){
-      $actions = array();
+      $actions = [];
     }
     if(empty($actions) && $current_user->hasPermission('block users')){
       $actions = $block_action;

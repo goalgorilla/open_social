@@ -106,3 +106,11 @@ function _social_user_get_permissions($role) {
   return [];
 }
 
+/**
+ * Add permissions to view and block users for site manager role.
+ */
+function social_user_update_8003() {
+  $permissions = _social_user_get_permissions('sitemanager');
+  user_role_grant_permissions('sitemanager', $permissions);
+}
+
