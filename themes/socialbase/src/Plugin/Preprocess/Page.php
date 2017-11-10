@@ -3,6 +3,7 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
+use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
 
 /**
@@ -20,7 +21,15 @@ class Page extends PreprocessBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
-    $variables['display_page_title'] = TRUE;
+    // Add needed attributes so later in template we can manipulate with them.
+    $attributes = new Attribute();
+    // Default classes.
+    $attributes->addClass('row', 'container');
+    // If page has title.
+    if ($variables['page']['title']) {
+      $attributes->addClass('with-title-region');
+      $variables['display_page_title'] = TRUE;
+    }
 
     // If we have the admin toolbar permission.
     $user = \Drupal::currentUser();
@@ -55,11 +64,33 @@ class Page extends PreprocessBase {
         'book',
       ];
 
-      if (in_array($node->bundle(), $page_to_exclude)) {
+      // If there is a title and node type is excluded remove class.
+      if (in_array($node->bundle(), $page_to_exclude, TRUE)) {
+        $attributes->removeClass('with-title-region');
         $variables['display_page_title'] = FALSE;
       }
 
     }
+
+    // Check complementary_top and complementary_bottom variables.
+    if ($variables['page']['complementary_top'] || $variables['page']['complementary_bottom']) {
+      $attributes->addClass('layout--with-complementary');
+    }
+    // Check if sidebars are empty.
+    if (empty($variables['page']['sidebar_first']) && empty($variables['page']['sidebar_second'])) {
+      $attributes->addClass('layout--with-complementary');
+    }
+    // Sidebars logic.
+    if (empty($variables['page']['complementary_top']) && empty($variables['page']['complementary_bottom'])) {
+      if ($variables['page']['sidebar_first'] && $variables['page']['sidebar_second']) {
+        $attributes->addClass('layout--with-three-columns');
+      }
+      if (!empty($variables['page']['sidebar_second']) xor !empty($variables['page']['sidebar_first'])) {
+        $attributes->addClass('layout--with-two-columns');
+      }
+    }
+
+    $variables['content_attributes'] = $attributes;
 
   }
 

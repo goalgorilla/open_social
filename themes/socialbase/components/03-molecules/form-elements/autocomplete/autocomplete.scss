@@ -1,5 +1,17 @@
 @import 'settings';
 
+// Autocomplete
+//
+// For autocomplete we use jQuery UI v11.4 from Drupal core.
+// We extend the core/drupal.ajax library with our own css.
+// There is no initialisation needed. This is all done via field settings.
+//
+// Markup: autocomplete.twig
+//
+// Weight: 1
+//
+// Style guide: molecules.form-elements.autocomplete
+
 .ui-autocomplete.ui-widget-content {
   @include z-depth-4;
 	background: white;
