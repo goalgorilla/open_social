@@ -115,16 +115,6 @@ function _socialbase_node_get_like_count($type, $id) {
 }
 
 /**
- * Implements hook_js_alter().
- */
-function socialbase_js_alter(&$javascript, AttachedAssetsInterface $assets) {
-  if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {
-    $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
-  }
-
-}
-
-/**
  * Implements theme_preprocess_username().
  */
 function socialbase_preprocess_username(&$variables) {
