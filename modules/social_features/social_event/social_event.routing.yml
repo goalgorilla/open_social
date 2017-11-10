@@ -1,0 +1,6 @@
+social_event.my_events:
+  path: '/my-events'
+  defaults:
+    _controller: '\Drupal\social_event\Controller\SocialEventController::redirectMyEvents'
+  requirements:
+      _user_is_logged_in: 'TRUE'
