@@ -34,6 +34,8 @@ class Field extends PreprocessBase {
       case 'field_comment_body':
       case 'field_activity_output_text':
       case 'field_activity_entity':
+      case 'field_profile_first_name':
+      case 'field_profile_last_name':
         $variables['bare'] = TRUE;
         break;
 
