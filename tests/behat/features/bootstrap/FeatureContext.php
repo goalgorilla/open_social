@@ -77,6 +77,48 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @When /^I click on the embed icon in the WYSIWYG editor$/
+     */
+    public function clickEmbedIconInWysiwygEditor() {
+
+      $cssSelector = 'a.cke_button__url';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $element->click();
+    }
+
+    /**
+     * @Then /^The iframe in the body description should have the src "([^"]*)"$/
+     */
+    public function iFrameInBodyDescriptionShouldHaveTheSrc($src) {
+
+      $cssSelector = 'article .card__body .body-text iframe';
+
+      $session = $this->getSession();
+      $element = $session->getPage()->find(
+        'xpath',
+        $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector)
+      );
+      if (null === $element) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+      }
+
+      $iframe_source = $element->getAttribute('src');
+
+      if ($iframe_source !== $src) {
+        throw new \InvalidArgumentException(sprintf('The iframe does not have the src: "%s"', $src));
+      }
+    }
+
+    /**
      * @When /^I click on the image icon in the WYSIWYG editor$/
      */
     public function clickImageIconInWysiwygEditor() {
