@@ -15,11 +15,13 @@
           $('.menu.nav.navbar-nav', '.dropdown.profile.not-logged-in').removeClass().addClass('dropdown-menu');
         }
 
-      }
+      };
 
-      // Extecuted on document load and window resize.
-      $(document).on('ready', navbarResizeUpdate);
-      $(window).on('resize', navbarResizeUpdate);
+      // Executed on document load and window resize.
+      navbarResizeUpdate();
+      $(window).resize(_.debounce(function(){
+        navbarResizeUpdate()
+      }, 500));
 
     }
   }
