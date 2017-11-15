@@ -174,7 +174,7 @@
         value = @cache.value.compiled
 
       if oldValue and newValue
-        diff = diffChars oldValue, newValue
+        diff = JsDiff.diffChars oldValue, newValue
         cursor = 0
 
         setPosition = (cursor, delta) =>

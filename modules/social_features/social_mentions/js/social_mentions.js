@@ -27,11 +27,9 @@
           return $li.appendTo(ul);
         },
         open: function(event, ui) {
-          var menu = $(this).data("ui-mentionsAutocomplete").menu;
-          menu.focus(null, $("li", menu.element).eq(0));
-
-          if (CKEDITOR.instances[this.id]) {
-            $(menu.element).focus();
+          if (!CKEDITOR.instances[this.id]) {
+            var menu = $(this).data("ui-mentionsAutocomplete").menu;
+            menu.focus(null, $("li", menu.element).eq(0));
           }
         }
       },

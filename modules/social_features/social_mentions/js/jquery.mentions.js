@@ -204,7 +204,7 @@
           value = this.cache.value.compiled;
         }
         if (oldValue && newValue) {
-          diff = diffChars(oldValue, newValue);
+          diff = JsDiff.diffChars(oldValue, newValue);
           cursor = 0;
           setPosition = (function(_this) {
             return function(cursor, delta) {
