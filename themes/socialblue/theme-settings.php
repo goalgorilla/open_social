@@ -17,12 +17,12 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
     return;
   }
 
-  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+  $theme = \Drupal::configFactory()->get('system.theme')->get('default');
 
   // If the default theme is either socialblue or socialsaas then extend
   // the form in the appearance section.
-  if ($system_theme_settings == 'socialblue' || $system_theme_settings == 'socialsaas') {
-    $config = \Drupal::config($system_theme_settings . '.settings');
+  if ($theme == 'socialblue' || $theme == 'socialsaas') {
+    $config = \Drupal::config($theme . '.settings');
 
     $form['open_social_settings'] = [
       '#type' => 'vertical_tabs',

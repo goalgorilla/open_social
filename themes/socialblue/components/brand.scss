@@ -1,0 +1,260 @@
+@import 'settings';
+
+[type=\"radio\"]:checked + label:before {
+  border-color: $brand-secondary;
+}
+
+[type=\"radio\"]:checked + label:after {
+  border-color: $brand-secondary;
+  background-color: $brand-secondary;
+}
+
+[type=\"radio\"]:checked + label {
+  color: $brand-secondary;
+}
+
+.dropdown-toggle.btn-primary:hover {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+}
+
+.nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus, .card__link {
+  color: $brand-primary;
+}
+
+.nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
+  border-right-color: $brand-primary;
+}
+
+.nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
+  border-bottom-color: transparent;
+}
+
+.read-indicator,
+.select2-container--social .select2-results__option--highlighted[aria-selected],
+.select2-container--social .select2-results__option[aria-selected=true],
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span,
+.pagination > .active > span:hover,
+.pagination > .active > span:focus {
+  background-color: $brand-primary;
+}
+
+.hero-form[role='search'] {
+
+  .form-control {
+    &:focus,
+    &:active,
+    &:focus ~ .search-icon,
+    &:active ~ .search-icon {
+      box-shadow: 0 2px 0 0 $brand-secondary;
+    }
+  }
+
+  .search-icon {
+    fill: $brand-primary;
+  }
+
+}
+
+.form-control:focus {
+  border-color: $brand-primary;
+  box-shadow: 0 2px 0 0 $brand-primary;
+}
+
+.select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
+  border-color: $brand-primary;
+}
+
+.brand-secondary {
+  background-color: $brand-secondary;
+  border-color: $brand-secondary;
+}
+
+.badge-secondary {
+  background-color: $brand-secondary;
+}
+
+.badge-accent {
+  background-color: $brand-accent;
+}
+
+.nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
+  background-color: rgba(0,0,0,0.5);
+}
+
+.btn-primary {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+}
+
+.btn-accent {
+  background-color: $brand-accent;
+  border-color: $brand-accent;
+}
+
+.btn-flat,
+.btn-link,
+.btn-link:hover,
+.btn-flat:hover,
+.btn-link:focus,
+.btn-flat:focus,
+.card__link,
+.card__link:focus,
+.card__link:hover,
+.view--who-liked .views-field-view-user a,
+.comment__reply-btn,
+.body-text a,
+.body-text a:hover,
+.book-menu .list-item--active-trail > a {
+  color: $brand-primary;
+  fill: $brand-primary;
+}
+
+.list-item--active, .list-item--active:hover, .list-item--active:focus,
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus,
+[type=\"checkbox\"]:checked + label:after {
+  background-color: $brand-secondary;
+  border-color: $brand-secondary;
+}
+
+.stream-icon-new {
+  background-color: $brand-secondary;
+}
+
+blockquote {
+  border-left-color: $brand-primary;
+}
+
+.input-group .form-control:focus ~ .input-group-addon {
+  border-color: $brand-primary;
+  box-shadow: 0 2px 0 0 $brand-primary;
+}
+
+.site-footer,
+.cover {
+  background-color: $brand-primary;
+}
+
+.navbar-secondary {
+  color: #f9f9f9;
+  background-color: #1f7ea7;
+
+  .navbar-nav {
+
+    a {
+      color: #f9f9f9;
+    }
+
+    li.active a {
+      border-bottom-color: #f9f9f9;
+    }
+
+  }
+}
+
+.navbar-scrollable:before {
+  background: linear-gradient(90deg, #1f7ea7, transparent);
+}
+
+.navbar-scrollable:after {
+  background: linear-gradient(-90deg, #1f7ea7, transparent);
+}
+
+.ui-datepicker-calendar > tbody > tr > td .ui-state-active {
+  background-color: $brand-secondary;
+}
+
+.navbar-default {
+  background-color: $navbar-default-bg;
+
+  .navbar-toggle {
+    color: $navbar-default-link-color;
+
+    &:hover,
+    &:focus {
+      color: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+    }
+  }
+
+  .navbar-nav {
+    > li > a {
+      color: $navbar-default-link-color;
+      fill: $navbar-default-link-color;
+
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+
+        .navbar-nav__icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $navbar-default-link-active-bg;
+        color: $navbar-default-link-active-color;
+      }
+    }
+
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        fill: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+      }
+    }
+
+  }
+}
+
+@include for-tablet-landscape-down{
+
+  .navbar-collapse .dropdown-menu li a {
+    color: $navbar-default-link-color;
+
+    &:hover,
+    &:focus {
+      color: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+    }
+
+  }
+}
+
+.navbar-nav__icon {
+  fill: $navbar-default-link-color;
+}
+
+
+.navbar__open-search-block {
+  background-color: $navbar-default-bg;
+}
+
+@include for-tablet-landscape-up {
+
+  .search-take-over .form-text {
+    color: $navbar-default-link-color;
+
+    &:focus {
+      border-color: $navbar-default-link-color;
+      box-shadow: 0 2px 0 0 $navbar-default-link-color;
+    }
+
+  }
+
+  .btn--close-search-take-over svg {
+    fill: $navbar-default-link-color;
+  }
+
+}
