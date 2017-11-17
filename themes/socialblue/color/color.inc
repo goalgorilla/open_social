@@ -41,9 +41,9 @@ $info = [
     ],
   ],
 
-  'css' => array(
+  'css' => [
     'assets/css/brand.css',
-  ),
+  ],
 
   // Files to copy.
   'copy' => [
