@@ -132,8 +132,10 @@ abstract class DemoSystem extends DemoContent {
       }
       // Font.
       $config->set('font_primary', $this->getOrCreateFont($data['theme']['font_primary']))->save();
-      // Border radius.
-      $config->set('border_radius', $data['theme']['border_radius'])->save();
+      // Borders.
+      $config->set('card_radius', $data['theme']['card_radius'])->save();
+      $config->set('form_control_radius', $data['theme']['form_control_radius'])->save();
+      $config->set('button_radius', $data['theme']['button_radius'])->save();
 
       // Get the colors.
       $color = $this->configFactory->getEditable('color.theme.' . $active_theme);
