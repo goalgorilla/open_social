@@ -392,7 +392,6 @@ figure.align-center {
 .embed-responsive {
   display: block;
   position: relative;
-  height: 0;
   overflow: hidden;
   width: 100%;
   padding: 0;
@@ -417,6 +416,10 @@ figure.align-center {
   height: 100%;
 }
 
+.embed-responsive + p {
+  margin-top: 0.75rem;
+}
+
 .embed-responsive-16by9::before {
   padding-top: 56.25%;
 }
@@ -435,6 +438,11 @@ figure.align-center {
 
 iframe {
   max-width: 100%;
+}
+
+p > iframe {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 a {
@@ -1187,6 +1195,22 @@ a.icon-after .glyphicon {
 .btn.icon-after .btn-icon {
   margin-left: .25em;
   margin-right: -.25em;
+}
+
+.cke_button_label.cke_button__url_label {
+  display: inline;
+}
+
+.icon-desktop {
+  background-image: url(../images/icons/icon-desktop.svg);
+}
+
+.icon-tablet {
+  background-image: url(../images/icons/icon-tablet.svg);
+}
+
+.icon-phone {
+  background-image: url(../images/icons/icon-phone.svg);
 }
 
 .close {
