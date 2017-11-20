@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_embed module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_embed.
+ */
+function social_embed_install() {
+  // Create the social_embed icon.
+  social_embed_create_media_button();
+}
+
+/**
+ * Create the social_embed icon.
+ */
+function social_embed_update_8001() {
+  // Create the social_embed icon.
+  social_embed_create_media_button();
+}
