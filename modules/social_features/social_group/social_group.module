@@ -363,8 +363,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // Add custom submit handler just for redirect purposes.
       // We don't want to override the form::save in group.
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
-      $form['actions']['unpublish']['#submit'][] = '_social_group_node_form_submit';
-      $form['actions']['publish']['#submit'][] = '_social_group_node_form_submit';
     }
   }
 
@@ -584,18 +582,18 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       // Always remove the option: public for groups.
-      unset($element['#options']['public']);
+      $element['public']['#disabled'] = TRUE;
       if ($group_type->id() === 'closed_group') {
-        unset($element['#options']['community']);
+        $element['community']['#disabled'] = TRUE;
         $element['#default_value'] = 'group';
       }
       else {
-        unset($element['#options']['group']);
+        $element['group']['#disabled'] = TRUE;
       }
     }
     else {
-      // This is not a group so lets remove this visibility option.
-      unset($element['#options']['group']);
+      // This is not a group so lets disable this visibility option.
+      $element['group']['#disabled'] = TRUE;
     }
   }
 }
@@ -946,4 +944,91 @@ function social_group_block_view_group_hero_block_alter(array &$build, BlockPlug
   if ($current_route == 'entity.group_content.create_form') {
     $build['#pre_render'] = [];
   }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_group_entity_base_field_info_alter(&$fields, \Drupal\Core\Entity\EntityTypeInterface $entity_type) {
+  $entity_types = ['node', 'user'];
+  if (in_array($entity_type->id(), $entity_types)) {
+    if (isset($fields['groups'])) {
+      /** @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
+      $fields['groups']->setLabel(t('Group'));
+      $fields['groups']->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'settings' => [],
+        'weight' => 16,
+      ]);
+      $fields['groups']->setDisplayConfigurable('form', TRUE);
+      $fields['groups']->setDescription('');
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  if ($form['#form_id'] === 'node_topic_edit_form' || $form['#form_id'] === 'node_event_edit_form') {
+    if (isset($form['groups'])) {
+      $change_fieldgroup_titles = [
+        'group_topic_visibility',
+        'group_event_visibility',
+      ];
+      foreach ($change_fieldgroup_titles as $fieldgroup_title) {
+        if (isset($form['#fieldgroups'][$fieldgroup_title])) {
+          $form['#fieldgroups'][$fieldgroup_title]->label = (string) t('Group and visibility');
+        }
+      }
+      $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
+
+      // Lets remove all the groups the user is not a member of.
+      $account = \Drupal::currentUser();
+      if (!$account->hasPermission('manage all groups')) {
+        $account_groups = social_group_get_all_group_members($account->id());
+        foreach ($form['groups']['widget']['#options'] as $option_category_key => $option_category) {
+          if (is_array($option_category)) {
+            foreach ($option_category as $option_key => $option) {
+              if (!in_array($option_key, $account_groups)) {
+                unset($form['groups']['widget']['#options'][$option_category_key][$option_key]);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  elseif ($form['#form_id'] === 'node_topic_form' || $form['#form_id'] === 'node_event_form') {
+    $form['groups']['#access'] = FALSE;
+  }
+}
+
+/**
+ * Form submit to save the group from a node form.
+ *
+ * @param array $form
+ *   Node add or node edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
+  $original_groups = $form['groups']['widget']['#default_value'];
+  $groups_to_add = [];
+  $groups_to_remove = [];
+  foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
+    $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
+  }
+  foreach ($original_groups as $original_group_key => $original_group) {
+    if (!in_array($original_group, $groups_to_add)) {
+      $groups_to_remove[$original_group] = $original_group;
+    }
+    else {
+      unset($groups_to_add[$original_group]);
+    }
+  }
+  $node = $form_state->getFormObject()->getEntity();
+
+  // Now make sure the relevant GroupContent is removed or added.
+  \Drupal\social_group\SetGroupsForNodeService::setGroupsForNode($node, $groups_to_remove, $groups_to_add);
 }
