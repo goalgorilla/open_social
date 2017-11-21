@@ -32,7 +32,7 @@ class SocialEmbedEditorConfigOverride implements ConfigFactoryOverrideInterface 
             foreach ($settings['toolbar']['rows'] as $row_id => $row) {
               foreach ($row as $group_id => $group) {
                 foreach ($group['items'] as $button_id => $button) {
-                  if ($button === 'url') {
+                  if ($button === 'social_embed') {
                     $button_exists = TRUE;
                   }
                 }
@@ -45,7 +45,7 @@ class SocialEmbedEditorConfigOverride implements ConfigFactoryOverrideInterface 
               $group = [];
               $group['name'] = 'Embed';
               $group['items'] = [];
-              $group['items'][] = 'url';
+              $group['items'][] = 'social_embed';
               $settings['toolbar']['rows'][$last_row_key][] = $group;
               $overrides[$config_name] = [
                 'settings' => $settings,
