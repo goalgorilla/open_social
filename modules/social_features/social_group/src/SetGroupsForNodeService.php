@@ -24,7 +24,7 @@ class SetGroupsForNodeService {
   /**
    * Save groups for a given node.
    */
-  public static function setGroupsForNode(Node $node, Array $groups_to_remove, Array $groups_to_add) {
+  public static function setGroupsForNode(Node $node, array $groups_to_remove, array $groups_to_add) {
     if ($node->id()) {
       foreach ($groups_to_remove as $group_id) {
         $group = Group::load($group_id);
@@ -44,7 +44,7 @@ class SetGroupsForNodeService {
    *
    * @param \Drupal\node\NodeInterface $node
    *   Object of a node.
-   * @param Group $group
+   * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
   public static function addGroupContent(NodeInterface $node, Group $group) {
@@ -64,13 +64,13 @@ class SetGroupsForNodeService {
    *
    * @param \Drupal\node\NodeInterface $node
    *   Object of a node.
-   * @param Group $group
+   * @param \Drupal\group\Entity\Group $group
    *   Object of a group.
    */
   public static function removeGroupContent(NodeInterface $node, Group $group) {
     // Try to load group content from entity.
     if ($group_contents = GroupContent::loadByEntity($node)) {
-      /** @var GroupContent $group_content */
+      /* @var @param \Drupal\group\Entity\GroupContent $group_content */
       foreach ($group_contents as $group_content) {
         if ($group->id() === $group_content->getGroup()->id()) {
           $group_content->delete();
