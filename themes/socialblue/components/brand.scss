@@ -1,32 +1,29 @@
 @import 'settings';
 
-[type=\"radio\"]:checked + label:before {
-  border-color: $brand-secondary;
+[type="radio"]:checked + label:before {
+  border-color: $brand-primary;
+}
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px $brand-primary;
 }
 
-[type=\"radio\"]:checked + label:after {
-  border-color: $brand-secondary;
-  background-color: $brand-secondary;
+[type="checkbox"]:checked + label:after,
+[type="radio"]:checked + label:after {
+  border-color: $brand-primary;
+  background-color: $brand-primary;
 }
 
-[type=\"radio\"]:checked + label {
-  color: $brand-secondary;
-}
-
-.nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus, .card__link {
+[type="checkbox"]:checked + label,
+[type="radio"]:checked + label {
   color: $brand-primary;
 }
 
-.nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
+.tabs-left .nav-tabs > li.active > a,
+.tabs-left .nav-tabs > li.active > a:hover,
+.tabs-left .nav-tabs > li.active > a:focus {
   border-right-color: $brand-primary;
 }
 
-.nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
-  border-bottom-color: transparent;
-}
-
-
-.site-footer,
 .cover,
 .read-indicator,
 .select2-container--social .select2-results__option--highlighted[aria-selected],
@@ -66,34 +63,72 @@
   border-color: $brand-primary;
 }
 
-.brand-secondary {
-  background-color: $brand-secondary;
-  border-color: $brand-secondary;
-}
-
+.site-footer,
 .badge-secondary,
 .ui-datepicker-calendar > tbody > tr > td .ui-state-active,
 .stream-icon-new {
   background-color: $brand-secondary;
 }
 
-.badge-accent {
-  background-color: $brand-accent;
-}
-
-.nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
-  background-color: rgba(0,0,0,0.5);
-}
-
-.btn-primary,
-.dropdown-toggle.btn-primary:hover {
+.btn-primary{
   background-color: $brand-primary;
   border-color: $brand-primary;
+
+  &:focus,
+  &.focus,
+  &:hover,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle,
+  &.dropdown-toggle:hover{
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $brand-primary;
+      border-color: $brand-primary;
+    }
+  }
+
+}
+
+.badge-accent {
+  background-color: $brand-accent;
+  border-color: $brand-accent;
 }
 
 .btn-accent {
   background-color: $brand-accent;
   border-color: $brand-accent;
+
+  &:focus,
+  &.focus,
+  &:hover,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle,
+  &.dropdown-toggle:hover{
+    background-color: $brand-accent;
+    border-color: $brand-accent;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $brand-accent;
+      border-color: $brand-accent;
+    }
+  }
+
 }
 
 .btn-flat,
@@ -102,6 +137,9 @@
 .btn-flat:hover,
 .btn-link:focus,
 .btn-flat:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
 .card__link,
 .card__link:focus,
 .card__link:hover,
@@ -114,9 +152,12 @@
   fill: $brand-primary;
 }
 
-.list-item--active, .list-item--active:hover, .list-item--active:focus,
-.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus,
-[type=\"checkbox\"]:checked + label:after {
+.list-item--active,
+.list-item--active:hover,
+.list-item--active:focus,
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
   background-color: $brand-secondary;
   border-color: $brand-secondary;
 }
