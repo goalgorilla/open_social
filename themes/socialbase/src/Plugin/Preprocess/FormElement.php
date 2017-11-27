@@ -20,7 +20,8 @@ class FormElement extends BaseFormElement {
    */
   public function preprocessElement(Element $element, Variables $variables) {
 
-    // If form element is part of email_notification add class to label.
+    // Check if form element is part of
+    // email_notifications and add class to label.
     if (in_array('email_notifications', $element['#parents'])) {
       $variables['label']['#attributes']['class'][] = 'control-label--wide';
     }

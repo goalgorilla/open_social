@@ -168,45 +168,31 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
 
     .btn-flat,
     .btn-link,
-    .card__link,
-    .view--who-liked .views-field-view-user a {
-      color: $link !important;
-      fill: $link !important;
-    }
-
     .btn-link:hover,
-    .btn-flat:hover {
-      color: inherit !important;
-    }
-
-    .list-item--active, .list-item--active:hover, .list-item--active:focus,
-    .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
-      background-color: $secondary !important;
-      border-color: $secondary !important;
-    }
-
-    [type=\"checkbox\"]:checked + label:after {
-      border-color: $secondary !important;
-      background-color: $secondary !important;
-    }
-
-    .stream-icon-new {
-      background-color: $secondary !important;
-    }
-
-    .comment__reply-btn {
-      color: $link !important;
-    }
-
-    .btn-accent {
-      background-color: $accent !important;
-      border-color: $accent !important;
-    }
-
+    .btn-flat:hover,
+    .btn-link:focus,
+    .btn-flat:focus,
+    .card__link,
+    .card__link:focus,
+    .card__link:hover,
+    .view--who-liked .views-field-view-user a,
+    .comment__reply-btn,
     .body-text a,
     .body-text a:hover,
     .book-menu .list-item--active-trail > a {
       color: $link !important;
+      fill: $link !important;
+    }
+
+    .list-item--active, .list-item--active:hover, .list-item--active:focus,
+    .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus,
+    [type=\"checkbox\"]:checked + label:after {
+      background-color: $secondary !important;
+      border-color: $secondary !important;
+    }
+
+    .stream-icon-new {
+      background-color: $secondary !important;
     }
 
     blockquote {
@@ -221,16 +207,13 @@ function _improved_theme_settings_update_palette($colors = '', $system_theme_set
     .navbar-default .dropdown-menu > .active > a,
     .navbar-default .dropdown-menu > .active > a:hover,
     .navbar-default .dropdown-menu > .active > a:focus,
-    .site-footer {
+    .site-footer,
+    .cover {
       background-color: $primary !important;
     }
 
     .navbar-secondary {
       background-color: $secondary !important;
-    }
-    
-    .cover {
-      background-color: $primary !important;
     }
 
     .navbar-scrollable:before {
