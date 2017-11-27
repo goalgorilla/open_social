@@ -36,7 +36,6 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       else {
         $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
         $gid = $group_content_entity->get('gid')->getValue();
-
       }
 
       if ($gid && isset($gid[0]['target_id'])) {
