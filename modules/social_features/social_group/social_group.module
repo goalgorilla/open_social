@@ -1100,6 +1100,7 @@ function social_group_validate_group_selection(array $form, FormStateInterface $
   }
 
   foreach ($allowed_visibility_options as $visibility => $allowed) {
+    $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
     if ($allowed === TRUE) {
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
