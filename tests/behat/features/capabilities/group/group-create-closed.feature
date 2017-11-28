@@ -55,7 +55,7 @@ Feature: Create Closed Group
       | Title | Test closed group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save and publish"
+    And I press "Save"
     And I should see "Test closed group topic"
 
   # Create an event inside the closed group
@@ -70,7 +70,7 @@ Feature: Create Closed Group
       | Time  | 11:00:00    |
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I press "Save and publish"
+    And I press "Save"
     And I should see "Test closed group event"
 
   # Lets add another user on the Manage members tab.
