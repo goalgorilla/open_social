@@ -8,7 +8,6 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContent;
 
 /**
  * Implements hook_token_info().
@@ -25,9 +24,19 @@ function social_group_token_info() {
     'description' => t('The type of the content that is created in the group.'),
   ];
 
+  $social_group['content_url'] = [
+    'name' => t('The group content url.'),
+    'description' => t('The url to the content that is created in the group.'),
+  ];
+
   $social_group['group_name'] = [
     'name' => t('The group name.'),
     'description' => t('The name of the group.'),
+  ];
+
+  $social_group['group_url'] = [
+    'name' => t('The group name.'),
+    'description' => t('The url to the group.'),
   ];
 
   return [
@@ -51,9 +60,10 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
     foreach ($tokens as $name => $original) {
       switch ($name) {
 
-        case 'group_name':
-        case 'group_url':
         case 'content_type':
+        case 'content_url':
+        case 'group_url':
+        case 'group_name':
 
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
@@ -63,42 +73,59 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               ->load($target_id);
 
             if (is_object($entity)) {
+              if ($entity->getEntityTypeId() === 'post' || $entity->getEntityTypeId() === 'photo') {
+                if ($name === 'content_type') {
+                  if (!empty($entity->get('field_recipient_group')
+                    ->getValue())) {
+                    $group = Group::load($entity->field_recipient_group->target_id);
+                  }
+                  if (is_callable([$entity, 'getDisplayName'])) {
+                    $display_name = $entity->getDisplayName();
+                  }
+                  else {
+                    $display_name = $entity->bundle();
+                  }
 
-              // Try to get the group.
-              $group_content = GroupContent::loadByEntity($entity);
-              if (!empty($group_content)) {
-                $group_content = reset($group_content);
-                $group = $group_content->getGroup();
-              }
-              // Or special handling for post entities.
-              if ($entity->getEntityTypeId() === 'post') {
-                if (!empty($entity->get('field_recipient_group')->getValue())) {
-                  $group = Group::load($entity->field_recipient_group->target_id);
+                  if (!empty($display_name)) {
+                    $replacements[$original] = $display_name;
+                  }
                 }
               }
-
-              // If it's a group.. add it in the arguments.
-              if (isset($group) && $group instanceof Group) {
-                if ($name === 'group_name') {
-                  $replacements[$original] = $group->label();
-                }
-                if ($name === 'group_url') {
-                  $group_url = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
-                  $replacements[$original] = $group_url->toString();
-                }
+              else {
+                // Get the group.
+                $gid = $entity->gid->target_id;
+                $group = Group::load($gid);
               }
 
-              if ($name == 'content_type') {
-
-                if ($entity->getEntityTypeId() == 'post' || $entity->getEntityTypeId() == 'photo') {
-                  $replacements[$original] = t('post');
-                }
-
-                if ($entity->getEntityTypeId() == 'group_content') {
+              if ($entity->getEntityTypeId() === 'group_content') {
+                if ($name === 'content_type') {
                   /** @var \Drupal\group\Entity\GroupContent $entity */
                   $group_content_type = $entity->getGroupContentType();
                   if (!empty($group_content_type)) {
                     $replacements[$original] = $group_content_type->label();
+                  }
+                }
+                if ($name === 'content_url') {
+                  $content_url = Url::fromRoute('entity.node.canonical',
+                    ['node' => $entity->id()],
+                    ['absolute' => TRUE]
+                  );
+                  $replacements[$original] = $content_url->toString();
+                }
+              }
+
+              // Add the group.
+              if (isset($group) && $group instanceof Group) {
+                if ($name === 'group_url') {
+                  $group_url = Url::fromRoute('entity.group.canonical',
+                    ['group' => $group->id()],
+                    ['absolute' => TRUE]
+                  );
+                  $replacements[$original] = $group_url->toString();
+                }
+                if ($name === 'group_name') {
+                  if (!empty($group)) {
+                    $replacements[$original] = $group->label();
                   }
                 }
               }
