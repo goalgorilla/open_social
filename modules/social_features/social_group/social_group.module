@@ -1069,7 +1069,8 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   $node = $form_state->getFormObject()->getEntity();
 
   // Now make sure the relevant GroupContent is removed or added.
-  SetGroupsForNodeService::setGroupsForNode($node, $groups_to_remove, $groups_to_add);
+  SetGroupsForNodeService::setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
+
 }
 
 /**
