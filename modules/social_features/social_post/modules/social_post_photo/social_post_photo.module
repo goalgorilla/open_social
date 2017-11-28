@@ -22,7 +22,7 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
  * Implements hook_photo_preprocess_image_formatter().
  */
 function social_post_photo_preprocess_image_formatter(&$variables) {
-  if ($variables['image_style'] == "social_post_photo") {
+  if ($variables['image_style'] == "social_post_photo" && empty($variables['image']['#alt'])) {
     // Set the image alt to the filename.
     $uri = $variables['image']['#uri'];
     $alt = substr(strrchr($uri, "/"), 1);
