@@ -23,9 +23,11 @@
   background-color: transparent;
 }
 
-.form-control[disabled],
-fieldset[disabled] .form-control {
+.form-control:disabled,
+fieldset[disabled] .form-control,
+.form-disabled .form-control {
   cursor: not-allowed;
+  color: rgba(0, 0, 0, 0.26);
 }
 
 .form-control--autogrow {
@@ -108,7 +110,7 @@ input[type="search"] {
   cursor: pointer;
   display: inline-block;
   line-height: 21px;
-  font-size: 1em;
+  font-size: 0.875rem;
   -webkit-transition: .28s ease;
   transition: .28s ease;
   -webkit-user-select: none;
@@ -488,6 +490,10 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   padding-right: 30px;
 }
 
+.select-wrapper select:disabled {
+  color: rgba(0, 0, 0, 0.26);
+}
+
 .select-wrapper:after {
   content: '▾';
   font-style: normal;
@@ -500,6 +506,10 @@ input[type=checkbox]:not(:disabled) ~ .lever:active:after {
   right: 0;
   top: 50%;
   z-index: 2;
+}
+
+.form-disabled .select-wrapper::after {
+  color: #777777;
 }
 
 @media (min-width: 600px) {
