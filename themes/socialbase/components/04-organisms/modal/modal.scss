@@ -108,19 +108,25 @@
   outline: 0;
   -webkit-appearance: none;
   transition: 0.3s;
+  position: relative;
 
   &:before {
     content: 'x';
+    position: absolute;
+    text-indent: 0;
+    top: 0;
+    right: 0;
   }
 
   &:hover {
     opacity: .75;
   }
 
-  .ui-button-text {
-    @include visually-hidden;
-  }
+}
 
+.ui-button-icon-only {
+  text-indent: -9999px;
+  white-space: nowrap;
 }
 
 .ui-dialog-content {
