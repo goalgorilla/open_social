@@ -1,0 +1,291 @@
+@import 'settings';
+
+[type="radio"]:checked + label:before {
+  border-color: $brand-primary;
+}
+[type="radio"]:focus + label:before {
+  box-shadow: 0 0 3px 2px $brand-primary;
+}
+
+[type="checkbox"]:checked + label:after,
+[type="radio"]:checked + label:after {
+  border-color: $brand-primary;
+  background-color: $brand-primary;
+}
+
+[type="checkbox"]:checked + label,
+[type="radio"]:checked + label {
+  color: $brand-primary;
+}
+
+.tabs-left .nav-tabs > li.active > a,
+.tabs-left .nav-tabs > li.active > a:hover,
+.tabs-left .nav-tabs > li.active > a:focus {
+  border-right-color: $brand-primary;
+}
+
+.cover,
+.read-indicator,
+.select2-container--social .select2-results__option--highlighted[aria-selected],
+.select2-container--social .select2-results__option[aria-selected=true],
+.pagination > .active > a,
+.pagination > .active > a:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span,
+.pagination > .active > span:hover,
+.pagination > .active > span:focus {
+  background-color: $brand-primary;
+}
+
+.hero-form[role='search'] {
+
+  .form-control {
+    &:focus,
+    &:active,
+    &:focus ~ .search-icon,
+    &:active ~ .search-icon {
+      box-shadow: 0 2px 0 0 $brand-secondary;
+    }
+  }
+
+  .search-icon {
+    fill: $brand-primary;
+  }
+
+}
+
+.form-control:focus {
+  border-color: $brand-primary;
+  box-shadow: 0 2px 0 0 $brand-primary;
+}
+
+.select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
+  border-color: $brand-primary;
+}
+
+.site-footer,
+.badge-secondary,
+.ui-datepicker-calendar > tbody > tr > td .ui-state-active,
+.stream-icon-new {
+  background-color: $brand-secondary;
+}
+
+.btn-primary{
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+
+  &:focus,
+  &.focus,
+  &:hover,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle,
+  &.dropdown-toggle:hover{
+    background-color: $brand-primary;
+    border-color: $brand-primary;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $brand-primary;
+      border-color: $brand-primary;
+    }
+  }
+
+}
+
+.badge-accent {
+  background-color: $brand-accent;
+  border-color: $brand-accent;
+}
+
+.btn-accent {
+  background-color: $brand-accent;
+  border-color: $brand-accent;
+
+  &:focus,
+  &.focus,
+  &:hover,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle,
+  &.dropdown-toggle:hover{
+    background-color: $brand-accent;
+    border-color: $brand-accent;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $brand-accent;
+      border-color: $brand-accent;
+    }
+  }
+
+}
+
+.btn-flat,
+.btn-link,
+.btn-link:hover,
+.btn-flat:hover,
+.btn-link:focus,
+.btn-flat:focus,
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
+.card__link,
+.card__link:focus,
+.card__link:hover,
+.view--who-liked .views-field-view-user a,
+.comment__reply-btn,
+.body-text a,
+.body-text a:hover,
+.book-menu .list-item--active-trail > a {
+  color: $brand-primary;
+  fill: $brand-primary;
+}
+
+.list-item--active,
+.list-item--active:hover,
+.list-item--active:focus,
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+  background-color: $brand-secondary;
+  border-color: $brand-secondary;
+}
+
+
+blockquote {
+  border-left-color: $brand-primary;
+}
+
+.input-group .form-control:focus ~ .input-group-addon {
+  border-color: $brand-primary;
+  box-shadow: 0 2px 0 0 $brand-primary;
+}
+
+.navbar-secondary {
+  color: #f9f9f9;
+  background-color: #1f7ea7;
+
+  .navbar-nav {
+
+    a {
+      color: #f9f9f9;
+    }
+
+    li.active a {
+      border-bottom-color: #f9f9f9;
+    }
+
+  }
+}
+
+.navbar-scrollable:before {
+  background: linear-gradient(90deg, #1f7ea7, transparent);
+}
+
+.navbar-scrollable:after {
+  background: linear-gradient(-90deg, #1f7ea7, transparent);
+}
+
+.navbar-default {
+  background-color: $navbar-default-bg;
+
+  .navbar-toggle {
+    color: $navbar-default-link-color;
+
+    &:hover,
+    &:focus {
+      color: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+    }
+  }
+
+  .navbar-nav {
+    > li > a {
+      color: $navbar-default-link-color;
+      fill: $navbar-default-link-color;
+
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+
+        .navbar-nav__icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $navbar-default-link-active-bg;
+        color: $navbar-default-link-active-color;
+      }
+    }
+
+    > li > a.is-active,
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        fill: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+      }
+    }
+
+  }
+}
+
+@include for-tablet-landscape-down{
+
+  .navbar-collapse .dropdown-menu li a {
+    color: $navbar-default-link-color;
+
+    &:hover,
+    &:focus {
+      color: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+    }
+
+  }
+}
+
+.navbar-nav__icon {
+  fill: $navbar-default-link-color;
+}
+
+
+.navbar__open-search-block {
+  background-color: $navbar-default-bg;
+}
+
+@include for-tablet-landscape-up {
+
+  .search-take-over .form-text {
+    color: $navbar-default-link-color;
+
+    &:focus {
+      border-color: $navbar-default-link-color;
+      box-shadow: 0 2px 0 0 $navbar-default-link-color;
+    }
+
+  }
+
+  .btn--close-search-take-over svg {
+    fill: $navbar-default-link-color;
+  }
+
+}
