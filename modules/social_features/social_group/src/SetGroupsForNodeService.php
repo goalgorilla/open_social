@@ -36,17 +36,14 @@ class SetGroupsForNodeService {
       }
     }
 
-    if ($node->id()) {
-      foreach ($groups_to_remove as $group_id) {
-        $group = Group::load($group_id);
-        self::removeGroupContent($node, $group);
-      }
-      foreach ($groups_to_add as $group_id) {
-        $group = Group::load($group_id);
-        self::addGroupContent($node, $group);
-      }
+    foreach ($groups_to_remove as $group_id) {
+      $group = Group::load($group_id);
+      self::removeGroupContent($node, $group);
     }
-
+    foreach ($groups_to_add as $group_id) {
+      $group = Group::load($group_id);
+      self::addGroupContent($node, $group);
+    }
     return $node;
   }
 
@@ -59,15 +56,8 @@ class SetGroupsForNodeService {
    *   Object of a group.
    */
   public static function addGroupContent(NodeInterface $node, Group $group) {
-    // Get the group content plugin.
     $plugin_id = 'group_node:' . $node->bundle();
-    $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
-    $group_content = GroupContent::create([
-      'type' => $plugin->getContentTypeConfigId(),
-      'gid' => $group->id(),
-      'entity_id' => $node->id(),
-    ]);
-    $group_content->save();
+    $group->addContent($node, $plugin_id);
   }
 
   /**

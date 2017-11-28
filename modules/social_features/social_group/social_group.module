@@ -583,8 +583,13 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
+
   // Unset the public options on visibility field.
   if ($field_definition->getType() == 'entity_access_field') {
+    $default_value = $context['items']->getValue();
+    if (isset($default_value[0]['value'])) {
+      $element['#default_value'] = $default_value[0]['value'];
+    }
     $current_group = _social_group_get_current_group();
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
@@ -984,7 +989,13 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
  * Implements hook_form_FORM_ID_alter().
  */
 function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
-  if ($form['#form_id'] === 'node_topic_edit_form' || $form['#form_id'] === 'node_event_edit_form') {
+  $supported_forms = [
+    'node_topic_form',
+    'node_topic_edit_form',
+    'node_event_edit_form',
+    'node_event_form',
+  ];
+  if (in_array($form['#form_id'], $supported_forms)) {
     if (isset($form['groups'])) {
       $change_fieldgroup_titles = [
         'group_topic_visibility',
@@ -995,10 +1006,15 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
           $form['#fieldgroups'][$fieldgroup_title]->label = (string) t('Group and visibility');
         }
       }
+      // Lets remove the original submit function in favor of this submit.
+      foreach ($form['actions']['submit']['#submit'] as $submit_key => $submit_function) {
+        if ($submit_function === 'group_content_entity_submit') {
+          unset($form['actions']['submit']['#submit'][$submit_key]);
+        }
+      }
       $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
 
       $form['groups']['#suffix'] = '<div id="group-selection-result"></div>';
-
       $form['groups']['widget']['#ajax'] = [
         'callback' => 'social_group_validate_group_selection',
         'effect' => 'fade',
@@ -1011,6 +1027,15 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
       $acting_user = \Drupal::currentUser();
       /* @var \Drupal\node\NodeInterface $node */
       $node = $form_state->getFormObject()->getEntity();
+
+      // If it is a new node lets add the current group.
+      if (!$node->id()) {
+        $current_group = _social_group_get_current_group();
+        if (!empty($current_group) && empty($form['groups']['widget']['#default_value'])) {
+          $form['groups']['widget']['#default_value'] = [$current_group->id()];
+        }
+      }
+
       $author = $node->getOwner();
       if (!$allow_group_selection_in_node && !$acting_user->hasPermission('manage all groups')) {
         $form['groups']['#disabled'] = TRUE;
@@ -1038,9 +1063,6 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
 
     }
   }
-  elseif ($form['#form_id'] === 'node_topic_form' || $form['#form_id'] === 'node_event_form') {
-    $form['groups']['#access'] = FALSE;
-  }
 }
 
 /**
@@ -1052,25 +1074,29 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  $original_groups = $form['groups']['widget']['#default_value'];
+  /* @var \Drupal\node\Entity\Node $node */
+  $node = $form_state->getFormObject()->getEntity();
+  $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
   foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
   }
-  foreach ($original_groups as $original_group_key => $original_group) {
-    if (!in_array($original_group, $groups_to_add)) {
-      $groups_to_remove[$original_group] = $original_group;
-    }
-    else {
-      unset($groups_to_add[$original_group]);
+  // The node already exist so lets also change the logic accordingly.
+  if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
+    $original_groups = $form['groups']['widget']['#default_value'];
+    foreach ($original_groups as $original_group_key => $original_group) {
+      if (!in_array($original_group, $groups_to_add)) {
+        $groups_to_remove[$original_group] = $original_group;
+      }
+      else {
+        unset($groups_to_add[$original_group]);
+      }
     }
   }
-  $node = $form_state->getFormObject()->getEntity();
 
   // Now make sure the relevant GroupContent is removed or added.
   SetGroupsForNodeService::setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
-
 }
 
 /**
