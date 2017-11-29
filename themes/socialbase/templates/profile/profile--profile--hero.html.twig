@@ -19,42 +19,49 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/hero')}}
+
+{% if profile_hero_styled_image_url %}
+<div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+{% else %}
+<div class="cover">
+{% endif %}
 {% if profile_edit_url %}
   <div class="hero-action-button">
     <a href="{{ profile_edit_url }}" title="Edit profile information" class="btn btn-raised btn-default btn-floating">
-      <svg class="icon-gray icon-medium">
+      <svg class="icon-medium">
         <use xlink:href="#icon-edit"></use>
       </svg>
     </a>
   </div>
 {% endif %}
 
-<div class="cover-wrap">
-  <header>
-  <h1 class="page-title">
-    {{ profile_name }}
-  </h1>
+  <div class="cover-wrap">
+    <header>
+      <h1 class="page-title">
+        {{ profile_name }}
+      </h1>
+      {{ content.field_profile_image }}
+    </header>
 
-    {{ content.field_profile_image }}
-  </header>
+    {% if (content.field_profile_function|render or content.field_profile_organization|render) %}
+      <footer class="hero-footer">
+        <div class="hero-footer__text">
+          {% if content.field_profile_function|render %}
+            <strong>{{ content.field_profile_function|render }}</strong>
+          {% endif %}
+          {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+          &nbsp;-&nbsp;
+          {% endif %}
+          {% if content.field_profile_organization|render %}
+            {{ content.field_profile_organization|render }}
+          {% endif %}
+        </div>
 
-  {% if (content.field_profile_function|render or content.field_profile_organization|render) %}
-    <footer class="hero-footer">
-      <div class="hero-footer__text">
-        {% if content.field_profile_function|render %}
-          <strong>{{ content.field_profile_function|render }}</strong>
-        {% endif %}
-        {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
-        &nbsp;-&nbsp;
-        {% endif %}
-        {% if content.field_profile_organization|render %}
-          {{ content.field_profile_organization|render }}
-        {% endif %}
-      </div>
+      </footer>
+    {% endif %}
 
-    </footer>
-  {% endif %}
-
-  {# render other fields that developers might add #}
-  {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
+    {# render other fields that developers might add #}
+    {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
+  </div>
 </div>
