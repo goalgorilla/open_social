@@ -60,9 +60,9 @@ install:
 
 script:
   - set -e
-  - docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh
-  - docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh
-  - docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_update" ] ; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi

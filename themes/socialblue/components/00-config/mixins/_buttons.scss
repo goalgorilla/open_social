@@ -10,31 +10,15 @@
   fill: $color;
 
   &:focus,
-  &.focus {
-    color: $color;
-    background-color: darken($background, 10%);
-        border-color: darken($border, 25%);
-  }
-  &:hover {
-    color: $color;
-    background-color: darken($background, 10%);
-        border-color: darken($border, 12%);
-  }
+  &.focus,
+  &:hover,
   &:active,
   &.active,
   .open > &.dropdown-toggle {
-    color: $color;
     background-color: darken($background, 10%);
         border-color: darken($border, 12%);
-
-    &:hover,
-    &:focus,
-    &.focus {
-      color: $color;
-      background-color: darken($background, 17%);
-          border-color: darken($border, 25%);
-    }
   }
+
   &.disabled,
   &[disabled],
   fieldset[disabled] & {

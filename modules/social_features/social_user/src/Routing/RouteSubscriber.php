@@ -40,6 +40,11 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_title_callback'] = '\Drupal\social_user\Controller\SocialUserController::setUserStreamTitle';
       $route->setDefaults($defaults);
     }
+
+    if ($route = $collection->get('entity.user.edit_form')) {
+      $route->setOption('_admin_route', FALSE);
+    }
+
   }
 
 }
