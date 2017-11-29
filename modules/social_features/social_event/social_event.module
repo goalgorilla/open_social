@@ -435,3 +435,10 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
 function social_event_date_is_all_day(DrupalDateTime $date) {
   return $date->format('H:i', ['timezone' => DateTimeItemInterface::STORAGE_TIMEZONE]) == '00:01';
 }
+
+/**
+ * Implements hook_social_follow_content_types_alter().
+ */
+function social_event_social_follow_content_types_alter(array &$types) {
+  $types[] = 'event';
+}

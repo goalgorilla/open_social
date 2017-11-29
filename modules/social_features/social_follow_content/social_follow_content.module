@@ -2,21 +2,24 @@
 
 /**
  * @file
- * The Social core module.
+ * The Social Follow Content module.
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
+use Drupal\flag\FlagInterface;
+use Drupal\node\NodeInterface;
 
 /**
- * Implements hook_ENTIT_YTYPE_insert().
+ * Implements hook_ENTITY_TYPE_insert().
  */
 function social_follow_content_event_enrollment_insert(EntityInterface $entity) {
   social_follow_content_event_enrollment_follow($entity);
 }
 
 /**
- * Implements hook_ENTIT_YTYPE_update().
+ * Implements hook_ENTITY_TYPE_update().
  */
 function social_follow_content_event_enrollment_update(EntityInterface $entity) {
   social_follow_content_event_enrollment_follow($entity);
@@ -52,6 +55,41 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
         $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
         drupal_set_message($message);
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_follow_content_comment_insert(EntityInterface $entity) {
+  /** @var \Drupal\comment\CommentInterface $entity */
+  $entity = $entity->getCommentedEntity();
+
+  if (!($entity instanceof NodeInterface)) {
+    return;
+  }
+
+  $types = [];
+
+  \Drupal::moduleHandler()->alter('social_follow_content_types', $types);
+
+  if (empty($types)) {
+    return;
+  }
+
+  $flag = Flag::load('follow_content');
+
+  if ($flag instanceof FlagInterface) {
+    /** @var \Drupal\flag\FlagService $service */
+    $service = \Drupal::service('flag');
+
+    if (empty($service->getFlagging($flag, $entity))) {
+      $service->flag($flag, $entity);
+
+      drupal_set_message(t('You are now automatically following this @type.', [
+        '@type' => $entity->getType(),
+      ]));
     }
   }
 }
