@@ -23,6 +23,7 @@ class SocialPageTitleBlock extends PageTitleBlock {
     // Take the raw parameter. We'll load it ourselves.
     $nid = \Drupal::routeMatch()->getRawParameter('node');
     $node = FALSE;
+    $current_path = \Drupal::service('path.current')->getPath();
 
     // At this point the parameter could also be a simple string of a nid.
     // EG: on: /node/%node/enrollments.
@@ -36,16 +37,39 @@ class SocialPageTitleBlock extends PageTitleBlock {
       if (!empty($translation)) {
         $node->setTitle($translation->getTitle());
       }
-      $title = $node->getTitle();
 
-      return [
-        '#theme' => 'page_hero_data',
-        '#title' => $title,
-        '#node' => $node,
-        '#section_class' => 'page-title',
+      $paths_to_exclude = [
+        'edit',
+        'add',
+        'delete',
       ];
+
+      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
+
+      if (!$in_path) {
+
+        $title = $node->getTitle();
+
+        return [
+          '#theme' => 'page_hero_data',
+          '#title' => $title,
+          '#node' => $node,
+          '#section_class' => 'page-title',
+        ];
+
+      }
+      else {
+
+        return [
+          '#type' => 'page_title',
+          '#title' => $this->title,
+        ];
+
+      }
+
     }
     else {
+
       $request = \Drupal::request();
       $group = _social_group_get_current_group();
 

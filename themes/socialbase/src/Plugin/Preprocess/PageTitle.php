@@ -31,8 +31,16 @@ class PageTitle extends PreprocessBase {
       $variables['node'] = TRUE;
     }
 
-    // Check if it is the node/edit or node/add.
-    if (strpos($current_path, 'edit') !== FALSE || strpos($current_path, 'add') !== FALSE) {
+    // Check if it is the edit/add/delete.
+    $paths_to_exclude = [
+      'edit',
+      'add',
+      'delete',
+    ];
+
+    $in_path = str_replace($paths_to_exclude, '', $current_path) !== $current_path;
+
+    if ($in_path) {
       $variables['edit'] = TRUE;
     }
 
