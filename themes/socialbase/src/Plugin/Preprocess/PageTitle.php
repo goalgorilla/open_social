@@ -3,8 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\profile\Entity\ProfileTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Pre-processes variables for the "page_title" theme hook.
@@ -33,7 +31,6 @@ class PageTitle extends PreprocessBase {
 
     if (strpos($current_path, 'user') !== FALSE && strpos($current_path, 'edit') !== FALSE) {
       $variables['title'] = t('<em>Configure account settings:</em> @label', ['@label' => $variables['title']['#markup']]);
-
     }
 
     if (strpos($current_path, 'stream') !== FALSE || strpos($current_path, 'explore') !== FALSE) {
