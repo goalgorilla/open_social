@@ -81,7 +81,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function clickEmbedIconInWysiwygEditor() {
 
-      $cssSelector = 'a.cke_button__url';
+      $cssSelector = 'a.cke_button__social_embed';
 
       $session = $this->getSession();
       $element = $session->getPage()->find(
