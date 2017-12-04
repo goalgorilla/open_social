@@ -29,16 +29,6 @@ function social_group_token_info() {
     'description' => t('The url to the content that is created in the group.'),
   ];
 
-  $social_group['group_name'] = [
-    'name' => t('The group name.'),
-    'description' => t('The name of the group.'),
-  ];
-
-  $social_group['group_url'] = [
-    'name' => t('The group name.'),
-    'description' => t('The url to the group.'),
-  ];
-
   return [
     'types' => ['social_group' => $type],
     'tokens' => [
@@ -61,10 +51,8 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
       switch ($name) {
 
         case 'content_type':
-        case 'content_url':
-        case 'group_url':
-        case 'group_name':
 
+          // Get the related entity.
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
@@ -73,30 +61,23 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               ->load($target_id);
 
             if (is_object($entity)) {
+
+              // When it's a post or photo post.
               if ($entity->getEntityTypeId() === 'post' || $entity->getEntityTypeId() === 'photo') {
                 if ($name === 'content_type') {
-                  if (!empty($entity->get('field_recipient_group')
-                    ->getValue())) {
-                    $group = Group::load($entity->field_recipient_group->target_id);
-                  }
                   if (is_callable([$entity, 'getDisplayName'])) {
                     $display_name = $entity->getDisplayName();
                   }
                   else {
                     $display_name = $entity->bundle();
                   }
-
                   if (!empty($display_name)) {
                     $replacements[$original] = $display_name;
                   }
                 }
               }
-              else {
-                // Get the group.
-                $gid = $entity->gid->target_id;
-                $group = Group::load($gid);
-              }
 
+              // If it's group content.
               if ($entity->getEntityTypeId() === 'group_content') {
                 if ($name === 'content_type') {
                   /** @var \Drupal\group\Entity\GroupContent $entity */
@@ -105,34 +86,43 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $replacements[$original] = $group_content_type->label();
                   }
                 }
-                if ($name === 'content_url') {
-                  $content_url = Url::fromRoute('entity.node.canonical',
-                    ['node' => $entity->id()],
-                    ['absolute' => TRUE]
-                  );
-                  $replacements[$original] = $content_url->toString();
-                }
-              }
-
-              // Add the group.
-              if (isset($group) && $group instanceof Group) {
-                if ($name === 'group_url') {
-                  $group_url = Url::fromRoute('entity.group.canonical',
-                    ['group' => $group->id()],
-                    ['absolute' => TRUE]
-                  );
-                  $replacements[$original] = $group_url->toString();
-                }
-                if ($name === 'group_name') {
-                  if (!empty($group)) {
-                    $replacements[$original] = $group->label();
-                  }
-                }
+//                if ($name === 'content_url') {
+//                  $content_url = Url::fromRoute('entity.node.canonical',
+//                    ['node' => $entity->getEntity()->id()],
+//                    ['absolute' => TRUE]
+//                  );
+//                  $replacements[$original] = $content_url->toString();
+//                }
               }
             }
           }
 
           break;
+
+        case 'content_url':
+
+          // Get the related entity.
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            $entity = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
+
+            if (is_object($entity)) {
+              // If it's group content.
+              if ($entity->getEntityTypeId() === 'group_content') {
+                if ($name === 'content_url') {
+                  $content_url = Url::fromRoute('entity.node.canonical',
+                    ['node' => $entity->getEntity()->id()],
+                    ['absolute' => TRUE]
+                  );
+                  $replacements[$original] = $content_url->toString();
+                }
+              }
+            }
+          }
+
       }
     }
   }
