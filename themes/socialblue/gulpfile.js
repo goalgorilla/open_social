@@ -341,8 +341,38 @@ gulp.task('kss', function () {
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/kss/'));
 });
 
+// #########################
+// Color preview
+//
+// We generate a separate prefixed stylesheet for the preview
+// so it will affect any element outside the preview.
+// #########################
 
+const prefixCss = require('gulp-prefix-css');
+let   cleanCSS = require('gulp-clean-css');
 
+gulp.task('preview-base', function () {
+  return gulp.src(options.basetheme.css + '**/*.css')
+    .pipe(concat('preview-base.css'))
+    .pipe(prefixCss('.preview'))
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(options.theme.root + 'color/css/'));
+});
+
+gulp.task('preview-blue', function () {
+  return gulp.src(options.theme.css + '**/*.css')
+    .pipe(concat('preview-blue.css'))
+    .pipe(prefixCss('.preview'))
+    .pipe(cleanCSS())
+    .pipe(gulp.dest(options.theme.root + 'color/css/'));
+});
+
+gulp.task('preview-font', function () {
+  return gulp.src(options.theme.build + 'font/**/*')
+    .pipe(gulp.dest(options.theme.root + 'color/font/'));
+});
+
+gulp.task('preview', ['preview-base', 'preview-blue', 'preview-font']);
 
 // #########################
 // Lint Sass and JavaScript.
