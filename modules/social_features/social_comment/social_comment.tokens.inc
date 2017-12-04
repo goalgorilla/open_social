@@ -97,7 +97,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                       $display_name = $entity->getDisplayName();
                     }
                     else {
-                      $display_name = $entity->bundle();
+                      if ($entity instanceof \Drupal\node\NodeInterface) {
+                        $display_name = strtolower($entity->type->entity->label());
+                      }
+                      else {
+                        $display_name = $entity->bundle();
+                      }
                     }
 
                     if (!empty($display_name)) {
