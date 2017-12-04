@@ -169,6 +169,8 @@ options.styleGuide = {
     // Organisms stylesheets
     'kss-assets/base/css/comment.css',
     'kss-assets/blue/css/comment.css',
+    'kss-assets/base/css/form-default.css',
+    'kss-assets/base/css/form-horizontal.css',
     'kss-assets/base/css/hero.css',
     'kss-assets/blue/css/hero.css',
     'kss-assets/base/css/meta.css',
@@ -218,7 +220,7 @@ var sassProcessors = [
 // At the end we check if we should inject new styles in the browser
 // ===================================================
 
-gulp.task('styles', ['clean:css'], function () {
+gulp.task('styles', function () {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe($.plumber({errorHandler: onError}))
