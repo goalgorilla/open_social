@@ -26,7 +26,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
  */
 function social_comment_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Change value of 'Save' button.
-  $form['actions']['submit']['#value'] = t('Comment');
+  $form['actions']['submit']['#value'] = t('Comment', [], ['context' => 'Comment Button']);
   // Hide title of 'Comment' field.
   if (!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])) {
     $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'invisible';
