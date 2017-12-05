@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Social Comment Upload.
+ */
+
+/**
+ * Install the module.
+ */
+function social_comment_upload_install() {
+  _social_comment_upload_set_defaults();
+}
+
+/**
+ * Set default values for social comment upload access.
+ */
+function social_comment_upload_update_8001() {
+  _social_comment_upload_set_defaults();
+}
+
+/**
+ * Function that sets the default configuration value(s) for this module.
+ */
+function _social_comment_upload_set_defaults() {
+  // Set allow to true, since that's the case by default.
+  \Drupal::getContainer()->get('config.factory')->getEditable('social_comment_upload.settings')->set('allow_upload_comments', 1)->save();
+  // SM should be able to change the permissions.
+  user_role_grant_permissions('sitemanager', ['administer social_comment_upload settings']);
+}
