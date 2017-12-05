@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - private_message
+    - social_private_message
+id: private_message_thread.private_message_thread.default
+targetEntityType: private_message_thread
+bundle: private_message_thread
+mode: default
+content:
+  delete_link:
+    weight: -100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  members:
+    label: hidden
+    type: private_message_thread_member_formatter
+    weight: 0
+    region: content
+    settings:
+      display_type: label
+      entity_display_mode: private_message_author
+    third_party_settings: {  }
+  private_message_form:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  private_messages:
+    type: private_message_thread_message_formatter
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      message_count: 7
+      ajax_previous_load_count: 5
+      ajax_refresh_rate: 120
+      message_order: asc
+    third_party_settings: {  }
+hidden:
+  last_message: true

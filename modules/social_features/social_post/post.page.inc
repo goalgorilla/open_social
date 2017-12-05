@@ -34,7 +34,6 @@ function template_preprocess_post(array &$variables) {
     ->formatTimeDiffSince($post->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
   $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));
-  $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might

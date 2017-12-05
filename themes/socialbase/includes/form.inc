@@ -35,7 +35,7 @@ function socialbase_preprocess_form(&$variables) {
 
   $variables['attributes']['class'][] = 'clearfix';
 
-  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form') {
+  if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form' || $element['#form_id'] === 'private_message_add_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -126,12 +126,6 @@ function socialbase_preprocess_form(&$variables) {
       }
     }
   }
-
-  if ($element['#form_id'] === 'social_user_password_form') {
-    $form['mail']['#prefix'] = '<div class="help-block">';
-    $form['mail']['#suffix'] = '</div>';
-  }
-
 }
 
 /**
@@ -160,6 +154,24 @@ function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterf
 
   // Set a placeholder text to guide the user.
   $form['field_comment_body']['widget'][0]['#placeholder'] = t('Write a comment...');
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function socialbase_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  foreach ($form['actions'] as $key => &$actions) {
+    // Must be pretty sure it's a submit button.
+    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit'])) {
+      // Key must have submit in it.
+      if (strpos($key, 'submit-') !== FALSE) {
+        $actions['#button_type'] = 'flat';
+        $actions['#comment_button'] = TRUE;
+      }
+    }
+  }
 
 }
 
@@ -207,9 +219,22 @@ function socialbase_form_user_form_alter(&$form) {
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  // Clientside validation is not consistent accross devices. Disable for now.
+  // Client side validation is not consistent accross devices. Disable for now.
   if (!isset($form['#attributes']['novalidate'])) {
     $form['#attributes']['novalidate'] = 'novalidate';
+  }
+
+  // In the code above we disable HTML5 native validation,
+  // for the following forms enable validating.
+  // These forms only have required attributes.
+  $validate_forms = [
+    'private_message_add_form',
+    'comment_post_comment_form',
+    'social_post_entity_form',
+  ];
+
+  if (in_array($form_id, $validate_forms)) {
+    unset($form['#attributes']['novalidate']);
   }
 
   // These forms have a container with class form-action at the bottom and
@@ -250,6 +275,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
+    'private_message_thread_delete_form',
   ];
 
   if (in_array($form_id, $default_forms)) {
@@ -298,6 +324,17 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'social_user_password_form',
   ];
 
+  if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {
+    $form['#attributes']['class'][] = 'card';
+    $form['#attributes']['class'][] = 'form--default';
+    $form['actions']['#prefix'] = '</div></div>';
+
+    if (isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#button_type'] = 'primary';
+      $form['actions']['submit']['#button_level'] = 'raised';
+    }
+  }
+
   if (in_array($form_id, $add_card_to_forms)) {
     $form['#attributes']['class'][] = 'card';
     $form['actions']['#prefix'] = '</div></div>';
@@ -320,6 +357,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_closed_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
+    'private_message_thread_delete_form',
   ];
 
   if (in_array($form_id, $confirm_forms)) {

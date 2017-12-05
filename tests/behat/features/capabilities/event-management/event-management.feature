@@ -51,7 +51,7 @@ Feature: Event Management
     And I press "field_event_managers_add_more"
     And I wait for AJAX to finish
     And I fill in "event_organiser_2" for "field_event_managers[1][target_id]"
-    And I press "Save and publish"
+    And I press "Save"
     And I should see "This is an event with event organisers in group"
 
     # Now test with event_organiser_1
@@ -59,12 +59,12 @@ Feature: Event Management
     And I am logged in as "event_organiser_1"
     And I open the "event" node with title "This is an event with event organisers"
     And I click "Edit content"
-    Then I should see "Save and keep published"
+    Then I should see "Save"
     And I should not see "Authoring information"
 
     Given I open the "event" node with title "This is an event with event organisers in group"
     And I click "Edit content"
-    Then I should see "Save and keep published"
+    Then I should see "Save"
     And I should not see "Authoring information"
 
     # Now test with event_organiser_2
@@ -72,12 +72,12 @@ Feature: Event Management
     And I am logged in as "event_organiser_2"
     And I open the "event" node with title "This is an event with event organisers"
     And I click "Edit content"
-    Then I should see "Save and keep published"
+    Then I should see "Save"
     And I should not see "Authoring information"
 
     Given I open the "event" node with title "This is an event with event organisers in group"
     And I click "Edit content"
-    Then I should see "Save and keep published"
+    Then I should see "Save"
     And I should not see "Authoring information"
 
     # Regression test for topic

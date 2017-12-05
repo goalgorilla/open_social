@@ -20,7 +20,7 @@ class ActivityFactory extends ControllerBase {
    *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
-  private $activityDestinationManager;
+  protected $activityDestinationManager;
 
   /**
    * ActivityFactory constructor.
@@ -56,7 +56,7 @@ class ActivityFactory extends ControllerBase {
    * @return array
    *   An array of created activities.
    */
-  private function buildActivities(array $data) {
+  protected function buildActivities(array $data) {
     $activities = [];
     $message = Message::load($data['mid']);
     // Initialize fields for new activity entity.
@@ -90,7 +90,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'destination' field from data array.
    */
-  private function getFieldDestinations(array $data, $allowed_destinations = []) {
+  protected function getFieldDestinations(array $data, $allowed_destinations = []) {
     $value = NULL;
     if (isset($data['destination'])) {
       $value = $data['destination'];
@@ -108,7 +108,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'entity' field from data array.
    */
-  private function getFieldEntity($data) {
+  protected function getFieldEntity($data) {
     $value = NULL;
     if (isset($data['related_object'])) {
       $value = $data['related_object'];
@@ -119,7 +119,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'message' field from data array.
    */
-  private function getFieldMessage($data) {
+  protected function getFieldMessage($data) {
     $value = NULL;
     if (isset($data['mid'])) {
       $value = [];
@@ -133,7 +133,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'output_text' field from data array.
    */
-  private function getFieldOutputText(Message $message, $arguments = []) {
+  protected function getFieldOutputText(Message $message, $arguments = []) {
     $value = NULL;
     if (isset($message)) {
 
@@ -163,7 +163,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'created' field from data array.
    */
-  private function getCreated(Message $message) {
+  protected function getCreated(Message $message) {
     $value = NULL;
     if (isset($message)) {
       $value = $message->getCreatedTime();
@@ -174,7 +174,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get aggregation settings from message template.
    */
-  private function getAggregationSettings(Message $message) {
+  protected function getAggregationSettings(Message $message) {
     $message_template = $message->getTemplate();
     return $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL);
   }
@@ -182,7 +182,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Build the aggregated activities based on a data array.
    */
-  private function buildAggregatedActivites($data, $activity_fields) {
+  protected function buildAggregatedActivites($data, $activity_fields) {
     $activities = [];
     $common_destinations = $this->activityDestinationManager->getListByProperties('isCommon', TRUE);
     $personal_destinations = $this->activityDestinationManager->getListByProperties('isCommon', FALSE);
@@ -236,7 +236,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related activities for activity aggregation.
    */
-  private function getAggregationRelatedActivities($data) {
+  protected function getAggregationRelatedActivities($data) {
     $activities = [];
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
@@ -310,7 +310,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get unique authors number for activity aggregation.
    */
-  private function getAggregationAuthorsCount(array $data) {
+  protected function getAggregationAuthorsCount(array $data) {
     $count = 0;
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
@@ -331,7 +331,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'recipient_group' field from data array.
    */
-  private function getFieldRecipientGroup($data) {
+  protected function getFieldRecipientGroup($data) {
     $value = NULL;
     if (isset($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'group') {
@@ -345,7 +345,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'recipient_user' field from data array.
    */
-  private function getFieldRecipientUser($data) {
+  protected function getFieldRecipientUser($data) {
     $value = NULL;
     if (isset($data['recipient']) && is_array($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'user') {
@@ -365,7 +365,7 @@ class ActivityFactory extends ControllerBase {
    * @return int
    *   Value uid integer.
    */
-  private function getActor(array $data) {
+  protected function getActor(array $data) {
     $value = 0;
     if (isset($data['actor'])) {
       $value = $data['actor'];

@@ -48,7 +48,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
 
     // If a violation is expected, then the context's addViolation method will
     // be called, otherwise it should not be called.
-    $context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+    $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
     if ($expected_violation) {
       $context->expects($this->once())

@@ -58,7 +58,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           $notification_count = count($digest_notifications['#notifications']);
 
           // Get the notification count for the email template.
-          $digest_notifications['#notification_count'] = \Drupal::translation()->formatPlural($notification_count, 'You have received <strong>:count</strong> notification', 'You have received <strong>:count</strong> notifications', array(':count' => $notification_count));
+          $digest_notifications['#notification_count'] = \Drupal::translation()->formatPlural($notification_count, 'You have received <strong>:count</strong> notification', 'You have received <strong>:count</strong> notifications', [':count' => $notification_count]);
 
           $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
           /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */

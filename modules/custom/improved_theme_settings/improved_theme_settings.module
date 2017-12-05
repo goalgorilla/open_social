@@ -5,7 +5,6 @@
  * Improved theme settings module file.
  */
 
-use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Markup;
@@ -43,190 +42,6 @@ function improved_theme_settings_form_system_theme_settings_alter(&$form, FormSt
 }
 
 /**
- * Function that returns the updated color palette colors for in the <head>.
- *
- * @param string $colors
- *   Colors from the active theme.
- * @param string $system_theme_settings
- *   Active theme.
- *
- * @return string
- *   Updated CSS.
- */
-function _improved_theme_settings_update_palette($colors = '', $system_theme_settings = 'socialblue') {
-
-  if (empty($colors)) {
-    $colors = color_get_palette($system_theme_settings);
-  }
-
-  $primary = $colors['brand-bg-primary'];
-  $secondary = $colors['brand-bg-secondary'];
-  $accent = $colors['brand-bg-accent'];
-  $link = $colors['brand-text-primary'];
-
-  $css = "
-    [type=\"radio\"]:checked + label:before {
-      border-color: $secondary !important;
-    }
-
-    [type=\"radio\"]:checked + label:after {
-      border-color: $secondary !important;
-      background-color: $secondary !important;
-    }
-
-    [type=\"radio\"]:checked + label {
-      color: $secondary !important;
-    }
-
-    .dropdown-toggle.btn-primary:hover {
-      background-color: $primary !important;
-      border-color: $primary !important;
-    }
-
-    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:hover, .nav-tabs:not(.brand-secondary) .nav-tabs > li.active > a:focus, .card__link {
-      color: $link !important;
-    }
-
-    .nav-tabs:not(.brand-secondary) > li.active > a, .nav-tabs:not(.brand-secondary) > li.active > a:hover, .nav-tabs:not(.brand-secondary) > li.active > a:focus {
-      border-right-color: $primary !important;
-    }
-
-    .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
-      border-bottom-color: transparent !important;
-    }
-
-    .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-      background-color: $primary !important;
-    }
-
-    .navbar-default .navbar-brand:hover,
-    .navbar-default .navbar-brand:focus {
-      background-color: $primary !important;
-    }
-
-    @media (max-width: 959px) {
-      .navbar-collapse .dropdown-menu li a:hover, .navbar-collapse .dropdown-menu li a:focus {
-        background-color: $primary !important;
-      }
-    }
-
-    @media(max-width: 900px) {
-      .navbar-form[role='search'] .search-icon {
-        fill: $primary !important;
-      }
-    }
-
-    .hero-form[role='search'] .search-icon,
-    #navbar-search.is-open .search-icon,
-    .no-js #navbar-search .search-icon {
-      fill: $primary !important;
-    }
-
-    .form-control:focus {
-      border-color: $primary !important;
-      border-bottom-color: $primary !important;
-      box-shadow: 0 2px 0 0 $primary !important;
-    }
-    
-    .select2-container--social .select2-results__option--highlighted[aria-selected], .select2-container--social .select2-results__option[aria-selected=true] {
-      background-color: $primary !important;
-    }
-    
-    .select2-container--social.select2-container--focus .select2-selection, .select2-container--social.select2-container--open .select2-selection, .select2-container--social .select2-dropdown {
-      border-color: $primary !important;
-    }
-
-    .brand-secondary {
-      background-color: $secondary !important;
-      border-color: $secondary !important;
-    }
-
-    .nav-tabs.brand-primary a:hover, .nav-tabs.brand-primary a:focus, .brand-primary > .nav-tabs a:hover, .brand-primary > .nav-tabs a:focus, .nav-tabs.brand-secondary a:hover, .nav-tabs.brand-secondary a:focus, .brand-secondary > .nav-tabs a:hover, .brand-secondary > .nav-tabs a:focus {
-      background-color: rgba(0,0,0,0.5) !important;
-    }
-
-    .pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
-      background-color: $primary !important;
-    }
-
-    .btn-primary {
-      background-color: $primary !important;
-      border-color: $primary !important;
-    }
-
-    .btn-flat {
-      color: $link !important;
-      fill: $link !important;
-    }
-
-    .btn-flat:hover {
-      color: inherit !important;
-    }
-
-    .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
-      background-color: $secondary !important;
-      border-color: $secondary !important;
-    }
-
-    [type=\"checkbox\"]:checked + label:after {
-      border-color: $secondary !important;
-      background-color: $secondary !important;
-    }
-
-    .stream-icon-new {
-      background: $secondary !important;
-    }
-
-    .comment__reply-btn {
-      color: $link !important;
-    }
-
-    .btn-accent {
-      background-color: $accent !important;
-      border-color: $accent !important;
-    }
-
-    .body-text a {
-      color: $link !important;
-    }
-
-    .body-text a:hover {
-      color: $link !important;
-    }
-
-    blockquote {
-      border-left-color: $link !important;
-    }
-
-    .book-menu .list-item--active-trail > a {
-      color: $link !important;
-    }
-
-    .input-group .form-control:focus ~ .input-group-addon {
-      border-color: $primary !important;
-      box-shadow: 0 2px 0 0 $primary !important;
-    }
-
-    .navbar-default .dropdown-menu > .active > a,
-    .navbar-default .dropdown-menu > .active > a:hover,
-    .navbar-default .dropdown-menu > .active > a:focus {
-      background-color: $primary !important;
-    }
-
-    .navbar-scrollable:before {
-      background: linear-gradient(90deg, $secondary, transparent) !important;
-    }
-
-    .navbar-scrollable:after {
-      background: linear-gradient(-90deg, $secondary, transparent) !important;
-    }
-
-  ";
-
-  return $css;
-}
-
-/**
  * Implements hook_page_attachments().
  */
 function improved_theme_settings_page_attachments(array &$page) {
@@ -235,7 +50,7 @@ function improved_theme_settings_page_attachments(array &$page) {
   $active_theme = \Drupal::theme()->getActiveTheme()->getName();
   // Determine the admin theme from config.
   $config = \Drupal::config('system.theme');
-  // If we're in the admin theme we need to add alibrary.
+  // If we're in the admin theme we need to add a library.
   if ($active_theme == $config->get('admin')) {
     $page['#attached']['library'][] = 'improved_theme_settings/color.admin';
   }
@@ -265,12 +80,18 @@ function improved_theme_settings_page_attachments(array &$page) {
         .hero-canvas {
           border-radius: ' . $card_radius . 'px !important;
         }
+        
+        .message__message-body {
+          border-radius: ' . $card_radius / 2 . 'px !important;
+        }
 
         .tabs-left .vertical-tabs-list {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
 
-        .teaser--stream:last-child {
+        .teaser--stream:last-child,
+        .card__block:last-child,
+        .card__nested-section:last-child {
           border-bottom-left-radius: ' . $card_radius . 'px !important;
           border-bottom-right-radius: ' . $card_radius . 'px !important;
         }
@@ -284,12 +105,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-top-right-radius: ' . $card_radius . 'px !important;
         }
         
-        .card__block:last-child,
-        .card__nested-section:last-child {
-          border-bottom-left-radius: ' . $card_radius . 'px !important;
-          border-bottom-right-radius: ' . $card_radius . 'px !important;
-        }
-
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;
@@ -331,19 +146,12 @@ function improved_theme_settings_page_attachments(array &$page) {
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
           }
+          
+          .btn.btn-icon-toggle {
+            border-radius: 50% !important;
+          }
 
         ';
-      }
-
-
-      // Get the color palette saved for custom social blue.
-      $colors = color_get_palette($system_theme_settings);
-      $default = color_get_palette($system_theme_settings, TRUE);
-
-      // Check if there are differences between socialblue default scheme and
-      // the saved palette. If yes we render our extra's in the head too.
-      if (count(array_diff($colors, $default)) > 0) {
-        $style_to_add .= _improved_theme_settings_update_palette($colors, $system_theme_settings);
       }
 
       if (!empty($style_to_add)) {
@@ -358,24 +166,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           // altering.
           'social_theme_preprocess',
         ];
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_css_alter().
- */
-function improved_theme_settings_css_alter(&$css, AttachedAssetsInterface $assets) {
-  // Remove the imported brand.css from theme. There's no need to use this file.
-  // Only in case of other colors, the generated brand.css needs to be used.
-  foreach ($css as $key => $singlecss) {
-    // First check if there's a brand.css file in there.
-    if (strpos($singlecss['data'], 'brand.css') > 0) {
-      // Must be public, otherwise remove it.
-      if (strpos($singlecss['data'], 'public://') === FALSE) {
-        // Not pubic, so it must be unset.
-        unset($css[$key]);
       }
     }
   }
