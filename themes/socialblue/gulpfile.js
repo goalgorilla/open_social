@@ -349,30 +349,43 @@ gulp.task('kss', function () {
 // #########################
 
 const prefixCss = require('gulp-prefix-css');
-let   cleanCSS = require('gulp-clean-css');
 
 gulp.task('preview-base', function () {
-  return gulp.src(options.basetheme.css + '**/*.css')
+  return gulp.src([
+    options.basetheme.css + 'base.css',
+    options.basetheme.css + 'badge.css',
+    options.basetheme.css + 'button.css',
+    options.basetheme.css + 'cards.css',
+    options.basetheme.css + 'comment.css',
+    options.basetheme.css + 'form-controls.css',
+    options.basetheme.css + 'form-elements.css',
+    options.basetheme.css + 'form-post-create.css',
+    options.basetheme.css + 'hero.css',
+    options.basetheme.css + 'layout.css',
+    options.basetheme.css + 'media.css',
+    options.basetheme.css + 'navbar.css',
+    options.basetheme.css + 'nav-tabs.css',
+    options.basetheme.css + 'stream.css',
+    options.basetheme.css + 'teaser.css'
+  ])
     .pipe(concat('preview-base.css'))
-    .pipe(prefixCss('.preview'))
-    .pipe(cleanCSS())
+    .pipe(prefixCss('.color-preview'))
     .pipe(gulp.dest(options.theme.root + 'color/css/'));
 });
 
 gulp.task('preview-blue', function () {
-  return gulp.src(options.theme.css + '**/*.css')
-    .pipe(concat('preview-blue.css'))
-    .pipe(prefixCss('.preview'))
-    .pipe(cleanCSS())
-    .pipe(gulp.dest(options.theme.root + 'color/css/'));
+  return gulp.src(options.theme.components + 'preview.scss')
+    .pipe(sass(options.sass).on('error', sass.logError))
+    .pipe($.plumber({errorHandler: onError}))
+    // run autoprefixer and media-query packer
+    .pipe($.postcss(sassProcessors))
+    // run rucksack @see https://simplaio.github.io/rucksack/
+    .pipe($.rucksack())
+    .pipe(prefixCss('.color-preview'))
+    .pipe(gulp.dest(options.theme.css));
 });
 
-gulp.task('preview-font', function () {
-  return gulp.src(options.theme.build + 'font/**/*')
-    .pipe(gulp.dest(options.theme.root + 'color/font/'));
-});
-
-gulp.task('preview', ['preview-base', 'preview-blue', 'preview-font']);
+gulp.task('preview', ['preview-base', 'preview-blue']);
 
 // #########################
 // Lint Sass and JavaScript.
