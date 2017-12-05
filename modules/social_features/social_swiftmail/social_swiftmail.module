@@ -24,10 +24,10 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
 
   // Set variables from theme.
   $logo = social_swiftmail_get_logo($theme_id);
-  $primary = $colors['brand-bg-primary'];
-  $secondary = $colors['brand-bg-secondary'];
-  $accent = $colors['brand-bg-accent'];
-  $link = $colors['brand-text-primary'];
+  $primary = $colors['brand-primary'];
+  $secondary = $colors['brand-secondary'];
+  $accent = $colors['brand-accent'];
+  $link = $colors['brand-link'];
   $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id));
 
   // Add variables to send to the html template.
