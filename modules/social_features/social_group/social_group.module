@@ -125,29 +125,6 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
 }
 
 /**
- * Prepares variables for page templates.
- *
- * Default template: page-title.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - title: The page title.
- */
-function social_group_preprocess_page_title(array &$variables) {
-
-  // Define URL parameters.
-  $parameters = explode('/', \Drupal::request()->getpathInfo());
-
-  // Better descriptive page title when removing something from a group.
-  if($parameters[1] == 'group' && $parameters[3] == 'content' && $parameters[5] == 'delete') {
-    list($group_content, $group) = _social_group_get_group_labels();
-
-    // Adjust title.
-    $variables['title'] = t('Remove "@group_content" from <em>@group</em>', array('@group_content' => $group_content, '@group' => $group));
-  }
-}
-
-/**
  * Load group content label and group label.
  *
  * @return array of gropu labels.
@@ -344,7 +321,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
     list($name, $group) = _social_group_get_group_labels();
 
-    // Give a better description.
+    // Give a better title, description and submit button value.
+    $form['#title'] = t('Remove %name from %group', array('%name' => $name, '%group' => $group));
+    $form['actions']['submit']['#value'] = t('Remove');
     $form['description']['#markup'] = t('Are you sure you want to remove %name from %group?', array('%name' => $name, '%group' => $group));
   }
 
