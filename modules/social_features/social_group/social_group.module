@@ -583,7 +583,6 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
-
   // Unset the public options on visibility field.
   if ($field_definition->getType() == 'entity_access_field') {
     $default_value = $context['items']->getValue();
