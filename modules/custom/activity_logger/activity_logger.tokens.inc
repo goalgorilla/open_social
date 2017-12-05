@@ -100,6 +100,14 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                     ->load($target_id);
                 }
               }
+              // Handling for group content entities.
+              if ($entity->getEntityTypeId() === 'group_content') {
+                $group = $entity->getGroup();
+              }
+              // Handling for group entities.
+              if ($entity->getEntityTypeId() === 'group') {
+                $group = $entity;
+              }
 
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
