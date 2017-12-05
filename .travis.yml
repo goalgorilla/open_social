@@ -14,7 +14,7 @@ addons:
 language: php
 
 php:
-  - 5.6
+  - 7.1
 
 env:
   global:
@@ -67,7 +67,7 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 stability-2 stability-3 stability-4 "stability-5&&~DS-1136&&~DS-3605"; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
