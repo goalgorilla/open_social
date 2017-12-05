@@ -52,7 +52,11 @@ class EventSettingsForm extends ConfigFormBase {
 
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
-      $form['enroll']['#options'][$group_type->id()] = $group_type->label();
+      // Check if this group type uses events.
+      if ($group_type->hasContentPlugin('group_node:event')) {
+        // Add to the option array.
+        $form['enroll']['#options'][$group_type->id()] = $group_type->label();
+      }
     }
 
     return parent::buildForm($form, $form_state);
