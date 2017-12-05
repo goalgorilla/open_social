@@ -102,7 +102,7 @@ class SocialUserExportOverrides implements ConfigFactoryOverrideInterface {
                   'id' => 'gid',
                   'table' => 'group_content_field_data',
                   'field' => 'gid',
-                  'relationship', 'group_content',
+                  'relationship' => 'group_content',
                   'group_type' => 'group',
                   'admin_label' => 'Group',
                   'required' => FALSE,

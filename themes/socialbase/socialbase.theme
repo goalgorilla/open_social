@@ -7,7 +7,6 @@
 
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\bootstrap\Bootstrap;
-use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\node\Entity\Node;
 
 // Include all files from the includes directory.
@@ -27,7 +26,7 @@ function socialbase_theme_suggestions_alter(&$data, &$context1 = NULL, &$context
  * Prepare group link when an event or topic belongs to one group.
  */
 function socialbase_group_link($node) {
-  $group = _social_group_get_current_group();
+  $group = _social_group_get_current_group($node);
   $group_link = NULL;
 
   // Exclude nodes without ids (Preview).
@@ -111,20 +110,6 @@ function _socialbase_node_get_like_count($type, $id) {
   }
 
   return $count;
-
-}
-
-/**
- * Implements hook_js_alter().
- */
-function socialbase_js_alter(&$javascript, AttachedAssetsInterface $assets) {
-  if (isset($javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js'])) {
-    $javascript['modules/contrib/image_widget_crop/js/imageWidgetCrop.js']['data'] = drupal_get_path('theme', 'socialbase') . '/assets/js/imageWidgetCrop.min.js';
-  }
-
-  if (isset($javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js'])) {
-    $javascript['themes/contrib/bootstrap/js/misc/vertical-tabs.js']['weight']--;
-  }
 
 }
 

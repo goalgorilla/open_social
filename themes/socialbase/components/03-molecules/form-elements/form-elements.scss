@@ -29,9 +29,22 @@
 //
 // markup: inline-form-error.twig
 //
-// Weight: 1
+// Weight: 3
 //
 // Style guide: molecules.form-elements.inline-error
+
+// Form element icons
+//
+// To add icons to a form element, you can add it inside the `<label>` element.
+// The icon can be used to make labels and elements easily recognisable or categorise
+// form elements. Wrap the icon in span with the class `control-label__icon` where you
+// can add a background-image or inline SVG.
+//
+// markup: form-element-icon.twig
+//
+// Weight: 2
+//
+// Style guide: molecules.form-elements.icon
 
 // Browsers do not recognize pseudo :after selectors, we must create a wrapper
 // around the select element to style it properly.
@@ -45,6 +58,30 @@ label {
 
 .control-label {
   font-size: 0.875rem;
+}
+
+.control-label__icon--bg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 24px 24px;
+}
+
+.control-label__icon--svg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  padding: 3px;
+  fill: $default-color;
+}
+
+.control-label--above {
+  display: block;
+  margin-bottom: 3px;
 }
 
 // Form groups

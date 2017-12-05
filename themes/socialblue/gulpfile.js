@@ -124,6 +124,7 @@ options.styleGuide = {
     'kss-assets/blue/css/form-controls.css',
     'kss-assets/blue/css/list.css',
     'kss-assets/base/css/list.css',
+    'kss-assets/base/css/spinner.css',
     'kss-assets/blue/css/spinner.css',
     'kss-assets/lib/waves.css',
     'kss-assets/blue/css/waves.css',
@@ -134,6 +135,10 @@ options.styleGuide = {
     'kss-assets/blue/css/file.css',
     'kss-assets/base/css/form-elements.css',
     'kss-assets/blue/css/form-elements.css',
+    'kss-assets/base/css/autocomplete.css',
+    'kss-assets/lib/select2.min.css',
+    'kss-assets/base/css/select2.css',
+    'kss-assets/blue/css/select2.css',
     'kss-assets/base/css/datepicker.css',
     'kss-assets/blue/css/datepicker.css',
     'kss-assets/base/css/input-groups.css',
@@ -164,6 +169,8 @@ options.styleGuide = {
     // Organisms stylesheets
     'kss-assets/base/css/comment.css',
     'kss-assets/blue/css/comment.css',
+    'kss-assets/base/css/form-default.css',
+    'kss-assets/base/css/form-horizontal.css',
     'kss-assets/base/css/hero.css',
     'kss-assets/blue/css/hero.css',
     'kss-assets/base/css/meta.css',
@@ -309,12 +316,16 @@ gulp.task('scripts-drupal', function () {
 // Copy libraries scripts from drupal libraries folder to make them available for the styleguide
 gulp.task('libraries', function () {
   return gulp.src([
+    options.rootPath.drupal + 'assets/vendor/jquery.ui/themes/base/menu.css',
+    options.rootPath.drupal + 'assets/vendor/jquery.ui/themes/base/autocomplete.css',
     options.rootPath.libraries + 'bootstrap/dist/js/bootstrap.min.js',
     options.rootPath.libraries + 'morris.js/morris.min.js',
     options.rootPath.libraries + 'raphael/raphael.min.js',
     options.rootPath.libraries + 'waves/dist/waves.min.js',
     options.rootPath.libraries + 'waves/dist/waves.css',
-    options.rootPath.libraries + 'autosize/dist/autosize.min.js'
+    options.rootPath.libraries + 'autosize/dist/autosize.min.js',
+    options.rootPath.libraries + 'select2/dist/css/select2.min.css',
+    options.rootPath.libraries + 'select2/dist/js/select2.min.js'
   ])
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/lib/'));
 });
