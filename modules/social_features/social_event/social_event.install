@@ -82,6 +82,7 @@ function _social_event_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
+    'administer social_event settings',
   ]);
 
   if (isset($permissions[$role])) {
@@ -129,4 +130,12 @@ function _social_event_enroll_group_types() {
  */
 function social_event_update_8001() {
   _social_event_enroll_group_types();
+}
+
+/**
+ * Set permissions to administer social_event settings.
+ */
+function social_event_update_8002() {
+  // Give SM the administer social_event settings permission.
+  user_role_grant_permissions('sitemanager', ['administer social_event settings']);
 }
