@@ -33,9 +33,9 @@ class ActivityListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.activity.edit_form', array(
+        'entity.activity.edit_form', [
           'activity' => $entity->id(),
-        )
+        ]
       )
     );
     return $row + parent::buildRow($entity);

@@ -5,25 +5,20 @@
 // ===================================================
 
 var importOnce    = require('node-sass-import-once'),
-    path          = require('path'),
     notify        = require("gulp-notify"),
-    bower         = require("gulp-bower"),
     gulp          = require('gulp'),
     $             = require('gulp-load-plugins')(),
     browserSync   = require('browser-sync').create(),
     del           = require('del'),
     // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
     sass          = require('gulp-sass'),
-    postcss       = require('gulp-postcss'),
     autoprefixer  = require('autoprefixer'),
-    mqpacker      = require('css-mqpacker'),
-    runSequence   = require('run-sequence');
+    mqpacker      = require('css-mqpacker');
 
 var options = {};
 
 options.basetheme = {
   root       : __dirname,
-  bowerDir   : __dirname + '/libraries/',
   components : __dirname + '/components/',
   build      : __dirname + '/assets/',
   css        : __dirname + '/assets/css/',
@@ -71,7 +66,6 @@ var onError = function(err) {
 };
 
 
-
 // #################
 //
 // Compile the Sass
@@ -89,58 +83,34 @@ gulp.task('styles', ['clean:css'], function () {
     .pipe($.sass(options.sass).on('error', sass.logError))
     .pipe($.plumber({ errorHandler: onError }) )
     .pipe($.postcss(sassProcessors) )
-    .pipe($.rucksack() )
     .pipe($.rename({dirname: ''}))
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.basetheme.css))
-    .pipe(browserSync.reload({stream:true}))
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
 
 // #################
 //
-// Run Bower
+// Compile the Javascript
 //
 // #################
 //
-// This task will read bower.json file and put the library in libraries folder
-// the task minify-scripts will determine what to use and move it to the assets
-// eventually. Libraries will ignored in the repository.
+// This task will look for all js files, minifies theme
+// and puts them in assets folder. When browsersync is enabled
+// the browser will fetch the changes.
 // ===================================================
 
-gulp.task('bower', function () {
-  return bower()
-    .pipe(gulp.dest(options.basetheme.bowerDir))
-});
-
-
-
-// #################
-//
-// Minify JS
-//
-// #################
-//
-// First clean the JS folder, then search all components for js files.
-// Also search in the libraries folder for specific files.
-// Then compress the files, give them an explicit .min filename and
-// save them to the assets folder.
-// ===================================================
-
-gulp.task('minify-js', ['clean:js'], function () {
-  return gulp.src([
-    options.basetheme.components + '**/*.js',
-    options.basetheme.bowerDir + '**/raphael.js',
-    options.basetheme.bowerDir + '**/morris.js'
-    ]
-  )
-  .pipe($.uglify())
-  .pipe($.flatten())
-  .pipe($.rename({
-    suffix: ".min"
-  }))
-  .pipe(gulp.dest(options.basetheme.js));
+gulp.task('scripts', ['clean:js'], function () {
+  return gulp.src(options.basetheme.components + '**/*.js')
+    .pipe($.uglify())
+    .pipe($.flatten())
+    .pipe($.rename({
+      suffix: ".min"
+    }))
+    .pipe(gulp.dest(options.basetheme.js))
+    .pipe(browserSync.reload({stream:true}));
 });
 
 
@@ -220,9 +190,7 @@ gulp.task('mime-image-icons', function () {
 //
 // ##############################
 
-gulp.task('watch', ['browser-sync']);
-
-gulp.task('browser-sync', ['watch:css', 'watch:icons'], function () {
+gulp.task('watch', ['watch:css', 'watch:js', 'watch:icons'], function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -235,6 +203,12 @@ gulp.task('browser-sync', ['watch:css', 'watch:icons'], function () {
 gulp.task('watch:css', ['styles'], function () {
   return gulp.watch(options.basetheme.components + '**/*.scss', ['styles']);
 });
+
+
+gulp.task('watch:js', ['scripts'], function () {
+  return gulp.watch(options.basetheme.components + '**/*.js', ['scripts']);
+});
+
 
 gulp.task('watch:icons', function () {
   return gulp.watch(options.icons.src + '**/*.svg', ['sprite-icons', 'image-icons'] );
@@ -268,12 +242,5 @@ gulp.task('clean:js', function () {
 // Default task (no watching)
 //
 // ######################
-//
-// Before generating all assets, first run bower
-// ===================================================
 
-gulp.task('default', function(done) {
-  runSequence('bower',
-    ['styles', 'image-icons', 'sprite-icons', 'minify-js'],
-    done);
-});
+gulp.task('default', ['styles', 'image-icons', 'sprite-icons', 'scripts']);

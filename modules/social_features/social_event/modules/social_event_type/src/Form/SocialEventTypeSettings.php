@@ -34,14 +34,14 @@ class SocialEventTypeSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_event_type.settings');
 
-    $form['social_event_type_required'] = array(
+    $form['social_event_type_required'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Event types required'),
       '#description' => $this->t('Set wether event types field is required or not.'),
       '#default_value' => $config->get('social_event_type_required'),
-    );
+    ];
 
-    $form['social_event_type_select_changer'] = array(
+    $form['social_event_type_select_changer'] = [
       '#type' => 'number',
       '#title' => $this->t('Change input widget'),
       '#description' => $this->t('When the amount of available event types reach this amount, on the event edit and create page, the radio widget will be changed to a select widget for better usability.'),
@@ -49,16 +49,9 @@ class SocialEventTypeSettings extends ConfigFormBase {
       '#min' => 2,
       '#step' => 1,
       '#size' => 2,
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

@@ -3,10 +3,9 @@
 namespace Drupal\social_user_export;
 
 use Drupal\Core\Url;
-use \Drupal\user\UserInterface;
-use \League\Csv\Writer;
-use \Drupal\Core\Link;
-use \Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
+use League\Csv\Writer;
+use Drupal\Core\Link;
 
 /**
  * Class ExportUser.
@@ -17,8 +16,13 @@ class ExportUser {
 
   /**
    * Callback of one operation.
+   *
+   * @param \Drupal\user\UserInterface $entity
+   *   UserInterface entity.
+   * @param array $context
+   *   Context of the operation.
    */
-  public static function exportUserOperation(UserInterface $entity, &$context) {
+  public static function exportUserOperation(UserInterface $entity, array &$context) {
     if (empty($context['results']['file_path'])) {
       $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
@@ -96,45 +100,46 @@ class ExportUser {
 
   /**
    * Callback of massive operations.
+   *
+   * @param array $conditions
+   *   Conditions of the operation.
+   * @param array $context
+   *   Context of the operation.
    */
-  public static function exportUsersAllOperation($conditions, &$context) {
+  public static function exportUsersAllOperation(array $conditions, array &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['current_id'] = 0;
-      $query = \Drupal::database()
-        ->select('users', 'u')
-        ->condition('u.uid', 0, '<>');
 
-      if ($conditions) {
-        social_user_export_user_apply_filter($query, $conditions);
-      }
-
-      $context['sandbox']['max'] = $query
-        ->countQuery()
-        ->execute()
-        ->fetchField();
+      // Get max uid.
+      $view = _social_user_export_get_view($conditions);
+      $context['sandbox']['max'] = $view->total_rows;
     }
 
-    $query = \Drupal::database()
-      ->select('users', 'u')
-      ->fields('u', ['uid'])
-      ->condition('u.uid', $context['sandbox']['current_id'], '>');
+    $view = _social_user_export_get_view($conditions, FALSE);
+    $view->initQuery();
+    $view->query->orderby = [
+      [
+        'field' => 'users_field_data.uid',
+        'direction' => 'ASC',
+      ],
+    ];
+    $view->setOffset(0);
+    $view->setItemsPerPage(1);
+    $view->query->addWhere(1, 'users_field_data.uid', $context['sandbox']['current_id'], '>');
+    $view->preExecute();
+    $view->execute();
 
-    if ($conditions) {
-      social_user_export_user_apply_filter($query, $conditions);
+    if (empty($view->result[0])) {
+      $context['finished'] = 1;
+      return;
     }
 
-    $uid = $query
-      ->orderBy('u.uid')
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-
-    $account = User::load($uid);
+    $account = $view->result[0]->_entity;
 
     if ($account) {
       self::exportUserOperation($account, $context);
-      $context['sandbox']['current_id'] = $uid;
+      $context['sandbox']['current_id'] = $account->id();
     }
 
     $context['sandbox']['progress']++;
@@ -146,14 +151,21 @@ class ExportUser {
 
   /**
    * Callback when batch is complete.
+   *
+   * @param bool $success
+   *   Boolean to indicate success of the batch.
+   * @param array $results
+   *   The results.
+   * @param array $operations
+   *   Operations that the batch performed.
    */
-  public static function finishedCallback($success, $results, $operations) {
+  public static function finishedCallback($success, array $results, array $operations) {
     if ($success && !empty($results['file_path'])) {
       $data = @file_get_contents($results['file_path']);
       $name = basename($results['file_path']);
       $path = 'private://csv';
 
-      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && ($file = file_save_data($data, $path . '/' . $name))) {
+      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
         $url = Url::fromUri(file_create_url($path . '/' . $name));
         $link = Link::fromTextAndUrl(t('Download file'), $url);
 
@@ -166,7 +178,7 @@ class ExportUser {
       }
     }
     else {
-      drupal_set_message('An error occurred', 'error');
+      drupal_set_message(t('An error occurred', 'error'));
     }
   }
 

@@ -34,21 +34,14 @@ class SocialTourSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_tour.settings');
 
-    $form['social_tour_enabled'] = array(
+    $form['social_tour_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable the social tour'),
       '#description' => $this->t('Set wether the tour is enabled or not.'),
       '#default_value' => $config->get('social_tour_enabled'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

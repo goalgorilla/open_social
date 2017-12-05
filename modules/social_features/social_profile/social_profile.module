@@ -12,10 +12,10 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\UserInterface;
-use \Drupal\Core\Cache\Cache;
-use \Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use \Drupal\file\Entity\File;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -119,12 +119,12 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
   // Get username.
   $user = \Drupal::currentUser();
   // Invalidate cache tag.
-  Cache::invalidateTags(array('user:breadcrumb:' . $user->id()));
+  Cache::invalidateTags(['user:breadcrumb:' . $user->id()]);
 
   // Set redirect to the profile overview page when a user saves their profile.
   $form_state->setRedirect(
     'view.user_information.user_information',
-    array('user' => \Drupal::currentUser()->id(), array())
+    ['user' => \Drupal::currentUser()->id(), []]
   );
 }
 
@@ -164,7 +164,7 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
   $entity = $variables['elements']['#profile'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
 
-  $suggestions = array();
+  $suggestions = [];
   $suggestions[] = $original;
   $suggestions[] = $original . '__' . $sanitized_view_mode;
   $suggestions[] = $original . '__' . $entity->bundle();
@@ -187,7 +187,7 @@ function social_profile_theme_suggestions_profile_alter(array &$suggestions, arr
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_profile_preprocess_profile(array &$variables) {
-  /** @var Profile $profile */
+  /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $variables['profile'];
   $user = User::load($profile->getOwnerId());
   $current_user = \Drupal::currentUser();
@@ -215,7 +215,7 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if (!in_array($route, array('entity.profile.type.user_profile_form'))) {
+  if (!in_array($route, ['entity.profile.type.user_profile_form'])) {
     if ($profile->access('update', $current_user)) {
       $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
       $variables['#cache']['contexts'][] = 'route.name';
@@ -233,7 +233,7 @@ function social_profile_user_insert(UserInterface $account) {
   // If the new account has a UID, we can create a default profile.
   // Default image is added through the field settings.
   if (!empty($account->id())) {
-    /** @var ProfileType $profile_type */
+    /** @var \Drupal\profile\Entity\ProfileType $profile_type */
     $profile_type = ProfileType::load('profile');
     // Sometimes profile fields are already requested during registrataion.
     // In those cases, the profile will already be created from that.
@@ -270,19 +270,19 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
       $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
       // Account value.
       $show_email = $profile->field_profile_show_email->value;
-      $form['profile_privacy'] = array(
+      $form['profile_privacy'] = [
         '#type' => 'fieldset',
         '#title' => t('Privacy settings'),
         '#tree' => TRUE,
-      );
-      $form['profile_privacy']['social_profile_show_email'] = array(
+      ];
+      $form['profile_privacy']['social_profile_show_email'] = [
         '#type' => 'checkbox',
         '#title' => t('Show my email on my profile'),
         '#default_value' => $show_email,
         '#attributes' => [
           'data-switch' => TRUE,
         ],
-      );
+      ];
 
       // If global setting is set, disable the setting and give a reason why.
       if ($global_show_email == TRUE) {
@@ -415,7 +415,7 @@ function social_profile_get_default_image() {
   $field_image_config = $config_factory->getEditable('field.field.profile.profile.field_profile_image');
   $default_image = $field_image_config->get('settings.default_image');
   // Load by uuid.
-  $files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(array('uuid' => $default_image['uuid']));
+  $files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uuid' => $default_image['uuid']]);
   // Pop it.
   $file = array_pop($files);
   // Set in an array.

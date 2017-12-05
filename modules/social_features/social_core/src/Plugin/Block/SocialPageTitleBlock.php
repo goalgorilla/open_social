@@ -37,7 +37,6 @@ class SocialPageTitleBlock extends PageTitleBlock {
         $node->setTitle($translation->getTitle());
       }
       $title = $node->getTitle();
-      $group_link = NULL;
 
       return [
         '#theme' => 'page_hero_data',
@@ -55,7 +54,10 @@ class SocialPageTitleBlock extends PageTitleBlock {
         if ($group && $request->attributes->get('_route') == 'entity.group_content.create_form') {
           return [
             '#type' => 'page_title',
-            '#title' => t($title . ' in ' . $group->label()),
+            '#title' => t('@title in @group', [
+              '@title' => $title,
+              '@group' => $group->label(),
+            ], ['context' => 'social_page_title']),
           ];
         }
         else {

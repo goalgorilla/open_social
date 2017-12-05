@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * The Social Embed module.
+ */
+
+use Drupal\embed\Entity\EmbedButton;
+use Drupal\file\Entity\File;
+
+/**
+ * Function that creates an embed button with a custom icon.
+ */
+function social_embed_create_media_button() {
+
+  // Create a File entity for the icon.
+  $path = drupal_get_path('module', 'social_embed');
+  $image_path = $path . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
+  $uri = file_unmanaged_copy($image_path, 'public://urlembed.png', FILE_EXISTS_REPLACE);
+
+  $media = File::create([
+    'langcode' => 'en',
+    'uid' => 1,
+    'status' => 1,
+    'uri' => $uri,
+  ]);
+  $media->save();
+
+  // Create an embed icon.
+  $button = EmbedButton::create([
+    'id' => 'social_embed',
+    'label' => t('Media'),
+    'langcode' => 'en',
+    'status' => TRUE,
+    'icon_uuid' => $media->uuid(),
+    'type_id' => 'url',
+    'type_settings' => [],
+  ]);
+  $button->save();
+
+}

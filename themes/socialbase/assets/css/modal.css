@@ -84,7 +84,8 @@
   z-index: 1050;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
@@ -130,32 +131,31 @@
   -webkit-appearance: none;
   -webkit-transition: 0.3s;
   transition: 0.3s;
+  position: relative;
 }
 
 .ui-dialog-titlebar-close:before {
   content: 'x';
+  position: absolute;
+  text-indent: 0;
+  top: 0;
+  right: 0;
 }
 
 .ui-dialog-titlebar-close:hover {
   opacity: .75;
 }
 
-.ui-dialog-titlebar-close .ui-button-text {
-  position: absolute;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  word-wrap: normal;
-  margin: -1px;
-  padding: 0;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+.ui-button-icon-only {
+  text-indent: -9999px;
+  white-space: nowrap;
 }
 
 .ui-dialog-content {
   position: relative;
   overflow: auto;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
   -webkit-box-flex: 1;
       -ms-flex: 1 1 auto;
           flex: 1 1 auto;
@@ -210,7 +210,8 @@
   border: 1px solid #999;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
   outline: 0;
 }

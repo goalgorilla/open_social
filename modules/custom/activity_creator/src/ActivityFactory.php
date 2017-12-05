@@ -16,10 +16,18 @@ use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 class ActivityFactory extends ControllerBase {
 
   /**
+   * Activity destination manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
-  private $activityDestinationManager;
+  protected $activityDestinationManager;
 
+  /**
+   * ActivityFactory constructor.
+   *
+   * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
+   *   The activity destination manager.
+   */
   public function __construct(ActivityDestinationManager $activityDestinationManager) {
     $this->activityDestinationManager = $activityDestinationManager;
   }
@@ -28,10 +36,10 @@ class ActivityFactory extends ControllerBase {
    * Create the activities based on a data array.
    *
    * @param array $data
-   *    An array of data to create activity from.
+   *   An array of data to create activity from.
    *
    * @return array
-   *    An array of created activities.
+   *   An array of created activities.
    */
   public function createActivities(array $data) {
     $activities = $this->buildActivities($data);
@@ -43,12 +51,12 @@ class ActivityFactory extends ControllerBase {
    * Build the activities based on a data array.
    *
    * @param array $data
-   *    An array of data to create activity from.
+   *   An array of data to create activity from.
    *
    * @return array
-   *    An array of created activities.
+   *   An array of created activities.
    */
-  private function buildActivities(array $data) {
+  protected function buildActivities(array $data) {
     $activities = [];
     $message = Message::load($data['mid']);
     // Initialize fields for new activity entity.
@@ -82,7 +90,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'destination' field from data array.
    */
-  private function getFieldDestinations(array $data, $allowed_destinations = array()) {
+  protected function getFieldDestinations(array $data, $allowed_destinations = []) {
     $value = NULL;
     if (isset($data['destination'])) {
       $value = $data['destination'];
@@ -100,7 +108,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'entity' field from data array.
    */
-  private function getFieldEntity($data) {
+  protected function getFieldEntity($data) {
     $value = NULL;
     if (isset($data['related_object'])) {
       $value = $data['related_object'];
@@ -111,7 +119,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'message' field from data array.
    */
-  private function getFieldMessage($data) {
+  protected function getFieldMessage($data) {
     $value = NULL;
     if (isset($data['mid'])) {
       $value = [];
@@ -125,7 +133,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'output_text' field from data array.
    */
-  private function getFieldOutputText(Message $message, $arguments = []) {
+  protected function getFieldOutputText(Message $message, $arguments = []) {
     $value = NULL;
     if (isset($message)) {
 
@@ -142,10 +150,10 @@ class ActivityFactory extends ControllerBase {
 
       // Add format.
       $value = [
-        '0' => array(
+        '0' => [
           'value' => $text,
           'format' => 'basic_html',
-        ),
+        ],
       ];
     }
 
@@ -155,7 +163,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'created' field from data array.
    */
-  private function getCreated(Message $message) {
+  protected function getCreated(Message $message) {
     $value = NULL;
     if (isset($message)) {
       $value = $message->getCreatedTime();
@@ -166,8 +174,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get aggregation settings from message template.
    */
-  private function getAggregationSettings(Message $message) {
-    $value = NULL;
+  protected function getAggregationSettings(Message $message) {
     $message_template = $message->getTemplate();
     return $message_template->getThirdPartySetting('activity_logger', 'activity_aggregate', NULL);
   }
@@ -175,10 +182,10 @@ class ActivityFactory extends ControllerBase {
   /**
    * Build the aggregated activities based on a data array.
    */
-  private function buildAggregatedActivites($data, $activity_fields) {
+  protected function buildAggregatedActivites($data, $activity_fields) {
     $activities = [];
-    $common_destinations = $this->activityDestinationManager->getListByProperties('is_common', TRUE);
-    $personal_destinations = $this->activityDestinationManager->getListByProperties('is_common', FALSE);
+    $common_destinations = $this->activityDestinationManager->getListByProperties('isCommon', TRUE);
+    $personal_destinations = $this->activityDestinationManager->getListByProperties('isCommon', FALSE);
 
     // Get related activities.
     $related_activities = $this->getAggregationRelatedActivities($data);
@@ -229,8 +236,8 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related activities for activity aggregation.
    */
-  private function getAggregationRelatedActivities($data) {
-    $activities = array();
+  protected function getAggregationRelatedActivities($data) {
+    $activities = [];
     $related_object = $data['related_object'][0];
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
       if ($related_object['target_type'] === 'comment') {
@@ -250,7 +257,7 @@ class ActivityFactory extends ControllerBase {
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
           // We exclude activities with email, platform_email and notifications
           // destinations from aggregation.
-          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('is_aggregatable', TRUE);
+          $aggregatable_destinations = $this->activityDestinationManager->getListByProperties('isAggregatable', TRUE);
           $activity_query->condition('field_activity_destinations.value', $aggregatable_destinations, 'IN');
           $activity_ids = $activity_query->execute();
           if (!empty($activity_ids)) {
@@ -303,7 +310,7 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get unique authors number for activity aggregation.
    */
-  private function getAggregationAuthorsCount(array $data) {
+  protected function getAggregationAuthorsCount(array $data) {
     $count = 0;
     $related_object = $data['related_object'][0];
     if (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
@@ -324,12 +331,12 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'recipient_group' field from data array.
    */
-  private function getFieldRecipientGroup($data) {
+  protected function getFieldRecipientGroup($data) {
     $value = NULL;
     if (isset($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'group') {
         // Should be in an array for the field.
-        $value = array($data['recipient']);
+        $value = [$data['recipient']];
       }
     }
     return $value;
@@ -338,12 +345,12 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get field value for 'recipient_user' field from data array.
    */
-  private function getFieldRecipientUser($data) {
+  protected function getFieldRecipientUser($data) {
     $value = NULL;
     if (isset($data['recipient']) && is_array($data['recipient'])) {
       if ($data['recipient']['target_type'] === 'user') {
         // Should be in an array for the field.
-        $value = array($data['recipient']);
+        $value = [$data['recipient']];
       }
     }
     return $value;
@@ -353,12 +360,12 @@ class ActivityFactory extends ControllerBase {
    * Return the actor uid.
    *
    * @param array $data
-   *    Array of data.
+   *   Array of data.
    *
    * @return int
-   *    Value uid integer.
+   *   Value uid integer.
    */
-  private function getActor(array $data) {
+  protected function getActor(array $data) {
     $value = 0;
     if (isset($data['actor'])) {
       $value = $data['actor'];
@@ -370,10 +377,9 @@ class ActivityFactory extends ControllerBase {
    * Get message text.
    *
    * @return array
-   *    Message text array.
+   *   Message text array.
    */
   public function getMessageText(Message $message) {
-
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
@@ -398,6 +404,8 @@ class ActivityFactory extends ControllerBase {
    *   Array with the arguments.
    * @param array $output
    *   Array with the templated text saved in the message template.
+   * @param \Drupal\message\Entity\Message $message
+   *   Message object.
    *
    * @return array
    *   The templated text, with the placeholders replaced with the actual value,
@@ -438,6 +446,8 @@ class ActivityFactory extends ControllerBase {
    *   The templated text to be replaced.
    * @param bool $clear
    *   Determine if unused token should be cleared.
+   * @param \Drupal\message\Entity\Message $message
+   *   Message object.
    *
    * @return array
    *   The output with placeholders replaced with the token value,

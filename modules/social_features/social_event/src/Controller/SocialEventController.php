@@ -17,7 +17,9 @@ class SocialEventController extends ControllerBase {
    * Redirect to a users events.
    */
   public function redirectMyEvents() {
-    return $this->redirect('view.events.events_overview', array('user' => $this->currentUser()->id()));
+    return $this->redirect('view.events.events_overview', [
+      'user' => $this->currentUser()->id(),
+    ]);
   }
 
 }

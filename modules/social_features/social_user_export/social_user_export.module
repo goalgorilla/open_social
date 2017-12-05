@@ -5,10 +5,9 @@
  * The Social User Export module.
  */
 
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\Core\Database\Database;
-use \Drupal\Core\Database\Query\Select;
-use \Drupal\user\UserInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
+use Drupal\views\Views;
 
 /**
  * Implements hook_form_alter().
@@ -17,7 +16,8 @@ function social_user_export_form_alter(&$form, FormStateInterface $form_state, $
   switch ($form_id) {
     case 'views_form_user_admin_people_page_1':
       // Fetch the amount of rows directly from the already executed view.
-      $count = $form['output']['0']['#view']->total_rows;
+      $count = $form['output'][0]['#view']->total_rows;
+      $form_state->set('query', \Drupal::request()->query->all());
 
       $form['#attached']['library'][] = 'social_user_export/select_all';
       $form['#attached']['drupalSettings']['socialUserExport'] = [
@@ -40,6 +40,15 @@ function social_user_export_form_alter(&$form, FormStateInterface $form_state, $
         $form['created']['min']['#title'] = t('Registered from');
         $form['created']['max']['#type'] = 'date';
         $form['created']['max']['#title'] = t('Registered to');
+
+        if (isset($form['group']) && ($items = _social_user_export_get_groups())) {
+          $form['group'] = array_merge($form['group'], [
+            '#type' => 'select',
+            '#options' => $items,
+            '#empty_option' => t('- Any -'),
+            '#size' => 1,
+          ]);
+        }
       }
       break;
   }
@@ -53,55 +62,33 @@ function social_user_export_views_data_alter(array &$data) {
 }
 
 /**
- * Applies the additional filters for export.
+ * Returns the user admin people view.
  *
- * @var Select $query
- * @var array $conditions
+ * @param array $query
+ *   Query parameters for exposed filters.
+ * @param bool $execute
+ *   If TRUE, views query will be executed.
+ *
+ * @return \Drupal\views\ViewExecutable
+ *   The requested view.
  */
-function social_user_export_user_apply_filter(Select $query, array $conditions) {
-  $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
+function _social_user_export_get_view(array $query = [], $execute = TRUE) {
+  $view = Views::getView('user_admin_people');
+  $view->setDisplay('page_1');
+  $view->setExposedInput($query);
 
-  // Apply filters.
-  if (!empty($conditions['user'])) {
-    $connection = Database::getConnection();
-    $or = $query->orConditionGroup();
-    $or
-      ->condition('uf.name', '%' . $connection->escapeLike($conditions['user']) . '%', 'LIKE')
-      ->condition('uf.mail', '%' . $connection->escapeLike($conditions['user']) . '%', 'LIKE');
-    $query->condition($or);
+  if ($execute) {
+    $view->preExecute();
+    $view->execute();
   }
 
-  if (!empty($conditions['role']) && $conditions['role'] != t('All')) {
-    $query->join('user__roles', 'ur', 'ur.entity_id = u.uid AND ur.roles_target_id = :roles_target_id', [
-      ':roles_target_id' => $conditions['role'],
-    ]);
-  }
-
-  if (!empty($conditions['permission']) && $conditions['permission'] != t('All')) {
-    $roles = user_roles(FALSE, $conditions['permission']);
-    $roles = array_keys($roles);
-
-    // To except "InvalidQueryException" error when variable $roles is empty.
-    $roles[] = -1;
-
-    $query->join('user__roles', 'ur', 'ur.entity_id = u.uid');
-    $query->condition('ur.roles_target_id', $roles, 'IN');
-  }
-
-  if (isset($conditions['status']) && $conditions['status'] != t('All')) {
-    $query->condition('uf.status', $conditions['status']);
-  }
-
-  if (!empty($conditions['created']['min']) && !empty($conditions['created']['max'])) {
-    $conditions['created'] = array_map('strtotime', $conditions['created']);
-    $query->condition('uf.created', array_values($conditions['created']), 'BETWEEN');
-  }
+  return $view;
 }
 
 /**
  * Returns quantity of comments posted by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -121,7 +108,7 @@ function social_user_export_comments_count(UserInterface $account) {
 /**
  * Returns quantity of posts created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -141,7 +128,7 @@ function social_user_export_posts_count(UserInterface $account) {
 /**
  * Returns quantity of nodes created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  * @param string $type
  *   The node type to filter on.
@@ -165,7 +152,7 @@ function social_user_export_nodes_count(UserInterface $account, $type) {
 /**
  * Returns quantity of enrollments of specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -185,7 +172,7 @@ function social_user_export_events_enrollments_count(UserInterface $account) {
 /**
  * Returns quantity of groups created by specific user.
  *
- * @param UserInterface $account
+ * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return int
@@ -215,4 +202,21 @@ function social_user_export_file_download($uri) {
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];
   }
+}
+
+/**
+ * Returns array with titles of all groups.
+ */
+function _social_user_export_get_groups() {
+  $data = &drupal_static(__FUNCTION__);
+
+  if (empty($data)) {
+    $data = \Drupal::database()
+      ->select('groups_field_data', 'gfd')
+      ->fields('gfd', ['id', 'label'])
+      ->execute()
+      ->fetchAllKeyed(0, 1);
+  }
+
+  return $data;
 }

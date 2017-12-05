@@ -5,7 +5,7 @@
  * Install, update and uninstall functions for the social_group module.
  */
 
-use \Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
@@ -17,9 +17,9 @@ use Drupal\user\Entity\Role;
 function social_group_update_dependencies() {
   // Necessary because in system_update_8200 all the configuration files are
   // updated and we delete some modules.
-  $dependencies['system'][8200] = array(
+  $dependencies['system'][8200] = [
     'social_group' => 8005,
-  );
+  ];
   return $dependencies;
 }
 
@@ -69,32 +69,32 @@ function _social_group_set_permissions() {
  * Build the permissions.
  *
  * @param string $role
- *    The role.
+ *   The role.
  *
  * @return array
- *    Returns an array containing the permissions.
+ *   Returns an array containing the permissions.
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = array();
+  $permissions['anonymous'] = [];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], array(
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'create open_group group',
     'create closed_group group',
-  ));
+  ]);
 
   // Content manager.
-  $permissions['contentmanager'] = array_merge($permissions['authenticated'], array(
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
     'manage all groups',
     'view node.book.field_content_visibility:group content',
     'view node.event.field_content_visibility:group content',
     'view node.topic.field_content_visibility:group content',
     'view node.page.field_content_visibility:group content',
-  ));
+  ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], array());
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -108,7 +108,7 @@ function _social_group_get_permissions($role) {
 function _social_group_create_menu_links() {
   $menu_links = MenuLinkContent::loadMultiple();
   $parent = NULL;
-  /** @var MenuLinkContent $menu_link */
+  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent $menu_link */
   foreach ($menu_links as $menu_link) {
     if ($menu_link->label() === 'Explore' && $menu_link->isExpanded()) {
       $parent = 'menu_link_content:' . $menu_link->uuid();
@@ -132,11 +132,11 @@ function _social_group_create_menu_links() {
  */
 function social_group_update_8001() {
 
-  $modules = array(
+  $modules = [
     'geolocation',
     'geocoder',
     'grolesync',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 
 }
@@ -163,13 +163,13 @@ function social_group_update_8004(&$sandbox) {
   $display_mode = 'default';
 
   // Add a new column 'format' for description field type.
-  $spec = array(
+  $spec = [
     'type' => 'varchar',
     'description' => '',
     'length' => 255,
     'not null' => FALSE,
     'default' => NULL,
-  );
+  ];
   $schema = Database::getConnection()->schema();
   $table = "{$entity}__{$field_name}";
   $col = "{$field_name}_format";
@@ -206,23 +206,23 @@ function social_group_update_8004(&$sandbox) {
   $display_id = "{$entity}.{$bundle}.$display_mode";
   $view_display = \Drupal::entityManager()->getStorage('entity_view_display')->load($display_id);
   if ($component = $view_display->getComponent($field_name)) {
-    $view_display->setComponent($field_name, array(
+    $view_display->setComponent($field_name, [
       'type' => 'basic_string',
       'settings' => [],
-    ) + $component)->save();
+    ] + $component)->save();
   }
 
   // Update entity form display.
   $form_display_name = 'group.open_group.default';
   $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')->load($form_display_name);
   if (($component = $form_display->getComponent($field_name)) && $component['type'] == 'string_textarea') {
-    $form_display->setComponent($field_name, array(
+    $form_display->setComponent($field_name, [
       'type' => 'text_textarea',
-      'settings' => array(
+      'settings' => [
         'rows' => 5,
         'placeholder' => '',
-      ),
-    ) + $component)->save();
+      ],
+    ] + $component)->save();
   }
 }
 
@@ -230,10 +230,10 @@ function social_group_update_8004(&$sandbox) {
  * Uninstall geocoder and geolocation modules. Remove group geolocation field.
  */
 function social_group_update_8005() {
-  $modules = array(
+  $modules = [
     'geolocation',
     'geocoder',
-  );
+  ];
 
   $config_factory = \Drupal::service('config.factory');
 
@@ -273,9 +273,7 @@ function social_group_update_8006() {
  * Uninstall grolesync module (for now, more info: drupal.org/node/2850417).
  */
 function social_group_update_8007() {
-  $modules = array(
-    'grolesync',
-  );
+  $modules = ['grolesync'];
   \Drupal::service('module_installer')->uninstall($modules);
 }
 

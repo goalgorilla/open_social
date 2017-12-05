@@ -30,7 +30,8 @@
   height: 8px;
   position: absolute;
   background: #777777;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+          box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
   border-radius: 50%;
   border: 1px solid #fff;
 }
@@ -89,12 +90,6 @@
       flex-shrink: 0;
 }
 
-.card--stream .comment__content {
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
-}
-
 .teaser--stream {
   margin-top: 0.625rem;
   margin-right: -1.25rem;
@@ -108,15 +103,12 @@
 }
 
 @media (min-width: 600px) {
-
   .stream {
     margin-left: 0;
   }
-
   .stream:before {
     top: 42px;
   }
-
   .stream-icon {
     left: 0;
     top: 36px;
@@ -124,33 +116,27 @@
     height: 16px;
     border-width: 2px;
   }
-
   .card--stream {
     margin-left: 30px;
   }
-
   .card--stream:before {
     border-width: 9px;
     top: 35px;
   }
-
   .card--stream:after {
     border-width: 8px;
     top: 36px;
   }
-
   .card--stream .comment__avatar {
     margin-right: 12px;
   }
-
   .teaser--stream {
     height: 200px;
   }
-
   .teaser--stream .teaser__image {
     height: 200px;
     -webkit-box-flex: 0;
-    -ms-flex: 0 0 200px;
-    flex: 0 0 200px;
+        -ms-flex: 0 0 200px;
+            flex: 0 0 200px;
   }
 }

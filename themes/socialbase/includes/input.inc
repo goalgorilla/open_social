@@ -9,6 +9,7 @@
  * Implements hook_preprocess_input().
  */
 function socialbase_preprocess_input(&$variables) {
+
   if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
     // Only reaction on the visibility field.
     if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
@@ -41,7 +42,7 @@ function socialbase_preprocess_input(&$variables) {
   }
 
   if (isset($variables['element']['#addsearchicon'])) {
-    $variables['add_search_icon'] = TRUE;
+    $variables['addsearchicon'] = TRUE;
   }
 
   // Button types are determined in the hook_form_alter and set to be
@@ -49,6 +50,7 @@ function socialbase_preprocess_input(&$variables) {
   // ['#button_type']
   // ['#button_level'].
   if (isset($variables['element']['#button_type'])) {
+
     if ($variables['element']['#button_type'] == 'primary') {
       $variables['button_type'] = 'primary';
     }
@@ -87,9 +89,9 @@ function socialbase_preprocess_input(&$variables) {
 
   // Make sure we can use a span class caret in the button.
   if (!empty($variables['element']['#attributes']['data-caret']) && $variables['element']['#attributes']['data-caret'] === 'true') {
-    $variables['element']['caret'] = array(
+    $variables['element']['caret'] = [
       '#markup' => '<span class="caret"></span>',
-    );
+    ];
   }
 
 }
@@ -106,6 +108,7 @@ function socialbase_preprocess_textarea(&$variables) {
     $autogrow_areas = [
       'field_post',
       'field_comment_body',
+      'message',
     ];
 
     $c = array_intersect($context, $autogrow_areas);

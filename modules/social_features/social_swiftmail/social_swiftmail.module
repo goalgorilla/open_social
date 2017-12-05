@@ -6,14 +6,13 @@
  */
 
 use Drupal\Component\Utility\Xss;
+use Drupal\file\Entity\File;
 
 /**
  * Preprocess swift template.
  */
 function social_swiftmail_preprocess_swiftmailer(array &$variables) {
-  // Determine host.
-  $request = \Drupal::request();
-  $host = $request->getSchemeAndHttpHost();
+
   // Load default theme (not active).
   $theme_id = \Drupal::config('system.theme')->get('default');
 
@@ -24,11 +23,11 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   }
 
   // Set variables from theme.
-  $logo = $host . theme_get_setting('logo.url', $theme_id);
-  $primary = $colors['brand-bg-primary'];
-  $secondary = $colors['brand-bg-secondary'];
-  $accent = $colors['brand-bg-accent'];
-  $link = $colors['brand-text-primary'];
+  $logo = social_swiftmail_get_logo($theme_id);
+  $primary = $colors['brand-primary'];
+  $secondary = $colors['brand-secondary'];
+  $accent = $colors['brand-accent'];
+  $link = $colors['brand-link'];
   $border_radius = Xss::filter(theme_get_setting('border_radius', $theme_id));
 
   // Add variables to send to the html template.
@@ -42,13 +41,13 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   // Try to add a heading message.
   if ($user = user_load_by_mail($variables['message']['to'])) {
     $message = $variables['message'];
-    $options = array(
+    $options = [
       'langcode' => $message['langcode'],
-    );
+    ];
 
-    $replace = array(
+    $replace = [
       '%display_name' => $user->getDisplayName(),
-    );
+    ];
     $variables['heading'] = t('Hi %display_name', $replace, $options);
   }
 }
@@ -67,5 +66,29 @@ function social_swiftmail_mail_alter(&$message) {
   else {
     $message['from'] = $site_settings->get('name') . ' <' . $site_settings->get('mail') . '>';
   }
+}
 
+/**
+ * Function the fetches the logo.
+ */
+function social_swiftmail_get_logo($theme_id) {
+  // Determine host.
+  $request = \Drupal::request();
+  $host = $request->getSchemeAndHttpHost();
+  // Default we use the logo image.
+  $logo = $host . theme_get_setting('logo.url', $theme_id);
+
+  // It could be overridden here.
+  $email_logo = theme_get_setting('email_logo', $theme_id);
+
+  // Must be a non-empty array.
+  if (is_array($email_logo) && !empty($email_logo)) {
+    $file = File::load($email_logo[0]);
+
+    if ($file instanceof File) {
+      $logo = file_create_url($file->getFileUri());
+    }
+  }
+
+  return $logo;
 }

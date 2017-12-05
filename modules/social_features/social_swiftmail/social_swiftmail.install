@@ -18,9 +18,18 @@ function social_swiftmail_install() {
   $swift_settings->set('format', 'text/html')->save();
   $swift_settings->set('respect_format', FALSE)->save();
   // Alter mailsystem settings.
-  $mailsystem_settings->set('theme', 'current')->save();
+  $mailsystem_settings->set('theme', 'default')->save();
   $mailsystem_settings->set('defaults.sender', 'social_swiftmailer')->save();
   $mailsystem_settings->set('defaults.formatter', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
+}
+
+/**
+ * Set which theme to use when sending emails.
+ */
+function social_swiftmail_update_8001(&$sandbox) {
+  // Alter mailsystem settings.
+  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+  $mailsystem_settings->set('theme', 'default')->save();
 }

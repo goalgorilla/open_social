@@ -18,7 +18,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
-    $search_routes = array(
+    $search_routes = [
       'view.search_all.page',
       'view.search_all.page_no_value',
       'view.search_content.page',
@@ -27,7 +27,7 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       'view.search_users.page_no_value',
       'view.search_groups.page',
       'view.search_groups.page_no_value',
-    );
+    ];
     return in_array($route_match->getRouteName(), $search_routes);
   }
 
@@ -40,29 +40,20 @@ class SocialSearchBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     switch ($route_match->getRouteName()) {
       case 'view.search_content.page':
       case 'view.search_content.page_no_value':
-        $page_title = $this->t('Search content');
-        break;
-
       case 'view.search_users.page':
       case 'view.search_users.page_no_value':
-        $page_title = $this->t('Search users');
-        break;
-
       case 'view.search_groups.page':
       case 'view.search_groups.page_no_value':
-        $page_title = $this->t('Search groups');
-        break;
-
       case 'view.search_all.page':
       case 'view.search_all.page_no_value':
-        $page_title = $this->t('Search all');
+        // No value because of duplicate words.
         break;
 
       default:
         $page_title = $this->t('Search');
+        $breadcrumb->addLink(Link::createFromRoute($page_title, '<none>'));
     }
 
-    $breadcrumb->addLink(Link::createFromRoute($page_title, '<none>'));
     $breadcrumb->addLink(Link::createFromRoute($this->t('Home'), '<front>'));
 
     // This breadcrumb builder is based on a route parameter, and hence it

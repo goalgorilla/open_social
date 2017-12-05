@@ -48,7 +48,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
 
     // If a violation is expected, then the context's addViolation method will
     // be called, otherwise it should not be called.
-    $context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+    $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
     if ($expected_violation) {
       $context->expects($this->once())
@@ -98,7 +98,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
 
     // Correct email cases.
     // See https://en.wikipedia.org/wiki/Email_address.
-    $invalid_names = array(
+    $invalid_names = [
       'prettyandsimple@example.com',
       'very.common@example.com',
       'disposable.style.email.with+symbol@example.com',
@@ -113,7 +113,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
       'user@com',
       'user@localserver',
       'user@[IPv6:2001:db8::1]',
-    );
+    ];
 
     foreach ($invalid_names as $name) {
       $cases[] = [
@@ -126,11 +126,11 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     // These names are valid names, but are validated as incorrect.
     // Because we use the same validation for the Emails it will not
     // Affect the email login system.
-    $valid_names_but_valid_emails = array(
+    $valid_names_but_valid_emails = [
       '"very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com',
       '"()<>[]:,;@\\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
       'Abc.example.com (no @ character)',
-    );
+    ];
     $email_violations = 1;
     foreach ($valid_names_but_valid_emails as $name) {
       $cases[] = [
@@ -142,7 +142,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
       $email_violations++;
     }
 
-    $valid_names = array(
+    $valid_names = [
       'admin',
       'user1',
       'haha',
@@ -154,7 +154,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
       'john..doe@example.com',
       'a"b(c)d,e:f;g<h>i[j\k]l@example.com',
       'A@b@c@example.com',
-    );
+    ];
     $email_violations = 3;
     foreach ($valid_names as $name) {
       $cases[] = [
@@ -199,7 +199,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    *   Mock constraintViolationItems with the count of $number_of_items.
    */
   protected function buildViolationList($number_of_items) {
-    $violationList = array();
+    $violationList = [];
     for ($count = 0; $count < $number_of_items; $count++) {
       $violation = $this->getMock('Symfony\Component\Validator\ConstraintViolationInterface');
       $violationList[] = $violation;

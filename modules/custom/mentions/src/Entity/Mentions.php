@@ -8,9 +8,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\mentions\MentionsInterface;
 
 /**
- *
- * @file
- * Mentions Entity.
+ * Mentions Class.
  *
  * @ContentEntityType(
  *   id = "mentions",

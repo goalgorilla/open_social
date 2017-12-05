@@ -1,0 +1,9 @@
+services:
+  social_embed.overrider:
+    class: \Drupal\social_embed\SocialEmbedConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
+  social_embed_editor.overrider:
+    class: \Drupal\social_embed\SocialEmbedEditorConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}

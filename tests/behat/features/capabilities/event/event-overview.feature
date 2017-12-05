@@ -6,9 +6,13 @@ Feature: Overview
 
   @LU @perfect @critical
   Scenario: Successfully see the event overview
-    Given I am logged in as an "authenticated user"
-    And I am on "user"
-    When I click "Events"
+    Given users:
+      | name     | mail               | status |
+      | User One | user_1@example.com | 1      |
+      | User Two | user_2@example.com | 1      |
+    When I am logged in as "User One"
+    And I am on "/user"
+    And I click "Events"
     Then I should see "Events" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"
     And I should see "Upcoming events"
@@ -16,7 +20,7 @@ Feature: Overview
     And I should see text matching "Publish status"
 
     # Scenario: Successfully see the topic overview of another user
-    Given I am on "user/1"
+    Given I am on the profile of "User Two"
     When I click "Events"
     Then I should see "Events" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"

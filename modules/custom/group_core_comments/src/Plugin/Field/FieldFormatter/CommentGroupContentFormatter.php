@@ -7,7 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use \Drupal\Core\Link;
+use Drupal\Core\Link;
 
 /**
  * Plugin implementation of the 'comment_group_content' formatter.
@@ -46,29 +46,29 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
       $access_post_comments = $this->getPermissionInGroups('post comments', $account, $group_contents, $output);
       if ($access_post_comments->isForbidden()) {
         $description = $this->t('You are not allowed to comment on content in a group you are not member of. You can join the group @group_link.',
-          array(
+          [
             '@group_link' => Link::fromTextAndUrl($this->t('here'), $group_url)
               ->toString(),
-          )
+          ]
         );
-        $output[0]['comment_form'] = array(
+        $output[0]['comment_form'] = [
           '#prefix' => '<hr>',
           '#markup' => $description,
-        );
+        ];
       }
 
       $access_view_comments = $this->getPermissionInGroups('access comments', $account, $group_contents, $output);
       if ($access_view_comments->isForbidden()) {
         $description = $this->t('You are not allowed to view comments on content in a group you are not member of. You can join the group @group_link.',
-          array(
+          [
             '@group_link' => Link::fromTextAndUrl($this->t('here'), $group_url)
               ->toString(),
-          )
+          ]
         );
         unset($output[0]);
-        $output[0]['comments'] = array(
+        $output[0]['comments'] = [
           '#markup' => $description,
-        );
+        ];
       }
 
     }

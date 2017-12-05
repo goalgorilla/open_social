@@ -124,7 +124,7 @@ Feature: See and get notified when content is created
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
-    And I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible for non members as well." with the id "edit-group-type-open-group"
+    And I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
     And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
@@ -143,7 +143,7 @@ Feature: See and get notified when content is created
       | Time  | 11:00:00    |
       | Location name       | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-      And I press "Save and publish"
+      And I press "Save"
     Then I should see "Test group event"
     When I click "Test open group"
       When I wait for the queue to be empty
@@ -152,7 +152,7 @@ Feature: See and get notified when content is created
     And I should see "Test group event"
 
     Given I am logged in as "SeeUser"
-    And I click "CreateUser"
+    And I am on the profile of "CreateUser"
     Then I should see "CreateUser created an event in Test open group"
     When I am on the homepage
     Then I should not see "CreateUser created an event in Test open group"

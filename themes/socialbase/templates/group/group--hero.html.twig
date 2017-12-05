@@ -24,7 +24,6 @@
 {%
   set cover_classes = [
     'cover',
-    'brand-bg-primary',
     group_hero_styled_image_url ? 'cover-img cover-img-gradient',
   ]
 %}
@@ -32,7 +31,7 @@
 <div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
   {% if group_edit_url %}
     <div class="hero-action-button">
-      <a href="{{ group_edit_url }}"  title="Edit group" class="btn btn-default btn-floating waves-effect waves-circle">
+      <a href="{{ group_edit_url }}"  title="Edit group" class="btn btn-default btn-floating">
         <svg class="icon-gray icon-medium">
           <use xlink:href="#icon-edit"></use>
         </svg>
@@ -68,14 +67,14 @@
         <div class="hero-footer__cta">
           <div class="btn-group">
             {% if joined %}
-              <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent">{% trans %}Joined{% endtrans %}<span class="caret"></span></button>
+              <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle">{% trans %}Joined{% endtrans %}<span class="caret"></span></button>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
               </ul>
             {% elseif closed_group %}
-              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent disabled" title="{{ cta }}">{{ cta }}</a>
+              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle disabled" title="{{ cta }}">{{ cta }}</a>
             {% else %}
-              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent" title="Join">{% trans %}Join{% endtrans %}</a>
+              <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle" title="Join">{% trans %}Join{% endtrans %}</a>
             {% endif %}
           </div>
         </div>

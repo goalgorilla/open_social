@@ -7,7 +7,7 @@ base:
 brand:
   css:
     theme:
-      assets/css/brand.css: {}
+      assets/css/brand.css: { weight: 500}
 
 ## 2. The SMACSS category Component — discrete, reusable UI elements
 
@@ -27,8 +27,8 @@ button:
     theme:
       assets/css/button.css: {}
       assets/css/waves.css: {}
-  js:
-    assets/js/waves.min.js: {}
+  dependencies:
+    - socialblue/waves
 
 cards:
   css:
@@ -49,6 +49,14 @@ spinner:
   css:
     theme:
       assets/css/spinner.css: {}
+
+waves:
+  css:
+    theme:
+      /libraries/waves/dist/waves.css: {}
+  js:
+    /libraries/waves/dist/waves.min.js: { minified: true }
+    assets/js/waves.min.js: { minified: true }
 
 ### 2.2 Molecules
 
@@ -122,6 +130,11 @@ popover:
     theme:
       assets/css/popover.css: {}
 
+select2:
+  css:
+    theme:
+      assets/css/select2.css: {}
+
 teaser:
   css:
     theme:
@@ -142,6 +155,11 @@ hero:
   css:
     theme:
       assets/css/hero.css: {}
+
+message:
+  css:
+    theme:
+      assets/css/message.css: {}
 
 meta:
   css:
@@ -174,7 +192,6 @@ page-node:
       assets/css/page-node.css: {}
 
 color.preview:
-  version: VERSION
   css:
     theme:
       color/preview.css: {}

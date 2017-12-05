@@ -15,14 +15,23 @@ use Drupal\file\Entity\File;
  * Alter the weight of the actions, so the upload is last.
  */
 function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($form['field_comment_files'])) {
-    $form['field_comment_files']['widget']['#file_upload_title'] = '';
-    $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
-    $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
-    // Workaround for fixing behat tests,
-    // which is caused by alter in social_comment module.
-    $form['field_comment_files']['#weight'] = 9;
-    $form['actions']['#weight'] = 8;
+
+  $settings = \Drupal::config('social_comment_upload.settings')->get('allow_upload_comments');
+
+  if (\Drupal::config('social_comment_upload.settings')->get('allow_upload_comments') == TRUE) {
+    if (isset($form['field_comment_files'])) {
+      $form['field_comment_files']['widget']['#file_upload_title'] = '';
+      $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
+      $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
+      // Workaround for fixing behat tests,
+      // which is caused by alter in social_comment module.
+      $form['field_comment_files']['#weight'] = 9;
+      $form['actions']['#weight'] = 8;
+    }
+  }
+  else {
+    // Turn it off.
+    $form['field_comment_files']['#access'] = FALSE;
   }
 }
 
@@ -30,7 +39,7 @@ function social_comment_upload_form_comment_comment_form_alter(&$form, FormState
  * Removes the select list with "weight" value.
  */
 function social_comment_upload_form_comment_comment_form_after_build($form, FormStateInterface $form_state) {
-  foreach ($form['field_comment_files']['widget'] as $key => &$element) {
+  foreach ($form['field_comment_files']['widget'] as &$element) {
     if (is_array($element) && isset($element['_weight'])) {
       unset($element['_weight']);
     }
@@ -42,22 +51,24 @@ function social_comment_upload_form_comment_comment_form_after_build($form, Form
  * Implements hook_preprocess_HOOK().
  */
 function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
-  $element = $variables['element'];
+  if (\Drupal::config('social_comment_upload.settings')->get('allow_upload_comments') == TRUE) {
+    $element = $variables['element'];
 
-  if ($element['#field_name'] == 'field_comment_files') {
-    // Remove "weight" column.
-    foreach ($variables['table']['#rows'] as $key => $row) {
-      if (!empty($element['#display_field'])) {
-        unset($variables['table']['#rows'][$key]['data'][2]);
+    if ($element['#field_name'] == 'field_comment_files') {
+      // Remove "weight" column.
+      foreach ($variables['table']['#rows'] as $key => $row) {
+        if (!empty($element['#display_field'])) {
+          unset($variables['table']['#rows'][$key]['data'][2]);
+        }
+        else {
+          unset($variables['table']['#rows'][$key]['data'][1]);
+        }
       }
-      else {
-        unset($variables['table']['#rows'][$key]['data'][1]);
-      }
+
+      // Remove headers and disable sorting rows.
+      $variables['table']['#header'] = [];
+      $variables['table']['#tabledrag'] = [];
     }
-
-    // Remove headers and disable sorting rows.
-    $variables['table']['#header'] = [];
-    $variables['table']['#tabledrag'] = [];
   }
 }
 

@@ -13,7 +13,7 @@ Feature: Create Open Group
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
-    Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible for non members as well." with the id "edit-group-type-open-group"
+    Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
     And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
@@ -92,7 +92,7 @@ Feature: Create Open Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
     And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
-    And I press "Save and publish"
+    And I press "Save"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -115,7 +115,7 @@ Feature: Create Open Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
-    And I press "Save and publish"
+    And I press "Save"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page

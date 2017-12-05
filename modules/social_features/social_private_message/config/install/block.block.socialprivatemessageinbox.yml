@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - private_message
+    - system
+    - user
+  theme:
+    - socialbase
+id: socialprivatemessageinbox
+theme: socialbase
+region: content
+weight: 0
+provider: null
+plugin: social_private_message_inbox_block
+settings:
+  id: social_private_message_inbox_block
+  label: Inbox
+  provider: social_private_message
+  label_display: '0'
+  thread_count: '30'
+  ajax_load_count: '20'
+  ajax_refresh_rate: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: /user/inbox
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -19,7 +20,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
 
   if ($form_state->getFormObject()->getEntity()->isNew()) {
     // Load current user.
-    $account = \Drupal\user\Entity\User::load(Drupal::currentUser()->id());
+    $account = User::load(Drupal::currentUser()->id());
     // Load compact notification view mode of the attached profile.
     if ($account) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -29,9 +30,8 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
           $content = \Drupal::entityTypeManager()
             ->getViewBuilder('profile')
             ->view($user_profile, 'compact_notification');
-          $content['#attributes']['class'][] = 'media-left avatar hidden-for-phone-only';
-          // Add the avatar class and show it!
-          $form['#prefix'] = render($content);
+          // Add to a new field, so twig can render it.
+          $form['current_user_image'] = $content;
         }
       }
     }
@@ -41,7 +41,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   $form['field_post']['widget'][0]['#title_display'] = '';
 
   // Set submit button caption to Post instead of Save.
-  $form['actions']['submit']['#value'] = t('Post',array(),array('context' => 'Post button'));
+  $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
     // For posting on the stream on the group stream.
@@ -74,11 +74,11 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
   // without breaking functionality.
   $uri = Url::fromRoute('<current>')->toString();
   // Store in a hidden field.
-  $form['redirect_after_save'] = array(
+  $form['redirect_after_save'] = [
     '#type' => 'hidden',
     '#title' => t('Redir'),
     '#default_value' => $uri,
-  );
+  ];
 
   // Submit function to retrieve the action uri and redirect to it.
   $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
@@ -111,33 +111,33 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * Implements hook_views_data_alter().
  */
 function social_post_views_data_alter(array &$data) {
-  $data['post']['post_visibility_access_filter'] = array(
+  $data['post']['post_visibility_access_filter'] = [
     'title' => t('Post visibility access'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post visibility access'),
       'help' => t('Enable post access for public and community posts.'),
       'field' => 'field_visibility',
       'id' => 'post_visibility_access',
-    ),
-  );
-  $data['post']['post_account_stream_filter'] = array(
+    ],
+  ];
+  $data['post']['post_account_stream_filter'] = [
     'title' => t('Post account stream'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post account stream'),
       'help' => t('Enable post for the account stream.'),
       'field' => 'field_visibility',
       'id' => 'post_account_stream',
-    ),
-  );
-  $data['post']['post_group_stream_filter'] = array(
+    ],
+  ];
+  $data['post']['post_group_stream_filter'] = [
     'title' => t('Post group stream'),
-    'filter' => array(
+    'filter' => [
       'title' => t('Post group stream'),
       'help' => t('Enable post for the group stream.'),
       'field' => 'field_visibility',
       'id' => 'post_group_stream',
-    ),
-  );
+    ],
+  ];
 }
 
 /**

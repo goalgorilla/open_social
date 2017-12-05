@@ -16,10 +16,10 @@ class AddressFormatSubscriber implements EventSubscriberInterface {
    * Get the subscribed events.
    *
    * @return mixed
-   *    Returns the subscribed events.
+   *   Returns the subscribed events.
    */
   public static function getSubscribedEvents() {
-    $events[AddressEvents::ADDRESS_FORMAT][] = array('onGetDefinition', 0);
+    $events[AddressEvents::ADDRESS_FORMAT][] = ['onGetDefinition', 0];
     return $events;
   }
 

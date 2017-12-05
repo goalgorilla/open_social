@@ -15,15 +15,28 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   border-color: $btn-primary-border;
 }
 
-// Feedback states
-.has-success {
-  @include form-control-validation($state-success-text, $state-success-text, $state-success-bg);
-}
-.has-warning {
-  @include form-control-validation($state-warning-text, $state-warning-text, $state-warning-bg);
-}
+// inline form error
 .has-error {
-  @include form-control-validation($state-danger-text, $state-danger-text, $state-danger-bg);
+
+  .form-control {
+    border-color: $state-danger-text;
+
+    &:focus {
+      box-shadow: 0 2px 0 0 $state-danger-text;
+      border-color: $state-danger-text;
+    }
+  }
+
+}
+
+.form-item--error-message.alert-danger {
+
+  border-radius: $input-border-radius;
+
+  &:before {
+    color: $state-danger-bg;
+
+  }
 }
 
 .control-label {

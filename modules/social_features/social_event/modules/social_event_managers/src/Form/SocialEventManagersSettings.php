@@ -34,21 +34,14 @@ class SocialEventManagersSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_event_managers.settings');
 
-    $form['author_as_manager'] = array(
+    $form['author_as_manager'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Author as event organiser'),
       '#description' => $this->t('Set author of event as event organiser automatically.'),
       '#default_value' => $config->get('author_as_manager'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

@@ -36,48 +36,41 @@ class SiteWideJSForm extends ConfigFormBase {
 
     $form['warning']['#markup'] = $this->t('<h2>Warning</h2><p>Be careful, in this section you can make sitewide changes to the HTML template and therefore break both the front-end javascript applications and the layout for your website.</p>');
 
-    $form['swjs_enabled'] = array(
+    $form['swjs_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable site wide JS'),
       '#description' => $this->t('Turn sitewide JS on or off.'),
       '#default_value' => $config->get('swjs_enabled'),
-    );
+    ];
 
-    $form['swjs_location'] = array(
+    $form['swjs_location'] = [
       '#type' => 'radios',
       '#title' => $this->t('JS Location'),
       '#description' => $this->t('The output location of the sitewide JS.'),
       '#default_value' => $config->get('swjs_location'),
-      '#options' => array(0 => $this->t('Header'), 1 => $this->t('Footer')),
-    );
+      '#options' => [0 => $this->t('Header'), 1 => $this->t('Footer')],
+    ];
 
-    $form['swjs_footer_region'] = array(
+    $form['swjs_footer_region'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Footer region'),
       '#description' => $this->t('Footer region to put the JS in.'),
       '#default_value' => $config->get('swjs_footer_region'),
-      '#states' => array(
-        'visible' => array(
-          ':input[name="swjs_location"]' => array('value' => '1'),
-        ),
-      ),
-    );
+      '#states' => [
+        'visible' => [
+          ':input[name="swjs_location"]' => ['value' => '1'],
+        ],
+      ],
+    ];
 
-    $form['swjs_javascript'] = array(
+    $form['swjs_javascript'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Javascript'),
       '#description' => $this->t('The JS to add to the site.'),
       '#default_value' => $config->get('swjs_javascript'),
-    );
+    ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

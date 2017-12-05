@@ -2,8 +2,15 @@
 
 namespace Drupal\social_user\Plugin\Block;
 
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'AccountHeaderBlock' block.
@@ -16,19 +23,100 @@ use Drupal\Core\Url;
  *   }
  * )
  */
-class AccountHeaderBlock extends BlockBase {
+class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * The activity notifications.
+   *
+   * @var \Drupal\activity_creator\ActivityNotifications
+   */
+  protected $activityNotifications;
+
+  /**
+   * The Entity Type Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * AccountHeaderBlock constructor.
+   *
+   * @param array $configuration
+   *   The configuration.
+   * @param string $plugin_id
+   *   The plugin id.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
+   * @param \Drupal\activity_creator\ActivityNotifications $activity_notifications
+   *   The activity creator, activity notifications.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The Entity Type Manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The Config Factory.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+    $this->renderer = $renderer;
+    $this->activityNotifications = $activity_notifications;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->configFactory = $configFactory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('renderer'),
+      $container->get('activity_creator.activity_notifications'),
+      $container->get('entity_type.manager'),
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
    */
   public function build() {
     $account = $this->getContextValue('user');
+    $navigation_settings_config = $this->configFactory->get('social_user_navigation.settings');
 
     if ($account->id() !== 0) {
       $account_name = $account->getAccountName();
 
       $links = [
-        'add' => array(
+        'add' => [
           'classes' => 'dropdown',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
@@ -37,8 +125,8 @@ class AccountHeaderBlock extends BlockBase {
           'label' => $this->t('New content'),
           'title_classes' => 'sr-only',
           'url' => '#',
-          'below' => array(
-            'add_event' => array(
+          'below' => [
+            'add_event' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -50,8 +138,8 @@ class AccountHeaderBlock extends BlockBase {
               'url' => Url::fromRoute('node.add', [
                 'node_type' => 'event',
               ]),
-            ),
-            'add_topic' => array(
+            ],
+            'add_topic' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -63,8 +151,8 @@ class AccountHeaderBlock extends BlockBase {
               'url' => Url::fromRoute('node.add', [
                 'node_type' => 'topic',
               ]),
-            ),
-            'add_group' => array(
+            ],
+            'add_group' => [
               'classes' => '',
               'link_attributes' => '',
               'link_classes' => '',
@@ -74,25 +162,56 @@ class AccountHeaderBlock extends BlockBase {
               'label' => $this->t('New group'),
               'title_classes' => '',
               'url' => Url::fromRoute('entity.group.add_page'),
-            ),
-          ),
-        ),
-        'groups' => array(
-          'classes' => '',
-          'link_attributes' => '',
-          'icon_classes' => 'icon-group',
-          'title' => $this->t('My Groups'),
-          'label' => $this->t('My Groups'),
-          'title_classes' => 'sr-only',
-          'url' => Url::fromRoute('view.groups.page_user_groups', [
-            'user' => $account->id(),
-          ]),
-        ),
+            ],
+          ],
+        ],
       ];
 
+      if ($this->moduleHandler->moduleExists('social_group')) {
+        if ($navigation_settings_config->get('display_my_groups_icon') === 1) {
+          $links['groups'] = [
+            'classes' => '',
+            'link_attributes' => '',
+            'icon_classes' => 'icon-group',
+            'title' => $this->t('My Groups'),
+            'label' => $this->t('My Groups'),
+            'title_classes' => 'sr-only',
+            'url' => Url::fromRoute('view.groups.page_user_groups', [
+              'user' => $account->id(),
+            ]),
+          ];
+        }
+      }
+
+      if ($this->moduleHandler->moduleExists('social_private_message')) {
+        if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
+          // Fetch the amount of unread items.
+          $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+          // Default icon values.
+          $message_icon = 'icon-mail_outline';
+          $label_classes = 'hidden';
+          // Override icons when there are unread items.
+          if ($num_account_messages > 0) {
+            $message_icon = 'icon-mail';
+            $label_classes = 'badge badge-accent badge--pill';
+          }
+
+          $links['messages'] = [
+            'classes' => '',
+            'link_attributes' => '',
+            'icon_classes' => $message_icon,
+            'title' => $this->t('Inbox'),
+            'label' => (string) $num_account_messages,
+            'title_classes' => $label_classes,
+            'url' => Url::fromRoute('social_private_message.inbox'),
+          ];
+        }
+      }
+
       // Check if the current user is allowed to create new books.
-      if (\Drupal::moduleHandler()->moduleExists('social_book')) {
-        $links['add']['below']['add_book'] = array(
+      if ($this->moduleHandler->moduleExists('social_book')) {
+        $links['add']['below']['add_book'] = [
           'classes' => '',
           'link_attributes' => '',
           'link_classes' => '',
@@ -105,12 +224,12 @@ class AccountHeaderBlock extends BlockBase {
             'node_type' => 'book',
           ]),
           'access' => $account->hasPermission('create new books'),
-        );
+        ];
       }
 
       // Check if the current user is allowed to create new pages.
-      if (\Drupal::moduleHandler()->moduleExists('social_page')) {
-        $links['add']['below']['add_page'] = array(
+      if ($this->moduleHandler->moduleExists('social_page')) {
+        $links['add']['below']['add_page'] = [
           'classes' => '',
           'link_attributes' => '',
           'link_classes' => '',
@@ -122,15 +241,15 @@ class AccountHeaderBlock extends BlockBase {
           'url' => Url::fromRoute('node.add', [
             'node_type' => 'page',
           ]),
-        );
+        ];
       }
 
-      if (\Drupal::moduleHandler()->moduleExists('activity_creator')) {
+      if ($this->moduleHandler->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-        $notifications = \Drupal::service('renderer')->render($notifications_view);
+        $notifications = $this->renderer->render($notifications_view);
 
-        $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-        $num_notifications = count($account_notifications->getNotifications($account, array(ACTIVITY_STATUS_RECEIVED)));
+        $account_notifications = $this->activityNotifications;
+        $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
 
         if ($num_notifications === 0) {
           $notifications_icon = 'icon-notifications_none';
@@ -145,7 +264,7 @@ class AccountHeaderBlock extends BlockBase {
           }
         }
 
-        $links['notifications'] = array(
+        $links['notifications'] = [
           'classes' => 'dropdown notification-bell',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
@@ -155,30 +274,30 @@ class AccountHeaderBlock extends BlockBase {
           'title_classes' => $label_classes,
           'url' => '#',
           'below' => $notifications,
-        );
+        ];
       }
 
-      $links['account_box'] = array(
+      $links['account_box'] = [
         'classes' => 'dropdown profile',
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-account_circle',
-        'title' => $this->t('Profile of @account', array('@account' => $account_name)),
+        'title' => $this->t('Profile of @account', ['@account' => $account_name]),
         'label' => $account_name,
         'title_classes' => 'sr-only',
         'url' => '#',
-        'below' => array(
-          'signed_in_as' => array(
+        'below' => [
+          'signed_in_as' => [
             'classes' => 'dropdown-header header-nav-current-user',
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
-          ),
-          'divide_profile' => array(
+          ],
+          'divide_profile' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'my_profile' => array(
+          ],
+          'my_profile' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -188,8 +307,8 @@ class AccountHeaderBlock extends BlockBase {
             'label' => $this->t('My profile'),
             'title_classes' => '',
             'url' => Url::fromRoute('user.page'),
-          ),
-          'my_events' => array(
+          ],
+          'my_events' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -201,8 +320,8 @@ class AccountHeaderBlock extends BlockBase {
             'url' => Url::fromRoute('view.events.events_overview', [
               'user' => $account->id(),
             ]),
-          ),
-          'my_topics' => array(
+          ],
+          'my_topics' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -214,8 +333,8 @@ class AccountHeaderBlock extends BlockBase {
             'url' => Url::fromRoute('view.topics.page_profile', [
               'user' => $account->id(),
             ]),
-          ),
-          'my_groups' => array(
+          ],
+          'my_groups' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -227,13 +346,29 @@ class AccountHeaderBlock extends BlockBase {
             'url' => Url::fromRoute('view.groups.page_user_groups', [
               'user' => $account->id(),
             ]),
-          ),
-          'divide_account' => array(
+          ],
+          'divide_content' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'my_account' => array(
+          ],
+          'my_content' => [
+            'classes' => '',
+            'link_attributes' => '',
+            'link_classes' => '',
+            'icon_classes' => '',
+            'icon_label' => '',
+            'title' => $this->t("View content I'm following"),
+            'label' => $this->t('Following'),
+            'title_classes' => '',
+            'url' => Url::fromRoute('view.following.following'),
+          ],
+          'divide_account' => [
+            'divider' => 'true',
+            'classes' => 'divider',
+            'attributes' => 'role=separator',
+          ],
+          'my_account' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -245,8 +380,8 @@ class AccountHeaderBlock extends BlockBase {
             'url' => Url::fromRoute('entity.user.edit_form', [
               'user' => $account->id(),
             ]),
-          ),
-          'edit_profile' => array(
+          ],
+          'edit_profile' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -260,13 +395,13 @@ class AccountHeaderBlock extends BlockBase {
               'profile_type' => 'profile',
             ]),
             'access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
-          ),
-          'divide_logout' => array(
+          ],
+          'divide_logout' => [
             'divider' => 'true',
             'classes' => 'divider',
             'attributes' => 'role=separator',
-          ),
-          'logout' => array(
+          ],
+          'logout' => [
             'classes' => '',
             'link_attributes' => '',
             'link_classes' => '',
@@ -276,15 +411,15 @@ class AccountHeaderBlock extends BlockBase {
             'label' => $this->t('Logout'),
             'title_classes' => '',
             'url' => Url::fromRoute('user.logout'),
-          ),
-        ),
-      );
+          ],
+        ],
+      ];
 
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
 
       if ($profile) {
-        $content = \Drupal::entityTypeManager()
+        $content = $this->entityTypeManager
           ->getViewBuilder('profile')
           ->view($profile, 'small');
         $links['account_box']['icon_image'] = $content;
@@ -292,7 +427,7 @@ class AccountHeaderBlock extends BlockBase {
     }
     else {
       $links = [
-        'home' => array(
+        'home' => [
           'classes' => 'hidden-xs',
           'link_attributes' => '',
           'icon_classes' => '',
@@ -301,7 +436,7 @@ class AccountHeaderBlock extends BlockBase {
           'label' => $this->t('Home'),
           'title_classes' => '',
           'url' => Url::fromRoute('<front>'),
-        ),
+        ],
       ];
     }
 

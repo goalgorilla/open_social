@@ -14,15 +14,18 @@ class DemoContentParser extends Yaml implements DemoContentParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPath($file, $module) {
-    return drupal_get_path('module', $module) . DIRECTORY_SEPARATOR . $file;
+  public function getPath($file, $module, $profile) {
+    if ($profile != '' && strpos($profile, DIRECTORY_SEPARATOR) === FALSE) {
+      $profile .= DIRECTORY_SEPARATOR;
+    }
+    return drupal_get_path('module', $module) . DIRECTORY_SEPARATOR . $profile . $file;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function parseFile($file, $module) {
-    return $this->parse($this->getPath($file, $module));
+  public function parseFile($file, $module, $profile) {
+    return $this->parse(file_get_contents($this->getPath($file, $module, $profile)));
   }
 
 }

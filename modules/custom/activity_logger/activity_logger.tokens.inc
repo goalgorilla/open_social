@@ -33,6 +33,10 @@ function activity_logger_token_info() {
     'name' => t("Groups url"),
     'description' => t("The related group url."),
   ];
+  $message['pmt-url'] = [
+    'name' => t("Private Message Thread url"),
+    'description' => t("The URL of the private message thread group url."),
+  ];
 
   $message['recipient-user-url'] = [
     'name' => t("Recipient user url"),
@@ -63,6 +67,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
         case 'gtitle':
         case 'gurl':
         case 'recipient-user-url':
+        case 'pmt-url':
 
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
@@ -86,7 +91,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // Or special handling for post entities.
               if ($entity->getEntityTypeId() === 'post') {
                 if (!empty($entity->get('field_recipient_group')->getValue())) {
-                  $group = Group::load($group_id = $entity->field_recipient_group->target_id);
+                  $group = Group::load($entity->field_recipient_group->target_id);
                 }
                 if (isset($entity->field_recipient_user) && !empty($entity->field_recipient_user->target_id)) {
                   $target_id = $entity->field_recipient_user->target_id;
@@ -95,6 +100,14 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                     ->load($target_id);
                 }
               }
+              // Handling for group content entities.
+              if ($entity->getEntityTypeId() === 'group_content') {
+                $group = $entity->getGroup();
+              }
+              // Handling for group entities.
+              if ($entity->getEntityTypeId() === 'group') {
+                $group = $entity;
+              }
 
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
@@ -102,7 +115,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
-                  $gurl = Url::fromRoute('entity.group.canonical', array('group' => $group->id()));
+                  $gurl = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
                   $replacements[$original] = $gurl->toString();
                 }
               }
@@ -110,11 +123,29 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               if ($name === 'recipient-user-url') {
                 if (!empty($recipient_user)) {
                   $target_stream_url = Url::fromRoute('entity.user.canonical',
-                    array('user' => $recipient_user->id()),
-                    array('absolute' => TRUE)
+                    ['user' => $recipient_user->id()],
+                    ['absolute' => TRUE]
                   );
                   $replacements[$original] = $target_stream_url->toString();
                 }
+              }
+
+              if ($name === 'pmt-url') {
+                // Get the related message.
+                $target_type = $message->field_message_related_object->target_type;
+                $target_id = $message->field_message_related_object->target_id;
+                $entity = \Drupal::entityTypeManager()
+                  ->getStorage($target_type)
+                  ->load($target_id);
+                // Use the mapper service to get the ID of the thread.
+                $pmService = \Drupal::service('private_message.mapper');
+                $thread_id = $pmService->getThreadIdFromMessage($entity);
+                // Build the url.
+                $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
+                  ['private_message_thread' => $thread_id],
+                  ['absolute' => TRUE]
+                );
+                $replacements[$original] = $thread_url->toString();
               }
 
             }
