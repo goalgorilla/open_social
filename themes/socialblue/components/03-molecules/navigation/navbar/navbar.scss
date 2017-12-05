@@ -19,24 +19,9 @@
 
 }
 
-.navbar-toggle {
-  border-radius: $border-radius-base;
-}
-
 // Default navbar
 .navbar-default {
   background-color: $navbar-default-bg;
-  border-color: $navbar-default-border;
-
-  .navbar-brand {
-    color: $navbar-default-brand-color;
-
-    &:hover,
-    &:focus {
-      color: $navbar-default-brand-hover-color;
-      background-color: $navbar-default-brand-hover-bg;
-    }
-  }
 
   .navbar-nav {
     > li > a {
@@ -51,14 +36,15 @@
       }
     }
 
-    > .active > a {
-      &,
-      &:hover,
-      &:focus {
-        color: $navbar-default-link-active-color;
-        fill: $navbar-default-link-active-color;
-        background-color: $navbar-default-link-active-bg;
-      }
+    > .active > a,
+    > .active > a:hover,
+    > .active > a:focus,
+    > li > a.is-active,
+    > li > a.is-active:hover,
+    > li > a.is-active:focus {
+      color: $navbar-default-link-active-color;
+      fill: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
     }
 
     > .disabled > a {
@@ -88,21 +74,18 @@
         background-color: $navbar-default-dropdown-link-active-bg;
         color: $navbar-default-dropdown-link-active-color;
         font-weight: 500;
+
+        &:hover,
+        &:focus {
+          cursor: default;
+        }
       }
     }
   }
 
-  // Active state
-  .dropdown-menu > .active > a {
-    &,
-    &:hover,
-    &:focus {
-      background-color: $dropdown-link-active-bg;
-      color: $dropdown-link-active-color;
-    }
-  }
 
   .navbar-toggle {
+    border-radius: 0;
 
     &:hover,
     &:focus {
@@ -111,8 +94,7 @@
 
   }
 
-  .navbar-collapse,
-  .navbar-form {
+  .navbar-collapse {
     border-color: $navbar-default-border;
   }
 
@@ -163,7 +145,7 @@
 
 @include for-tablet-landscape-down {
   .navbar-collapse .dropdown-menu li a {
-    color: white;
+    color: #ffffff;
 
     &:hover,
     &:focus {
@@ -221,18 +203,26 @@
     border-radius: 0 $input-border-radius $input-border-radius 0;
   }
 
-
 }
 
 .navbar__open-search-block {
   background: rgba($navbar-default-bg, 0.95);
 }
 
+.navbar-nav__icon {
+  fill: $navbar-default-link-color;
+}
+
 @include for-tablet-landscape-up {
 
-  .search-take-over .form-text:focus {
-    border-color: #fff;
-    box-shadow: 0 2px 0 0 #fff;
+  .search-take-over .form-text {
+    color: $navbar-default-link-color;
+
+    &:focus {
+      border-color: $navbar-default-link-color;
+      box-shadow: 0 2px 0 0 $navbar-default-link-color;
+    }
+
   }
 
 }
@@ -243,6 +233,14 @@
   background-color: $brand-secondary;
 
   .navbar-nav {
+
+    a {
+      color: #fff;
+    }
+
+    li.active a {
+      border-bottom-color: #fff;
+    }
 
     li:not(.active) a:hover,
     li:not(.active) a:focus {
