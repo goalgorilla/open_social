@@ -13,7 +13,6 @@ Feature: Overview
     When I am logged in as "User One"
     And I am on "/user"
     And I click "Events"
-    Then I should see "Events" in the "Page title block"
     And I should see "FILTER" in the "Sidebar second"
     And I should see "Upcoming events"
     And I should see "Events that have started or are finished"

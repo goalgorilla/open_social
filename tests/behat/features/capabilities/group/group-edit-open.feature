@@ -42,8 +42,7 @@ Feature: Edit my group as a group manager
 
   # DS-706 As a Group Manager I want to manage group memberships
     And I click "Manage members"
-    Then I should see "Members of Test open group"
-    And I should see the link "Add member"
+    Then I should see the link "Add member"
     And I should see "Member"
     And I should see "Group Manager One"
     And I should see "Organisation"
