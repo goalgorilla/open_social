@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - social_user
     - user
 id: user_admin_people
 label: People
@@ -19,9 +20,8 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
-        options:
-          perm: 'administer users'
+        type: people_access
+        options: {  }
       cache:
         type: tag
       query:
@@ -921,7 +921,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       max-age: 0
       tags: {  }
   page_1:
@@ -954,6 +953,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       max-age: 0
       tags: {  }
