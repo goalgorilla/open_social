@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_token_info().
@@ -97,7 +98,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                       $display_name = $entity->getDisplayName();
                     }
                     else {
-                      if ($entity instanceof \Drupal\node\NodeInterface) {
+                      if ($entity instanceof NodeInterface) {
                         $display_name = strtolower($entity->type->entity->label());
                       }
                       else {
