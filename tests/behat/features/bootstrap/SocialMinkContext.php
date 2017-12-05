@@ -62,15 +62,25 @@ class SocialMinkContext extends MinkContext{
   /**
    * @AfterStep
    */
-  public function takeScreenShotAfterFailedStep(afterStepScope $scope)
+  public function takeScreenShotAfterFailedStep(AfterStepScope $scope)
   {
     if (99 === $scope->getTestResult()->getResultCode()) {
       $driver = $this->getSession()->getDriver();
       if (!($driver instanceof Selenium2Driver)) {
         return;
       }
-      $today = date("H_i_s");
-      $this->iMakeAScreenshotWithFileName($today . '-error');
+      $feature = $scope->getFeature();
+      $title = $feature->getTitle();
+
+      $filename = date("Ymd-H_i_s");
+
+      if (!empty($title)) {
+        $filename .= '-' . str_replace(' ', '-', strtolower($title));
+      }
+
+      $filename .= '-error';
+
+      $this->iMakeAScreenshotWithFileName($filename);
     }
   }
 
