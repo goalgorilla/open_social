@@ -30,6 +30,31 @@ class FormElementLabel extends BaseFormElementLabel {
         // Set the materialize icon.
         $variables['icon'] = _socialbase_get_visibility_icon($element['#title']);
       }
+
+      if ($element['#id'] == 'edit-message-0-value') {
+        $variables['title_display'] = 'invisible';
+      }
+
+      // Date fields that need labels to distinguish date from time fields
+      // These include daterange fields already as well.
+      // @TODO update date fields of event to daterange fields and remove
+      // the last 4 variables of this array.
+      $date_fields = [
+        'edit-field-date-0-value-time',
+        'edit-field-date-0-value-date',
+        'edit-field-date-0-end-value-date',
+        'edit-field-date-0-end-value-time',
+        'edit-field-event-date-0-value-date',
+        'edit-field-event-date-0-value-time',
+        'edit-field-event-date-end-0-value-date',
+        'edit-field-event-date-end-0-value-time',
+
+      ];
+
+      if (in_array($element['#id'], $date_fields)) {
+        $variables['title_display'] = 'above';
+      }
+
     }
 
     parent::preprocessElement($element, $variables);

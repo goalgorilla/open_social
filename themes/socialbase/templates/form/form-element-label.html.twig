@@ -22,6 +22,7 @@
     'control-label',
     title_display == 'after' ? 'option',
     title_display == 'invisible' ? 'sr-only',
+    title_display == 'above' ? 'control-label--above',
     required ? 'js-form-required',
     required ? 'form-required',
   ]
@@ -34,7 +35,7 @@
       <p class="help-block">{{ description }}</p>
     {%- endif -%}
   </label>
-  {%- if required -%}
+  {%- if required and title_display != 'invisible' -%}
     <span class="form-required">*</span>
   {%- endif -%}
 {%- endif -%}

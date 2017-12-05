@@ -22,6 +22,5 @@
   Scenario: search for admin user without result
     Given I am logged in as an "authenticated user"
       And I am on "search/users/admin"
-     Then I should see "Search users"
-      And I should see "Member results"
+     Then I should see "Member results"
       And I should see "No results found."

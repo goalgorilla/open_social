@@ -15,6 +15,12 @@ use Drupal\user\Entity\Role;
 function social_user_install() {
   // Set some default permissions.
   _social_user_set_permissions();
+
+  // Set default value for displaying navigation icons.
+  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
+  $config->set('display_social_private_message_icon', 1)->save();
+  $config->set('display_my_groups_icon', 1)->save();
 }
 
 /**
@@ -35,6 +41,16 @@ function social_user_update_8001(&$sandbox) {
    */
   $conf_default->set('content', [])->save();
   $conf_full->set('content', [])->save();
+}
+
+/**
+ * Set default value for displaying navigation icons.
+ */
+function social_user_update_8002() {
+  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
+  $config->set('display_social_private_message_icon', 1)->save();
+  $config->set('display_my_groups_icon', 1)->save();
 }
 
 /**

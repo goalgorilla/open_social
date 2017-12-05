@@ -1,0 +1,313 @@
+<?php
+
+/**
+ * @file
+ * The Social Privagte Message module.
+ */
+
+use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_private_message_element_info_alter(array &$info) {
+  if (isset($info['text_format']['#process'])) {
+    $info['text_format']['#process'][] = 'social_private_message_filter_process_format';
+  }
+}
+
+/**
+ * Remove ability of selecting format on private message (use plain_text only).
+ */
+function social_private_message_filter_process_format($element) {
+  // Fields listed here will have plain_text format only.
+  $plain_text_fields = [
+    'edit-message-0',
+  ];
+
+  if ($element['#type'] == 'text_format' && in_array($element['#id'], $plain_text_fields)) {
+    $element['#format'] = 'plain_text';
+    $element['format']['format']['#access'] = FALSE;
+    $element['format']['format']['#value'] = 'plain_text';
+    $element['format']['help']['#access'] = FALSE;
+    $element['format']['format']['#options'] = ['plain_text' => 'Plain Text'];
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function social_private_message_form_private_message_thread_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Redirect cancel to our inbox.
+  $form['actions']['cancel']['#url'] = Url::fromRoute('social_private_message.inbox');
+  // Redirect delete to our inbox.
+  $form['actions']['submit']['#submit'][] = 'social_private_message_thread_delete_redirect';
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function social_private_message_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add CTRL/CMD + Enter is submit.
+  $form['#attached']['library'][] = 'social_post/keycode-submit';
+
+  // There's an alternative submit. We need to change its value.
+  foreach ($form['actions'] as $key => &$actions) {
+    // Must be pretty sure it's a submit button.
+    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit'])) {
+      // Key must have submit in it.
+      if (strpos($key, 'submit-') !== FALSE) {
+        $actions['#value'] = t('Send');
+        $actions['#submit'][] = 'social_private_message_redirect';
+        unset($actions['#ajax']);
+      }
+    }
+  }
+
+  // Alter the users widget.
+  $form['members']['widget']['#required'] = TRUE;
+  $form['members']['widget']['#description'] = '';
+  // Add the required tag.
+  $form['members']['widget']['#attributes']['required'] = 'required';
+  // Unset the empty and anonymous option.
+  unset($form['members']['widget']['#options']['0']);
+  unset($form['members']['widget']['#options']['_none']);
+  // Unset current user.
+  unset($form['members']['widget']['#options'][Drupal::currentUser()->id()]);
+
+  // Alter the message widget.
+  // Add the required tag.
+  $form['message']['widget']['#attributes']['required'] = 'required';
+  // Normal submit button shoud say 'Next'.
+  $form['actions']['submit']['#value'] = t('Send');
+  $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
+
+  // Determine if the form is an PMT edit form.
+  $form_is_edit_form = !is_null($form_state->get('thread_members'));
+  // Add form class based on form type (create/edit).
+  $form_class = 'message__thread_edit';
+  if ($form_is_edit_form) {
+    $form_class = 'message__thread_create';
+  }
+  $form['#attributes']['class'][] = $form_class;
+
+  if ($form_is_edit_form) {
+    // In edit mode, remove the label from the message field.
+    $form['message']['widget'][0]['#title'] = '';
+  }
+}
+
+/**
+ * Redirects the form to the inbox.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
+ */
+function social_private_message_thread_delete_redirect(array $form, FormStateInterface $form_state) {
+  // Set a nice message.
+  drupal_set_message(t('Your message has been deleted.'));
+  // Force redirect to the inbox.
+  $url = Url::fromRoute('social_private_message.inbox');
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Redirects the form to the inbox.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
+ */
+function social_private_message_redirect(array $form, FormStateInterface $form_state) {
+  // Set a nice message.
+  drupal_set_message(t('Your message has been created.'));
+  // Force redirect to the inbox.
+  $url = Url::fromRoute('social_private_message.inbox');
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function social_private_message_js_alter(&$javascript, AttachedAssetsInterface $assets) {
+  // Remove Js coming from the private_message module.
+  if (isset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js'])) {
+    unset($javascript['modules/contrib/private_message/js/private_message_inbox_block.js']);
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function social_private_message_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  // Threads.
+  if ($entity->getEntityTypeId() === 'private_message_thread') {
+    // View mode inbox.
+    if ($build['#view_mode'] === 'inbox') {
+      /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
+      $thread = $entity;
+      $members = $thread->getMembers();
+      $members_string = [];
+      $display_name = '';
+
+      // Remove myself from the array.
+      /* @var Drupal\user\Entity\User $member */
+      foreach ($members as $key => $member) {
+        if (Drupal::currentUser()->id() === $member->id()) {
+          unset($members[$key]);
+        }
+        else {
+          $members_string[] = $member->getDisplayName();
+        }
+      }
+      // Count the amount of members.
+      $member_count = count($members);
+
+      $profile_picture = [];
+
+      if ($member_count === 1) {
+        $recipient = end($members);
+        // Load compact notification view mode of the attached profile.
+        if ($recipient instanceof User) {
+          $display_name = $recipient->getDisplayName();
+          $storage = \Drupal::entityTypeManager()->getStorage('profile');
+          if (!empty($storage)) {
+            $user_profile = $storage->loadByUser($recipient, 'profile');
+            if ($user_profile) {
+              $content = \Drupal::entityTypeManager()
+                ->getViewBuilder('profile')
+                ->view($user_profile, 'compact_notification');
+              // Add to a new field, so twig can render it.
+              $profile_picture = $content;
+            }
+          }
+        }
+      }
+
+      // Add either the profile picture or the group picture.
+      if ($member_count > 1) {
+        $build['members']['#markup'] = '<div class="avatar-icon avatar-group-icon avatar-group-icon--medium"></div>';
+        // Add members names.
+        $build['membernames']['#markup'] = implode(', ', $members_string);
+        $build['membernames']['#prefix'] = '<strong>';
+        $build['membernames']['#suffix'] = '</strong>';
+      }
+      else {
+        $build['members'] = $profile_picture;
+        // Add members name.
+        $build['membernames']['#markup'] = $display_name;
+        $build['membernames']['#prefix'] = '<strong>';
+        $build['membernames']['#suffix'] = '</strong>';
+      }
+    }
+    elseif ($build['#view_mode'] === 'full') {
+      $socialPrivateMessageService = Drupal::service('social_private_message.service');
+      $socialPrivateMessageService->updateLastThreadCheckTime($entity);
+      $build['#prefix'] = '';
+      $build['#suffix'] = '';
+    }
+  }
+
+  // Private message entity.
+  if ($entity->getEntityTypeId() === 'private_message') {
+    // View mode inbox.
+    if ($build['#view_mode'] === 'inbox') {
+      // Remove prefix and suffix.
+      $build['#prefix'] = '';
+      $build['#suffix'] = '';
+    }
+    elseif ($build['#view_mode'] === 'full') {
+      /* @var \Drupal\private_message\Entity\PrivateMessage $entity */
+      if (Drupal::currentUser()->id() === $entity->getOwnerId()) {
+        $build['#prefix'] = '<div class="message__by-me">' . $build['#prefix'];
+        $build['#suffix'] = '</div>' . $build['#suffix'];
+        // Current user is 'You'.
+        $build['owner'][0]['#plain_text'] = t('You');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_thread_view_alter().
+ */
+function social_private_message_thread_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  if ($display->getComponent('delete_link')) {
+    $url = Url::fromRoute('entity.private_message_thread.delete_form', ['private_message_thread' => $entity->id()]);
+    $build['delete_link'] = [
+      '#prefix' => '',
+      '#suffix' => '',
+      '#type' => 'link',
+      '#url' => $url,
+      '#title' => t('Delete thread'),
+    ];
+  }
+  // Also add the back to inbox link
+  // but just the link since it's a drop down with icon.
+  $build['back_to_inbox']['#markup'] = Url::fromRoute('social_private_message.inbox')->toString();
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_private_message_preprocess_field(&$variables) {
+  if (isset($variables['element']['#view_mode']) && $variables['element']['#view_mode'] == "full") {
+    if ($variables['field_name'] == "message") {
+      $variables['view_mode'] = "full";
+    }
+
+  }
+}
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_private_message_menu_local_actions_alter(&$local_actions) {
+  unset($local_actions['private_message.private_message_add']);
+}
+
+/**
+ * When the user creates a message, mark this thread as read for the author.
+ *
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_private_message_private_message_thread_insert(EntityInterface $entity) {
+  $socialPrivateMessageService = Drupal::service('social_private_message.service');
+  $socialPrivateMessageService->updateLastThreadCheckTime($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function social_private_message_pm_thread_delete_time_update(EntityInterface $entity) {
+  $socialPrivateMessageService = Drupal::service('social_private_message.service');
+  $socialPrivateMessageService->deleteUserDataThreadInfo($entity);
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_private_message_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  // Privatemessage Thread entity.
+  if ($context['entity_type'] == 'private_message_thread') {
+    // Change members formatter in full mode.
+    if ($context['view_mode'] == 'full') {
+      // Get the necessary component.
+      $component = $display->getComponent('members');
+      // Alter it.
+      $component['type'] = 'social_private_message_member_formatter';
+      // Put the component back in the display.
+      $display->setComponent('members', $component);
+    }
+  }
+}

@@ -211,7 +211,6 @@ figure.align-center {
 .embed-responsive {
   display: block;
   position: relative;
-  height: 0;
   overflow: hidden;
   width: 100%;
   padding: 0;
@@ -236,6 +235,10 @@ figure.align-center {
   height: 100%;
 }
 
+.embed-responsive + p {
+  margin-top: 0.75rem;
+}
+
 .embed-responsive-16by9::before {
   padding-top: 56.25%;
 }
@@ -254,6 +257,11 @@ figure.align-center {
 
 iframe {
   max-width: 100%;
+}
+
+p > iframe {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 a {
@@ -919,6 +927,16 @@ body {
 .align-right {
   float: right;
   padding-left: 1em;
+}
+
+.embed-responsive .cke_widget_drupalurl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
 }
 
 @media (min-width: 600px) {
