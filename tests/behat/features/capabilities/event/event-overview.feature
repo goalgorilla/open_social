@@ -21,8 +21,7 @@ Feature: Overview
     # Scenario: Successfully see the topic overview of another user
     Given I am on the profile of "User Two"
     When I click "Events"
-    Then I should see "Events" in the "Page title block"
-    And I should see "FILTER" in the "Sidebar second"
+    Then I should see "FILTER" in the "Sidebar second"
     And I should not see text matching "Publish status"
 
     #@TODO make a scenario for filters to work.

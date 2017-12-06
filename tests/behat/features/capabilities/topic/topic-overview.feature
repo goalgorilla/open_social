@@ -23,8 +23,7 @@ Feature: Topic Overview
     Then I should see "toverview1"
     When I click "toverview1"
     And I click "Topics"
-    Then I should see "Topics" in the "Page title block"
-    And I should see "FILTER" in the "Sidebar second"
+    Then I should see "FILTER" in the "Sidebar second"
     And I should not see text matching "has the publish status of"
 
 #  Scenario: Successfully filter the topic overview

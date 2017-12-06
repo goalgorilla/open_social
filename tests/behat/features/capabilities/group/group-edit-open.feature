@@ -59,7 +59,7 @@ Feature: Edit my group as a group manager
     And I should see the button "Save"
     And I should see the link "Delete"
     And I press "Save"
-    And I should see "Members of Test open group"
+    And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
     When I click "Add member"
