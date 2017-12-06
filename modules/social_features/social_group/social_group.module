@@ -127,7 +127,8 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
 /**
  * Load group content label and group label.
  *
- * @return array of gropu labels.
+ * @return array
+ *   of group labels.
  */
 function _social_group_get_group_labels() {
 
@@ -137,7 +138,7 @@ function _social_group_get_group_labels() {
   // Load group name.
   $group = \Drupal::routeMatch()->getParameter('group')->label();
 
-  return array($group_content, $group);
+  return [$group_content, $group];
 }
 
 /**
@@ -322,9 +323,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     list($name, $group) = _social_group_get_group_labels();
 
     // Give a better title, description and submit button value.
-    $form['#title'] = t('Remove %name from %group', array('%name' => $name, '%group' => $group));
+    $form['#title'] = t('Remove %name from %group', ['%name' => $name, '%group' => $group]);
     $form['actions']['submit']['#value'] = t('Remove');
-    $form['description']['#markup'] = t('Are you sure you want to remove %name from %group?', array('%name' => $name, '%group' => $group));
+    $form['description']['#markup'] = t('Are you sure you want to remove %name from %group?', ['%name' => $name, '%group' => $group]);
   }
 
   // Set some helpful text on the group join form now it's there.
