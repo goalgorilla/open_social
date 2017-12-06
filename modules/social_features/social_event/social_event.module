@@ -10,6 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\group\Entity\GroupContent;
+use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
@@ -187,6 +189,46 @@ function social_event_views_data_alter(array &$data) {
       'id' => 'event_passed_upcoming_sort',
     ],
   ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_flagging_insert(EntityInterface $entity) {
+  $group_type_ids = \Drupal::config('social_event.settings')->get('enroll');
+
+  if (empty($group_type_ids)) {
+    return;
+  }
+
+  $current_user = \Drupal::currentUser();
+  $owner = $entity->getOwnerId() == $current_user->id();
+  $is_node = $entity->entity_type->value == 'node';
+  $following = $entity->getFlagId() == 'follow_content';
+
+  if (!($owner && $is_node && $following)) {
+    return;
+  }
+
+  $nid = $entity->entity_id->value;
+  $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+
+  /** @var \Drupal\group\Entity\GroupContentInterface $groupcontent */
+  foreach (GroupContent::loadByEntity($node) as $groupcontent) {
+    /** @var \Drupal\group\Entity\GroupInterface $group */
+    $group = $groupcontent->getGroup();
+
+    $allowed_type = in_array($group->bundle(), $group_type_ids);
+    $is_member = $group->getMember($current_user) instanceof GroupMembershipLoaderInterface;
+
+    if ($allowed_type && !$is_member) {
+      $account = \Drupal::entityTypeManager()
+        ->getStorage('user')
+        ->load($current_user->id());
+
+      $group->addMember($account);
+    }
+  }
 }
 
 /**
