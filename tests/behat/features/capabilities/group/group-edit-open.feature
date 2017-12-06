@@ -53,7 +53,7 @@ Feature: Edit my group as a group manager
     And I should see "Operations"
     And I should see the button "Edit"
     When I press the "Toggle Dropdown" button
-    Then I should see the link "Delete"
+    Then I should see the link "Remove"
     When I press "Edit"
     Then I should see "Group Manager One"
     And I should see "Group Manager"
