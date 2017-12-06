@@ -80,9 +80,10 @@ Feature: Edit my group as a group manager
     And I press "Save"
     And I click the xth "5" element with the css ".dropdown-toggle"
     And I click "Remove"
-    Then I should see "This action cannot be undone"
+    Then I should see "Remove a member"
+    And I should see "Are you sure you want to remove Group Manager One from Test open group?"
     And I should see the button "Remove"
-    And I should see the link "Cancel"
+    And I should see the button "Cancel"
 
   # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
     And I logout
