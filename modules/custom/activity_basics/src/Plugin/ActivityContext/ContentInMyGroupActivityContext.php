@@ -5,6 +5,7 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\Group;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
 
 /**
@@ -34,7 +35,13 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
+        /* @var \Drupal\group\Entity\GroupContent $group_content_entity */
         $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
+        /* @var \Drupal\node\Entity\Node $node */
+        $node = $group_content_entity->getEntity();
+        if ($node instanceof Node) {
+          $owner_id = $node->getOwnerId();
+        }
         $gid = $group_content_entity->get('gid')->getValue();
       }
 
