@@ -525,3 +525,4 @@
 
 }).call(this);
 
+//# sourceMappingURL=jquery.mentions.js.map
