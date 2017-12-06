@@ -86,13 +86,6 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                     $replacements[$original] = $group_content_type->label();
                   }
                 }
-//                if ($name === 'content_url') {
-//                  $content_url = Url::fromRoute('entity.node.canonical',
-//                    ['node' => $entity->getEntity()->id()],
-//                    ['absolute' => TRUE]
-//                  );
-//                  $replacements[$original] = $content_url->toString();
-//                }
               }
             }
           }
