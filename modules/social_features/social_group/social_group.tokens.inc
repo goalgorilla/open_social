@@ -7,7 +7,6 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
 
 /**
  * Implements hook_token_info().
