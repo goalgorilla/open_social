@@ -45,7 +45,6 @@ function social_mentions_form_alter(&$form, FormStateInterface $form_state, $for
     }
 
     $form['#attached']['library'][] = 'social_mentions/social_mentions';
-    $form['#attached']['library'][] = 'socialbase/mention';
     $form['#attached']['drupalSettings']['socialMentions'] = [
       'suggestionsFormat' => $config->get('suggestions_format'),
       'prefix' => $prefix,
