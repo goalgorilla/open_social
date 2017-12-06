@@ -9,6 +9,22 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\block\Entity\Block;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\social_user\Plugin\Action\SocialBlockUser;
+
+/**
+ * Implements hook_action_info_alter().
+ *
+ * @see hook_action_info_alter()
+ */
+function social_user_action_info_alter(&$definitions) {
+  // Swaps stadard block user action with our implementation.
+  // If another module has already swapped out those classes,
+  // though, we'll be polite and do nothing.
+  if (isset($definitions['user_block_user_action']['class']) && $definitions['user_block_user_action']['class'] == BlockUser::class) {
+    $definitions['user_block_user_action']['class'] = SocialBlockUser::class;
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -117,6 +133,24 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
       // We redirect them to the home page stream.
       $form_state->setRedirect('social_core.homepage');
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_user_form_views_form_user_admin_people_page_1_alter(&$form, FormStateInterface $form_state) {
+  if (!empty($form['header']['user_bulk_form']['action']['#options'])) {
+    $actions = $form['header']['user_bulk_form']['action']['#options'];
+    $block_action = ['user_block_user_action' => $actions['user_block_user_action']];
+    $current_user = \Drupal::currentUser();
+    if (!$current_user->hasPermission('administer users')) {
+      $actions = [];
+    }
+    if (empty($actions) && $current_user->hasPermission('block users')) {
+      $actions = $block_action;
+    }
+    $form['header']['user_bulk_form']['action']['#options'] = $actions;
   }
 }
 
