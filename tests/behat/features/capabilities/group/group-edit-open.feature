@@ -79,11 +79,10 @@ Feature: Edit my group as a group manager
     And I check the box "Group Manager"
     And I press "Save"
     And I click the xth "5" element with the css ".dropdown-toggle"
-    And I click "Delete"
+    And I click "Remove"
     Then I should see "This action cannot be undone"
-    And I should see the button "Delete"
+    And I should see the button "Remove"
     And I should see the link "Cancel"
-    And I click "Cancel"
 
   # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
     And I logout
