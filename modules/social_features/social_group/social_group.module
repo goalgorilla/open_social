@@ -125,6 +125,27 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
 }
 
 /**
+ * Load group content label and group label.
+ *
+ * @return array
+ *   array of group labels.
+ */
+function _social_group_get_group_labels() {
+
+  // Load the entity label from the group content being handled.
+  $group_content = \Drupal::routeMatch()->getParameter('group_content')->label();
+
+  // Load group name.
+  $group = \Drupal::routeMatch()->getParameter('group')->label();
+
+  return [
+    $group_content,
+    $group,
+  ];
+
+}
+
+/**
  * Prepares variables for profile templates.
  *
  * Default template: profile.html.twig.
@@ -292,14 +313,29 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-join_form',
     'group_content_closed_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_delete_form',
   ];
 
   // Perform alterations on joining / leaving groups.
-  if (in_array($form_id, ['group_content_-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
+  if (in_array($form_id, ['group_content_open_group-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
+
+    list($name, $group) = _social_group_get_group_labels();
+
+    // Give a better title, description and submit button value.
+    $form['#title'] = t('Remove %name from %group', [
+      '%name' => $name,
+      '%group' => $group,
+    ]);
+    $form['actions']['submit']['#value'] = t('Remove');
+    $form['description']['#markup'] = t('Are you sure you want to remove %name from %group?', [
+      '%name' => $name,
+      '%group' => $group,
+    ]);
   }
 
   // Set some helpful text on the group join form now it's there.
