@@ -198,6 +198,13 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
 
+  // Set a condition for the label to show in the teaser
+  // The actual label text should be changeable in the template.
+  $variables['profile_contact_label'] = 'profile_info';
+  if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
+    $variables['profile_contact_label'] = 'private_message';
+  }
+
   // Email field.
   $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
   if (isset($profile->field_profile_show_email)) {
