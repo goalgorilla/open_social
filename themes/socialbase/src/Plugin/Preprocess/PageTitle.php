@@ -3,6 +3,7 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
+use Drupal\Core\Url;
 
 /**
  * Pre-processes variables for the "page_title" theme hook.
@@ -20,7 +21,8 @@ class PageTitle extends PreprocessBase {
     parent::preprocess($variables, $hook, $info);
 
     // Get the current path and if is it stream return a variable.
-    $current_path = \Drupal::service('path.current')->getPath();
+    $current_url = Url::fromRoute('<current>');
+    $current_path = $current_url->toString();
 
     if (strpos($current_path, 'profile') !== FALSE) {
       $profile_type = $variables['title']->getArguments();

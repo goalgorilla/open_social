@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Url;
 
 /**
  * Pre-processes variables for the "page" theme hook.
@@ -50,7 +51,8 @@ class Page extends PreprocessBase {
     $nid = \Drupal::routeMatch()->getRawParameter('node');
     $node = FALSE;
 
-    $current_path = \Drupal::service('path.current')->getPath();
+    $current_url = Url::fromRoute('<current>');
+    $current_path = $current_url->toString();
 
     if (!is_null($nid) && !is_object($nid)) {
       $node = Node::load($nid);
