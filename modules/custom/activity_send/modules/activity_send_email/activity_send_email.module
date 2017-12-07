@@ -129,8 +129,8 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     $all_email_message_values = array_values($email_message_templates);
 
     $message_to_me = [
+      $all_email_message_keys[8] => $all_email_message_values[8],
       $all_email_message_keys[7] => $all_email_message_values[7],
-      $all_email_message_keys[5] => $all_email_message_values[5],
       $all_email_message_keys[6] => $all_email_message_values[6],
       $all_email_message_keys[4] => $all_email_message_values[4],
       $all_email_message_keys[3] => $all_email_message_values[3],
@@ -141,6 +141,7 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     ];
     $what_follow = [
       $all_email_message_keys[1] => $all_email_message_values[1],
+      $all_email_message_keys[5] => $all_email_message_values[5],
     ];
 
     // Sort a list of email frequencies by weight.
