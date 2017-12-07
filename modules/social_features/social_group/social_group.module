@@ -1029,6 +1029,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
       $acting_user = \Drupal::currentUser();
       /* @var \Drupal\node\NodeInterface $node */
       $node = $form_state->getFormObject()->getEntity();
+      $author = $node->getOwner();
 
       // If it is a new node lets add the current group.
       if (!$node->id()) {
@@ -1037,31 +1038,31 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
           $form['groups']['widget']['#default_value'] = [$current_group->id()];
         }
       }
-
-      $author = $node->getOwner();
-      if (!$allow_group_selection_in_node && !$acting_user->hasPermission('manage all groups')) {
-        $form['groups']['#disabled'] = TRUE;
-        $form['groups']['widget']['#description'] = t('Moving content function is disabled by the site manager.');
-      }
       else {
-        // Lets remove all the groups the author is not a member of.
-        if (!$author->hasPermission('manage all groups')) {
-          $author_groups = social_group_get_all_group_members($author->id());
+        if (!$allow_group_selection_in_node && !$acting_user->hasPermission('manage all groups')) {
+          $form['groups']['#disabled'] = TRUE;
+          $form['groups']['widget']['#description'] = t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
+        }
+      }
 
-          foreach ($form['groups']['widget']['#options'] as $option_category_key => $option_category) {
-            if (is_array($option_category)) {
-              foreach ($option_category as $option_key => $option) {
-                if (!in_array($option_key, $author_groups)) {
-                  unset($form['groups']['widget']['#options'][$option_category_key][$option_key]);
-                }
+      // Lets remove all the groups the author is not a member of.
+      if (!$author->hasPermission('manage all groups')) {
+        $author_groups = social_group_get_all_group_members($author->id());
+
+        foreach ($form['groups']['widget']['#options'] as $option_category_key => $option_category) {
+          if (is_array($option_category)) {
+            foreach ($option_category as $option_key => $option) {
+              if (!in_array($option_key, $author_groups)) {
+                unset($form['groups']['widget']['#options'][$option_category_key][$option_key]);
               }
             }
-            if (empty($form['groups']['widget']['#options'][$option_category_key])) {
-              unset($form['groups']['widget']['#options'][$option_category_key]);
-            }
+          }
+          if (empty($form['groups']['widget']['#options'][$option_category_key])) {
+            unset($form['groups']['widget']['#options'][$option_category_key]);
           }
         }
       }
+
 
     }
   }

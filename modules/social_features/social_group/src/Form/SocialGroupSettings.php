@@ -36,8 +36,8 @@ class SocialGroupSettings extends ConfigFormBase {
 
     $form['allow_group_selection_in_node'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow logged-in users to select a group when creating/editing content'),
-      '#description' => $this->t('When checked, logged-in users can also move content to or out of a group. In general, users can only move content to a group the author is a member of.'),
+      '#title' => $this->t('Allow logged-in users to change or remove a group when editing content'),
+      '#description' => $this->t('When checked, logged-in users can also move content to or out of a group after the content is created. Users can only move content to a group the author is a member of.'),
       '#default_value' => $config->get('allow_group_selection_in_node'),
     ];
 
