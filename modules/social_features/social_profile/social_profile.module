@@ -200,8 +200,9 @@ function social_profile_preprocess_profile(array &$variables) {
 
   // Set a condition for the label to show in the teaser
   // The actual label text should be changeable in the template.
+  // Disable for the LU's own profile.
   $variables['profile_contact_label'] = 'profile_info';
-  if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
+  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId()) {
     $variables['profile_contact_label'] = 'private_message';
   }
 
@@ -234,11 +235,11 @@ function social_profile_preprocess_profile(array &$variables) {
 /**
  * Get the contact URL. This can be private message or other means of contact.
  *
- * @param User $account
- *  The user object.
+ * @param \Drupal\user\Entity\User $account
+ *   The user object.
  *
- * @return Url
- *  The URL to contact the user.
+ * @return \Drupal\Core\Url
+ *   The URL to contact the user.
  */
 function _social_profile_get_contact_url(User $account) {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
