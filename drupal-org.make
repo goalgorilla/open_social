@@ -75,4 +75,3 @@ projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha2
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.7
-projects[bootstrap][patch] = "https://www.drupal.org/files/issues/updating_to_drupal_core-2903656-3.patch"
