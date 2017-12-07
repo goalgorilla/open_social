@@ -5,6 +5,7 @@ namespace Drupal\social_core\Plugin\Block;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
+use Drupal\Core\Url;
 
 /**
  * Provides a 'SocialPageTitleBlock' block.
@@ -23,7 +24,8 @@ class SocialPageTitleBlock extends PageTitleBlock {
     // Take the raw parameter. We'll load it ourselves.
     $nid = \Drupal::routeMatch()->getRawParameter('node');
     $node = FALSE;
-    $current_path = \Drupal::service('path.current')->getPath();
+    $current_url = Url::fromRoute('<current>');
+    $current_path = $current_url->toString();
 
     // At this point the parameter could also be a simple string of a nid.
     // EG: on: /node/%node/enrollments.
