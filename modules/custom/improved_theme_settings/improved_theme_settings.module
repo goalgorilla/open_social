@@ -69,11 +69,14 @@ function improved_theme_settings_page_attachments(array &$page) {
         $style_to_add .= social_font_render();
       }
 
+      // Check if card_radius is used in the theme.
       $card_radius = Xss::filter(theme_get_setting('card_radius', $system_theme_settings));
-      $form_control_radius = Xss::filter(theme_get_setting('form_control_radius', $system_theme_settings));
-      $button_radius = Xss::filter(theme_get_setting('button_radius', $system_theme_settings));
 
-      if (!empty($card_radius) || $card_radius == 0) {
+      if (is_string($card_radius) && trim($card_radius) !== '') {
+        $card_radius = intval($card_radius);
+      }
+
+      if (is_integer($card_radius)) {
         $style_to_add .= '
         .card,
         .card-radius,
@@ -81,10 +84,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $card_radius . 'px !important;
         }
         
-        .message__message-body {
-          border-radius: ' . $card_radius / 2 . 'px !important;
-        }
-
         .tabs-left .vertical-tabs-list {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
@@ -114,11 +113,20 @@ function improved_theme_settings_page_attachments(array &$page) {
             border-radius: ' . $card_radius . 'px !important;
           }
         }
-
+        
+        .message__message-body {
+          border-radius: ' . $card_radius / 2 . 'px !important;
+        }
         ';
+
       }
 
-      if (!empty($form_control_radius) || $form_control_radius == 0) {
+      $form_control_radius = Xss::filter(theme_get_setting('form_control_radius', $system_theme_settings));
+      if (is_string($form_control_radius) && trim($form_control_radius) !== '') {
+        $form_control_radius = intval($form_control_radius);
+      }
+
+      if (is_integer($form_control_radius)) {
         $style_to_add .= '
           .form-control-radius,
           .form-control {
@@ -141,7 +149,12 @@ function improved_theme_settings_page_attachments(array &$page) {
         ';
       }
 
-      if (!empty($button_radius) || $button_radius == 0) {
+      $button_radius = Xss::filter(theme_get_setting('button_radius', $system_theme_settings));
+      if (is_string($button_radius) && trim($button_radius) !== '') {
+        $button_radius = intval($button_radius);
+      }
+
+      if (is_integer($button_radius)) {
         $style_to_add .= '
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
