@@ -589,16 +589,12 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (isset($default_value[0]['value'])) {
       $element['#default_value'] = $default_value[0]['value'];
     }
+    $entity = $form_state->getFormObject()->getEntity();
+
     $current_group = _social_group_get_current_group();
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
-
-      $entity = $form_state->getFormObject()->getEntity();
-      $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type->id());
-
-      foreach ($visibility_options as $visibility => $allowed) {
-        $element[$visibility]['#disabled'] = !$allowed;
-      }
+      $group_type_id = $group_type->id();
       if (!$entity->id()) {
         if ($group_type->id() === 'closed_group') {
           $element['#default_value'] = 'group';
@@ -609,8 +605,15 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       }
     }
     else {
+      $group_type_id = NULL;
       // This is not a group so lets disable this visibility option.
       $element['group']['#disabled'] = TRUE;
+    }
+
+    $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity);
+
+    foreach ($visibility_options as $visibility => $allowed) {
+      $element[$visibility]['#disabled'] = !$allowed;
     }
   }
 
@@ -1130,8 +1133,9 @@ function social_group_validate_group_selection(array $form, FormStateInterface $
   else {
     $config = \Drupal::config('entity_access_by_field.settings');
     $default_visibility = $config->get('default_visibility');
+    $entity = $form_state->getFormObject()->getEntity();
 
-    $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL);
+    $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
     $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
   }
 
@@ -1168,7 +1172,7 @@ function social_group_validate_group_selection(array $form, FormStateInterface $
  * @return array
  *   An array of visibility options for the given group type.
  */
-function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL) {
+function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL) {
 
   // Get the logged in user.
   if ($account === NULL) {
@@ -1188,7 +1192,17 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
     $config = \Drupal::config('entity_access_by_field.settings');
     $visibility_options['public'] = TRUE;
     if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
-      $visibility_options['public'] = FALSE;
+      // This is a new entity.
+      if (!$entity) {
+        $visibility_options['public'] = FALSE;
+      }
+      else {
+        /** @var \Drupal\node\Entity\Node $entity */
+        $current_visibility = $entity->get('field_content_visibility')->getString();
+        if ($current_visibility !== 'public') {
+          $visibility_options['public'] = FALSE;
+        }
+      }
     }
     $visibility_options['community'] = TRUE;
     $visibility_options['group'] = FALSE;
