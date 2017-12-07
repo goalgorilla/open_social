@@ -210,6 +210,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
     }
 
+    /**
+     * @When I select group :group
+     */
+    public function iSelectGroup($group) {
+
+      $option = $this->getGroupIdFromTitle($group);
+
+      if (!$option) {
+        throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
+      }
+      $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
+
+    }
+
+
 
   /**
    * @When I click the xth :position link with the text :locator
@@ -497,6 +512,18 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function openGroupStreamPage($group_title)
     {
+      $group_id = $this->getGroupIdFromTitle($group_title);
+      $page = '/group/' . $group_id . '/stream';
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * @param $group_title
+     *
+     * @return null
+     */
+    public function getGroupIdFromTitle($group_title) {
 
       $query = \Drupal::entityQuery('group')
         ->condition('label', $group_title);
@@ -505,20 +532,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $groups = entity_load_multiple('group', $group_ids);
 
       if (count($groups) > 1) {
-        throw new \Exception(sprintf("Multiple groups with title '%s' exists.", $group_title));
+        return NULL;
       }
       else {
         $group = reset($groups);
         if ($group->id() !== 0) {
           $group_id = $group->id();
         }
-        else {
-          throw new \Exception(sprintf("Group with group_title '%s' does not exist.", $group_title));
-        }
       }
-      $page = '/group/' . $group_id . '/stream';
-
-      $this->visitPath($page);
+      return $group_id;
     }
 
     /**
