@@ -48,19 +48,19 @@ class FollowContentActivityContext extends ActivityContextBase {
 
     // We don't send notifications to users about their own comments.
     $original_related_object = $data['related_object'][0];
-    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'comment') {
-      $storage = \Drupal::entityTypeManager()
-        ->getStorage($original_related_object['target_type']);
-      $original_related_entity = $storage->load($original_related_object['target_id']);
-    }
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage($original_related_object['target_type']);
+    $original_related_entity = $storage->load($original_related_object['target_id']);
 
     foreach ($flaggings as $flagging) {
-      $recipient_id = $flagging->getOwner()->id();
-      if ($recipient_id != $original_related_entity->getOwnerId()) {
-        $recipients[] = [
-          'target_type' => 'user',
-          'target_id' => $flagging->getOwner()->id(),
-        ];
+      $recipient = $flagging->getOwner();
+      if ($recipient->id() != $original_related_entity->getOwnerId()) {
+        if ($original_related_entity->access('view', $recipient)) {
+          $recipients[] = [
+            'target_type' => 'user',
+            'target_id' => $recipient->id(),
+          ];
+        }
       }
     }
 
