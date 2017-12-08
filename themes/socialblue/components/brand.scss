@@ -98,6 +98,34 @@
 
 }
 
+.btn-secondary{
+  background-color: $brand-secondary;
+  border-color: $brand-secondary;
+
+  &:focus,
+  &.focus,
+  &:hover,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle,
+  &.dropdown-toggle:hover{
+    background-color: $brand-secondary;
+    border-color: $brand-secondary;
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $brand-secondary;
+      border-color: $brand-secondary;
+    }
+  }
+
+}
+
 .badge-accent {
   background-color: $brand-accent;
   border-color: $brand-accent;
@@ -145,8 +173,6 @@
 .card__link:hover,
 .view--who-liked .views-field-view-user a,
 .comment__reply-btn,
-.body-text a,
-.body-text a:hover,
 .book-menu .list-item--active-trail > a {
   color: $brand-primary;
   fill: $brand-primary;
@@ -160,6 +186,11 @@
 .list-group-item.active:focus {
   background-color: $brand-secondary;
   border-color: $brand-secondary;
+}
+
+.body-text a:not(.btn),
+.body-text a:not(.btn):hover {
+  color: #33b5e5;
 }
 
 

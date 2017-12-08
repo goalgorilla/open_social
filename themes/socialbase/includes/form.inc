@@ -275,6 +275,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
+    'profile_profile_delete_form',
     'private_message_thread_delete_form',
   ];
 
@@ -358,6 +359,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
     'private_message_thread_delete_form',
+    'profile_profile_delete_form',
   ];
 
   if (in_array($form_id, $confirm_forms)) {

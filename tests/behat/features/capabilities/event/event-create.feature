@@ -37,7 +37,6 @@ Feature: Create Event
 
     # Quick edit
     Given I click "Edit content"
-    Then I should not see "Enrollments" in the "Hero block"
     When I fill in the following:
       | Title | This is a test event - edit |
     And I press "Save"
