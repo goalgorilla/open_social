@@ -76,7 +76,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         $card_radius = intval($card_radius);
       }
 
-      if (is_integer($card_radius)) {
+      if (is_int($card_radius)) {
         $style_to_add .= '
         .card,
         .card-radius,
@@ -126,7 +126,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         $form_control_radius = intval($form_control_radius);
       }
 
-      if (is_integer($form_control_radius)) {
+      if (is_int($form_control_radius)) {
         $style_to_add .= '
           .form-control-radius,
           .form-control {
@@ -154,7 +154,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         $button_radius = intval($button_radius);
       }
 
-      if (is_integer($button_radius)) {
+      if (is_int($button_radius)) {
         $style_to_add .= '
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
