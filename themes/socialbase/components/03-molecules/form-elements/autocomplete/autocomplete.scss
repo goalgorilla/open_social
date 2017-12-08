@@ -14,11 +14,45 @@
 
 .ui-autocomplete.ui-widget-content {
   @include z-depth-4;
-	background: white;
+  background: white;
+  padding: 0;
+  list-style: none;
+
+	.ui-menu-item {
+    padding: 7px 10px;
+    font-size: 0.875rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: $gray;
+    cursor: pointer;
+
+    .mention__item {
+      display: flex;
+    }
+
+    .mention__avatar {
+      flex: 0 0 24px;
+      max-width: 24px;
+      margin-right: 10px;
+    }
+
+    .mention__name {
+      align-self: center;
+      flex-grow: 1;
+    }
+
+    &:hover {
+      background: $gray-lighter;
+      border: 0;
+    }
+  }
 }
 
 .ui-autocomplete {
   margin-top: -1px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .ui-front {
@@ -58,16 +92,10 @@
 	text-decoration: none;
 }
 
-.ui-autocomplete .ui-state-active {
-	border: 1px solid #aaaaaa/*{borderColorActive}*/;
-	background: #ffffff;
-	font-weight: normal/*{fwDefault}*/;
-	color: #212121/*{fcActive}*/;
-}
 .ui-autocomplete .ui-state-active a,
 .ui-autocomplete .ui-state-active a:link,
 .ui-autocomplete .ui-state-active a:visited {
-	color: #212121/*{fcActive}*/;
+	color: #212121;
 	text-decoration: none;
 }
 

@@ -51,6 +51,13 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
     }
 
+    // Override default title for Groups "Delete Content" page.
+    if ($route = $collection->get('entity.group_content.delete_form')) {
+      $defaults = $route->getDefaults();
+      $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupRemoveContentTitle';
+      $route->setDefaults($defaults);
+    }
+
     if ($route = $collection->get('entity.group.add_page')) {
       $defaults = $route->getDefaults();
       unset($defaults['_controller']);
