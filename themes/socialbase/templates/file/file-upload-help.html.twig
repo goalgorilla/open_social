@@ -12,11 +12,16 @@
  */
 #}
 
-{% if description %}
-  {{ description }}<br>
-{% endif %}
 {% if popover %}
   {{ popover }}
 {% else %}
   {{ descriptions|safe_join('<br>') }}
+{% endif %}
+
+{% if popover and description %}
+  &bullet;
+{% endif %}
+
+{% if description %}
+  {{ description }}
 {% endif %}
