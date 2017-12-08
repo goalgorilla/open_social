@@ -69,11 +69,9 @@ function improved_theme_settings_page_attachments(array &$page) {
         $style_to_add .= social_font_render();
       }
 
-      $card_radius = Xss::filter(theme_get_setting('card_radius', $system_theme_settings));
-      $form_control_radius = Xss::filter(theme_get_setting('form_control_radius', $system_theme_settings));
-      $button_radius = Xss::filter(theme_get_setting('button_radius', $system_theme_settings));
+      $card_radius = improved_theme_settings_get_setting('card_radius', $system_theme_settings);
 
-      if (!empty($card_radius) || $card_radius == 0) {
+      if ($card_radius) {
         $style_to_add .= '
         .card,
         .card-radius,
@@ -81,10 +79,6 @@ function improved_theme_settings_page_attachments(array &$page) {
           border-radius: ' . $card_radius . 'px !important;
         }
         
-        .message__message-body {
-          border-radius: ' . $card_radius / 2 . 'px !important;
-        }
-
         .tabs-left .vertical-tabs-list {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
@@ -109,16 +103,24 @@ function improved_theme_settings_page_attachments(array &$page) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;
           }
-          
+        }
+        
+        @media (min-width: 900px) {
           .off-canvas-xs-only {
             border-radius: ' . $card_radius . 'px !important;
           }
         }
-
+        
+        .message__message-body {
+          border-radius: ' . $card_radius / 2 . 'px !important;
+        }
         ';
+
       }
 
-      if (!empty($form_control_radius) || $form_control_radius == 0) {
+      $form_control_radius = improved_theme_settings_get_setting('form_control_radius', $system_theme_settings);
+
+      if ($form_control_radius) {
         $style_to_add .= '
           .form-control-radius,
           .form-control {
@@ -146,7 +148,9 @@ function improved_theme_settings_page_attachments(array &$page) {
         ';
       }
 
-      if (!empty($button_radius) || $button_radius == 0) {
+      $button_radius = improved_theme_settings_get_setting('button_radius', $system_theme_settings);
+
+      if ($button_radius) {
         $style_to_add .= '
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
@@ -175,4 +179,17 @@ function improved_theme_settings_page_attachments(array &$page) {
       }
     }
   }
+}
+
+/**
+ * Function that returns a valid integer or FALSE.
+ */
+function improved_theme_settings_get_setting($setting, $themename) {
+  // Fetch setting from the theme.
+  $themevar = Xss::filter(theme_get_setting($setting, $themename));
+  // In this case '' is something different than 0.
+  if ($themevar !== trim(intval($themevar))) {
+    return FALSE;
+  }
+  return $themevar;
 }

@@ -106,7 +106,7 @@ Feature: Create Closed Group
     And I am on "/all-groups"
     Then I should see "Test closed group"
     When I click "Test closed group"
-    Then I should see "About Group"
+    Then I should see "About"
     Then I should not see "Test closed group topic"
     Then I should not see "Test closed group event"
     And I should not see "This is a closed group post."

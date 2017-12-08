@@ -42,8 +42,7 @@ Feature: Edit my group as a group manager
 
   # DS-706 As a Group Manager I want to manage group memberships
     And I click "Manage members"
-    Then I should see "Members of Test open group"
-    And I should see the link "Add member"
+    Then I should see the link "Add member"
     And I should see "Member"
     And I should see "Group Manager One"
     And I should see "Organisation"
@@ -60,7 +59,7 @@ Feature: Edit my group as a group manager
     And I should see the button "Save"
     And I should see the link "Delete"
     And I press "Save"
-    And I should see "Members of Test open group"
+    And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
     When I click "Add member"
@@ -70,8 +69,7 @@ Feature: Edit my group as a group manager
     And I should see "Group Manager"
     And I should see the button "Cancel"
     And I press "Save"
-    Then I should see "Members of Test open group"
-    And I should see "Group Member Two"
+    Then I should see "Group Member Two"
     And I should see "Drupal"
     And I should see "Member"
     And I click the xth "2" element with the css ".form-submit"

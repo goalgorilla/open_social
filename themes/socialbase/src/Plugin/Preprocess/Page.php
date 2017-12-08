@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Url;
 
 /**
  * Pre-processes variables for the "page" theme hook.
@@ -50,6 +51,9 @@ class Page extends PreprocessBase {
     $nid = \Drupal::routeMatch()->getRawParameter('node');
     $node = FALSE;
 
+    $current_url = Url::fromRoute('<current>');
+    $current_path = $current_url->toString();
+
     if (!is_null($nid) && !is_object($nid)) {
       $node = Node::load($nid);
     }
@@ -64,10 +68,22 @@ class Page extends PreprocessBase {
         'book',
       ];
 
-      // If there is a title and node type is excluded remove class.
-      if (in_array($node->bundle(), $page_to_exclude, TRUE)) {
-        $attributes->removeClass('with-title-region');
-        $variables['display_page_title'] = FALSE;
+      $paths_to_exclude = [
+        'edit',
+        'add',
+        'delete',
+      ];
+
+      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
+
+      if (!$in_path) {
+
+        // If there is a title and node type is excluded remove class.
+        if (in_array($node->bundle(), $page_to_exclude, TRUE)) {
+          $attributes->removeClass('with-title-region');
+          $variables['display_page_title'] = FALSE;
+        }
+
       }
 
     }

@@ -35,6 +35,8 @@ Feature: I want to be able to hide my email address
     And I show hidden checkboxes
     And I check the box "Show my email on my profile"
     And I press "Save"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
     And I click "Information"
     And I should see "user_1@example.com"
 
