@@ -29,6 +29,13 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Keep track of all groups that are created so they can easily be removed.
+     *
+     * @var array
+     */
+    protected $groups = array();
+
+    /**
      * @BeforeScenario
      *
      * @param $event
@@ -450,35 +457,34 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function createGroups(TableNode $groupsTable) {
       foreach ($groupsTable->getHash() as $groupHash) {
-        $group = (object) $groupHash;
-        $this->groupCreate($group);
+        $groupFields = (object) $groupHash;
+        try {
+          $group = $this->groupCreate($groupFields);
+          $this->groups[$groupFields->title] = $group;
+        } catch (Exception $e) {
+
+        }
       }
     }
 
     /**
-     * @AfterScenario @search&&@groups
+     * Remove any groups that were created.
+     *
+     * @AfterScenario
      */
     public function cleanupGroups(AfterScenarioScope $scope) {
-      $query = \Drupal::entityQuery('group')
-        ->condition('label', array(
-          '%Behat test group title%'
-        ), 'LIKE');
-
-      $group_ids = $query->execute();
-
-      $groups = entity_load_multiple('group', $group_ids);
-
-      foreach ($groups as $group) {
-        $group->delete();
+      if (!empty($this->groups)) {
+        foreach ($this->groups as $group) {
+          $group->delete();
+        }
       }
-
     }
 
     /**
-     * Create a user.
+     * Create a group.
      *
      * @return object
-     *   The created user.
+     *   The created group.
      */
     public function groupCreate($group) {
 
@@ -501,7 +507,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       $group_object->save();
 
-      return $group;
+      return $group_object;
     }
 
     /**
