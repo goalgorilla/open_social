@@ -1000,11 +1000,7 @@ function social_group_block_view_group_hero_block_alter(array &$build, BlockPlug
 }
 
 /**
- * Make sure the group selection uses the right widget.
- *
- * @param $info
- *   Array of information on field types as collected by the "field type" plugin
- *   manager.
+ * Implements hook_field_info_alter().
  */
 function social_group_field_info_alter(&$info) {
   if (isset($info['groups'])) {
