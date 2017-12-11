@@ -27,7 +27,6 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\social_group\SetGroupsForNodeService;
 
 /**
  * @file
@@ -1001,6 +1000,19 @@ function social_group_block_view_group_hero_block_alter(array &$build, BlockPlug
 }
 
 /**
+ * Make sure the group selection uses the right widget.
+ *
+ * @param $info
+ *   Array of information on field types as collected by the "field type" plugin
+ *   manager.
+ */
+function social_group_field_info_alter(&$info) {
+  if (isset($info['groups'])) {
+    $info['groups']['default widget'] = 'social_group_selector_widget';
+  }
+}
+
+/**
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
@@ -1016,6 +1028,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
       ]);
       $fields['groups']->setDisplayConfigurable('form', TRUE);
       $fields['groups']->setDescription('');
+
     }
   }
 }
@@ -1079,7 +1092,8 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   }
 
   // Now make sure the relevant GroupContent is removed or added.
-  SetGroupsForNodeService::setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
+  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
 }
 
 /**
