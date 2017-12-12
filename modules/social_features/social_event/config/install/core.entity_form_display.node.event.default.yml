@@ -77,6 +77,7 @@ third_party_settings:
         required_fields: true
     group_event_visibility:
       children:
+        - groups
         - field_content_visibility
       parent_name: ''
       weight: 2
@@ -120,7 +121,7 @@ content:
     third_party_settings: {  }
     region: content
   field_content_visibility:
-    weight: 10
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -161,6 +162,7 @@ content:
         - hero
         - teaser
       progress_indicator: throbber
+      warn_multiple_usages: true
     third_party_settings: {  }
     type: image_widget_crop
     region: content
@@ -195,7 +197,7 @@ content:
   status:
     region: content
     settings:
-      display_label: 1
+      display_label: true
     type: boolean_checkbox
     weight: 120
     third_party_settings: {  }

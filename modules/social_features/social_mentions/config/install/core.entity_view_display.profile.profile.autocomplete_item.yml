@@ -4,6 +4,7 @@ dependencies:
   config:
     - core.entity_view_mode.profile.autocomplete_item
     - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
@@ -15,7 +16,7 @@ dependencies:
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
-    - image.style.social_medium
+    - image.style.social_small
     - profile.type.profile
   module:
     - image
@@ -37,7 +38,7 @@ content:
     weight: 0
     label: hidden
     settings:
-      image_style: social_medium
+      image_style: social_small
       image_link: ''
     third_party_settings: {  }
     region: content
@@ -51,6 +52,7 @@ content:
     region: content
 hidden:
   field_profile_address: true
+  field_profile_banner_image: true
   field_profile_expertise: true
   field_profile_function: true
   field_profile_interests: true

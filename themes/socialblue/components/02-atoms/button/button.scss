@@ -87,6 +87,11 @@
   @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
 }
 
+.btn-secondary {
+  @include button-variant($btn-secondary-color, $btn-secondary-bg, $btn-secondary-border);
+}
+
+
 .btn-accent {
   @include button-variant($btn-accent-color, $btn-accent-bg, $btn-accent-border);
   fill: $btn-accent-color;
@@ -95,6 +100,8 @@
 .btn-flat {
   @include button-variant($brand-primary, transparent, transparent);
   fill: $brand-primary;
+
+  white-space: normal;
 
   &:hover,
   &:focus,

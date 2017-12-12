@@ -58,9 +58,11 @@
     font-size: $font-size-base;
   }
 
-  &[disabled],
-  fieldset[disabled] & {
+  &:disabled,
+  fieldset[disabled] &,
+  .form-disabled & {
     cursor: $cursor-disabled;
+    color: $input-disabled-color;
   }
 
   // [converter] extracted textarea& to textarea.form-control
