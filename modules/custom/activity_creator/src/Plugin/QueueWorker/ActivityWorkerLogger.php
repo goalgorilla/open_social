@@ -79,7 +79,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
         'mid' => $data['mid'],
         'message_template' => $data['message_template'],
         'actor' => $data['actor'],
-      // Not necessary?
+        // Not necessary?
         'context' => $data['context'],
         'destination' => $data['destination'],
         'related_object' => $data['related_object'],

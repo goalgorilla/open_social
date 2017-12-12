@@ -76,6 +76,7 @@ class SocialDrupalContext extends DrupalContext {
     // Set internal browser on the node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
+
   /**
    * @override DrupalContext:createNodes().
    *
@@ -160,4 +161,5 @@ class SocialDrupalContext extends DrupalContext {
   public function iEnableTheTourSetting() {
     \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
   }
+
 }

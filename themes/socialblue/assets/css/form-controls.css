@@ -45,7 +45,7 @@ input[type='range']::-moz-range-thumb {
   border: 2px solid #1d789e;
 }
 
-[type="radio"]:checked + label {
+[type="radio"]:checked:not(:disabled) + label {
   color: #1d789e;
 }
 
@@ -71,6 +71,41 @@ input[type='range']::-moz-range-thumb {
 [type="checkbox"].tabbed:checked:focus + label:after {
   background-color: #1d789e;
   border-color: #1d789e;
+}
+
+.js--animate-enabled-form-control:checked + label {
+  -webkit-animation: scale-form-control 0.5s ease-in 0.5s;
+          animation: scale-form-control 0.5s ease-in 0.5s;
+}
+
+@-webkit-keyframes scale-form-control {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes scale-form-control {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
 }
 
 .switch input[type=checkbox]:checked + .lever {

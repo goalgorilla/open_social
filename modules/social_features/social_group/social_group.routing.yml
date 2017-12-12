@@ -5,3 +5,10 @@ social_group.social_group_controller_redirectGroupMemberships:
     _title_callback: '\Drupal\social_group\Controller\SocialGroupController::groupMembersTitle'
   requirements:
     _group_permission: 'administer members'
+social_group.settings:
+  path: '/admin/config/opensocial/social-group'
+  defaults:
+    _form: 'Drupal\social_group\Form\SocialGroupSettings'
+    _title: 'Group settings'
+  requirements:
+    _permission: 'set social group settings'

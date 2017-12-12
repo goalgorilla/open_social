@@ -31,6 +31,7 @@ projects[flag][patch][] = "https://www.drupal.org/files/issues/2723703_31.patch"
 projects[group][type] = module
 projects[group][version] = 1.0-rc1
 projects[group][patch] = "https://www.drupal.org/files/issues/group-crash_when_clicking-2908830-2.patch"
+projects[group][patch] = "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
 projects[image_effects][type] = module
 projects[image_effects][version] = 1.0
 projects[image_widget_crop][type] = module

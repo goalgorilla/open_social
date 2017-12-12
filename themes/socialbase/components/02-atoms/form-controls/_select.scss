@@ -38,6 +38,10 @@
     padding-right: 30px;
   }
 
+  select:disabled {
+    color: $input-disabled-color;
+  }
+
   &:after {
     content: '▾';
     font-style: normal;
@@ -52,4 +56,9 @@
     z-index: 2;
   }
 
+}
+
+
+.form-disabled .select-wrapper::after {
+  color: $btn-link-disabled-color;
 }
