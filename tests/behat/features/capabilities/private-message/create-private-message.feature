@@ -33,9 +33,7 @@
       | Your message has been created. |
 
     # I want to send a new message from a user`s profile
-    When I am on "/all-members"
-    Then I should see "PM User Two"
-    And I click the xth "1" link with the text "View activities"
+    When I am on the profile of "PM User Two"
     Then I should see the link "Send message" in the "Hero block"
     And I click "Send message"
     Then I should see "PM User Two"
