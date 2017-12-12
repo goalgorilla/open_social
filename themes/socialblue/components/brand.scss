@@ -13,8 +13,8 @@
   background-color: $brand-primary;
 }
 
-[type="checkbox"]:checked + label,
-[type="radio"]:checked + label {
+[type="checkbox"]:checked:not(:disabled) + label,
+[type="radio"]:checked:not(:disabled) + label {
   color: $brand-primary;
 }
 
@@ -173,7 +173,7 @@
 .card__link:hover,
 .view--who-liked .views-field-view-user a,
 .comment__reply-btn,
-.book-menu .list-item--active-trail > a {
+.nav-book .menu-item--active-trail > a {
   color: $brand-primary;
   fill: $brand-primary;
 }

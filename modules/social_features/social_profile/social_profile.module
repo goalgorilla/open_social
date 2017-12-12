@@ -16,6 +16,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -228,6 +229,12 @@ function social_profile_preprocess_profile(array &$variables) {
       $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
       $variables['#cache']['contexts'][] = 'route.name';
     }
+  }
+
+  // Add the hero styled image.
+  if (!empty($profile->field_profile_banner_image->entity)) {
+    $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+      ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
 
 }
