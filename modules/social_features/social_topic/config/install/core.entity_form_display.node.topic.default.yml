@@ -47,6 +47,7 @@ third_party_settings:
         classes: 'card '
     group_topic_visibility:
       children:
+        - groups
         - field_content_visibility
       parent_name: ''
       weight: 1
@@ -90,7 +91,7 @@ content:
     third_party_settings: {  }
     region: content
   field_content_visibility:
-    weight: 2
+    weight: 17
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -119,6 +120,7 @@ content:
         - hero
         - teaser
       progress_indicator: throbber
+      warn_multiple_usages: true
     third_party_settings: {  }
     type: image_widget_crop
     region: content
@@ -137,7 +139,7 @@ content:
   status:
     region: content
     settings:
-      display_label: 1
+      display_label: true
     type: boolean_checkbox
     weight: 120
     third_party_settings: {  }
@@ -150,12 +152,9 @@ content:
     third_party_settings: {  }
     region: content
   uid:
-    type: entity_reference_autocomplete
+    type: options_select
     weight: 3
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
     region: content
 hidden:
