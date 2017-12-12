@@ -24,17 +24,6 @@
   border-right-color: #29abe2;
 }
 
-.nav-tabs.brand-primary a:hover,
-.nav-tabs.brand-primary a:focus,
-.brand-primary > .nav-tabs a:hover,
-.brand-primary > .nav-tabs a:focus,
-.nav-tabs.brand-secondary a:hover,
-.nav-tabs.brand-secondary a:focus,
-.brand-secondary > .nav-tabs a:hover,
-.brand-secondary > .nav-tabs a:focus {
-  border-bottom-color: transparent;
-}
-
 .cover,
 .read-indicator,
 .select2-container--social .select2-results__option--highlighted[aria-selected],
@@ -95,6 +84,25 @@ fieldset[disabled] .btn-primary.focus {
   border-color: #29abe2;
 }
 
+.btn-secondary {
+  background-color: #1f80aa;
+  border-color: #1f80aa;
+}
+
+.btn-secondary:focus, .btn-secondary.focus, .btn-secondary:hover, .btn-secondary:active, .btn-secondary.active,
+.open > .btn-secondary.dropdown-toggle, .btn-secondary.dropdown-toggle:hover {
+  background-color: #1f80aa;
+  border-color: #1f80aa;
+}
+
+.btn-secondary.disabled:hover, .btn-secondary.disabled:focus, .btn-secondary.disabled.focus, .btn-secondary[disabled]:hover, .btn-secondary[disabled]:focus, .btn-secondary[disabled].focus,
+fieldset[disabled] .btn-secondary:hover,
+fieldset[disabled] .btn-secondary:focus,
+fieldset[disabled] .btn-secondary.focus {
+  background-color: #1f80aa;
+  border-color: #1f80aa;
+}
+
 .badge-accent {
   background-color: #ffc142;
   border-color: #ffc142;
@@ -133,8 +141,6 @@ fieldset[disabled] .btn-accent.focus {
 .card__link:hover,
 .view--who-liked .views-field-view-user a,
 .comment__reply-btn,
-.body-text a,
-.body-text a:hover,
 .book-menu .list-item--active-trail > a {
   color: #29abe2;
   fill: #29abe2;
@@ -148,6 +154,11 @@ fieldset[disabled] .btn-accent.focus {
 .list-group-item.active:focus {
   background-color: #1f80aa;
   border-color: #1f80aa;
+}
+
+.body-text a:not(.btn),
+.body-text a:not(.btn):hover {
+  color: #33b5e5;
 }
 
 blockquote {

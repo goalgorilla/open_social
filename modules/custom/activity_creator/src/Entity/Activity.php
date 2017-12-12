@@ -207,11 +207,18 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $target_id = $related_object['0']['target_id'];
 
       // Make an exception for Votes.
-      if ($related_object['0']['target_type'] === 'vote') {
+      if ($target_type === 'vote') {
         /** @var \Drupal\votingapi\Entity\Vote $vote */
         if ($vote = entity_load($target_type, $target_id)) {
           $target_type = $vote->getVotedEntityType();
           $target_id = $vote->getVotedEntityId();
+        }
+      }
+      elseif ($target_type === 'group_content') {
+        /** @var \Drupal\group\Entity\GroupContent $group_content */
+        if ($group_content = entity_load($target_type, $target_id)) {
+          $target_type = $group_content->getEntity()->getEntityTypeId();
+          $target_id = $group_content->getEntity()->id();
         }
       }
 

@@ -26,6 +26,7 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * @file
@@ -122,6 +123,27 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
     'view.groups.page_user_groups',
     ['user' => \Drupal::currentUser()->id(), []]
   );
+}
+
+/**
+ * Load group content label and group label.
+ *
+ * @return array
+ *   array of group labels.
+ */
+function _social_group_get_group_labels() {
+
+  // Load the entity label from the group content being handled.
+  $group_content = \Drupal::routeMatch()->getParameter('group_content')->label();
+
+  // Load group name.
+  $group = \Drupal::routeMatch()->getParameter('group')->label();
+
+  return [
+    $group_content,
+    $group,
+  ];
+
 }
 
 /**
@@ -292,14 +314,29 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     'group_content_open_group-group_membership_group-join_form',
     'group_content_open_group-group_membership_group-leave_form',
     'group_content_open_group-group_membership_add_form',
+    'group_content_open_group-group_membership_delete_form',
     'group_content_closed_group-group_membership_group-join_form',
     'group_content_closed_group-group_membership_group-leave_form',
     'group_content_closed_group-group_membership_add_form',
+    'group_content_closed_group-group_membership_delete_form',
   ];
 
   // Perform alterations on joining / leaving groups.
-  if (in_array($form_id, ['group_content_-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
+  if (in_array($form_id, ['group_content_open_group-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
+
+    list($name, $group) = _social_group_get_group_labels();
+
+    // Give a better title, description and submit button value.
+    $form['#title'] = t('Remove %name from %group', [
+      '%name' => $name,
+      '%group' => $group,
+    ]);
+    $form['actions']['submit']['#value'] = t('Remove');
+    $form['description']['#markup'] = t('Are you sure you want to remove %name from %group?', [
+      '%name' => $name,
+      '%group' => $group,
+    ]);
   }
 
   // Set some helpful text on the group join form now it's there.
@@ -363,8 +400,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // Add custom submit handler just for redirect purposes.
       // We don't want to override the form::save in group.
       $form['actions']['submit']['#submit'][] = '_social_group_node_form_submit';
-      $form['actions']['unpublish']['#submit'][] = '_social_group_node_form_submit';
-      $form['actions']['publish']['#submit'][] = '_social_group_node_form_submit';
     }
   }
 
@@ -571,6 +606,8 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
 }
 
 /**
+ * Alter the visibility field within groups.
+ *
  * Implements hook_field_widget_form_alter().
  */
 function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
@@ -580,24 +617,38 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
 
   // Unset the public options on visibility field.
   if ($field_definition->getType() == 'entity_access_field') {
+    $default_value = $context['items']->getValue();
+    if (isset($default_value[0]['value'])) {
+      $element['#default_value'] = $default_value[0]['value'];
+    }
+    $entity = $form_state->getFormObject()->getEntity();
+
     $current_group = _social_group_get_current_group();
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
-      // Always remove the option: public for groups.
-      unset($element['#options']['public']);
-      if ($group_type->id() === 'closed_group') {
-        unset($element['#options']['community']);
-        $element['#default_value'] = 'group';
-      }
-      else {
-        unset($element['#options']['group']);
+      $group_type_id = $group_type->id();
+      if (!$entity->id()) {
+        if ($group_type->id() === 'closed_group') {
+          $element['#default_value'] = 'group';
+        }
+        if ($group_type->id() === 'open_group') {
+          $element['#default_value'] = 'community';
+        }
       }
     }
     else {
-      // This is not a group so lets remove this visibility option.
-      unset($element['#options']['group']);
+      $group_type_id = NULL;
+      // This is not a group so lets disable this visibility option.
+      $element['group']['#disabled'] = TRUE;
+    }
+
+    $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity);
+
+    foreach ($visibility_options as $visibility => $allowed) {
+      $element[$visibility]['#disabled'] = !$allowed;
     }
   }
+
 }
 
 /**
@@ -946,4 +997,146 @@ function social_group_block_view_group_hero_block_alter(array &$build, BlockPlug
   if ($current_route == 'entity.group_content.create_form') {
     $build['#pre_render'] = [];
   }
+}
+
+/**
+ * Implements hook_field_info_alter().
+ */
+function social_group_field_info_alter(&$info) {
+  if (isset($info['groups'])) {
+    $info['groups']['default widget'] = 'social_group_selector_widget';
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  $entity_types = ['node', 'user'];
+  if (in_array($entity_type->id(), $entity_types)) {
+    if (isset($fields['groups'])) {
+      /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
+      $fields['groups']->setLabel(t('Group'));
+      $fields['groups']->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'settings' => [],
+        'weight' => 16,
+      ]);
+      $fields['groups']->setDisplayConfigurable('form', TRUE);
+      $fields['groups']->setDescription('');
+
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Make sure the correct group is saved when group is selected on node form.
+ */
+function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
+    if (isset($form['groups'])) {
+      $change_fieldgroup_titles = [
+        'group_topic_visibility',
+        'group_event_visibility',
+      ];
+      foreach ($change_fieldgroup_titles as $fieldgroup_title) {
+        if (isset($form['#fieldgroups'][$fieldgroup_title])) {
+          $form['#fieldgroups'][$fieldgroup_title]->label = (string) t('Group and visibility');
+        }
+      }
+      // Lets remove the original submit function in favor of this submit.
+      foreach ($form['actions']['submit']['#submit'] as $submit_key => $submit_function) {
+        if ($submit_function === 'group_content_entity_submit') {
+          unset($form['actions']['submit']['#submit'][$submit_key]);
+        }
+      }
+      $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
+    }
+  }
+}
+
+/**
+ * Form submit to save the group from a node form.
+ *
+ * @param array $form
+ *   Node add or node edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
+  /* @var \Drupal\node\Entity\Node $node */
+  $node = $form_state->getFormObject()->getEntity();
+  $original_groups = [];
+  $groups_to_add = [];
+  $groups_to_remove = [];
+  foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
+    $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
+  }
+  // The node already exist so lets also change the logic accordingly.
+  if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
+    $original_groups = $form['groups']['widget']['#default_value'];
+    foreach ($original_groups as $original_group_key => $original_group) {
+      if (!in_array($original_group, $groups_to_add)) {
+        $groups_to_remove[$original_group] = $original_group;
+      }
+      else {
+        unset($groups_to_add[$original_group]);
+      }
+    }
+  }
+
+  // Now make sure the relevant GroupContent is removed or added.
+  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
+}
+
+/**
+ * Get the allowed visibility options for a given group type.
+ *
+ * @param string|null $group_type_id
+ *   The group type. Can be NULL to get visibility when it is not in a group.
+ * @param \Drupal\Core\Session\AccountInterface|null $account
+ *   The account object that may have impact on the visibility options.
+ *
+ * @return array
+ *   An array of visibility options for the given group type.
+ */
+function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL) {
+
+  // Get the logged in user.
+  if ($account === NULL) {
+    $account = \Drupal::currentUser();
+  }
+
+  $visibility_options = [];
+  $visibility_options['public'] = FALSE;
+  $visibility_options['community'] = TRUE;
+  $visibility_options['group'] = FALSE;
+
+  if ($group_type_id === 'closed_group') {
+    $visibility_options['community'] = FALSE;
+    $visibility_options['group'] = TRUE;
+  }
+  if ($group_type_id === NULL) {
+    $config = \Drupal::config('entity_access_by_field.settings');
+    $visibility_options['public'] = TRUE;
+    if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+      // This is a new entity.
+      if (!$entity) {
+        $visibility_options['public'] = FALSE;
+      }
+      else {
+        /** @var \Drupal\node\Entity\Node $entity */
+        $current_visibility = $entity->get('field_content_visibility')->getString();
+        if ($current_visibility !== 'public') {
+          $visibility_options['public'] = FALSE;
+        }
+      }
+    }
+    $visibility_options['community'] = TRUE;
+    $visibility_options['group'] = FALSE;
+  }
+  return $visibility_options;
 }

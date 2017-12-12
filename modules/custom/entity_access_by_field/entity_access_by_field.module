@@ -210,8 +210,10 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
   if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
     switch ($entity->getEntityTypeId()) {
       case 'node':
-        $element['#disabled'] = TRUE;
-        $element['#title'] = t('The visibility setting has been disabled. In order to change the visibility, please contact a site manager.')->render();
+        if ($entity->get($field_name)->getString() !== 'public') {
+          $element['public']['#disabled'] = TRUE;
+          $element['#description'] = t('The public visibility setting has been disabled. In order to change the visibility to public, please contact a site manager.')->render();
+        }
         break;
 
       case 'post':

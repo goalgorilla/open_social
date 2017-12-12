@@ -65,7 +65,6 @@ Feature: Create Open Group
   # And I should see "Newest members" in the "Sidebar second"
   # And I should see "Group User One" in the "Sidebar second"
     And I click "Members"
-    And I should see "Members of Test open group"
     And I should see "Group User One"
 
   # DS-647 As a LU I want to join a group

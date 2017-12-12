@@ -254,6 +254,22 @@ function activity_creator_entity_delete(EntityInterface $entity) {
         entity_delete_multiple('activity', $ids);
       }
     }
+    if ($entity_type == 'group_content') {
+      /** @var \Drupal\group\Entity\GroupContent $group_content */
+      $group_content = $entity;
+      $linked_entity = $group_content->getEntity();
+      $group = $group_content->getGroup();
+      if ($linked_entity && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
+        $entity_query = \Drupal::entityQuery('activity');
+        $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
+        $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
+        $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
+        $ids = $entity_query->execute();
+        if (!empty($ids)) {
+          entity_delete_multiple('activity', $ids);
+        }
+      }
+    }
   }
 
 }
