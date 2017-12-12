@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
@@ -24,14 +25,14 @@ bundle: profile
 mode: default
 content:
   field_profile_address:
-    weight: 1
+    weight: 2
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_profile_expertise:
-    weight: 4
+    weight: 5
     label: visually_hidden
     settings:
       link: true
@@ -39,7 +40,7 @@ content:
     type: entity_reference_label
     region: content
   field_profile_interests:
-    weight: 3
+    weight: 4
     label: visually_hidden
     settings:
       link: true
@@ -56,20 +57,21 @@ content:
     region: content
   field_profile_profile_tag:
     type: entity_reference_label
-    weight: 0
+    weight: 1
     label: visually_hidden
     settings:
       link: false
     third_party_settings: {  }
     region: content
   field_profile_self_introduction:
-    weight: 2
+    weight: 3
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: text_default
     region: content
 hidden:
+  field_profile_banner_image: true
   field_profile_first_name: true
   field_profile_function: true
   field_profile_image: true
