@@ -205,6 +205,7 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_contact_label'] = 'profile_info';
   if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId()) {
     $variables['profile_contact_label'] = 'private_message';
+    $variables['#cache']['contexts'][] = 'user';
   }
 
   // Email field.
