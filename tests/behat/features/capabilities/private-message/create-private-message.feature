@@ -24,8 +24,8 @@
 
     # I want to send a new message from a user`s profile teaser
     When I am on "/all-members"
-    Then I should see "Contact Me"
-    When I click the xth "1" link with the text "Contact Me"
+    Then I should see "Private message"
+    When I click the xth "1" link with the text "Private message"
     Then I should see "PM User Two"
     And I fill in "Message" with "Hi PM User Two, I heard you like salami on your pizza..."
     And I press "Send"
