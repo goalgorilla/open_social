@@ -64,7 +64,11 @@
 
     <div class="card__actionbar">
       <a href="{{ profile_contact_url }}" class="card__link">
-        {% trans %}View profile{% endtrans %}
+        {% if profile_contact_label == 'private_message' %}
+          {% trans %}Private message{% endtrans %}
+        {% else %}
+          {% trans %}View profile{% endtrans %}
+        {% endif %}
       </a>
       <a href="{{ profile_stream_url }}" class="card__link hidden-for-phone-only">
         {% trans %}View activities{% endtrans %}
