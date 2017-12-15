@@ -5,6 +5,7 @@
  * Contains social_tagging.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -21,4 +22,35 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
 
     default:
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Remove these fields.
+  $form['path']['#access'] = FALSE;
+  $form['relations']['#access'] = FALSE;
+  $form['description']['#access'] = FALSE;
+
+  // Move it outside the details.
+  $form['parent'] = $form['relations']['parent'];
+  unset($form['relations']['parent']);
+
+  // Make some changes.
+  $form['weight']['#access'] = FALSE;
+  $form['parent']['#multiple'] = FALSE;
+  $form['parent']['#title'] = t('Placement');
+
+  // Load all taxonomy terms from the top level.
+  $tag_service = Drupal::getContainer()->get('social_tagging.terms');
+
+  // Fetch all top level items.
+  $options = $tag_service->getCategories();
+  // Add the 0 option for a new toplevel item.
+  $options[0] = t('Main category');
+  // Sort the array.
+  ksort($options);
+  // Add it to the select.
+  $form['parent']['#options'] = $options;
 }
