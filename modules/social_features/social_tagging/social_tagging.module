@@ -39,7 +39,6 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
 
   // Make some changes.
   $form['weight']['#access'] = FALSE;
-  $form['parent']['#multiple'] = FALSE;
   $form['parent']['#title'] = t('Placement');
 
   // Load all taxonomy terms from the top level.
