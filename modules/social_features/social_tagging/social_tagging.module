@@ -70,8 +70,8 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
       unset($form['terms'][$name]['weight']);
     }
 
-    // Hide Save and Reset buttons.
-    $form['actions']['#access'] = FALSE;
+    // Hide Save button.
+    $form['actions']['submit']['#access'] = FALSE;
 
     // Remove tableDrag.
     unset($form['terms']['#tabledrag']);
