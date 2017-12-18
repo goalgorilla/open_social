@@ -79,12 +79,15 @@ function _social_group_set_permissions() {
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'access group search',
+  ];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'create open_group group',
     'create closed_group group',
+    'create public_group group',
   ]);
 
   // Content manager.
@@ -317,4 +320,11 @@ function social_group_update_8009() {
     user_role_grant_permissions($role->id(), $permissions);
   }
 
+}
+
+/**
+ * Add permissions for public groups.
+ */
+function social_group_update_8010() {
+  _social_group_set_permissions();
 }
