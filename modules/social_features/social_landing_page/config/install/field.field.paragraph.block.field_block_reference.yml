@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_block_reference
+    - paragraphs.paragraphs_type.block
+  module:
+    - block_field
+id: paragraph.block.field_block_reference
+field_name: field_block_reference
+entity_type: paragraph
+bundle: block
+label: Primary
+description: 'Select a Block from a list to include'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  plugin_ids:
+    'views_block:community_activities-block_stream_landing': 'views_block:community_activities-block_stream_landing'
+field_type: block_field

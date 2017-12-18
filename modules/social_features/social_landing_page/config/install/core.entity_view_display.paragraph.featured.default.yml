@@ -1,0 +1,117 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.featured.field_featured_description
+    - field.field.paragraph.featured.field_featured_items
+    - field.field.paragraph.featured.field_featured_link
+    - field.field.paragraph.featured.field_featured_title
+    - paragraphs.paragraphs_type.featured
+  module:
+    - dynamic_entity_reference
+    - link
+    - text
+id: paragraph.featured.default
+targetEntityType: paragraph
+bundle: featured
+mode: default
+content:
+  field_featured_description:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_featured_items:
+    weight: 2
+    label: hidden
+    settings:
+      node:
+        view_mode: featured
+      group:
+        view_mode: featured
+      activity:
+        view_mode: default
+        link: false
+      comment:
+        view_mode: default
+        link: false
+      crop:
+        view_mode: default
+        link: false
+      block_content:
+        view_mode: default
+        link: false
+      menu_link_content:
+        view_mode: default
+        link: false
+      event_enrollment:
+        view_mode: default
+        link: false
+      file:
+        view_mode: default
+        link: false
+      flagging:
+        view_mode: default
+        link: false
+      font:
+        view_mode: default
+        link: false
+      group_content:
+        view_mode: default
+        link: false
+      mentions:
+        view_mode: default
+        link: false
+      message:
+        view_mode: default
+        link: false
+      paragraph:
+        view_mode: default
+        link: false
+      post:
+        view_mode: default
+        link: false
+      profile:
+        view_mode: default
+        link: false
+      search_api_task:
+        view_mode: default
+        link: false
+      taxonomy_term:
+        view_mode: default
+        link: false
+      user:
+        view_mode: default
+        link: false
+      vote:
+        view_mode: default
+        link: false
+      vote_result:
+        view_mode: default
+        link: false
+    third_party_settings: {  }
+    type: dynamic_entity_reference_entity_view
+    region: content
+  field_featured_link:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_featured_title:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

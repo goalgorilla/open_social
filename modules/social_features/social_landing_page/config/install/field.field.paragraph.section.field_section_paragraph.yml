@@ -1,0 +1,48 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_section_paragraph
+    - paragraphs.paragraphs_type.block
+    - paragraphs.paragraphs_type.featured
+    - paragraphs.paragraphs_type.hero
+    - paragraphs.paragraphs_type.introduction
+    - paragraphs.paragraphs_type.section
+  module:
+    - entity_reference_revisions
+id: paragraph.section.field_section_paragraph
+field_name: field_section_paragraph
+entity_type: paragraph
+bundle: section
+label: Reference
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      featured: featured
+      block: block
+      hero: hero
+      introduction: introduction
+    target_bundles_drag_drop:
+      section:
+        weight: 3
+        enabled: false
+      featured:
+        enabled: true
+        weight: 4
+      block:
+        enabled: true
+        weight: 4
+      hero:
+        enabled: true
+        weight: 5
+      introduction:
+        enabled: true
+        weight: 6
+field_type: entity_reference_revisions
