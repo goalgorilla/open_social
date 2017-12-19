@@ -5,6 +5,7 @@
  * Contains social_tagging.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -12,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_help().
@@ -238,4 +240,19 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
   }
 
   return $fields;
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_tagging_entity_delete(EntityInterface $entity) {
+  // When a term from the social_tagging vocbulary is deleted, remove from node.
+  if ($entity instanceof Term) {
+    /* @var Term $entity */
+    if ($entity->getVocabularyId() == 'social_tagging') {
+      /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
+      db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+      db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    }
+  }
 }
