@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Contains social_tagging.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_help().
+ */
+function social_tagging_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_tagging module.
+    case 'help.page.social_tagging':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Content tagging module') . '</p>';
+      return $output;
+
+    case 'entity.taxonomy_vocabulary.overview_form':
+      /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+      $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
+      if ($vocabulary->id() === 'social_tagging') {
+        return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
+      }
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Remove these fields.
+  $form['path']['#access'] = FALSE;
+  $form['relations']['#access'] = FALSE;
+  $form['description']['#access'] = FALSE;
+
+  // Move it outside the details.
+  $form['parent'] = $form['relations']['parent'];
+  unset($form['relations']['parent']);
+
+  // Make some changes.
+  $form['weight']['#access'] = FALSE;
+  $form['parent']['#title'] = t('Placement');
+
+  // Load all taxonomy terms from the top level.
+  $tag_service = Drupal::getContainer()->get('social_tagging.terms');
+
+  // Fetch all top level items.
+  $options = $tag_service->getCategories();
+  // Add the 0 option for a new toplevel item.
+  $options[0] = t('Main category');
+  // Sort the array.
+  ksort($options);
+  // Add it to the select.
+  $form['parent']['#options'] = $options;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $storage = $form_state->getStorage();
+  /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+  $vocabulary = $storage['taxonomy']['vocabulary'];
+
+  if ($vocabulary->id() === 'social_tagging') {
+    // Remove edit/delete links.
+    foreach (Element::children($form['terms']) as $name) {
+      unset($form['terms'][$name]['weight']);
+    }
+
+    // Hide Save button.
+    $form['actions']['submit']['#access'] = FALSE;
+
+    // Remove tableDrag.
+    unset($form['terms']['#tabledrag']);
+
+    // Remove Weight column.
+    unset($form['terms']['#header'][1]);
+  }
+
+}
