@@ -48,13 +48,23 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns all the top level term items, that are considered categories.
+   * Returns wether the feature is turned on or not.
    *
    * @return bool
    *   Wether tagging is turnded on or not.
    */
   public function active() {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('enable_content_tagging');
+  }
+
+  /**
+   * Returns wether splitting of fields is allowed.
+   *
+   * @return bool
+   *   Wether category split on field level is turnded on or not.
+   */
+  public function allowSplit() {
+    return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('allow_category_split'));
   }
 
   /**
