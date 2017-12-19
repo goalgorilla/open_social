@@ -64,8 +64,6 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     // Get the configuration file.
     $config = $this->config('social_tagging.settings');
 
-
-
     $content_types = [];
     foreach (NodeType::loadMultiple() as $node_type) {
       /* @var NodeType $node_type */
@@ -77,7 +75,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#title' => $this->t('Allow users to tag content in content.'),
       '#default_value' => $config->get('enable_content_tagging'),
       '#required' => FALSE,
-      '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", array('@content' => implode(', ', $content_types))),
+      '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
     ];
 
     return parent::buildForm($form, $form_state);
