@@ -23,7 +23,9 @@ function _social_tagging_set_defaults() {
   ];
 
   // Set allow to true, since that's the case by default.
-  \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings')->set('enable_content_tagging', 1)->save();
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+  $config->set('enable_content_tagging', 1)->save();
+  $config->set('allow_category_split', 1)->save();
   // SM should be able to change the permissions.
   user_role_grant_permissions('sitemanager', $permissions);
 }

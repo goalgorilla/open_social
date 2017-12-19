@@ -7,6 +7,8 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -78,6 +80,17 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
     ];
 
+    $form['allow_category_split'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow category split.'),
+      '#default_value' => $config->get('allow_category_split'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
+      '#disabled' => TRUE,
+    ];
+
+    $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form',['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -89,6 +102,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     // Get the configuration file.
     $config = $this->config('social_tagging.settings');
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();
+    $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
 
     parent::submitForm($form, $form_state);
   }
