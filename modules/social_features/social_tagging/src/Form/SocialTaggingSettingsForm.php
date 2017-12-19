@@ -7,6 +7,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -63,12 +64,20 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     // Get the configuration file.
     $config = $this->config('social_tagging.settings');
 
+
+
+    $content_types = [];
+    foreach (NodeType::loadMultiple() as $node_type) {
+      /* @var NodeType $node_type */
+      $content_types[] = $node_type->get('name');
+    }
+
     $form['enable_content_tagging'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow users to user tags in all node types.'),
+      '#title' => $this->t('Allow users to tag content in content.'),
       '#default_value' => $config->get('enable_content_tagging'),
       '#required' => FALSE,
-      '#description' => $this->t("Determine wether users are allowed tag content and to view tags in content."),
+      '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", array('@content' => implode(', ', $content_types))),
     ];
 
     return parent::buildForm($form, $form_state);
