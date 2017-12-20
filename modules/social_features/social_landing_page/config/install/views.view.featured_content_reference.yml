@@ -198,15 +198,15 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        field_content_visibility_value:
-          id: field_content_visibility_value
-          table: node__field_content_visibility
-          field: field_content_visibility_value
+        nid:
+          id: nid
+          table: node_access
+          field: nid
           relationship: none
           group_type: group
           admin_label: ''
           operator: '='
-          value: public
+          value: ''
           group: 1
           exposed: false
           expose:
@@ -233,7 +233,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
+          plugin_id: node_access
       sorts:
         title:
           id: title

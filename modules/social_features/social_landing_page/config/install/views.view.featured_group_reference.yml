@@ -1,8 +1,6 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - group.type.open_group
   module:
     - group
 id: featured_group_reference
@@ -142,16 +140,7 @@ display:
           entity_type: null
           entity_field: label
           plugin_id: field
-      filters:
-        type:
-          id: type
-          table: groups_field_data
-          field: type
-          value:
-            open_group: open_group
-          entity_type: group
-          entity_field: type
-          plugin_id: bundle
+      filters: {  }
       sorts:
         label:
           id: label
@@ -173,6 +162,9 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      filter_groups:
+        operator: AND
+        groups: {  }
     cache_metadata:
       max-age: -1
       contexts:
