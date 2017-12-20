@@ -327,5 +327,16 @@ function social_group_update_8009() {
  * Add permissions for public groups.
  */
 function social_group_update_8010() {
-  _social_group_set_permissions();
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->id() === 'anonymous') {
+      user_role_grant_permissions($role->id(), ['access group search']);
+    }
+    else {
+      user_role_grant_permissions($role->id(), [
+        'create public_group group',
+        'view group stream page',
+      ]);
+    }
+  }
 }

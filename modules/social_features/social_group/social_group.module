@@ -100,14 +100,6 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $form['group_type']['#default_value'] = $group->bundle();
   $form['group_type']['#disabled'] = TRUE;
   $form['#group_children']['group_type'] = 'group_content';
-
-  if (\Drupal::moduleHandler()->moduleExists('social_course')) {
-    $course_wrapper = \Drupal::service('social_course.course_wrapper');
-    $available_bundles = $course_wrapper::getAvailableBundles();
-    $form['group_type']['#options'] = array_filter($form['group_type']['#options'], function ($key) use ($available_bundles) {
-      return !in_array($key, $available_bundles);
-    }, ARRAY_FILTER_USE_KEY);
-  }
 }
 
 /**
@@ -896,48 +888,6 @@ function social_group_entity_type_alter(array &$entity_types) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function social_group_group_delete(EntityInterface $entity) {
-  if ($entity->bundle() == 'public_group') {
-    $ids = \Drupal::database()
-      ->select('post__field_recipient_group', 'p')
-      ->fields('p', ['entity_id'])
-      ->condition('field_recipient_group_target_id', $entity->id())
-      ->execute()
-      ->fetchCol();
-
-    if (!empty($ids)) {
-      $queue = \Drupal::queue('public_group_queue');
-      $item = new \stdClass();
-      $item->entity_type = 'post';
-
-      foreach ($ids as $id) {
-        $item->entity_id = $id;
-        $queue->createItem($item);
-      }
-    }
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function social_group_group_content_delete(EntityInterface $entity) {
-  if ($entity->getGroup()->bundle() == 'public_group') {
-    $related_entity = $entity->getEntity();
-
-    if ($related_entity && $related_entity->getEntityTypeId() == 'node') {
-      $queue = \Drupal::queue('public_group_queue');
-      $item = new \stdClass();
-      $item->entity_type = 'node';
-      $item->entity_id = $related_entity->id();
-      $queue->createItem($item);
-    }
-  }
-}
-
-/**
  * Return user profile by given group membership content.
  *
  * @param \Drupal\group\Entity\GroupContent $group_content
@@ -1358,30 +1308,6 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
     if ($new && $hidden) {
       $conditions['value'][] = $group_type->id();
-    }
-  }
-}
-
-/**
- * Implements hook_cron().
- */
-function social_group_cron() {
-  $queue = \Drupal::queue('public_group_queue');
-  $items = $queue->numberOfItems();
-
-  if ($items > 10) {
-    $items = 10;
-  }
-
-  for (; $items > 0; $items--) {
-    $item = $queue->claimItem();
-
-    if (!empty($item)) {
-      $storage = \Drupal::entityTypeManager()->getStorage($item->data->entity_type);
-      if ($entity = $storage->load($item->data->entity_id)) {
-        $entity->delete();
-      }
-      $queue->deleteItem($item);
     }
   }
 }
