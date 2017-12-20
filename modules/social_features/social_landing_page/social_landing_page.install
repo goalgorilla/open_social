@@ -16,6 +16,9 @@ function social_landing_page_install() {
 
   // Set some default permissions.
   _social_landing_page_set_permissions();
+  // Clear all plugin caches.
+  \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+
 }
 
 /**
