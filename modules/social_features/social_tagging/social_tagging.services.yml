@@ -1,4 +1,4 @@
 services:
-  social_tagging.terms:
+  social_tagging.tag_service:
     class: Drupal\social_tagging\SocialTaggingService
-    arguments: ['@entity.manager']
+    arguments: ['@entity.manager', '@config.factory']
