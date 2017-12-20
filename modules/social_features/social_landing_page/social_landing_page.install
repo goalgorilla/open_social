@@ -40,10 +40,14 @@ function _social_landing_page_set_permissions() {
  */
 function _social_landing_page_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'view node.landing_page.field_content_visibility:public content',
+  ];
 
   // Authenticated.
-  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'view node.landing_page.field_content_visibility:community content',
+  ]);
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
@@ -62,6 +66,7 @@ function _social_landing_page_get_permissions($role) {
     'override landing_page promote to front landing_page option',
     'override landing_page revision option',
     'override landing_page sticky option',
+    'view node.landing_page.field_content_visibility:group content',
   ]);
 
   // Site manager.
