@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Social Tagging.
+ */
+
+/**
+ * Install the module.
+ */
+function social_tagging_install() {
+  _social_tagging_set_defaults();
+}
+
+/**
+ * Function that sets the default configuration value(s) for this module.
+ */
+function _social_tagging_set_defaults() {
+  $permissions = [
+    'administer social_tagging',
+    'delete terms in social_tagging',
+    'edit terms in social_tagging',
+  ];
+
+  // Set allow to true, since that's the case by default.
+  \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings')->set('enable_content_tagging', 1)->save();
+  // SM should be able to change the permissions.
+  user_role_grant_permissions('sitemanager', $permissions);
+}
