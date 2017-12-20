@@ -1018,6 +1018,23 @@ function social_group_preprocess_profile(&$variables) {
  * If the user is not a member, the user has no access to view this block.
  */
 function social_group_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view' && $account->isAnonymous()) {
+    $group_types = 0;
+
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    foreach (GroupType::loadMultiple() as $group_type) {
+      $permissions = $group_type->getAnonymousRole()->getPermissions();
+
+      if (in_array('view group', $permissions)) {
+        $group_types++;
+      }
+    }
+
+    if ($group_types < 2) {
+      return AccessResult::forbidden();
+    }
+  }
+
   $group = _social_group_get_current_group();
   $user = Drupal::currentUser();
   // Check if there is a group set and if its an closed group.
@@ -1285,11 +1302,9 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
   $found = FALSE;
 
-  foreach ($query->where as &$conditions_group) {
-    foreach ($conditions_group['conditions'] as &$conditions) {
-      $field = $conditions['field'] == 'groups_field_data.type';
-
-      if ($field && $conditions['operator'] == 'not in') {
+  foreach ($query->where as &$conditions) {
+    foreach ($conditions['conditions'] as &$condition) {
+      if ($condition['field'] == 'groups_field_data.type') {
         $found = TRUE;
         break 2;
       }
@@ -1297,17 +1312,27 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
-    return;
+    $condition = [
+      'field' => 'groups_field_data.type',
+      'value' => [],
+      'operator' => 'not in',
+    ];
   }
+
+  $hiddens = $condition['operator'] == 'not in';
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
-    $new = !in_array($group_type->id(), $conditions['value']);
+    $new = !in_array($group_type->id(), $condition['value']);
     $permissions = $group_type->getAnonymousRole()->getPermissions();
     $hidden = !in_array('view group', $permissions);
 
-    if ($new && $hidden) {
-      $conditions['value'][] = $group_type->id();
+    if ($new && $hiddens == $hidden) {
+      $condition['value'][] = $group_type->id();
     }
+  }
+
+  if (!$found) {
+    $conditions['conditions'][] = $condition;
   }
 }
