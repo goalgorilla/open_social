@@ -21,6 +21,19 @@ function social_landing_page_form_alter(array &$form, FormStateInterface $form_s
 }
 
 /**
+ * Implements hook_form_form_ID_alter().
+ *
+ * Remove Landing Page option from Search Content filter.
+ */
+function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form['#id'] === 'views-exposed-form-search-content-page') {
+    if (isset($form['type']['#options']['landing_page'])) {
+      unset($form['type']['#options']['landing_page']);
+    }
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function social_landing_page_theme() {
