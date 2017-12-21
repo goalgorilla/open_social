@@ -471,66 +471,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  $items = [
-    'social_post_entity_form' => [
-      'field' => 'field_visibility',
-      'value' => 1,
-    ],
-    'node_event_form' => [
-      'field' => 'field_content_visibility',
-      'value' => 'public',
-    ],
-    'node_event_edit_form' => [
-      'field' => 'field_content_visibility',
-      'value' => 'public',
-    ],
-    'node_topic_form' => [
-      'field' => 'field_content_visibility',
-      'value' => 'public',
-    ],
-    'node_topic_edit_form' => [
-      'field' => 'field_content_visibility',
-      'value' => 'public',
-    ],
-  ];
-
-  if (isset($items[$form_id])) {
-    $group = \Drupal::routeMatch()->getParameter('group');
-    $entity = $form_state->getFormObject()->getEntity();
-
-    // Parameter may not exists if it is node edit page.
-    if (!isset($group) && $entity->id()) {
-      $group_content = GroupContent::loadByEntity($entity);
-
-      if ($group_content = current($group_content)) {
-        $group = $group_content->getGroup();
-      }
-    }
-
-    if (is_numeric($group)) {
-      $group = Group::load($group);
-    }
-
-    if (!($group instanceof GroupInterface) || $group->bundle() != 'public_group') {
-      return;
-    }
-
-    $entity_manager = \Drupal::service('entity_field.manager');
-    $fields = $entity_manager->getFieldStorageDefinitions($form['#entity_type']);
-    $field_name = $items[$form_id]['field'];
-    $values = $fields[$field_name]->getSetting('allowed_values');
-
-    if (is_numeric($key = $items[$form_id]['value'])) {
-      $form_field = &$form[$field_name]['widget'][0];
-    }
-    else {
-      $form_field = &$form[$field_name]['widget'];
-    }
-
-    $form_field['#options'] = [$key => $values[$key]];
-    $form_field['#default_value'] = (string) $key;
-  }
-
   switch ($form_id) {
     case 'group_content_public_group-group_membership_group-join_form':
     case 'group_content_public_group-group_membership_group-leave_form':
@@ -751,6 +691,9 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (isset($default_value[0]['value'])) {
       $element['#default_value'] = $default_value[0]['value'];
     }
+    else {
+      $element['#default_value'] = 'public';
+    }
     $entity = $form_state->getFormObject()->getEntity();
 
     $current_group = _social_group_get_current_group();
@@ -758,11 +701,18 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
       if (!$entity->id()) {
-        if ($group_type->id() === 'closed_group') {
-          $element['#default_value'] = 'group';
-        }
-        if ($group_type->id() === 'open_group') {
-          $element['#default_value'] = 'community';
+        switch ($group_type_id) {
+          case 'closed_group':
+            $element['#default_value'] = 'group';
+            break;
+
+          case 'open_group':
+            $element['#default_value'] = 'community';
+            break;
+
+          case 'public_group':
+            $element['#default_value'] = 'public';
+            break;
         }
       }
     }
@@ -1262,28 +1212,36 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
   $visibility_options['community'] = TRUE;
   $visibility_options['group'] = FALSE;
 
-  if ($group_type_id === 'closed_group') {
-    $visibility_options['community'] = FALSE;
-    $visibility_options['group'] = TRUE;
-  }
-  if ($group_type_id === NULL) {
-    $config = \Drupal::config('entity_access_by_field.settings');
-    $visibility_options['public'] = TRUE;
-    if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
-      // This is a new entity.
-      if (!$entity) {
-        $visibility_options['public'] = FALSE;
-      }
-      else {
-        /** @var \Drupal\node\Entity\Node $entity */
-        $current_visibility = $entity->get('field_content_visibility')->getString();
-        if ($current_visibility !== 'public') {
+  switch ($group_type_id) {
+    case 'closed_group':
+      $visibility_options['community'] = FALSE;
+      $visibility_options['group'] = TRUE;
+      break;
+
+    case 'public_group':
+      $visibility_options['public'] = TRUE;
+      $visibility_options['community'] = FALSE;
+      break;
+
+    case NULL:
+      $config = \Drupal::config('entity_access_by_field.settings');
+      $visibility_options['public'] = TRUE;
+      if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+        // This is a new entity.
+        if (!$entity) {
           $visibility_options['public'] = FALSE;
         }
+        else {
+          /** @var \Drupal\node\Entity\Node $entity */
+          $current_visibility = $entity->get('field_content_visibility')->getString();
+          if ($current_visibility !== 'public') {
+            $visibility_options['public'] = FALSE;
+          }
+        }
       }
-    }
-    $visibility_options['community'] = TRUE;
-    $visibility_options['group'] = FALSE;
+      $visibility_options['community'] = TRUE;
+      $visibility_options['group'] = FALSE;
+      break;
   }
   return $visibility_options;
 }
