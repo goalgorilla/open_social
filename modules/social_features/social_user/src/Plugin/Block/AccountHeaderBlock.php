@@ -244,6 +244,23 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ];
       }
 
+      // Check if the current user is allowed to create new landing pages.
+      if ($this->moduleHandler->moduleExists('social_landing_page')) {
+        $links['add']['below']['add_landing_page'] = [
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => $this->t('Create New Landing Page'),
+          'label' => $this->t('New landing page'),
+          'title_classes' => '',
+          'url' => Url::fromRoute('node.add', [
+            'node_type' => 'landing_page',
+          ]),
+        ];
+      }
+
       if ($this->moduleHandler->moduleExists('activity_creator')) {
         $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
         $notifications = $this->renderer->render($notifications_view);

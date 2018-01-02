@@ -1,0 +1,39 @@
+.primary-col {
+  padding-left: 1em;
+  padding-right: 1em;
+  flex-basis: 100%;
+  max-width: 100%;
+
+  @media (min-width: 900px) {
+    flex: 0 0 (100%/1.5);
+    max-width: (100%/1.5);
+    order: 1;
+  }
+
+  @media (min-width: 1200px) {
+    padding-left: 0;
+  }
+  .block-title {
+    font-size: 24px;
+    line-height: 48px;
+    margin-bottom: 30px;
+  }
+}
+
+.secondary-col {
+  padding-left: 1em;
+  padding-right: 1em;
+  flex-basis: 100%;
+  max-width: 100%;
+
+  @media (min-width: 900px) {
+    margin-top: 1rem;
+    flex: 0 1 (100%/3);
+    order: 2;
+    max-width: (100%/3);
+  }
+
+  @media (min-width: 1200px) {
+    padding-right: 0;
+  }
+}

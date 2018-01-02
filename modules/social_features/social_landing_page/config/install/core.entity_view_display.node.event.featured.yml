@@ -1,0 +1,83 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured
+    - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - field.field.node.event.field_files
+    - image.style.social_featured
+    - node.type.event
+  module:
+    - address
+    - image
+    - user
+id: node.event.featured
+targetEntityType: node
+bundle: event
+mode: featured
+content:
+  field_event_address:
+    type: address_plain
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_event_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: social_featured
+      image_link: content
+    third_party_settings: {  }
+  field_event_location:
+    type: string
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  groups:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_closed_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_open_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+hidden:
+  body: true
+  field_content_visibility: true
+  field_event_comments: true
+  field_event_date: true
+  field_event_date_end: true
+  field_files: true
+  flag_follow_content: true
+  like_and_dislike: true
+  links: true

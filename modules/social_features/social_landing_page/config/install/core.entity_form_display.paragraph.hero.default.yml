@@ -1,0 +1,66 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero.field_hero_buttons
+    - field.field.paragraph.hero.field_hero_image
+    - field.field.paragraph.hero.field_hero_subtitle
+    - field.field.paragraph.hero.field_hero_title
+    - image.style.medium
+    - paragraphs.paragraphs_type.hero
+  module:
+    - image_widget_crop
+    - paragraphs
+id: paragraph.hero.default
+targetEntityType: paragraph
+bundle: hero
+mode: default
+content:
+  field_hero_buttons:
+    type: paragraphs
+    weight: 5
+    settings:
+      title: Button
+      title_plural: Buttons
+      edit_mode: closed
+      closed_mode: preview
+      autocollapse: all
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: button
+    third_party_settings: {  }
+    region: content
+  field_hero_image:
+    weight: 0
+    settings:
+      show_default_crop: true
+      warn_multiple_usages: true
+      preview_image_style: medium
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero_landing
+      progress_indicator: throbber
+      show_crop_area: false
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  field_hero_subtitle:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_hero_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

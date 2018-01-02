@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - crop
+    - image_effects
+name: social_landing_hero
+label: 'social landing hero (1500×370)'
+effects:
+  d9ddbeef-d61b-466e-b856-f549dd551390:
+    uuid: d9ddbeef-d61b-466e-b856-f549dd551390
+    id: crop_crop
+    weight: -9
+    data:
+      crop_type: hero_landing
+  24fa75ed-0989-425f-ba23-26693a7d2ea5:
+    uuid: 24fa75ed-0989-425f-ba23-26693a7d2ea5
+    id: image_effects_auto_orient
+    weight: -10
+    data:
+      scan_exif: true
+  758d4ae8-0fe7-4751-b0e1-ac3209451371:
+    uuid: 758d4ae8-0fe7-4751-b0e1-ac3209451371
+    id: image_scale_and_crop
+    weight: -8
+    data:
+      width: 1500
+      height: 370
