@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 
@@ -256,4 +257,66 @@ function social_tagging_entity_delete(EntityInterface $entity) {
       db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_tagging_preprocess_node(&$variables) {
+
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+
+  $renderable = [];
+  $tarray = [];
+
+  if ($variables['node'] instanceof Node) {
+    /** @var Drupal\node\Entity\Node $node */
+    $node = $variables['node'];
+
+    if ($node->hasField('social_tagging')) {
+
+      if ($tag_service->allowSplit()) {
+        $tarray = $tag_service->buildHierarchy($node->get('social_tagging')->getValue());
+        $renderable = [
+          '#theme' => 'social_tagging_split',
+          '#taghierarchy' => $tarray,
+        ];
+      }
+      elseif ($tag_service->active()) {
+        // Just a simple way to add all tags to the array.
+        foreach ($node->get('social_tagging')->getValue() as $term) {
+          $url = Url::fromRoute('view.search_content.page_no_value', [
+            'tag' => $term['target_id'],
+          ]);
+
+          /** @var Drupal\taxonomy\Entity\Term $term */
+          $taxonomy_term = Term::load($term['target_id']);
+          $tarray[$taxonomy_term->getName()] = $url->toString();
+        }
+
+        $renderable = [
+          '#theme' => 'social_tagging_nosplit',
+          '#tagstitle' => t('Tags'),
+          '#tags' => $tarray,
+        ];
+      }
+    }
+
+  }
+
+  $variables['social_tagging'] = drupal_render($renderable);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_tagging_theme($existing, $type, $theme, $path) {
+  return [
+    'social_tagging_nosplit' => [
+      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+    ],
+    'social_tagging_split' => [
+      'variables' => ['taghierarchy' => NULL],
+    ],
+  ];
 }
