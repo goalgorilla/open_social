@@ -18,7 +18,7 @@ function social_user_install() {
 
   // Set default value for displaying navigation icons.
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
   $config->set('display_social_private_message_icon', 1)->save();
   $config->set('display_my_groups_icon', 1)->save();
 }
@@ -51,6 +51,26 @@ function social_user_update_8002() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
   $config->set('display_social_private_message_icon', 1)->save();
   $config->set('display_my_groups_icon', 1)->save();
+}
+
+/**
+ * Add permissions to view and block users for site manager role.
+ */
+function social_user_update_8003() {
+  $permissions = _social_user_get_permissions('sitemanager');
+  user_role_grant_permissions('sitemanager', $permissions);
+}
+
+/**
+ * Migrate navigation settings into the correct format.
+ */
+function social_user_update_8004() {
+  $old_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
+  $new_config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
+  // Store the values.
+  $new_config->setData($old_config->getRawData());
+  // Remove the old config altogether.
+  $old_config->delete();
 }
 
 /**
@@ -104,12 +124,4 @@ function _social_user_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
-}
-
-/**
- * Add permissions to view and block users for site manager role.
- */
-function social_user_update_8003() {
-  $permissions = _social_user_get_permissions('sitemanager');
-  user_role_grant_permissions('sitemanager', $permissions);
 }
