@@ -85,20 +85,6 @@ function _social_search_get_permissions($role) {
 }
 
 /**
- * Install new submodule from search_api, to fix our exposed filters.
- *
- * See https://www.drupal.org/node/2777483.
- */
-function social_search_update_8101(array &$sandbox) {
-
-  $modules = [
-    'search_api_views_taxonomy',
-  ];
-  \Drupal::service('module_installer')->install($modules);
-
-}
-
-/**
  * Remove deprecated bloks and views from Social Search module.
  */
 function social_search_update_8102(array &$sandbox) {
@@ -263,4 +249,14 @@ function social_search_update_8107(&$sandbox) {
       }
     }
   }
+}
+
+/**
+ * Uninstall depricated submodule from search_api.
+ */
+function social_search_update_8108(array &$sandbox) {
+  $modules = [
+    'search_api_views_taxonomy',
+  ];
+  \Drupal::service('module_installer')->uninstall($modules);
 }
