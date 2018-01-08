@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_block_reference_secondary
+    - paragraphs.paragraphs_type.block
+  module:
+    - block_field
+id: paragraph.block.field_block_reference_secondary
+field_name: field_block_reference_secondary
+entity_type: paragraph
+bundle: block
+label: Secondary
+description: 'A secondary block will be printed in a side column, keep in mind it will take 1/3'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  plugin_ids:
+    'views_block:latest_topics-group_topics_block': 'views_block:latest_topics-group_topics_block'
+    'views_block:latest_topics-block_latest_topics': 'views_block:latest_topics-block_latest_topics'
+    'views_block:newest_groups-block_newest_groups': 'views_block:newest_groups-block_newest_groups'
+    'views_block:newest_users-block_newest_users': 'views_block:newest_users-block_newest_users'
+    'views_block:topics-block_user_topics': 'views_block:topics-block_user_topics'
+    'views_block:upcoming_events-upcoming_events_group': 'views_block:upcoming_events-upcoming_events_group'
+    activity_overview_block: activity_overview_block
+field_type: block_field

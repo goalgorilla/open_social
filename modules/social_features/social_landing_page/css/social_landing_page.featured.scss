@@ -1,0 +1,50 @@
+.field--name-field-featured-items {
+  @media(min-width: 900px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    .paragraph--section & {
+      margin: 0 -10px;
+    }
+  }
+  .field--label {
+    width: 100%;
+  }
+  .field--item {
+    @media(min-width: 900px) {
+      float: left;
+      width: 33.3%;
+      padding: 0 10px;
+    }
+    .card {
+      overflow: hidden;
+      height: 100%;
+      @media(min-width: 900px) {
+        margin-bottom: 0;
+      }
+      .card__title {
+        min-height: 63px;
+        color: #4D4D4D;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 400;
+        text-transform: none;
+      }
+      .card__image {
+        padding-bottom: 33.3%;
+        background-color: #e6e6e6;
+        position: relative;
+        .teaser__teaser-type {
+          z-index: 2;
+        }
+        img {
+          width: 100%;
+          position: absolute;
+        }
+      }
+    }
+    .teaser__published-author {
+      font-weight: 500;
+    }
+  }
+}

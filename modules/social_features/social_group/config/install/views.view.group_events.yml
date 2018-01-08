@@ -5,6 +5,10 @@ dependencies:
     - core.entity_view_mode.group_content.teaser
     - group.content_type.closed_group-group_node-event
     - group.content_type.open_group-group_node-event
+    - group.content_type.public_group-group_node-event
+    - group.type.closed_group
+    - group.type.open_group
+    - group.type.public_group
   module:
     - datetime
     - group
@@ -148,6 +152,7 @@ display:
           value:
             open_group-group_node-event: open_group-group_node-event
             closed_group-group_node-event: closed_group-group_node-event
+            public_group-group_node-event: public_group-group_node-event
           entity_type: group_content
           entity_field: type
           plugin_id: bundle
@@ -316,11 +321,18 @@ display:
             sort_order: asc
             number_of_records: 0
             format: default_summary
-          specify_validation: false
+          specify_validation: true
           validate:
-            type: none
+            type: 'entity:group'
             fail: 'not found'
-          validate_options: {  }
+          validate_options:
+            access: false
+            bundles:
+              closed_group: closed_group
+              open_group: open_group
+              public_group: public_group
+            multiple: 0
+            operation: view
           break_phrase: false
           not: false
           entity_type: group_content

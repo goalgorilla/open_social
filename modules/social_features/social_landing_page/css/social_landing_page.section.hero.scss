@@ -1,0 +1,52 @@
+.paragraph--hero {
+  @media(min-width: 1200px) {
+    .paragraph--section & {
+      margin-left: calc(-100vw / 2 + #{1200px} / 2);
+      margin-right: calc(-100vw / 2 + #{1200px} / 2);
+    }
+  }
+  .cover-wrap {
+    @media(min-width: 600px) {
+      min-height: 350px;
+    }
+  }
+  .cover-small {
+    max-width: 620px;
+    width: 100%;
+    padding: 0 7px;
+    margin: 0 auto;
+    text-align: left;
+    @media(min-width: 600px) {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .page-title {
+      width: 100%;
+      text-align: left;
+      padding: 30px 0 10px;
+    }
+    .page-subtitle {
+      margin: 0 0 5px;
+      font-weight: normal;
+      font-size: 20px;
+    }
+    .hero-footer {
+      .field--item {
+        display: inline-block;
+        &:not(:first-child) {
+          .paragraph--button {
+            padding-left: 20px;
+          }
+        }
+      }
+      .card__actionbar {
+        padding: 20px 0;
+        .btn {
+          min-width: 130px;
+        }
+      }
+    }
+  }
+}
