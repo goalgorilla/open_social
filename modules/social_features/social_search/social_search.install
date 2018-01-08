@@ -264,3 +264,15 @@ function social_search_update_8107(&$sandbox) {
     }
   }
 }
+
+/**
+ * Uninstall depricated submodule from search_api.
+ *
+ * See https://www.drupal.org/project/search_api/issues/2917399
+ */
+function social_search_update_8108(array &$sandbox) {
+  $modules = [
+    'search_api_views_taxonomy',
+  ];
+  \Drupal::service('module_installer')->uninstall($modules);
+}
