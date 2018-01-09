@@ -2,7 +2,3 @@ services:
   social_tagging.tag_service:
     class: Drupal\social_tagging\SocialTaggingService
     arguments: ['@entity.manager', '@config.factory']
-  social_tagging.overrider:
-    class: \Drupal\social_tagging\SocialTaggingConfigOverride
-    tags:
-      - {name: config.factory.override, priority: 5}
