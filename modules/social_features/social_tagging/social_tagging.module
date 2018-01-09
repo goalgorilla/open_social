@@ -320,3 +320,27 @@ function social_tagging_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+  $options = [];
+  // Must be either one of these form_ids.
+  if (in_array($form['#id'], ["views-exposed-form-search-content-page-no-value", "views-exposed-form-search-content-page"])) {
+    if ($tag_service->allowSplit()) {
+      foreach($tag_service->getCategories() as $key => $value) {
+        $options[$value] = $tag_service->getChildren($key);
+      }
+
+      $form['tag']['#options'] = $options;
+    }
+    // Only remove all toplevel items.
+    elseif ($tag_service->active()) {
+      // Remove main items and just insert child options.
+      $options = $tag_service->getAllChildren();
+      $form['tag']['#options'] = $options;
+    }
+  }
+}
