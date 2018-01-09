@@ -122,7 +122,7 @@ class SocialTaggingService {
     foreach ($terms as $term) {
       $current_term = Term::load($term['target_id']);
       $url = Url::fromRoute('view.search_content.page_no_value', [
-        'tag' => $current_term->id(),
+        'tag[]' => $current_term->id(),
       ]);
       // Get current terms parents.
       $parents = $this->termStorage->loadParents($current_term->id());

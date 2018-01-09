@@ -286,7 +286,7 @@ function social_tagging_preprocess_node(&$variables) {
         // Just a simple way to add all tags to the array.
         foreach ($node->get('social_tagging')->getValue() as $term) {
           $url = Url::fromRoute('view.search_content.page_no_value', [
-            'tag' => $term['target_id'],
+            'tag[]' => $term['target_id'],
           ]);
 
           /** @var Drupal\taxonomy\Entity\Term $term */
