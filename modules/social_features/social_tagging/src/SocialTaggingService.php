@@ -107,6 +107,27 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns all the children of top level term items.
+   *
+   * @return array
+   *   An array of child items.
+   */
+  public function getAllChildren() {
+    // Define as array.
+    $options = [];
+
+    // Fetch main categories.
+    foreach ($this->getCategories() as $main_item_id => $main_item_name) {
+
+      foreach ($this->termStorage->loadTree('social_tagging', $main_item_id, 1) as $category) {
+        $options[$category->tid] = $category->name;
+      }
+    }
+    // Return array.
+    return $options;
+  }
+
+  /**
    * Returns a multilevel tree.
    *
    * @param array $terms
