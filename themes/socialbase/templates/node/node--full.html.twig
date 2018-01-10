@@ -192,15 +192,6 @@
         {% endblock %}
     {% endif %}
 
-    {% block nodefull_tagging %}
-      {% if social_tagging %}
-        <hr/>
-        <div class="meta-engage">
-          {{ social_tagging }}
-        </div>
-      {% endif %}
-    {% endblock %}
-
     {% block nodefull_body %}
       {{ content|without('flag_follow_content') }}
     {% endblock %}
