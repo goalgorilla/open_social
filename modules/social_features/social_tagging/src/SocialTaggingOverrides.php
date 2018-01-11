@@ -110,16 +110,16 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $config_name = 'search_api.index.social_content';
 
     if (in_array($config_name, $names)) {
-      $overrides[$config_name] = [
-        'field_settings' => [
-          'social_tagging' => [
-            'label' => 'Tags',
-            'datasource_id' => 'entity:node',
-            'property_path' => 'social_tagging',
-            'type' => 'integer',
-          ],
-        ],
+      $config = \Drupal::service('config.factory')->getEditable($config_name);
+      $field_settings = $config->get('field_settings');
+
+      $field_settings['social_tagging'] = [
+        'label' => 'Tags',
+        'datasource_id' => 'entity:node',
+        'property_path' => 'social_tagging',
+        'type' => 'integer',
       ];
+      $overrides[$config_name]['field_settings'] = $field_settings;
     }
 
     return $overrides;
