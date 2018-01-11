@@ -260,18 +260,22 @@ function social_tagging_entity_delete(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Build output on node view.
+ *
+ * @param \Drupal\node\Entity\Node $node
+ *   A node.
+ *
+ * @return array
+ *   Hierarchic presentation of the terms.
  */
-function social_tagging_preprocess_node(&$variables) {
+function social_tagging_process_tags(Node $node) {
 
   $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
   $renderable = [];
   $tarray = [];
 
-  if ($variables['node'] instanceof Node) {
-    /** @var Drupal\node\Entity\Node $node */
-    $node = $variables['node'];
+  if ($node instanceof Node) {
 
     if ($node->hasField('social_tagging')) {
 
@@ -304,7 +308,7 @@ function social_tagging_preprocess_node(&$variables) {
 
   }
 
-  $variables['social_tagging'] = drupal_render($renderable);
+  return drupal_render($renderable);
 }
 
 /**
@@ -330,7 +334,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   // Must be either one of these form_ids.
   if (in_array($form['#id'], ["views-exposed-form-search-content-page-no-value", "views-exposed-form-search-content-page"])) {
     if ($tag_service->allowSplit()) {
-      foreach($tag_service->getCategories() as $key => $value) {
+      foreach ($tag_service->getCategories() as $key => $value) {
         $options[$value] = $tag_service->getChildren($key);
       }
 

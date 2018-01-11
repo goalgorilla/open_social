@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_tagging
+    - system
+  theme:
+    - socialblue
+id: socialtagsblock
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: social_tags_block
+settings:
+  id: social_tags_block
+  label: Tags
+  provider: social_tagging
+  label_display: visible
+visibility:
+  request_path:
+    id: request_path
+    pages: '/node/*'
+    negate: false
+    context_mapping: {  }

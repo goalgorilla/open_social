@@ -141,7 +141,16 @@ class SocialTaggingService {
     $tree = [];
 
     foreach ($terms as $term) {
+      if (!isset($term['target_id'])) {
+        continue;
+      }
+
       $current_term = Term::load($term['target_id']);
+      // Must be a valid Term.
+      if (!$current_term instanceof Term) {
+        continue;
+      }
+
       $url = Url::fromRoute('view.search_content.page_no_value', [
         'tag[]' => $current_term->id(),
       ]);
