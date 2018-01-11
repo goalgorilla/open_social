@@ -16,12 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *  id = "social_tags_block",
  *  admin_label = @Translation("Social Tags block"),
- *   context = {
- *     "node" = @ContextDefinition(
- *       "entity:node",
- *       label = @Translation("Current Node")
- *     )
- *   }
  * )
  */
 class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterface {
