@@ -5,11 +5,37 @@
  * Installation file for Social Tagging.
  */
 
+use Drupal\search_api\Entity\Index;
+use Drupal\user\Entity\User;
+
 /**
  * Install the module.
  */
 function social_tagging_install() {
   _social_tagging_set_defaults();
+
+  /* @var Drupal\search_api\Entity\Index $index */
+  $index = Index::load('social_content');
+  \Drupal::logger('social_tagging')->info('Loaded search index');
+
+  // If currently enabled we will first disabled and enable the index.
+  if ($index !== NULL && $index->status()) {
+    \Drupal::logger('social_tagging')->info('Search index exists');
+
+    // Elevate permissions so we can index *all* the items.
+    $accountSwitcher = Drupal::service('account_switcher');
+    $account = User::load(1);
+    $accountSwitcher->switchTo($account);
+
+    // Disable and enable the index so the tagging field is properly added.
+    $index->disable()->save();
+    \Drupal::logger('social_tagging')->info('Search index disabled');
+    $index->enable()->save();
+    \Drupal::logger('social_tagging')->info('Search index enabled');
+
+    // Restore user account.
+    $accountSwitcher->switchBack();
+  }
 }
 
 /**

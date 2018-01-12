@@ -85,7 +85,6 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#default_value' => $config->get('allow_category_split'),
       '#required' => FALSE,
       '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
-      '#disabled' => TRUE,
     ];
 
     $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
