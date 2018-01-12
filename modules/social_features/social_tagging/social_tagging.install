@@ -21,10 +21,19 @@ function social_tagging_install() {
   if ($index !== NULL && $index->status()) {
     \Drupal::logger('social_tagging')->info('Search index exists');
 
+    // Elevate permissions so we can index *all* the items.
+    $accountSwitcher = Drupal::service('account_switcher');
+    $account = \Drupal\user\Entity\User::load(1);
+    $accountSwitcher->switchTo($account);
+
+    // Disable and enable the index so the tagging field is properly added.
     $index->disable()->save();
     \Drupal::logger('social_tagging')->info('Search index disabled');
     $index->enable()->save();
     \Drupal::logger('social_tagging')->info('Search index enabled');
+
+    // Restore user account.
+    $accountSwitcher->switchBack();
   }
 }
 
