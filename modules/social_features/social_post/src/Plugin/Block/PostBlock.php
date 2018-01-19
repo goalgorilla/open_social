@@ -67,7 +67,7 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $this->currentUser = $currentUser;
     $this->formBuilder = $formBuilder;
     $this->moduleHandler = $moduleHandler;
-    if ($moduleHandler->moduleExists('social_post_photo')){
+    if ($moduleHandler->moduleExists('social_post_photo')) {
       $this->bundle = 'photo';
     }
   }

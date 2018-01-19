@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Provide views data for social_post module.

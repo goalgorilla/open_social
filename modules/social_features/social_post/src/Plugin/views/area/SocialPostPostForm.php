@@ -1,7 +1,4 @@
 <?php
-/**
- * @file
- */
 
 namespace Drupal\social_post\Plugin\views\area;
 
@@ -163,4 +160,5 @@ class SocialPostPostForm extends AreaPluginBase {
 
     return $block_instance;
   }
+
 }
