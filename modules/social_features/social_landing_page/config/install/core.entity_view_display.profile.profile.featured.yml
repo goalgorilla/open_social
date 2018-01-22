@@ -25,8 +25,16 @@ targetEntityType: profile
 bundle: profile
 mode: featured
 content:
+  field_profile_first_name:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   field_profile_image:
-    weight: 7
+    weight: 0
     label: hidden
     settings:
       image_style: social_featured
@@ -34,14 +42,20 @@ content:
     third_party_settings: {  }
     type: image
     region: content
+  field_profile_last_name:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
   field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
-  field_profile_first_name: true
   field_profile_function: true
   field_profile_interests: true
-  field_profile_last_name: true
   field_profile_organization: true
   field_profile_phone_number: true
   field_profile_profile_tag: true

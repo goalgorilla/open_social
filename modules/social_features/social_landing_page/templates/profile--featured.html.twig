@@ -46,13 +46,6 @@
 
   {% block card_image %}
     <div class="card__image" >
-      {% block card_teaser_type %}
-        <div class="teaser__teaser-type">
-          <svg class="teaser__teaser-type-icon">
-            <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-          </svg>
-        </div>
-      {% endblock %}
       {{ content.field_profile_image }}
     </div>
   {% endblock %}
