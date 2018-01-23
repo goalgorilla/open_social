@@ -2,10 +2,11 @@
 
 namespace Drupal\alternative_frontpage\EventSubscriber;
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
@@ -24,11 +25,18 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $userData;
 
   /**
-   * Protected var ConfigFactory.
+   * Protected var alternativeFrontpageSettings.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $configFactory;
+  protected $alternativeFrontpageSettings;
+
+  /**
+   * Protected var siteSettings.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $siteSettings;
 
   /**
    * Protected var for the current user.
@@ -50,7 +58,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher) {
     // We needs it.
     $this->userData = $user_data;
-    $this->configFactory = $config_factory->get('alternative_frontpage.settings');
+    $this->alternativeFrontpageSettings = $config_factory->get('alternative_frontpage.settings');
+    $this->siteSettings = $config_factory->get('system.site');
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
   }
@@ -86,12 +95,22 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $isFrontPage = $this->pathMatcher->isFrontPage();
-    if ($isFrontPage) {
-      // Get the current user.
-      $front_page = $this->configFactory->get('frontpage_for_authenticated_user');
-      if ($front_page && $this->currentUser->isAuthenticated()) {
-        $event->setResponse(new RedirectResponse($front_page));
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $request = $event->getRequest();
+    $request_path = $request->getPathInfo();
+    $frontpage_an = $this->siteSettings->get('page.front');
+    if ($request_path === $frontpage_an || $request_path === '/') {
+      $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user');
+      if ($frontpage_an === $frontpage_lu) {
+        return;
+      }
+      if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
+        $cache_contexts = new CacheableMetadata();
+        $cache_contexts->setCacheContexts(['user.roles:anonymous']);
+
+        $response = new CacheableRedirectResponse($frontpage_lu);
+        $response->addCacheableDependency($cache_contexts);
+        $event->setResponse($response);
       }
     }
   }
