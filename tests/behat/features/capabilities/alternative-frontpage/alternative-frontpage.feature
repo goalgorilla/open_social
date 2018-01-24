@@ -36,5 +36,19 @@ Feature: Set alternative frontpage
     Then I should see "Frontpage LU"
     # See as AN
     Given I logout
-    And I click "Home"
+    When I click "Home"
     Then I should see "Frontpage AN"
+
+    # Restore the settings
+    Given I am on "user/login"
+    When I fill in the following:
+      | Username or email address | admin |
+      | Password                  | admin |
+    And I press "Log in"
+    Given I am on "admin/config/alternative_frontpage"
+    # Error validation
+    When I fill in the following:
+      | Frontpage for anonymous users     | /stream |
+      | Frontpage for authenticated users |         |
+    And I press "Save configuration"
+    Then I should see "The configuration options have been saved."
