@@ -8,7 +8,6 @@ use Drupal\profile\Event\ProfileLabelEvent;
 use Drupal\user\Entity\User;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-
 /**
  * Class ProfileLabelSubscriber.
  *
@@ -29,7 +28,9 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
 
   /**
    * Subscriber Callback for the event.
-   * @param ProfileLabelEvent $event
+   *
+   * @param \Drupal\profile\Event\ProfileLabelEvent $event
+   *   The event.
    */
   public function overrideProfileLabel(ProfileLabelEvent $event) {
     $profile = $event->getProfile();
@@ -41,4 +42,5 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
       }
     }
   }
+
 }
