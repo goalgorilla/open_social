@@ -14,6 +14,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -113,7 +114,7 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
   /** @var \Drupal\node\Entity\NodeType $node_type */
   $node_type = \Drupal::routeMatch()->getParameter('node_type');
   $node_type_tagging = TRUE;
-  if ($node_type instanceof \Drupal\node\Entity\NodeType) {
+  if ($node_type instanceof NodeType) {
     if (in_array($node_type->id(), $ignored_node_types)) {
       $node_type_tagging = FALSE;
     }
