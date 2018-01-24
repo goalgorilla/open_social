@@ -69,7 +69,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     // 280 priority is higher than the dynamic and static page cache.
-    $events[KernelEvents::REQUEST][] = ['checkForHomepageRedirect'];
+    $events[KernelEvents::REQUEST][] = ['checkForHomepageRedirect', '280'];
     return $events;
   }
 

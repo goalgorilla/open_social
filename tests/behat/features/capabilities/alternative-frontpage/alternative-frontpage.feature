@@ -16,8 +16,8 @@ Feature: Set alternative frontpage
     When I am on "admin/config/alternative_frontpage"
     # Error validation
     And I fill in the following:
-      | Frontpage for anonymous users     |       |
-      | Frontpage for authenticated users | /user |
+      | Frontpage for anonymous users     |              |
+      | Frontpage for authenticated users | /user/logout |
     And I press "Save configuration"
     Then I should see "The path for the anonymous frontpage cannot be empty."
     And I should see "The path for the authenticated frontpage is not allowed."
@@ -37,3 +37,4 @@ Feature: Set alternative frontpage
     # See as AN
     Given I logout
     And I click "Home"
+    Then I should see "Frontpage AN"

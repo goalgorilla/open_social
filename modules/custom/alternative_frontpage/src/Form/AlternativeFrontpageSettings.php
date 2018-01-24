@@ -122,11 +122,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   /**
    * Checks if a path is allowed.
    *
-   * Some paths are not allowed, e.g.:
-   *  - /user/login?destination=
-   *  - /user/login
-   *  - /user
-   *  - /user/register/
+   * Some paths are not allowed, e.g. /user/logout or /ajax.
    *
    * @param string $path
    *   Path to check.
@@ -136,9 +132,8 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
    */
   private function isAllowedPath($path) {
     $unallowed_paths = [
-      '/user/login',
-      '/user/register',
-      '/user',
+      '/user/logout',
+      '/ajax',
     ];
     foreach ($unallowed_paths as $unallowed_path) {
       if ($unallowed_path === substr($path, 0, strlen($unallowed_path))) {
