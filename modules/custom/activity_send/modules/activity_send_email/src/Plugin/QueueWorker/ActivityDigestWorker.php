@@ -45,7 +45,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           if (isset($activity->field_activity_output_text)) {
             // Load the message.
             $message = Message::load($activity->field_activity_message->target_id);
-            $body_text = EmailActivityDestination::getSendEmailOutputText($message);
+            $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
 
             if ($langcode && !empty($body_text)) {
               $digest_notifications['#notifications'][] = $body_text;
