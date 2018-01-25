@@ -18,7 +18,30 @@
     Then I should see "Create Private Message"
     And I select "PM User Two" from "edit-members"
     And I fill in "Message" with "Hi PM User Two, I heard you like pineapple on your pizza..."
-    When I press "Send"
+    And I press "Send"
+    Then I should see the following success messages:
+      | Your message has been created. |
+
+    # I want to send a new message from a user`s profile teaser
+    When I am on "/all-members"
+    Then I should see "Private message"
+    When I click the xth "1" link with the text "Private message"
+    Then I should see "PM User Two"
+    And I fill in "Message" with "Hi PM User Two, I heard you like salami on your pizza..."
+    And I press "Send"
+    Then I should see the following success messages:
+      | Your message has been created. |
+
+    # I want to send a new message from a user`s profile
+    When I am on the profile of "PM User Two"
+    Then I should see the link "Private message" in the "Hero block"
+    And I click "Private message"
+    Then I should see "PM User Two"
+    And I should see "You"
+    When I fill in "Message" with "Hi PM User Two, are we going to eat some pizza tomorrow?"
+    And I press "Send"
+    Then I should see the following success messages:
+      | Your message has been created. |
 
     # I want to see my new message and reply.
     Given I am logged in as "PM User Two"
@@ -27,8 +50,8 @@
     And I should see the link "View thread"
     And I should see "PM User One"
     When I click "View thread"
-    Then I should see "Hi PM User Two, I heard you like pineapple on your pizza..."
-    When I fill in "Message" with "Hey PM User One, ...That's correct. Ansjovis is good too!"
+    Then I should see "Hi PM User Two, are we going to eat some pizza tomorrow?"
+    When I fill in "Message" with "Hey PM User One, ...That's fine. I will order!"
     And I press "Send"
     Then I should see the following success messages:
       | Your message has been created. |
@@ -92,6 +115,7 @@
     And I select "PM User Four" from "edit-members"
     And I fill in "Message" with "Be strict on the pizza toppings, user two likes it weird!"
     When I press "Send"
+
     # Check the two messages.
     Given I am logged in as "PM User Four"
     When I click the xth "0" element with the css ".icon-mail"

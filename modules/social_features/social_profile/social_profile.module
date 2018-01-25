@@ -16,6 +16,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_field_widget_form_alter().
@@ -195,8 +196,17 @@ function social_profile_preprocess_profile(array &$variables) {
   // See social_user_user_format_name_alter(), DisplayName is either first name
   // + last name, or username if both first and last name aren't filled out.
   $variables['profile_name'] = $user->getDisplayName();
-  $variables['profile_contact_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/information');
+  $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
+
+  // Set a condition for the label to show in the teaser
+  // The actual label text should be changeable in the template.
+  // Disable for the LU's own profile.
+  $variables['profile_contact_label'] = 'profile_info';
+  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId()) {
+    $variables['profile_contact_label'] = 'private_message';
+    $variables['#cache']['contexts'][] = 'user';
+  }
 
   // Email field.
   $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
@@ -222,6 +232,38 @@ function social_profile_preprocess_profile(array &$variables) {
     }
   }
 
+  // Add the hero styled image.
+  if (!empty($profile->field_profile_banner_image->entity)) {
+    $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+      ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+  }
+
+}
+
+/**
+ * Get the contact URL. This can be private message or other means of contact.
+ *
+ * @param \Drupal\user\Entity\User $account
+ *   The user object.
+ *
+ * @return \Drupal\Core\Url
+ *   The URL to contact the user.
+ */
+function _social_profile_get_contact_url(User $account) {
+  if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
+    $current_user = \Drupal::currentUser();
+    if ($current_user->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
+      $members = [$current_user, $account];
+      $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
+      if ($thread_id) {
+        return Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+      }
+      else {
+        return Url::fromRoute('private_message.private_message_create', [], ['query' => ['recipient' => $account->id()]]);
+      }
+    }
+  }
+  return Url::fromUserInput('/user/' . $account->id() . '/information');
 }
 
 /**

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.public_group
+    - node.type.topic
+  module:
+    - gnode
+    - node
+id: public_group-group_node-topic
+label: topic
+description: 'Adds <em class="placeholder">Topic</em> content to groups both publicly and privately.'
+group_type: public_group
+content_plugin: 'group_node:topic'
+plugin_config:
+  group_cardinality: 1
+  entity_cardinality: 1
+  use_creation_wizard: false

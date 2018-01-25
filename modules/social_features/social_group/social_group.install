@@ -46,6 +46,9 @@ function social_group_install() {
     $view->setStatus(FALSE);
     $view->save();
   }
+
+  // Set default group settings.
+  _social_group_set_default_configuration();
 }
 
 /**
@@ -76,12 +79,16 @@ function _social_group_set_permissions() {
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'access group search',
+  ];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'create open_group group',
     'create closed_group group',
+    'create public_group group',
+    'view group stream page',
   ]);
 
   // Content manager.
@@ -94,7 +101,9 @@ function _social_group_get_permissions($role) {
   ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'set social group settings',
+  ]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -125,6 +134,15 @@ function _social_group_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
+}
+
+/**
+ * Function to set default configuration.
+ */
+function _social_group_set_default_configuration() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('allow_group_selection_in_node', FALSE);
+  $config->save();
 }
 
 /**
@@ -282,4 +300,43 @@ function social_group_update_8007() {
  */
 function social_group_update_8008() {
   _social_group_set_permissions();
+}
+
+/**
+ * Set the default group configuration and permission for sitemanager.
+ */
+function social_group_update_8009() {
+  _social_group_set_default_configuration();
+
+  // Site manager should have permission to set social group settings.
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() !== 'sitemanager') {
+      continue;
+    }
+
+    $permissions = ['set social group settings'];
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+
+}
+
+/**
+ * Add permissions for public groups.
+ */
+function social_group_update_8010() {
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->id() === 'anonymous') {
+      user_role_grant_permissions($role->id(), ['access group search']);
+    }
+    else {
+      user_role_grant_permissions($role->id(), [
+        'create public_group group',
+        'view group stream page',
+      ]);
+    }
+  }
 }

@@ -44,7 +44,9 @@ libraries-extend:
   #extend the core datepicker with a stylesheet and attach the listener
   core/jquery.ui.datepicker:
     - socialbase/form--timepicker
-  # attach the bootstrap library script and css component
+  # Attach the bootstrap library script and css component.
+  # Note that the socialbase library scripts needs to load first. That is
+  # why we added weights to the library JS files in socialbase.
   bootstrap/popover:
     - socialbase/popover
   core/drupal.dialog.ajax:
@@ -88,6 +90,10 @@ libraries-override:
     css:
       component:
         assets/vendor/jquery.ui/themes/base/dialog.css: false
+  core/jquery.ui.menu:
+    css:
+      component:
+        assets/vendor/jquery.ui/themes/base/menu.css: false
   system/base: false
   views/views.module: false
   classy/file: false

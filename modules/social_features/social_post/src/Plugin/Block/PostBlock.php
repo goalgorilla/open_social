@@ -4,6 +4,7 @@ namespace Drupal\social_post\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -48,9 +49,16 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
   protected $formBuilder;
 
   /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandler
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, AccountProxy $currentUser, FormBuilderInterface $formBuilder) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, AccountProxy $currentUser, FormBuilderInterface $formBuilder, ModuleHandler $moduleHandler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityType = 'post';
     $this->bundle = 'post';
@@ -58,6 +66,10 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
     $this->entityTypeManager = $entityTypeManager;
     $this->currentUser = $currentUser;
     $this->formBuilder = $formBuilder;
+    $this->moduleHandler = $moduleHandler;
+    if ($moduleHandler->moduleExists('social_post_photo')) {
+      $this->bundle = 'photo';
+    }
   }
 
   /**
@@ -70,7 +82,8 @@ class PostBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('module_handler')
     );
   }
 

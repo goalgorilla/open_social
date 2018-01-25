@@ -1,4 +1,4 @@
-[type="radio"]:checked + label {
+[type="radio"]:checked:not(:disabled) + label {
   color: $radio-fill-color;
 }
 
@@ -32,4 +32,18 @@
     border-color: $brand-primary-dark;
   }
 
+}
+
+// Make the animation obvious when another element
+// is changing the selected radio.
+// This class is set in social_group in the
+// social_group_validate_group_selection function.
+.js--animate-enabled-form-control:checked + label {
+  animation: scale-form-control 0.5s ease-in 0.5s;
+}
+
+@keyframes scale-form-control {
+  0%   {transform: scale(1)}
+  50%  {transform: scale(1.1)}
+  100% {transform: scale(1)}
 }

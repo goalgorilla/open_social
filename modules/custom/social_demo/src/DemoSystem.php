@@ -141,10 +141,16 @@ abstract class DemoSystem extends DemoContent {
       $color = $this->configFactory->getEditable('color.theme.' . $active_theme);
       // Set as a palette.
       $palette = [
-        'brand-bg-primary' => $data['theme']['color_primary'],
-        'brand-bg-secondary' => $data['theme']['color_secondary'],
-        'brand-bg-accent' => $data['theme']['color_accents'],
-        'brand-text-primary' => $data['theme']['color_link'],
+        'brand-primary'  => $data['theme']['color_primary'],
+        'brand-secondary'  => $data['theme']['color_secondary'],
+        'brand-accent'  => $data['theme']['color_accents'],
+        'brand-link'  => $data['theme']['color_link'],
+        'navbar-bg' => $data['theme']['navbar-bg'],
+        'navbar-text' => $data['theme']['navbar-text'],
+        'navbar-active-bg' => $data['theme']['navbar-active-bg'],
+        'navbar-active-text' => $data['theme']['navbar-active-text'],
+        'navbar-sec-bg' => $data['theme']['navbar-sec-bg'],
+        'navbar-sec-text' => $data['theme']['navbar-sec-text'],
       ];
 
       // Save the palette.

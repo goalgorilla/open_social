@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_hero_buttons
+    - paragraphs.paragraphs_type.button
+    - paragraphs.paragraphs_type.hero
+  module:
+    - entity_reference_revisions
+id: paragraph.hero.field_hero_buttons
+field_name: field_hero_buttons
+entity_type: paragraph
+bundle: hero
+label: Buttons
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      button: button
+    target_bundles_drag_drop:
+      block:
+        weight: 7
+        enabled: false
+      button:
+        enabled: true
+        weight: 8
+      featured:
+        weight: 9
+        enabled: false
+      hero:
+        weight: 10
+        enabled: false
+      introduction:
+        weight: 11
+        enabled: false
+      section:
+        weight: 12
+        enabled: false
+field_type: entity_reference_revisions

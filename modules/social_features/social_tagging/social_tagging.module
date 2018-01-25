@@ -1,0 +1,366 @@
+<?php
+
+/**
+ * @file
+ * Contains social_tagging.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Implements hook_help().
+ */
+function social_tagging_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_tagging module.
+    case 'help.page.social_tagging':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Content tagging module') . '</p>';
+      return $output;
+
+    case 'entity.taxonomy_vocabulary.overview_form':
+      $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+
+      if ($tag_service->allowSplit()) {
+        /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+        $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
+        if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
+          return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
+        }
+      }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Load all taxonomy terms from the top level.
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+
+  if ($tag_service->allowSplit()) {
+    // Remove these fields.
+    $form['path']['#access'] = FALSE;
+    $form['relations']['#access'] = FALSE;
+    $form['description']['#access'] = FALSE;
+
+    // Move it outside the details.
+    $form['parent'] = $form['relations']['parent'];
+    unset($form['relations']['parent']);
+
+    // Make some changes.
+    $form['weight']['#access'] = FALSE;
+    $form['parent']['#title'] = t('Placement');
+
+    // Fetch all top level items.
+    $options = $tag_service->getCategories();
+    // Add the 0 option for a new toplevel item.
+    $options[0] = t('Main category');
+    // Sort the array.
+    ksort($options);
+    // Add it to the select.
+    $form['parent']['#options'] = $options;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+    $storage = $form_state->getStorage();
+    /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+    $vocabulary = $storage['taxonomy']['vocabulary'];
+
+    if ($vocabulary->id() === 'social_tagging') {
+      // Remove edit/delete links.
+      foreach (Element::children($form['terms']) as $name) {
+        unset($form['terms'][$name]['weight']);
+      }
+
+      // Hide Save button.
+      $form['actions']['submit']['#access'] = FALSE;
+
+      // Remove tableDrag.
+      unset($form['terms']['#tabledrag']);
+
+      // Remove Weight column.
+      unset($form['terms']['#header'][1]);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Get the taggingservice.
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+  // Check if tagging is turned on/off.
+  if (!$tag_service->active()) {
+    // Remove the field from the form.
+    $form['social_tagging']['#access'] = FALSE;
+    return;
+  }
+
+  if (isset($form['social_tagging'])) {
+    // Add an extra vertical tab.
+    $form['tagging'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Tag content'),
+      '#description' => '',
+      '#group' => 'group_tagging',
+      '#open' => TRUE,
+      '#weight' => 50,
+    ];
+
+    if ($tag_service->allowSplit()) {
+      // Get the default value.
+      $default_value = _social_tagging_node_form_defaults_values($form_state->getFormObject()->getEntity());
+      // Get the main categories.
+      $categories = $tag_service->getCategories();
+      // Loop over the categories.
+      foreach ($categories as $tid => $category) {
+        $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
+        // Get the corresponding items.
+        $options = $tag_service->getChildren($tid);
+        // Only add a field if the category has any options.
+        if (count($options) > 0) {
+          // Add a field.
+          $form['tagging'][$field_name] = [
+            '#type' => 'select',
+            '#title' => $category,
+            '#multiple' => TRUE,
+            '#default_value' => $default_value,
+            '#options' => $options,
+            '#group' => 'group_tagging',
+          ];
+        }
+      }
+      // Deny access the social_tagging field altogether.
+      $form['social_tagging']['#access'] = FALSE;
+      // Add a custom submithandler.
+      $form['#validate'][] = '_social_tagging_node_form_validate';
+    }
+    else {
+      // Move the social_tagging field in the group.
+      $form['tagging']['social_tagging'] = $form['social_tagging'];
+      unset($form['social_tagging']);
+      $form['tagging']['social_tagging']['#group'] = 'group_tagging';
+    }
+  }
+}
+
+/**
+ * Validate function that overrides the tagging field with new values.
+ */
+function _social_tagging_node_form_validate($form, FormStateInterface $form_state) {
+  // Get the taggingservice.
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+  // Get the main categories.
+  $categories = $tag_service->getCategories();
+  // Init categories.
+  $tagging_values = [];
+  $counter = 0;
+  // Loop over the categories.
+  foreach ($categories as $tid => $category) {
+    foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
+      $tagging_values[] = [
+        'target_id' => $selected,
+        '_weight' => (string) $counter,
+      ];
+      $counter++;
+    }
+  }
+  // Set the values in the social_tagging field.
+  $form_state->setValue('social_tagging', $tagging_values);
+
+}
+
+/**
+ * Helper function to get the current default tagging values of a node.
+ */
+function _social_tagging_node_form_defaults_values(Node $node) {
+  // Init.
+  $default_value = [];
+  // If the node exists, we need to get the default value.
+  if ($node instanceof Node && $node->id() !== NULL) {
+    foreach ($node->get('social_tagging')->getValue() as $key => $value) {
+      if (isset($value['target_id'])) {
+        $default_value[] = $value['target_id'];
+      }
+    }
+  }
+  return $default_value;
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Add a 'Highlight' base field to all node types.
+  if ($entity_type->id() === 'node') {
+    $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Tagging'))
+      ->setDescription(t('Tagging field.'))
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default:taxonomy_term')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [
+          'social_tagging' => 'social_tagging',
+        ],
+      ])
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', [
+        'type' => 'hidden',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 3,
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '10',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ],
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_tagging_entity_delete(EntityInterface $entity) {
+  // When a term from the social_tagging vocbulary is deleted, remove from node.
+  if ($entity instanceof Term) {
+    /* @var Term $entity */
+    if ($entity->getVocabularyId() == 'social_tagging') {
+      /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
+      db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+      db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    }
+  }
+}
+
+/**
+ * Build output on node view.
+ *
+ * @param \Drupal\node\Entity\Node $node
+ *   A node.
+ *
+ * @return array
+ *   Hierarchic presentation of the terms.
+ */
+function social_tagging_process_tags(Node $node) {
+
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+
+  $renderable = [];
+  $tarray = [];
+
+  if ($node instanceof Node) {
+
+    if ($node->hasField('social_tagging')) {
+
+      if ($tag_service->allowSplit()) {
+        $tarray = $tag_service->buildHierarchy($node->get('social_tagging')->getValue());
+        $renderable = [
+          '#theme' => 'social_tagging_split',
+          '#taghierarchy' => $tarray,
+        ];
+      }
+      elseif ($tag_service->active()) {
+        // Just a simple way to add all tags to the array.
+        foreach ($node->get('social_tagging')->getValue() as $term) {
+          $url = Url::fromRoute('view.search_content.page_no_value', [
+            'tag[]' => $term['target_id'],
+          ]);
+
+          /** @var Drupal\taxonomy\Entity\Term $term */
+          $taxonomy_term = Term::load($term['target_id']);
+          $tarray[$taxonomy_term->getName()] = $url->toString();
+        }
+
+        $renderable = [
+          '#theme' => 'social_tagging_nosplit',
+          '#tagstitle' => t('Tags'),
+          '#tags' => $tarray,
+        ];
+      }
+    }
+
+  }
+
+  return drupal_render($renderable);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_tagging_theme($existing, $type, $theme, $path) {
+  return [
+    'social_tagging_nosplit' => [
+      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+    ],
+    'social_tagging_split' => [
+      'variables' => ['taghierarchy' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+  $options = [];
+  // Must be either one of these form_ids.
+  if (in_array($form['#id'], ["views-exposed-form-search-content-page-no-value", "views-exposed-form-search-content-page"])) {
+    if ($tag_service->allowSplit()) {
+      foreach ($tag_service->getCategories() as $key => $value) {
+        $options[$value] = $tag_service->getChildren($key);
+      }
+
+      $form['tag']['#options'] = $options;
+    }
+    // Only remove all toplevel items.
+    elseif ($tag_service->active()) {
+      // Remove main items and just insert child options.
+      $options = $tag_service->getAllChildren();
+      $form['tag']['#options'] = $options;
+    }
+  }
+}
+
+/**
+ * Main term names to machine name for on node edit / validate.
+ *
+ * @param string $text
+ *   A node.
+ *
+ * @return mixed|string
+ *   A machine name so it can be used pogrammatically.
+ */
+function social_tagging_to_machine_name($text) {
+  $text = strtolower($text);
+  $text = str_replace(' ', '', $text);
+
+  return $text;
+}

@@ -1,0 +1,171 @@
+<?php
+
+/**
+ * @file
+ * The Social landing page module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\node\NodeInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if ('node_landing_page_edit_form' || 'node_landing_page_form' === $form_id) {
+    $form['#attached']['library'][] = 'social_landing_page/admin';
+  }
+}
+
+/**
+ * Implements hook_form_form_ID_alter().
+ *
+ * Remove Landing Page option from Search Content filter.
+ */
+function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form['#id'] === 'views-exposed-form-search-content-page') {
+    if (isset($form['type']['#options']['landing_page'])) {
+      unset($form['type']['#options']['landing_page']);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_landing_page_theme() {
+  // Page.
+  $theme_templates['page__node__landing_page'] = [
+    'base hook' => 'page',
+  ];
+  // Node.
+  $theme_templates['node__landing_page'] = [
+    'base hook' => 'node',
+  ];
+  $theme_templates['node__event__featured'] = [
+    'base hook' => 'node',
+  ];
+  $theme_templates['node__topic__featured'] = [
+    'base hook' => 'node',
+  ];
+  // Group.
+  $theme_templates['group__featured'] = [
+    'base hook' => 'group',
+  ];
+  // Paragraphs.
+  $theme_templates['paragraph__block__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__button__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__featured__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__hero__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__introduction__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__section__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  // Fields.
+  $theme_templates['field__paragraph__section'] = [
+    'base hook' => 'field',
+  ];
+  // Views.
+  $theme_templates['views_view__community_activities'] = [
+    'base hook' => 'views_view',
+  ];
+
+  return $theme_templates;
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function social_landing_page_preprocess_page(&$variables) {
+  $nid = \Drupal::routeMatch()->getRawParameter('node');
+  // At this point the parameter could also be a simple string of a nid.
+  // EG: on: /node/%node/enrollments.
+  if (!is_null($nid) && !is_object($nid)) {
+    $node = Node::load($nid);
+  }
+
+  // Here we remove class for landing page.
+  if (isset($variables['node']) && $node->bundle() === 'landing_page') {
+    if ($variables['content_attributes'] instanceof Attribute) {
+      $variables['content_attributes']->removeClass('layout--with-complementary');
+    }
+    else {
+      $variables['content_attributes'] = new Attribute();
+      $variables['content_attributes']->addClass('container');
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_landing_page_theme_registry_alter(&$theme_registry) {
+  // Here we put our preprocess function after bootstrap
+  // preprocess to have content_attributes inside.
+  $original = $theme_registry['page']['preprocess functions'];
+  $key = array_search('social_landing_page_preprocess_page', $original, TRUE);
+  unset($original[$key]);
+  array_splice($original, ++$key, 0, ['social_landing_page_preprocess_page']);
+  $theme_registry['page']['preprocess functions'] = $original;
+}
+
+/**
+ * Prepares variables for the paragraph.
+ */
+function social_landing_page_preprocess_paragraph(&$variables) {
+  /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
+  $entity = $variables['elements']['#paragraph'];
+  $bundle = $entity->bundle();
+
+  switch ($bundle) {
+    case 'hero':
+      // Add the hero styled image.
+      $image_style = 'social_landing_hero';
+      $image_field = "field_{$bundle}_image";
+      if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
+        $variables['hero_styled_image_url'] = ImageStyle::load($image_style)
+          ->buildUrl($entity->{$image_field}->entity->getFileUri());
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_landing_page_preprocess_node(&$variables) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = $variables['node'];
+  if ($node->getType() === 'landing_page') {
+    // Get current user.
+    $account = \Drupal::currentUser();
+
+    // Add node edit url for management.
+    if ($node instanceof NodeInterface) {
+      // Get the current route name to check if the user is on the
+      // edit or delete page.
+      $route = \Drupal::routeMatch()->getRouteName();
+      if (!in_array($route, [
+        'entity.node.edit_form',
+        'entity.node.delete_form',
+      ])) {
+        if ($node->access('update', $account)) {
+          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+        }
+      }
+    }
+  }
+}

@@ -19,42 +19,62 @@
  * @ingroup themeable
  */
 #}
+{{ attach_library('socialbase/hero')}}
+
+{% if profile_hero_styled_image_url %}
+  <div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+{% else %}
+  <div class="cover">
+{% endif %}
+
 {% if profile_edit_url %}
   <div class="hero-action-button">
     <a href="{{ profile_edit_url }}" title="Edit profile information" class="btn btn-raised btn-default btn-floating">
-      <svg class="icon-gray icon-medium">
+      <svg class="icon-medium">
         <use xlink:href="#icon-edit"></use>
       </svg>
     </a>
   </div>
 {% endif %}
 
-<div class="cover-wrap">
-  <header>
-  <h1 class="page-title">
-    {{ profile_name }}
-  </h1>
+  <div class="cover-wrap">
 
-    {{ content.field_profile_image }}
-  </header>
+    <header>
+      <h1 class="page-title">
+        {{ profile_name }}
+      </h1>
+      {{ content.field_profile_image }}
+    </header>
 
-  {% if (content.field_profile_function|render or content.field_profile_organization|render) %}
+
+  {% if (content.field_profile_function|render or content.field_profile_organization|render) or profile_contact_label == 'private_message' %}
     <footer class="hero-footer">
-      <div class="hero-footer__text">
-        {% if content.field_profile_function|render %}
-          <strong>{{ content.field_profile_function|render }}</strong>
-        {% endif %}
-        {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
-        &nbsp;-&nbsp;
-        {% endif %}
-        {% if content.field_profile_organization|render %}
-          {{ content.field_profile_organization|render }}
-        {% endif %}
-      </div>
+  {% endif %}
 
+    <div class="hero-footer__text">
+      {% if content.field_profile_function|render %}
+        <strong>{{ content.field_profile_function|render }}</strong>
+      {% endif %}
+      {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+      &nbsp;-&nbsp;
+      {% endif %}
+        {{ content.field_profile_organization|render }}
+    </div>
+
+    {% if profile_contact_label == 'private_message' %}
+      <div class="hero-footer__cta">
+        <a href="{{ profile_contact_url }}" class="btn btn-accent btn-lg btn-raised">
+          {% trans %} Private message {% endtrans %}
+        </a>
+      </div>
+    {% endif %}
+
+  {% if (content.field_profile_function|render or content.field_profile_organization|render) or profile_contact_label == 'private_message' %}
     </footer>
   {% endif %}
 
-  {# render other fields that developers might add #}
-  {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
+    {# render other fields that developers might add #}
+    {{ content|without('field_profile_first_name', 'field_profile_last_name', 'field_profile_image', 'field_profile_function', 'field_profile_organization') }}
+  </div>
+
 </div>
