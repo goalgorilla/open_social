@@ -209,6 +209,7 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
   }
 
   // Generate the output text for the user in his selected language.
+  // Get language van recipient user.
   if ($entity instanceof \Drupal\activity_creator\Entity\Activity) {
     $message = Message::load($entity->get('field_activity_message')->target_id);
     if ($message instanceof Message) {
@@ -216,6 +217,8 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
       $output = \Drupal::service('activity_creator.activity_factory')->getMessageText($message);
       // Replace the old text with the correct one.
       $build['field_activity_output_text'][0]['#text'] = $output[0];
+
+      // Caching context met current language toevoegen als nodig (build array).
     }
   }
 }
