@@ -54,7 +54,7 @@ class Immediately extends EmailFrequencyBase {
       '#notification' => $body_text,
       '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
         '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
-        ':frequency' => $this->getName(),
+        ':frequency' => t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]),
       ],
       ['langcode' => $langcode]),
     ];
