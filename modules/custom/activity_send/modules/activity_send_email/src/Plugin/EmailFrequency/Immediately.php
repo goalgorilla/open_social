@@ -29,7 +29,7 @@ class Immediately extends EmailFrequencyBase {
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
-      $body_text = EmailActivityDestination::getSendEmailOutputText($message);
+      $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
 
       if ($langcode && !empty($body_text)) {
         $this->sendEmail($body_text, $langcode, $target);
