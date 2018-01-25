@@ -38,7 +38,8 @@ class ProfileLabelSubscriber implements EventSubscriberInterface {
     if ($profile instanceof Profile) {
       $account = User::load($profile->getOwnerId());
       if ($account instanceof User) {
-        $event->setLabel($account->getDisplayName());
+        $label = t('Profile of @name', ['@name' => $account->getDisplayName()]);
+        $event->setLabel($label);
       }
     }
   }
