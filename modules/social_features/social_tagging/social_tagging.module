@@ -109,6 +109,14 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
 
   /** @var \Drupal\node\Entity\NodeType $node_type */
   $node_type = \Drupal::routeMatch()->getParameter('node_type');
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // On node edit we need to do this.
+  if (!$node_type) {
+    $node_type = NodeType::load($node->bundle());
+  }
+
   $node_type_tagging = TRUE;
   if ($node_type instanceof NodeType) {
 
