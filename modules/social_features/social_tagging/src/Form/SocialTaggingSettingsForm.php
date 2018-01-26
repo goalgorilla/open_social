@@ -87,6 +87,25 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
     ];
 
+    $form['node_type_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Node type configuration'),
+    ];
+
+    /** @var \Drupal\node\Entity\NodeType $nodetype */
+    foreach (NodeType::loadMultiple() as $nodetype) {
+      $field_name = 'tag_node_type_' . $nodetype->id();
+      $value = $config->get($field_name);
+      $default_value = isset($value) ? $config->get($field_name) : TRUE;
+      $form['node_type_settings'][$field_name] = [
+        '#type' => 'checkbox',
+        '#title' => $nodetype->label(),
+        '#default_value' => $default_value,
+        '#required' => FALSE,
+        '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
+      ];
+    }
+
     $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
 
     return parent::buildForm($form, $form_state);

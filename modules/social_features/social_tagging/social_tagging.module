@@ -107,15 +107,15 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  $ignored_node_types = [
-    'landing_page',
-  ];
-
   /** @var \Drupal\node\Entity\NodeType $node_type */
   $node_type = \Drupal::routeMatch()->getParameter('node_type');
   $node_type_tagging = TRUE;
   if ($node_type instanceof NodeType) {
-    if (in_array($node_type->id(), $ignored_node_types)) {
+
+    $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+    $config_value = $config->get('tag_node_type_' . $node_type->id());
+
+    if ($config_value === FALSE) {
       $node_type_tagging = FALSE;
     }
   }
