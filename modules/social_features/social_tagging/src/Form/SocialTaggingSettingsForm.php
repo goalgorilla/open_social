@@ -121,6 +121,12 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
 
+    /** @var \Drupal\node\Entity\NodeType $nodetype */
+    foreach (NodeType::loadMultiple() as $nodetype) {
+      $config_name = 'tag_node_type_' . $nodetype->id();
+      $config->set($config_name, $form_state->getValue($config_name))->save();
+    }
+
     parent::submitForm($form, $form_state);
   }
 

@@ -115,7 +115,7 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
     $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
     $config_value = $config->get('tag_node_type_' . $node_type->id());
 
-    if ($config_value === FALSE) {
+    if ($config_value === FALSE || $config_value === 0) {
       $node_type_tagging = FALSE;
     }
   }
