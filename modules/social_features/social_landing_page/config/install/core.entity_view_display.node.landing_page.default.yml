@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.landing_page.field_content_visibility
     - field.field.node.landing_page.field_landing_page_section
     - node.type.landing_page
   module:
@@ -50,9 +51,18 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   links:
     weight: 100
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_content_visibility: true
