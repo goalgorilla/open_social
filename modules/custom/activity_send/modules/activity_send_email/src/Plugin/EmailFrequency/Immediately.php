@@ -48,13 +48,18 @@ class Immediately extends EmailFrequencyBase {
    *   The target account to send the email to.
    */
   protected function sendEmail($body_text, $langcode, User $target) {
+    // Translating frequency instance in the language of the user.
+    // @codingStandardsIgnoreStart
+    $frequency_translated = t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
+    // @codingStandardsIgnoreEnd
+
     // Construct the render array.
     $notification = [
       '#theme' => 'directmail',
       '#notification' => $body_text,
       '#notification_settings' => t('Based on your @settings, the notification above is sent to you <strong>:frequency</strong>', [
         '@settings' => Link::fromTextAndUrl(t('email notification settings', [], ['langcode' => $langcode]), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
-        ':frequency' => t($this->getName()->getUntranslatedString(), [], ['langcode' => $langcode]),
+        ':frequency' => $frequency_translated,
       ],
       ['langcode' => $langcode]),
     ];

@@ -64,10 +64,15 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $emailfrequencymanager->createInstance($data['frequency']);
 
+          // Translating frequency instance in the language of the user.
+          // @codingStandardsIgnoreStart
+          $frequency_translated = t($instance->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
+          // @codingStandardsIgnoreEnd
+
           // Get the notification settings for the email template.
           $digest_notifications['#notification_settings'] = \Drupal::translation()->formatPlural($notification_count, 'Based on your @settings, the notification above is sent to you as a <strong>:frequency mail</strong>', 'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>', [
             '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
-            ':frequency' => t($instance->getName()->getUntranslatedString(), [], ['langcode' => $langcode]),
+            ':frequency' => $frequency_translated,
           ],
           ['langcode' => $langcode]);
 
