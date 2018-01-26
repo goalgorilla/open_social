@@ -4,7 +4,6 @@ dependencies:
   config:
     - field.storage.paragraph.field_featured_items
     - paragraphs.paragraphs_type.featured
-    - profile.type.profile
   module:
     - dynamic_entity_reference
 id: paragraph.featured.field_featured_items
@@ -33,14 +32,12 @@ settings:
         display_name: entity_reference_1
         arguments: {  }
   profile:
-    handler: 'default:profile'
+    handler: views
     handler_settings:
-      target_bundles:
-        profile: profile
-      sort:
-        field: _none
-      auto_create: false
-      auto_create_bundle: ''
+      view:
+        view_name: featured_profile_reference
+        display_name: entity_reference_1
+        arguments: {  }
   activity:
     handler: 'default:activity'
     handler_settings: {  }
