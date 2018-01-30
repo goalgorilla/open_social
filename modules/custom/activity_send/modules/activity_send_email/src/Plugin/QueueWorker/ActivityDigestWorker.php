@@ -45,7 +45,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           if (isset($activity->field_activity_output_text)) {
             // Load the message.
             $message = Message::load($activity->field_activity_message->target_id);
-            $body_text = EmailActivityDestination::getSendEmailOutputText($message);
+            $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
 
             if ($langcode && !empty($body_text)) {
               $digest_notifications['#notifications'][] = $body_text;
@@ -58,17 +58,23 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
           $notification_count = count($digest_notifications['#notifications']);
 
           // Get the notification count for the email template.
-          $digest_notifications['#notification_count'] = \Drupal::translation()->formatPlural($notification_count, 'You have received <strong>:count</strong> notification', 'You have received <strong>:count</strong> notifications', [':count' => $notification_count]);
+          $digest_notifications['#notification_count'] = \Drupal::translation()->formatPlural($notification_count, 'You have received <strong>:count</strong> notification', 'You have received <strong>:count</strong> notifications', [':count' => $notification_count], ['langcode' => $langcode]);
 
           $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
           /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
           $instance = $emailfrequencymanager->createInstance($data['frequency']);
 
+          // Translating frequency instance in the language of the user.
+          // @codingStandardsIgnoreStart
+          $frequency_translated = t($instance->getName()->getUntranslatedString(), [], ['langcode' => $langcode]);
+          // @codingStandardsIgnoreEnd
+
           // Get the notification settings for the email template.
           $digest_notifications['#notification_settings'] = \Drupal::translation()->formatPlural($notification_count, 'Based on your @settings, the notification above is sent to you as a <strong>:frequency mail</strong>', 'Based on your @settings, the notifications above are sent to you as a <strong>:frequency mail</strong>', [
             '@settings' => Link::fromTextAndUrl(t('email notification settings'), Url::fromRoute('entity.user.edit_form', ['user' => $target->id()])->setAbsolute())->toString(),
-            ':frequency' => $instance->getName(),
-          ]);
+            ':frequency' => $frequency_translated,
+          ],
+          ['langcode' => $langcode]);
 
           // Render the notifications using the digestmail.html.twig template.
           $params['body'] = \Drupal::service('renderer')->renderRoot($digest_notifications);
