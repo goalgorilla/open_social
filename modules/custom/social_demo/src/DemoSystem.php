@@ -218,7 +218,7 @@ abstract class DemoSystem extends DemoContent {
     $font = Font::create([
       'name' => $fontName,
       'user_id' => 1,
-      'created' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
       'field_fallback' => '0',
     ]);
     $font->save();

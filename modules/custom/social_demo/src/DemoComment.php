@@ -105,11 +105,11 @@ abstract class DemoComment extends DemoContent {
       if (!empty($item['created'])) {
         $item['created'] = $this->createDate($item['created']);
         if ($item['created'] < $entity->get('created')->value) {
-          $item['created'] = REQUEST_TIME;
+          $item['created'] = \Drupal::time()->getRequestTime();
         }
       }
       else {
-        $item['created'] = REQUEST_TIME;
+        $item['created'] = \Drupal::time()->getRequestTime();
       }
 
       $item['entity_id'] = $entity->id();
