@@ -225,7 +225,7 @@ class Post extends ContentEntityBase implements PostInterface {
         ],
         'weight' => 20,
       ])
-      ->setDisplayConfigurable('form', TRUE);      
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
