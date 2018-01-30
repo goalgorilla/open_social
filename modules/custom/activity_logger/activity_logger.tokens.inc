@@ -115,7 +115,10 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
-                  $gurl = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
+                  $gurl = Url::fromRoute('entity.group.canonical',
+                    ['group' => $group->id()],
+                    ['absolute' => TRUE]
+                  );
                   $replacements[$original] = $gurl->toString();
                 }
               }
