@@ -92,6 +92,18 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
+  public function getCacheTags() {
+    $cache_tags = parent::getCacheTags();
+    $node = $this->routeMatch->getParameter('node');
+    if ($node instanceof Node) {
+      $cache_tags[] = 'node:' . $node->id();
+    }
+    return $cache_tags;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function build() {
     $build = [];
 
