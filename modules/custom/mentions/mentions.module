@@ -167,7 +167,7 @@ function mentions_crud_update($type, $mentions, $id, $author) {
   // Update existing mentions.
   foreach (array_intersect($new_users, $old_users) as $uid) {
     $entity = $mentions_storage->load($old_mids[$uid]);
-    $entity->set('created', REQUEST_TIME);
+    $entity->set('created', \Drupal::time()->getRequestTime());
     $entity->save();
     $event_dispatcher->dispatch('mentions.update', new Event());
   }
