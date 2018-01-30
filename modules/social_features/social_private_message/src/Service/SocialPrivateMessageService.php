@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Service;
 
+use Drupal\Component\Datetime\Time;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\Entity;
@@ -25,11 +26,19 @@ class SocialPrivateMessageService extends PrivateMessageService {
   protected $database;
 
   /**
+   * The Time service.
+   *
+   * @var \Drupal\Component\Datetime\Time
+   */
+  protected $time;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct($mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, Connection $database) {
+  public function __construct($mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, Connection $database, Time $time) {
     parent::__construct($mapper, $currentUser, $configFactory, $userData);
     $this->database = $database;
+    $this->time = $time;
   }
 
   /**
@@ -39,7 +48,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
    *   The thread entity.
    */
   public function updateLastThreadCheckTime(Entity $entity) {
-    $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), REQUEST_TIME);
+    $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), $this->time->getRequestTime());
   }
 
   /**
