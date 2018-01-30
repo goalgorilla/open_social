@@ -217,6 +217,15 @@ class Post extends ContentEntityBase implements PostInterface {
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Post is published.'))
       ->setDefaultValue(TRUE);
+    $fields['status']
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 20,
+      ])
+      ->setDisplayConfigurable('form', TRUE);      
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
