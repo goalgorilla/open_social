@@ -16,7 +16,7 @@ function social_font_install() {
   $font = Font::create([
     'name' => 'Montserrat',
     'user_id' => 1,
-    'created' => REQUEST_TIME,
+    'created' => \Drupal::time()->getRequestTime(),
     'field_fallback' => '0',
   ]);
 
