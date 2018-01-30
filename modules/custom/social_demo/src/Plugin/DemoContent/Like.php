@@ -29,7 +29,7 @@ class Like extends DemoEntity {
       'value' => $item['value'],
       'value_type' => $item['value_type'],
       'user_id' => $this->loadByUuid('user', $item['uid'])->id(),
-      'timestamp' => REQUEST_TIME,
+      'timestamp' => \Drupal::time()->getRequestTime(),
       'vote_source' => $item['vote_source'],
     ];
   }

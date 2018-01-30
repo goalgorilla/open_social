@@ -27,7 +27,7 @@ class EventEnrollment extends DemoEntity {
       'langcode' => $item['langcode'],
       'name' => substr($item['title'], 0, 50),
       'user_id' => $uid,
-      'created' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
       'field_event' => $this->loadByUuid('node', $item['field_event'])->id(),
       'field_enrollment_status' => $item['field_enrollment_status'],
       'field_account' => $uid,
