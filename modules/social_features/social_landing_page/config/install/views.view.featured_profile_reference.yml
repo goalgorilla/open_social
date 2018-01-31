@@ -1,16 +1,18 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - profile.type.profile
   module:
-    - node
+    - profile
     - user
-id: featured_content_reference
-label: 'Featured content reference'
+id: featured_profile_reference
+label: 'Featured profile reference'
 module: views
-description: 'Custom selection handler for content that will be selected as featured.'
+description: ''
 tag: ''
-base_table: node_field_data
-base_field: nid
+base_table: profile
+base_field: profile_id
 core: 8.x
 display:
   default:
@@ -20,9 +22,8 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
-        options:
-          perm: 'access content'
+        type: none
+        options: {  }
       cache:
         type: tag
         options: {  }
@@ -77,11 +78,11 @@ display:
           hide_empty: false
           default_field_elements: true
       fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          relationship: none
+        name:
+          id: name
+          table: users_field_data
+          field: name
+          relationship: uid
           group_type: group
           admin_label: ''
           label: ''
@@ -104,8 +105,8 @@ display:
             target: ''
             nl2br: false
             max_length: 0
-            word_boundary: false
-            ellipsis: false
+            word_boundary: true
+            ellipsis: true
             more_link: false
             more_link_text: ''
             more_link_path: ''
@@ -126,7 +127,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: user_name
           settings:
             link_to_entity: false
           group_column: value
@@ -139,76 +140,35 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: title
+          entity_type: user
+          entity_field: name
           plugin_id: field
       filters:
-        status:
-          value: '1'
-          table: node_field_data
-          field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
-          expose:
-            operator: ''
-          group: 1
-        nid:
-          id: nid
-          table: node_access
-          field: nid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: ''
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: node_access
-      sorts:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          order: ASC
-          entity_type: node
-          entity_field: title
-          plugin_id: standard
-          relationship: none
-          group_type: group
-          admin_label: ''
-          exposed: false
-          expose:
-            label: ''
+        type:
+          id: type
+          table: profile
+          field: type
+          value:
+            profile: profile
+          entity_type: profile
+          entity_field: type
+          plugin_id: bundle
+      sorts: {  }
       header: {  }
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        uid:
+          id: uid
+          table: profile
+          field: uid
+          relationship: none
+          group_type: group
+          admin_label: User
+          required: true
+          entity_type: profile
+          entity_field: uid
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
@@ -217,8 +177,6 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url.query_args
-        - 'user.node_grants:view'
-        - user.permissions
       tags: {  }
   entity_reference_1:
     display_plugin: entity_reference
@@ -231,12 +189,23 @@ display:
         type: entity_reference
         options:
           search_fields:
-            title: title
+            name: name
+            uid: '0'
+      row:
+        type: entity_reference
+        options:
+          default_field_elements: true
+          inline:
+            name: name
+          separator: ' '
+          hide_empty: false
+      pager:
+        type: none
+        options:
+          offset: 0
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - 'user.node_grants:view'
-        - user.permissions
       tags: {  }
