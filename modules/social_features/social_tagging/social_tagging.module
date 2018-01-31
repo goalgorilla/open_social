@@ -189,8 +189,9 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
         '#multiple' => TRUE,
         '#default_value' => $form['social_tagging']['#default_value'],
         '#options' => $options,
-        '#group' => 'group_tagging'
+        '#group' => 'group_tagging',
       ];
+
       unset($form['social_tagging']);
 
       $form['tagging']['social_tagging']['#group'] = 'group_tagging';
