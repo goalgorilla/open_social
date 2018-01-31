@@ -49,29 +49,28 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
   // Load all taxonomy terms from the top level.
   $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
-  if ($tag_service->allowSplit()) {
-    // Remove these fields.
-    $form['path']['#access'] = FALSE;
-    $form['relations']['#access'] = FALSE;
-    $form['description']['#access'] = FALSE;
+  // Remove these fields.
+  $form['path']['#access'] = FALSE;
+  $form['relations']['#access'] = FALSE;
+  $form['description']['#access'] = FALSE;
 
-    // Move it outside the details.
-    $form['parent'] = $form['relations']['parent'];
-    unset($form['relations']['parent']);
+  // Move it outside the details.
+  $form['parent'] = $form['relations']['parent'];
+  unset($form['relations']['parent']);
 
-    // Make some changes.
-    $form['weight']['#access'] = FALSE;
-    $form['parent']['#title'] = t('Placement');
+  // Make some changes.
+  $form['weight']['#access'] = FALSE;
+  $form['parent']['#title'] = t('Placement');
 
-    // Fetch all top level items.
-    $options = $tag_service->getCategories();
-    // Add the 0 option for a new toplevel item.
-    $options[0] = t('Main category');
-    // Sort the array.
-    ksort($options);
-    // Add it to the select.
-    $form['parent']['#options'] = $options;
-  }
+  // Fetch all top level items.
+  $options = $tag_service->getCategories();
+  // Add the 0 option for a new toplevel item.
+  $options[0] = t('Main category');
+  // Sort the array.
+  ksort($options);
+  // Add it to the select.
+  $form['parent']['#options'] = $options;
+
 }
 
 /**
@@ -177,9 +176,23 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
       $form['#validate'][] = '_social_tagging_node_form_validate';
     }
     else {
+      $options = [];
+      foreach ($tag_service->getCategories() as $key => $value) {
+        $options[$value] = $tag_service->getChildren($key);
+      }
       // Move the social_tagging field in the group.
       $form['tagging']['social_tagging'] = $form['social_tagging'];
+
+      $form['tagging']['social_tagging'] = [
+        '#type' => 'select',
+        '#title' => $form['social_tagging']['#title'],
+        '#multiple' => TRUE,
+        '#default_value' => $form['social_tagging']['#default_value'],
+        '#options' => $options,
+        '#group' => 'group_tagging'
+      ];
       unset($form['social_tagging']);
+
       $form['tagging']['social_tagging']['#group'] = 'group_tagging';
     }
   }
