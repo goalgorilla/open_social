@@ -11,7 +11,7 @@ field_name: field_featured_items
 entity_type: paragraph
 bundle: featured
 label: Items
-description: 'Only public content or group can be selected'
+description: ''
 required: false
 translatable: false
 default_value: {  }
@@ -29,6 +29,13 @@ settings:
     handler_settings:
       view:
         view_name: featured_group_reference
+        display_name: entity_reference_1
+        arguments: {  }
+  profile:
+    handler: views
+    handler_settings:
+      view:
+        view_name: featured_profile_reference
         display_name: entity_reference_1
         arguments: {  }
   activity:
@@ -72,9 +79,6 @@ settings:
     handler_settings: {  }
   post:
     handler: 'default:post'
-    handler_settings: {  }
-  profile:
-    handler: 'default:profile'
     handler_settings: {  }
   search_api_task:
     handler: 'default:search_api_task'
