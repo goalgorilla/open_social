@@ -1267,7 +1267,9 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
         break 2;
       }
     }
+    unset($condition);
   }
+  unset($conditions);
 
   if (!$found) {
     $condition = [
@@ -1291,6 +1293,6 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
-    $conditions['conditions'][] = $condition;
+    $query->where['conditions'][] = $condition;
   }
 }
