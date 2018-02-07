@@ -835,3 +835,15 @@ function social_core_update_8026() {
     }
   }
 }
+
+/**
+ * Enable Social CAPTCHA module.
+ */
+function  social_core_update_8027() {
+
+  $modules = [
+    'social_captcha',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+
+}
