@@ -15,6 +15,7 @@ function social_language_form_user_form_alter(&$form, FormStateInterface $form_s
     $form['language']['#title'] = NULL;
     $form['language']['preferred_langcode']['#title'] = t('Interface language');
     $form['language']['preferred_langcode']['#description'] = t('Select the language you want to use this site in.');
+    $form['language']['#attributes']['class'][] = 'form-horizontal';
   }
   else {
     $form['language']['#access'] = FALSE;
