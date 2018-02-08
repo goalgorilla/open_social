@@ -55,10 +55,11 @@ class FormElementLabel extends BaseFormElementLabel {
         $variables['title_display'] = 'above';
       }
 
-      // add class to labels for locale settings on user form, to make select elements consistent in placement and width
+      // Add class to labels for locale settings on user form
+      // To make select elements consistent in placement and width.
       $locale_settings = [
         'edit-timezone--2',
-        'edit-preferred-langcode'
+        'edit-preferred-langcode',
       ];
 
       if (in_array($element['#id'], $locale_settings)) {
