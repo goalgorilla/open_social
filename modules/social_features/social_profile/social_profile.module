@@ -338,6 +338,8 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
       }
     }
   }
+
+  $form['#pre_render'][] = '_social_profile_form_pre_render';
 }
 
 /**
@@ -468,4 +470,12 @@ function social_profile_get_default_image() {
   ];
   // Retun the array.
   return $data;
+}
+
+/**
+ * Hide timezone fields group label.
+ */
+function _social_profile_form_pre_render($element) {
+  $element['group_locale_settings']['timezone']['#title'] = NULL;
+  return $element;
 }
