@@ -101,8 +101,10 @@ function template_preprocess_page_hero_data(array &$variables) {
         $field = reset($image_fields);
         if ($field != NULL){
           if ($field->getFieldDefinition()->get("field_type") == "image") {
-            $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-              ->buildUrl($node->get($field->getName())->entity->getFileUri());
+            if (!empty(($node->get($field->getName())->entity))) {
+              $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+                ->buildUrl($node->get($field->getName())->entity->getFileUri());
+            }
           }
         }
       }
