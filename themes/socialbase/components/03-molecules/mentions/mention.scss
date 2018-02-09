@@ -1,6 +1,18 @@
 @import "settings";
 
 .mentions-input .ui-autocomplete {
-  max-height: 6rem;
+  max-height: 304px; //height of 8 users in a list
   overflow-y: auto;
+}
+
+@include for-phone-only {
+
+  .main-container {
+    overflow: auto;
+  }
+
+}
+
+.ui-state-active {
+  background-color: $gray-lighter;
 }
