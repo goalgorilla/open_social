@@ -17,6 +17,7 @@
     $(".form-textarea", element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
+        position: {  my: "left bottom", at: "left top", collision: "flip"  },
         renderItem: function(ul, item) {
           var $li = $("<li />"),
             $a = $("<a />", {
