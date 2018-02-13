@@ -17,9 +17,9 @@
   background: white;
   padding: 0;
   list-style: none;
+  margin-bottom: 0;
 
 	.ui-menu-item {
-    padding: 7px 10px;
     font-size: 0.875rem;
     overflow: hidden;
     white-space: nowrap;
@@ -29,7 +29,12 @@
 
     .mention__item {
       display: flex;
+			padding: 7px 10px;
     }
+
+		.ui-state-active {
+			background-color: $gray-lighter;
+		}
 
     .mention__avatar {
       flex: 0 0 24px;
