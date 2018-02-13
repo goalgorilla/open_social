@@ -17,8 +17,6 @@
     $(".form-textarea", element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
-        position: {  collision: "fit"  },
-        minLength: 1,
         renderItem: function(ul, item) {
           var $li = $("<li />"),
             $a = $("<a />", {
@@ -32,6 +30,29 @@
           if (!CKEDITOR.instances[this.id]) {
             var menu = $(this).data("ui-mentionsAutocomplete").menu;
             menu.focus(null, $("li", menu.element).eq(0));
+
+            if (window.matchMedia("(min-width: 600px)").matches) {
+              console.log("the viewport is at least 600 pixels wide");
+
+              var commentTextarea = $(this).offset().top + $(this).height();
+              var userList = $(this).siblings(".ui-autocomplete");
+              var userListHeight = $(userList).innerHeight();
+              var documentHeight = $(document).height();
+              var distanceFromBottom = (documentHeight - commentTextarea);
+
+              console.log("commentTextarea:" + commentTextarea);
+              console.log("userListHeight: " + userListHeight);
+              console.log("documentHeight: " + documentHeight);
+              console.log("distanceFromBottom: " + distanceFromBottom);
+
+              if (distanceFromBottom < userListHeight) {
+                console.log("List can't fit!");
+                $(userList).css({
+                  "bottom": "38px", // height of textarea
+                  "top": "unset"
+                });
+              }
+            }
           }
         }
       },
