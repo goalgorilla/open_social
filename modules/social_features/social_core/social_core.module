@@ -94,11 +94,28 @@ function template_preprocess_page_hero_data(array &$variables) {
     if (!empty($node->{$image_field}->entity)) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
+      } else { // If machine name too long or using another image field
+        $node_fields = $node->getFields();
+        $image_fields = array_filter($node_fields, "findImageField");
+        // Get the first image field of all the fields
+        $field = reset($image_fields);
+        if ($field != NULL){
+          if ($field->getFieldDefinition()->get("field_type") == "image") {
+            if (!empty(($node->get($field->getName())->entity))) {
+              $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+                ->buildUrl($node->get($field->getName())->entity->getFileUri());
+            }
+          }
+        }
+      }
     }
-
   }
-
-}
+  
+  function findImageField($field){
+    if (strpos($field->getName(), 'image') !== false) {
+      return $field;
+    }
+  }
 
 /**
  * Implements hook_form_FORM_ID_alter().
