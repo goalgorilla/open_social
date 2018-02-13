@@ -85,7 +85,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     $last_activity_time = $query->execute()->fetchField();
 
     $offline_window = \Drupal::config('activity_send.settings')->get('activity_send_offline_window');
-    $current_time = REQUEST_TIME - $offline_window;
+    $current_time = \Drupal::time()->getRequestTime() - $offline_window;
 
     return (empty($last_activity_time) || $last_activity_time < $current_time);
   }
