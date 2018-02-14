@@ -34,3 +34,67 @@ function social_profile_fields_entity_field_access($operation, \Drupal\Core\Fiel
 
   return $access_result;
 }
+
+/**
+ * Implements hook_user_format_name_alter().
+ *
+ * @param $name
+ * @param $account
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ */
+function social_profile_fields_user_format_name_alter(&$name, $account) {
+  // Can we use the fields?
+  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
+  $use_last_name  = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
+  $use_nick_name  = _social_profile_fields_get_setting('profile_profile_field_profile_nick_name');
+
+  $accountname = '';
+  // Let's get the Nickname, First name Last name.
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      // First try to set it from the nick_name.
+      $accountname = $use_nick_name ? $user_profile->get('field_profile_nick_name')->value : '';
+      // If that fails, fallback to old behaviour with first/last name.
+      if ($accountname == '') {
+        $first_name = $use_first_name ? $user_profile->get('field_profile_first_name')->value : '';
+        $last_name = $use_last_name ? $user_profile->get('field_profile_last_name')->value : '';
+
+        $accountname = trim(t('@first @last', [
+          '@first' => $first_name,
+          '@last' => $last_name,
+        ]));
+      }
+
+    }
+  }
+  // If all fails, we now fall back to the drupal username.
+  $name = ($accountname !== '') ? $accountname : $account->getUsername();
+}
+
+/**
+ * @param $key
+ *
+ * @return bool
+ */
+function _social_profile_fields_get_setting($key) {
+  $config = \Drupal::config('social_profile_fields.settings');
+  $setting_value = $config->get($key);
+
+  if (!isset($setting_value) || $setting_value == TRUE) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_profile_fields_form_profile_profile_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // Place the nick_name in the top card.
+  $form['#group_children']['field_profile_nick_name'] = 'group_profile_names_image';
+}
+
