@@ -235,82 +235,6 @@ display:
           entity_type: activity
           entity_field: status
           plugin_id: boolean
-        status_1:
-          id: status_1
-          table: node_field_data
-          field: status
-          relationship: node__field_activity_entity
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: '1'
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-        status_2:
-          id: status_2
-          table: post_field_data
-          field: status
-          relationship: post__field_activity_entity
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: '1'
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: post
-          entity_field: status
-          plugin_id: boolean
       sorts:
         created:
           id: created
@@ -344,25 +268,7 @@ display:
             value: 'You do not have any notifications.'
             format: basic_html
           plugin_id: text
-      relationships:
-        node__field_activity_entity:
-          id: node__field_activity_entity
-          table: activity__field_activity_entity
-          field: node__field_activity_entity
-          relationship: none
-          group_type: group
-          admin_label: 'field_activity_entity: Content'
-          required: false
-          plugin_id: standard
-        post__field_activity_entity:
-          id: post__field_activity_entity
-          table: activity__field_activity_entity
-          field: post__field_activity_entity
-          relationship: none
-          group_type: group
-          admin_label: 'field_activity_entity: Post'
-          required: false
-          plugin_id: standard
+      relationships: {  }
       arguments:
         field_activity_recipient_user_target_id:
           id: field_activity_recipient_user_target_id
@@ -402,11 +308,6 @@ display:
       use_more: false
       use_more_always: true
       use_more_text: 'All notifications'
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-          2: OR
     cache_metadata:
       max-age: -1
       contexts:
