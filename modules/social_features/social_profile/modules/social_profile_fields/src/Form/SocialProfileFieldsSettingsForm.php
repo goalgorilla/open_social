@@ -2,6 +2,7 @@
 
 namespace Drupal\social_profile_fields\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -115,6 +116,9 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     $config->save();
 
     parent::submitForm($form, $form_state);
+
+    // Invalidate profile cache.
+    Cache::invalidateTags(['profile', 'profile_list', 'profile_view']);
   }
 
   /**
