@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * The social profile fields modue file.
+ */
+
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_entity_field_access().
+ *
+ * @param $operation
+ * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+ * @param \Drupal\Core\Session\AccountInterface $account
+ * @param \Drupal\Core\Field\FieldItemListInterface|null $items
+ *
+ * @return \Drupal\Core\Access\AccessResultForbidden
+ */
+function social_profile_fields_entity_field_access($operation, \Drupal\Core\Field\FieldDefinitionInterface $field_definition, \Drupal\Core\Session\AccountInterface $account, \Drupal\Core\Field\FieldItemListInterface $items = NULL) {
+
+  // By default, we return Switzerland.
+  $access_result = AccessResult::neutral();
+
+  if ($field_definition->getTargetEntityTypeId() === 'profile') {
+    $config = \Drupal::config('social_profile_fields.settings');
+    $setting_name = $field_definition->getTargetEntityTypeId() . '_' . $field_definition->getTargetBundle() . '_' . $field_definition->getName();
+    $setting_value = $config->get($setting_name);
+
+    if ( isset($setting_value) && !$setting_value ) {
+      $access_result = AccessResult::forbidden();
+    }
+  }
+
+  return $access_result;
+}
