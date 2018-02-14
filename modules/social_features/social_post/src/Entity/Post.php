@@ -214,8 +214,7 @@ class Post extends ContentEntityBase implements PostInterface {
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Post is published.'))
+      ->setLabel(t('Published'))
       ->setDefaultValue(TRUE);
     $fields['status']
       ->setDisplayOptions('form', [
