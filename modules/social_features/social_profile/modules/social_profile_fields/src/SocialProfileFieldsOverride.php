@@ -7,12 +7,12 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
-* Class SocialProfileFieldsConfigOverride.
-*
-* Override profile form.
-*
-* @package Drupal\social_profile_fields
-*/
+ * Class SocialProfileFieldsConfigOverride.
+ *
+ * Override profile form.
+ *
+ * @package Drupal\social_profile_fields
+ */
 class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
   /**

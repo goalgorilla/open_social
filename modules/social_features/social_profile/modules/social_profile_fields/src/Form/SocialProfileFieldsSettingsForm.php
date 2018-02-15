@@ -4,11 +4,9 @@ namespace Drupal\social_profile_fields\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigStorage;
 use Drupal\profile\Entity\ProfileType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,11 +17,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialProfileFieldsSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
-   * Config storage.
+   * Field storage.
    *
-   * @var ConfigEntityStorage
+   * @var \Drupal\field\FieldConfigStorage
    */
-  protected $field_storage;
+  protected $fieldStorage;
 
   /**
    * SocialProfileSettingsForm constructor.
@@ -31,10 +29,11 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\field\FieldConfigStorage $field_storage
+   *   Fieldstorage for the profile fields.
    */
   public function __construct(ConfigFactoryInterface $config_factory, FieldConfigStorage $field_storage) {
     parent::__construct($config_factory);
-    $this->field_storage = $field_storage;
+    $this->fieldStorage = $field_storage;
   }
 
   /**
@@ -78,8 +77,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         '#open' => TRUE,
       ];
 
-
-      /** @var FieldConfig $field_config */
+      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
@@ -108,7 +106,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     foreach (ProfileType::loadMultiple() as $profile_type) {
       $type = $profile_type->id();
 
-      /** @var FieldConfig $field_config */
+      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($this->getProfileFields($type) as $field) {
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
@@ -122,17 +120,19 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   }
 
   /**
-   * @param $profile_type_id
-   *    The profile bundle.
+   * Functions fetches profile fields from a profile type.
+   *
+   * @param string $profile_type_id
+   *   The profile bundle.
    *
    * @return array
-   *    An array of fields.
+   *   An array of fields.
    */
   protected function getProfileFields($profile_type_id) {
     $fields = [];
 
     // Use storage to get only the profile fields of the current bundle type.
-    $profile_fields = $this->field_storage->loadByProperties(['entity_type' => 'profile', 'bundle' => $profile_type_id]);
+    $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => $profile_type_id]);
 
     // Loop through the fields and return the necessary values.
     foreach ($profile_fields as $profile_field) {
