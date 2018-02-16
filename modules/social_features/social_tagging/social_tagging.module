@@ -180,20 +180,10 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
       foreach ($tag_service->getCategories() as $key => $value) {
         $options[$value] = $tag_service->getChildren($key);
       }
+      $form['social_tagging']['widget']['#options'] = $options;
       // Move the social_tagging field in the group.
       $form['tagging']['social_tagging'] = $form['social_tagging'];
-
-      $form['tagging']['social_tagging'] = [
-        '#type' => 'select',
-        '#title' => $form['social_tagging']['#title'],
-        '#multiple' => TRUE,
-        '#default_value' => $form['social_tagging']['#default_value'],
-        '#options' => $options,
-        '#group' => 'group_tagging',
-      ];
-
       unset($form['social_tagging']);
-
       $form['tagging']['social_tagging']['#group'] = 'group_tagging';
     }
   }
@@ -267,13 +257,9 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
         'type' => 'hidden',
       ])
       ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
+        'type' => 'options_select',
         'weight' => 3,
         'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => '10',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
         ],
       ])
       ->setDisplayConfigurable('form', TRUE)
