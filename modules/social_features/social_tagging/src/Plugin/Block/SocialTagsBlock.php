@@ -47,6 +47,7 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match.
    * @param \Drupal\social_tagging\SocialTaggingService $tagging_service
+   *   The tag service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, SocialTaggingService $tagging_service) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
