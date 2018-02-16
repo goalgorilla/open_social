@@ -109,7 +109,7 @@ class SocialGroupAddForm extends FormBase {
 
     $group_types_options = [];
     $group_types_descriptions = [];
-    $group_types = $this->entityTypeManager->getListBuilder('group_type')->load();
+    $group_types = $this->entityTypeManager->getStorage('group_type')->loadMultiple();
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach ($group_types as $group_type) {
       $group_types_options[$group_type->id()] = $group_type->label();
