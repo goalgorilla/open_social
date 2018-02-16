@@ -81,7 +81,9 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       foreach ($this->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
-        $default_value = $config->get($id) ?: 0;
+
+        // No setting is TRUE.
+        $default_value = (is_null($config->get($id)) ? TRUE : FALSE);
 
         $form[$type][$id] = [
           '#type' => 'checkbox',
