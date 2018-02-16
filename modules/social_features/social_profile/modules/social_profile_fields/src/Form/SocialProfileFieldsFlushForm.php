@@ -69,7 +69,6 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    parent::submitForm($form, $form_state);
 
     drupal_set_message($this->t('All data from unused fields is permanently flushed.'));
 
