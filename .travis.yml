@@ -47,7 +47,7 @@ before_install:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:1.0.0 --prefer-dist; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:1.6.0 --prefer-dist; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT} --prefer-dist; fi
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
