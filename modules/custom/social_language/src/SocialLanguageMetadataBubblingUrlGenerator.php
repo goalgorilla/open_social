@@ -9,14 +9,14 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 
 /**
- * Class SocialLanguageMetadataBubblingUrlGenerator
+ * Class SocialLanguageMetadataBubblingUrlGenerator.
  *
  * @package Drupal\social_language
  */
 class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGenerator {
 
   /**
-   * Language manager for retrieving the default langcode when none is specified.
+   * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
@@ -29,6 +29,8 @@ class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGene
    *   The non-bubbling URL generator.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    */
   public function __construct(UrlGeneratorInterface $url_generator, RendererInterface $renderer, LanguageManagerInterface $language_manager) {
     parent::__construct($url_generator, $renderer);
