@@ -95,7 +95,7 @@ abstract class DemoNode extends DemoContent {
         $item['created'] = $this->createDate($item['created']);
       }
       else {
-        $item['created'] = REQUEST_TIME;
+        $item['created'] = \Drupal::time()->getRequestTime();
       }
 
       $entry = $this->getEntry($item);
