@@ -39,6 +39,15 @@ function social_tagging_install() {
 }
 
 /**
+ * Exclude landing pages from tagging.
+ */
+function social_tagging_update_8001() {
+  // Set allow to true, since that's the case by default.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+  $config->set('tag_node_type_landing_page', FALSE)->save();
+}
+
+/**
  * Function that sets the default configuration value(s) for this module.
  */
 function _social_tagging_set_defaults() {
@@ -52,6 +61,7 @@ function _social_tagging_set_defaults() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
   $config->set('enable_content_tagging', 1)->save();
   $config->set('allow_category_split', 1)->save();
+  $config->set('tag_node_type_landing_page', FALSE)->save();
   // SM should be able to change the permissions.
   user_role_grant_permissions('sitemanager', $permissions);
 }
