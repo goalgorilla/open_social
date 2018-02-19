@@ -84,7 +84,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         $id = $field['id'];
 
         // No setting is TRUE.
-        $default_value = (is_null($config->get($id)) ? TRUE : FALSE);
+        $default_value = (is_null($config->get($id)) ? TRUE : $config->get($id));
 
         $form[$type][$id] = [
           '#type' => 'checkbox',
