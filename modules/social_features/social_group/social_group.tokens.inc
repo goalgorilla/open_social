@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
+use Drupal\Component\Utility\Unicode;
 
 /**
  * Implements hook_token_info().
@@ -64,12 +65,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               // When it's a post or photo post.
               if ($entity->getEntityTypeId() === 'post' || $entity->getEntityTypeId() === 'photo') {
                 if ($name === 'content_type') {
-                  if (is_callable([$entity, 'getDisplayName'])) {
-                    $display_name = $entity->getDisplayName();
-                  }
-                  else {
-                    $display_name = $entity->bundle();
-                  }
+                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
                   if (!empty($display_name)) {
                     $replacements[$original] = $display_name;
                   }
