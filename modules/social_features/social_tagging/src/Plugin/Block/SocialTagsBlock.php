@@ -120,7 +120,6 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
     return $cache_tags;
   }
 
-
   /**
    * {@inheritdoc}
    */
