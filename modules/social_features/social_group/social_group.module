@@ -1249,8 +1249,8 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
   $found = FALSE;
 
-  foreach ($query->where as $conditions) {
-    foreach ($conditions['conditions'] as $condition) {
+  foreach ($query->where as &$conditions) {
+    foreach ($conditions['conditions'] as &$condition) {
       if ($condition['field'] == 'groups_field_data.type') {
         $found = TRUE;
         break 2;
@@ -1259,6 +1259,8 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
+    unset($condition);
+
     $condition = [
       'field' => 'groups_field_data.type',
       'value' => [],
@@ -1280,6 +1282,14 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
-    $query->where[]['conditions'][] = $condition;
+    if (isset($conditions)) {
+      $conditions['conditions'][] = $condition;
+    }
+    else {
+      $query->where[] = [
+        'conditions' => [$condition],
+        'type' => 'AND',
+      ];
+    }
   }
 }
