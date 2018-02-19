@@ -3,6 +3,7 @@
 namespace Drupal\social_demo;
 
 use Drupal\block_content\Entity\BlockContent;
+use Drupal\Core\Asset\CssOptimizer;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldItemList;
@@ -156,11 +157,69 @@ abstract class DemoSystem extends DemoContent {
       // Save the palette.
       $color->set('palette', $palette)->save();
 
-      // Remove the already generated css files.
-      // TODO: Check if isset.
-      foreach ($color->get('stylesheets') as $file) {
-        file_unmanaged_delete($file);
+      /*
+       * The code below has been stolen from the color.module. This module makes
+       * no use of services or any other way to make its code a bit more
+       * re-usable. Therefore a rip/copy was needed.
+       *
+       * The code makes sure that the above enforced color configuration is
+       * in fact applied.
+       */
+
+      // Define the library name(s).
+      $libraries = [
+        'assets/css/brand.css',
+      ];
+
+      $id = $active_theme . '-' . substr(hash('sha256', serialize($palette) . microtime()), 0, 8);
+      $paths['color'] = 'public://color';
+      $paths['target'] = $paths['color'] . '/' . $id;
+
+      foreach ($paths as $path) {
+        file_prepare_directory($path, FILE_CREATE_DIRECTORY);
       }
+
+      $paths['target'] = $paths['target'] . '/';
+      $paths['id'] = $id;
+      $paths['source'] = drupal_get_path('theme', $active_theme) . '/';
+      $paths['files'] = $paths['map'] = [];
+
+      $css = [];
+      foreach ($libraries as $stylesheet) {
+        // Build a temporary array with CSS files.
+        $files = [];
+        if (file_exists($paths['source'] . $stylesheet)) {
+          $files[] = $stylesheet;
+        }
+
+        foreach ($files as $file) {
+          $css_optimizer = new CssOptimizer();
+          // Aggregate @imports recursively for each configured top level
+          // CSS file without optimization.
+          // Aggregation and optimization will be handled by
+          // drupal_build_css_cache() only.
+          $style = $css_optimizer->loadFile($paths['source'] . $file, FALSE);
+
+          // Return the path to where this CSS file originated from, stripping
+          // off the name of the file at the end of the path.
+          $css_optimizer->rewriteFileURIBasePath = base_path() . dirname($paths['source'] . $file) . '/';
+
+          // Prefix all paths within this CSS file, ignoring absolute paths.
+          $style = preg_replace_callback('/url\([\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\)/i', [$css_optimizer, 'rewriteFileURI'], $style);
+          // Rewrite stylesheet with new colors.
+          $style = _color_rewrite_stylesheet($active_theme, $info, $paths, $palette, $style);
+          $base_file = drupal_basename($file);
+          $css[] = $paths['target'] . $base_file;
+
+          _color_save_stylesheet($paths['target'] . $base_file, $style, $paths);
+        }
+      }
+
+      // Maintain list of files.
+      $color
+        ->set('stylesheets', $css)
+        ->set('files', $paths['files'])
+        ->save();
     }
 
     // Return something.
@@ -218,7 +277,7 @@ abstract class DemoSystem extends DemoContent {
     $font = Font::create([
       'name' => $fontName,
       'user_id' => 1,
-      'created' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
       'field_fallback' => '0',
     ]);
     $font->save();

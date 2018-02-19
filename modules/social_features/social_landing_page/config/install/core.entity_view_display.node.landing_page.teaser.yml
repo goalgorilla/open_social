@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.landing_page.field_content_visibility
     - field.field.node.landing_page.field_landing_page_section
     - node.type.landing_page
   module:
@@ -39,8 +40,17 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   links:
     weight: 100
     region: content
 hidden:
+  field_content_visibility: true
   field_landing_page_section: true

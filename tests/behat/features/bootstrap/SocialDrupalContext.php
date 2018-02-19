@@ -89,7 +89,10 @@ class SocialDrupalContext extends DrupalContext {
       if (isset($node->field_event_date)) {
         $node->field_event_date = date('Y-m-d H:i:s', strtotime($node->field_event_date));
       }
-      $this->nodeCreate($node);
+      $entity = $this->nodeCreate($node);
+      if (isset($node->alias)) {
+        \Drupal::service('path.alias_storage')->save("/node/" . $entity->nid, $node->alias);
+      }
     }
   }
 

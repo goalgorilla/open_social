@@ -5,6 +5,7 @@ namespace Drupal\activity_creator;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 
@@ -376,15 +377,35 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get message text.
    *
+   * @param \Drupal\message\Entity\Message $message
+   *   Message object we get the text for.
+   * @param string $langcode
+   *   The language code we try to get the translation for.
+   *
    * @return array
    *   Message text array.
    */
-  public function getMessageText(Message $message) {
+  public function getMessageText(Message $message, $langcode = '') {
     /** @var \Drupal\message\Entity\MessageTemplate $message_template */
     $message_template = $message->getTemplate();
 
     $message_arguments = $message->getArguments();
     $message_template_text = $message_template->get('text');
+
+    // If we have a language code here we can try to get a translated text.
+    if (!empty($langcode)) {
+      $language_manager = \Drupal::languageManager();
+      if ($language_manager instanceof ConfigurableLanguageManagerInterface) {
+        // Load the language override for the message template.
+        $config_translation = $language_manager->getLanguageConfigOverride($langcode, 'message.template.' . $message_template->id());
+        $translated_text = $config_translation->get('text');
+
+        // Replace the text *only* if we have an translation available.
+        if ($translated_text) {
+          $message_template_text = $translated_text;
+        }
+      }
+    }
 
     $output = $this->processArguments($message_arguments, $message_template_text, $message);
 

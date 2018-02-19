@@ -13,3 +13,8 @@
 - [ ] Notice it doesn't work
 - [ ] Checkout to this branch
 - [ ] Try this and this and that and see that it works now
+
+## Documentation
+- [ ] This item is added to the release notes
+- [ ] This item is documented on LGOS
+- [ ] This item has been added to the feature overview
