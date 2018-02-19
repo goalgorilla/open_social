@@ -76,7 +76,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#title' => $this->t('Allow users to tag content in content.'),
       '#default_value' => $config->get('enable_content_tagging'),
       '#required' => FALSE,
-      '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
+      '#description' => $this->t("Determine whether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
     ];
 
     $form['allow_category_split'] = [
@@ -102,7 +102,6 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
         '#title' => $nodetype->label(),
         '#default_value' => $default_value,
         '#required' => FALSE,
-        '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
       ];
     }
 
