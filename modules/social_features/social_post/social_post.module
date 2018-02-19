@@ -12,6 +12,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
 use Drupal\user\Entity\User;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\Group;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -197,6 +199,9 @@ function social_post_preprocess_field(array &$variables) {
 function social_post_comment_create_access(AccountInterface $account, array $context, $entity_bundle) {
   if ($entity_bundle === 'post_comment') {
     $group = \Drupal::routeMatch()->getParameter('group');
+    if (is_numeric($group) && !$group instanceof GroupInterface) {
+      $group = Group::load($group);
+    }
     if ($group) {
       if ($group->hasPermission('add post entities in group', $account)) {
         return AccessResult::allowed()->cachePerUser();
