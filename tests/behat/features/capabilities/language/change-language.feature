@@ -1,4 +1,4 @@
-@api @account @language @stability @LU @DS-1382 @stability-2 @test
+@api @account @language @stability @LU @DS-1382 @stability-2
 Feature: Multilingual Open Social
   Benefit: Deliver site in users own language
   Role: LU
@@ -21,7 +21,7 @@ Feature: Multilingual Open Social
     And I click "Add language"
     And I select "Dutch" from "Language name"
     And I press "Add language"
-    And I wait for AJAX to finish
+    And I wait for the batch job to finish
 
     # Language field on user form should be visible when site has more one language.
     When I am logged in as an "authenticated user"
