@@ -8,6 +8,7 @@
 
 namespace Drupal\social_profile_fields;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\profile\Entity\Profile;
 
 class SocialProfileFieldsBatch {
@@ -29,6 +30,8 @@ class SocialProfileFieldsBatch {
       }
       // Save the profile.
       $results[] = $profile->save();
+      // Oh and also clear the profile cache while we're at it.
+      Cache::invalidateTags(['profile:'.$profile->id()]);
     }
     $context['message'] = $message;
     $context['results'] = $results;
