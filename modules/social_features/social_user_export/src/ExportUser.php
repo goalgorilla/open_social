@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export;
 
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 use League\Csv\Writer;
@@ -12,7 +13,7 @@ use Drupal\Core\Link;
  *
  * @package Drupal\social_user_export
  */
-class ExportUser {
+class ExportUser extends ContentEntityBase {
 
   /**
    * Callback of one operation.
@@ -40,6 +41,7 @@ class ExportUser {
         t('Registration date'),
         t('Status'),
         t('Roles'),
+        t('Number of Private Messages'),
         t('Posts created'),
         t('Comments created'),
         t('Topics created'),
@@ -85,6 +87,7 @@ class ExportUser {
       \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
       !empty($status[0]['value']) ? t('Active') : t('Blocked'),
       implode(', ', $roles),
+      social_user_export_number_of_private_messages($entity),
       social_user_export_posts_count($entity),
       social_user_export_comments_count($entity),
       social_user_export_nodes_count($entity, 'topic'),

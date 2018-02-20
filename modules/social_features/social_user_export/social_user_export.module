@@ -190,6 +190,26 @@ function social_user_export_groups_count(UserInterface $account) {
 }
 
 /**
+ * Returns number of private messages sent per user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account that sends messages.
+ *
+ * @return int
+ *   The number of private messages.
+ */
+function social_user_export_number_of_private_messages(UserInterface $account) {
+  $query = \Drupal::database()->select('private_messages', 'pm');
+  $query->addField('pm', 'message_value');
+  $query->condition('pm.owner', $account->id());
+
+ return (int) $query
+   ->countQuery()
+   ->execute()
+   ->fetchField();
+}
+
+/**
  * Implements hook_file_download().
  */
 function social_user_export_file_download($uri) {
