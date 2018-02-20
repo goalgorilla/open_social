@@ -14,7 +14,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -106,21 +105,12 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  /** @var \Drupal\node\Entity\NodeType $node_type */
-  $node_type = \Drupal::routeMatch()->getParameter('node_type');
-  /** @var \Drupal\node\Entity\Node $node */
-  $node = \Drupal::routeMatch()->getParameter('node');
-
-  // On node edit we need to do this.
-  if (!$node_type) {
-    $node_type = NodeType::load($node->bundle());
-  }
-
+  $node = $form_state->getFormObject()->getEntity();
   $node_type_tagging = TRUE;
-  if ($node_type instanceof NodeType) {
+  if ($node_type = $node->type->entity->id()) {
 
     $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    $config_value = $config->get('tag_node_type_' . $node_type->id());
+    $config_value = $config->get('tag_node_type_' . $node_type);
 
     if ($config_value === FALSE || $config_value === 0) {
       $node_type_tagging = FALSE;
