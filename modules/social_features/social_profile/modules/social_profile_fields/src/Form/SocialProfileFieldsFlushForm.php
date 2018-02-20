@@ -89,8 +89,23 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $pids = \Drupal::entityQuery('profile')
+      ->condition('type', 'profile')
+      ->execute();
 
-    drupal_set_message($this->t('All data from unused fields is permanently flushed.'));
+    $fields = $this->getUnselectedFields();
+
+    $batch = array(
+      'title' => t('Flushing profiles.'),
+      'operations' => array(
+        array(
+          '\Drupal\social_profile_fields\SocialProfileFieldsBatch::performFlush',
+          array($pids, $fields)
+        ),
+      ),
+      'finished' => '\Drupal\social_profile_fields\SocialProfileFieldsBatch::performFlushFinishedCallback',
+    );
+    batch_set($batch);
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
@@ -100,10 +115,22 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
    */
   public function getDescription() {
 
+    $fields = $this->getUnselectedFields();
+    $field_string = implode(', ', $fields);
+
+    return $this->t('WARNING: Flushing profile data will permanently remove ALL data from the following fields from the database: @fields This cannot be undone. Are you sure you want to contine?', ["@fields" => $field_string]);
+  }
+
+
+  /**
+   * @return array
+   */
+  protected function getUnselectedFields() {
     $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile']);
     $settings = $this->configFactory->get('social_profile_fields.settings');
     $empty = [];
 
+    /** @var \Drupal\field\Entity\FieldConfig $value */
     foreach ($profile_fields as $key => $value) {
       $sval = $settings->get(str_replace('.', '_', $key));
 
@@ -111,10 +138,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
         $empty[] = $value->getName();
       }
     }
-
-    $field_string = implode(', ', $empty);
-
-    return $this->t('WARNING: Flushing profile data will permanently remove ALL data from the following fields from the database: @fields This cannot be undone. Are you sure you want to contine?', ["@fields" => $field_string]);
+    return $empty;
   }
 
 }
