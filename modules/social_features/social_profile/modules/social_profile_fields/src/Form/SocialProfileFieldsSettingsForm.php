@@ -7,7 +7,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\field\FieldConfigStorage;
 use Drupal\profile\Entity\ProfileType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -163,7 +162,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    * Redirects to confirmation form for the flush action.
    */
   public function submitFlush(array &$form, FormStateInterface $form_state) {
-    // social_profile_fields.flush
+    // social_profile_fields.flush.
     $form_state->setRedirect('social_profile_fields.flush');
   }
+
 }

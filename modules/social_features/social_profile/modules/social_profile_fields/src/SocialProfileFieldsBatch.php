@@ -1,22 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jochem
- * Date: 20/02/2018
- * Time: 12:17
- */
 
 namespace Drupal\social_profile_fields;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\profile\Entity\Profile;
 
+/**
+ * Class SocialProfileFieldsBatch.
+ *
+ * Empty profile fields in batch.
+ *
+ * @package Drupal\social_profile_fields
+ */
 class SocialProfileFieldsBatch {
 
-  public static function performFlush($pids, $fields, &$context) {
+  /**
+   * Perform the flush.
+   *
+   * @param array $pids
+   *   Profile id's.
+   * @param array $fields
+   *   An array of fields to empty.
+   * @param array $context
+   *   The context of the flush.
+   */
+  public static function performFlush(array $pids, array $fields, array &$context) {
     $message = 'Flushing profile data...';
 
-    $results = array();
+    $results = [];
 
     foreach ($pids as $pid) {
       $profile = Profile::load($pid);
@@ -31,13 +42,23 @@ class SocialProfileFieldsBatch {
       // Save the profile.
       $results[] = $profile->save();
       // Oh and also clear the profile cache while we're at it.
-      Cache::invalidateTags(['profile:'.$profile->id()]);
+      Cache::invalidateTags(['profile:' . $profile->id()]);
     }
     $context['message'] = $message;
     $context['results'] = $results;
   }
 
-  function performFlushFinishedCallback($success, $results, $operations) {
+  /**
+   * Message when done.
+   *
+   * @param bool $success
+   *   If the operation was a success.
+   * @param array $results
+   *   The amount of items done.
+   * @param string $operations
+   *   The operation performed.
+   */
+  public function performFlushFinishedCallback($success, array $results, $operations) {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {
@@ -52,4 +73,5 @@ class SocialProfileFieldsBatch {
 
     drupal_set_message($message);
   }
+
 }

@@ -11,34 +11,44 @@ use Drupal\profile\ProfileStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Class SocialProfileFieldsFlushForm.
+ *
  * Provides confirmation form for resetting a vocabulary to alphabetical order.
  */
 class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
 
   /**
+   * Profilestorage.
+   *
    * @var \Drupal\profile\ProfileStorage
    */
   protected $profileStorage;
 
   /**
+   * Configstorage.
+   *
    * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
 
 
   /**
+   * Fiekdconfigstorage.
+   *
    * @var \Drupal\field\FieldConfigStorage
    */
   protected $fieldStorage;
-
 
   /**
    * Constructs a new ExportUserConfirm.
    *
    * @param \Drupal\profile\ProfileStorage $profiel_storage
+   *   The profile storage.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config.
    * @param \Drupal\field\FieldConfigStorage $field_storage
+   *   The field storage.
    */
   public function __construct(ProfileStorage $profiel_storage, ConfigFactory $config_factory, FieldConfigStorage $field_storage) {
     $this->profileStorage = $profiel_storage;
@@ -95,16 +105,16 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
     $fields = $this->getUnselectedFields();
 
-    $batch = array(
+    $batch = [
       'title' => t('Flushing profiles.'),
-      'operations' => array(
-        array(
+      'operations' => [
+        [
           '\Drupal\social_profile_fields\SocialProfileFieldsBatch::performFlush',
-          array($pids, $fields)
-        ),
-      ),
+          [$pids, $fields],
+        ],
+      ],
       'finished' => '\Drupal\social_profile_fields\SocialProfileFieldsBatch::performFlushFinishedCallback',
-    );
+    ];
     batch_set($batch);
 
     $form_state->setRedirectUrl($this->getCancelUrl());
@@ -121,9 +131,11 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
     return $this->t('WARNING: Flushing profile data will permanently remove ALL data from the following fields from the database: @fields This cannot be undone. Are you sure you want to contine?', ["@fields" => $field_string]);
   }
 
-
   /**
+   * Function that return an array of field names.
+   *
    * @return array
+   *   An array of field names.
    */
   protected function getUnselectedFields() {
     $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile']);
