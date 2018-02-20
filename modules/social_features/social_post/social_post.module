@@ -67,25 +67,36 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
  *
  * Alter the comment_post_comment_form form.
  */
-function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Reset title display.
-  $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
-
-  // Set the action of the form to the current uri.
-  // This needs to be done, because we cannot override $form['#action']
-  // without breaking functionality.
-  $uri = Url::fromRoute('<current>')->toString();
-  // Store in a hidden field.
-  $form['redirect_after_save'] = [
-    '#type' => 'hidden',
-    '#title' => t('Redir'),
-    '#default_value' => $uri,
-  ];
-
-  // Submit function to retrieve the action uri and redirect to it.
-  $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
+function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id)
+{
+    // Reset title display.
+    $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
+    //for redirecting the comment_edit_form page
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    //check if on editing comment
+    if ($route_name == 'entity.comment.edit_form') {
+        $uri = Url::fromRoute('<current>')->toUriString();
+        $form['redirect_after_save'] = [
+            '#type' => 'hidden',
+            '#title' => t('Redir'),
+            '#defautl_value' => $uri,
+        ];
+    }
+    else {
+        // Set the action of the form to the current uri.
+        // This needs to be done, because we cannot override $form['#action']
+        // without breaking functionality.
+        $uri = Url::fromRoute('<current>')->toString();
+        // Store in a hidden field.
+        $form['redirect_after_save'] = [
+            '#type' => 'hidden',
+            '#title' => t('Redir'),
+            '#default_value' => $uri,
+        ];
+    }
+    // Submit function to retrieve the action uri and redirect to it.
+    $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
 }
-
 /**
  * Form submit for comment_post_comment_form.
  *

@@ -1,0 +1,13 @@
+social_content_export.export_content_confirm:
+  path: '/admin/content/export'
+  defaults:
+    _form: '\Drupal\social_content_export\Form\ExportContentConfirm'
+    _title: 'Export Content to CSV'
+  requirements:
+    _permission: 'administer site configuration'
+social_user_export.content_download_controller:
+  path: '/admin/content/export/download/{name}'
+  defaults:
+   _controller: '\Drupal\social_content_export\Controller\ContentDownloadController::download'
+   requirements:
+     _permission: 'administer content'

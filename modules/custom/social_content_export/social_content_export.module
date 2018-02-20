@@ -1,0 +1,139 @@
+<?php
+
+/**
+ * @file
+ * The social_content_export module.
+ */
+
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\views\Views;
+
+/**
+ * Returns event location.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity to look for data to export.
+ *
+ * @return mixed
+ *   Return location of event to take place.
+ */
+function social_content_export_event_location(ContentEntityInterface $entity) {
+  // Get location of event.
+  if ($location = $entity->get('field_event_location')->value) {
+    return $location;
+  }
+  else {
+    $location = '';
+    return $location;
+  }
+
+}
+
+/**
+ * Returns event host.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity to look for data to export.
+ *
+ * @return mixed
+ *   Returns address of event.
+ */
+function social_content_export_event_host(ContentEntityInterface $entity) {
+  // Get location of event.
+  if ($host = $entity->get('field_event_address')->locality) {
+    return $host;
+  }
+  else {
+    $host = '';
+    return $host;
+  }
+}
+
+/**
+ * Returns participant.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity to look for data to export.
+ *
+ * @return mixed
+ *   Return event participants.
+ */
+function social_content_export_event_participant(ContentEntityInterface $entity) {
+  return $participant = \Drupal::entityQuery('event_enrollment')
+    ->condition('user_id', $entity->id())
+    ->execute();
+}
+
+/**
+ * Returns event title.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity to look for data to export.
+ *
+ * @return mixed
+ *   Return event title.
+ */
+function social_content_export_event_title(ContentEntityInterface $entity) {
+
+  if ($host = $entity->get('title')->value) {
+    return $host;
+  }
+  else {
+    $host = '';
+    return $host;
+  }
+}
+
+/**
+ * Returns event organizer.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity to look for data to export.
+ *
+ * @return mixed
+ *   Return event organizer.
+ */
+function social_content_export_event_organizer(ContentEntityInterface $entity) {
+  return $organizer = \Drupal::entityQuery('event_enrollment')
+    ->condition('id', $entity->id())
+    ->execute();
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function social_content_export_file_download($uri) {
+  $scheme = \Drupal::service('file_system')->uriScheme($uri);
+  $target = file_uri_target($uri);
+  $access = \Drupal::currentUser()->hasPermission('administer node types');
+
+  if ($scheme == 'private' && preg_match('/^csv\/export-content-([a-f0-9]{12})\.csv$/i', $target) && $access) {
+    return [
+      'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
+    ];
+  }
+}
+
+/**
+ * Returns the  admin content view.
+ *
+ * @param array $query
+ *   Query parameters for exposed filters.
+ * @param bool $execute
+ *   If TRUE, views query will be executed.
+ *
+ * @return \Drupal\views\ViewExecutable
+ *   The requested view.
+ */
+function _social_content_export_get_view(array $query = [], $execute = TRUE) {
+  $view = Views::getView('content');
+  $view->setDisplay('page_1');
+  $view->setExposedInput($query);
+
+  if ($execute) {
+    $view->preExecute();
+    $view->execute();
+  }
+
+  return $view;
+}
