@@ -74,6 +74,13 @@ Feature: Create Public Group
     And I click "Test public group"
     Then I should see the button "Joined"
 
+    # Create a post inside the public group, visible to public only
+    When I fill in "Say something to the group" with "This is a public group post."
+    And I select post visibility "Public"
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a public group post."
+
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
     And I click "Create Event"
@@ -132,3 +139,6 @@ Feature: Create Public Group
     When I logout
     And I am on "all-groups"
     Then I should see the link "Test public group"
+
+    When I click "Test public group"
+    Then I should see "This is a public group post."
