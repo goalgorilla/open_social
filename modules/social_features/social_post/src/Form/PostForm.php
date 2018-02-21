@@ -98,7 +98,6 @@ class PostForm extends ContentEntityForm {
             }
           }
 
-
         }
       }
 
