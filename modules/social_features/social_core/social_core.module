@@ -102,7 +102,7 @@ function template_preprocess_page_hero_data(array &$variables) {
       $image_fields = array_filter($node_fields, '_social_core_find_image_field');
       // Get the first image field of all the fields.
       $field = reset($image_fields);
-      if ($field !== NULL) {
+      if ($field !== NULL && $field !== FALSE) {
         if ($field->getFieldDefinition()->get("field_type") === 'image') {
           if (!empty(($node->get($field->getName())->entity))) {
             $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')

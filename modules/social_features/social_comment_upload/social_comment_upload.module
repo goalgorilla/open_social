@@ -76,15 +76,32 @@ function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
  * Implements hook_comment_delete().
  */
 function social_comment_upload_comment_delete(EntityInterface $entity) {
-  // Loop through the files in the comment.
-  foreach ($entity->field_comment_files as $filefield) {
+  // If this comment has any files, delete those as well.
+  _social_comment_upload_delete_comment_files($entity);
+}
+
+/**
+ * Deletes the files associated with a comment.
+ *
+ * This can be used to clean up files that were uploaded with a comment once
+ * that comment is being removed.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The comment for which attached files should be deleted.
+ */
+function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
+  // If this comment doesn't have any attached files we abort early.
+  if (!$entity->hasField('field_comment_files') || $entity->get('field_comment_files')->isEmpty()) {
+    return;
+  }
+
+  foreach ($entity->field_comment_files as $file_reference) {
     // Try to load the actual file object.
-    $file = File::load($filefield->target_id);
+    $file = File::load($file_reference->target_id);
     // Check if it's an actual file object.
     if ($file instanceof File) {
       // Delete the file object.
       $file->delete();
     }
   }
-
 }
