@@ -14,3 +14,51 @@ function improved_theme_settings_install() {
   // Set weight.
   module_set_weight('improved_theme_settings', 50);
 }
+
+/**
+ * Migrate old theme settings to the new settings.
+ */
+function improved_theme_settings_update_8001() {
+  // Get the current default theme.
+  $theme = \Drupal::configFactory()->get('system.theme')->get('default');
+  // Get the color values.
+  $config = \Drupal::configFactory()->getEditable('color.theme.' . $theme);
+  $colors = $config->getRawData();
+
+  // Create an array for the new color values.
+  $new_colors = [
+    'brand-primary' => '#29abe2',
+    'brand-secondary' => '#1f80aa',
+    'brand-accent' => '#ffc142',
+    'brand-link' => '#33b5e5',
+    'navbar-bg' => '#333333',
+    'navbar-text' => '#ffffff',
+    'navbar-active-bg' => '#1f1f1f',
+    'navbar-active-text' => '#f3f3f3',
+    'navbar-sec-bg' => '#1f7ea7',
+    'navbar-sec-text' => '#f9f9f9',
+  ];
+
+  // Fetch values from the old theme and overrode em.
+  if (isset($colors['palette']['brand-bg-primary'])) {
+    $new_colors['brand-primary'] = $colors['palette']['brand-bg-primary'];
+  }
+
+  if (isset($colors['palette']['brand-bg-secondary'])) {
+    $new_colors['brand-secondary'] = $colors['palette']['brand-bg-secondary'];
+  }
+
+  if (isset($colors['palette']['brand-bg-accent'])) {
+    $new_colors['brand-accent'] = $colors['palette']['brand-bg-accent'];
+  }
+
+  if (isset($colors['palette']['brand-text-primary'])) {
+    $new_colors['brand-link'] = $colors['palette']['brand-text-primary'];
+  }
+
+  // overwrite.
+  $colors['palette'] = $new_colors;
+
+  // Save the new config.
+  $config->setData($colors)->save();
+}

@@ -242,6 +242,14 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
         break;
 
+      case 'profile':
+
+        if (\Drupal::currentUser()->isAnonymous()) {
+          $suggestions[] = $hook . '__' . $variables['elements']['#entity_type'] . '__' . $variables['elements']['#view_mode'] . '__anonymous';
+        }
+
+        break;
+
     }
 
   }

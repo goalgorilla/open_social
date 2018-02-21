@@ -110,7 +110,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function build() {
     $account = $this->getContextValue('user');
-    $navigation_settings_config = $this->configFactory->get('social_user_navigation.settings');
+    $navigation_settings_config = $this->configFactory->get('social_user.navigation.settings');
 
     if ($account->id() !== 0) {
       $account_name = $account->getAccountName();
@@ -240,6 +240,23 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'title_classes' => '',
           'url' => Url::fromRoute('node.add', [
             'node_type' => 'page',
+          ]),
+        ];
+      }
+
+      // Check if the current user is allowed to create new landing pages.
+      if ($this->moduleHandler->moduleExists('social_landing_page')) {
+        $links['add']['below']['add_landing_page'] = [
+          'classes' => '',
+          'link_attributes' => '',
+          'link_classes' => '',
+          'icon_classes' => '',
+          'icon_label' => '',
+          'title' => $this->t('Create New Landing Page'),
+          'label' => $this->t('New landing page'),
+          'title_classes' => '',
+          'url' => Url::fromRoute('node.add', [
+            'node_type' => 'landing_page',
           ]),
         ];
       }

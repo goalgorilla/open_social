@@ -52,7 +52,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['social_user_navigation.settings'];
+    return ['social_user.navigation.settings'];
   }
 
   /**
@@ -61,7 +61,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     // Get the configuration file.
-    $config = $this->config('social_user_navigation.settings');
+    $config = $this->config('social_user.navigation.settings');
 
     $form['navigation_settings'] = [
       '#type' => 'fieldset',
@@ -99,7 +99,7 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     // Get the configuration file.
-    $config = $this->config('social_user_navigation.settings');
+    $config = $this->config('social_user.navigation.settings');
     $config->set('display_social_private_message_icon', $form_state->getValue('display_social_private_message_icon'))
       ->set('display_my_groups_icon', $form_state->getValue('display_my_groups_icon'))
       ->save();

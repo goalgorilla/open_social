@@ -56,6 +56,7 @@ class SetGroupsForNodeService {
    *   Object of a group.
    */
   public static function addGroupContent(NodeInterface $node, Group $group) {
+    // TODO Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
     $group->addContent($node, $plugin_id);
   }

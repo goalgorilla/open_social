@@ -20,6 +20,10 @@ function social_group_update_dependencies() {
   $dependencies['system'][8200] = [
     'social_group' => 8005,
   ];
+  // The gnode module is triggering node access rebuild. Lets rebuild it!
+  $dependencies['social_group'][8011] = [
+    'gnode' => 8005,
+  ];
   return $dependencies;
 }
 
@@ -79,12 +83,16 @@ function _social_group_set_permissions() {
  */
 function _social_group_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'access group search',
+  ];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'create open_group group',
     'create closed_group group',
+    'create public_group group',
+    'view group stream page',
   ]);
 
   // Content manager.
@@ -317,4 +325,29 @@ function social_group_update_8009() {
     user_role_grant_permissions($role->id(), $permissions);
   }
 
+}
+
+/**
+ * Add permissions for public groups.
+ */
+function social_group_update_8010() {
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->id() === 'anonymous') {
+      user_role_grant_permissions($role->id(), ['access group search']);
+    }
+    else {
+      user_role_grant_permissions($role->id(), [
+        'create public_group group',
+        'view group stream page',
+      ]);
+    }
+  }
+}
+
+/**
+ * Rebuild node access.
+ */
+function social_group_update_8011() {
+  node_access_rebuild(TRUE);
 }

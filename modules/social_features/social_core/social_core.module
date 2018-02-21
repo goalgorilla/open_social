@@ -16,6 +16,7 @@ use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
+use Drupal\Core\Field\FieldItemList;
 
 /**
  * Implements hook_theme().
@@ -95,9 +96,38 @@ function template_preprocess_page_hero_data(array &$variables) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
     }
-
+    else {
+      // If machine name too long or using another image field.
+      $node_fields = $node->getFields();
+      $image_fields = array_filter($node_fields, '_social_core_find_image_field');
+      // Get the first image field of all the fields.
+      $field = reset($image_fields);
+      if ($field !== NULL && $field !== FALSE) {
+        if ($field->getFieldDefinition()->get("field_type") === 'image') {
+          if (!empty(($node->get($field->getName())->entity))) {
+            $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
+              ->buildUrl($node->get($field->getName())->entity->getFileUri());
+          }
+        }
+      }
+    }
   }
+}
 
+/**
+ * Tries to determine if a field is an image field based on a field name.
+ *
+ * @param \Drupal\Core\Field\FieldItemList $field
+ *   A field object.
+ *
+ * @return \Drupal\Core\Field\FieldItemList|null
+ *   Will return the FieldItemList or null if its not an image field.
+ */
+function _social_core_find_image_field(FieldItemList $field) {
+  if (strpos($field->getName(), 'image') !== FALSE) {
+    return $field;
+  }
+  return NULL;
 }
 
 /**
