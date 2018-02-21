@@ -16,6 +16,10 @@ function social_language_install() {
 
   // Set some default permissions.
   _social_language_set_permissions();
+
+  \Drupal::configFactory()->getEditable('locale.settings')
+    ->set('translation.path', '/tmp')
+    ->save();
 }
 
 /**
