@@ -60,8 +60,8 @@ function social_user_register_validate(&$form, FormStateInterface $form_state) {
     $site_config = \Drupal::config('system.site');
     $site_mail = $site_config->get('mail');
     $admin_link = empty($site_mail) ? t('site administrator') : Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString();
-    $form_state->setErrorByName('mail', t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses or usernames. However, if you entered an email address or username that already exists, you will not be able to continue.
-    Please try again, or request a new password. Contact the @admin_link if there are any problems.', ['@admin_link' => $admin_link]));
+    $form_state->setErrorByName('mail', t("Oops, there was an error with the email address or username you entered. Due to privacy concerns, we can't disclose the existence of already registered email addresses.
+    So, please try again! Contact the @admin_link if there are any problems.", ['@admin_link' => $admin_link]));
   }
 }
 
