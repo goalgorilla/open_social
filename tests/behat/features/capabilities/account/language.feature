@@ -22,6 +22,11 @@ Feature: View language selector form element in the user settings form
     And I select "Dutch" from "Language name"
     And I press "Add language"
     And I wait for AJAX to finish
+    And I go to "/admin/config/regional/language/detection"
+    And I uncheck the box "Enable url language detection method"
+    And I check the box "Enable user language detection method"
+    And I press "Save settings"
+
     And I am logged in as an "authenticated user"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
