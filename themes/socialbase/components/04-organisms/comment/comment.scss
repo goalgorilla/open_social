@@ -155,15 +155,13 @@
 
   textarea.form-control {
     height: $input-height-base;
-    .stream-item:last-child & {
-      @include for-phone-only {
-        &:focus {
-          margin-bottom: 150px;
-        }
-      }
-    }
   }
 
+}
+.main-container.open-keyboard {
+  @include for-phone-only {
+    padding-bottom: 250px;
+  }
 }
 
 // when optional module social_comment_upload is enabled
