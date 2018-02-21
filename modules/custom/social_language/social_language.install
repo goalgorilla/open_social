@@ -41,11 +41,12 @@ function _social_language_set_permissions() {
 function _social_language_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = [
-    'administer languages',
     'create content translations',
     'delete content translations',
     'update content translations',
     'translate menu_link_content',
+    'translate account settings',
+    'translate system information',
   ];
 
   if (isset($permissions[$role])) {
