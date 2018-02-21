@@ -52,7 +52,6 @@
   font-size: $button-font-size-small;
   color: $gray-light;
 
-
   > * {
     display: inline-block;
     margin-right: 0.5em;
@@ -105,7 +104,6 @@
 
 }
 
-
 // make sure the btn-group is positioned top right of the comment
 .comment__actions {
   position: absolute;
@@ -157,8 +155,14 @@
 
   textarea.form-control {
     height: $input-height-base;
+    .stream-item:last-child & {
+      @include for-phone-only {
+        &:focus {
+          margin-bottom: 50px;
+        }
+      }
+    }
   }
-
 
 }
 
@@ -199,7 +203,9 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-summary::-moz-list-bullet { list-style-type: none;  }
+summary::-moz-list-bullet {
+  list-style-type: none;
+}
 
 // Set state for open details
 details .details__close-icon,
