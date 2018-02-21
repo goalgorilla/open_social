@@ -54,3 +54,12 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
     ];
   }
 }
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ *
+ * Make the label/title translatable.
+ */
+function social_block_view_search_hero_block_alter(array &$build, BlockPluginInterface $block) {
+  $build['#configuration']['label'] = t('Search');
+}

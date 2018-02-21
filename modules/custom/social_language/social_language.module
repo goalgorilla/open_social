@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Contains social_language.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_language_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\Core\Config\ImmutableConfig $language_types */
+  $language_negotiations = \Drupal::configFactory()->get('language.types')->get('negotiation');
+
+  // Show the preferred language field only when the user language negotiation
+  // is set to user and we have at least two languages.
+  if (isset($language_negotiations['language_interface']['enabled']['language-user']) && count(\Drupal::languageManager()->getLanguages()) > 1) {
+    $form['language']['#title'] = NULL;
+    $form['language']['preferred_langcode']['#title'] = t('Interface language');
+    $form['language']['preferred_langcode']['#description'] = t('Select the language you want to use this site in.');
+    $form['language']['#attributes']['class'][] = 'form-horizontal';
+  }
+  else {
+    $form['language']['#access'] = FALSE;
+  }
+}

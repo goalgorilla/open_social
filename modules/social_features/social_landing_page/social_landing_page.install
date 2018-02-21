@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_landing_page module.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_landing_page.
+ */
+function social_landing_page_install() {
+
+  // Set some default permissions.
+  _social_landing_page_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_landing_page_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_landing_page_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Build the permissions.
+ */
+function _social_landing_page_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [
+    'view node.landing_page.field_content_visibility:public content',
+  ];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'view node.landing_page.field_content_visibility:community content',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'create landing_page content',
+    'delete any landing_page content',
+    'delete own landing_page content',
+    'edit any landing_page content',
+    'edit own landing_page content',
+    'view landing_page revisions',
+    'delete landing_page revisions',
+    'revert landing_page revisions',
+    'override landing_page revision log entry',
+    'override landing_page authored by option',
+    'override landing_page published option',
+    'override landing_page authored on option',
+    'override landing_page promote to front landing_page option',
+    'override landing_page revision option',
+    'override landing_page sticky option',
+    'view node.landing_page.field_content_visibility:group content',
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
+}

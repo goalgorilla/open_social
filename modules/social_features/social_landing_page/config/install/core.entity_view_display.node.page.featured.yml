@@ -1,0 +1,68 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured
+    - field.field.node.page.body
+    - field.field.node.page.field_content_visibility
+    - field.field.node.page.field_files
+    - field.field.node.page.field_page_comments
+    - field.field.node.page.field_page_image
+    - image.style.social_featured
+    - node.type.page
+  module:
+    - image
+    - user
+id: node.page.featured
+targetEntityType: node
+bundle: page
+mode: featured
+content:
+  field_page_image:
+    type: image
+    weight: 4
+    region: content
+    label: above
+    settings:
+      image_style: social_featured
+      image_link: ''
+    third_party_settings: {  }
+  groups:
+    type: entity_reference_label
+    weight: 0
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  groups_type_closed_group:
+    type: entity_reference_label
+    weight: 1
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  groups_type_open_group:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  groups_type_public_group:
+    type: entity_reference_label
+    weight: 3
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_content_visibility: true
+  field_files: true
+  field_page_comments: true
+  flag_follow_content: true
+  links: true

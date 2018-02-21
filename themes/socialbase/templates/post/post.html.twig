@@ -1,20 +1,20 @@
-  {#
-  /**
-  * @file post.html.twig
-  * Default theme implementation to present Post data.
-  *
-  * This template is used when viewing Post pages.
-  *
-  *
-  * Available variables:
-  * - content: A list of content items. Use 'content' to print all content, or
-  * - attributes: HTML attributes for the container element.
-  *
-  * @see template_preprocess_post()
-  *
-  * @ingroup themeable
-  */
-  #}
+{#
+/**
+* @file post.html.twig
+* Default theme implementation to present Post data.
+*
+* This template is used when viewing Post pages.
+*
+*
+* Available variables:
+* - content: A list of content items. Use 'content' to print all content, or
+* - attributes: HTML attributes for the container element.
+*
+* @see template_preprocess_post()
+*
+* @ingroup themeable
+*/
+#}
 
 {{ attach_library('socialbase/comment') }}
 <div class="card">
@@ -42,25 +42,20 @@
 
     <div class="margin-top-s iframe-container">
 
-      {% if content.field_post %}
-        {{ content.field_post }}
-      {% endif %}
+      {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
 
       {% if content.field_post_image|render %}
         <p>{{ content.field_post_image }}</p>
       {% endif %}
 
-      {% if content.like_and_dislike %}
-        {{ content.like_and_dislike }}
-      {% endif %}
+      <div class="clearfix"></div>
+      {{ content.like_and_dislike }}
     </div>
 
 
     {% if logged_in %}
       <div class="card__nested-section">
-        {% if content.field_post_comments %}
-          {{ content.field_post_comments }}
-        {% endif %}
+        {{ content.field_post_comments }}
       </div>
     {% endif %}
 

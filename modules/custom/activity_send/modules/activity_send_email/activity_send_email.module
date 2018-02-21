@@ -144,6 +144,10 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
       $all_email_message_keys[5] => $all_email_message_values[5],
     ];
 
+    if (\Drupal::moduleHandler()->moduleExists('social_private_message') && isset($all_email_message_keys[9])) {
+      $message_to_me[$all_email_message_keys[9]] = $all_email_message_values[9];
+    }
+
     // Sort a list of email frequencies by weight.
     $emailfrequencies = sort_email_frequency_options();
 

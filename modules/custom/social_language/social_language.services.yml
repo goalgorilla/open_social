@@ -1,0 +1,14 @@
+services:
+  social_language.override:
+    class: \Drupal\social_language\SocialLanguageConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
+  social_language.access:
+    class: Drupal\social_language\Access
+    arguments: ['@language_manager']
+    tags:
+      - { name: access_check, applies_to: _social_language_access }
+  social_language.route_subscriber:
+    class: Drupal\social_language\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

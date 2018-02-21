@@ -153,8 +153,8 @@ abstract class DemoUser extends DemoContent {
       'init' => $item['mail'],
       'timezone' => $item['timezone'],
       'status' => $item['status'],
-      'created' => REQUEST_TIME,
-      'changed' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
+      'changed' => \Drupal::time()->getRequestTime(),
       'roles' => array_values($item['roles']),
     ];
 
