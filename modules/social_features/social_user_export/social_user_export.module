@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\Views;
 
@@ -194,10 +193,10 @@ function social_user_export_groups_count(UserInterface $account) {
  * Returns the quantity of likes by a user.
  *
  * @param \Drupal\user\UserInterface $account
- * The account to get the data for.
+ *   The account to get the data for.
  *
  * @return int
- * number of likes
+ *   number of likes
  */
 function social_user_export_likes_count(UserInterface $account) {
   $query = \Drupal::database()->select('votingapi_vote', 'v');
