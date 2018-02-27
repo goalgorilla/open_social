@@ -31,10 +31,6 @@ use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
 
-
-/**
- * Implements hook_form_FORM_ID_alter().
- *
 /**
  * Implements hook_form_FORM_ID_alter().
  */
@@ -234,10 +230,10 @@ function social_group_group_insert(GroupInterface $group) {
       $plugin = $group->getGroupType()->getContentPlugin('group_membership');
       $values = ['group_roles' => [$group->bundle() . '-group_admin', $group->bundle() . '-group_manager']];
       $group_content = GroupContent::create([
-          'type' => $plugin->getContentTypeConfigId(),
-          'gid' => $group->id(),
-          'entity_id' => $group->getOwnerId(),
-        ] + $values);
+        'type' => $plugin->getContentTypeConfigId(),
+        'gid' => $group->id(),
+        'entity_id' => $group->getOwnerId(),
+      ] + $values);
       $group_content->save();
     }
     else {
@@ -245,10 +241,10 @@ function social_group_group_insert(GroupInterface $group) {
       $plugin = $group->getGroupType()->getContentPlugin('group_membership');
       $values = ['group_roles' => [$group->bundle() . '-group_manager']];
       $group_content = GroupContent::create([
-          'type' => $plugin->getContentTypeConfigId(),
-          'gid' => $group->id(),
-          'entity_id' => $group->getOwnerId(),
-        ] + $values);
+        'type' => $plugin->getContentTypeConfigId(),
+        'gid' => $group->id(),
+        'entity_id' => $group->getOwnerId(),
+      ] + $values);
       $group_content->save();
     }
   }
@@ -291,40 +287,25 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
 
   $join_forms = [];
+  $leave_forms = [];
+  $membership_add_forms = [];
+  $membership_edit_forms = [];
+  $membership_delete_forms = [];
+  $group_forms = [];
+
   foreach ($social_group_types as $social_group_type) {
     $join_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
-  }
-
-  $leave_forms = [];
-  foreach ($social_group_types as $social_group_type) {
     $leave_forms[] = "group_content_{$social_group_type}-group_membership_group-leave_form";
-  }
-
-  $membership_add_forms = [];
-  foreach ($social_group_types as $social_group_type) {
     $membership_add_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
-  }
-
-  $membership_edit_forms = [];
-  foreach ($social_group_types as $social_group_type) {
     $membership_edit_forms[] = "group_content_{$social_group_type}-group_membership_edit_form";
-  }
-
-  $membership_delete_forms = [];
-  foreach ($social_group_types as $social_group_type) {
     $membership_delete_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
-  }
-
-  $action_forms = array_merge($join_forms, $leave_forms, $membership_delete_forms, $membership_add_forms);
-
-  $membership_forms = array_merge($membership_add_forms, $membership_edit_forms);
-
-  $group_forms = [];
-  foreach ($social_group_types as $social_group_type) {
     $group_forms['edit'][] = "group_{$social_group_type}_edit_form";
     $group_forms['add'][] = "group_{$social_group_type}_add_form";
     $group_forms['delete'][] = "group_{$social_group_type}_delete_form";
   }
+
+  $action_forms = array_merge($join_forms, $leave_forms, $membership_delete_forms, $membership_add_forms);
+  $membership_forms = array_merge($membership_add_forms, $membership_edit_forms);
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $membership_delete_forms)) {
