@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
+use Drupal\social_tagging\SocialTaggingService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +29,13 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
   protected $routeMatch;
 
   /**
+   * The route match.
+   *
+   * @var \Drupal\social_tagging\SocialTaggingService
+   */
+  protected $tagService;
+
+  /**
    * EventAddBlock constructor.
    *
    * @param array $configuration
@@ -38,10 +46,13 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
    *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match.
+   * @param \Drupal\social_tagging\SocialTaggingService $tagging_service
+   *   The tag service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, SocialTaggingService $tagging_service) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
+    $this->tagService = $tagging_service;
   }
 
   /**
@@ -52,7 +63,8 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('social_tagging.tag_service')
     );
   }
 
@@ -62,6 +74,11 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
    * Logic to display the block in the sidebar.
    */
   protected function blockAccess(AccountInterface $account) {
+    // If tagging is off, deny access always.
+    if (!$this->tagService->active()) {
+      return AccessResult::forbidden();
+    }
+
     $route_name = $this->routeMatch->getRouteName();
 
     if ($route_name == 'entity.node.canonical') {
@@ -87,6 +104,20 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'url';
     return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $cache_tags = parent::getCacheTags();
+    $node = $this->routeMatch->getParameter('node');
+
+    if ($node instanceof Node) {
+      $cache_tags[] = 'node:' . $node->id();
+    }
+
+    return $cache_tags;
   }
 
   /**

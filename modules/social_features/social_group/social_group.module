@@ -1086,17 +1086,6 @@ function social_group_get_all_group_members($uid) {
 }
 
 /**
- * Implements hook_block_view_BASE_BLOCK_ID_alter().
- */
-function social_group_block_view_group_hero_block_alter(array &$build, BlockPluginInterface $block) {
-  $current_route = Drupal::routeMatch()->getRouteName();
-  // Hide the group_hero_block on the content creation page.
-  if ($current_route == 'entity.group_content.create_form') {
-    $build['#pre_render'] = [];
-  }
-}
-
-/**
  * Implements hook_field_info_alter().
  */
 function social_group_field_info_alter(&$info) {
@@ -1270,6 +1259,8 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
+    unset($condition);
+
     $condition = [
       'field' => 'groups_field_data.type',
       'value' => [],
@@ -1291,6 +1282,14 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   if (!$found) {
-    $conditions['conditions'][] = $condition;
+    if (isset($conditions)) {
+      $conditions['conditions'][] = $condition;
+    }
+    else {
+      $query->where[] = [
+        'conditions' => [$condition],
+        'type' => 'AND',
+      ];
+    }
   }
 }
