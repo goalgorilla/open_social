@@ -58,16 +58,17 @@
           <div class="secondary-col">{{ content.field_block_reference_secondary }}</div>
         {% else %}
           <div class="primary-col">{{ content.field_block_reference }}</div>
-          </div>
         {% endif %}
       {% endblock %}
     </div>
     {% if (content.field_block_link|render is not empty) %}
-      <footer class="primary-col card__actionbar">
-        <div class="card__link">
-          {{ content.field_block_link }}
-        </div>
-      </footer>
+      <div class="container row">
+        <footer class="primary-col card__actionbar">
+          <div class="card__link">
+            {{ content.field_block_link }}
+          </div>
+        </footer>
+      </div>
     {% endif %}
   </div>
 {% endblock paragraph %}
