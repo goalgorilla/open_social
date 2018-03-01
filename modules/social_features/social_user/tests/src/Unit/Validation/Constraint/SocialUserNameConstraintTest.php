@@ -10,6 +10,7 @@ use Egulias\EmailValidator\EmailValidator;
 /**
  * @coversDefaultClass \Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator
  *
+ * @group social
  * @group user
  */
 class SocialUserNameConstraintTest extends UnitTestCase {
