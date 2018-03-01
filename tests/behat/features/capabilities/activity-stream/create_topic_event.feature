@@ -1,4 +1,4 @@
-@api @DS-1255 @activity_stream @topic @create @stability @stability-3
+@api @DS-1255 @DS-4211 @activity_stream @topic @create @stability @stability-3
 Feature: See and get notified when content is created
   Benefit: So I can discover new content on the platform
   Role: As a LU
@@ -131,7 +131,7 @@ Feature: See and get notified when content is created
     And I press "Save"
     And I should see "Test open group" in the "Main content"
 
-    And I click "Test open group"
+    And I should not see the link "Test open group"
     And I should see "Test open group" in the "Hero block"
 
     When I click "Events"
