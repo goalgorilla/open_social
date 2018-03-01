@@ -13,6 +13,34 @@
       margin-right: calc(-100vw / 2 + #{1200px} / 2);
     }
   }
+  // javascript counts and adds class based on multiple sections
+  &.multiple {
+    padding: 0 1em;
+    @media(min-width: 900px) {
+      padding: 0 1em;
+    }
+    @media(min-width: 1200px) {
+      padding: 0;
+    }
+  }
+  &.multiple.first {
+    padding: 30px 1em 0;
+    @media(min-width: 900px) {
+      padding: 50px 1em 0;
+    }
+    @media(min-width: 1200px) {
+      padding: 50px 0 0;
+    }
+  }
+  &.multiple.last {
+    padding: 0 1em 30px;
+    @media(min-width: 900px) {
+      padding: 0 1em 50px;
+    }
+    @media(min-width: 1200px) {
+      padding: 0 0 50px;
+    }
+  }
   .title {
     margin-top: 25px;
     font-size: 24px;
@@ -22,5 +50,8 @@
   .field--name-field-featured-items {
     margin-top: 30px;
     margin-bottom: 0.75rem;
+  }
+  .card__actionbar {
+    padding-right: 0;
   }
 }
