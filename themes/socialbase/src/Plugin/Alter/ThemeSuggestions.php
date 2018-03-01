@@ -244,12 +244,13 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'profile':
 
-        // Add an anonymous variant to all the default profile theme suggestions.
+        // Add an anonymous variant to all the default profile theme
+        // suggestions.
         if (\Drupal::currentUser()->isAnonymous()) {
           $default_suggestions = profile_theme_suggestions_profile($variables->getArrayCopy());
 
           foreach ($default_suggestions as $suggestion) {
-            // Find the position of the original suggestion
+            // Find the position of the original suggestion.
             $reference_pos = array_search($suggestion, $suggestions);
 
             $anonymous_suggestion = $suggestion . '__anonymous';
