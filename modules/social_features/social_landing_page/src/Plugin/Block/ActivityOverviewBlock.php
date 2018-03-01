@@ -168,7 +168,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
           ],
           'group' => [
             'icon' => [
-              '#markup' => '<svg class="teaser__content-type-icon"><use xlink:href="#icon-community"></use></svg>',
+              '#markup' => '<svg class="teaser__content-type-icon"><use xlink:href="#icon-account_circle"></use></svg>',
               '#allowed_tags' => ['use', 'svg'],
             ],
             'content' => [

@@ -20,6 +20,10 @@ function social_group_update_dependencies() {
   $dependencies['system'][8200] = [
     'social_group' => 8005,
   ];
+  // The gnode module is triggering node access rebuild. Lets rebuild it!
+  $dependencies['social_group'][8011] = [
+    'gnode' => 8005,
+  ];
   return $dependencies;
 }
 
@@ -339,4 +343,11 @@ function social_group_update_8010() {
       ]);
     }
   }
+}
+
+/**
+ * Rebuild node access.
+ */
+function social_group_update_8011() {
+  node_access_rebuild(TRUE);
 }

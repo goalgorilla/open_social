@@ -48,29 +48,28 @@ function social_tagging_form_taxonomy_term_social_tagging_form_alter(&$form, For
   // Load all taxonomy terms from the top level.
   $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
-  if ($tag_service->allowSplit()) {
-    // Remove these fields.
-    $form['path']['#access'] = FALSE;
-    $form['relations']['#access'] = FALSE;
-    $form['description']['#access'] = FALSE;
+  // Remove these fields.
+  $form['path']['#access'] = FALSE;
+  $form['relations']['#access'] = FALSE;
+  $form['description']['#access'] = FALSE;
 
-    // Move it outside the details.
-    $form['parent'] = $form['relations']['parent'];
-    unset($form['relations']['parent']);
+  // Move it outside the details.
+  $form['parent'] = $form['relations']['parent'];
+  unset($form['relations']['parent']);
 
-    // Make some changes.
-    $form['weight']['#access'] = FALSE;
-    $form['parent']['#title'] = t('Placement');
+  // Make some changes.
+  $form['weight']['#access'] = FALSE;
+  $form['parent']['#title'] = t('Placement');
 
-    // Fetch all top level items.
-    $options = $tag_service->getCategories();
-    // Add the 0 option for a new toplevel item.
-    $options[0] = t('Main category');
-    // Sort the array.
-    ksort($options);
-    // Add it to the select.
-    $form['parent']['#options'] = $options;
-  }
+  // Fetch all top level items.
+  $options = $tag_service->getCategories();
+  // Add the 0 option for a new toplevel item.
+  $options[0] = t('Main category');
+  // Sort the array.
+  ksort($options);
+  // Add it to the select.
+  $form['parent']['#options'] = $options;
+
 }
 
 /**
@@ -105,10 +104,23 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  * Implements hook_form_FORM_ID_alter().
  */
 function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $node = $form_state->getFormObject()->getEntity();
+  $node_type_tagging = TRUE;
+  if ($node_type = $node->type->entity->id()) {
+
+    $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
+    $config_value = $config->get('tag_node_type_' . $node_type);
+
+    if ($config_value === FALSE || $config_value === 0) {
+      $node_type_tagging = FALSE;
+    }
+  }
+
   // Get the taggingservice.
   $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
   // Check if tagging is turned on/off.
-  if (!$tag_service->active()) {
+  if (!$tag_service->active() || !$tag_service->hasContent() || $node_type_tagging === FALSE) {
     // Remove the field from the form.
     $form['social_tagging']['#access'] = FALSE;
     return;
@@ -154,6 +166,11 @@ function social_tagging_form_node_form_alter(&$form, FormStateInterface $form_st
       $form['#validate'][] = '_social_tagging_node_form_validate';
     }
     else {
+      $options = [];
+      foreach ($tag_service->getCategories() as $key => $value) {
+        $options[$value] = $tag_service->getChildren($key);
+      }
+      $form['social_tagging']['widget']['#options'] = $options;
       // Move the social_tagging field in the group.
       $form['tagging']['social_tagging'] = $form['social_tagging'];
       unset($form['social_tagging']);
@@ -175,12 +192,14 @@ function _social_tagging_node_form_validate($form, FormStateInterface $form_stat
   $counter = 0;
   // Loop over the categories.
   foreach ($categories as $tid => $category) {
-    foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
-      $tagging_values[] = [
-        'target_id' => $selected,
-        '_weight' => (string) $counter,
-      ];
-      $counter++;
+    if (!empty($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)))) {
+      foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
+        $tagging_values[] = [
+          'target_id' => $selected,
+          '_weight' => (string) $counter,
+        ];
+        $counter++;
+      }
     }
   }
   // Set the values in the social_tagging field.
@@ -228,14 +247,9 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
         'type' => 'hidden',
       ])
       ->setDisplayOptions('form', [
-        'type' => 'entity_reference_autocomplete',
+        'type' => 'options_select',
         'weight' => 3,
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'size' => '10',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ],
+        'settings' => [],
       ])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
