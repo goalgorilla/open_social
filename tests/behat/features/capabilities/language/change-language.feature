@@ -62,7 +62,7 @@ Feature: Multilingual Open Social
     # Switch back to English.
     Given I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Instellingen"
-    And I select "Engels" from "Interface language"
+    And I select "Engels" from "Taal van de editor"
     And I press "Opslaan"
     Then I should see the text "Locale settings"
 
