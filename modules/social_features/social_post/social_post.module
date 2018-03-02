@@ -42,7 +42,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   // Reset title display.
   $form['field_post']['widget'][0]['#title_display'] = "";
 
-    // Set submit button caption to Post instead of Save.
+  // Set submit button caption to Post instead of Save.
   $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
 
   if (!empty($form['field_post']) && !empty($form['field_post']['widget'][0])) {
