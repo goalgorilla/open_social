@@ -112,6 +112,11 @@
   height: 38px;
 }
 
+/*
+* Fix styles if last of page textarea is focused on mobile
+* Only for page with textareas.
+ */
+
 .comment-attachments {
   -webkit-box-flex: 1;
       -ms-flex: 1 0 100%;
@@ -192,5 +197,8 @@ details[open] .details__close-icon {
   .comment-form .btn--comment-submit .label {
     font-size: 0;
     text-indent: -9999px;
+  }
+  .main-container.open-keyboard {
+    padding-bottom: 270px;
   }
 }

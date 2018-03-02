@@ -197,6 +197,11 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
   // Set public visibility by default.
   $entity = $form_object->getEntity();
   $field_name = $field_definition->getName();
+
+  if (!$entity->hasField($field_name)) {
+    return;
+  }
+
   // Do not check if visibility already set and user has access to override
   // this option because SM can change the visibility.
   if (!$entity->get($field_name) || (!$entity->get($field_name)->isEmpty() && $account->hasPermission('override disabled public visibility'))) {

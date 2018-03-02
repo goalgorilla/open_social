@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
+use Drupal\Component\Utility\Unicode;
 
 /**
  * Implements hook_token_info().
@@ -64,12 +65,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               // When it's a post or photo post.
               if ($entity->getEntityTypeId() === 'post' || $entity->getEntityTypeId() === 'photo') {
                 if ($name === 'content_type') {
-                  if (is_callable([$entity, 'getDisplayName'])) {
-                    $display_name = $entity->getDisplayName();
-                  }
-                  else {
-                    $display_name = $entity->bundle();
-                  }
+                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
                   if (!empty($display_name)) {
                     $replacements[$original] = $display_name;
                   }
@@ -104,17 +100,23 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
             if (is_object($entity)) {
               // If it's group content.
               if ($entity->getEntityTypeId() === 'group_content') {
-                if ($name === 'content_url') {
-                  $content_url = Url::fromRoute('entity.node.canonical',
-                    ['node' => $entity->getEntity()->id()],
-                    ['absolute' => TRUE]
-                  );
-                  $replacements[$original] = $content_url->toString();
-                }
+                $content_url = Url::fromRoute('entity.node.canonical',
+                  ['node' => $entity->getEntity()->id()],
+                  ['absolute' => TRUE]
+                );
+                $replacements[$original] = $content_url->toString();
+              }
+              // For posts, it works slightly different.
+              elseif ($entity->getEntityTypeId() === 'post') {
+                $content_url = Url::fromRoute('entity.post.canonical',
+                  ['post' => $entity->id()],
+                  ['absolute' => TRUE]
+                );
+                $replacements[$original] = $content_url->toString();
               }
             }
           }
-
+          break;
       }
     }
   }

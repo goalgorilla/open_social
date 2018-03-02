@@ -60,6 +60,25 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns if there are any taxonomy items available.
+   *
+   * @return bool
+   *   If there are tags available.
+   */
+  public function hasContent() {
+
+    if (count($this->getCategories()) == 0) {
+      return FALSE;
+    }
+
+    if (count($this->getAllChildren()) == 0) {
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
    * Returns wether splitting of fields is allowed.
    *
    * @return bool
