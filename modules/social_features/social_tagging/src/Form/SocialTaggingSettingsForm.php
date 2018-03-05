@@ -76,7 +76,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#title' => $this->t('Allow users to tag content in content.'),
       '#default_value' => $config->get('enable_content_tagging'),
       '#required' => FALSE,
-      '#description' => $this->t("Determine wether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
+      '#description' => $this->t("Determine whether users are allowed to tag content, view tags and filter on tags in content. (@content)", ['@content' => implode(', ', $content_types)]),
     ];
 
     $form['allow_category_split'] = [
@@ -86,6 +86,24 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#required' => FALSE,
       '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
     ];
+
+    $form['node_type_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Node type configuration'),
+    ];
+
+    /** @var \Drupal\node\Entity\NodeType $nodetype */
+    foreach (NodeType::loadMultiple() as $nodetype) {
+      $field_name = 'tag_node_type_' . $nodetype->id();
+      $value = $config->get($field_name);
+      $default_value = isset($value) ? $config->get($field_name) : TRUE;
+      $form['node_type_settings'][$field_name] = [
+        '#type' => 'checkbox',
+        '#title' => $nodetype->label(),
+        '#default_value' => $default_value,
+        '#required' => FALSE,
+      ];
+    }
 
     $form['some_text_field']['#markup'] = '<p><strong>' . Link::createFromRoute($this->t('Click here to go to the social tagging overview'), 'entity.taxonomy_vocabulary.overview_form', ['taxonomy_vocabulary' => 'social_tagging'])->toString() . '</strong></p>';
 
@@ -101,6 +119,12 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config = $this->config('social_tagging.settings');
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
+
+    /** @var \Drupal\node\Entity\NodeType $nodetype */
+    foreach (NodeType::loadMultiple() as $nodetype) {
+      $config_name = 'tag_node_type_' . $nodetype->id();
+      $config->set($config_name, $form_state->getValue($config_name))->save();
+    }
 
     parent::submitForm($form, $form_state);
   }

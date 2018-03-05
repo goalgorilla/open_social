@@ -247,6 +247,10 @@
   height: 24px;
   display: inline-block;
 
+  // Click events are swallowed by SVG <use> elements in IE/Edge.
+  // See https://github.com/facebook/react/issues/4963
+  pointer-events: none;
+
   + .badge {
     position: absolute;
     top: 8px;

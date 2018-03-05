@@ -30,6 +30,19 @@
           if (!CKEDITOR.instances[this.id]) {
             var menu = $(this).data("ui-mentionsAutocomplete").menu;
             menu.focus(null, $("li", menu.element).eq(0));
+
+            if (window.matchMedia("(min-width: 600px)").matches) {
+              var commentTextarea = $(this).offset().top + $(this).height();
+              var userList = $(this).siblings(".ui-autocomplete");
+              var userListHeight = $(userList).innerHeight();
+              var documentHeight = $(document).height();
+              var distanceFromBottom = (documentHeight - commentTextarea);
+              if (distanceFromBottom < userListHeight) {
+                // class rule set bottom and top position
+                // so list displays above the textarea
+                $(userList).addClass("upward");
+              }
+            }
           }
         }
       },
