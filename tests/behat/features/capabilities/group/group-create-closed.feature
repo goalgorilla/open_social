@@ -1,4 +1,4 @@
-@api @group @DS-3428 @stability @stability-1
+@api @group @DS-3428 @DS-4211 @stability @stability-1
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
   Role: As a LU
@@ -30,9 +30,8 @@ Feature: Create Closed Group
     And I should see "Disclosed"
     And I should see "1 member"
     And I should see "Joined"
-    And I should see the link "Read more"
+    And I should not see the link "Read more"
 
-    And I click "Test closed group"
     And I should see "Test closed group" in the "Hero block"
     And I should see the button "Joined"
     And I should see the link "Edit group" in the "Hero block"
@@ -41,7 +40,8 @@ Feature: Create Closed Group
     And I should see "7556SP" in the "Hero block"
 
   # Create a post inside the closed group, visible to group members only
-    When I fill in "Say something to the group" with "This is a closed group post."
+    When I click "Stream"
+    And I fill in "Say something to the group" with "This is a closed group post."
     And I select post visibility "Group members"
     And I press "Post"
     Then I should see the success message "Your post has been posted."
@@ -186,8 +186,7 @@ Feature: Create Closed Group
     And I should see "Test closed group 2" in the "Main content"
 
   # As a member of this closed group I want to leave the group
-    When I click "Test closed group 2"
-    Then I should see the button "Joined"
+    And I should see the button "Joined"
     When I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
