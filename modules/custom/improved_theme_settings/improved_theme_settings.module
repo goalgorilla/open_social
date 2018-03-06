@@ -71,7 +71,7 @@ function improved_theme_settings_page_attachments(array &$page) {
 
       $card_radius = improved_theme_settings_get_setting('card_radius', $system_theme_settings);
 
-      if ($card_radius) {
+      if ($card_radius >= 0) {
         $style_to_add .= '
         .card,
         .card-radius,
@@ -120,7 +120,7 @@ function improved_theme_settings_page_attachments(array &$page) {
 
       $form_control_radius = improved_theme_settings_get_setting('form_control_radius', $system_theme_settings);
 
-      if ($form_control_radius) {
+      if ($form_control_radius >= 0) {
         $style_to_add .= '
           .form-control-radius,
           .form-control {
@@ -150,7 +150,7 @@ function improved_theme_settings_page_attachments(array &$page) {
 
       $button_radius = improved_theme_settings_get_setting('button_radius', $system_theme_settings);
 
-      if ($button_radius) {
+      if ($button_radius >= 0) {
         $style_to_add .= '
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
