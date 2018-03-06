@@ -32,7 +32,6 @@ Feature: Create Closed Group
     And I should see "Joined"
     And I should not see the link "Read more"
 
-    And I should not see the link "Test closed group"
     And I should see "Test closed group" in the "Hero block"
     And I should see the button "Joined"
     And I should see the link "Edit group" in the "Hero block"
@@ -187,7 +186,6 @@ Feature: Create Closed Group
     And I should see "Test closed group 2" in the "Main content"
 
   # As a member of this closed group I want to leave the group
-    And I should not see the link "Test closed group 2"
     And I should see the button "Joined"
     When I click the xth "4" element with the css ".dropdown-toggle"
     And I should see the link "Leave group"

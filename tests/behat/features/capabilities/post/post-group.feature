@@ -29,8 +29,6 @@ Feature: Create Post on Group
     And I should see "GG HQ"
     And I should see "1 member"
     And I should see "Joined"
-    And I should not see the link "Read more"
-    And I should not see the link "Test open group"
     And I should see "Test open group" in the "Hero block"
 
     When I click "Stream"

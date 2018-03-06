@@ -34,7 +34,6 @@ Feature: Create Open Group
     And I should not see the link "Read more"
 
   # DS-761 As a LU I want to view the hero area of a group
-    And I should not see the link "Test open group"
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"

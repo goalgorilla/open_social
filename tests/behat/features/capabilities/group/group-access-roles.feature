@@ -28,7 +28,6 @@ Feature: Group access roles
     | Postal code | 7556SP |
     And I press "Save"
     Then I should see "Test closed group 3" in the "Main content"
-    And I should not see the link "Test closed group 3"
 
   # Create a topic inside the closed group
     When I am on "user"

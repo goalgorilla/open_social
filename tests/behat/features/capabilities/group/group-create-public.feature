@@ -37,7 +37,6 @@ Feature: Create Public Group
     And I should see "Joined"
     And I should not see the link "Read more"
 
-    And I should not see the link "Test public group"
     And I should see "Test public group" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"
