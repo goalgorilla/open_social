@@ -21,6 +21,8 @@ class ExportUser {
    *   UserInterface entity.
    * @param array $context
    *   Context of the operation.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
   public static function exportUserOperation(UserInterface $entity, array &$context) {
     if (empty($context['results']['file_path'])) {
@@ -34,6 +36,9 @@ class ExportUser {
       $headers = [
         t('ID'),
         t('UUID'),
+        t('First name'),
+        t('Last name'),
+        t("Username"),
         t('Email'),
         t('Last login'),
         t('Last access'),
@@ -79,6 +84,9 @@ class ExportUser {
     $csv->insertOne([
       $entity->id(),
       $entity->uuid(),
+      social_user_export_first_name($entity),
+      social_user_export_last_name($entity),
+      $entity->getAccountName(),
       $entity->getEmail(),
       $last_login,
       $last_access,

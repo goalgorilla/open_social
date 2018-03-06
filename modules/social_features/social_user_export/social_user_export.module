@@ -5,6 +5,7 @@
  * The Social User Export module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\Views;
@@ -83,6 +84,53 @@ function _social_user_export_get_view(array $query = [], $execute = TRUE) {
   }
 
   return $view;
+}
+
+/**
+ * Returns first name of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return string
+ *   First name of the use.
+ * @throws InvalidPluginDefinitionException
+ */
+function social_user_export_first_name(UserInterface $account) {
+  $first_name = '';
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  // Check if entity type 'profile' exist
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    // Checking if Storage is not empty.
+    if (!empty($storage)) {
+      if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+        $first_name = $user_profile->get('field_profile_first_name')->value;
+      }
+    }
+  return $first_name;
+}
+
+/**
+ * Returns LastName of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return string
+ *   LastName of the user.
+ * @throws InvalidPluginDefinitionException
+ */
+function social_user_export_last_name(UserInterface $account) {
+  $last_name = '';
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  // Checking if Storage is not empty.
+  if (!empty($storage)) {
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $last_name = $user_profile->get('field_profile_last_name')->value;
+    }
+  }
+  return $last_name;
 }
 
 /**
