@@ -74,6 +74,19 @@ function social_user_update_8004() {
 }
 
 /**
+ * Add permissions to administer the navigation settings.
+ */
+function social_user_update_8005() {
+  $rid = 'sitemanager';
+  // Revoke permissions for the role.
+  $role = Role::load($rid);
+  if ($role) {
+    $permissions = ['administer navigation settings'];
+    user_role_grant_permissions($rid, $permissions);
+  }
+}
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {
@@ -118,6 +131,7 @@ function _social_user_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'view users',
     'block users',
+    'administer navigation settings',
   ]);
 
   if (isset($permissions[$role])) {
