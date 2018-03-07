@@ -58,13 +58,13 @@
       {% block content %}
         {{ content.field_featured_items }}
       {% endblock %}
+      {% if (content.field_featured_link|render is not empty) %}
       <footer class="card__actionbar">
-        {% if (content.field_featured_link|render is not empty) %}
           <div class="card__link">
             {{ content.field_featured_link }}
           </div>
-        {% endif %}
       </footer>
+      {% endif %}
     </div>
   </section>
 {% endblock paragraph %}

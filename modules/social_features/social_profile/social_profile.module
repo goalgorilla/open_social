@@ -420,9 +420,10 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
 
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
+
   // If the current user has no access to viewing user profiles, he might not
   // have access to the users profile.
-  if (!$current_user->hasPermission('view any profile profile') && ($display->getMode() === 'compact' || $display->getMode() === 'compact_notification')) {
+  if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
     // Try to load the profile picture.
     $fid = $entity->get('field_profile_image')->target_id;
     // Must have a value and not be NULL.
