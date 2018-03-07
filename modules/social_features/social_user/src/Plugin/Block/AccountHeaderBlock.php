@@ -314,10 +314,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'classes' => 'divider mobile',
             'attributes' => 'role=separator',
           ],
-          'messages_mobile' => [
-          ],
-          'notification_mobile' => [
-          ],
+          'messages_mobile' => [],
+          'notification_mobile' => [],
           'divide_profile' => [
             'divider' => 'true',
             'classes' => 'divider',
