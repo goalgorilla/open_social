@@ -53,12 +53,12 @@
 
     <div class="hero-footer__text">
       {% if content.field_profile_function|render %}
-        <strong>{{ content.field_profile_function|render }}</strong>
+        <strong>{{ content.field_profile_function }}</strong>
       {% endif %}
       {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
       &nbsp;-&nbsp;
       {% endif %}
-        {{ content.field_profile_organization|render }}
+        {{ content.field_profile_organization }}
     </div>
 
     {% if profile_contact_label == 'private_message' %}
