@@ -481,7 +481,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         }
 
         $links['account_box']['below']['notification_mobile'] = [
-          'classes' => 'mobile notification-bell-mobile',
+          'classes' => 'mobile notification-bell',
           'link_attributes' => '',
           'icon_classes' => '',
           'title' => $this->t('Notification Centre'),
