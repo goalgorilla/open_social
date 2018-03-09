@@ -66,6 +66,18 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_profile_fields.settings');
 
+    // Add an introduction text to explain what can be done here.
+    $form['introduction']['description'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Per profile type you can choose which fields you want to use. Users will not be able to edit or view fields that are deselected.'),
+    ];
+    $form['introduction']['warning'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Be aware that data is <em>not removed</em>, and can possibly still be found through the search, until you flush the data.'),
+    ];
+
     /** @var \Drupal\profile\Entity\ProfileType $profile_type */
     foreach (ProfileType::loadMultiple() as $profile_type) {
       $type = $profile_type->id();
@@ -73,7 +85,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       $form[$type] = [
         '#type' => 'details',
         '#title' => $this->t('Settings for profiletype: @profile_type', ['@profile_type' => $type]),
-        '#description' => $this->t('Select the fields you want to use on this profile type'),
+        '#description' => $this->t('Select the fields you want to use on this profile type.'),
         '#open' => TRUE,
       ];
 
@@ -81,6 +93,12 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       foreach ($this->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
+
+        // Hiding this field on the Open Social profile will make no difference, let's skip it for now.
+        if ($type === 'profile' && $id === 'profile_profile_field_profile_show_email') {
+          continue;
+        }
+
 
         // No setting is TRUE.
         $default_value = (is_null($config->get($id)) ? TRUE : $config->get($id));
@@ -154,7 +172,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         'label' => $profile_field->getLabel(),
       ];
     }
-    // Return the array of fields..
+
+    // Return the array of fields.
     return $fields;
   }
 
@@ -162,7 +181,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    * Redirects to confirmation form for the flush action.
    */
   public function submitFlush(array &$form, FormStateInterface $form_state) {
-    // social_profile_fields.flush.
     $form_state->setRedirect('social_profile_fields.flush');
   }
 
