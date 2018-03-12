@@ -38,6 +38,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   The config factory.
    * @param \Drupal\field\FieldConfigStorage $field_storage
    *   Fieldstorage for the profile fields.
+   * @param \Drupal\Core\Database\Connection $database
+   *   Database connection for invalidating caches.
    */
   public function __construct(ConfigFactoryInterface $config_factory, FieldConfigStorage $field_storage, Connection $database) {
     parent::__construct($config_factory);
