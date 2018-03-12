@@ -16,10 +16,6 @@
         {%- block field_icon -%} event {%- endblock -%}
         {%- block field_value %} {{ event_date }} {%- endblock -%}
       {% endembed %}
-
-      <div class="card__link">
-        <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}</a>
-      </div>
       {% embed "node--teaser__field.html.twig" %}
         {%- block field_icon -%} location {%- endblock -%}
         {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
@@ -30,4 +26,8 @@
         </span>
       {% endif %}
     </small>
+
+    <div class="card__link">
+      <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}</a>
+    </div>
   {% endblock %}
