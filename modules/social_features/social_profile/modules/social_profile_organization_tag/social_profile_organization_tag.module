@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * The Social profile organization tag module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Render\FormattableMarkup;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function social_profile_organization_tag_page_attachments(array &$attachments) {
+  // Unconditionally attach library to the page.
+  $attachments['#attached']['library'][] = 'social_profile_organization_tag/social_profile_tag';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_organization_tag_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $profile_forms = [
+    'profile_profile_add_form',
+    'profile_profile_edit_form',
+  ];
+
+  if (in_array($form_id, $profile_forms)) {
+    $user = \Drupal::currentUser();
+    // Check for permission on custom edit profile organization tags,
+    // only CM+ who can actually edit and add profile organization tags.
+    if (!$user->hasPermission('edit profile organization tags')) {
+      $form['field_profile_organization_tag']['#access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function social_profile_organization_tag_user_format_name_alter(&$name, $account) {
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      if (!$user_profile->get('field_profile_organization_tag')->isEmpty()) {
+        $organization_tag = $user_profile->get('field_profile_organization_tag');
+        $organization_tag_entities = $organization_tag->referencedEntities();
+        if (count($organization_tag_entities) === 1) {
+          foreach ($organization_tag_entities as $organization) {
+            $value = '@name <span class="profile-organization-tag"><span class="text">from @org</span></span>';
+            $arguments = [
+              '@name' => $name,
+              '@org' => $organization->label(),
+            ];
+            $name = new FormattableMarkup($value, $arguments);
+          }
+
+        }
+      }
+    }
+  }
+}
