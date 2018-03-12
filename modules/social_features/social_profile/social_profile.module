@@ -259,15 +259,13 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if (!in_array($route, ['entity.profile.type.user_profile_form'])) {
-    if ($profile->access('update', $current_user)) {
-      $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
-      $variables['#cache']['contexts'][] = 'route.name';
-    }
+  if ($route !== 'entity.profile.type.user_profile_form' && $profile->access('update', $current_user)) {
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+    $variables['#cache']['contexts'][] = 'route.name';
   }
 
-  // Add the hero styled image.
-  if (!empty($profile->field_profile_banner_image->entity)) {
+  // Add the hero styled image if we have access to it.
+  if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
