@@ -94,11 +94,11 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         // Loop through the fields.
         $id = $field['id'];
 
-        // Hiding this field on the Open Social profile will make no difference, let's skip it for now.
+        // Hiding this field on the Open Social profile will make no difference,
+        // let's skip it for now.
         if ($type === 'profile' && $id === 'profile_profile_field_profile_show_email') {
           continue;
         }
-
 
         // No setting is TRUE.
         $default_value = (is_null($config->get($id)) ? TRUE : $config->get($id));
