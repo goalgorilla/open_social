@@ -4,6 +4,7 @@ namespace Drupal\social_profile_fields\Form;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,6 +25,13 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   protected $fieldStorage;
 
   /**
+   * The database.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -31,9 +39,10 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    * @param \Drupal\field\FieldConfigStorage $field_storage
    *   Fieldstorage for the profile fields.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FieldConfigStorage $field_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, FieldConfigStorage $field_storage, Connection $database) {
     parent::__construct($config_factory);
     $this->fieldStorage = $field_storage;
+    $this->database = $database;
   }
 
   /**
@@ -42,7 +51,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('entity.manager')->getStorage('field_config')
+      $container->get('entity.manager')->getStorage('field_config'),
+      $container->get('database')
     );
   }
 
@@ -142,8 +152,20 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
 
     parent::submitForm($form, $form_state);
 
-    // Invalidate profile cache.
-    Cache::invalidateTags(['profile', 'profile_list', 'profile_view']);
+    // Invalidate profile cache tags.
+    $query = $this->database->select('profile', 'p');
+    $query->addField('p', 'profile_id');
+    $query->condition('p.type', 'profile');
+    $query->condition('p.status', 1);
+    $ids = $query->execute()->fetchCol();
+
+    $cache_tags = ['profile', 'profile_list', 'profile_view'];
+    if (!empty($ids)) {
+      foreach ($ids as $id) {
+        $cache_tags[] = 'profile:' . $id;
+      }
+    }
+    Cache::invalidateTags($cache_tags);
   }
 
   /**

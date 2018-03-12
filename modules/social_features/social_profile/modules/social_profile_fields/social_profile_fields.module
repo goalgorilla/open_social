@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -24,7 +26,14 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
     $setting_value = $config->get($setting_name);
 
     if (isset($setting_value) && !$setting_value) {
-      $access_result = AccessResult::forbidden();
+      // For the profile image field we have an exception. We'll fix it before
+      // display.
+      if ($setting_name === 'profile_profile_field_profile_image' && $operation === 'view') {
+        $access_result = AccessResult::neutral();
+      }
+      else {
+        $access_result = AccessResult::forbidden();
+      }
     }
   }
 
@@ -64,6 +73,25 @@ function social_profile_fields_user_format_name_alter(&$name, $account) {
   }
   // If all fails, we now fall back to the drupal username.
   $name = ($accountname !== '') ? $accountname : $account->getUsername();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+  // Check if profile image is unset.
+  if (!_social_profile_fields_get_setting('profile_profile_field_profile_image')) {
+    // Load default data.
+    $replacement_data = social_profile_get_default_image();
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
+    $imgitem = $build['field_profile_image'][0]['#item'];
+    // Time to override the data that going to be rendered.
+    $imgitem->set('target_id', $replacement_data['id']);
+    $imgitem->set('width', $replacement_data['width']);
+    $imgitem->set('height', $replacement_data['height']);
+    // Put replacement data back in the object that's about to be built.
+    $build['field_profile_image'][0]['#item'] = $imgitem;
+  }
 }
 
 /**
