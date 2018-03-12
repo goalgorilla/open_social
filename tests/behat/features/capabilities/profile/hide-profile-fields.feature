@@ -50,12 +50,14 @@ Feature: I want to be able to hide profile fields
     And I should not see "Last name"
     And I should see "Nickname"
 
-    When I fill in "Nickname" with "Mr. Wise"
+    When I fill in "Nickname" with "Shrouded Person"
     And I press "Save"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My profile"
+    And I click "Information"
     Then I should not see "John Doe"
     And I should not see "+31612345678"
-    And I should not see "john_doe"
-    And I should see "Mr. Wise"
+    And I should see "Shrouded Person"
 
     # Check if not flushing data will restore the information.
     Given I am logged in as an "administrator"
@@ -66,7 +68,8 @@ Feature: I want to be able to hide profile fields
     And I uncheck the box "Nickname"
     And I press "Save configuration"
     When I am on the profile of "john_doe"
+    And I click "Information"
     Then I should see "John Doe"
     And I should see "+31612345678"
     And I should not see "john_doe"
-    And I should not see "Mr. Wise"
+    And I should not see "Shrouded Person"
