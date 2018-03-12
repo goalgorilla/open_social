@@ -4,6 +4,7 @@ namespace Drupal\social_profile_fields;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\profile\Entity\Profile;
+use Drupal\search_api\Entity\Index;
 
 /**
  * Class SocialProfileFieldsBatch.
@@ -66,6 +67,17 @@ class SocialProfileFieldsBatch {
         count($results),
         'One profile flushed.', '@count profiles flushed.'
       );
+
+      $indexes = Index::loadMultiple(['social_all', 'social_users']);
+      /** @var \Drupal\search_api\Entity\Index $index */
+      foreach ($indexes as $index) {
+        // If the search index is on and items are not indexed immediately, the
+        // index also needs to be flushed and re-indexed.
+        if ($index !== NULL && $index->status() && !$index->getOption('index_directly')) {
+          $index->clear();
+          $index->reindex();
+        }
+      }
     }
     else {
       $message = t('Whoops... something went wrong!');

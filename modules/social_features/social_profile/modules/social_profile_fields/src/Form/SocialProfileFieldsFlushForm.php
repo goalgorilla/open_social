@@ -128,7 +128,7 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
     $fields = $this->getUnselectedFields();
     $field_string = implode(', ', $fields);
 
-    return $this->t('WARNING: Flushing profile data will permanently remove ALL data from the following fields from the database: @fields This cannot be undone. Are you sure you want to contine?', ["@fields" => $field_string]);
+    return $this->t('<strong>WARNING</strong>: Flushing profile data will permanently <strong>remove all data</strong> from the following fields from the database: %fields. The search indexes may also be cleared and will need re-indexing. This <strong>cannot be undone</strong>. Are you sure you want to continue?', ['%fields' => $field_string]);
   }
 
   /**
