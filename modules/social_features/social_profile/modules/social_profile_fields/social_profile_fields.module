@@ -80,17 +80,20 @@ function social_profile_fields_user_format_name_alter(&$name, $account) {
  */
 function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
   // Check if profile image is unset.
-  if (!_social_profile_fields_get_setting('profile_profile_field_profile_image')) {
+  if (!_social_profile_fields_get_setting('profile_profile_field_profile_image') && isset($display->get('content')['field_profile_image'])) {
     // Load default data.
     $replacement_data = social_profile_get_default_image();
-    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
-    $imgitem = $build['field_profile_image'][0]['#item'];
+
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
+    $image = $build['field_profile_image'][0]['#item'];
+
     // Time to override the data that going to be rendered.
-    $imgitem->set('target_id', $replacement_data['id']);
-    $imgitem->set('width', $replacement_data['width']);
-    $imgitem->set('height', $replacement_data['height']);
+    $image->set('target_id', $replacement_data['id']);
+    $image->set('width', $replacement_data['width']);
+    $image->set('height', $replacement_data['height']);
+
     // Put replacement data back in the object that's about to be built.
-    $build['field_profile_image'][0]['#item'] = $imgitem;
+    $build['field_profile_image'][0]['#item'] = $image;
   }
 }
 
