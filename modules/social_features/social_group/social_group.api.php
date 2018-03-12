@@ -15,10 +15,9 @@
  *
  * @param array $social_group_types
  *   List of group types used in open social.
- *
  * @ingroup social_group_api
  */
-function hook_social_group_types_alter(array &$social_group_types) {
+function hook_social_group_types_alter(&$social_group_types) {
   $social_group_types[] = 'challenge';
 }
 

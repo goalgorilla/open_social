@@ -245,16 +245,21 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
 
   $group_add_card_to_forms = [];
-  $group_confirm_forms = [];
-  $group_default_forms = [];
-
   foreach ($social_group_types as $social_group_type) {
     $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
     $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
     $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_edit_form";
+  }
+
+  $group_confirm_forms = [];
+  foreach ($social_group_types as $social_group_type) {
     $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_group-leave_form";
     $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
     $group_confirm_forms[] = "group_{$social_group_type}_delete_form";
+  }
+
+  $group_default_forms = [];
+  foreach ($social_group_types as $social_group_type) {
     $group_default_forms[] = "group_{$social_group_type}_add_form";
     $group_default_forms[] = "group_{$social_group_type}_edit_form";
   }
