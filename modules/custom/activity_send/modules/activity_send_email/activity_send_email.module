@@ -277,15 +277,15 @@ function activity_send_email_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {
-
-  $destinations = $activity->getDestinations();
-  if (in_array('email', $destinations)) {
-    /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
-    $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
-    // Trigger the create action for entities.
-    /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
-    $create_action = $activity_send_factory->createInstance('email_activity_send');
-    $create_action->create($activity);
+  if (!in_array('email', $activity->getDestinations())) {
+    return;
   }
 
+  /* @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
+  $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+
+  // Trigger the create action for entities.
+  /* @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
+  $create_action = $activity_send_factory->createInstance('email_activity_send');
+  $create_action->create($activity);
 }
