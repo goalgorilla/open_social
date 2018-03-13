@@ -1,4 +1,4 @@
-@api @group @DS-811 @DS-816 @stability @stability-1
+@api @group @DS-811 @DS-816 @DS-4211 @stability @stability-1
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -31,10 +31,9 @@ Feature: Create Open Group
     And I should see "Technopark"
     And I should see "1 member"
     And I should see "Joined"
-    And I should see the link "Read more"
+    And I should not see the link "Read more"
 
   # DS-761 As a LU I want to view the hero area of a group
-    And I click "Test open group"
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"

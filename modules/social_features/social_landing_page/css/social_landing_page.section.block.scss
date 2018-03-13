@@ -1,11 +1,24 @@
-.paragraph--block .title {
-  flex: 0 0 100%;
-  padding: 0 1rem;
-
-  @media (min-width: 900px) {
-    padding-left: 20px;
+.paragraph--block {
+  .paragraph--section & {
+    background-color: #fff;
+    padding: 30px 1em;
+    @media(min-width: 900px) {
+      padding: 50px 1em;
+    }
+    @media(min-width: 1200px) {
+      padding: 50px 0;
+      margin-left: calc(-100vw / 2 + #{1200px} / 2);
+      margin-right: calc(-100vw / 2 + #{1200px} / 2);
+    }
+    .title {
+      flex: 0 0 100%;
+      padding: 0 1rem;
+      margin-bottom: 1rem;
+      @media (min-width: 900px) {
+        padding-left: 20px;
+      }
+    }
   }
-
 }
 
 .primary-col {
@@ -23,10 +36,18 @@
   @media (min-width: 1200px) {
     padding-left: 0;
   }
-  .block-title {
+
+  // when the first block in the primary column title is disabled
+  .block-views > .stream:first-child {
+    margin-top: 59px;
+  }
+
+  .block-title,
+  .section-title {
     font-size: 24px;
-    line-height: 48px;
-    margin-bottom: 30px;
+    line-height: 1.2;
+    margin: 0 0 2rem;
+    padding: 0 0 0 40px;
   }
 
   &.card__actionbar {
@@ -41,7 +62,8 @@
   max-width: 100%;
 
   @media (min-width: 900px) {
-    margin-top: 1rem;
+    //margin-top: 1rem;
+    margin-top: 59px; //height of primary column block title
     flex: 0 1 (100%/3);
     order: 2;
     max-width: (100%/3);
@@ -50,4 +72,9 @@
   @media (min-width: 1200px) {
     padding-right: 0;
   }
+
+  > .field > .field--item {
+    margin-bottom: 0.75rem;
+  }
+
 }

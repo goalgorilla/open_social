@@ -51,7 +51,7 @@
   <div class="card__body">
     <h2 class="card__title">{{ content.field_introduction_title }}</h2>
     <div class="card__text">
-      <blockquote>{{ content.field_introduction_text }}</blockquote>
+      {{ content.field_introduction_text }}
     </div>
     <footer class="card__actionbar">
       {% if (logged_in and content.field_introduction_link_lu|render is not empty) or (not logged_in and content.field_introduction_link_an|render is not empty) %}
