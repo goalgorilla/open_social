@@ -119,96 +119,78 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
     ];
 
     $form['email_notifications']['description'] = [
-      '#markup' => '<p>' . t('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.') . '</p>',
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => t('For each email notification below, you can choose to turn it off, receive it immediately or in a daily or weekly digest. Email notifications will only be sent when you are not active in the platform.'),
+    ];
+
+    $items = [
+      'message_to_me' => [
+        'title' => t('Message to me'),
+        'templates' => [
+          'create_post_profile',
+          'create_mention_post',
+          'create_mention_comment',
+          'create_comment_reply_mention',
+          'create_comment_reply',
+          'create_comment_post_profile',
+          'create_like_node_or_post',
+        ],
+      ],
+      'what_manage' => [
+        'title' => t('What I manage'),
+        'templates' => [
+          'create_comment_author_node_post',
+        ],
+      ],
+      'what_follow' => [
+        'title' => t('What I follow'),
+        'templates' => [
+          'create_comment_following_node',
+          'create_content_in_joined_group',
+        ],
+      ],
     ];
 
     $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
-    $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
-    $all_email_message_keys = array_keys($email_message_templates);
-    $all_email_message_values = array_values($email_message_templates);
-
-    $message_to_me = [
-      $all_email_message_keys[8] => $all_email_message_values[8],
-      $all_email_message_keys[7] => $all_email_message_values[7],
-      $all_email_message_keys[6] => $all_email_message_values[6],
-      $all_email_message_keys[4] => $all_email_message_values[4],
-      $all_email_message_keys[3] => $all_email_message_values[3],
-      $all_email_message_keys[2] => $all_email_message_values[2],
-    ];
-    $what_manage = [
-      $all_email_message_keys[0] => $all_email_message_values[0],
-    ];
-    $what_follow = [
-      $all_email_message_keys[1] => $all_email_message_values[1],
-      $all_email_message_keys[5] => $all_email_message_values[5],
-    ];
-
-    if (\Drupal::moduleHandler()->moduleExists('social_private_message') && isset($all_email_message_keys[9])) {
-      $message_to_me[$all_email_message_keys[9]] = $all_email_message_values[9];
+    if (\Drupal::moduleHandler()->moduleExists('social_private_message') && isset($email_message_templates['create_private_message'])) {
+      $items['message_to_me']['templates'][] = 'create_private_message';
     }
 
     // Sort a list of email frequencies by weight.
-    $emailfrequencies = sort_email_frequency_options();
+    $email_frequencies = sort_email_frequency_options();
 
     $notification_options = [];
 
     // Place the sorted data in an actual form option.
-    foreach ($emailfrequencies as $option) {
+    foreach ($email_frequencies as $option) {
       $notification_options[$option['id']] = $option['name'];
     }
 
-    // The email notification settings for Message to me.
-    $form['email_notifications']['message_to_me'] = [
-      '#type' => 'details',
-      '#title' => t('<h5>Message to me</h5>'),
-      '#attributes' => [
-        'class' => ['form-fieldset'],
-      ],
-    ];
-    // Build the message to me section.
-    foreach ($message_to_me as $key => $title) {
-      $form['email_notifications']['message_to_me'][$key] = [
-        '#type' => 'select',
-        '#title' => $title,
-        '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
-      ];
-    }
-    // The email notification settings for What I manage.
-    $form['email_notifications']['what_manage'] = [
-      '#type' => 'details',
-      '#title' => t('<h5>What I manage</h5>'),
-      '#attributes' => [
-        'class' => ['form-fieldset'],
-      ],
-    ];
-    // Build the what I manage section.
-    foreach ($what_manage as $key => $title) {
-      $form['email_notifications']['what_manage'][$key] = [
-        '#type' => 'select',
-        '#title' => $title,
-        '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
-      ];
-    }
+    $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
-    // The email notification settings for What I follow.
-    $form['email_notifications']['what_follow'] = [
-      '#type' => 'details',
-      '#title' => t('<h5>What I follow</h5>'),
-      '#attributes' => [
-        'class' => ['form-fieldset'],
-      ],
-    ];
-    // Build the what I follow section.
-    foreach ($what_follow as $key => $title) {
-      $form['email_notifications']['what_follow'][$key] = [
-        '#type' => 'select',
-        '#title' => $title,
-        '#options' => $notification_options,
-        '#default_value' => isset($user_email_settings[$key]) ? $user_email_settings[$key] : 'immediately',
+    foreach ($items as $item_id => $item) {
+      $form['email_notifications'][$item_id] = [
+        '#type' => 'details',
+        '#title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h5',
+          '#value' => $item['title'],
+        ],
+        '#attributes' => [
+          'class' => ['form-fieldset'],
+        ],
       ];
+
+      foreach ($item['templates'] as $template) {
+        $form['email_notifications'][$item_id][$template] = [
+          '#type' => 'select',
+          '#title' => $email_message_templates[$template],
+          '#options' => $notification_options,
+          '#default_value' => isset($user_email_settings[$template]) ? $user_email_settings[$template] : 'immediately',
+        ];
+      }
     }
 
     // Submit function to save send email settings.
@@ -295,15 +277,15 @@ function activity_send_email_mail($key, &$message, $params) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function activity_send_email_activity_insert(ActivityInterface $activity) {
-
-  $destinations = $activity->getDestinations();
-  if (in_array('email', $destinations)) {
-    /* @var $activity_send_factory Drupal\activity_send\Plugin\ActivitySendManager */
-    $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
-    // Trigger the create action for entities.
-    /* @var $create_action Drupal\activity_send\Plugin\ActivitySend\CreateActivitySend */
-    $create_action = $activity_send_factory->createInstance('email_activity_send');
-    $create_action->create($activity);
+  if (!in_array('email', $activity->getDestinations())) {
+    return;
   }
 
+  /* @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
+  $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
+
+  // Trigger the create action for entities.
+  /* @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
+  $create_action = $activity_send_factory->createInstance('email_activity_send');
+  $create_action->create($activity);
 }
