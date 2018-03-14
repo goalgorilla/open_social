@@ -24,7 +24,11 @@ function social_comment_upload_update_8001() {
  */
 function _social_comment_upload_set_defaults() {
   // Set allow to true, since that's the case by default.
-  \Drupal::getContainer()->get('config.factory')->getEditable('social_comment_upload.settings')->set('allow_upload_comments', 1)->save();
+  \Drupal::configFactory()
+    ->getEditable('social_comment_upload.settings')
+    ->set('allow_upload_comments', TRUE)
+    ->save();
+
   // SM should be able to change the permissions.
   user_role_grant_permissions('sitemanager', ['administer social_comment_upload settings']);
 }
