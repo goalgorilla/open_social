@@ -37,9 +37,10 @@ services:
   - docker
 
 before_install:
-  # Kill the install_update and drush_make jobs if it is not a PR build.
+  # Kill the install_update, drush_make and accessibility jobs if it is not a PR build.
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then exit 0; fi
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch feature/DS-4945-accessibility https://github.com/goalgorilla/drupal_social.git install
