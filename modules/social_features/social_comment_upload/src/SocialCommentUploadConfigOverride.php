@@ -16,7 +16,11 @@ use Drupal\Core\Config\StorageInterface;
  */
 class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterface {
 
-  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   protected $configFactory;
 
   /**
@@ -88,7 +92,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
     $config_name = 'core.entity_view_display.comment.comment.default';
     if (in_array($config_name, $names)) {
       $content = [
-        'field_comment_files' =>  [
+        'field_comment_files' => [
           'weight' => 1,
           'label' => 'hidden',
           'settings' => [],
