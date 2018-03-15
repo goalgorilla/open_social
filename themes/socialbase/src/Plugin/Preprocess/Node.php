@@ -107,13 +107,13 @@ class Node extends PreprocessBase {
         ->format($date, 'social_medium_date');
     }
 
-    // Remove the "Add new comment" link on teasers or when the comment form is
+    // Removes comment and readmore ink on teasers or when the comment form is
     // displayed on the page.
 
     if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
 
       if ($variables['node']->getType() == 'book') {
-        //unset($variables['content']['links']);
+        unset($variables['content']['links']);
       }
 
     }
