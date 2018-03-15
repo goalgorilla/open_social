@@ -7,6 +7,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\Component\Utility\Crypt;
+use Drupal\node\Entity\Node;
 
 /**
  * Class EventAnEnrollForm.
@@ -29,12 +30,8 @@ class EventAnEnrollForm extends EnrollActionForm {
     $nid = $this->routeMatch->getRawParameter('node');
 
     // Load node object.
-    if (!empty($nid)) {
-      if (!is_object($nid) && !is_null($nid)) {
-        $node = $this->entityTypeManager
-          ->getStorage('node')
-          ->load($nid);
-      }
+    if (!is_null($nid) && !is_object($nid)) {
+      $node = Node::load($nid);
     }
 
     // Set hidden values.

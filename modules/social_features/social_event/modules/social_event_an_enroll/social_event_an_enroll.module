@@ -83,10 +83,9 @@ function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
   // Get current node object or node id.
   $node = \Drupal::routeMatch()->getParameter('node');
 
-  if (!is_object($node) && !is_null($node)) {
-    $node = \Drupal::service('entity_type.manager')
-      ->getStorage('node')
-      ->load($node);
+  // Load node object.
+  if (!is_null($node) && !is_object($node)) {
+    $node = Node::load($node);
   }
 
   if (is_object($node)) {

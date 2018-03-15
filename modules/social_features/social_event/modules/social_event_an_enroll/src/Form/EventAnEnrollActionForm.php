@@ -6,6 +6,7 @@ use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 
 /**
  * Class EventAnEnrollActionForm.
@@ -28,12 +29,9 @@ class EventAnEnrollActionForm extends EnrollActionForm {
     $nid = $this->routeMatch->getRawParameter('node');
     $token = \Drupal::request()->query->get('token');
 
-    if (!empty($nid)) {
-      if (!is_object($nid) && !is_null($nid)) {
-        $node = $this->entityTypeManager
-          ->getStorage('node')
-          ->load($nid);
-      }
+    // Load node object.
+    if (!is_null($nid) && !is_object($nid)) {
+      $node = Node::load($nid);
     }
 
     if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
