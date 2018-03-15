@@ -6,7 +6,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\Form\EnrollActionForm;
 
 /**
  * Class EventAnEnrollController.
@@ -19,29 +18,9 @@ class EventAnEnrollController extends ControllerBase {
    * Determines if user has access to enroll form.
    */
   public function enrollAccess(NodeInterface $node) {
-    $current_user = \Drupal::currentUser();
-
     $node_visibility = $node->get('field_content_visibility')->getString();
     if ($node_visibility !== 'public') {
       return AccessResult::forbidden();
-    }
-
-    $groups = EnrollActionForm::getGroups($node);
-    if (!empty($groups)) {
-      $group_type_ids = $this->configFactory->getEditable('social_event.settings')
-        ->get('enroll');
-
-      foreach ($groups as $group) {
-        $group_type_id = $group->bundle();
-
-        if (in_array($group_type_id, $group_type_ids) && $group->hasPermission('join group', $current_user)) {
-          break;
-        }
-
-        if ($group->hasPermission('enroll to events in groups', $current_user) == FALSE) {
-          return AccessResult::forbidden();
-        }
-      }
     }
 
     return AccessResult::allowed();
