@@ -49,16 +49,19 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
   position: relative;
   z-index: 2;
   min-height: 300px;
 
   @include for-tablet-portrait-up {
     min-height: 410px;
-
   }
 
+}
+
+.block-social-profile .cover-wrap {
+  justify-content: space-between;
 }
 
 .node-unpublished .status:before {
