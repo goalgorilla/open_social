@@ -27,6 +27,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $nid = $this->routeMatch->getRawParameter('node');
+    // @todo: Replace it with Dependency Injection.
     $token = \Drupal::request()->query->get('token');
 
     // Load node object.
