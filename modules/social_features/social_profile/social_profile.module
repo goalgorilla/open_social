@@ -238,6 +238,15 @@ function social_profile_preprocess_profile(array &$variables) {
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
 
+  // Add the profile image.
+  if (!empty($profile->field_profile_image->entity)) {
+
+
+    $variables['profile_image_url'] = ImageStyle::load('social_medium')
+      ->buildUrl($profile->field_profile_image->entity->getFileUri());
+
+  }
+
 }
 
 /**
