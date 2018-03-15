@@ -1,0 +1,196 @@
+<?php
+
+/**
+ * @file
+ * The Social event AN enroll module.
+ */
+
+use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\Component\Render\PlainTextOutput;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_mail().
+ */
+function social_event_an_enroll_mail($key, &$message, $params) {
+  $social_event_an_enroll_config = \Drupal::config('social_event_an_enroll.settings');
+
+  $replace = [
+    $params['event_title'],
+    $params['event_url'],
+  ];
+
+  $subject = social_event_an_enroll_token_replace($replace, $social_event_an_enroll_config->get('event_an_enroll_email_subject'));
+  $body = social_event_an_enroll_token_replace($replace, $social_event_an_enroll_config->get('event_an_enroll_email_body'));
+
+  $message['subject'] .= PlainTextOutput::renderFromHtml($subject);
+  $message['body'][] = $body;
+  $message['headers']['From'] = $message['from'];
+}
+
+/**
+ * Replace token in email.
+ */
+function social_event_an_enroll_token_replace($replace, $subject) {
+  return str_replace(['[event name]', '[event url]'], $replace, $subject);
+}
+
+/**
+ * Create and send a invitation email on the given user account.
+ */
+function social_event_an_enroll_send_mail($params) {
+  if (!empty($params['field_event']) && !empty($params['field_email'])) {
+
+    $nid = $params['field_event'];
+    $email = $params['field_email'];
+    $token = $params['field_token'];
+
+    $node = Node::load($nid);
+    $params['event_title'] = $node->getTitle();
+    $params['event_url'] = social_event_an_enroll_url($nid, $token);
+
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $site_mail = \Drupal::config('system.site')->get('mail');
+
+    $mail = \Drupal::service('plugin.manager.mail')
+      ->mail('social_event_an_enroll', 'social_event_an_enroll', $email, $langcode, $params, $site_mail);
+
+    return empty($mail) ? NULL : $mail['result'];
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_event_an_enroll_theme() {
+  return [
+    'event_an_enroll_dialog' => [
+      'variables' => [
+        'links' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Override variables for the social page hero data.
+ */
+function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
+  $account = \Drupal::currentUser();
+
+  // Get current node object or node id.
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  if (!is_object($node) && !is_null($node)) {
+    $node = \Drupal::service('entity_type.manager')
+      ->getStorage('node')
+      ->load($node);
+  }
+
+  if (is_object($node)) {
+    if (!empty($variables['event_enrollment'])) {
+      if ($node->getType() == 'event') {
+        if ($account->isAnonymous()) {
+
+          $form = \Drupal::formBuilder()
+            ->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm');
+
+          $variables['event_enrollment'] = [
+            'enroll_action_form' => $form,
+          ];
+
+          $an_enroll_routes = [
+            'social_event_an_enroll.enroll_dialog',
+            'social_event_an_enroll.enroll_form',
+          ];
+
+          if (in_array(\Drupal::routeMatch()->getRouteName(), $an_enroll_routes)) {
+            unset($variables['event_enrollment']);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Alter "Event enrollments" views. Add number of anonymous enrollments.
+ */
+function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
+    if (isset($output['#rows'])) {
+      $nid = \Drupal::routeMatch()->getRawParameter('node');
+      $an_count = social_event_an_enroll_count($nid);
+      if ($an_count && $an_count > 0) {
+        // Fix counter in block title.
+        $view->total_rows += $an_count;
+        // Add default avatar image with counter.
+        if (empty($output['#rows'])) {
+          $output['#rows'][0]['#theme'] = $output['#theme'];
+          $output['#rows'][0]['#view'] = $output['#view'];
+          $output['#rows'][0]['#grouping_level'] = 0;
+          $output['#rows'][0]['#title'] = '';
+        }
+        $output['#rows'][0]['#rows'][] = [
+          '#prefix' => '<div class="avatar">',
+          '#theme' => 'image_style',
+          '#style_name' => 'social_medium',
+          '#uri' => 'public://default-profile-picture.png',
+          '#suffix' => '<span class="badge badge--pill">' . $an_count . '</span></div>',
+        ];
+        $output['#attached']['library'][] = 'social_event_an_enroll/event_an_enroll';
+      }
+    }
+  }
+}
+
+/**
+ * Returns number of anonymous enrollments.
+ */
+function social_event_an_enroll_count($nid) {
+  $query = \Drupal::database()
+    ->select('event_enrollment__field_account', 'eefa');
+  $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
+  $query->condition('eefa.field_account_target_id', 0);
+  $query->condition('eefe.field_event_target_id', $nid);
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns number of anonymous enrollments.
+ */
+function social_event_an_enroll_token_exists($token, $nid) {
+  $query = \Drupal::database()
+    ->select('event_enrollment__field_token', 'eeft');
+  $query->join('event_enrollment__field_event', 'eefe', 'eeft.entity_id = eefe.entity_id');
+  $query->condition('eeft.field_token_value', $token);
+  $query->condition('eefe.field_event_target_id', $nid);
+
+  $results = $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+
+  return !empty($results);
+}
+
+/**
+ * Returns url to event with token for anonymous enrollment.
+ */
+function social_event_an_enroll_url($nid, $token) {
+  $url = Url::fromRoute('entity.node.canonical',
+    ['node' => $nid],
+    [
+      'query' => ['token' => $token],
+      'absolute' => TRUE,
+    ])->toString();
+  return $url;
+}
