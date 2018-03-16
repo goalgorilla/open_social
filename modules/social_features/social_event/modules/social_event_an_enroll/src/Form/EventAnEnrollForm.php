@@ -40,10 +40,6 @@ class EventAnEnrollForm extends EnrollActionForm {
       '#value' => $nid,
     ];
 
-    // Display form.
-    // @todo: Add form to socialbase/includes/form.inc and fix title and submit.
-    $form['#attributes']['class'][] = 'card';
-
     $form['field_first_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('First Name'),
@@ -88,23 +84,40 @@ class EventAnEnrollForm extends EnrollActionForm {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
 
-    if ($uid === 0) {
+    if ($current_user->isAnonymous()) {
       $nid = $form_state->getValue('field_event');
       $values = $form_state->getValues();
 
       $values['user_id'] = $uid;
       $values['field_account'] = $uid;
       $values['field_enrollment_status'] = '1';
-      $values['field_token'] = Crypt::randomBytesBase64();
 
-      // Create a new enrollment for the event.
-      $enrollment = EventEnrollment::create($values);
-      $enrollment->save();
+      // Check if there is enrollment with the same email.
+      $conditions = [
+        'field_email' => $values['field_email'],
+        'field_event' => $nid,
+      ];
+      $enrollments = $this->entityStorage->loadByProperties($conditions);
+      if ($enrollment = array_pop($enrollments)) {
+        $values['field_token'] = $enrollment->get('field_token')->getString();
 
-      // Invalidate cache for our enrollment cache tag in
-      // social_event_node_view_alter().
-      $cache_tag = 'enrollment:' . $nid . '-' . $uid;
-      Cache::invalidateTags([$cache_tag]);
+        $message = $this->t('You have been already enrolled to this event. You have also received a notification via email.');
+        drupal_set_message($message);
+      }
+      else {
+        $values['field_token'] = Crypt::randomBytesBase64();
+        // Create a new enrollment for the event.
+        $enrollment = EventEnrollment::create($values);
+        $enrollment->save();
+
+        // Invalidate cache for our enrollment cache tag in
+        // social_event_node_view_alter().
+        $cache_tag = 'enrollment:' . $nid . '-' . $uid;
+        Cache::invalidateTags([$cache_tag]);
+
+        $message = $this->t('You have successfully enrolled to this event. You have also received a notification via email.');
+        drupal_set_message($message);
+      }
 
       // Redirect anonymous use to login page before enrolling to an event.
       $form_state->setRedirect('entity.node.canonical',
@@ -112,12 +125,8 @@ class EventAnEnrollForm extends EnrollActionForm {
         ['query' => ['token' => $values['field_token']]]
       );
 
-      $message = $this->t('You have successfully enrolled to this event. You have also received a notification via email.');
-      drupal_set_message($message);
-
       // Send email.
       social_event_an_enroll_send_mail($values);
-
     }
   }
 

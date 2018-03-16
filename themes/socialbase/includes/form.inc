@@ -285,6 +285,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'node_topic_delete_form',
     'profile_profile_delete_form',
     'private_message_thread_delete_form',
+    'event_an_enroll_form',
   ];
 
   if (in_array($form_id, $default_forms)) {
@@ -331,6 +332,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_register_form',
     'user_pass_reset',
     'social_user_password_form',
+    'event_an_enroll_form',
   ];
 
   if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {

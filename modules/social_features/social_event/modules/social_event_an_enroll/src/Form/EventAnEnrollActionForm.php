@@ -27,8 +27,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $nid = $this->routeMatch->getRawParameter('node');
-    // @todo: Replace it with Dependency Injection.
-    $token = \Drupal::request()->query->get('token');
+    $token = $this->getRequest()->query->get('token');
 
     // Load node object.
     if (!is_null($nid) && !is_object($nid)) {
@@ -111,6 +110,8 @@ class EventAnEnrollActionForm extends EnrollActionForm {
 
       if ($enrollment = array_pop($enrollments)) {
         $enrollment->delete();
+        $message = $this->t('You are no longer enrolled to this event.');
+        drupal_set_message($message);
       }
     }
   }
