@@ -11,7 +11,7 @@
     attach: function (context, settings) {
 
       $('#edit-members').on('invalid', function () {
-        this.setCustomValidity(Drupal.t(settings.social_private_message.validator));
+        this.setCustomValidity(settings.social_private_message.validator);
       });
 
     }
