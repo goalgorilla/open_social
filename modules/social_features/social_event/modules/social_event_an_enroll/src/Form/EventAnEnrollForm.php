@@ -42,12 +42,12 @@ class EventAnEnrollForm extends EnrollActionForm {
 
     $form['field_first_name'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('First Name'),
+      '#title' => $this->t('First name'),
     ];
 
     $form['field_last_name'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Last Name'),
+      '#title' => $this->t('Last name'),
     ];
 
     $form['field_email'] = [
