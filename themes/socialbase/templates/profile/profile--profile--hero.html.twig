@@ -23,6 +23,7 @@
 
 {% if profile_hero_styled_image_url %}
   <div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+    <div class="hero__bgimage-overlay"></div>
 {% else %}
   <div class="cover">
 {% endif %}
@@ -40,10 +41,10 @@
   <div class="cover-wrap">
 
     <header>
+      {{ content.field_profile_image }}
       <h1 class="page-title">
         {{ profile_name }}
       </h1>
-      {{ content.field_profile_image }}
     </header>
 
 
