@@ -1,4 +1,4 @@
-@api @javascript @event @eventenrollment @stability @perfect @PAC-423 @profile @stability-2
+@api @javascript @event @eventenrollment @stability @perfect @PAC-423 @profile @stability-3
 Feature: Enroll for an event without an account
   Benefit: In order to attend an Event
   Role: AN
