@@ -193,7 +193,7 @@
     };
 
     MentionsBase.prototype._markupMention = function(mention) {
-      return "@[" + mention.name + "](" + mention.uid + ")";
+      return this.options.markup(mention);
     };
 
     return MentionsBase;
@@ -251,6 +251,7 @@
         select: this._onSelect,
         suffix: this.options.suffix,
         source: this.options.source,
+        markup: this.options.markup,
         appendTo: this.input.parent()
       }, this.options.autocomplete);
       this.autocomplete = this.input[this.options.widget](options);
@@ -405,7 +406,8 @@
       this._addMention({
         name: ui.item.value,
         pos: ui.item.pos,
-        uid: ui.item.uid
+        uid: ui.item.uid,
+        profile_id: ui.item.profile_id
       });
       return this._updateValue();
     };
@@ -674,7 +676,7 @@
 
   })(MentionsBase);
 
-  
+
 /*
     Copyright (c) 2009-2011, Kevin Decker <kpdecker@gmail.com>
 */

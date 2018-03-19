@@ -157,7 +157,7 @@ class MentionsBase
         return '[' + @options.trigger + '](' + allowedChars + '{0,20})'
 
     _markupMention: (mention) ->
-        return "@[#{mention.name}](#{mention.uid})"
+        return @options.markup(mention)
 
 
 class MentionsInput extends MentionsBase
@@ -202,6 +202,7 @@ class MentionsInput extends MentionsBase
             select: @_onSelect,
             suffix: @options.suffix,
             source: @options.source,
+            markup: @option.markup,
             appendTo: @input.parent()
         , @options.autocomplete)
         @autocomplete = @input[@options.widget](options)
@@ -246,23 +247,23 @@ class MentionsInput extends MentionsBase
         hidden = $('<input>', {type: 'hidden', name: @input.attr('name')});
 
         $.each(@input.data(), (name, value) ->    hidden.attr("data-" + name.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase(), JSON.stringify(value))
-        
+
         );
         @input.removeData();
         hidden.appendTo(@container)
-       
+
         @input.removeAttr('name')
         return hidden
 
     _createHighlighter: ->
         highlighter = $('<div>', {'class': 'highlighter'})
-        
+
         if @input.prop("tagName") == "INPUT"
             highlighter.css('whiteSpace', 'pre')
         else
             highlighter.css('whiteSpace', 'pre-wrap')
             highlighter.css('wordWrap', 'break-word')
-        
+
         content = $('<div>', {'class': 'highlighter-content'})
         highlighter.append(content).prependTo(@container)
 
@@ -306,7 +307,7 @@ class MentionsInput extends MentionsBase
 
     _onSelect: (event, ui) =>
         @_updateMentions()
-        @_addMention(name: ui.item.value, pos: ui.item.pos, uid: ui.item.uid)
+        @_addMention(name: ui.item.value, pos: ui.item.pos, uid: ui.item.uid, profile_id: ui.item.profile_id)
         @_updateValue()
 
     _updateValue: =>

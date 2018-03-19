@@ -48,12 +48,10 @@
       },
       markup: function(item) {
         var type = settings.socialMentions.suggestionsFormat;
-
         if (type == "full_name" || (type == "all" && item.profile_id)) {
           return settings.socialMentions.prefix + item.profile_id + settings.socialMentions.suffix;
         }
-
-        return settings.socialMentions.prefix + item.username + settings.socialMentions.suffix;
+        return settings.socialMentions.prefix + item.name + settings.socialMentions.suffix;
       },
       template: function(item) {
         return item.value;
