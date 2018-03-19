@@ -17,18 +17,9 @@
     $(".form-textarea", element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
-        renderItem: function(ul, item) {
-          var $li = $("<li />"),
-            $a = $("<a />", {
-              class: "mention__item"
-            }).appendTo($li);
-
-          $a.append(item.html_item);
-          return $li.appendTo(ul);
-        },
         open: function(event, ui) {
           if (!CKEDITOR.instances[this.id]) {
-            var menu = $(this).data("ui-mentionsAutocomplete").menu;
+            var menu = $(this).data("ui-autocomplete").menu;
             menu.focus(null, $("li", menu.element).eq(0));
 
             if (window.matchMedia("(min-width: 600px)").matches) {
@@ -45,6 +36,15 @@
             }
           }
         }
+      },
+      renderItem: function(ul, item) {
+        var $li = $("<li />"),
+          $a = $("<a />", {
+            class: "mention__item"
+          }).appendTo($li);
+
+        $a.append(item.html_item);
+        return $li.appendTo(ul);
       },
       markup: function(item) {
         var type = settings.socialMentions.suggestionsFormat;

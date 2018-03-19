@@ -85,15 +85,7 @@ $.widget( "ui.areacomplete", $.ui.autocomplete,
         return $.ui.autocomplete.prototype.search.call(@, @searchTerm, event)
 
     _renderItem: (ul, item) ->
-        li = $('<li>')
-        anchor = $('<a>').appendTo(li)
-        if item.image
-            anchor.append("<img src=\"#{item.image}\" />")
-
-        regexp = new RegExp("(" + escapeRegExp(this.searchTerm) + ")", "gi");
-        value = item.value.replace(regexp, "<strong>$&</strong>")
-        anchor.append(value)
-        return li.appendTo(ul)
+        return @options.renderItem(ul, item)
 )
 
 
@@ -202,7 +194,8 @@ class MentionsInput extends MentionsBase
             select: @_onSelect,
             suffix: @options.suffix,
             source: @options.source,
-            markup: @option.markup,
+            markup: @options.markup,
+            renderItem: @options.renderItem,
             appendTo: @input.parent()
         , @options.autocomplete)
         @autocomplete = @input[@options.widget](options)

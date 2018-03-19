@@ -107,16 +107,7 @@
       return $.ui.autocomplete.prototype.search.call(this, this.searchTerm, event);
     },
     _renderItem: function(ul, item) {
-      var anchor, li, regexp, value;
-      li = $('<li>');
-      anchor = $('<a>').appendTo(li);
-      if (item.image) {
-        anchor.append("<img src=\"" + item.image + "\" />");
-      }
-      regexp = new RegExp("(" + escapeRegExp(this.searchTerm) + ")", "gi");
-      value = item.value.replace(regexp, "<strong>$&</strong>");
-      anchor.append(value);
-      return li.appendTo(ul);
+      return this.options.renderItem(ul, item);
     }
   });
 
@@ -252,6 +243,7 @@
         suffix: this.options.suffix,
         source: this.options.source,
         markup: this.options.markup,
+        renderItem: this.options.renderItem,
         appendTo: this.input.parent()
       }, this.options.autocomplete);
       this.autocomplete = this.input[this.options.widget](options);
