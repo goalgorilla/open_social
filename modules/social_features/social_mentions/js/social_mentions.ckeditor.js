@@ -13,49 +13,18 @@
     instances: {}
   };
 
-  // Render Mention Item.
-  var renderMentionItem = function (ul, item) {
-    var $li = $("<li />"),
-      $a = $("<a />", {
-        class: "mention__item"
-      }).appendTo($li);
-
-    $a.append(item.html_item);
-    return $li.appendTo(ul);
-  };
-
-  // Markup for Mention Item.
-  var markupMentionItem = function(item, settings) {
-    var type = settings.socialMentions.suggestionsFormat;
-    if (type == "full_name" || (type == "all" && item.profile_id)) {
-      return settings.socialMentions.prefix + item.profile_id + settings.socialMentions.suffix;
-    }
-    return settings.socialMentions.prefix + item.name + settings.socialMentions.suffix;
-  };
-
-  // Adds mention input config for the textarea.
-  var initMentions = function(element, context, settings) {
-    $(element).mentionsInput({
-      source: settings.path.baseUrl + "mentions-autocomplete",
-      renderItem: function(ul, item) {
-        return renderMentionItem(ul, item);
-      },
-      markup: function(item) {
-        return markupMentionItem(item, settings);
-      },
-      template: function(item) {
-        return item.value;
-      }
-    });
-  };
-
-  // Adds mention input config for the textarea.
-  var initCKEditorMentions = function(element, context, settings) {
-    $(element).mentionsOldInput({
+  var initMentions = function(element, context, settings, editor) {
+    $(".form-textarea", element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
       autocomplete: {
         renderItem: function(ul, item) {
-          return renderMentionItem(ul, item);
+          var $li = $("<li />"),
+            $a = $("<a />", {
+              class: "mention__item"
+            }).appendTo($li);
+
+          $a.append(item.html_item);
+          return $li.appendTo(ul);
         },
         open: function(event, ui) {
           if (!CKEDITOR.instances[this.id]) {
@@ -78,7 +47,13 @@
         }
       },
       markup: function(item) {
-        return markupMentionItem(item, settings);
+        var type = settings.socialMentions.suggestionsFormat;
+
+        if (type == "full_name" || (type == "all" && item.profile_id)) {
+          return settings.socialMentions.prefix + item.profile_id + settings.socialMentions.suffix;
+        }
+
+        return settings.socialMentions.prefix + item.username + settings.socialMentions.suffix;
       },
       template: function(item) {
         return item.value;
@@ -86,58 +61,50 @@
     });
   };
 
-  // Initiate mentions.
   Drupal.behaviors.socialMentions = {
     attach: function(context, settings) {
       var formIds = ".comment-form, #social-post-entity-form";
 
       CKEDITOR.on("instanceReady", function () {
-        $(formIds).once("socialMentions").each(function (i, element) {
-          $.each($(".form-textarea", element), function (i, textarea) {
-            if (typeof CKEDITOR.instances[$(textarea).attr('id')] === 'undefined') {
-              initMentions(textarea, context, settings);
-            }
-            else {
-              initCKEditorMentions(textarea, context, settings);
-            }
-          });
+        $(formIds).once("socialMentions").each(function (i, e) {
+          // initMentions(e, context, settings, CKEDITOR.instances[e.id]);
         });
       });
     }
   };
 
-  // Adds a custom behaviour for clicking on the reply button.
   Drupal.behaviors.socialMentionsReply = {
     attach: function (context, settings) {
       CKEDITOR.on("instanceReady", function () {
         $(".comment-form").once("socialMentionsReply").each(function (i, e) {
           var form = e,
             $textarea = $(".form-textarea", form),
-            mentionsInput = $textarea.data("mentionsInput"),
-            editor = CKEDITOR.instances[$textarea.attr("id")];
+            mentionsInput = $textarea.data("mentionsInput");
 
           $(".mention-reply").on("click", function (e) {
             e.preventDefault();
 
             var author = $(this).data("author"),
-              empty = editor ? editor.getData().length : !$textarea.val().length;
+              empty = CKEDITOR.instances[$textarea.attr("id")] ? !CKEDITOR.instances[$textarea.attr("id")].getData().length : !$textarea.val().length;
 
             if (author && empty) {
-              if (!editor) {
-                $textarea.val(author.value);
+              mentionsInput.handler.refreshMentions();
 
-                mentionsInput._updateMentions();
-                mentionsInput._addMention({
-                  name: author.value,
-                  pos: 0,
-                  uid: author.uid,
-                  profile_id: author.profile_id
+              if (!CKEDITOR.instances[$textarea.attr("id")]) {
+                mentionsInput.handler.cache.mentions.push({
+                  value: {
+                    original: mentionsInput.settings.markup(author),
+                    compiled: mentionsInput.settings.template(author)
+                  },
+                  start: {
+                    original: 0,
+                    compiled: 0
+                  }
                 });
-                mentionsInput._updateValue();
 
+                mentionsInput.handler.setValue($textarea.val() + author.value + " ");
                 $textarea.focus();
-              }
-              else {
+              } else {
                 mentionsInput.handler.editor.focus();
                 mentionsInput.handler.handleInput();
                 mentionsInput.handler.onSelect({}, {
@@ -155,9 +122,9 @@
           });
 
           $textarea.on("input", function () {
-            // if (!mentionsInput.mentions.length) {
-            //   $(".parent-comment", form).val("");
-            // }
+            if (!mentionsInput.handler.mentions.length) {
+              $(".parent-comment", form).val("");
+            }
           });
         });
       });
