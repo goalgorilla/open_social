@@ -1,4 +1,4 @@
-@api @group @ECI-632 @stability @stability-1
+@api @group @DS-4211 @ECI-632 @stability @stability-1
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -35,9 +35,8 @@ Feature: Create Public Group
     And I should see "Technopark"
     And I should see "1 member"
     And I should see "Joined"
-    And I should see the link "Read more"
+    And I should not see the link "Read more"
 
-    And I click "Test public group"
     And I should see "Test public group" in the "Hero block"
     And I should see the button "Joined"
     And I click the xth "4" element with the css ".dropdown-toggle"
@@ -73,6 +72,13 @@ Feature: Create Public Group
     And I click "Groups"
     And I click "Test public group"
     Then I should see the button "Joined"
+
+    # Create a post inside the public group, visible to public only
+    When I fill in "Say something to the group" with "This is a public group post."
+    And I select post visibility "Public"
+    And I press "Post"
+    Then I should see the success message "Your post has been posted."
+    And I should see "This is a public group post."
 
     When I click "Events"
     And I should see the link "Create Event" in the "Sidebar second"
@@ -132,3 +138,6 @@ Feature: Create Public Group
     When I logout
     And I am on "all-groups"
     Then I should see the link "Test public group"
+
+    When I click "Test public group"
+    Then I should see "This is a public group post."

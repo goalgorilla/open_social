@@ -52,7 +52,6 @@
   font-size: $button-font-size-small;
   color: $gray-light;
 
-
   > * {
     display: inline-block;
     margin-right: 0.5em;
@@ -104,7 +103,6 @@
   }
 
 }
-
 
 // make sure the btn-group is positioned top right of the comment
 .comment__actions {
@@ -159,7 +157,16 @@
     height: $input-height-base;
   }
 
+}
 
+/*
+* Fix styles if last of page textarea is focused on mobile
+* Only for page with textareas.
+ */
+.main-container.open-keyboard {
+  @include for-phone-only {
+    padding-bottom: 270px;
+  }
 }
 
 // when optional module social_comment_upload is enabled
@@ -199,7 +206,9 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-summary::-moz-list-bullet { list-style-type: none;  }
+summary::-moz-list-bullet {
+  list-style-type: none;
+}
 
 // Set state for open details
 details .details__close-icon,

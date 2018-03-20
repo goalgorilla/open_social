@@ -1,7 +1,13 @@
 {% extends 'node--featured.html.twig' %}
 
   {% block card_hero_image %}
-    <div class="img_wrapper">{{ content.field_topic_image }}</div>
+    <div class="img_wrapper">
+      {% if content.field_topic_image|render %}
+        {{ content.field_topic_image }}
+      {% else %}
+        <hr class="no-feature-image">
+      {% endif %}
+    </div>
   {% endblock %}
 
   {% block card_body %}
@@ -24,5 +30,11 @@
         {% endembed %}
       {% endif %}
     </small>
+
+    <div class="card__link">
+      <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+        <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+      </a>
+    </div>
 
   {% endblock %}
