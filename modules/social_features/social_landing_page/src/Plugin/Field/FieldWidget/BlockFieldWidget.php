@@ -32,13 +32,18 @@ class BlockFieldWidget extends BlockFieldWidgetBase {
     $options = [];
 
     $groups = [
-      'Lists (Views)' => $this->t('Basic')->render(),
-      'Social Landing Page' => $this->t('Basic')->render(),
+      $this->t('Lists (Views)')->render() => $this->t('Basic'),
+      $this->t('Social Landing Page')->render() => $this->t('Basic'),
     ];
 
     $blocks = [
+      'activity_overview_block' => $this->t('Activity details'),
       'views_block:activity_stream-block_stream_homepage' => $this->t('New post form and all activities list'),
       'views_block:community_activities-block_stream_landing' => $this->t('Filtered activities list'),
+      'views_block:latest_topics-block_latest_topics' => $this->t('Latest topic'),
+      'views_block:newest_groups-block_newest_groups' => $this->t('Newest groups'),
+      'views_block:newest_users-block_newest_users' => $this->t('Newest users'),
+      'views_block:upcoming_events-block_community_events' => $this->t('Community events'),
     ];
 
     foreach ($element['plugin_id']['#options'] as $title => $items) {
@@ -46,8 +51,10 @@ class BlockFieldWidget extends BlockFieldWidgetBase {
         $title = $groups[$title];
       }
       else {
-        $title = $this->t('Extra')->render();
+        $title = $this->t('Extra');
       }
+
+      $title = $title->render();
 
       if (!isset($options[$title])) {
         $options[$title] = [];
