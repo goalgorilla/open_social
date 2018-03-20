@@ -120,7 +120,7 @@
             e.preventDefault();
 
             var author = $(this).data("author"),
-              empty = editor ? editor.getData().length : !$textarea.val().length;
+              empty = editor ? !editor.getData().length : !$textarea.val().length;
 
             if (author && empty) {
               if (!editor) {
@@ -138,6 +138,8 @@
                 $textarea.focus();
               }
               else {
+                mentionsInput.handler.refreshMentions();
+
                 mentionsInput.handler.editor.focus();
                 mentionsInput.handler.handleInput();
                 mentionsInput.handler.onSelect({}, {
@@ -155,9 +157,11 @@
           });
 
           $textarea.on("input", function () {
-            // if (!mentionsInput.mentions.length) {
-            //   $(".parent-comment", form).val("");
-            // }
+            if (editor) {
+              if (!mentionsInput.mentions.length) {
+                $(".parent-comment", form).val("");
+              }
+            }
           });
         });
       });

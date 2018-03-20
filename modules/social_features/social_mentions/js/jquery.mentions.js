@@ -211,7 +211,7 @@
       this.settings = {
         trigger: '@',
         widget: 'areacomplete',
-        suffix: '',
+        suffix: ' ',
         autocomplete: {
           autoFocus: true,
           delay: 0
