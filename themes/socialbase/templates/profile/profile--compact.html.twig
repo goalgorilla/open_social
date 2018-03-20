@@ -20,13 +20,13 @@
  */
 #}
 <div class="avatar">
-  <a href="{{ profile_stream_url }}" title="{{ profile_name ~ ' profile'| trans }}">
+  <a href="{{ profile_stream_url }}" title="{{ profile_name }}">
 
     {% if profile_image_url %}
       <img src="{{ profile_image_url }}" class="img-responsive" alt="{{ profile_name }}">
     {% else %}
       {# if default_image #}
-      {{ node.field_profile_image }}
+      {{ content.field_profile_image }}
     {% endif %}
 
   </a>
