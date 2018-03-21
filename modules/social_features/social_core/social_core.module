@@ -230,8 +230,14 @@ function social_core_preprocess_block(&$variables) {
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = Url::fromRoute('view.upcoming_events.page_community_events');
+      if (isset($variables['label']['#markup'])) {
+        $label = $variables['label']['#markup'];
+      }
+      else {
+        $label = t('events');
+      }
       $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
+        '@label' => $label,
       ]);
       break;
 

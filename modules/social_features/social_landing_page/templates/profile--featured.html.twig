@@ -5,13 +5,17 @@
 {% endblock %}
 
 {% block card_teaser_type %}
-
+  <div class="teaser__teaser-type">
+    <svg class="teaser__teaser-type-icon">
+      <use xlink:href="#icon-account_circle"></use>
+    </svg>
+  </div>
 {% endblock %}
 
 {% block card_title %}
   <h4 class="teaser__title">
     <a href="{{ profile_stream_url }}">
-      {{ profile_name|render }}
+      {{ profile_name }}
     </a>
   </h4>
 {% endblock %}

@@ -139,10 +139,10 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
  *   Form state interface.
  */
 function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
-  // Set redirect to the group overview page when user saves a group.
+  // Set redirect to the group about page.
   $form_state->setRedirect(
-    'view.groups.page_user_groups',
-    ['user' => \Drupal::currentUser()->id(), []]
+    'view.group_information.page_group_about',
+    $form_state->getRedirect()->getRouteParameters()
   );
 }
 
