@@ -41,6 +41,9 @@ class Access implements AccessInterface {
    *   The account to check access for.
    * @param string $permission
    *   (optional) The permission.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Whether to grant or deny access.
    */
   public function access(RouteMatchInterface $route_match, AccountInterface $account, $permission = NULL) {
     if (count($this->languageManager->getLanguages()) > 1) {
