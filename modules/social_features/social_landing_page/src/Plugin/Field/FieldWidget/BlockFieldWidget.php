@@ -37,13 +37,13 @@ class BlockFieldWidget extends BlockFieldWidgetBase {
     ];
 
     $blocks = [
-      'activity_overview_block' => $this->t('Activity details'),
-      'views_block:activity_stream-block_stream_homepage' => $this->t('New post form and all activities list'),
-      'views_block:community_activities-block_stream_landing' => $this->t('Filtered activities list'),
+      'activity_overview_block' => $this->t('Full activity stream'),
+      'views_block:activity_stream-block_stream_homepage' => $this->t('Full activity stream with post field'),
+      'views_block:community_activities-block_stream_landing' => $this->t('Latest activities'),
       'views_block:latest_topics-block_latest_topics' => $this->t('Latest topic'),
       'views_block:newest_groups-block_newest_groups' => $this->t('Newest groups'),
       'views_block:newest_users-block_newest_users' => $this->t('Newest users'),
-      'views_block:upcoming_events-block_community_events' => $this->t('Community events'),
+      'views_block:upcoming_events-block_community_events' => $this->t('Upcoming community events'),
     ];
 
     foreach ($element['plugin_id']['#options'] as $title => $items) {
