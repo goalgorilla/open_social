@@ -49,6 +49,9 @@
     <a href="#main-content" class="sr-only sr-only-focusable">
       {{ 'Skip to main content'|t }}
     </a>
+    {% if is_front %}
+      <h1 class="visually-hidden">{{ head_title|safe_join(' | ') }}</h1>
+    {% endif %}
     {{ page_top }}
     {{ page }}
     {{ page_bottom }}
