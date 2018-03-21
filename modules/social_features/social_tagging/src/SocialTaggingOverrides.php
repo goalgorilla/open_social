@@ -60,7 +60,9 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
 
     if ($tag_service->allowSplit()) {
       foreach ($tag_service->getCategories() as $tid => $value) {
-        $fields['social_tagging_' . $tid] = $value;
+        if (!empty($tag_service->getChildren($tid))) {
+          $fields['social_tagging_' . $tid] = $value;
+        }
       }
     }
     else {

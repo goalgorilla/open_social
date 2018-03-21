@@ -363,7 +363,10 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   if ($tag_service->allowSplit()) {
     foreach ($tag_service->getCategories() as $tid => $label) {
       $label = social_tagging_to_machine_name($label);
-      $form[$label]['#options'] = $tag_service->getChildren($tid);
+
+      if (isset($form[$label])) {
+        $form[$label]['#options'] = $tag_service->getChildren($tid);
+      }
     }
   }
   // Only remove all toplevel items.
