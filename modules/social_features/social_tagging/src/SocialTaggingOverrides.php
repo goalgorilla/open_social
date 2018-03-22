@@ -61,12 +61,18 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     if ($tag_service->allowSplit()) {
       foreach ($tag_service->getCategories() as $tid => $value) {
         if (!empty($tag_service->getChildren($tid))) {
-          $fields['social_tagging_' . $tid] = $value;
+          $fields['social_tagging_' . $tid] = [
+            'identifier' => social_tagging_to_machine_name($value),
+            'label' => $value,
+          ];
         }
       }
     }
     else {
-      $fields['social_tagging'] = 'Tags';
+      $fields['social_tagging'] = [
+        'identifier' => 'tag',
+        'label' => 'Tags',
+      ];
     }
 
     if (!in_array($config_name = $config_names[0], $names)) {
@@ -79,7 +85,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       $overrides[$config_name]['display'][$display]['cache_metadata']['contexts'][] = 'user';
     }
 
-    foreach ($fields as $field => $label) {
+    foreach ($fields as $field => $data) {
       $overrides[$config_name]['display']['default']['display_options']['filters'][$field] = [
         'id' => $field,
         'table' => 'search_api_index_social_content',
@@ -93,11 +99,11 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
         'exposed' => TRUE,
         'expose' => [
           'operator_id' => $field . '_op',
-          'label' => $label,
+          'label' => $data['label'],
           'description' => '',
           'use_operator' => FALSE,
           'operator' => $field . '_op',
-          'identifier' => social_tagging_to_machine_name($label),
+          'identifier' => $data['identifier'],
           'required' => FALSE,
           'remember' => FALSE,
           'multiple' => TRUE,

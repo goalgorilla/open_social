@@ -369,11 +369,16 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
       }
     }
   }
-  // Only remove all toplevel items.
+  // Only remove all top level items.
   else {
     // Remove main items and just insert child options.
-    $options = $tag_service->getAllChildren();
-    $form['tag']['#options'] = $options;
+    $form['tag']['#options'] = [];
+
+    foreach ($tag_service->getCategories() as $tid => $label) {
+      if (!empty($options = $tag_service->getChildren($tid))) {
+        $form['tag']['#options'][$label] = $options;
+      }
+    }
   }
 }
 
