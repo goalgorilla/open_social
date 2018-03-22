@@ -363,7 +363,6 @@ th {
 }
 
 .table thead th {
-  text-transform: uppercase;
   font-weight: 500;
   font-size: 12px;
   vertical-align: bottom;
@@ -446,8 +445,6 @@ th {
 .table-responsive {
   display: block;
   width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .table-responsive .table-bordered {
@@ -934,7 +931,6 @@ img.align-center {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  text-transform: uppercase;
   -webkit-transition: .3s ease-out;
   transition: .3s ease-out;
   outline: 0;
@@ -1407,6 +1403,12 @@ body {
   }
   figure.align-left figcaption, figure.align-right figcaption, figure.align-center figcaption {
     padding: 0;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    padding-bottom: 100px;
+    margin-bottom: -100px;
   }
   .hidden-for-phone-only {
     display: none;
