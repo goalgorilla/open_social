@@ -56,7 +56,6 @@ fitframe:
     component:
       assets/css/fitframe.css: {}
 
-
 list:
   css:
     component:
@@ -160,7 +159,7 @@ media:
     component:
       assets/css/media.css: {}
 
-mention:
+mentions:
   css:
     component:
       assets/css/mention.css: {}
@@ -196,8 +195,8 @@ popover:
     component:
       assets/css/popover.css: {}
   js:
-    /libraries/bootstrap/js/tooltip.js: {}
-    /libraries/bootstrap/js/popover.js: {}
+    /libraries/bootstrap/js/tooltip.js: { weight: -2 }
+    /libraries/bootstrap/js/popover.js: { weight: -1 }
 
 select2:
   css:
@@ -289,6 +288,16 @@ stream:
   css:
     component:
       assets/css/stream.css: {}
+
+photoswipe.image:
+  css:
+    theme:
+      /libraries/photoswipe/dist/photoswipe.css: {}
+      /libraries/photoswipe/dist/default-skin/default-skin.css: {}
+  js:
+    /libraries/photoswipe/dist/photoswipe.min.js: { minified: true }
+    /libraries/photoswipe/dist/photoswipe-ui-default.min.js: { minified: true }
+    assets/js/photoswipe.min.js: { minified: true }
 
 ### 2.4 Templates
 layout:

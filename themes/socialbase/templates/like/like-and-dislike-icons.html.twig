@@ -34,10 +34,10 @@
     <div class="vote__count">
       {% if logged_in %}
       <a class="use-ajax" data-dialog-options='{"title":"{{ modal_title }}","width":"auto"}' data-dialog-type="modal" href="/wholiked/{{ entity_type }}/{{ entity_id }}">
-        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+        {% trans %}{{ likes }} like {% plural likes %} {{ likes }} likes{% endtrans %}
       </a>
       {% else %}
-        {% trans %}1 like {% plural likes %} {{ likes }} likes{% endtrans %}
+        {% trans %}{{ likes }} like {% plural likes %} {{ likes }} likes{% endtrans %}
       {% endif %}
     </div>
   </div>

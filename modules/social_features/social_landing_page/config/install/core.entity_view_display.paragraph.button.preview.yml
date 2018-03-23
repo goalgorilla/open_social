@@ -1,0 +1,49 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.button.field_button_link_an
+    - field.field.paragraph.button.field_button_link_lu
+    - field.field.paragraph.button.field_button_style
+    - paragraphs.paragraphs_type.button
+  module:
+    - link
+    - options
+id: paragraph.button.preview
+targetEntityType: paragraph
+bundle: button
+mode: preview
+content:
+  field_button_link_an:
+    weight: 0
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_button_link_lu:
+    weight: 1
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_button_style:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+hidden: {  }

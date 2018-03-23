@@ -56,4 +56,14 @@ class SocialGroupController extends ControllerBase {
     return $this->t('Add a member');
   }
 
+  /**
+   * The title callback for the entity.group_content.delete-form.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function groupRemoveContentTitle() {
+    return $this->t('Remove a member');
+  }
+
 }

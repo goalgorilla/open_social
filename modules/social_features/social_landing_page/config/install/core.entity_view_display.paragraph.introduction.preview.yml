@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.introduction.field_introduction_link_an
+    - field.field.paragraph.introduction.field_introduction_link_lu
+    - field.field.paragraph.introduction.field_introduction_text
+    - field.field.paragraph.introduction.field_introduction_title
+    - paragraphs.paragraphs_type.introduction
+  module:
+    - link
+    - text
+id: paragraph.introduction.preview
+targetEntityType: paragraph
+bundle: introduction
+mode: preview
+content:
+  field_introduction_link_an:
+    weight: 2
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_introduction_link_lu:
+    weight: 3
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_introduction_text:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_introduction_title:
+    weight: 0
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

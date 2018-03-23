@@ -53,7 +53,6 @@ label {
   display: inline-block;
   max-width: 100%; // Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141)
   margin-bottom: 5px;
-  font-weight: bold;
 }
 
 .control-label {
@@ -93,19 +92,9 @@ label {
   margin-bottom: $form-group-margin-bottom;
   position: relative;
 
-  > label {
-    font-weight: 300;
-    font-size: 0.875rem;
-    cursor: text;
-  }
-
   .radio,
   .checkbox {
     margin-bottom: 0;
-
-    > label {
-      cursor: pointer;
-    }
   }
 
 }
@@ -181,7 +170,7 @@ span.form-required {
 .views-exposed-form__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 0;
 
   // The primary button will align right
@@ -192,7 +181,6 @@ span.form-required {
   // the flat button (reset button) will align left
   .btn-flat {
     margin-left: 0;
-    margin-right: auto;
   }
 }
 

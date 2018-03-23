@@ -3,6 +3,7 @@
 namespace Drupal\social_admin_menu\Menu;
 
 use Drupal\Core\Menu\DefaultMenuLinkTreeManipulators;
+use Drupal\Core\Menu\MenuTreeParameters;
 
 /**
  * Provides a couple of menu link tree manipulators.
@@ -95,6 +96,35 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
     }
 
     return $tree;
+  }
+
+  /**
+   * Renders the toolbar's administration tray.
+   *
+   * This is a adoption of core's
+   * toolbar_prerender_toolbar_administration_tray() function,
+   * which uses setMaxDepth(4) instead of setTopLevelOnly()
+   *
+   * @return array
+   *   The updated renderable array.
+   *
+   * @see admin_toolbar_prerender_toolbar_administration_tray()
+   */
+  public function renderForm() {
+    $menu_tree = \Drupal::service('toolbar.menu_tree');
+    $parameters = new MenuTreeParameters();
+    $parameters->setRoot('system.admin')->excludeRoot()->setMaxDepth(4)->onlyEnabledLinks();
+    $manipulators = [
+        ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+        ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+        ['callable' => 'toolbar_tools_menu_navigation_links'],
+        ['callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'],
+    ];
+    $tree = $menu_tree->load(NULL, $parameters);
+    $tree = $menu_tree->transform($tree, $manipulators);
+    $element['administration_menu'] = $menu_tree->build($tree);
+    $element['administration_menu']['#cache']['contexts'][] = 'user.roles';
+    return $element;
   }
 
 }

@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @stability-2
+@api @group @stability @DS-956 @DS-4211 @stability-2
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -35,15 +35,12 @@ Feature: Edit my group as a group manager
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
-    And I click "Test open group" in the "Main content"
-    And I click "About"
     Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
 
   # DS-706 As a Group Manager I want to manage group memberships
     And I click "Manage members"
-    Then I should see "Members of Test open group"
-    And I should see the link "Add member"
+    Then I should see the link "Add member"
     And I should see "Member"
     And I should see "Group Manager One"
     And I should see "Organisation"
@@ -53,14 +50,14 @@ Feature: Edit my group as a group manager
     And I should see "Operations"
     And I should see the button "Edit"
     When I press the "Toggle Dropdown" button
-    Then I should see the link "Delete"
+    Then I should see the link "Remove"
     When I press "Edit"
     Then I should see "Group Manager One"
     And I should see "Group Manager"
     And I should see the button "Save"
     And I should see the link "Delete"
     And I press "Save"
-    And I should see "Members of Test open group"
+    And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
     When I click "Add member"
@@ -70,8 +67,7 @@ Feature: Edit my group as a group manager
     And I should see "Group Manager"
     And I should see the button "Cancel"
     And I press "Save"
-    Then I should see "Members of Test open group"
-    And I should see "Group Member Two"
+    Then I should see "Group Member Two"
     And I should see "Drupal"
     And I should see "Member"
     And I click the xth "2" element with the css ".form-submit"
@@ -79,11 +75,11 @@ Feature: Edit my group as a group manager
     And I check the box "Group Manager"
     And I press "Save"
     And I click the xth "5" element with the css ".dropdown-toggle"
-    And I click "Delete"
-    Then I should see "This action cannot be undone"
-    And I should see the button "Delete"
-    And I should see the link "Cancel"
-    And I click "Cancel"
+    And I click "Remove"
+    Then I should see "Remove a member"
+    And I should see "Are you sure you want to remove Group Manager One from Test open group?"
+    And I should see the button "Remove"
+    And I should see the button "Cancel"
 
   # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
     And I logout
