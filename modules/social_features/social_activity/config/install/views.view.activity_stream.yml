@@ -6,6 +6,7 @@ dependencies:
   module:
     - activity_creator
     - activity_viewer
+    - node
     - options
     - social_post
 id: activity_stream
@@ -199,6 +200,120 @@ display:
             group_items: {  }
           entity_type: activity
           plugin_id: activity_filter_nodes_from_my_groups
+        status:
+          id: status
+          table: activity_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          entity_field: status
+          plugin_id: boolean
+        status_1:
+          id: status_1
+          table: node_field_data
+          field: status
+          relationship: node__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+        status_2:
+          id: status_2
+          table: post_field_data
+          field: status
+          relationship: post__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: post
+          entity_field: status
+          plugin_id: boolean
       sorts:
         created:
           id: created
@@ -231,7 +346,25 @@ display:
         header: false
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        node__field_activity_entity:
+          id: node__field_activity_entity
+          table: activity__field_activity_entity
+          field: node__field_activity_entity
+          relationship: none
+          group_type: group
+          admin_label: 'field_activity_entity: Content'
+          required: false
+          plugin_id: standard
+        post__field_activity_entity:
+          id: post__field_activity_entity
+          table: activity__field_activity_entity
+          field: post__field_activity_entity
+          relationship: none
+          group_type: group
+          admin_label: 'field_activity_entity: Post'
+          required: false
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
       css_class: stream
@@ -239,6 +372,7 @@ display:
         operator: AND
         groups:
           1: AND
+          2: OR
     cache_metadata:
       max-age: -1
       contexts:
@@ -333,6 +467,120 @@ display:
             group_items: {  }
           entity_type: activity
           plugin_id: activity_filter_personalised_homepage
+        status:
+          id: status
+          table: activity_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          entity_field: status
+          plugin_id: boolean
+        status_1:
+          id: status_1
+          table: node_field_data
+          field: status
+          relationship: node__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+        status_2:
+          id: status_2
+          table: post_field_data
+          field: status
+          relationship: post__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: post
+          entity_field: status
+          plugin_id: boolean
       defaults:
         filters: false
         filter_groups: false
@@ -340,6 +588,7 @@ display:
         operator: AND
         groups:
           1: AND
+          2: OR
     cache_metadata:
       max-age: -1
       contexts:
@@ -479,10 +728,125 @@ display:
             group_items: {  }
           entity_type: activity
           plugin_id: activity_post_visibility_access
+        status:
+          id: status
+          table: activity_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: activity
+          entity_field: status
+          plugin_id: boolean
+        status_1:
+          id: status_1
+          table: node_field_data
+          field: status
+          relationship: node__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+        status_2:
+          id: status_2
+          table: post_field_data
+          field: status
+          relationship: post__field_activity_entity
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: post
+          entity_field: status
+          plugin_id: boolean
       filter_groups:
         operator: AND
         groups:
           1: AND
+          2: OR
     cache_metadata:
       max-age: -1
       contexts:
