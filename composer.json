@@ -2,7 +2,7 @@
     "name": "goalgorilla/open_social",
     "description": "Open Social is a distribution for building social communities and intranets.",
     "type": "drupal-profile",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "repositories": [
@@ -32,24 +32,29 @@
         "patches": {
             "drupal/core": {
                 "Color module html preview optional": "https://www.drupal.org/files/issues/color-optional-html-preview-2844190-2.patch",
-                "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/image_restrict_image_styles-2528214-19.patch"
-            },
-            "drupal/like_and_dislike": {
-                "Fix preview on node": "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
+                "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/image_restrict_image_styles-2528214-19.patch",
+                "Fix SQL error when importing translations": "https://www.drupal.org/files/issues/2599228-31.patch",
+                "Optimize getCommentedEntity()": "https://www.drupal.org/files/issues/get-commented-entity-2580551.52.patch"
             },
             "drupal/flag": {
                 "Add relationship to flagged entities when Flagging is base table": "https://www.drupal.org/files/issues/2723703_31.patch"
             },
-            "drupal/url_embed": {
-                "WSOD if wrong url or network unavailable": "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch",
-                "Improve performance for embeds": "https://www.drupal.org/files/issues/caching_layer_url_embed_2867668-14.patch"
-            },
             "drupal/group": {
-                "Crash when clicking delete on any group content": "https://www.drupal.org/files/issues/group-crash_when_clicking-2908830-2.patch",
                 "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
+            },
+            "drupal/like_and_dislike": {
+                "Fix preview on node": "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
             },
             "drupal/private_message": {
                 "Email notification settings are not taken into account": "https://www.drupal.org/files/issues/2910537-2.patch"
+            },
+            "drupal/bootstrap": {
+                "Not possible to select vertical tabs menu items with keyboard": "https://www.drupal.org/files/issues/bootstrap-vertical-tabs-menu-items-accessibility-2949112-2.patch"
+            },
+            "drupal/url_embed": {
+                "WSOD if wrong url or network unavailable": "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch",
+                "Improve performance for embeds": "https://www.drupal.org/files/issues/caching_layer_url_embed_2867668-14.patch",
+                "Translate dialog title": "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch"
             }
         }
     },
@@ -58,20 +63,20 @@
         "composer/installers": "^1.0",
         "oomphinc/composer-installers-extender": "^1.1",
         "drupal-composer/drupal-scaffold": "^2.0.0",
-        "drupal/core": "8.4.3",
-        "drupal/crop": "1.3",
+        "drupal/core": "8.4.5",
+        "drupal/crop": "1.5",
         "drupal/address": "1.3",
         "drupal/addtoany": "1.8",
-        "drupal/admin_toolbar": "1.21",
+        "drupal/admin_toolbar": "1.23",
         "drupal/config_update": "1.5",
         "drupal/devel": "1.2",
-        "drupal/dynamic_entity_reference": "1.4",
+        "drupal/dynamic_entity_reference": "1.5",
         "drupal/embed": "1.0",
         "drupal/entity": "1.0-beta1",
         "drupal/features": "3.5",
         "drupal/field_group": "3.0-beta1",
         "drupal/flag": "4.0-alpha2",
-        "drupal/group": "1.0-rc1",
+        "drupal/group": "1.0-rc2",
         "drupal/image_effects": "1.0",
         "drupal/image_widget_crop": "2.1",
         "drupal/like_and_dislike": "1.0-alpha2",
@@ -82,17 +87,20 @@
         "drupal/private_message": "1.0-beta18",
         "drupal/profile": "1.0-rc1",
         "drupal/r4032login": "1.x-dev#4b2077aa70e3f7b00b8a9cba25af5b948ba2e3b9",
-        "drupal/search_api": "1.5",
+        "drupal/search_api": "1.6",
         "drupal/swiftmailer" : "1.0-beta1",
-        "drupal/token": "1.0",
+        "drupal/token": "1.1",
         "drupal/url_embed": "1.0-alpha1",
         "drupal/views_infinite_scroll": "1.5",
         "drupal/votingapi": "3.0-alpha2",
-        "drupal/bootstrap": "3.7",
-        "drupal/csv_serialization": "1.0",
-        "league/csv": "^7.1",
+        "drupal/bootstrap": "3.9",
+        "drupal/csv_serialization": "1.2",
+        "league/csv": "^8",
         "drupal/social_api": "1.1",
         "drupal/social_auth": "1.0",
+        "drupal/paragraphs": "1.2",
+        "drupal/entity_reference_revisions": "1.4",
+        "drupal/block_field": "1.0-alpha5",
         "facebook/graph-sdk": "^5.4",
         "google/apiclient": "^2.1",
         "php-http/curl-client": "^1.6",
@@ -101,7 +109,7 @@
         "happyr/linkedin-api-client": "^1.0",
         "abraham/twitteroauth": "^0.7.2",
         "swiftmailer/swiftmailer" : "5.4.8",
-        "bower-asset/waves": "0.7.5",
+        "bower-asset/waves": "0.7.6",
         "bower-asset/timepicker": "1.11.4",
         "bower-asset/tablesaw": "2.0.3",
         "bower-asset/morris.js": "0.5.1",
@@ -113,6 +121,7 @@
         "bower-asset/highlight": "9.7.0",
         "embed/embed": "2.7.7",
         "npm-asset/jquery.caret": "^0.3.1",
-        "npm-asset/diff": "^3.4"
+        "npm-asset/diff": "^3.4",
+        "npm-asset/photoswipe": "^4.1.2"
     }
 }

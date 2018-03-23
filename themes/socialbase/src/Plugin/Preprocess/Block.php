@@ -36,7 +36,11 @@ class Block extends PreprocessBase {
     $route_name = \Drupal::routeMatch()->getRouteName();
 
     // Get the region of a block.
-    $region = BlockEntity::load($variables['elements']['#id'])->getRegion();
+    $region = '';
+    $block_entity = BlockEntity::load($variables['elements']['#id']);
+    if ($block_entity) {
+      $region = $block_entity->getRegion();
+    }
 
     $prefix = '';
     // If socialbase is one of the basetheme, we need a prefix for block ids.
@@ -52,6 +56,7 @@ class Block extends PreprocessBase {
       'complementary_bottom',
       'content_top',
       'content_bottom',
+      '',
     ];
 
     if (in_array($region, $regions_card)) {

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post_photo\Plugin\Block;
 
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\social_post\Plugin\Block\PostBlock;
 
 /**
@@ -14,34 +15,11 @@ use Drupal\social_post\Plugin\Block\PostBlock;
  */
 class PostPhotoBlock extends PostBlock {
 
-  public $bundle;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountProxy
-   */
-  protected $currentUser;
-
-  /**
-   * The form builder.
-   *
-   * @var \Drupal\Core\Form\FormBuilderInterface
-   */
-  protected $formBuilder;
-
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, $entityTypeManager, $currentUser, $formBuilder) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $currentUser, $formBuilder);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, $entityTypeManager, $currentUser, $formBuilder, ModuleHandler $moduleHandler) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entityTypeManager, $currentUser, $formBuilder, $moduleHandler);
     // Override the bundle type.
     $this->bundle = 'photo';
   }

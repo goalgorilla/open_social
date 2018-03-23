@@ -9,6 +9,7 @@ use Drupal\message\Entity\Message;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Url;
+use Drupal\activity_creator\Entity\Activity;
 
 /**
  * Activity statuses.
@@ -206,6 +207,17 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
     \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
+  }
+
+  // Generate the output text for the user in his selected language.
+  if ($entity instanceof Activity && !empty($entity->get('field_activity_message')->target_id)) {
+    $message = Message::load($entity->get('field_activity_message')->target_id);
+    if ($message instanceof Message) {
+      // Get the text in the users language.
+      $output = \Drupal::service('activity_creator.activity_factory')->getMessageText($message);
+      // Replace the old text with the correct one.
+      $build['field_activity_output_text'][0]['#text'] = $output[0];
+    }
   }
 }
 

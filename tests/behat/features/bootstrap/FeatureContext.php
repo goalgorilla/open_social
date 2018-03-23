@@ -78,8 +78,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     /**
      * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
      */
-    public function iFillInTheWysiwygEditor($instanceId, $text) {
-      $instance = $this->getWysiwygInstance($instanceId);
+    public function iFillInTheWysiwygEditor($locator, $text) {
+      $field = $this->getSession()->getPage()->findField($locator);
+
+      if (null === $field) {
+        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $locator);
+      }
+
+      $id = $field->getAttribute('id');
+      $instance = $this->getWysiwygInstance($id);
       $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
 

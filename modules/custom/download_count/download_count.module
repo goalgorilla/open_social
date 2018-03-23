@@ -32,7 +32,7 @@ function download_count_file_access($entity, $operation, $account) {
     $flood = \Drupal::flood();
     $config = \Drupal::config('download_count.settings');
     $flood_window = $config->get('download_count_flood_window');
-    $time = REQUEST_TIME;
+    $time = \Drupal::time()->getRequestTime();
 
     // Invalidate file field formatter.
     $cache_tag = 'file:' . $entity->id();
