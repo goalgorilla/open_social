@@ -23,5 +23,20 @@ function hook_social_group_types_alter(array &$social_group_types) {
 }
 
 /**
+ * Provide a method to alter default group overview route.
+ *
+ * @param array $route
+ *   An array with route name and parameters.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_overview_route_alter(array &$route) {
+  $route = [
+    'name' => 'view.challenges_user.page',
+    'parameters' => ['user' => \Drupal::currentUser()->id()],
+  ];
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
