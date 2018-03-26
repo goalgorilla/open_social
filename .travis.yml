@@ -50,7 +50,7 @@ before_install:
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - echo "$TRAVIS_PULL_REQUEST_SLUG:${BRANCH}#${TRAVIS_PULL_REQUEST_SHA}"
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer remove goalgorilla/open_social; fi
+#  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer remove goalgorilla/open_social; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social composer https://github.com/$TRAVIS_PULL_REQUEST_SLUG; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TEST_SUITE" = "install_update" ]; then composer require $TRAVIS_PULL_REQUEST_SLUG:1.6.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then composer require $TRAVIS_REPO_SLUG:1.6.0 --prefer-dist; fi
