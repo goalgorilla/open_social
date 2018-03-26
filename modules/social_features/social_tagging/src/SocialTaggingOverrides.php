@@ -85,6 +85,14 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       $overrides[$config_name]['display'][$display]['cache_metadata']['contexts'][] = 'user';
     }
 
+    $group = 1;
+
+    if (count($fields) > 1) {
+      $overrides[$config_name]['display']['default']['display_options']['filter_groups']['groups'][1] = 'AND';
+      $overrides[$config_name]['display']['default']['display_options']['filter_groups']['groups'][2] = 'OR';
+      $group++;
+    }
+
     foreach ($fields as $field => $data) {
       $overrides[$config_name]['display']['default']['display_options']['filters'][$field] = [
         'id' => $field,
@@ -95,7 +103,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
         'admin_label' => '',
         'operator' => 'or',
         'value' => [],
-        'group' => '1',
+        'group' => $group,
         'exposed' => TRUE,
         'expose' => [
           'operator_id' => $field . '_op',
