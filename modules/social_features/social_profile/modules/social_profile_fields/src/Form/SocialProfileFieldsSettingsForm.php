@@ -62,7 +62,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'social_profile_admin_settings_form';
+    return 'social_profile_fields_admin_settings_form';
   }
 
   /**
