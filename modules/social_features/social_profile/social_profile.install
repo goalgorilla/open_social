@@ -256,10 +256,15 @@ function social_profile_update_8006(&$sandbox) {
     // This must be the first run. Initialize the sandbox.
     $sandbox['progress'] = 0;
     $sandbox['profiles_created'] = 0;
-    // We use array_values to get the entity_ids.
-    // Not interested in the revisions.
-    $sandbox['uids'] = array_values(\Drupal::entityQuery('user')
-      ->execute());
+    // We get all user ids that don't have a profile.
+    $query = \Drupal::database()->select('users', 'u');
+    $query->fields('u', ['uid']);
+    $query->leftJoin('profile', 'p', '%alias.uid = u.uid');
+    $query->where('p.uid IS NULL');
+    $result = $query->execute();
+    $uids = $result->fetchAllAssoc('uid');
+
+    $sandbox['uids'] = array_keys($uids);
     $sandbox['user_count'] = count($sandbox['uids']);
 
     \Drupal::logger('social_profile')->info('Checking profile status for @count users', ['@count' => $sandbox['user_count']]);
