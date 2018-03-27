@@ -240,8 +240,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     // Get timezone of user.
     // Get offset of user from UTC time to localtime.
     $timezone = drupal_get_user_timezone();
-    //Let's get offset time from UTC.
-    $offset = $this->get_timezone_offset('UTC', $timezone);
+    // Let's get offset time from UTC.
+    $offset = $this->getTimezoneOffset('UTC', $timezone);
 
     // Use the start date when the end date is not set to determine if the
     // event is closed.
@@ -285,10 +285,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    * @return bool|int
    *   Offset in seconds.
    */
-  public function get_timezone_offset($remote_tz, $origin_tz = null) {
-    if($origin_tz === null) {
-      if(!is_string($origin_tz = date_default_timezone_get())) {
-        return false; // A UTC timestamp was returned
+  public function getTimezoneOffset($remote_tz, $origin_tz = NULL) {
+    if($origin_tz === NULL) {
+      if (!is_string($origin_tz = date_default_timezone_get())) {
+        // A UTC timestamp was returned.
+        return FALSE;
       }
     }
     $origin_dtz = new DateTimeZone($origin_tz);
