@@ -193,7 +193,7 @@ function social_user_export_groups_count(UserInterface $account) {
  * Returns the organization of a user.
  *
  * @param \Drupal\user\UserInterface $account
- *  The account to get the data for.
+ *   The account to get the data for.
  *
  * @return string
  *   The organization where the user belongs to.
@@ -291,6 +291,7 @@ function social_user_export_user_expertize(UserInterface $account) {
     ->execute()
     ->fetchField();
 }
+
 /**
  * Return Phone number of user.
  *
@@ -316,6 +317,7 @@ function social_user_export_user_phone_number(UserInterface $account) {
  *
  * @param \Drupal\user\UserInterface $account
  *   User's account to get country code of user.
+ *
  * @return mixed
  *   Returns country code of a user.
  */
@@ -334,10 +336,10 @@ function social_user_export_user_country_code(UserInterface $account) {
  * Returns Administrative address of a user.
  *
  * @param \Drupal\user\UserInterface $account
- *  User's account to get the administrative area.
+ *   User's account to get the administrative area.
  *
  * @return string
- *  Returns the administrative address of a user.
+ *   Returns the administrative address of a user.
  */
 function social_user_export_user_administrative_address(UserInterface $account) {
   $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
@@ -412,11 +414,12 @@ function social_user_export_user_address_line1(UserInterface $account) {
 
 /**
  * Returns user's address line 2.
- * @param UserInterface $account
- *  User's account to get address.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get address.
  *
  * @return mixed
- *
+ *   Returns address of user.
  */
 function social_user_export_user_address_line2(UserInterface $account) {
   $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
