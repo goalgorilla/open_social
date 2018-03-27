@@ -237,8 +237,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   TRUE if the evens is finished / completed.
    */
   protected function eventHasBeenFinished(Node $node) {
-    //Get timezone of user.
-    //Get offset of user from UTC time to localtime.
+    // Get timezone of user.
+    // Get offset of user from UTC time to localtime.
     $timezone = drupal_get_user_timezone();
     //Let's get offset time from UTC.
     $offset = $this->get_timezone_offset('UTC', $timezone);
@@ -254,36 +254,36 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Check to see if Event end date is in the future,
     // hence we can still "Enroll".
-    //Add offset time accordingly.
+    // Add offset time accordingly.
     if ($offset > 0) {
       if ((time() - $offset) > $event_end_timestamp) {
         return TRUE;
       }
     }
     elseif ($offset < 0) {
-     $offset = abs($offset);
-     if ((time() + $offset) > $event_end_timestamp) {
-       return TRUE;
+      $offset = abs($offset);
+      if ((time() + $offset) > $event_end_timestamp) {
+        return TRUE;
       }
-   }
-   elseif ($offset == 0) {
+    }
+    elseif ($offset == 0) {
       if (time() > $event_end_timestamp) {
         return TRUE;
       }
-   }
+    }
     return FALSE;
   }
 
   /**
    * Function to return the number of offset seconds.
    *
-   * @param $remote_tz
-   *  The remote timezone.
+   * @param string $remote_tz
+   *   The remote timezone.
    * @param null $origin_tz
-   *  The origin timezone.
+   *   The origin timezone.
    *
    * @return bool|int
-   *  Offset in seconds.
+   *   Offset in seconds.
    */
   public function get_timezone_offset($remote_tz, $origin_tz = null) {
     if($origin_tz === null) {
