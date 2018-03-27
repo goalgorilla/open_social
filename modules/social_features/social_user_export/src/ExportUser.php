@@ -46,6 +46,7 @@ class ExportUser {
         t('Events enrollments'),
         t('Events created'),
         t('Groups created'),
+        t('Number of Likes'),
       ];
       $csv->insertOne($headers);
     }
@@ -91,6 +92,7 @@ class ExportUser {
       social_user_export_events_enrollments_count($entity),
       social_user_export_nodes_count($entity, 'event'),
       social_user_export_groups_count($entity),
+      social_user_export_likes_count($entity),
     ]);
 
     $context['message'] = t('Exporting: @name', [

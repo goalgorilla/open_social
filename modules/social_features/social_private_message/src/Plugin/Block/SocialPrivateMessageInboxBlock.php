@@ -43,7 +43,7 @@ class SocialPrivateMessageInboxBlock extends PrivateMessageInboxBlock {
         $block['no_threads'] = [
           '#prefix' => '<p>',
           '#suffix' => '</p>',
-          '#markup' => $this->t('You do not have any private messages'),
+          '#markup' => $this->t('You do not have any private messages yet. Click on the button on the right to start a new chat.'),
         ];
       }
 
