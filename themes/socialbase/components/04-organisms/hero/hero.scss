@@ -58,10 +58,6 @@
   // this excludes the social_landing page hero section
   > .hero-footer {
     @include for-tablet-portrait-up {
-      justify-content: flex-end;
-      display: flex;
-      align-items: center;
-      align-self: flex-end;
       position: absolute;
       bottom: 0;
     }
@@ -101,6 +97,10 @@
 .hero-footer {
   padding: 1rem 0;
   width: 100%;
+  @include for-tablet-portrait-up {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .hero-footer__text {
