@@ -15,4 +15,4 @@ Github</a>
 
 For any other information be sure to checkout our
 <a target="_blank" href="https://www.drupal.org/docs/8/distributions/open-social">
-Documentation</a>. 
+Documentation</a>.
