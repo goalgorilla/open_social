@@ -1,4 +1,4 @@
-@api @stability @activity_stream @comment @DS-1394 @DS-4211 @stability-2
+@api @stability @activity_stream @comment @DS-1394 @DS-4211 @DS-4886 @stability-2
 Feature: See comments in activity stream
   Benefit: Participate in discussions on the platform
   Role: As a LU
@@ -114,7 +114,7 @@ Feature: See comments in activity stream
     And I am on the stream of group "Test open group"
     Then I should see "CreateUser created an event in Test open group"
     And I should see "Test group event"
-    And I should see "This is a third event comment"
+    And I should not see "This is a third event comment"
     And I should not see "This is a first event comment"
     And I should not see "This is a reply event comment"
 
