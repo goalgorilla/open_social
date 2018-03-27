@@ -70,7 +70,7 @@ function _social_group_get_overview_route() {
     'name' => 'view.groups.page_user_groups',
     'parameters' => ['user' => \Drupal::currentUser()->id()],
   ];
-  \Drupal::moduleHandler()->alter('social_group_overview', $route);
+  \Drupal::moduleHandler()->alter('social_group_overview_route', $route);
   return $route;
 }
 
