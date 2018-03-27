@@ -230,6 +230,68 @@ function social_user_export_user_function(UserInterface $account) {
 }
 
 /**
+ * Returns user interest.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User account to get user's interest.
+ *
+ * @return string
+ *   Returns interest of user.
+ */
+function social_user_export_user_interest(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the interest as entity type (could be topic, event...).
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_interests = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user's profile tag.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account.
+ *
+ * @return string
+ *   Returns profile tag.
+ */
+function social_user_export_user_profile_tag(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the profile tag as entity type.
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_profile_tag = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user's skill or expertize.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account.
+ *
+ * @return string
+ *   Returns user's skill.
+ */
+function social_user_export_user_expertize(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the profile tag as entity type.
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_expertise = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+/**
  * Return Phone number of user.
  *
  * @param \Drupal\user\UserInterface $account
