@@ -279,14 +279,14 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *
    * @param string $remote_tz
    *   The remote timezone.
-   * @param null $origin_tz
+   * @param string $origin_tz
    *   The origin timezone.
    *
    * @return bool|int
    *   Offset in seconds.
    */
   public function getTimezoneOffset($remote_tz, $origin_tz = NULL) {
-    if($origin_tz === NULL) {
+    if ($origin_tz === NULL) {
       if (!is_string($origin_tz = date_default_timezone_get())) {
         // A UTC timestamp was returned.
         return FALSE;
