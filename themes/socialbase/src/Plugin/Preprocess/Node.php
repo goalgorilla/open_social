@@ -107,17 +107,6 @@ class Node extends PreprocessBase {
         ->format($date, 'social_medium_date');
     }
 
-    // Removes comment and readmore ink on teasers or when the comment form is
-    // displayed on the page.
-
-    if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
-
-      if ($variables['node']->getType() == 'book') {
-        unset($variables['content']['links']);
-      }
-
-    }
-
     // Content visibility.
     if ((isset($node->field_content_visibility)) && !$currentuser->isAnonymous()) {
       $node_visibility_value = $node->field_content_visibility->getValue();

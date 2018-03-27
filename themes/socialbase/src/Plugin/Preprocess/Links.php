@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 
 /**
@@ -19,8 +18,8 @@ class Links extends PreprocessBase {
    * {@inheritdoc}
    */
   public function preprocessVariables(Variables $variables) {
-      //unset($variables['links']['comment-add']);
-      //unset($variables['links']['comment-comments']);
-      //dpm($variables['content']['links']['comment']['links']);
-   }
+    unset($variables['links']['comment-add']);
+    unset($variables['links']['comment-comments']);
+  }
+
 }
