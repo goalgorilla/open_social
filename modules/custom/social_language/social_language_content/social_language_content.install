@@ -19,7 +19,7 @@ function social_language_content_disable_field_translations() {
     'paragraph',
     'taxonomy_term',
   ];
-
+  
   /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
   $field_manager = \Drupal::service('entity_field.manager');
 
@@ -33,11 +33,15 @@ function social_language_content_disable_field_translations() {
   }, ARRAY_FILTER_USE_KEY);
 
   foreach ($bundles as $entity_type_id => $bundle_info) {
+    $langcode_key = \Drupal::entityTypeManager()->getDefinition($entity_type_id)->getKey('langcode');
+    
     foreach (array_keys($bundle_info) as $bundle) {
       $fields = $field_manager->getFieldDefinitions($entity_type_id, $bundle);
       foreach($fields as $field) {
         $field_config = $field->getConfig($bundle);
-        if ($field_config->isTranslatable()) {
+        // Only disable translatable fields and always allow the langcode to be
+        // translated.
+        if ($field_config->isTranslatable() && $field->getName() !== $langcode_key) {
           $field_config
             ->setTranslatable(FALSE)
             ->save();
