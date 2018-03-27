@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event\Form;
 
+use DateTime;
+use DateTimeZone;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -235,10 +237,15 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   TRUE if the evens is finished / completed.
    */
   protected function eventHasBeenFinished(Node $node) {
+    //Get timezone of user.
+    //Get offset of user from UTC time to localtime.
+    $timezone = drupal_get_user_timezone();
+    //Let's get offset time from UTC.
+    $offset = $this->get_timezone_offset('UTC', $timezone);
+
     // Use the start date when the end date is not set to determine if the
     // event is closed.
     $check_end_date = $node->field_event_date->value;
-
     if (isset($node->field_event_date_end->value)) {
       $check_end_date = $node->field_event_date_end->value;
     }
@@ -247,10 +254,49 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Check to see if Event end date is in the future,
     // hence we can still "Enroll".
-    if (time() > $event_end_timestamp) {
-      return TRUE;
+    //Add offset time accordingly.
+    if ($offset > 0) {
+      if ((time() - $offset) > $event_end_timestamp) {
+        return TRUE;
+      }
     }
+    elseif ($offset < 0) {
+     $offset = abs($offset);
+     if ((time() + $offset) > $event_end_timestamp) {
+       return TRUE;
+      }
+   }
+   elseif ($offset == 0) {
+      if (time() > $event_end_timestamp) {
+        return TRUE;
+      }
+   }
     return FALSE;
+  }
+
+  /**
+   * Function to return the number of offset seconds.
+   *
+   * @param $remote_tz
+   *  The remote timezone.
+   * @param null $origin_tz
+   *  The origin timezone.
+   *
+   * @return bool|int
+   *  Offset in seconds.
+   */
+  public function get_timezone_offset($remote_tz, $origin_tz = null) {
+    if($origin_tz === null) {
+      if(!is_string($origin_tz = date_default_timezone_get())) {
+        return false; // A UTC timestamp was returned
+      }
+    }
+    $origin_dtz = new DateTimeZone($origin_tz);
+    $remote_dtz = new DateTimeZone($remote_tz);
+    $origin_dt = new DateTime("now", $origin_dtz);
+    $remote_dt = new DateTime("now", $remote_dtz);
+    $offset = $origin_dtz->getOffset($origin_dt) - $remote_dtz->getOffset($remote_dt);
+    return $offset;
   }
 
   /**
