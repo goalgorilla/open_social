@@ -33,15 +33,27 @@ function social_language_content_disable_field_translations() {
   }, ARRAY_FILTER_USE_KEY);
 
   foreach ($bundles as $entity_type_id => $bundle_info) {
-    $langcode_key = \Drupal::entityTypeManager()->getDefinition($entity_type_id)->getKey('langcode');
-    
+    $definition = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+
+    // Fields that must remain translatable for content translation to work
+    // properly.
+    $exceptions = [
+      $definition->getKey('default_langcode'),
+      $definition->getKey('langcode'),
+      $definition->getKey('status'),
+      $definition->getKey('uid'),
+      $definition->getKey('content_translation_source'),
+      $definition->getKey('content_translation_outdated'),
+      $definition->getKey('revision_translation_affected'),
+    ];
+
     foreach (array_keys($bundle_info) as $bundle) {
       $fields = $field_manager->getFieldDefinitions($entity_type_id, $bundle);
       foreach($fields as $field) {
         $field_config = $field->getConfig($bundle);
-        // Only disable translatable fields and always allow the langcode to be
-        // translated.
-        if ($field_config->isTranslatable() && $field->getName() !== $langcode_key) {
+        // Only disable translatable fields and always allow some exceptions
+        // that are required for content translation to function properly.
+        if ($field_config->isTranslatable() && !in_array($field->getName(), $exceptions)) {
           $field_config
             ->setTranslatable(FALSE)
             ->save();
