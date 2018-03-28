@@ -27,17 +27,18 @@ function hook_social_group_types_alter(array &$social_group_types) {
  *
  * @param array $route
  *   An array with route name and parameters.
- *
  * @param GroupInterface $group
  *   Current group entity.
  *
  * @ingroup social_group_api
  */
 function hook_social_group_overview_route_alter(array &$route, GroupInterface $group) {
-  $route = [
-    'name' => 'view.challenges_user.page',
-    'parameters' => ['user' => \Drupal::currentUser()->id()],
-  ];
+  if ($group->bundle() == 'challenge') {
+    $route = [
+      'name' => 'view.challenges_user.page',
+      'parameters' => ['user' => \Drupal::currentUser()->id()],
+    ];
+  }
 }
 
 /**
