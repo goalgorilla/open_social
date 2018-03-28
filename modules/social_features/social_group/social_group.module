@@ -63,14 +63,14 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
  * Get group overview route.
  *
  * @return array
- *   An array with route name and parameters.
+ *   An array with route name and parameters and group.
  */
-function _social_group_get_overview_route() {
+function _social_group_get_overview_route(GroupInterface $group) {
   $route = [
     'name' => 'view.groups.page_user_groups',
     'parameters' => ['user' => \Drupal::currentUser()->id()],
   ];
-  \Drupal::moduleHandler()->alter('social_group_overview_route', $route);
+  \Drupal::moduleHandler()->alter('social_group_overview_route', $route, $group);
   return $route;
 }
 
@@ -84,7 +84,8 @@ function _social_group_get_overview_route() {
  */
 function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
   // Set redirect to the group overview page when user saves a group.
-  $route = _social_group_get_overview_route();
+  $group = $form_state->getFormObject()->getEntity();
+  $route = _social_group_get_overview_route($group);
   $form_state->setRedirect(
     $route['name'],
     $route['parameters']
@@ -460,7 +461,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     else {
       // Set redirect to the Group overview page
       // when a user saves their profile.
-      $route = _social_group_get_overview_route();
+      $route = _social_group_get_overview_route($group);
       $form_state->setRedirect(
         $route['name'],
         $route['parameters']
