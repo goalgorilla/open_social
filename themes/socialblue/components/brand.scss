@@ -3,6 +3,7 @@
 [type="radio"]:checked + label:before {
   border-color: $brand-primary;
 }
+
 [type="radio"]:focus + label:before {
   box-shadow: 0 0 3px 2px $brand-primary;
 }
@@ -70,7 +71,7 @@
   background-color: $brand-secondary;
 }
 
-.btn-primary{
+.btn-primary {
   background-color: $brand-primary;
   border-color: $brand-primary;
 
@@ -80,9 +81,10 @@
   &:active,
   &.active,
   .open > &.dropdown-toggle,
-  &.dropdown-toggle:hover{
+  &.dropdown-toggle:hover {
     background-color: $brand-primary;
     border-color: $brand-primary;
+    background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
   }
 
   &.disabled,
@@ -93,12 +95,13 @@
     &.focus {
       background-color: $brand-primary;
       border-color: $brand-primary;
+      background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
     }
   }
 
 }
 
-.btn-secondary{
+.btn-secondary {
   background-color: $brand-secondary;
   border-color: $brand-secondary;
 
@@ -108,9 +111,10 @@
   &:active,
   &.active,
   .open > &.dropdown-toggle,
-  &.dropdown-toggle:hover{
+  &.dropdown-toggle:hover {
     background-color: $brand-secondary;
     border-color: $brand-secondary;
+    background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
   }
 
   &.disabled,
@@ -121,6 +125,7 @@
     &.focus {
       background-color: $brand-secondary;
       border-color: $brand-secondary;
+      background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
     }
   }
 
@@ -141,9 +146,10 @@
   &:active,
   &.active,
   .open > &.dropdown-toggle,
-  &.dropdown-toggle:hover{
+  &.dropdown-toggle:hover {
     background-color: $brand-accent;
     border-color: $brand-accent;
+    background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
   }
 
   &.disabled,
@@ -154,6 +160,7 @@
     &.focus {
       background-color: $brand-accent;
       border-color: $brand-accent;
+      background-image: linear-gradient(to bottom, rgba(black,0.2) 0%, rgba(black,0.2) 100%);
     }
   }
 
@@ -178,6 +185,17 @@
   fill: $brand-primary;
 }
 
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
+.card__link:focus,
+.card__link:hover,
+.btn-link:hover,
+.btn-flat:hover,
+.btn-link:focus,
+.btn-flat:focus {
+  text-shadow: 0 0 1px rgba(black,0.2);
+}
 .list-item--active,
 .list-item--active:hover,
 .list-item--active:focus,
@@ -192,7 +210,6 @@
 .body-text a:not(.btn):hover {
   color: #33b5e5;
 }
-
 
 blockquote {
   border-left-color: $brand-primary;
@@ -279,8 +296,19 @@ blockquote {
 
   }
 }
+.dropdown {
+  &.has-alert {
+    > a {
+      @include for-phone-only {
+        &:before {
+          background-color: $brand-accent;
+        }
+      }
+    }
+  }
+}
 
-@include for-tablet-landscape-down{
+@include for-tablet-landscape-down {
 
   .navbar-collapse .dropdown-menu li a {
     color: $navbar-default-link-color;
@@ -297,7 +325,6 @@ blockquote {
 .navbar-nav__icon {
   fill: $navbar-default-link-color;
 }
-
 
 .navbar__open-search-block {
   background-color: $navbar-default-bg;
