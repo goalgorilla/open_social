@@ -14,9 +14,9 @@
       font-size: 1.5rem;
       color: #4d4d4d;
       font-weight: bold;
-      padding: 15px 0;
+      padding: 15px 27px;
       @media(min-width: 600px) {
-        padding: 15px 0;
+        padding: 15px 60px;
       }
     }
     blockquote {
@@ -24,6 +24,11 @@
       @media(min-width: 600px) {
         padding: 0 55px;
         border-left-width: 5px;
+      }
+      // in case of nested blockquote
+      blockquote {
+        padding: 0;
+        border: 0 none;
       }
     }
   }

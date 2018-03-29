@@ -3,14 +3,21 @@
 namespace Drupal\social_tagging;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Url;
-use Drupal\taxonomy\TermInterface;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Provides a custom tagging service.
  */
 class SocialTaggingService {
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
 
   /**
    * The taxonomy storage.
@@ -29,15 +36,16 @@ class SocialTaggingService {
   /**
    * SocialTaggingService constructor.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Injection of the entityTypeManager.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entityManager
+   *   Injection of the entitymanager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Injection of the configFactory.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
-    $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
+  public function __construct(EntityManagerInterface $entityManager, ConfigFactoryInterface $configFactory) {
+    $this->entityManager = $entityManager;
+    $this->termStorage = $entityManager->getStorage('taxonomy_term');
     $this->configFactory = $configFactory;
   }
 
@@ -128,8 +136,11 @@ class SocialTaggingService {
     $options = [];
 
     // Fetch main categories.
-    foreach (array_keys($this->getCategories()) as $category) {
-      $options = array_merge($options, $this->getChildren($category));
+    foreach ($this->getCategories() as $main_item_id => $main_item_name) {
+
+      foreach ($this->termStorage->loadTree('social_tagging', $main_item_id, 1) as $category) {
+        $options[$category->tid] = $category->name;
+      }
     }
     // Return array.
     return $options;
@@ -153,28 +164,20 @@ class SocialTaggingService {
         continue;
       }
 
-      $current_term = $this->termStorage->load($term['target_id']);
+      $current_term = Term::load($term['target_id']);
       // Must be a valid Term.
-      if (!$current_term instanceof TermInterface) {
+      if (!$current_term instanceof Term) {
         continue;
-      }
-      // Get current terms parents.
-      $parents = $this->termStorage->loadParents($current_term->id());
-      $parent = reset($parents);
-      $category = $parent->getName();
-
-      if ($this->allowSplit()) {
-        $parameter = social_tagging_to_machine_name($category);
-      }
-      else {
-        $parameter = 'tag';
       }
 
       $url = Url::fromRoute('view.search_content.page_no_value', [
-        $parameter . '[]' => $current_term->id(),
+        'tag[]' => $current_term->id(),
       ]);
+      // Get current terms parents.
+      $parents = $this->termStorage->loadParents($current_term->id());
+      $parent = reset($parents);
 
-      $tree[$parent->id()]['title'] = $category;
+      $tree[$parent->id()]['title'] = $parent->getName();
       $tree[$parent->id()]['tags'][$current_term->id()] = [
         'url' => $url->toString(),
         'name' => $current_term->getName(),

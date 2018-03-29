@@ -32,42 +32,33 @@
   padding: 40px;
 }
 
-.hero__bgimage-overlay {
+.cover-img-gradient:before{
+  display: block;
   position: absolute;
-  top: 0;
+  content: '';
+  background-image: linear-gradient(rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.1) 70%, rgba(34,34,34,0.5) 100%);
+  width: 100%;
   left: 0;
-  bottom: 0;
   right: 0;
-  background: linear-gradient(rgba(0,0,0,0.1) 0%,rgba(34,34,34,0.7) 100%);
+  top: 0;
+  bottom: 0;
+  z-index: 1;
 }
 
 .cover-wrap {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
   z-index: 2;
   min-height: 300px;
-  align-items: stretch;
 
   @include for-tablet-portrait-up {
     min-height: 410px;
+
   }
 
-  // this excludes the social_landing page hero section
-  > .hero-footer {
-    @include for-tablet-portrait-up {
-      position: absolute;
-      bottom: 0;
-    }
-  }
-
-}
-
-// anon homepage hero
-.cover-with-canvas .cover-wrap {
-  justify-content: space-between;
 }
 
 .node-unpublished .status:before {
@@ -94,19 +85,30 @@
 
 }
 
+// Profile
+
+.hero-avatar {
+  @include z-depth-1;
+  margin: auto;
+  width: 128px;
+  height: 128px;
+}
+
 .hero-footer {
   padding: 1rem 0;
   width: 100%;
-  @include for-tablet-portrait-up {
+
+  @include for-tablet-landscape-up {
     display: flex;
     align-items: center;
+    align-self: flex-end;
   }
 }
 
 .hero-footer__text {
   margin-top: 10px;
 
-  @include for-tablet-portrait-up {
+  @include for-tablet-landscape-up {
     padding-right: 1rem;
     flex: 0 0 50%;
     max-width: 50%;
@@ -126,61 +128,6 @@
 
   }
 }
-
-// Profile
-
-.hero-avatar {
-  @include z-depth-1;
-  margin: auto;
-  width: 128px;
-  height: 128px;
-}
-
-.block-social-profile {
-
-  header {
-    padding-top: 2rem;
-    padding-bottom: 1em;
-  }
-
-  .page-title {
-    padding-top: 1rem;
-  }
-
-  .hero-footer {
-    justify-content: center;
-  }
-
-  .hero-footer__text {
-    padding-right: 0;
-
-    @include for-tablet-portrait-up {
-      flex: 0 0 auto;
-      max-width: unset;
-      margin-left: 0;
-    }
-  }
-
-  .hero-footer__cta {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 1rem;
-    padding-left: 1rem;
-
-    @include for-tablet-landscape-up {
-      padding: 0;
-      position: absolute;
-      right: 0;
-      flex: 0 0 auto;
-      max-width: unset;
-
-    }
-  }
-
-
-}
-
-
 
 .hero-footer-icon {
   fill: white;

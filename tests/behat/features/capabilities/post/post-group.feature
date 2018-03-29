@@ -1,4 +1,4 @@
-@api @group @DS-677 @DS-642 @DS-4211 @stability @stability-3 @test
+@api @group @DS-677 @DS-642 @stability @stability-3
 Feature: Create Post on Group
   Benefit: In order to share knowledge with people in group
   Role: As a LU
@@ -29,9 +29,10 @@ Feature: Create Post on Group
     And I should see "GG HQ"
     And I should see "1 member"
     And I should see "Joined"
-    And I should see "Test open group" in the "Hero block"
+    And I should see the link "Read more"
 
-    When I click "Stream"
+    And I click "Test open group"
+    And I should see "Test open group" in the "Hero block"
     And I fill in "Say something to the group" with "This is a community post in a group."
     And I press "Post"
     Then I should see the success message "Your post has been posted."

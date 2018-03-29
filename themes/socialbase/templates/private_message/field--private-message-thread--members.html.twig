@@ -1,7 +1,7 @@
 <div{{ attributes.addClass('message__thread-members') }}>
-  <div{{ item.attributes.addClass('media media-middle') }}>
-    {% for item in items %}
+  {% for item in items %}
+    <div{{ item.attributes.addClass('media media-middle') }}>
       {{ item.content }}{% if not loop.last %},{% endif %}
-    {% endfor %}
-  </div>
+    </div>
+  {% endfor %}
 </div>

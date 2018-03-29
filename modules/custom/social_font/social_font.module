@@ -45,15 +45,8 @@ function social_font_render($font_id = NULL) {
     }
   }
 
-  $css = '';
-
-  // Use empty() instead of a NULL comparison to guard for malformed
-  // configuration.
-  if (empty($font_id)) {
-    return $css;
-  }
-
   $font = Font::load($font_id);
+  $css = '';
 
   if ($font instanceof Font) {
     // Fontname.

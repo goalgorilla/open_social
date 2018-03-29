@@ -23,7 +23,6 @@
                           var remaining_notifications = result['remaining_notifications'];
 
                           notification_count.html(remaining_notifications);
-                        $('.notification-bell.mobile .badge').html(remaining_notifications);
                       }
                     });
               });

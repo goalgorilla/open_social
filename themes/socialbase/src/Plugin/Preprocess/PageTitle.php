@@ -23,16 +23,15 @@ class PageTitle extends PreprocessBase {
     // Get the current path and if is it stream return a variable.
     $current_url = Url::fromRoute('<current>');
     $current_path = $current_url->toString();
-    $route_name = \Drupal::routeMatch()->getRouteName();
 
-    if ($route_name === 'entity.profile.type.user_profile_form') {
+    if (strpos($current_path, 'profile') !== FALSE) {
       $profile_type = $variables['title']->getArguments();
       if (!empty($profile_type['@label'])) {
         $variables['title'] = t('Edit @label', ['@label' => $profile_type['@label']]);
       }
     }
 
-    if ($route_name === 'entity.user.edit_form' && isset($variables['title']['#markup'])) {
+    if (strpos($current_path, 'user') !== FALSE && strpos($current_path, 'edit') !== FALSE) {
       $variables['title'] = t('<em>Configure account settings:</em> @label', ['@label' => $variables['title']['#markup']]);
     }
 

@@ -81,4 +81,3 @@ projects[block_field][type] = module
 projects[block_field][version] = 1.0-alpha5
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.9
-projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/bootstrap-vertical-tabs-menu-items-accessibility-2949112-2.patch"

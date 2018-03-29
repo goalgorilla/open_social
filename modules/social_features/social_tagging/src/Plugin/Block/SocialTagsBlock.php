@@ -8,7 +8,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\social_tagging\SocialTaggingService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -129,7 +128,7 @@ class SocialTagsBlock extends BlockBase implements ContainerFactoryPluginInterfa
 
     $node = $this->routeMatch->getParameter('node');
 
-    if ($node instanceof NodeInterface) {
+    if ($node instanceof Node) {
       $build['content']['#markup'] = social_tagging_process_tags($node);
     }
 
