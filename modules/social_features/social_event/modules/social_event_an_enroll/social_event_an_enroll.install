@@ -83,3 +83,13 @@ function _social_event_an_enroll_fix_blocks() {
     }
   }
 }
+
+/**
+ * Fix text of AU Enrollment Confirmation Email.
+ */
+function social_event_an_enroll_update_8001() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll_email_subject', "You are enrolled in the event [event name]");
+  $config->set('event_an_enroll_email_body', "You have been enrolled in the event [event name]. \nYou can cancel your enrollment anytime using this link [event url]");
+  $config->save();
+}
