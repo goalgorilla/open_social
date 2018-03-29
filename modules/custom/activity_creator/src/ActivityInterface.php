@@ -61,4 +61,12 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    */
   public function getRelatedEntityUrl();
 
+  /**
+   * Get destinations.
+   *
+   * @return array
+   *   The list of destinations.
+   */
+  public function getDestinations();
+
 }

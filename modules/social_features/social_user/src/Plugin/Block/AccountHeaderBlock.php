@@ -170,7 +170,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       if ($this->moduleHandler->moduleExists('social_group')) {
         if ($navigation_settings_config->get('display_my_groups_icon') === 1) {
           $links['groups'] = [
-            'classes' => '',
+            'classes' => 'desktop',
             'link_attributes' => '',
             'icon_classes' => 'icon-group',
             'title' => $this->t('My Groups'),
@@ -198,7 +198,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           }
 
           $links['messages'] = [
-            'classes' => '',
+            'classes' => 'desktop',
             'link_attributes' => '',
             'icon_classes' => $message_icon,
             'title' => $this->t('Inbox'),
@@ -282,7 +282,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         }
 
         $links['notifications'] = [
-          'classes' => 'dropdown notification-bell',
+          'classes' => 'dropdown notification-bell desktop',
           'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
           'link_classes' => 'dropdown-toggle clearfix',
           'icon_classes' => $notifications_icon,
@@ -309,6 +309,13 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
           ],
+          'divide_mobile' => [
+            'divider' => 'true',
+            'classes' => 'divider mobile',
+            'attributes' => 'role=separator',
+          ],
+          'messages_mobile' => [],
+          'notification_mobile' => [],
           'divide_profile' => [
             'divider' => 'true',
             'classes' => 'divider',
@@ -431,6 +438,60 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
         ],
       ];
+      if ($this->moduleHandler->moduleExists('social_private_message')) {
+        if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
+          // Fetch the amount of unread items.
+          $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+          // Default icon values.
+          $label_classes = 'hidden';
+          // Override icons when there are unread items.
+          if ($num_account_messages > 0) {
+            $label_classes = 'badge badge-accent badge--pill';
+            $links['account_box']['classes'] = $links['account_box']['classes'] . ' has-alert';
+          }
+          $links['account_box']['below']['messages_mobile'] = [
+            'classes' => 'mobile',
+            'link_attributes' => '',
+            'icon_classes' => '',
+            'title' => $this->t('Inbox'),
+            'label' => $this->t('Inbox'),
+            'title_classes' => '',
+            'count_classes' => $label_classes,
+            'count_icon' => (string) $num_account_messages,
+            'url' => Url::fromRoute('social_private_message.inbox'),
+          ];
+        }
+      }
+
+      if ($this->moduleHandler->moduleExists('activity_creator')) {
+        $account_notifications = $this->activityNotifications;
+        $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
+
+        if ($num_notifications === 0) {
+          $label_classes = 'hidden';
+        }
+        else {
+          $label_classes = 'badge badge-accent badge--pill';
+          $links['account_box']['classes'] = $links['account_box']['classes'] . ' has-alert';
+
+          if ($num_notifications > 99) {
+            $num_notifications = '99+';
+          }
+        }
+
+        $links['account_box']['below']['notification_mobile'] = [
+          'classes' => 'mobile notification-bell',
+          'link_attributes' => '',
+          'icon_classes' => '',
+          'title' => $this->t('Notification Centre'),
+          'label' => $this->t('Notification Centre'),
+          'title_classes' => '',
+          'count_classes' => $label_classes,
+          'count_icon' => (string) $num_notifications,
+          'url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
+        ];
+      }
 
       $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
