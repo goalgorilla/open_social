@@ -61,26 +61,38 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
               ->load($target_id);
 
             if (is_object($entity)) {
+              switch ($target_type) {
 
-              // When it's a post or photo post.
-              if ($entity->getEntityTypeId() === 'post' || $entity->getEntityTypeId() === 'photo') {
-                if ($name === 'content_type') {
-                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
-                  if (!empty($display_name)) {
-                    $replacements[$original] = $display_name;
-                  }
-                }
-              }
-
-              // If it's group content.
-              if ($entity->getEntityTypeId() === 'group_content') {
-                if ($name === 'content_type') {
+                // If it's group content.
+                case 'group_content':
                   /** @var \Drupal\group\Entity\GroupContent $entity */
                   $group_content_type = $entity->getGroupContentType();
                   if (!empty($group_content_type)) {
                     $replacements[$original] = $group_content_type->label();
                   }
-                }
+                  break;
+
+                // If it's node.
+                case 'node':
+                  $content_type = $entity->bundle();
+                  $article = 'a';
+
+                  if (preg_match('/^[aeioquy]/i', $content_type)) {
+                    $article .= 'n';
+                  }
+
+                  $replacements[$original] = $article . ' ' . $content_type;
+                  break;
+
+                // When it's a post or photo post.
+                case 'photo':
+                case 'post':
+                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
+                  if (!empty($display_name)) {
+                    $replacements[$original] = $display_name;
+                  }
+                  break;
+
               }
             }
           }

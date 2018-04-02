@@ -4,7 +4,6 @@ namespace Drupal\social_group;
 
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
 /**
@@ -24,7 +23,9 @@ class SetGroupsForNodeService {
   /**
    * Save groups for a given node.
    */
-  public static function setGroupsForNode(Node $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
+  public static function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
+    $moved = FALSE;
+
     // Remove the notifications related to the node if a group is added or
     // moved.
     if ((empty($original_groups) || $original_groups != $groups_to_add) && !empty($groups_to_add)) {
@@ -37,6 +38,8 @@ class SetGroupsForNodeService {
         $messages = \Drupal::entityTypeManager()->getStorage('message')
           ->loadByProperties(['template' => $template]);
         $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+
+        $moved = TRUE;
       }
 
       if (!empty($ids = $entity_query->execute())) {
@@ -53,6 +56,16 @@ class SetGroupsForNodeService {
       $group = Group::load($group_id);
       self::addGroupContent($node, $group);
     }
+
+    if ($moved) {
+      $hook = 'social_group_move';
+
+      foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+        $function = $module . '_' . $hook;
+        $function($node);
+      }
+    }
+
     return $node;
   }
 
