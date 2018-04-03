@@ -67,19 +67,30 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
  */
 function social_post_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Reset title display.
-  $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
-
-  // Set the action of the form to the current uri.
-  // This needs to be done, because we cannot override $form['#action']
-  // without breaking functionality.
-  $uri = Url::fromRoute('<current>')->toString();
-  // Store in a hidden field.
-  $form['redirect_after_save'] = [
-    '#type' => 'hidden',
-    '#title' => t('Redir'),
-    '#default_value' => $uri,
-  ];
-
+  $from['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
+  // For redirecting the comment_edit_form page.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  // Check if we are on editing comment.
+  if ($route_name == 'entity.comment.edit_form') {
+    $uri = Url::fromRoute('<current>')->toUriString();
+    $form['redirect_after_save'] = [
+      '#type' => 'hidden',
+      '#title' => t('Redir'),
+      '#defautl_value' => $uri,
+    ];
+  }
+  else {
+    // Set the action of the form to the current uri.
+    // This needs to be done, because we cannot override $form['#action']
+    // Without breaking functionality.
+    $uri = Url::fromRoute('<current>')->toString();
+    // Store in a hidden field.
+    $form['redirect_after_save'] = [
+      '#type' => 'hidden',
+      '#title' => t('Redir'),
+      '#default_value' => $uri,
+    ];
+  }
   // Submit function to retrieve the action uri and redirect to it.
   $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
 }
@@ -93,29 +104,6 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
  *   Form state interface.
  */
 function _social_post_comment_post_comment_form_submit(array $form, FormStateInterface $form_state) {
-  // For redirecting the comment_edit_form page.
-  $route_name = \Drupal::routeMatch()->getRouteName();
-  // We only change it for editing a comment on a Post.
-  if ($route_name === 'entity.comment.edit_form') {
-    // Get comment from URL.
-    foreach (\Drupal::routeMatch()->getParameters() as $comment) {
-      if ($comment instanceof \Drupal\comment\Entity\Comment) {
-        // Get the Post the comment was placed on.
-        $post = $comment->getCommentedEntity();
-        /** @var \Drupal\Core\Url $url */
-        $url = $post->toUrl('canonical');
-        $options = [
-          'fragment' => 'comment-' . $comment->id(),
-        ];
-        // Redirect to the canonical URL of the post
-        // and add the comment as a fragment.
-        // This to ensure we scroll directly to
-        // the comment by using #-commentid.
-        $form_state->setRedirectUrl($url, $options);
-      }
-    }
-  }
-
   // Fetch from the form.
   $uri = $form_state->getValue('redirect_after_save');
   // Let's not trust this.
