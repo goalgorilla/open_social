@@ -1,0 +1,16 @@
+@import "settings";
+
+// this removes overflow:hidden from main container
+// the page scrolls so entire user list is accessible
+@include for-phone-only {
+
+  .main-container {
+    overflow: auto;
+  }
+
+  .ui-autocomplete.ui-widget-content {
+    margin-bottom: 1rem;
+  }
+
+}
+

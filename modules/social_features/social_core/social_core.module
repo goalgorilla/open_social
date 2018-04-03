@@ -102,7 +102,7 @@ function template_preprocess_page_hero_data(array &$variables) {
       $image_fields = array_filter($node_fields, '_social_core_find_image_field');
       // Get the first image field of all the fields.
       $field = reset($image_fields);
-      if ($field !== NULL) {
+      if ($field !== NULL && $field !== FALSE) {
         if ($field->getFieldDefinition()->get("field_type") === 'image') {
           if (!empty(($node->get($field->getName())->entity))) {
             $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
@@ -230,8 +230,14 @@ function social_core_preprocess_block(&$variables) {
     case 'upcoming_events-block_community_events':
       $variables['subtitle'] = t('in the community');
       $variables['view_all_path'] = Url::fromRoute('view.upcoming_events.page_community_events');
+      if (isset($variables['label']['#markup'])) {
+        $label = $variables['label']['#markup'];
+      }
+      else {
+        $label = t('events');
+      }
       $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
+        '@label' => $label,
       ]);
       break;
 

@@ -101,7 +101,7 @@ class Node extends PreprocessBase {
         ->format($date, 'social_short_date');
     }
     // Teasers and activity stream.
-    $teaser_view_modes = ['teaser', 'activity', 'activity_comment'];
+    $teaser_view_modes = ['teaser', 'activity', 'activity_comment', 'featured'];
     if (in_array($variables['view_mode'], $teaser_view_modes)) {
       $variables['date'] = \Drupal::service('date.formatter')
         ->format($date, 'social_medium_date');

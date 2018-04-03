@@ -1,9 +1,11 @@
 {% extends 'node--featured.html.twig' %}
 
-{% block card_hero_image %}
-  <div class="img_wrapper"></div>
-{% endblock %}
+{% block card_body %}
 
-{% block card_teaser_type %}
+  <div class="card__link">
+    <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+      <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+    </a>
+  </div>
 
 {% endblock %}

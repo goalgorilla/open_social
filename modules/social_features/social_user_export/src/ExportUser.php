@@ -46,6 +46,7 @@ class ExportUser {
         t('Events enrollments'),
         t('Events created'),
         t('Groups created'),
+        t('Number of Likes'),
       ];
       $csv->insertOne($headers);
     }
@@ -91,6 +92,7 @@ class ExportUser {
       social_user_export_events_enrollments_count($entity),
       social_user_export_nodes_count($entity, 'event'),
       social_user_export_groups_count($entity),
+      social_user_export_likes_count($entity),
     ]);
 
     $context['message'] = t('Exporting: @name', [
@@ -109,7 +111,6 @@ class ExportUser {
   public static function exportUsersAllOperation(array $conditions, array &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
-      $context['sandbox']['current_id'] = 0;
 
       // Get max uid.
       $view = _social_user_export_get_view($conditions);
@@ -124,9 +125,8 @@ class ExportUser {
         'direction' => 'ASC',
       ],
     ];
-    $view->setOffset(0);
+    $view->setOffset($context['sandbox']['progress']);
     $view->setItemsPerPage(1);
-    $view->query->addWhere(1, 'users_field_data.uid', $context['sandbox']['current_id'], '>');
     $view->preExecute();
     $view->execute();
 
@@ -139,7 +139,6 @@ class ExportUser {
 
     if ($account) {
       self::exportUserOperation($account, $context);
-      $context['sandbox']['current_id'] = $account->id();
     }
 
     $context['sandbox']['progress']++;

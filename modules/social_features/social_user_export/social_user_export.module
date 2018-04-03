@@ -190,6 +190,25 @@ function social_user_export_groups_count(UserInterface $account) {
 }
 
 /**
+ * Returns the quantity of likes by a user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return int
+ *   number of likes
+ */
+function social_user_export_likes_count(UserInterface $account) {
+  $query = \Drupal::database()->select('votingapi_vote', 'v');
+  $query->condition('v.user_id', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
  * Implements hook_file_download().
  */
 function social_user_export_file_download($uri) {

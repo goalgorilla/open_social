@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * @file
+ * The social profile fields module file.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_entity_field_access().
+ */
+function social_profile_fields_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
+
+  // By default, we return Switzerland.
+  $access_result = AccessResult::neutral();
+
+  if ($field_definition->getTargetEntityTypeId() === 'profile') {
+    $config = \Drupal::config('social_profile_fields.settings');
+    $setting_name = $field_definition->getTargetEntityTypeId() . '_' . $field_definition->getTargetBundle() . '_' . $field_definition->getName();
+    $setting_value = $config->get($setting_name);
+
+    if (isset($setting_value) && !$setting_value) {
+      // For the profile image field we have an exception. We'll fix it before
+      // display.
+      if ($setting_name === 'profile_profile_field_profile_image' && $operation === 'view') {
+        $access_result = AccessResult::neutral();
+      }
+      else {
+        $access_result = AccessResult::forbidden();
+      }
+    }
+  }
+
+  return $access_result;
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function social_profile_fields_user_format_name_alter(&$name, $account) {
+  // Can we use the fields?
+  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
+  $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
+  $use_nick_name = _social_profile_fields_get_setting('profile_profile_field_profile_nick_name');
+
+  $accountname = '';
+  // Let's get the Nickname, First name Last name.
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      // First try to set it from the nick_name.
+      $accountname = $use_nick_name ? $user_profile->get('field_profile_nick_name')->value : '';
+      // If that fails, fallback to old behaviour with first/last name.
+      if ($accountname == '') {
+        $first_name = $use_first_name ? $user_profile->get('field_profile_first_name')->value : '';
+        $last_name = $use_last_name ? $user_profile->get('field_profile_last_name')->value : '';
+
+        $accountname = trim(t('@first @last', [
+          '@first' => $first_name,
+          '@last' => $last_name,
+        ]));
+      }
+
+    }
+  }
+  // If all fails, we now fall back to the drupal username.
+  $name = ($accountname !== '') ? $accountname : $account->getUsername();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+  // Check if profile image is unset.
+  if (!_social_profile_fields_get_setting('profile_profile_field_profile_image') && isset($display->get('content')['field_profile_image'])) {
+    // Load default data.
+    $replacement_data = social_profile_get_default_image();
+
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
+    $image = $build['field_profile_image'][0]['#item'];
+
+    // Time to override the data that going to be rendered.
+    $image->set('target_id', $replacement_data['id']);
+    $image->set('width', $replacement_data['width']);
+    $image->set('height', $replacement_data['height']);
+
+    // Put replacement data back in the object that's about to be built.
+    $build['field_profile_image'][0]['#item'] = $image;
+  }
+}
+
+/**
+ * Get the value for the key from the settings.
+ *
+ * @param string $key
+ *   The field name to check.
+ *
+ * @return bool
+ *   If the field is enabled or disabled.
+ */
+function _social_profile_fields_get_setting($key) {
+  $config = \Drupal::config('social_profile_fields.settings');
+  $setting_value = $config->get($key);
+
+  if (!isset($setting_value) || $setting_value == TRUE) {
+    return TRUE;
+  }
+  return FALSE;
+}

@@ -37,6 +37,11 @@
         cursor: $cursor-disabled;
       }
     }
+    &.desktop {
+      @include for-phone-only {
+        display: none;
+      }
+    }
   }
 
 }
@@ -246,6 +251,10 @@
   width: 24px;
   height: 24px;
   display: inline-block;
+
+  // Click events are swallowed by SVG <use> elements in IE/Edge.
+  // See https://github.com/facebook/react/issues/4963
+  pointer-events: none;
 
   + .badge {
     position: absolute;

@@ -13,7 +13,7 @@
       | PM User Two   | pm_user_2@example.com | 1      |
     When I am logged in as "PM User One"
     And I am on "/user/inbox"
-    Then I should see "You do not have any private messages"
+    Then I should see "You do not have any private messages yet. Click on the button on the right to start a new chat."
     And I click "New message"
     Then I should see "Create Private Message"
     And I select "PM User Two" from "edit-members"
@@ -45,7 +45,7 @@
 
     # I want to see my new message and reply.
     Given I am logged in as "PM User Two"
-    And I click the xth "0" element with the css ".icon-mail"
+    And I am on "/user/inbox"
     Then I should see "Inbox"
     And I should see the link "View thread"
     And I should see "PM User One"
@@ -64,7 +64,7 @@
     And I press "Delete thread"
     Then I should see the following success messages:
       | Your message has been deleted. |
-    And I should see "You do not have any private messages"
+    And I should see "You do not have any private messages yet. Click on the button on the right to start a new chat."
 
   # Create thread with multiple users.
   Scenario: Create thread with multiple users.
@@ -76,7 +76,7 @@
       | PM User Three | pm_user_3@example.com | 1      |
       | PM User Four  | pm_user_4@example.com | 1      |
     Given I am logged in as "PM User Four"
-    When I click the xth "0" element with the css ".icon-mail_outline"
+    When I am on "/user/inbox"
     And I click "New message"
     Then I select "PM User One" from "edit-members"
     And I additionally select "PM User Two" from "edit-members"
@@ -88,21 +88,21 @@
 
     # Check that all the users in the thread received the message.
     When I am logged in as "PM User One"
-    And I click the xth "0" element with the css ".icon-mail"
+    And I am on "/user/inbox"
     Then I should see "Hi, let's discuss what pizza's we're gonna order!"
     And I click "View thread"
     And I fill in "Message" with "I'd like a pizza with tuna."
     And I press "Send"
 
     When I am logged in as "PM User Two"
-    And I click the xth "0" element with the css ".icon-mail"
+    And I am on "/user/inbox"
     Then I should see "PM User One: I'd like a pizza with tuna."
     And I click the xth "0" element with the css ".unread-thread"
     And I fill in "Message" with "OMG YES, I want a pizza hawai with extra ansjovis on top!"
     And I press "Send"
 
     When I am logged in as "PM User Three"
-    And I click the xth "0" element with the css ".icon-mail"
+    And I am on "/user/inbox"
     Then I should see "PM User Two: OMG YES, I want a pizza hawai with extra ansjovis on top!"
     And I click the xth "0" element with the css ".unread-thread"
     And I fill in "Message" with "Pizza calzone for me please!"
@@ -110,7 +110,7 @@
 
     # Multiple messages in the inbox.
     When I am logged in as "PM User One"
-    When I click the xth "0" element with the css ".icon-mail"
+    When I am on "/user/inbox"
     And I click "New message"
     And I select "PM User Four" from "edit-members"
     And I fill in "Message" with "Be strict on the pizza toppings, user two likes it weird!"
@@ -118,6 +118,6 @@
 
     # Check the two messages.
     Given I am logged in as "PM User Four"
-    When I click the xth "0" element with the css ".icon-mail"
+    When I am on "/user/inbox"
     Then I should see "Be strict on the pizza toppings, user two likes it weird!"
     And I should see "PM User Three: Pizza calzone for me please!"
