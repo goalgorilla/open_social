@@ -75,13 +75,20 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                 // If it's node.
                 case 'node':
                   $content_type = $entity->bundle();
-                  $article = 'a';
 
-                  if (preg_match('/^[aeioquy]/i', $content_type)) {
-                    $article .= 'n';
+                  // When a name of content name starts from a vowel letter then
+                  // will be added "an" before this name. For example "an
+                  // event".
+                  if (preg_match('/^[aeiou]/', $content_type)) {
+                    $replacements[$original] = 'an ' . $content_type;
                   }
 
-                  $replacements[$original] = $article . ' ' . $content_type;
+                  // When a name of content name starts from a consonant letter
+                  // then will be added "a" before this name. For example
+                  // "a topic".
+                  else {
+                    $replacements[$original] = 'a ' . $content_type;
+                  }
                   break;
 
                 // When it's a post or photo post.
