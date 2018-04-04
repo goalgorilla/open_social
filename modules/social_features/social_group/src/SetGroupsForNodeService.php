@@ -80,7 +80,7 @@ class SetGroupsForNodeService {
   public static function addGroupContent(NodeInterface $node, Group $group) {
     // TODO Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
-    $group->addContent($node, $plugin_id);
+    $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
   }
 
   /**
