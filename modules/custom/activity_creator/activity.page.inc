@@ -41,7 +41,7 @@ function template_preprocess_activity(array &$variables) {
     $variables['date'] = $date;
   }
   else {
-    $variables['date'] = Link::fromTextAndUrl($date, $full_url);
+    $variables['date'] = Link::fromTextAndUrl($date, $full_url)->toString()->getGeneratedLink();
   }
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
