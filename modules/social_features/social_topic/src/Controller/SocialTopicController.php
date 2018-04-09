@@ -106,18 +106,26 @@ class SocialTopicController extends ControllerBase {
     // Fetch user from url.
     $user = $this->requestStack->getCurrentRequest()->get('user');
 
+    // If we don't have a user in the request, assume it's my own profile.
+    if (is_null($user)) {
+      // Usecase is the user menu, which is generated on all LU pages.
+      $user = User::load($account->id());
+    }
+
     // If not a user then just return neutral.
     if (!$user instanceof User) {
-      return AccessResult::neutral();
+      $user = User::load($user);
+
+      if (!$user instanceof User) {
+        return AccessResult::neutral();
+      }
     }
 
     // Own profile?
     if ($user->id() === $account->id()) {
       return AccessResult::allowedIfHasPermission($account, 'view topics on my profile');
     }
-    else {
-      return AccessResult::allowedIfHasPermission($account, 'view topics on other profiles');
-    }
+    return AccessResult::allowedIfHasPermission($account, 'view topics on other profiles');
   }
 
 }
