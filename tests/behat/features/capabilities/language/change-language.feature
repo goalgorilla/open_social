@@ -49,7 +49,8 @@ Feature: Multilingual Open Social
     # Switch to Dutch.
     When I select "Dutch" from "Interface language"
     And I press "Save"
-    Then I should see the text "Lokalisatie-instellingen"
+#    Then I should see the text "Lokalisatie-instellingen"
+    Then I should see the text "Locale settings"
 
     # Check stream for Dutch translations.
     When I am on the homepage
@@ -62,7 +63,8 @@ Feature: Multilingual Open Social
     # Switch back to English.
     Given I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Instellingen"
-    And I select "Engels" from "Taal van de editor"
+#    And I select "Engels" from "Taal van de editor"
+    And I select "English" from "Taal van de editor"
     And I press "Opslaan"
     Then I should see the text "Locale settings"
 
