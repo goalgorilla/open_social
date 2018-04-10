@@ -122,7 +122,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   protected function fetchData() {
     if (!$this->data) {
-      $this->data = $this->parser->parseFile($this->getSource(), $this->getModule(), $this->getProfile());
+      $this->data = $this->parser->parseFileFromModule($this->getSource(), $this->getModule(), $this->getProfile());
     }
 
     return $this->data;
