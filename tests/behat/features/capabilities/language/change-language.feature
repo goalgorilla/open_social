@@ -49,8 +49,7 @@ Feature: Multilingual Open Social
     # Switch to Dutch.
     When I select "Dutch" from "Interface language"
     And I press "Save"
-#    Then I should see the text "Lokalisatie-instellingen"
-    Then I should see the text "Locale settings"
+    Then I should see the text "Lokalisatie-instellingen"
 
     # Check stream for Dutch translations.
     When I am on the homepage
