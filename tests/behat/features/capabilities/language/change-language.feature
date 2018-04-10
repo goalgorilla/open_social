@@ -24,7 +24,6 @@ Feature: Multilingual Open Social
     And I press "Add language"
     And I wait for AJAX to finish
     And I translate "Interface language" to "Taalinstelling" for "nl"
-    And I translate "All topics" to "Alle onderwerpen" for "nl"
     And I translate "New event" to "Nieuw evenement" for "nl"
     And I translate "New group" to "Nieuwe groep" for "nl"
     And I translate "Settings" to "Instellingen" for "nl"
@@ -60,9 +59,7 @@ Feature: Multilingual Open Social
 
     # Check stream for Dutch translations.
     When I am on the homepage
-    Then I should see the text "Alle onderwerpen"
-
-    When I click the xth "0" element with the css ".navbar-nav .dropdown"
+    And I click the xth "0" element with the css ".navbar-nav .dropdown"
     Then I should see the text "Nieuw evenement"
     And I should see the text "Nieuwe groep"
 
@@ -70,14 +67,11 @@ Feature: Multilingual Open Social
     Given I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Instellingen"
     And I select "English" from "Taalinstelling"
-    And I press "Opslaan"
+    And I press "Save"
     Then I should see the text "Interface language"
 
     # Check stream for English texts.
     When I am on the homepage
-    Then I should see the text "Enrolled"
-    And I should see the text "All topics"
-
     When I click the xth "0" element with the css ".navbar-nav .dropdown"
     Then I should see the text "New event"
     And I should see the text "New group"
