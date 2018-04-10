@@ -37,7 +37,7 @@ function template_preprocess_activity(array &$variables) {
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($activity->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
   $date = t('@time ago', ['@time' => $created_time_ago->getString()]);
-  if ($full_url == '') {
+  if (isset($variables['elements']['#view_mode']) && ($variables['elements']['#view_mode'] === 'notification_archive' || $variables['elements']['#view_mode'] === 'notification')) {
     $variables['date'] = $date;
   }
   else {
