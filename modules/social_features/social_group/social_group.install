@@ -93,6 +93,8 @@ function _social_group_get_permissions($role) {
     'create closed_group group',
     'create public_group group',
     'view group stream page',
+    'view groups on my profile',
+    'view groups on other profiles',
   ]);
 
   // Content manager.
@@ -350,4 +352,24 @@ function social_group_update_8010() {
  */
 function social_group_update_8011() {
   node_access_rebuild(TRUE);
+}
+
+
+/**
+ * Set my groups permissions.
+ */
+function social_group_update_8012() {
+  // Make it so that everyone who has the 'access user profiles' permission,
+  // now also get these two new permissions.
+  $permissions = [
+    'view groups on my profile',
+    'view groups on other profiles',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access user profiles')) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
