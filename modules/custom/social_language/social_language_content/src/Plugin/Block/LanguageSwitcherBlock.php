@@ -11,7 +11,7 @@ use Drupal\Core\Url;
  *
  * @Block(
  *  id = "social_language_content_language_switcher_block",
- *  admin_label = @Translation("Social Language Content Language switcher block"),
+ *  admin_label = @Translation("Language switcher block"),
  * )
  */
 class LanguageSwitcherBlock extends BlockBase {
@@ -33,8 +33,8 @@ class LanguageSwitcherBlock extends BlockBase {
     $defaultLanguage = $languageManager->getCurrentLanguage();
 
     // Build the menu.
-    $links = array(
-      'language' => array(
+    $links = [
+      'language' => [
         'classes' => 'dropdown',
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
@@ -43,16 +43,17 @@ class LanguageSwitcherBlock extends BlockBase {
         'title' => $defaultLanguage->getName() . " (" . $defaultLanguage->getId() . ")",
         'title_classes' => 'navlabel-language pull-left',
         'url' => '#',
-      ),
-    );
+      ],
+    ];
 
     // Get the languages.
     $route_name = \Drupal::routeMatch()->getRouteName();
     $languagelinks = $languageManager->getLanguageSwitchLinks('language_interface', Url::fromRoute($route_name));
+    $current_path = \Drupal::service('path.current')->getPath();
 
     // Add languages as links.
     foreach ($languagelinks->links as $iso => $languagelink) {
-      $links['language']['below'][$iso] = array(
+      $links['language']['below'][$iso] = [
         'classes' => '',
         'link_attributes' => '',
         'link_classes' => ($iso === $defaultLanguage) ? 'active' : '',
@@ -61,16 +62,16 @@ class LanguageSwitcherBlock extends BlockBase {
         'label' => $languagelink['title'] . " (" . $iso . ")",
         'title' => $languagelink['title'] . " (" . $iso . ")",
         'title_classes' => '',
-        'url' => '/' . (($iso === 'en') ? '' : $iso),
-      );
+        'url' => (($iso === 'en') ? '' : '/' . $iso) . $current_path,
+      ];
     }
 
     return [
       '#theme' => 'account_header_links',
       '#links' => $links,
-      '#cache' => array(
-        'contexts' => array('user'),
-      ),
+      '#cache' => [
+        'contexts' => ['user', 'url.path'],
+      ],s
     ];
   }
 
