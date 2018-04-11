@@ -20,7 +20,9 @@
         {{ content|without('link') }}
     </div>
 
+    {% if content.link|render %}
     <footer class="card__actionbar">
         {{ content.link }}
     </footer>
+    {% endif %}
 {% endblock %}
