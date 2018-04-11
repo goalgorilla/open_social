@@ -58,6 +58,9 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   // Add CTRL/CMD + Enter is submit.
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 
+  $form['#attached']['library'][] = 'social_private_message/validator';
+  $form['#attached']['drupalSettings']['social_private_message']['validator'] = t('Please select an item in the list.');
+
   // There's an alternative submit. We need to change its value.
   foreach ($form['actions'] as $key => &$actions) {
     // Must be pretty sure it's a submit button.

@@ -103,6 +103,40 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
     $form['field_profile_interests']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
   }
 
+  // Check if the Social Profile Fields module is on.
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
+    // Load the profile fields and check if at least one of them can be changed.
+    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
+      $empty_profile = TRUE;
+
+      /** @var \Drupal\field\Entity\FieldConfig $field_config */
+      foreach ($profile_fields as $field) {
+        if (isset($form[$field->get('field_name')]) && $form[$field->get('field_name')]['#access'] === TRUE) {
+          $empty_profile = FALSE;
+        }
+      }
+
+      // There are no fields the user can edit here. Set an explanatory message
+      // and disable the Save button.
+      if ($empty_profile === TRUE) {
+        $account = \Drupal::routeMatch()->getParameter('user');
+
+        $form['empty_profile'] = [
+          '#type' => 'fieldset',
+        ];
+        $form['empty_profile']['notice'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => t('There is no profile information you can change here. Change your @settings.', [
+            '@settings' => Link::createFromRoute(t('account settings here'), 'entity.user.edit_form', ['user' => $account->id()])->toString(),
+          ]),
+        ];
+
+        $form['actions']['submit']['#disabled'] = TRUE;
+      }
+    }
+  }
+
   // Add custom submit handler just for redirect purposes. We don't want to
   // override the form::save in profile.
   $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
@@ -117,16 +151,22 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
  *   The form state interface.
  */
 function _social_profile_profile_edit_form_submit(array $form, FormStateInterface $form_state) {
-  // Get username.
-  $user = \Drupal::currentUser();
-  // Invalidate cache tag.
-  Cache::invalidateTags(['user:breadcrumb:' . $user->id()]);
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
 
-  // Set redirect to the profile overview page when a user saves their profile.
-  $form_state->setRedirect(
-    'view.user_information.user_information',
-    ['user' => \Drupal::currentUser()->id(), []]
-  );
+  // Let's be on the safe side.
+  if ($profile instanceof Profile) {
+    // Get the uid of the profile.
+    $uid = $profile->getOwnerId();
+    // Invalidate cache tag.
+    Cache::invalidateTags(['user:breadcrumb:' . $uid]);
+    // Set redirect to the profile page when a user saves their profile.
+    $form_state->setRedirect(
+      'view.user_information.user_information', [
+        'user' => $uid,
+      ]
+    );
+  }
 }
 
 /**
@@ -225,17 +265,21 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if (!in_array($route, ['entity.profile.type.user_profile_form'])) {
-    if ($profile->access('update', $current_user)) {
-      $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
-      $variables['#cache']['contexts'][] = 'route.name';
-    }
+  if ($route !== 'entity.profile.type.user_profile_form' && $profile->access('update', $current_user)) {
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+    $variables['#cache']['contexts'][] = 'route.name';
   }
 
-  // Add the hero styled image.
-  if (!empty($profile->field_profile_banner_image->entity)) {
+  // Add the hero styled image if we have access to it.
+  if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+  }
+
+  // Add the profile image.
+  if (!empty($profile->field_profile_image->entity)) {
+    $variables['profile_image_url'] = ImageStyle::load('social_medium')
+      ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
 
 }
@@ -398,22 +442,6 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view().
- */
-function social_profile_profile_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  // Change the URL in the compact view mode.
-  if ($view_mode === 'compact' && $entity instanceof Profile) {
-    $uid = $entity->getOwnerId();
-    // Get the url from the user profile.
-    $url = Url::fromRoute('entity.user.canonical', [
-      'user' => $uid,
-    ]);
-    // Add it to the build.
-    $build['field_profile_image'][0]['#url'] = $url;
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
@@ -471,6 +499,27 @@ function social_profile_get_default_image() {
   ];
   // Retun the array.
   return $data;
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function social_profile_user_format_name_alter(&$name, $account) {
+
+  $accountname = '';
+  // Let's get the First name Last name.
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $accountname = trim(t('@first @last', [
+        '@first' => $user_profile->get('field_profile_first_name')->value,
+        '@last' => $user_profile->get('field_profile_last_name')->value,
+      ]));
+    }
+  }
+  $name = ($accountname !== '') ? $accountname : $name;
 }
 
 /**

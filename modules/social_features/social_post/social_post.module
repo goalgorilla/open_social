@@ -40,7 +40,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
   }
 
   // Reset title display.
-  $form['field_post']['widget'][0]['#title_display'] = '';
+  $form['field_post']['widget'][0]['#title_display'] = "";
 
   // Set submit button caption to Post instead of Save.
   $form['actions']['submit']['#value'] = t('Post', [], ['context' => 'Post button']);
@@ -49,15 +49,19 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
     // For posting on the stream on the group stream.
     if (!empty(_social_group_get_current_group())) {
       $form['field_post']['widget'][0]['#placeholder'] = t('Say something to the group');
+      $form['field_post']['widget'][0]['#title'] = t('Say something to the group');
     }
     // For the post on a users profile.
     elseif (!empty(\Drupal::routeMatch()->getParameter('user')) && \Drupal::routeMatch()->getParameter('user')->id() != \Drupal::currentUser()->id()) {
       $user_profile = \Drupal::routeMatch()->getParameter('user');
       $name = $user_profile->getDisplayName();
       $form['field_post']['widget'][0]['#placeholder'] = t('Leave a message to @name', ['@name' => $name]);
+      $form['field_post']['widget'][0]['#title'] = t('Leave a message to @name', ['@name' => $name]);
     }
     else {
-      $form['field_post']['widget'][0]['#placeholder'] = t('Say something to the Community');
+      $title = t('Say something to the Community');
+      $form['field_post']['widget'][0]['#title'] = $title;
+      $form['field_post']['widget'][0]['#placeholder'] = $title;
     }
   }
 }
