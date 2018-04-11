@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_language_content\Plugin\Block;
+namespace Drupal\social_language\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Language\Language;
@@ -10,7 +10,7 @@ use Drupal\Core\Url;
  * Provides a 'LanguageSwitcherBlock' block.
  *
  * @Block(
- *  id = "social_language_content_language_switcher_block",
+ *  id = "language_switcher_block",
  *  admin_label = @Translation("Language switcher block"),
  * )
  */
@@ -71,7 +71,7 @@ class LanguageSwitcherBlock extends BlockBase {
       '#links' => $links,
       '#cache' => [
         'contexts' => ['user', 'url.path'],
-      ],s
+      ],
     ];
   }
 
