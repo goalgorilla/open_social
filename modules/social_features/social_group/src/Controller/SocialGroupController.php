@@ -3,6 +3,7 @@
 namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\group\Entity\Group;
 
 /**
  * Returns responses for Social Group routes.
@@ -21,15 +22,11 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupMembersTitle($group) {
-    if (is_object($group)) {
-      $group_label = $group->label();
+    // If it's not a group then it's a gid.
+    if (!$group instanceof Group) {
+      $group = Group::load($group);
     }
-    else {
-      $storage = \Drupal::entityTypeManager()->getStorage('group');
-      $group_entity = $storage->load($group);
-      $group_label = empty($group_entity) ? 'group' : $group_entity->label();
-    }
-    return $this->t('Members of @name', ['@name' => $group_label]);
+    return $this->t('Members of @name', ['@name' => $group->label()]);
   }
 
   /**
