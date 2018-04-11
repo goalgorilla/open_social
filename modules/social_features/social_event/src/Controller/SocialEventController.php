@@ -82,9 +82,9 @@ class SocialEventController extends ControllerBase {
 
     // Own profile?
     if ($user->id() === $account->id()) {
-      return AccessResult::allowedIfHasPermission($account, 'view topics on my profile');
+      return AccessResult::allowedIfHasPermission($account, 'view events on my profile');
     }
-    return AccessResult::allowedIfHasPermission($account, 'view topics on other profiles');
+    return AccessResult::allowedIfHasPermission($account, 'view events on other profiles');
   }
 
 }
