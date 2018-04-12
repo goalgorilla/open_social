@@ -21,7 +21,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
 
     // TODO: This doesn't work if the setting is enabled by an override but allowing the override will create an endless loop.
     $settings = \Drupal::configFactory()->getEditable('social_language_content.settings');
-    $translate_book = $settings->getOriginal('social_book', FALSE);
+    $translate_book = $settings->getOriginal('social_event', FALSE);
 
     // If the social_language_content settings object doesn't exist or we are
     // disabled then we perform no overrides.
@@ -34,19 +34,19 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   
   protected function addTranslationOverrides($names, array &$overrides) {
     $field_overrides = [
-      'core.base_field_override.node.book.title' => [
+      'core.base_field_override.node.event.title' => [
         'translatable' => TRUE,
       ],
-      'core.base_field_override.node.book.menu_link' => [
+      'core.base_field_override.node.event.menu_link' => [
         'translatable' => TRUE,
       ],
-      'core.base_field_override.node.book.path' => [
+      'core.base_field_override.node.event.path' => [
         'translatable' => TRUE,
       ],
-      'field.field.node.book.body' => [
+      'field.field.node.event.body' => [
         'translatable' => TRUE,
       ],
-      'field.field.node.book.field_book_image' => [
+      'field.field.node.event.field_event_image' => [
         'third_party_settings' => [
           'content_translation' => [
             'translation_sync' => [
