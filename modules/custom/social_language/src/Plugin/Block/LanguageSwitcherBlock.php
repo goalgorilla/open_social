@@ -2,7 +2,7 @@
 
 namespace Drupal\social_language\Plugin\Block;
 
-use Drupal\Core\Block\BlockBase;
+use Drupal\language\Plugin\Block\LanguageBlock;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Url;
 
@@ -14,23 +14,15 @@ use Drupal\Core\Url;
  *  admin_label = @Translation("Language switcher block"),
  * )
  */
-class LanguageSwitcherBlock extends BlockBase {
+class LanguageSwitcherBlock extends LanguageBlock {
 
   /**
    * {@inheritdoc}
    */
   public function build() {
 
-    // Fetch the languagemanager.
-    $languageManager = \Drupal::languageManager();
-
-    // Site must be multilingual to show this menu.
-    if ($languageManager->isMultilingual() === FALSE) {
-      return [];
-    }
-
     /** @var Language $defaultLanguage */
-    $defaultLanguage = $languageManager->getCurrentLanguage();
+    $defaultLanguage = $this->languageManager->getCurrentLanguage();
 
     // Build the menu.
     $links = [
@@ -48,8 +40,11 @@ class LanguageSwitcherBlock extends BlockBase {
 
     // Get the languages.
     $route_name = \Drupal::routeMatch()->getRouteName();
-    $languagelinks = $languageManager->getLanguageSwitchLinks('language_interface', Url::fromRoute($route_name));
+    $languagelinks = $this->languageManager->getLanguageSwitchLinks('language_interface', Url::fromRoute($route_name));
     $current_path = \Drupal::service('path.current')->getPath();
+
+    //TODO: use configuration for the prefix instead of assuming ISO.
+    $prefixes = \Drupal::config('language.negotiation')->get('url.prefixes');
 
     // Add languages as links.
     foreach ($languagelinks->links as $iso => $languagelink) {
@@ -62,7 +57,7 @@ class LanguageSwitcherBlock extends BlockBase {
         'label' => $languagelink['title'] . " (" . $iso . ")",
         'title' => $languagelink['title'] . " (" . $iso . ")",
         'title_classes' => '',
-        'url' => (($iso === 'en') ? '' : '/' . $iso) . $current_path,
+        'url' => (($prefixes[$iso] === '') ? '' : '/' . $prefixes[$iso]) . $current_path,
       ];
     }
 
@@ -70,7 +65,7 @@ class LanguageSwitcherBlock extends BlockBase {
       '#theme' => 'account_header_links',
       '#links' => $links,
       '#cache' => [
-        'contexts' => ['user', 'url.path'],
+        'contexts' => ['user', 'url.path', 'languages'],
       ],
     ];
   }
