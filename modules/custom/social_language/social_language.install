@@ -44,17 +44,15 @@ function _social_language_set_permissions() {
  * Build the permissions.
  */
 function _social_language_get_permissions($role) {
-  // Site manager.
-  $permissions['sitemanager'] = [
+  $translation_permissions = [
     'create content translations',
     'delete content translations',
     'update content translations',
-    'translate menu_link_content',
-    'translate account settings',
-    'translate system information',
-    'translate profile_tag taxonomy_term',
-    'translate topic_types taxonomy_term',
+    'translate any entity',
   ];
+
+  $permissions['sitemanager'] = $translation_permissions;
+  $permissions['contentmanager'] = $translation_permissions;
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
