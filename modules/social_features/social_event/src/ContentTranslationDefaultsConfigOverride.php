@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_book;
+namespace Drupal\social_event;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
