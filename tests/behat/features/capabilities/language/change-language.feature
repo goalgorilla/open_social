@@ -17,11 +17,17 @@ Feature: Multilingual Open Social
 
     # Add Dutch language.
     Given I am logged in as an "administrator"
+    And I turn off translations import
     When I am on "/admin/config/regional/language"
     And I click "Add language"
     And I select "Dutch" from "Language name"
     And I press "Add language"
-    And I wait for the batch job to finish
+    And I wait for AJAX to finish
+    And I translate "Interface language" to "Taalinstelling" for "nl"
+    And I translate "New event" to "Nieuw evenement" for "nl"
+    And I translate "New group" to "Nieuwe groep" for "nl"
+    And I translate "Settings" to "Instellingen" for "nl"
+
 
     # Check language field not visible when User negotation is not turned on.
     Given I go to "/admin/config/regional/language/detection"
@@ -49,28 +55,23 @@ Feature: Multilingual Open Social
     # Switch to Dutch.
     When I select "Dutch" from "Interface language"
     And I press "Save"
-    Then I should see the text "Lokalisatie-instellingen"
+    Then I should see the text "Taalinstelling"
 
     # Check stream for Dutch translations.
     When I am on the homepage
-    Then I should see the text "Alle onderwerpen"
-
-    When I click the xth "0" element with the css ".navbar-nav .dropdown"
+    And I click the xth "0" element with the css ".navbar-nav .dropdown"
     Then I should see the text "Nieuw evenement"
     And I should see the text "Nieuwe groep"
 
     # Switch back to English.
     Given I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Instellingen"
-    And I select "Engels" from "Taal van de editor"
-    And I press "Opslaan"
-    Then I should see the text "Locale settings"
+    And I select "English" from "Taalinstelling"
+    And I press "Save"
+    Then I should see the text "Interface language"
 
     # Check stream for English texts.
     When I am on the homepage
-    Then I should see the text "Enrolled"
-    And I should see the text "All topics"
-
     When I click the xth "0" element with the css ".navbar-nav .dropdown"
     Then I should see the text "New event"
     And I should see the text "New group"
