@@ -7,9 +7,9 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Provides content translation defaults for the book content type.
+ * Provides content translation defaults for the event content type.
  *
- * @package Drupal\social_book
+ * @package Drupal\social_event
  */
 class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideInterface {
 
@@ -21,11 +21,11 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
 
     // TODO: This doesn't work if the setting is enabled by an override but allowing the override will create an endless loop.
     $settings = \Drupal::configFactory()->getEditable('social_language_content.settings');
-    $translate_book = $settings->getOriginal('social_event', FALSE);
+    $translate_event = $settings->getOriginal('social_event', FALSE);
 
     // If the social_language_content settings object doesn't exist or we are
     // disabled then we perform no overrides.
-    if ($translate_book) {
+    if ($translate_event) {
       $this->addTranslationOverrides($names, $overrides);
     }
 
