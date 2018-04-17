@@ -57,6 +57,15 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $suggestions = [$variables['theme_hook_original'] . '__' . 'charts'];
         }
 
+        if (isset($variables['elements']['#id'])) {
+          $theme = \Drupal::theme()->getActiveTheme()->getName();
+          $name = 'data_policy_page_title_block';
+
+          if ($variables['elements']['#id'] == $theme . '_' . $name) {
+            $suggestions[] = $variables['theme_hook_original'] . '__' . $name;
+          }
+        };
+
         break;
 
       case 'container':

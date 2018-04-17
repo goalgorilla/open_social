@@ -6,20 +6,20 @@ dependencies:
     - system
   theme:
     - socialblue
-id: socialblue_pagetitleblock_content
+id: socialblue_data_policy_page_title_block
 theme: socialblue
-region: title
+region: hero
 weight: 0
 provider: null
 plugin: social_page_title_block
 settings:
   id: social_page_title_block
-  label: 'Page title block'
+  label: 'Page title for Data policy'
   provider: social_core
   label_display: '0'
 visibility:
   request_path:
     id: request_path
-    pages: "/search/*\r\n*/stream\r\n*/events\r\n*/topics\r\n*/groups\r\n*/information\r\n*/members\r\n*/membership\r\n*/about\r\n/data-policy\r\n/data-policy/*"
-    negate: true
+    pages: "/data-policy\r\n/data-policy/*"
+    negate: false
     context_mapping: {  }

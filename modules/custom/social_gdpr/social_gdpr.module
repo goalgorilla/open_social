@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Contains social_gdpr.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function social_gdpr_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_gdpr module.
+    case 'help.page.social_gdpr':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Integrate GDPR Inform and Consent module.') . '</p>';
+      return $output;
+  }
+}
