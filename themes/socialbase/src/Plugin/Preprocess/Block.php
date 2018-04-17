@@ -88,7 +88,7 @@ class Block extends PreprocessBase {
     if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block') {
       $route_names = [
         'entity.group_content.collection',
-        'social_gdpr.revisions',
+        'social_gdpr.data_policy.revisions',
       ];
 
       if (in_array($route_name, $route_names)) {

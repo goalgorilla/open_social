@@ -1,7 +1,15 @@
-social_gdpr.revisions:
+social_gdpr.data_policy.add:
+  path: '/data-policy/revisions/add'
+  defaults:
+    _entity_form: 'data_policy.edit'
+    _title: 'Add new revision'
+  requirements:
+    _permission: 'edit data policy'
+
+social_gdpr.data_policy.revisions:
   path: '/data-policy/revisions'
   defaults:
-    _controller: '\Drupal\gdpr_consent\Controller\DataPolicyController::revisionOverview'
-    _title: 'Data Policy'
+    _controller: '\Drupal\social_gdpr\Controller\DataPolicy::revisionOverview'
+    _title: 'Revisions'
   requirements:
     _permission: 'view all data policy revisions'

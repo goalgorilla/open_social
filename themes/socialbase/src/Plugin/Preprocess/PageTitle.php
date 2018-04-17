@@ -52,7 +52,8 @@ class PageTitle extends PreprocessBase {
         break;
 
       case 'gdpr_consent.data_policy':
-      case 'social_gdpr.revisions':
+      case 'social_gdpr.data_policy.add':
+      case 'social_gdpr.data_policy.revisions':
 
         $extra_classes = FALSE;
 
