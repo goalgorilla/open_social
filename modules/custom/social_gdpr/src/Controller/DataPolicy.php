@@ -34,34 +34,36 @@ class DataPolicy extends DataPolicyController {
 
     $routes = [
       'view' => 'social_gdpr.data_policy.revision',
-      'revert' => 'social_gdpr.data_policy.revision_revert',
+      'delete' => 'social_gdpr.data_policy.revision_delete',
     ];
 
     foreach ($build['data_policy_revisions_table']['#rows'] as &$row) {
       foreach ($row[1]['data']['#links'] as $operation => &$link) {
-        if (isset($routes[$operation])) {
-          $link['url'] = Url::fromRoute(
-            $routes[$operation],
-            $link['url']->getRouteParameters()
-          );
+        /** @var \Drupal\Core\Url $url */
+        $url = &$link['url'];
+
+        if ($operation == 'revert') {
+          if ($url->getRouteName() == 'entity.data_policy.revision_revert') {
+            $route_name = 'social_gdpr.data_policy.revision_revert';
+          }
+          else {
+            $route_name = 'social_gdpr.data_policy.translation_revert';
+          }
+
+          $link['url'] = Url::fromRoute($route_name, $url->getRouteParameters());
+
+          $link['attributes'] = [
+            'class' => ['use-ajax'],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => Json::encode([
+              'title' => $this->t('Are you sure to revert this revision'),
+              'width' => 700,
+            ]),
+          ];
         }
 
-        switch ($operation) {
-          case 'revert':
-            $link['url'] = Url::fromRoute(
-              'social_gdpr.data_policy.revision_revert',
-              $link['url']->getRouteParameters()
-            );
-
-            $link['attributes'] = [
-              'class' => ['use-ajax'],
-              'data-dialog-type' => 'modal',
-              'data-dialog-options' => Json::encode([
-                'title' => $this->t('Are you sure to revert this revision'),
-                'width' => 700,
-              ]),
-            ];
-            break;
+        if (isset($routes[$operation])) {
+          $link['url'] = Url::fromRoute($routes[$operation], $link['url']->getRouteParameters());
         }
       }
     }
