@@ -5,7 +5,9 @@
  * Contains social_gdpr.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -19,4 +21,25 @@ function social_gdpr_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<p>' . t('Integrate GDPR Inform and Consent module.') . '</p>';
       return $output;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.add') {
+    $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  }
+}
+
+/**
+ * Form submit redirect for data policy.
+ *
+ * @param array $form
+ *   Data policy form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_gdpr_data_policy_submit(array $form, FormStateInterface $form_state) {
+  $form_state->setRedirect('social_gdpr.data_policy.revisions');
 }

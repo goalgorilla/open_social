@@ -13,3 +13,19 @@ social_gdpr.data_policy.revisions:
     _title: 'Revisions'
   requirements:
     _permission: 'view all data policy revisions'
+
+social_gdpr.data_policy.revision:
+  path: '/data-policy/revisions/{data_policy_revision}'
+  defaults:
+    _controller: '\Drupal\gdpr_consent\Controller\DataPolicyController::revisionShow'
+    _title_callback: '\Drupal\social_gdpr\Controller\DataPolicy::revisionPageTitle'
+  requirements:
+    _permission: 'access data policy revisions'
+
+social_gdpr.data_policy.revision_revert:
+  path: '/data-policy/revisions/{data_policy_revision}/revert'
+  defaults:
+    _form: '\Drupal\social_gdpr\Form\DataPolicyRevisionRevertForm'
+    _title: 'Are you sure to revert this revision'
+  requirements:
+    _permission: 'revert all data policy revisions'
