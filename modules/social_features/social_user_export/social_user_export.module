@@ -94,13 +94,11 @@ function _social_user_export_get_view(array $query = [], $execute = TRUE) {
  *
  * @return string
  *   First name of the use.
- *
- * @throws InvalidPluginDefinitionException
  */
 function social_user_export_first_name(UserInterface $account) {
   $first_name = '';
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  // Check if entity type 'profile' exist
+  // Check if entity type 'profile' exist.
   try {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
     // Checking if Storage is not empty.
@@ -111,7 +109,7 @@ function social_user_export_first_name(UserInterface $account) {
     }
   }
   catch (InvalidPluginDefinitionException $e) {
-    $first_name = "No first Name is provided";
+    $first_name = "";
   }
   return $first_name;
 }
@@ -124,8 +122,6 @@ function social_user_export_first_name(UserInterface $account) {
  *
  * @return string
  *   LastName of the user.
- *
- * @throws InvalidPluginDefinitionException
  */
 function social_user_export_last_name(UserInterface $account) {
   $last_name = '';
@@ -140,7 +136,7 @@ function social_user_export_last_name(UserInterface $account) {
     }
   }
   catch (InvalidPluginDefinitionException $e) {
-    $last_name = 'No last name is provided';
+    $last_name = '';
   }
   return $last_name;
 }
