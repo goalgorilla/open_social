@@ -13,6 +13,10 @@ use Drupal\user\Entity\Role;
 function social_gdpr_install() {
   // Set some default permissions.
   _social_gdpr_set_permissions();
+
+  \Drupal::configFactory()->getEditable('gdpr_consent.data_policy')
+    ->set('enforce_consent', TRUE)
+    ->save();
 }
 
 /**
