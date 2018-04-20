@@ -41,7 +41,7 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
   }
 }
 
-/*
+/**
  * Provide a method to return node which was moved to another group.
  *
  * @param \Drupal\node\NodeInterface $node
