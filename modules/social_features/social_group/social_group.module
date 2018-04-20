@@ -83,10 +83,13 @@ function _social_group_get_overview_route(GroupInterface $group) {
  */
 function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
   // Set redirect to the group about page.
-  $form_state->setRedirect(
-    'view.group_information.page_group_about',
-    $form_state->getRedirect()->getRouteParameters()
-  );
+  $route_parameters = $form_state->getRedirect()->getRouteParameters();
+  if (!empty($route_parameters['group'])) {
+    $form_state->setRedirect(
+      'view.group_information.page_group_about',
+      $route_parameters
+    );
+  }
 }
 
 /**
