@@ -5,13 +5,19 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
+use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A widget to select a group when creating an entity in a group.
@@ -28,7 +34,39 @@ use Drupal\group\Entity\Group;
  *   multiple_values = TRUE
  * )
  */
-class SocialGroupSelectorWidget extends OptionsSelectWidget {
+class SocialGroupSelectorWidget extends OptionsSelectWidget implements ContainerFactoryPluginInterface {
+
+  protected $configFactory;
+  protected $moduleHander;
+  protected $currentUser;
+
+  /**
+   * Creates a SocialGroupSelectorWidget instance.
+   *
+   * {@inheritdoc}
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactory $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
+    $this->configFactory = $configFactory;
+    $this->moduleHander = $moduleHandler;
+    $this->currentUser = $currentUser;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('config.factory'),
+      $container->get('current_user'),
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * Returns the array of options for the widget.
@@ -41,7 +79,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
    */
   protected function getOptions(FieldableEntityInterface $entity) {
     if (!isset($this->options)) {
-      $account = \Drupal::currentUser();
+      $account = $entity->getOwner();
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
@@ -58,7 +96,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
         $options = ['_none' => $empty_label] + $options;
       }
 
-      $module_handler = \Drupal::moduleHandler();
+      $module_handler = $this->moduleHander;
       $context = [
         'fieldDefinition' => $this->fieldDefinition,
         'entity' => $entity,
@@ -85,9 +123,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
       'event' => 'change',
     ];
 
-    $config = \Drupal::configFactory()->get('social_group.settings');
-    $allow_group_selection_in_node = $config->get('allow_group_selection_in_node');
-    $acting_user = \Drupal::currentUser();
+    $change_group_node = $this->configFactory->get('social_group.settings')
+      ->get('allow_group_selection_in_node');
     /* @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -99,7 +136,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
       }
     }
     else {
-      if (!$allow_group_selection_in_node && !$acting_user->hasPermission('manage all groups')) {
+      if (!$change_group_node && !$this->currentUser->hasPermission('manage all groups')) {
         $element['#disabled'] = TRUE;
         $element['#description'] = t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
       }
@@ -174,7 +211,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
    *
    * @param array $options
    *   A list of options to check.
-   * @param \Drupal\Core\Session\AccountProxyInterface $account
+   * @param \Drupal\user\Entity\User $account
    *   The user to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check for.
@@ -182,7 +219,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
    * @return array
    *   An list of options for the field containing groups with create access.
    */
-  private function removeGroupsWithoutCreateAccess(array $options, AccountProxyInterface $account, EntityInterface $entity) {
+  private function removeGroupsWithoutCreateAccess(array $options, User $account, EntityInterface $entity) {
 
     foreach ($options as $option_category_key => $groups_in_category) {
       if (is_array($groups_in_category)) {
@@ -211,7 +248,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
    *
    * @param int $gid
    *   Group id.
-   * @param \Drupal\Core\Session\AccountProxyInterface $account
+   * @param \Drupal\user\Entity\User $account
    *   The user to check for.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The node bundle to check for.
@@ -219,7 +256,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
    * @return int
    *   Either TRUE or FALSE.
    */
-  private function checkGroupContentCreateAccess($gid, AccountProxyInterface $account, EntityInterface $entity) {
+  private function checkGroupContentCreateAccess($gid, User $account, EntityInterface $entity) {
     $group = Group::load($gid);
 
     if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {
