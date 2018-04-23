@@ -36,6 +36,11 @@ class FormElement extends BaseFormElement {
       $variables['attributes']['class'][] = 'card';
     }
 
+    if (in_array('data_policy', $element['#parents']) && \Drupal::routeMatch()->getRouteName() == 'gdpr_consent.data_policy.agreement') {
+      $variables['attributes']['class'][] = 'card';
+      $variables['attributes']['class'][] = 'card__body';
+    }
+
     parent::preprocessElement($element, $variables);
 
   }

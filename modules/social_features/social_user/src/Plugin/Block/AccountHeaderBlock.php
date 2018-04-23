@@ -502,6 +502,36 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ->view($profile, 'small');
         $links['account_box']['icon_image'] = $content;
       }
+
+      $hook = 'social_user_account_header_links';
+
+      foreach ($this->moduleHandler->invokeAll($hook) as $key => $item) {
+        if (!isset($links['account_box']['below'][$item['after']]) || isset($links['account_box']['below'][$key])) {
+          continue;
+        }
+
+        $list = $links['account_box']['below'];
+
+        $links['account_box']['below'] = [];
+
+        foreach ($list as $exist_key => $exist_item) {
+          $links['account_box']['below'][$exist_key] = $exist_item;
+
+          if ($item['after'] == $exist_key) {
+            $links['account_box']['below'][$key] = [
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'title' => $item['title'],
+              'label' => $item['title'],
+              'title_classes' => '',
+              'url' => $item['url'],
+            ];
+          }
+        }
+      }
     }
     else {
       $links = [
