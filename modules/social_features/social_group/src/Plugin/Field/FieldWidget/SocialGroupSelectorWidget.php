@@ -5,9 +5,12 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
 
 /**
@@ -28,6 +31,48 @@ use Drupal\group\Entity\Group;
 class SocialGroupSelectorWidget extends OptionsSelectWidget {
 
   /**
+   * Returns the array of options for the widget.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   The entity for which to return options.
+   *
+   * @return array
+   *   The array of options for the widget.
+   */
+  protected function getOptions(FieldableEntityInterface $entity) {
+    if (!isset($this->options)) {
+      $account = \Drupal::currentUser();
+      // Limit the settable options for the current user account.
+      $options = $this->fieldDefinition
+        ->getFieldStorageDefinition()
+        ->getOptionsProvider($this->column, $entity)
+        ->getSettableOptions($account);
+
+      // Remove groups the user does not have create access to.
+      if (!$account->hasPermission('manage all groups')) {
+        $options = $this->removeGroupsWithoutCreateAccess($options, $account, $entity);
+      }
+
+      // Add an empty option if the widget needs one.
+      if ($empty_label = $this->getEmptyLabel()) {
+        $options = ['_none' => $empty_label] + $options;
+      }
+
+      $module_handler = \Drupal::moduleHandler();
+      $context = [
+        'fieldDefinition' => $this->fieldDefinition,
+        'entity' => $entity,
+      ];
+      $module_handler->alter('options_list', $options, $context);
+
+      array_walk_recursive($options, [$this, 'sanitizeLabel']);
+
+      $this->options = $options;
+    }
+    return $this->options;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
@@ -45,7 +90,6 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
     $acting_user = \Drupal::currentUser();
     /* @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
-    $author = $entity->getOwner();
 
     // If it is a new node lets add the current group.
     if (!$entity->id()) {
@@ -58,30 +102,6 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
       if (!$allow_group_selection_in_node && !$acting_user->hasPermission('manage all groups')) {
         $element['#disabled'] = TRUE;
         $element['#description'] = t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
-      }
-    }
-
-    // Lets remove all the groups the author is not a member of.
-    if (!$author->hasPermission('manage all groups')) {
-      $account_groups = social_group_get_all_group_members($author->id());
-
-      foreach ($element['#options'] as $option_category_key => $groups_in_category) {
-        if ($option_category_key === '_none') {
-          continue;
-        }
-        if (is_array($groups_in_category)) {
-          $element['#options'][$option_category_key] = $this->removeGroupUserIsNotMemberOf($groups_in_category, $account_groups);
-          // Remove the entire category if there are no groups for this author.
-          if (empty($element['#options'][$option_category_key])) {
-            unset($element['#options'][$option_category_key]);
-          }
-        }
-        else {
-          // Remove groups the user is not a member of.
-          if (!in_array($option_category_key, $account_groups)) {
-            unset($element['#options'][$option_category_key]);
-          }
-        }
       }
     }
 
@@ -150,23 +170,62 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
   }
 
   /**
-   * Remove groups where account is not a member of.
+   * Remove options from the list.
    *
-   * @param array $groups
-   *   A list of groups to check.
-   * @param array $account_groups
-   *   A list of groups user is a member of.
+   * @param array $options
+   *   A list of options to check.
+   * @param \Drupal\Core\Session\AccountProxyInterface $account
+   *   The user to check for.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check for.
    *
    * @return array
-   *   An array of groups where the user is member of.
+   *   An list of options for the field containing groups with create access.
    */
-  private function removeGroupUserIsNotMemberOf(array $groups, array $account_groups) {
-    foreach ($groups as $gid => $group_title) {
-      if (!in_array($gid, $account_groups)) {
-        unset($groups[$gid]);
+  private function removeGroupsWithoutCreateAccess(array $options, AccountProxyInterface $account, EntityInterface $entity) {
+
+    foreach ($options as $option_category_key => $groups_in_category) {
+      if (is_array($groups_in_category)) {
+        foreach ($groups_in_category as $gid => $group_title) {
+          if (!$this->checkGroupContentCreateAccess($gid, $account, $entity)) {
+            unset($options[$option_category_key][$gid]);
+          }
+        }
+        // Remove the entire category if there are no groups for this author.
+        if (empty($options[$option_category_key])) {
+          unset($options[$option_category_key]);
+        }
+      }
+      else {
+        if (!$this->checkGroupContentCreateAccess($option_category_key, $account, $entity)) {
+          unset($options[$option_category_key]);
+        }
       }
     }
-    return $groups;
+
+    return $options;
+  }
+
+  /**
+   * Check if user may create content of bundle in group.
+   *
+   * @param int $gid
+   *   Group id.
+   * @param \Drupal\Core\Session\AccountProxyInterface $account
+   *   The user to check for.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The node bundle to check for.
+   *
+   * @return int
+   *   Either TRUE or FALSE.
+   */
+  private function checkGroupContentCreateAccess($gid, AccountProxyInterface $account, EntityInterface $entity) {
+    $group = Group::load($gid);
+
+    if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }
