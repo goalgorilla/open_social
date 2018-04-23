@@ -72,8 +72,11 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
               unset($element['#options'][$option_category_key][$option_key]);
             }
           }
+          if (empty($element['#options'][$option_category_key])) {
+            unset($element['#options'][$option_category_key]);
+          }
         }
-        if (empty($element['#options'][$option_category_key])) {
+        elseif (!in_array($option_category_key, $author_groups)) {
           unset($element['#options'][$option_category_key]);
         }
       }
