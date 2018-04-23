@@ -63,21 +63,24 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
 
     // Lets remove all the groups the author is not a member of.
     if (!$author->hasPermission('manage all groups')) {
-      $author_groups = social_group_get_all_group_members($author->id());
+      $account_groups = social_group_get_all_group_members($author->id());
 
-      foreach ($element['#options'] as $option_category_key => $option_category) {
-        if (is_array($option_category)) {
-          foreach ($option_category as $option_key => $option) {
-            if (!in_array($option_key, $author_groups)) {
-              unset($element['#options'][$option_category_key][$option_key]);
-            }
-          }
+      foreach ($element['#options'] as $option_category_key => $groups_in_category) {
+        if ($option_category_key === '_none') {
+          continue;
+        }
+        if (is_array($groups_in_category)) {
+          $element['#options'][$option_category_key] = $this->removeGroupUserIsNotMemberOf($groups_in_category, $account_groups);
+          // Remove the entire category if there are no groups for this author.
           if (empty($element['#options'][$option_category_key])) {
             unset($element['#options'][$option_category_key]);
           }
         }
-        elseif (!in_array($option_category_key, $author_groups)) {
-          unset($element['#options'][$option_category_key]);
+        else {
+          // Remove groups the user is not a member of.
+          if (!in_array($option_category_key, $account_groups)) {
+            unset($element['#options'][$option_category_key]);
+          }
         }
       }
     }
@@ -144,6 +147,26 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget {
     $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
 
     return $ajax_response;
+  }
+
+  /**
+   * Remove groups where account is not a member of.
+   *
+   * @param array $groups
+   *   A list of groups to check.
+   * @param array $account_groups
+   *   A list of groups user is a member of.
+   *
+   * @return array
+   *   An array of groups where the user is member of.
+   */
+  private function removeGroupUserIsNotMemberOf(array $groups, array $account_groups) {
+    foreach ($groups as $gid => $group_title) {
+      if (!in_array($gid, $account_groups)) {
+        unset($groups[$gid]);
+      }
+    }
+    return $groups;
   }
 
 }
