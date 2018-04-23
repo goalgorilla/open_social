@@ -95,7 +95,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header = [
       'member' => $this->t('Member'),
-      'organization' => $this->t('Organisation'),
+      'organization' => $this->t('Organization'),
       'group_role' => $this->t('Role'),
     ];
     return $header + parent::buildHeader();
