@@ -43,7 +43,9 @@ function _social_gdpr_set_permissions() {
  */
 function _social_gdpr_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'without consent',
+  ];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
@@ -58,6 +60,10 @@ function _social_gdpr_get_permissions($role) {
     'access data policy revisions',
     'revert all data policy revisions',
   ]);
+
+  // An authenticated user should give consent when it necessary.
+  $id = array_search('without consent', $permissions['authenticated']);
+  unset($permissions['authenticated'][$id]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
