@@ -93,15 +93,14 @@ function _social_user_export_get_view(array $query = [], $execute = TRUE) {
  *   The account to get the data for.
  *
  * @return string
- *   First name of the use.
+ *   Returns first name of the use.
  */
 function social_user_export_first_name(UserInterface $account) {
   $first_name = '';
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  // Check if entity type 'profile' exist.
+  // Check if entity type 'profile' exists.
   try {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    // Checking if Storage is not empty.
     if (!empty($storage)) {
       if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
         $first_name = $user_profile->get('field_profile_first_name')->value;
@@ -109,26 +108,26 @@ function social_user_export_first_name(UserInterface $account) {
     }
   }
   catch (InvalidPluginDefinitionException $e) {
-    $first_name = "";
+    $first_name = '';
   }
   return $first_name;
 }
 
 /**
- * Returns LastName of user.
+ * Returns last name of user.
  *
  * @param \Drupal\user\UserInterface $account
  *   The account to get the data for.
  *
  * @return string
- *   LastName of the user.
+ *   Returns last name of the user.
  */
 function social_user_export_last_name(UserInterface $account) {
   $last_name = '';
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  // Check if entity type 'profile' exists.
   try {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    // Checking if Storage is not empty.
     if (!empty($storage)) {
       if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
         $last_name = $user_profile->get('field_profile_last_name')->value;
