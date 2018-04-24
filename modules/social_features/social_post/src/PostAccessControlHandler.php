@@ -6,8 +6,6 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\user\Plugin\views\argument\Uid;
-use Drupal\user\EntityOwnerInterface;
 
 /**
  * Access controller for the Post entity.
@@ -86,7 +84,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
             return AccessResult::allowed();
           }
           if ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
-          	return AccessResult::allowed();
+            return AccessResult::allowed();
           }
           return AccessResult::forbidden();
         }
@@ -123,11 +121,11 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-        	if ($account->hasPermission('view unpublished post entities', $account)) {
+          if ($account->hasPermission('view unpublished post entities', $account)) {
             return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');
           }
           elseif ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
-          	return AccessResult::allowedIfHasPermission($account, 'view own unpublished post entities');
+            return AccessResult::allowedIfHasPermission($account, 'view own unpublished post entities');
           }
         }
         return AccessResult::allowedIfHasPermission($account, 'view published post entities');
