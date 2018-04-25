@@ -152,9 +152,12 @@ content:
     third_party_settings: {  }
     region: content
   uid:
-    type: options_select
+    type: entity_reference_autocomplete
     weight: 3
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     region: content
 hidden:
