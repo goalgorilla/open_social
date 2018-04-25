@@ -42,7 +42,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
                     return AccessResult::forbidden();
                   }
                 }
-                // Fallback for invalid groups or if there is no group recipient.
+                // Fallback for invalid groups or if there is no group
+                // recipient.
                 return $this->checkDefaultAccess($entity, $operation, $account);
               }
               return AccessResult::forbidden();
@@ -80,13 +81,12 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
           }
         }
         else {
-          if ($account->hasPermission('view unpublished post entities', $account)) {
-            return AccessResult::allowed();
+          // Fetch information from the entity object if possible.
+          $uid = $entity->getOwnerId();
+          // Check if authors can view their own unpublished posts.
+          if ($operation === 'view' && $account->hasPermission('view own unpublished post entities') && $account->isAuthenticated() && $account->id() == $uid) {
+            return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
           }
-          if ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
-            return AccessResult::allowed();
-          }
-          return AccessResult::forbidden();
         }
 
       case 'update':
@@ -121,12 +121,10 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          if ($account->hasPermission('view unpublished post entities', $account)) {
-            return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');
+          if ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+            return AccessResult::allowed();
           }
-          elseif ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
-            return AccessResult::allowedIfHasPermission($account, 'view own unpublished post entities');
-          }
+          return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');
         }
         return AccessResult::allowedIfHasPermission($account, 'view published post entities');
 

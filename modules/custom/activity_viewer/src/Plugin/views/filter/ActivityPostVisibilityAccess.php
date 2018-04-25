@@ -47,7 +47,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     // Add tables and joins.
     $this->query->addTable('activity__field_activity_recipient_group');
-
     $this->query->addTable('activity__field_activity_entity');
 
     $configuration = [
@@ -128,6 +127,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_access = db_and();
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
     $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
+
     if (!$account->hasPermission('view public posts')) {
       $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
     }
@@ -138,6 +138,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
 
     $or->condition($post_access);
+
+    $post_status = db_and();
+    $post_status->condition('post.status', 1, '=');
+    $and_wrapper->condition($post_status);
 
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
