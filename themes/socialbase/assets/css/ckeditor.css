@@ -446,8 +446,6 @@ th {
 .table-responsive {
   display: block;
   width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .table-responsive .table-bordered {
@@ -1407,6 +1405,12 @@ body {
   }
   figure.align-left figcaption, figure.align-right figcaption, figure.align-center figcaption {
     padding: 0;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    padding-bottom: 100px;
+    margin-bottom: -100px;
   }
   .hidden-for-phone-only {
     display: none;

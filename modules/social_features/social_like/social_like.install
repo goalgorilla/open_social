@@ -52,6 +52,15 @@ function social_like_update_8004() {
 }
 
 /**
+ * Enable deleting likes from a database when a user is deleted.
+ */
+function social_like_update_8005() {
+  \Drupal::configFactory()->getEditable('votingapi.settings')
+    ->set('delete_everywhere', TRUE)
+    ->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_like_set_permissions() {

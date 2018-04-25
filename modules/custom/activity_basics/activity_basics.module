@@ -2,19 +2,37 @@
 
 /**
  * @file
- * Contains activity_basics.module..
+ * Contains activity_basics.module.
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
+ * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity) {
-  /* @var $activity_logger_factory Drupal\activity_creator\Plugin\ActivityActionManager */
-  $activity_logger_factory = \Drupal::service('plugin.manager.activity_action.processor');
-  // Trigger the create action for enttites.
-  /* @var $create_action Drupal\activity_creator\Plugin\ActivityAction\CreateActivityAction */
-  $create_action = $activity_logger_factory->createInstance('create_entitiy_action');
-  $create_action->create($entity);
+  _activity_basics_entity_action($entity, 'create_entitiy_action');
+}
+
+/**
+ * Implements hook_social_group_move().
+ */
+function activity_basics_social_group_move(NodeInterface $node) {
+  $node->setCreatedTime($node->getChangedTime());
+  _activity_basics_entity_action($node, 'move_entity_action');
+}
+
+/**
+ * Create or modify some entity.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity.
+ * @param string $instance
+ *   The instance.
+ */
+function _activity_basics_entity_action(EntityInterface $entity, $instance) {
+  \Drupal::service('plugin.manager.activity_action.processor')
+    ->createInstance($instance)
+    ->create($entity);
 }
