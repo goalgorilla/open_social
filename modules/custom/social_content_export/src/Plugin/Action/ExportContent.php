@@ -46,7 +46,7 @@ class ExportContent extends ActionBase implements ContainerFactoryPluginInterfac
    * @var array
    */
   protected $query = [];
-  
+
   /**
    * Constructs a new ExportContent object.
    *
