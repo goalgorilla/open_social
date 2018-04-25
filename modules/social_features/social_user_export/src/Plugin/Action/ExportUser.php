@@ -47,7 +47,7 @@ class ExportUser extends ActionBase implements ContainerFactoryPluginInterface {
    * @var array
    */
   protected $query = [];
-
+  
   /**
    * Constructs a ExportUser object.
    *
