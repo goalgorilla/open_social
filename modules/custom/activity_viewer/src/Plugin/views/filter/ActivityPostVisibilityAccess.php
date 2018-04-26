@@ -139,8 +139,9 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $or->condition($post_access);
 
-    $post_status = db_and();
+    $post_status = db_or();
     $post_status->condition('post.status', 1, '=');
+    $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
     $and_wrapper->condition($post_status);
 
     // Comments: retrieve comments the user has access to.
