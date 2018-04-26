@@ -9,6 +9,7 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\user\Plugin\Action\BlockUser;
@@ -281,17 +282,13 @@ function _social_user_search_content_pre_render(array $build) {
  * Implements hook_user_format_name_alter().
  */
 function social_user_user_format_name_alter(&$name, $account) {
-
+  /** @var \Drupal\Core\Session\AccountInterface $account */
   $accountname = '';
-  // Let's get the First name Last name.
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($storage)) {
-    // Returns false.
-    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = $user_profile->get('field_profile_first_name')->value . ' ' . $user_profile->get('field_profile_last_name')->value;
-      trim($accountname);
-    }
+  $user_profile = Profile::load($account->id());
+
+  if ($user_profile instanceof Profile) {
+    $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
+    $accountname = trim($accountname);
   }
   $name = ($accountname !== '') ? $accountname : $name;
 }
