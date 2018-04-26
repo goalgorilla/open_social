@@ -296,6 +296,8 @@ function social_user_user_format_name_alter(&$name, $account) {
     }
   }
   $name = ($accountname !== '') ? $accountname : $name;
+  // Make sure weird chars are displayed normally.
+  $name = html_entity_decode($name, ENT_QUOTES);
 }
 
 /**
