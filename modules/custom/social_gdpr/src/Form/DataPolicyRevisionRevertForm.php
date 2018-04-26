@@ -19,4 +19,18 @@ class DataPolicyRevisionRevertForm extends DataPolicyRevisionRevertFormBase {
     return new Url('social_gdpr.data_policy.revisions');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfirmText() {
+    return $this->t('Yes');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getQuestion() {
+    return $this->t('Are you sure to revert this revision');
+  }
+
 }
