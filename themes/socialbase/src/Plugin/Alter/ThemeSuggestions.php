@@ -68,6 +68,14 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
         break;
 
+      case 'confirm_form':
+
+        if (isset($variables['form']['#form_id']) && $variables['form']['#form_id'] == 'gdpr_consent_data_policy_revision_revert_confirm') {
+          $suggestions[] = $variables['theme_hook_original'] . '__modal';
+        }
+
+        break;
+
       case 'container':
 
         if (isset($variables['element']['#id']) && $variables['element']['#id'] == 'edit-field-post-image-wrapper') {

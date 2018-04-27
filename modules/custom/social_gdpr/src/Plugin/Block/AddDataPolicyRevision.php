@@ -30,6 +30,7 @@ class AddDataPolicyRevision extends BlockBase {
           'btn',
           'btn-primary',
           'btn-raised',
+          'btn-full',
           'waves-effect',
           'brand-bg-primary',
         ],

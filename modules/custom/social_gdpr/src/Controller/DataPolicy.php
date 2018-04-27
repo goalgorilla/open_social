@@ -56,8 +56,9 @@ class DataPolicy extends DataPolicyController {
             'class' => ['use-ajax'],
             'data-dialog-type' => 'modal',
             'data-dialog-options' => Json::encode([
-              'title' => $this->t('Are you sure to revert this revision'),
-              'width' => 700,
+              'dialogClass' => 'social-dialog',
+              'title' => '',
+              'width' => 360,
             ]),
           ];
         }
