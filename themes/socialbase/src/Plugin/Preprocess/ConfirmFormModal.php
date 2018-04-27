@@ -5,11 +5,11 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 
 /**
- * Pre-processes variables for the 'confirm_form__modal' theme hook.
+ * Pre-processes variables for the "confirm_form__modal" theme hook.
  *
  * @ingroup plugins_preprocess
  *
- * @BootstrapPreprocess('confirm_form__modal')
+ * @BootstrapPreprocess("confirm_form__modal")
  */
 class ConfirmFormModal extends PreprocessBase {
 
