@@ -33,38 +33,38 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   }
   
   protected function addTranslationOverrides($names, array &$overrides) {
-    $field_overrides = [
-      'core.base_field_override.node.book.title' => [
-        'translatable' => TRUE,
-      ],
-      'core.base_field_override.node.book.menu_link' => [
-        'translatable' => TRUE,
-      ],
-      'core.base_field_override.node.book.path' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.book.body' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.book.field_book_image' => [
-        'third_party_settings' => [
-          'content_translation' => [
-            'translation_sync' => [
-              'file' => 'file',
-              'alt' => '0',
-              'title' => '0',
-            ],
-          ],
-        ],
-        'translatable' => TRUE,
-      ],
-    ];
-
-    foreach ($field_overrides as $name => $override) {
-      if (in_array($name, $names)) {
-        $overrides[$name] = $override;
-      }
-    }
+//    $field_overrides = [
+//      'core.base_field_override.node.book.title' => [
+//        'translatable' => TRUE,
+//      ],
+//      'core.base_field_override.node.book.menu_link' => [
+//        'translatable' => TRUE,
+//      ],
+//      'core.base_field_override.node.book.path' => [
+//        'translatable' => TRUE,
+//      ],
+//      'field.field.node.book.body' => [
+//        'translatable' => TRUE,
+//      ],
+//      'field.field.node.book.field_book_image' => [
+//        'third_party_settings' => [
+//          'content_translation' => [
+//            'translation_sync' => [
+//              'file' => 'file',
+//              'alt' => '0',
+//              'title' => '0',
+//            ],
+//          ],
+//        ],
+//        'translatable' => TRUE,
+//      ],
+//    ];
+//
+//    foreach ($field_overrides as $name => $override) {
+//      if (in_array($name, $names)) {
+//        $overrides[$name] = $override;
+//      }
+//    }
   }
 
   /**

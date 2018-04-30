@@ -33,32 +33,32 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   }
   
   protected function addTranslationOverrides($names, array &$overrides) {
-    $field_overrides = [
-      'core.base_field_override.node.event.title' => [
-        'translatable' => TRUE,
-      ],
-      'core.base_field_override.node.event.menu_link' => [
-        'translatable' => TRUE,
-      ],
-      'core.base_field_override.node.event.path' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.event.body' => [
-        'translatable' => TRUE,
-      ],
-      'field.field.node.event.field_event_image' => [
-        'third_party_settings' => [
-          'content_translation' => [
-            'translation_sync' => [
-              'file' => 'file',
-              'alt' => '0',
-              'title' => '0',
-            ],
-          ],
-        ],
-        'translatable' => TRUE,
-      ],
-    ];
+//    $field_overrides = [
+//      'core.base_field_override.node.event.title' => [
+//        'translatable' => TRUE,
+//      ],
+//      'core.base_field_override.node.event.menu_link' => [
+//        'translatable' => TRUE,
+//      ],
+//      'core.base_field_override.node.event.path' => [
+//        'translatable' => TRUE,
+//      ],
+//      'field.field.node.event.body' => [
+//        'translatable' => TRUE,
+//      ],
+//      'field.field.node.event.field_event_image' => [
+//        'third_party_settings' => [
+//          'content_translation' => [
+//            'translation_sync' => [
+//              'file' => 'file',
+//              'alt' => '0',
+//              'title' => '0',
+//            ],
+//          ],
+//        ],
+//        'translatable' => TRUE,
+//      ],
+//    ];
 
     foreach ($field_overrides as $name => $override) {
       if (in_array($name, $names)) {
