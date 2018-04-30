@@ -232,7 +232,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   }
 
   /**
-   * Get destinations.
+   * {@inheritdoc}
    */
   public function getDestinations() {
     $values = [];

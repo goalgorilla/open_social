@@ -232,6 +232,15 @@ function social_event_flagging_insert(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_event_user_delete(EntityInterface $entity) {
+  $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+  $entities = $storage->loadByProperties(['user_id' => $entity->id()]);
+  $storage->delete($entities);
+}
+
+/**
  * Formats the event start end date.
  */
 function _social_event_format_date($event, $view_mode) {
@@ -269,7 +278,7 @@ function _social_event_format_date($event, $view_mode) {
 
   // Get date and time formats.
   $date_formatter = \Drupal::service('date.formatter');
-  $date_format = ($view_mode === 'hero') ? 'social_long_date' : 'social_short_date';
+  $date_format = ($view_mode === 'hero') ? 'social_long_date' : 'social_medium_extended_date';
   $time_format = 'social_time';
 
   if (!empty($start_datetime)) {

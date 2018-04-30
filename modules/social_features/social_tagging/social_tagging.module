@@ -14,6 +14,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -276,53 +277,53 @@ function social_tagging_entity_delete(EntityInterface $entity) {
 /**
  * Build output on node view.
  *
- * @param \Drupal\node\Entity\Node $node
+ * @param \Drupal\node\NodeInterface $node
  *   A node.
  *
  * @return array
  *   Hierarchic presentation of the terms.
  */
-function social_tagging_process_tags(Node $node) {
-
-  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
-
-  $renderable = [];
-  $tarray = [];
-
-  if ($node instanceof Node) {
-
-    if ($node->hasField('social_tagging')) {
-
-      if ($tag_service->allowSplit()) {
-        $tarray = $tag_service->buildHierarchy($node->get('social_tagging')->getValue());
-        $renderable = [
-          '#theme' => 'social_tagging_split',
-          '#taghierarchy' => $tarray,
-        ];
-      }
-      elseif ($tag_service->active()) {
-        // Just a simple way to add all tags to the array.
-        foreach ($node->get('social_tagging')->getValue() as $term) {
-          $url = Url::fromRoute('view.search_content.page_no_value', [
-            'tag[]' => $term['target_id'],
-          ]);
-
-          /** @var Drupal\taxonomy\Entity\Term $term */
-          $taxonomy_term = Term::load($term['target_id']);
-          $tarray[$taxonomy_term->getName()] = $url->toString();
-        }
-
-        $renderable = [
-          '#theme' => 'social_tagging_nosplit',
-          '#tagstitle' => t('Tags'),
-          '#tags' => $tarray,
-        ];
-      }
-    }
-
+function social_tagging_process_tags(NodeInterface $node) {
+  if (!($node instanceof NodeInterface && $node->hasField('social_tagging'))) {
+    return '';
   }
 
-  return drupal_render($renderable);
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+
+  if (!$tag_service->active()) {
+    return '';
+  }
+
+  $terms = $node->get('social_tagging')->getValue();
+
+  if ($tag_service->allowSplit()) {
+    $renderable = [
+      '#theme' => 'social_tagging_split',
+      '#taghierarchy' => $tag_service->buildHierarchy($terms),
+    ];
+  }
+  else {
+    $tarray = [];
+
+    // Just a simple way to add all tags to the array.
+    foreach ($terms as $term) {
+      $url = Url::fromRoute('view.search_content.page_no_value', [
+        'tag[]' => $term['target_id'],
+      ]);
+
+      /** @var Drupal\taxonomy\Entity\Term $term */
+      $taxonomy_term = Term::load($term['target_id']);
+      $tarray[$taxonomy_term->getName()] = $url->toString();
+    }
+
+    $renderable = [
+      '#theme' => 'social_tagging_nosplit',
+      '#tagstitle' => t('Tags'),
+      '#tags' => $tarray,
+    ];
+  }
+
+  return \Drupal::service('renderer')->render($renderable);
 }
 
 /**
@@ -343,22 +344,41 @@ function social_tagging_theme($existing, $type, $theme, $path) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
-  $options = [];
-  // Must be either one of these form_ids.
-  if (in_array($form['#id'], ["views-exposed-form-search-content-page-no-value", "views-exposed-form-search-content-page"])) {
-    if ($tag_service->allowSplit()) {
-      foreach ($tag_service->getCategories() as $key => $value) {
-        $options[$value] = $tag_service->getChildren($key);
-      }
+  $form_ids = [
+    'views-exposed-form-search-content-page-no-value',
+    'views-exposed-form-search-content-page',
+  ];
 
-      $form['tag']['#options'] = $options;
+  // Must be either one of these form_ids.
+  if (!in_array($form['#id'], $form_ids)) {
+    return;
+  }
+
+  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+
+  if (!($tag_service->active() && $tag_service->hasContent())) {
+    return;
+  }
+
+  if ($tag_service->allowSplit()) {
+    foreach ($tag_service->getCategories() as $tid => $label) {
+      $label = social_tagging_to_machine_name($label);
+
+      if (isset($form[$label])) {
+        $form[$label]['#options'] = $tag_service->getChildren($tid);
+      }
     }
-    // Only remove all toplevel items.
-    elseif ($tag_service->active()) {
-      // Remove main items and just insert child options.
-      $options = $tag_service->getAllChildren();
-      $form['tag']['#options'] = $options;
+  }
+  // Only remove all top level items.
+  else {
+    // Remove main items and just insert child options.
+    $form['tag']['#options'] = [];
+
+    foreach ($tag_service->getCategories() as $tid => $label) {
+      if (!empty($options = $tag_service->getChildren($tid))) {
+        $form['tag']['#options'][$label] = $options;
+      }
     }
   }
 }

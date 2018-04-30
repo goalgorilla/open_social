@@ -95,8 +95,7 @@ function social_group_form_group_public_group_add_form_alter(&$form, FormStateIn
  */
 function social_group_form_group_public_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $group = $form_state->getFormObject()->getEntity();
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $form['group_type'] = (new SocialGroupAddForm($entity_type_manager))->getGroupTypeElement();
+  $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
   $form['group_type']['#disabled'] = TRUE;
   $form['#group_children']['group_type'] = 'group_content';
@@ -131,7 +130,7 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
 }
 
 /**
- * Form submit redirect for open and closed groups.
+ * Form submit redirect for public and open and closed groups.
  *
  * @param array $form
  *   Group add or group edit form.
@@ -139,10 +138,10 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
  *   Form state interface.
  */
 function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
-  // Set redirect to the group overview page when user saves a group.
+  // Set redirect to the group about page.
   $form_state->setRedirect(
-    'view.groups.page_user_groups',
-    ['user' => \Drupal::currentUser()->id(), []]
+    'view.group_information.page_group_about',
+    $form_state->getRedirect()->getRouteParameters()
   );
 }
 
@@ -458,8 +457,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['actions']['submit']['#value'] = t('Save');
 
     if (in_array($form_id, $group_forms['edit'])) {
-      $etm = \Drupal::service('entity_type.manager');
-      $social_group_form = new SocialGroupAddForm($etm);
+      $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
       $group_type_element = $social_group_form->getGroupTypeElement();
       // Get the current group.
       $group = _social_group_get_current_group();
