@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @stability-2
+@api @group @stability @DS-956 @DS-4211 @stability-2
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -35,8 +35,6 @@ Feature: Edit my group as a group manager
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text - edited"
     And I press "Save"
     And I should see "Test open group" in the "Main content"
-    And I click "Test open group" in the "Main content"
-    And I click "About"
     Then I should see "Description text - edited" in the "Main content"
     And I should see "1 member"
 
@@ -45,7 +43,7 @@ Feature: Edit my group as a group manager
     Then I should see the link "Add member"
     And I should see "Member"
     And I should see "Group Manager One"
-    And I should see "Organisation"
+    And I should see "Organization"
     And I should see "GoalGorilla"
     And I should see "Role"
     And I should see "Group Manager"

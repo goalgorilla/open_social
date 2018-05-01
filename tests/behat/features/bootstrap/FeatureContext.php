@@ -12,6 +12,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use \Drupal\locale\SourceString;
 
 /**
  * Defines application features from the specific context.
@@ -78,8 +79,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     /**
      * @When /^I fill in the "([^"]*)" WYSIWYG editor with "([^"]*)"$/
      */
-    public function iFillInTheWysiwygEditor($instanceId, $text) {
-      $instance = $this->getWysiwygInstance($instanceId);
+    public function iFillInTheWysiwygEditor($locator, $text) {
+      $field = $this->getSession()->getPage()->findField($locator);
+
+      if (null === $field) {
+        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $locator);
+      }
+
+      $id = $field->getAttribute('id');
+      $instance = $this->getWysiwygInstance($id);
       $this->getSession()->executeScript("$instance.setData(\"$text\");");
     }
 
@@ -800,5 +808,54 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       // Now click the element.
       $element->click();
+    }
+
+    /**
+     * Turn off translations import.
+     *
+     * @Given I turn off translations import
+     */
+    public function turnOffTranslationsImport()
+    {
+      // Let's disable translation.path for now.
+      \Drupal::configFactory()->getEditable('locale.settings')->set('translation.import_enabled', FALSE)->save();
+    }
+
+    /**
+     * Translate a string.
+     *
+     * @Given /I translate "(?P<source>[^"]+)" to "(?P<translation>[^"]+)" for "(?P<langcode>[^"]+)"$/
+     */
+    public function iTranslate($source, $translation, $langcode)
+    {
+      $this->addTranslation($source, $translation, $langcode);
+    }
+
+    /**
+     * Helper function to add translation.
+     *
+     * @param $source_string
+     * @param $translated_string
+     * @param $langcode
+     */
+    public function addTranslation($source_string, $translated_string, $langcode) {
+      // Find existing source string.
+      $storage = \Drupal::service('locale.storage');
+      $string = $storage->findString(array('source' => $source_string));
+      if (is_null($string)) {
+        $string = new SourceString();
+        $string->setString($source_string);
+        $string->setStorage($storage);
+        $string->save();
+      }
+
+
+      // Create translation. If one already exists, it will be replaced.
+      $translation = $storage->createTranslation(array(
+        'lid' => $string->lid,
+        'language' => $langcode,
+        'translation' => $translated_string,
+      ))->save();
+      return $translation;
     }
 }

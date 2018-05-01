@@ -5,8 +5,10 @@
  * Builds placeholder replacement tokens for Social Comment module.
  */
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_token_info().
@@ -51,25 +53,23 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
         case 'parent_entity_author':
 
-          if ($name === 'parent_entity_author') {
-            if (isset($message->field_message_related_object)) {
-              $target_type = $message->field_message_related_object->target_type;
-              $target_id = $message->field_message_related_object->target_id;
-              $comment = \Drupal::entityTypeManager()
-                ->getStorage($target_type)
-                ->load($target_id);
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            $comment = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
 
-              // Or special handling for post entities. \Drupal::logger('commented_content_type')->notice(var_dump($comment));
-              if (!empty($comment)) {
-                if ($comment->getEntityTypeId() == 'comment') {
-                  if (!empty($comment->getCommentedEntity())) {
-                    $node = $comment->getCommentedEntity();
-                    $owner = $node->getOwner();
-                    $name = $owner->getDisplayName();
+            // Or special handling for post entities. \Drupal::logger('commented_content_type')->notice(var_dump($comment));
+            if (!empty($comment)) {
+              if ($comment->getEntityTypeId() == 'comment') {
+                if (!empty($comment->getCommentedEntity())) {
+                  $node = $comment->getCommentedEntity();
+                  $owner = $node->getOwner();
+                  $name = $owner->getDisplayName();
 
-                    if (!empty($name)) {
-                      $replacements[$original] = $name;
-                    }
+                  if (!empty($name)) {
+                    $replacements[$original] = $name;
                   }
                 }
               }
@@ -80,36 +80,35 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
         case 'commented_content_type':
 
-          if ($name == 'commented_content_type') {
-            if (isset($message->field_message_related_object)) {
-              $target_type = $message->field_message_related_object->target_type;
-              $target_id = $message->field_message_related_object->target_id;
-              /** @var \Drupal\comment\Entity\Comment $comment */
-              $comment = \Drupal::entityTypeManager()
-                ->getStorage($target_type)
-                ->load($target_id);
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            /** @var \Drupal\comment\Entity\Comment $comment */
+            $comment = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
 
-              if (!empty($comment)) {
-                if ($comment->getEntityTypeId() == 'comment') {
-                  /** @var \Drupal\Core\Entity\Entity $entity */
-                  $entity = $comment->getCommentedEntity();
-                  if (!empty($entity)) {
-                    if (is_callable([$entity, 'getDisplayName'])) {
-                      $display_name = $entity->getDisplayName();
-                    }
-                    else {
-                      if ($entity instanceof NodeInterface) {
-                        $display_name = strtolower($entity->type->entity->label());
-                      }
-                      else {
-                        $display_name = $entity->bundle();
-                      }
-                    }
-
-                    if (!empty($display_name)) {
-                      $replacements[$original] = $display_name;
-                    }
+            if (!empty($comment) && $comment->getEntityTypeId() == 'comment') {
+              /** @var \Drupal\Core\Entity\Entity $entity */
+              $entity = $comment->getCommentedEntity();
+              if (!empty($entity)) {
+                if ($entity instanceof PostInterface) {
+                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
+                }
+                elseif (is_callable([$entity, 'getDisplayName'])) {
+                  $display_name = $entity->getDisplayName();
+                }
+                else {
+                  if ($entity instanceof NodeInterface) {
+                    $display_name = strtolower($entity->type->entity->label());
                   }
+                  else {
+                    $display_name = $entity->bundle();
+                  }
+                }
+
+                if (!empty($display_name)) {
+                  $replacements[$original] = $display_name;
                 }
               }
             }

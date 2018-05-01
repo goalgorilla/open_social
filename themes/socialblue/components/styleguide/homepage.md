@@ -24,7 +24,7 @@ brand styling and extra components. For the extra components mostly
 [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
 principles are used.
 
-### Organisation
+### Organization
 
 Design components are reusable designs that can be applied using just the CSS
 class names specified in the component. We categorize our components to make

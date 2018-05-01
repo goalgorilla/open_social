@@ -117,16 +117,22 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
  *   The form state interface.
  */
 function _social_profile_profile_edit_form_submit(array $form, FormStateInterface $form_state) {
-  // Get username.
-  $user = \Drupal::currentUser();
-  // Invalidate cache tag.
-  Cache::invalidateTags(['user:breadcrumb:' . $user->id()]);
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
 
-  // Set redirect to the profile overview page when a user saves their profile.
-  $form_state->setRedirect(
-    'view.user_information.user_information',
-    ['user' => \Drupal::currentUser()->id(), []]
-  );
+  // Let's be on the safe side.
+  if ($profile instanceof Profile) {
+    // Get the uid of the profile.
+    $uid = $profile->getOwnerId();
+    // Invalidate cache tag.
+    Cache::invalidateTags(['user:breadcrumb:' . $uid]);
+    // Set redirect to the profile page when a user saves their profile.
+    $form_state->setRedirect(
+      'view.user_information.user_information', [
+        'user' => $uid,
+      ]
+    );
+  }
 }
 
 /**
@@ -236,6 +242,12 @@ function social_profile_preprocess_profile(array &$variables) {
   if (!empty($profile->field_profile_banner_image->entity)) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+  }
+
+  // Add the profile image.
+  if (!empty($profile->field_profile_image->entity)) {
+    $variables['profile_image_url'] = ImageStyle::load('social_medium')
+      ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
 
 }
@@ -398,31 +410,16 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view().
- */
-function social_profile_profile_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  // Change the URL in the compact view mode.
-  if ($view_mode === 'compact' && $entity instanceof Profile) {
-    $uid = $entity->getOwnerId();
-    // Get the url from the user profile.
-    $url = Url::fromRoute('entity.user.canonical', [
-      'user' => $uid,
-    ]);
-    // Add it to the build.
-    $build['field_profile_image'][0]['#url'] = $url;
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
 
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
+
   // If the current user has no access to viewing user profiles, he might not
   // have access to the users profile.
-  if (!$current_user->hasPermission('view any profile profile') && ($display->getMode() === 'compact' || $display->getMode() === 'compact_notification')) {
+  if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
     // Try to load the profile picture.
     $fid = $entity->get('field_profile_image')->target_id;
     // Must have a value and not be NULL.

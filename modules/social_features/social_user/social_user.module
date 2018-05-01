@@ -5,12 +5,13 @@
  * The social user module alterations.
  */
 
-use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\block\Entity\Block;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
+use Drupal\user\Plugin\Action\BlockUser;
 
 /**
  * Implements hook_action_info_alter().
@@ -81,7 +82,17 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
     // So it's actually the first time the user logs in and we can do our
     // redirect.
     $user = \Drupal::routeMatch()->getParameter('user');
-    if ($user->getCreatedTime() == $user->getChangedTime()) {
+
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $storage->loadByUser($user, 'profile');
+
+    if (!($profile instanceof ProfileInterface)) {
+      $profile = &$user;
+    }
+
+    if ($profile->getCreatedTime() == $profile->getChangedTime()) {
 
       // Remove unwanted message.
       $message = 'You have just used your one-time login link. It is no longer necessary to use this link to log in. Please change your password.';

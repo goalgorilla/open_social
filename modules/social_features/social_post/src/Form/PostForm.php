@@ -71,9 +71,7 @@ class PostForm extends ContentEntityForm {
           unset($form['field_visibility']['widget'][0]['#options'][3]);
         }
         else {
-          // Remove public option from options.
           $form['field_visibility']['widget'][0]['#default_value'] = "0";
-          unset($form['field_visibility']['widget'][0]['#options'][1]);
           unset($form['field_visibility']['widget'][0]['#options'][2]);
 
           $current_group = _social_group_get_current_group();
@@ -82,14 +80,24 @@ class PostForm extends ContentEntityForm {
           }
           else {
             $group_type_id = $current_group->getGroupType()->id();
-            if ($group_type_id !== 'closed_group') {
+            $allowed_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id);
+            if ($allowed_options['community'] !== TRUE) {
+              unset($form['field_visibility']['widget'][0]['#options'][0]);
+            }
+            if ($allowed_options['public'] !== TRUE) {
+              unset($form['field_visibility']['widget'][0]['#options'][1]);
+            }
+            else {
+              $form['field_visibility']['widget'][0]['#default_value'] = "1";
+            }
+            if ($allowed_options['group'] !== TRUE) {
               unset($form['field_visibility']['widget'][0]['#options'][3]);
             }
             else {
-              unset($form['field_visibility']['widget'][0]['#options'][0]);
               $form['field_visibility']['widget'][0]['#default_value'] = "3";
             }
           }
+
         }
       }
 
@@ -160,15 +168,18 @@ class PostForm extends ContentEntityForm {
 
   /**
    * Function to set the current form modes.
+   *
+   * Retrieve the form display before it is overwritten in the parent.
    */
   protected function setFormMode() {
-    // Retrieve the form display before it is overwritten in the parent.
-    $bundle = $this->getBundleEntity()->id();
+    if ($this->getBundleEntity() !== NULL) {
+      $bundle = $this->getBundleEntity()->id();
 
-    // Set as variables, since the bundle might be different.
-    $this->postViewDefault = 'post.' . $bundle . '.default';
-    $this->postViewProfile = 'post.' . $bundle . '.profile';
-    $this->postViewGroup = 'post.' . $bundle . '.group';
+      // Set as variables, since the bundle might be different.
+      $this->postViewDefault = 'post.' . $bundle . '.default';
+      $this->postViewProfile = 'post.' . $bundle . '.profile';
+      $this->postViewGroup = 'post.' . $bundle . '.group';
+    }
   }
 
 }

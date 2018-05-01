@@ -20,6 +20,15 @@
   cursor: not-allowed;
 }
 
+.page-preview .navbar-default {
+  position: relative;
+  z-index: 10;
+}
+
+.page-preview .main-container {
+  padding-top: 0;
+}
+
 .navbar {
   position: relative;
   min-height: 50px;
@@ -130,6 +139,7 @@
   width: 24px;
   height: 24px;
   display: inline-block;
+  pointer-events: none;
 }
 
 .navbar-nav__icon + .badge {
@@ -384,6 +394,50 @@
   }
 }
 
+@media (max-width: 599px) {
+  .nav > li.desktop {
+    display: none;
+  }
+  .navbar-scrollable {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 46px;
+  }
+  .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+  }
+  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 2;
+  }
+}
+
 @media (max-width: 899px) {
   .container--navbar {
     -ms-flex-wrap: wrap;
@@ -455,46 +509,5 @@
 @media screen and (max-height: 480px) {
   .navbar-collapse {
     max-height: 420px;
-  }
-}
-
-@media (max-width: 599px) {
-  .navbar-scrollable {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    height: 46px;
-  }
-  .navbar-scrollable .navbar-nav {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-  }
-  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
-    display: none;
-  }
-  .navbar-scrollable:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 24px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 2;
   }
 }
