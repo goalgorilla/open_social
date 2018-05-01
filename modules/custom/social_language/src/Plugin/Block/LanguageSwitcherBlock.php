@@ -38,16 +38,21 @@ class LanguageSwitcherBlock extends LanguageBlock {
       ],
     ];
 
-    // Get the languages.
+    // Get the language links.
     $route_name = \Drupal::routeMatch()->getRouteName();
     $languagelinks = $this->languageManager->getLanguageSwitchLinks('language_interface', Url::fromRoute($route_name));
-    $current_path = \Drupal::service('path.current')->getPath();
-
-    //TODO: use configuration for the prefix instead of assuming ISO.
-    $prefixes = \Drupal::config('language.negotiation')->get('url.prefixes');
+    // Use the default URL generator that does not rewrite the language.
+    $url_generator = \Drupal::service('drupal8_url_generator');
 
     // Add languages as links.
     foreach ($languagelinks->links as $iso => $languagelink) {
+      $url_options = [];
+      $url_options['query'] = $languagelink['query'];
+      $url_options['language'] = $languagelink['language'];
+      $languagelink['url']->setOptions($url_options);
+      $languagelink['url']->setUrlGenerator($url_generator);
+      $url_string = $languagelink['url']->toString();
+
       $links['language']['below'][$iso] = [
         'classes' => '',
         'link_attributes' => '',
@@ -57,7 +62,7 @@ class LanguageSwitcherBlock extends LanguageBlock {
         'label' => $languagelink['title'] . " (" . $iso . ")",
         'title' => $languagelink['title'] . " (" . $iso . ")",
         'title_classes' => '',
-        'url' => (($prefixes[$iso] === '') ? '' : '/' . $prefixes[$iso]) . $current_path,
+        'url' =>  $url_string,
       ];
     }
 
