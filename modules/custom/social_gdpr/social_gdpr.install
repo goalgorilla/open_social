@@ -13,6 +13,10 @@ use Drupal\user\Entity\Role;
 function social_gdpr_install() {
   // Set some default permissions.
   _social_gdpr_set_permissions();
+
+  \Drupal::configFactory()->getEditable('gdpr_consent.data_policy')
+    ->set('enforce_consent', TRUE)
+    ->save();
 }
 
 /**
@@ -39,7 +43,9 @@ function _social_gdpr_set_permissions() {
  */
 function _social_gdpr_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [];
+  $permissions['anonymous'] = [
+    'without consent',
+  ];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
@@ -49,11 +55,16 @@ function _social_gdpr_get_permissions($role) {
 
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer data policy settings',
     'edit data policy',
     'view all data policy revisions',
     'access data policy revisions',
     'revert all data policy revisions',
   ]);
+
+  // An authenticated user should give consent when it necessary.
+  $id = array_search('without consent', $permissions['authenticated']);
+  unset($permissions['authenticated'][$id]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];

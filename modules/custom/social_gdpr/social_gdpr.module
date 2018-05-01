@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -29,6 +30,23 @@ function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface
   if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.add') {
     $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_links().
+ */
+function social_gdpr_social_user_account_header_links() {
+  $items = [];
+
+  if (\Drupal::service('gdpr_consent.manager')->needConsent()) {
+    $items['data_policy_agreement'] = [
+      'title' => t('Data policy agreement'),
+      'url' => Url::fromRoute('gdpr_consent.data_policy.agreement'),
+      'after' => 'edit_profile',
+    ];
+  }
+
+  return $items;
 }
 
 /**
