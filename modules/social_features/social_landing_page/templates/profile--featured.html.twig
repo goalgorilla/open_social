@@ -1,0 +1,31 @@
+{% extends 'node--featured.html.twig' %}
+
+{% block card_hero_image %}
+  <div class="img_wrapper">{{ content.field_profile_image }}</div>
+{% endblock %}
+
+{% block card_teaser_type %}
+  <div class="teaser__teaser-type">
+    <svg class="teaser__teaser-type-icon">
+      <use xlink:href="#icon-account_circle"></use>
+    </svg>
+  </div>
+{% endblock %}
+
+{% block card_title %}
+  <h4 class="teaser__title">
+    <a href="{{ profile_stream_url }}">
+      {{ profile_name }}
+    </a>
+  </h4>
+{% endblock %}
+
+{% block card_body %}
+
+  <div class="card__link">
+    <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
+      <span class="visually-hidden">{{ 'about'|t }}{{ profile_name }}</span>
+    </a>
+  </div>
+
+{% endblock %}

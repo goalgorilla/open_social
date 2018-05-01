@@ -1,0 +1,53 @@
+{% extends 'node--featured.html.twig' %}
+
+{% block card_hero_image %}
+
+  <div class="img_wrapper">
+    {% if content.field_group_image|render %}
+      {{ content.field_group_image }}
+    {% else %}
+      <hr class="no-feature-image">
+    {% endif %}
+  </div>
+
+{% endblock %}
+
+{% block card_teaser_type %}
+  <div class="teaser__teaser-type">
+    <svg class="teaser__teaser-type-icon">
+      <use xlink:href="#icon-group-white"></use>
+    </svg>
+  </div>
+{% endblock %}
+
+{% block card_body %}
+  <small class="text-muted">
+    <div class="teaser__content-line">
+      <svg class="teaser__content-type-icon">
+        <use xlink:href="#icon-group"></use>
+      </svg>
+      <span class="teaser__content-text">
+        {% trans %}1 member{% plural group_members %}@count members{% endtrans %}&nbsp;
+      </span>
+    </div>
+    {% if content.field_group_location|render or content.field_group_address|render %}
+      <div class="teaser__content-line">
+        <svg class="teaser__content-type-icon">
+          <use xlink:href="#icon-location"></use>
+        </svg>
+        <span class="teaser__content-text">
+              {{ content.field_group_location }}
+          {% if content.field_group_location is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
+          {{ content.field_group_address }}
+            </span>
+      </div>
+    {% endif %}
+  </small>
+
+  <div class="card__link">
+    <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+      <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+    </a>
+  </div>
+
+{% endblock %}

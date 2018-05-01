@@ -13,7 +13,7 @@ use Drupal\Core\Access\AccessResult;
  *
  * @Block(
  *  id = "pm_add_block",
- *  admin_label = @Translation("PM add block"),
+ *  admin_label = @Translation("Private Message add block"),
  * )
  */
 class PmAddBlock extends BlockBase {

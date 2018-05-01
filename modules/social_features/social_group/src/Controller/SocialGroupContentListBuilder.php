@@ -95,7 +95,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header = [
       'member' => $this->t('Member'),
-      'organization' => $this->t('Organisation'),
+      'organization' => $this->t('Organization'),
       'group_role' => $this->t('Role'),
     ];
     return $header + parent::buildHeader();
@@ -161,7 +161,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
       $operations['edit']['title'] = $this->t('Edit');
     }
     if (isset($operations['delete'])) {
-      $operations['delete']['title'] = $this->t('Delete');
+      $operations['delete']['title'] = $this->t('Remove');
     }
 
     // Slap on redirect destinations for the administrative operations.

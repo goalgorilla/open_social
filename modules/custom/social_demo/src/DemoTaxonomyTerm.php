@@ -76,7 +76,7 @@ abstract class DemoTaxonomyTerm extends DemoContent {
       'uuid' => $item['uuid'],
       'name' => $item['name'],
       'vid' => $item['vid'],
-      'created' => REQUEST_TIME,
+      'created' => \Drupal::time()->getRequestTime(),
     ];
 
     return $entry;

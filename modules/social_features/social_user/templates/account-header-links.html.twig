@@ -34,6 +34,9 @@
                     <li class="{{ item.classes }}">
                       <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
                         <span class="{{item.title_classes}}">{{ item.label }}</span>
+                        {% if item.count_icon %}
+                          <span class="{{item.count_classes}}">{{ item.count_icon }}</span>
+                        {% endif %}
                       </a>
                     </li>
                   {% elseif item.divider %}

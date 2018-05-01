@@ -1,9 +1,25 @@
+jquery.caret:
+  js:
+    /libraries/jquery.caret/dist/jquery.caret.js: {}
+  dependencies:
+    - core/jquery
+
+diff:
+  js:
+    /libraries/diff/dist/diff.min.js: { minified: true }
+
 jquery.mentions:
+  css:
+    theme:
+      css/jquery.mentions.css: {}
   js:
     js/jquery.mentions.js: {}
+    js/jquery.mentions.ckeditor.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui.autocomplete
+    - social_mentions/diff
+    - social_mentions/jquery.caret
 
 social_mentions:
   js:

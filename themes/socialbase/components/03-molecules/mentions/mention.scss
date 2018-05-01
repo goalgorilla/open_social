@@ -1,46 +1,16 @@
 @import "settings";
 
-.mentions-input {
-  .ui-autocomplete {
-    @include z-depth-4;
-    padding: 10px 0;
+// this removes overflow:hidden from main container
+// the page scrolls so entire user list is accessible
+@include for-phone-only {
 
-    .ui-menu-item {
-      list-style: none;
-    }
+  .main-container {
+    overflow: auto;
   }
-}
 
-.mention__item {
-  @include clearfix;
-  font-size: 0.875rem;
-  height: 38px;
-  overflow: hidden;
-  display: flex;
-  padding: 7px 10px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: $gray;
-
-  &:hover {
-    background: $gray-lighter;
+  .ui-autocomplete.ui-widget-content {
+    margin-bottom: 1rem;
   }
 
 }
 
-.mention__avatar {
-  width: 24px;
-  height: auto;
-  margin-right: 10px;
-
-  img {
-    width: 24px;
-    height: auto;
-  }
-}
-
-.mention__name {
-  font-size: 0.875rem;
-  align-self: center;
-  flex: 1;
-}

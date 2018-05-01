@@ -109,7 +109,6 @@ class ExportUser {
   public static function exportUsersAllOperation(array $conditions, array &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
-      $context['sandbox']['current_id'] = 0;
 
       // Get max uid.
       $view = _social_user_export_get_view($conditions);
@@ -124,9 +123,8 @@ class ExportUser {
         'direction' => 'ASC',
       ],
     ];
-    $view->setOffset(0);
+    $view->setOffset($context['sandbox']['progress']);
     $view->setItemsPerPage(1);
-    $view->query->addWhere(1, 'users_field_data.uid', $context['sandbox']['current_id'], '>');
     $view->preExecute();
     $view->execute();
 
@@ -139,7 +137,6 @@ class ExportUser {
 
     if ($account) {
       self::exportUserOperation($account, $context);
-      $context['sandbox']['current_id'] = $account->id();
     }
 
     $context['sandbox']['progress']++;
