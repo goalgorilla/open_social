@@ -1,7 +1,11 @@
 {% extends 'node--featured.html.twig' %}
 
 {% block card_hero_image %}
-  <div class="img_wrapper">{{ content.field_profile_image }}</div>
+  <div class="img_wrapper">
+    <a href="{{ profile_stream_url }}">
+      {{ content.field_profile_image }}
+    </a>
+  </div>
 {% endblock %}
 
 {% block card_teaser_type %}
