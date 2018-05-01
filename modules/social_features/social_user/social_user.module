@@ -329,7 +329,7 @@ function social_user_menu_local_tasks_alter(&$data, $route_name) {
  * URL tokens are not filled in by the other token replacements.
  * In cases like this the account is cancelled, but the message remains behind.
  */
-function social_user_tokens_alter(array &$replacements, array $context, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
+function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata) {
   // Change the display name to that of the Anonymous user when the display name
   // token was not replaced.
   if ((isset($context['tokens']['display-name']) && empty($replacements[$context['tokens']['display-name']])) &&
