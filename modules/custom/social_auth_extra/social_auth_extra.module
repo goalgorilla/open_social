@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_api\Plugin\NetworkBase;
 use Drupal\Component\Render\PlainTextOutput;
+use Drupal\bootstrap\Utility\Unicode;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -53,7 +54,8 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
         // first name and last name.
         if (empty($name)) {
           // Translate to lowercase and remove unnecessary symbols.
-          $name = strtolower($data_handler->get('name'));
+          $name = Unicode::strtolower($data_handler->get('name'));
+          $name = \Drupal::transliteration()->transliterate($name);
           $name = str_replace('  ', ' ', $name);
           $name = preg_replace('/[^0-9a-z]/si', '_', $name);
         }

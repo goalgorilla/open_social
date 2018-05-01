@@ -168,15 +168,18 @@ class PostForm extends ContentEntityForm {
 
   /**
    * Function to set the current form modes.
+   *
+   * Retrieve the form display before it is overwritten in the parent.
    */
   protected function setFormMode() {
-    // Retrieve the form display before it is overwritten in the parent.
-    $bundle = $this->getBundleEntity()->id();
+    if ($this->getBundleEntity() !== NULL) {
+      $bundle = $this->getBundleEntity()->id();
 
-    // Set as variables, since the bundle might be different.
-    $this->postViewDefault = 'post.' . $bundle . '.default';
-    $this->postViewProfile = 'post.' . $bundle . '.profile';
-    $this->postViewGroup = 'post.' . $bundle . '.group';
+      // Set as variables, since the bundle might be different.
+      $this->postViewDefault = 'post.' . $bundle . '.default';
+      $this->postViewProfile = 'post.' . $bundle . '.profile';
+      $this->postViewGroup = 'post.' . $bundle . '.group';
+    }
   }
 
 }

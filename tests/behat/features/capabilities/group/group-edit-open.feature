@@ -43,7 +43,7 @@ Feature: Edit my group as a group manager
     Then I should see the link "Add member"
     And I should see "Member"
     And I should see "Group Manager One"
-    And I should see "Organisation"
+    And I should see "Organization"
     And I should see "GoalGorilla"
     And I should see "Role"
     And I should see "Group Manager"
