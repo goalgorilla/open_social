@@ -60,6 +60,10 @@ fieldset[disabled] .btn {
   font-weight: normal;
 }
 
+.btn.btn-full {
+  display: block;
+}
+
 .btn-non-clickable.disabled,
 fieldset[disabled] .btn-non-clickable,
 a.btn.disabled,
@@ -295,7 +299,7 @@ input[type="button"].btn-block {
   margin-left: 0;
 }
 
-.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+.btn-group > .btn:first-child:not(:last-of-type):not(.dropdown-toggle) {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }

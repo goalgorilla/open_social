@@ -85,8 +85,16 @@ class Block extends PreprocessBase {
     }
 
     // Wrap the group/membership table in a card element.
-    if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block' && $route_name == 'entity.group_content.collection') {
-      $variables['card'] = TRUE;
+    if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block') {
+      $route_names = [
+        'entity.group_content.collection',
+        'gdpr_consent.data_policy',
+        'social_gdpr.data_policy.revisions',
+      ];
+
+      if (in_array($route_name, $route_names)) {
+        $variables['card'] = TRUE;
+      }
     }
 
     // Show group managers block in a card.
