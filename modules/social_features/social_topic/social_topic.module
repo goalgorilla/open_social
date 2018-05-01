@@ -34,11 +34,16 @@ function social_topic_preprocess_node(array &$variables) {
     $topic_type = $node->get('field_topic_type');
     $topic_type_entities = $topic_type->referencedEntities();
     if (count($topic_type_entities) === 1) {
-      foreach ($topic_type_entities as $topic) {
-        $variables['metadata'] = t('in @topic', ['@topic' => $topic->link()]);
+      $lang_id = \Drupal::languageManager()->getCurrentLanguage()->getId();
+      /** @var Drupal\taxonomy\Entity\Term $topic_type_entity */
+      foreach ($topic_type_entities as $topic_type_entity) {
+        if ($topic_type_entity->hasTranslation($lang_id)) {
+          $topic_type_entity = $topic_type_entity->getTranslation($lang_id);
+        }
+        $variables['metadata'] = t('in @topic', ['@topic' => $topic_type_entity->link()]);
         // Set topic type link.
-        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
-        $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
+        $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic_type_entity->id()]);
+        $topic_type_link = Link::fromTextAndUrl($topic_type_entity->label(), $topic_type_url)
           ->toString();
         $variables['topic_type'] = $topic_type_link;
       }
