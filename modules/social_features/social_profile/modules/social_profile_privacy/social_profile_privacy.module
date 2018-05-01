@@ -302,7 +302,7 @@ function social_profile_privacy_private_fields_list($uid) {
  * Implements hook_entity_field_access().
  */
 function social_profile_privacy_entity_field_access($operation, FieldDefinitionInterface $field_definition, AccountInterface $account, FieldItemListInterface $items = NULL) {
-  if ($operation == 'view' && $field_definition->getTargetEntityTypeId() == 'profile') {
+  if ($operation == 'view' && $field_definition->getTargetEntityTypeId() == 'profile' && $items !== NULL) {
     $uid = $items->getEntity()->get('uid')->target_id;
     $fields = social_profile_privacy_private_fields_list($uid);
 
