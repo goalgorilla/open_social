@@ -321,3 +321,21 @@ function social_user_menu_local_tasks_alter(&$data, $route_name) {
   }
 
 }
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_user_tokens_alter(array &$replacements, array $context, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
+  // This is a fallback for when the user object is empty and the display name
+  // tokens are not filled in by the other token replacements.
+  // In cases like this the account is cancelled, but the message remains
+  // behind.
+  if ((isset($context['tokens']['display-name']) && empty($replacements[$context['tokens']['display-name']])) &&
+    (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
+    $replacements[$context['tokens']['display-name']] = \Drupal::configFactory()->get('user.settings')->get('anonymous');
+  }
+  if ((isset($context['tokens']['url:absolute']) && empty($replacements[$context['tokens']['url:absolute']])) &&
+    (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
+    $replacements[$context['tokens']['url:absolute']] = NULL;
+  }
+}
