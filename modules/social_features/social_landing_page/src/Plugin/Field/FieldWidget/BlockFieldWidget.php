@@ -37,9 +37,9 @@ class BlockFieldWidget extends BlockFieldWidgetBase {
     ];
 
     $blocks = [
-      'activity_overview_block' => $this->t('Full activity stream'),
-      'views_block:activity_stream-block_stream_homepage' => $this->t('Full activity stream with post field'),
-      'views_block:community_activities-block_stream_landing' => $this->t('Latest activities'),
+      'activity_overview_block' => $this->t('Community statistics'),
+      'views_block:activity_stream-block_stream_homepage' => $this->t('Personalised activity stream'),
+      'views_block:community_activities-block_stream_landing' => $this->t('Complete community activity stream'),
       'views_block:latest_topics-block_latest_topics' => $this->t('Latest topics'),
       'views_block:newest_groups-block_newest_groups' => $this->t('Newest groups'),
       'views_block:newest_users-block_newest_users' => $this->t('Newest users'),

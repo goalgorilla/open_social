@@ -24,8 +24,6 @@ class Activity extends PreprocessBase {
       'notification',
       'notification_archive',
     ])) {
-      // Remove href from date.
-      $variables['date'] = strip_tags($variables['date']->toString()->getGeneratedLink());
       // Remove href from output text.
       $variables['content']['field_activity_output_text'][0]['#text'] = strip_tags($variables['content']['field_activity_output_text'][0]['#text']);
       // Remove href from profile image.
