@@ -36,7 +36,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
                 $group_id = $entity->field_recipient_group->target_id;
                 if ($group_id) {
                   $group = entity_load('group', $group_id);
-                  if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                  if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                     return AccessResult::allowed();
                   }
                   else {
