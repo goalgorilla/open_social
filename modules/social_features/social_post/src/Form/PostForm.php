@@ -148,6 +148,7 @@ class PostForm extends ContentEntityForm {
         }
       }
     }
+    
     $status = parent::save($form, $form_state);
 
     switch ($status) {
