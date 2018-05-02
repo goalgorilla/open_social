@@ -24,6 +24,7 @@ class ConfirmFormModal extends PreprocessBase {
     $variables['title'] = $form['#title'];
 
     $form['actions']['cancel']['#attributes']['class'] = [
+      'dialog-cancel',
       'btn',
       'btn-default',
       'pull-left',
