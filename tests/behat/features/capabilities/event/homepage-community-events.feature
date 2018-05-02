@@ -23,7 +23,7 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 2"
 
     When I am at "community-events"
-    Then I should see "Community events"
+    Then I should see "All events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
     And I should see "Upcoming events"
@@ -33,7 +33,7 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 2"
 
     When I click "All Upcoming events"
-    Then I should see "Community events"
+    Then I should see "All events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
 
