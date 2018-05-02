@@ -136,20 +136,18 @@ class PostForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     // Init form modes.
     $this->setFormMode();
-
     $display = $this->getFormDisplay($form_state);
-
-    if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === $this->postViewProfile) {
-        $account_profile = \Drupal::routeMatch()->getParameter('user');
-        $this->entity->get('field_recipient_user')->setValue($account_profile);
-      }
-      elseif ($display_id === $this->postViewGroup) {
-        $group = \Drupal::routeMatch()->getParameter('group');
-        $this->entity->get('field_recipient_group')->setValue($group);
+    if ($this->entity->isNew()) {
+      if (isset($display) && ($display_id = $display->get('id'))) {
+        if ($display_id === $this->postViewProfile) {
+          $account_profile = \Drupal::routeMatch()->getParameter('user');
+          $this->entity->get('field_recipient_user')->setValue($account_profile);
+        } elseif ($display_id === $this->postViewGroup) {
+          $group = \Drupal::routeMatch()->getParameter('group');
+          $this->entity->get('field_recipient_group')->setValue($group);
+        }
       }
     }
-
     $status = parent::save($form, $form_state);
 
     switch ($status) {
