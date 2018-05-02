@@ -43,12 +43,17 @@ function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormS
     ],
   ];
 
-  foreach (['data_policy', 'not_agree'] as $key) {
+  $keys = ['data_policy'];
+
+  if (isset($form['not_agree'])) {
+    $form['not_agree']['#tag'] = 'small';
+    $keys[] = 'not_agree';
+  }
+
+  foreach ($keys as $key) {
     $form['fields'][$key] = $form[$key];
     unset($form[$key]);
   }
-
-  $form['fields']['not_agree']['#tag'] = 'small';
 }
 
 /**
