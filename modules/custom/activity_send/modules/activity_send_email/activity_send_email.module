@@ -160,9 +160,11 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
 
-  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && isset($email_message_templates['create_private_message'])) {
-    $items['message_to_me']['templates'][] = 'create_private_message';
-  }
+  // Give other modules the chance to add their own email notifications or
+  // change the title or order of the e-mail notifications on this form.
+  // Copy templates so that they can't be altered (arrays are assigned by copy).
+  $context = $email_message_templates;
+  \Drupal::moduleHandler()->alter('activity_send_email_notifications', $items, $context);
 
   // Sort a list of email frequencies by weight.
   $email_frequencies = sort_email_frequency_options();
