@@ -42,6 +42,8 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
 
 /**
  * Implements hook_user_format_name_alter().
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
 function social_profile_fields_user_format_name_alter(&$name, $account) {
   // Can we use the fields?
@@ -63,10 +65,8 @@ function social_profile_fields_user_format_name_alter(&$name, $account) {
         $first_name = $use_first_name ? $user_profile->get('field_profile_first_name')->value : '';
         $last_name = $use_last_name ? $user_profile->get('field_profile_last_name')->value : '';
 
-        $accountname = trim(t('@first @last', [
-          '@first' => $first_name,
-          '@last' => $last_name,
-        ]));
+        $accountname = $first_name . ' ' . $last_name;
+        $accountname = trim($accountname);
       }
 
     }
