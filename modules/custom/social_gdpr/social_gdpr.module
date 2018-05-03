@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\gdpr_consent\Entity\DataPolicy;
 
 /**
  * Implements hook_help().
@@ -41,6 +42,26 @@ function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormS
     '#attributes' => [
       'class' => ['card', 'card__body', 'card__block'],
     ],
+  ];
+
+  // Get the active data policy and display a message that it was updated.
+  $entity_id = \Drupal::config('gdpr_consent.data_policy')->get('entity_id');
+  $timestamp = DataPolicy::load($entity_id)->getChangedTime();
+  $date = \Drupal::service('date.formatter')->format($timestamp, 'social_medium_date');
+  $form['date'] = [
+    '#theme' => 'status_messages',
+    '#message_list' => [
+      'info' => [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => t('Our data policy has been updated on %date', [
+            '%date' => $date,
+          ]),
+        ],
+      ],
+    ],
+    '#weight' => -1,
   ];
 
   $keys = ['data_policy'];
