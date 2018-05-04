@@ -72,6 +72,7 @@ class Block extends PreprocessBase {
         $prefix . 'group_add_block',
         $prefix . 'group_add_event_block',
         $prefix . 'group_add_topic_block',
+        $prefix . 'add_data_policy_revision',
       ];
 
       if (in_array($variables['elements']['#id'], $block_buttons)) {
