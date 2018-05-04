@@ -22,6 +22,8 @@ use Drupal\Core\Url;
  *   - title: The text of menu item.
  *   - url: Url object for a URL that has a Drupal route.
  *   - after: Existing element after which will be added new item.
+ *   - divider: (optional) "before" for set divider over item and "after" for
+ *     set divider under item.
  *
  * @ingroup social_user_api
  */
@@ -33,6 +35,7 @@ function hook_social_user_account_header_links() {
         'user' => \Drupal::currentUser(),
       ]),
       'after' => 'edit_profile',
+      'divider' => 'after',
     ],
   ];
 }
