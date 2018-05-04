@@ -2,14 +2,45 @@
 
 namespace Drupal\mentions\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure mentions settings.
  */
 class MentionsSettingsForm extends ConfigFormBase {
+
+  use StringTranslationTrait;
+
+  /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Class constructor.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($config_factory);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -33,17 +64,17 @@ class MentionsSettingsForm extends ConfigFormBase {
 
     $form['general'] = [
       '#type' => 'details',
-      '#title' => t('General configuration'),
+      '#title' => $this->t('General configuration'),
       '#open' => TRUE,
     ];
 
     $form['general']['supported_entity_types'] = [
-      '#title' => t('Supported entity types'),
+      '#title' => $this->t('Supported entity types'),
       '#type' => 'select',
       '#multiple' => TRUE,
       '#options' => $this->getContentEntityTypes(),
       '#default_value' => $config->get('supported_entity_types'),
-      '#description' => t('Mentions entity will be created only for selected entity types.'),
+      '#description' => $this->t('Mentions entity will be created only for selected entity types.'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -71,7 +102,7 @@ class MentionsSettingsForm extends ConfigFormBase {
    */
   protected function getContentEntityTypes() {
     $options = [];
-    foreach (\Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
       if ($entity_type instanceof ContentEntityTypeInterface) {
         $options[$entity_type->id()] = $entity_type->getLabel();
       }

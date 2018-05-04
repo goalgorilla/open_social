@@ -15,7 +15,10 @@ use Drupal\node\Entity\Node;
  * Implements hook_form_alter().
  */
 function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  if ('node_landing_page_edit_form' || 'node_landing_page_form' === $form_id) {
+  if (in_array($form_id, [
+    'node_landing_page_edit_form',
+    'node_landing_page_form',
+  ])) {
     $form['#attached']['library'][] = 'social_landing_page/admin';
   }
 }
@@ -96,6 +99,10 @@ function social_landing_page_theme() {
   ];
   // Fields for feature item.
   $theme_templates['field__paragraph__field_featured_items'] = [
+    'base hook' => 'field',
+  ];
+  // Fields for hero buttons.
+  $theme_templates['field__paragraph__field_hero_buttons'] = [
     'base hook' => 'field',
   ];
   // Views.
