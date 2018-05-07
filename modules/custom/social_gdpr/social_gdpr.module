@@ -36,6 +36,13 @@ function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function social_gdpr_form_gdpr_consent_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Get the active data policy and display a message that it was updated.
   $entity_id = \Drupal::config('gdpr_consent.data_policy')->get('entity_id');

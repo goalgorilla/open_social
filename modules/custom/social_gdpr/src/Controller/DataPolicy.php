@@ -48,6 +48,7 @@ class DataPolicy extends DataPolicyBase {
 
     $routes = [
       'view' => 'social_gdpr.data_policy.revision',
+      'edit' => 'social_gdpr.data_policy.revision_edit',
       'delete' => 'social_gdpr.data_policy.revision_delete',
     ];
 
