@@ -28,7 +28,7 @@ social_gdpr.data_policy.revision_edit:
     _form: '\Drupal\gdpr_consent\Form\DataPolicyRevisionEdit'
     _title: 'Edit revision'
   requirements:
-    _permission: 'edit data policy'
+    _custom_access: '\Drupal\gdpr_consent\Controller\DataPolicy::revisionEditAccess'
 
 social_gdpr.data_policy.revision_revert:
   path: '/data-policy/revisions/{data_policy_revision}/revert'

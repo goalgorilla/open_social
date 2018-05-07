@@ -37,7 +37,9 @@ function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface
  * Implements hook_form_FORM_ID_alter().
  */
 function social_gdpr_form_gdpr_consent_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.revision_edit') {
+    $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  }
 }
 
 /**
