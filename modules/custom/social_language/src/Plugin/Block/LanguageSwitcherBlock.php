@@ -41,7 +41,7 @@ class LanguageSwitcherBlock extends LanguageBlock {
     // Get the language links.
     $languagelinks = $this->languageManager->getLanguageSwitchLinks('language_interface', Url::createFromRequest(\Drupal::request()));
     // Use the default URL generator that does not rewrite the language.
-    $url_generator = \Drupal::service('drupal8_url_generator');
+    $url_generator = \Drupal::service('drupal_core_url_generator');
 
     // Add languages as links.
     foreach ($languagelinks->links as $iso => $languagelink) {
