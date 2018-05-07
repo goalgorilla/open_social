@@ -23,7 +23,7 @@ class SocialGroupController extends ControllerBase {
   protected $requestStack;
 
   /**
-   * SocialTopicController constructor.
+   * SocialGroupController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.

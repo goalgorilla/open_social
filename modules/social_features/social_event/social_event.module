@@ -322,8 +322,8 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
 
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:events-events_overview' || $block->getPluginId() === 'views_block:events-block_events_on_profile')) {
     // Here we're going to assume by default access is not granted.
-    $topicController = SocialEventController::create(\Drupal::getContainer());
-    $access = $topicController->myEventAccess($account);
+    $eventController = SocialEventController::create(\Drupal::getContainer());
+    $access = $eventController->myEventAccess($account);
     // If the 'myEventAccess' returns 'AccessResultNeutral', we have to assume
     // that access must be denied.
     if ($access instanceof AccessResultNeutral) {

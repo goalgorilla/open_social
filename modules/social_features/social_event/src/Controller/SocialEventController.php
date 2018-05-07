@@ -24,7 +24,7 @@ class SocialEventController extends ControllerBase {
   protected $requestStack;
 
   /**
-   * SocialTopicController constructor.
+   * SocialEventController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
@@ -54,7 +54,7 @@ class SocialEventController extends ControllerBase {
   }
 
   /**
-   * Function that checks access on the my topic pages.
+   * Function that checks access on the my event pages.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.

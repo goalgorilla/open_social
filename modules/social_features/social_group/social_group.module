@@ -1009,9 +1009,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
   // Check if we're alloweed to view the joined groups block.
   if ($operation === 'view' && $block->getPluginId() === 'views_block:groups-block_user_groups') {
     // Here we're going to assume by default access is not granted.
-    $topicController = SocialGroupController::create(\Drupal::getContainer());
-    $access = $topicController->myGroupAccess($account);
-    // If the 'myEventAccess' returns 'AccessResultNeutral', we have to assume
+    $groupController = SocialGroupController::create(\Drupal::getContainer());
+    $access = $groupController->myGroupAccess($account);
+    // If the 'myGroupAccess' returns 'AccessResultNeutral', we have to assume
     // that access must be denied.
     if ($access instanceof AccessResultNeutral) {
       // Return forbidden, since access was not explicitly granted.
