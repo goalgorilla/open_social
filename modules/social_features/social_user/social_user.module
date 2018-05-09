@@ -283,6 +283,25 @@ function _social_user_search_content_pre_render(array $build) {
 }
 
 /**
+ * Implements hook_user_format_name_alter().
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ */
+function social_user_user_format_name_alter(&$name, $account) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  $accountname = '';
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
+      $accountname = trim($accountname);
+    }
+  }
+  $name = ($accountname !== '') ? $accountname : $name;
+}
+
+/**
  * Implements hook_menu_local_tasks_alter().
  */
 function social_user_menu_local_tasks_alter(&$data, $route_name) {
@@ -304,4 +323,26 @@ function social_user_menu_local_tasks_alter(&$data, $route_name) {
     $data['tabs'][0]['social_user.topics']['#weight'] = -1;
   }
 
+}
+
+/**
+ * Implements hook_tokens_alter().
+ *
+ * This is a fallback for when the user object is empty and the display name and
+ * URL tokens are not filled in by the other token replacements.
+ * In cases like this the account is cancelled, but the message remains behind.
+ */
+function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata) {
+  // Change the display name to that of the Anonymous user when the display name
+  // token was not replaced.
+  if ((isset($context['tokens']['display-name']) && empty($replacements[$context['tokens']['display-name']])) &&
+    (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
+    $replacements[$context['tokens']['display-name']] = \Drupal::configFactory()->get('user.settings')->get('anonymous');
+  }
+  // Empty the URL so it doesn't break rendering when the URL token was not
+  // replaced.
+  if ((isset($context['tokens']['url:absolute']) && empty($replacements[$context['tokens']['url:absolute']])) &&
+    (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
+    $replacements[$context['tokens']['url:absolute']] = NULL;
+  }
 }
