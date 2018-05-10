@@ -90,11 +90,16 @@ class Block extends PreprocessBase {
       $route_names = [
         'entity.group_content.collection',
         'gdpr_consent.data_policy',
+        'social_gdpr.data_policy.revision',
         'social_gdpr.data_policy.revisions',
       ];
 
       if (in_array($route_name, $route_names)) {
         $variables['card'] = TRUE;
+
+        if ($route_name == 'social_gdpr.data_policy.revision') {
+          $variables['attributes']['class'][] = 'card__body';
+        }
       }
     }
 
