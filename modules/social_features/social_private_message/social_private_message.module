@@ -314,3 +314,10 @@ function social_private_message_entity_view_display_alter(EntityViewDisplayInter
     }
   }
 }
+
+/**
+ * Implements hook_user_cancel_methods_alter().
+ */
+function social_private_message_user_cancel_methods_alter(&$methods) {
+  $methods['user_cancel_reassign']['title'] = t('Delete your account, delete private messages, and anonymize all other content.');
+}

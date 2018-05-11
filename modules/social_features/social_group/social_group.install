@@ -53,6 +53,9 @@ function social_group_install() {
 
   // Set default group settings.
   _social_group_set_default_configuration();
+
+  // Set module weight.
+  module_set_weight('social_group', 2);
 }
 
 /**
@@ -350,4 +353,11 @@ function social_group_update_8010() {
  */
 function social_group_update_8011() {
   node_access_rebuild(TRUE);
+}
+
+/**
+ * Set module weight.
+ */
+function social_group_update_8012() {
+  module_set_weight('social_group', 2);
 }
