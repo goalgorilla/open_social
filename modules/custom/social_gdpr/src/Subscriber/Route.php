@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\social_gdpr;
+namespace Drupal\social_gdpr\Subscriber;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class RouteSubscriber.
+ * Class Route.
  *
- * @package Drupal\social_gdpr
+ * @package Drupal\social_gdpr\Subscriber
  */
-class RouteSubscriber extends RouteSubscriberBase {
+class Route extends RouteSubscriberBase {
 
   /**
    * {@inheritdoc}
