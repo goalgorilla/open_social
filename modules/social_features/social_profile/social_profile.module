@@ -103,6 +103,40 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
     $form['field_profile_interests']['widget']['target_id']['#selection_settings']['hide_id'] = TRUE;
   }
 
+  // Check if the Social Profile Fields module is on.
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
+    // Load the profile fields and check if at least one of them can be changed.
+    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
+      $empty_profile = TRUE;
+
+      /** @var \Drupal\field\Entity\FieldConfig $field_config */
+      foreach ($profile_fields as $field) {
+        if (isset($form[$field->get('field_name')]) && $form[$field->get('field_name')]['#access'] === TRUE) {
+          $empty_profile = FALSE;
+        }
+      }
+
+      // There are no fields the user can edit here. Set an explanatory message
+      // and disable the Save button.
+      if ($empty_profile === TRUE) {
+        $account = \Drupal::routeMatch()->getParameter('user');
+
+        $form['empty_profile'] = [
+          '#type' => 'fieldset',
+        ];
+        $form['empty_profile']['notice'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => t('There is no profile information you can change here. Change your @settings.', [
+            '@settings' => Link::createFromRoute(t('account settings here'), 'entity.user.edit_form', ['user' => $account->id()])->toString(),
+          ]),
+        ];
+
+        $form['actions']['submit']['#disabled'] = TRUE;
+      }
+    }
+  }
+
   // Add custom submit handler just for redirect purposes. We don't want to
   // override the form::save in profile.
   $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
@@ -231,15 +265,13 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if (!in_array($route, ['entity.profile.type.user_profile_form'])) {
-    if ($profile->access('update', $current_user)) {
-      $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
-      $variables['#cache']['contexts'][] = 'route.name';
-    }
+  if ($route !== 'entity.profile.type.user_profile_form' && $profile->access('update', $current_user)) {
+    $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
+    $variables['#cache']['contexts'][] = 'route.name';
   }
 
-  // Add the hero styled image.
-  if (!empty($profile->field_profile_banner_image->entity)) {
+  // Add the hero styled image if we have access to it.
+  if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
@@ -467,6 +499,27 @@ function social_profile_get_default_image() {
   ];
   // Retun the array.
   return $data;
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ */
+function social_profile_user_format_name_alter(&$name, $account) {
+
+  $accountname = '';
+  // Let's get the First name Last name.
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $accountname = trim(t('@first @last', [
+        '@first' => $user_profile->get('field_profile_first_name')->value,
+        '@last' => $user_profile->get('field_profile_last_name')->value,
+      ]));
+    }
+  }
+  $name = ($accountname !== '') ? $accountname : $name;
 }
 
 /**
