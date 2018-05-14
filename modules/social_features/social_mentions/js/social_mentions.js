@@ -37,8 +37,27 @@
   var initMentions = function(element, context, settings) {
     $(element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
-      renderItem: function(ul, item) {
-        return renderMentionItem(ul, item);
+      autocomplete: {
+        renderItem: function(ul, item) {
+          return renderMentionItem(ul, item);
+        },
+        open: function(event, ui) {
+          if (!CKEDITOR.instances[this.id]) {
+
+            if (window.matchMedia("(min-width: 600px)").matches) {
+              var commentTextarea = $(this).offset().top + $(this).height();
+              var userList = $(this).siblings(".ui-autocomplete");
+              var userListHeight = $(userList).innerHeight();
+              var documentHeight = $(document).scrollTop() + $(window).height();
+              var distanceFromBottom = (documentHeight - commentTextarea);
+              if (distanceFromBottom < userListHeight) {
+                // class rule set bottom and top position
+                // so list displays above the textarea
+                $(userList).addClass("upward");
+              }
+            }
+          }
+        }
       },
       markup: function(item) {
         return markupMentionItem(item, settings);
@@ -69,7 +88,7 @@
               var commentTextarea = $(this).offset().top + $(this).height();
               var userList = $(this).siblings(".ui-autocomplete");
               var userListHeight = $(userList).innerHeight();
-              var documentHeight = $(document).height();
+              var documentHeight = $(document).scrollTop() + $(window).height();
               var distanceFromBottom = (documentHeight - commentTextarea);
               if (distanceFromBottom < userListHeight) {
                 // class rule set bottom and top position
