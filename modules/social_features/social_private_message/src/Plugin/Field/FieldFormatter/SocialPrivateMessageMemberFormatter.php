@@ -193,8 +193,7 @@ class SocialPrivateMessageMemberFormatter extends FormatterBase implements Conta
 
     $view_builder = $this->entityManager->getViewBuilder('user');
     foreach ($items as $delta => $item) {
-      $user = $item->entity;
-      if ($user->id() != $this->currentUser->id()) {
+      if (!empty($user) && $user->id() != $this->currentUser->id()) {
         if ($this->getSetting('display_type') == 'label') {
           $users[$user->id()] = $user->getDisplayName();
         }
