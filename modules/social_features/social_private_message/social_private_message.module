@@ -307,13 +307,15 @@ function social_private_message_preprocess_field(&$variables) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_delete().
+ * Implements hook_user_cancel().
  */
-function social_private_message_user_delete(EntityInterface $entity) {
-  \Drupal::database()->update('private_messages')
-    ->fields(['message__value' => ''])
-    ->condition('owner', $entity->id())
-    ->execute();
+function social_private_message_user_cancel($edit, $account, $method) {
+  if ($method == 'user_cancel_reassign') {
+    \Drupal::database()->update('private_messages')
+      ->fields(['message__value' => ' '])
+      ->condition('owner', $account->id())
+      ->execute();
+  }
 }
 
 /**
