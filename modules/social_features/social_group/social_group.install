@@ -91,7 +91,7 @@ function _social_group_get_permissions($role) {
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'create open_group group',
     'create closed_group group',
-    'create public_group group',
+    'create public_group group', // Note: this is depedendent on settings!
     'view group stream page',
   ]);
 

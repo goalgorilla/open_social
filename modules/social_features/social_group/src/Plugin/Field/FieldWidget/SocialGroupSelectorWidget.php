@@ -260,6 +260,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     $group = Group::load($gid);
 
     if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {
+      if ($group->getGroupType()->id() === 'public_group') {
+        $config = \Drupal::config('entity_access_by_field.settings');
+        if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+          return FALSE;
+        }
+      }
       return TRUE;
     }
     return FALSE;
