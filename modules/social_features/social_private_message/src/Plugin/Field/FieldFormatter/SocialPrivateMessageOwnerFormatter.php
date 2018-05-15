@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatter;
 
 /**
@@ -17,5 +18,18 @@ use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceLabelFormatter;
  * )
  */
 class SocialPrivateMessageOwnerFormatter extends EntityReferenceLabelFormatter {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = parent::viewElements($items, $langcode);
+
+    if (empty($elements) && !$items->isEmpty()) {
+      $elements[] = ['#plain_text' => $this->t('Deleted user')];
+    }
+
+    return $elements;
+  }
 
 }
