@@ -67,7 +67,7 @@ class Redirect implements EventSubscriberInterface {
       return;
     }
 
-    $url = Url::fromRoute('gdpr_consent.data_policy');
+    $url = Url::fromRoute('social_gdpr.data_policy.revisions');
     $response = new RedirectResponse($url->toString());
     $event->setResponse($response);
   }
