@@ -307,6 +307,16 @@ function social_private_message_preprocess_field(&$variables) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function social_private_message_user_delete(EntityInterface $entity) {
+  \Drupal::database()->update('private_messages')
+    ->fields(['message__value' => ''])
+    ->condition('owner', $entity->id())
+    ->execute();
+}
+
+/**
  * Implements hook_menu_local_actions_alter().
  */
 function social_private_message_menu_local_actions_alter(&$local_actions) {
