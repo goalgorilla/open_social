@@ -246,12 +246,21 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       $build['#suffix'] = '';
     }
     elseif ($build['#view_mode'] === 'full') {
+      $wrapper_class = NULL;
+
       /* @var \Drupal\private_message\Entity\PrivateMessage $entity */
       if (\Drupal::currentUser()->id() === $entity->getOwnerId()) {
-        $build['#prefix'] = '<div class="message__by-me">' . $build['#prefix'];
-        $build['#suffix'] = '</div>' . $build['#suffix'];
+        $wrapper_class = 'message__by-me';
         // Current user is 'You'.
         $build['owner'][0]['#plain_text'] = t('You');
+      }
+      elseif (empty($entity->getOwner())) {
+        $wrapper_class = 'message__deleted';
+      }
+
+      if (!empty($wrapper_class)) {
+        $build['#prefix'] = '<div class="' . $wrapper_class . '">' . $build['#prefix'];
+        $build['#suffix'] = '</div>' . $build['#suffix'];
       }
     }
   }
@@ -286,47 +295,14 @@ function social_private_message_preprocess_field(&$variables) {
 
   $element = &$variables['element'];
 
-  if (!(isset($element['#view_mode']) && $element['#view_mode'] == 'full')) {
-    return;
-  }
+  if (isset($element['#view_mode']) && $element['#view_mode'] == 'full' && $variables['field_name'] == 'message') {
+    $variables['view_mode'] = 'full';
 
-  switch ($variables['field_name']) {
-    case 'members':
-      $values = $element['#items']->getValue();
-
-      if (count($variables['items']) == count($values)) {
-        return;
+    if (empty($element['#object']->getOwner())) {
+      foreach ($variables['items'] as &$item) {
+        $item['content'] = t("This message was deleted together with the user’s account.");
       }
-
-      $items = $variables['items'];
-      $variables['items'] = [];
-
-      foreach ($values as $value) {
-        $found = FALSE;
-
-        foreach ($items as $id => $item) {
-          $parameters = $item['content']['#url']->getRouteParameters();
-
-          if ($value['target_id'] == $parameters['user']) {
-            $variables['items'][] = $item;
-            unset($items[$id]);
-            $found = TRUE;
-            break;
-          }
-        }
-
-        if (!$found) {
-          $variables['items'][] = [
-            'content' => t('Deleted user'),
-          ];
-        }
-      }
-
-      break;
-
-    case 'message':
-      $variables['view_mode'] = 'full';
-      break;
+    }
   }
 }
 
