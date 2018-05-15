@@ -2,9 +2,12 @@
 
 namespace Drupal\social_post\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for Post edit forms.
@@ -16,6 +19,36 @@ class PostForm extends ContentEntityForm {
   private $postViewDefault;
   private $postViewProfile;
   private $postViewGroup;
+
+  /**
+   * The Current User object.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a NodeForm object.
+   *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
+  public function __construct(TimeInterface $time = NULL, AccountInterface $current_user) {
+    $this->time = $time ?: \Drupal::service('datetime.time');
+    $this->currentUser = $current_user;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('datetime.time'),
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -125,6 +158,12 @@ class PostForm extends ContentEntityForm {
         // Set button to disabled in our template, users have no option anyway.
         $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
       }
+    }
+    if ($this->entity->isNew()) {
+      unset($form['status']);
+    }
+    else {
+      $form['status']['#access'] = $this->currentUser->hasPermission('edit any post entities');
     }
 
     return $form;
