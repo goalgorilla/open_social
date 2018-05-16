@@ -3,20 +3,34 @@
 namespace Drupal\social_gdpr\Controller;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
-use Drupal\gdpr_consent\Controller\DataPolicyController;
+use Drupal\gdpr_consent\Controller\DataPolicy as DataPolicyBase;
 
 /**
  * Class DataPolicy.
  *
  *  Returns responses for Data policy route.
  */
-class DataPolicy extends DataPolicyController {
+class DataPolicy extends DataPolicyBase {
 
   /**
    * {@inheritdoc}
    */
-  public function revisionPageTitle($data_policy_revision) {
+  public function entityOverviewAccess() {
+    $access = parent::entityOverviewAccess();
+
+    if ($access->isForbidden() && $this->currentUser()->hasPermission('edit data policy')) {
+      $access = AccessResult::allowed();
+    }
+
+    return $access;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function revisionOverviewTitle($data_policy_revision) {
     /** @var \Drupal\gdpr_consent\Entity\DataPolicyInterface $data_policy */
     $data_policy = $this->entityTypeManager()->getStorage('data_policy')
       ->loadRevision($data_policy_revision);
@@ -29,11 +43,12 @@ class DataPolicy extends DataPolicyController {
   /**
    * {@inheritdoc}
    */
-  public function revisionOverview() {
-    $build = parent::revisionOverview();
+  public function revisionsOverviewPage() {
+    $build = parent::revisionsOverviewPage();
 
     $routes = [
       'view' => 'social_gdpr.data_policy.revision',
+      'edit' => 'social_gdpr.data_policy.revision_edit',
       'delete' => 'social_gdpr.data_policy.revision_delete',
     ];
 

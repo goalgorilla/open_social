@@ -9,7 +9,7 @@ social_gdpr.data_policy.add:
 social_gdpr.data_policy.revisions:
   path: '/data-policy/revisions'
   defaults:
-    _controller: '\Drupal\social_gdpr\Controller\DataPolicy::revisionOverview'
+    _controller: '\Drupal\social_gdpr\Controller\DataPolicy::revisionsOverviewPage'
     _title: 'Revisions'
   requirements:
     _permission: 'view all data policy revisions'
@@ -17,10 +17,18 @@ social_gdpr.data_policy.revisions:
 social_gdpr.data_policy.revision:
   path: '/data-policy/revisions/{data_policy_revision}'
   defaults:
-    _controller: '\Drupal\gdpr_consent\Controller\DataPolicyController::revisionShow'
-    _title_callback: '\Drupal\social_gdpr\Controller\DataPolicy::revisionPageTitle'
+    _controller: '\Drupal\gdpr_consent\Controller\DataPolicy::revisionOverviewPage'
+    _title_callback: '\Drupal\social_gdpr\Controller\DataPolicy::revisionOverviewTitle'
   requirements:
     _permission: 'access data policy revisions'
+
+social_gdpr.data_policy.revision_edit:
+  path: '/data-policy/revisions/{data_policy_revision}/edit'
+  defaults:
+    _form: '\Drupal\gdpr_consent\Form\DataPolicyRevisionEdit'
+    _title: 'Edit revision'
+  requirements:
+    _custom_access: '\Drupal\gdpr_consent\Controller\DataPolicy::revisionEditAccess'
 
 social_gdpr.data_policy.revision_revert:
   path: '/data-policy/revisions/{data_policy_revision}/revert'

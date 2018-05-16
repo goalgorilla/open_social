@@ -36,14 +36,16 @@ function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['fields'] = [
-    '#type' => 'container',
-    '#attributes' => [
-      'class' => ['card', 'card__body', 'card__block'],
-    ],
-  ];
+function social_gdpr_form_gdpr_consent_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.revision_edit') {
+    $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  }
+}
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Get the active data policy and display a message that it was updated.
   $entity_id = \Drupal::config('gdpr_consent.data_policy')->get('entity_id');
   $timestamp = DataPolicy::load($entity_id)->getChangedTime();
@@ -64,16 +66,8 @@ function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormS
     '#weight' => -1,
   ];
 
-  $keys = ['data_policy'];
-
   if (isset($form['not_agree'])) {
     $form['not_agree']['#tag'] = 'small';
-    $keys[] = 'not_agree';
-  }
-
-  foreach ($keys as $key) {
-    $form['fields'][$key] = $form[$key];
-    unset($form[$key]);
   }
 }
 
@@ -88,6 +82,7 @@ function social_gdpr_social_user_account_header_links() {
       'title' => t('Data policy agreement'),
       'url' => Url::fromRoute('gdpr_consent.data_policy.agreement'),
       'after' => 'edit_profile',
+      'divider' => 'before',
     ];
   }
 

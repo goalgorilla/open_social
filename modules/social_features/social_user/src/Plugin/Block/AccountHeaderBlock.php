@@ -505,6 +505,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
       $hook = 'social_user_account_header_links';
 
+      $divider = [
+        'divider' => 'true',
+        'classes' => 'divider',
+        'attributes' => 'role=separator',
+      ];
+
       foreach ($this->moduleHandler->invokeAll($hook) as $key => $item) {
         if (!isset($links['account_box']['below'][$item['after']]) || isset($links['account_box']['below'][$key])) {
           continue;
@@ -518,6 +524,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           $links['account_box']['below'][$exist_key] = $exist_item;
 
           if ($item['after'] == $exist_key) {
+            if (isset($item['divider']) && $item['divider'] == 'before') {
+              $links['account_box']['below'][$key . '_divider'] = $divider;
+            }
+
             $links['account_box']['below'][$key] = [
               'classes' => '',
               'link_attributes' => '',
@@ -529,6 +539,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
               'title_classes' => '',
               'url' => $item['url'],
             ];
+
+            if (isset($item['divider']) && $item['divider'] == 'after') {
+              $links['account_box']['below'][$key . '_divider'] = $divider;
+            }
           }
         }
       }

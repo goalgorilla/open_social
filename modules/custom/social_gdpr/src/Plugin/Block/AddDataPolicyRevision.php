@@ -22,17 +22,19 @@ class AddDataPolicyRevision extends BlockBase {
    */
   public function build() {
     return [
-      '#type' => 'link',
-      '#title' => $this->t('Add new revision'),
-      '#url' => Url::fromRoute('social_gdpr.data_policy.add'),
-      '#attributes' => [
-        'class' => [
-          'btn',
-          'btn-primary',
-          'btn-raised',
-          'btn-full',
-          'waves-effect',
-          'brand-bg-primary',
+      'content' => [
+        '#type' => 'link',
+        '#title' => $this->t('Add new revision'),
+        '#url' => Url::fromRoute('social_gdpr.data_policy.add'),
+        '#attributes' => [
+          'class' => [
+            'btn',
+            'btn-primary',
+            'btn-raised',
+            'btn-full',
+            'waves-effect',
+            'brand-bg-primary',
+          ],
         ],
       ],
     ];
