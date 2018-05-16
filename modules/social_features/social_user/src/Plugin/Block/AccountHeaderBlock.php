@@ -113,7 +113,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     $navigation_settings_config = $this->configFactory->get('social_user.navigation.settings');
 
     if ($account->id() !== 0) {
-      $account_name = $account->getAccountName();
+      $account_name = $account->getDisplayName();
 
       $links = [
         'add' => [
