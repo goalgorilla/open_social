@@ -314,3 +314,14 @@ function social_private_message_entity_view_display_alter(EntityViewDisplayInter
     }
   }
 }
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_private_message_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If our create_private_message template is enabled for email then we add it
+  // to the "Message to Me" section.
+  if (isset($email_message_templates['create_private_message'])) {
+    $items['message_to_me']['templates'][] = 'create_private_message';
+  }
+}
