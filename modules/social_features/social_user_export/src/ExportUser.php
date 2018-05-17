@@ -24,6 +24,8 @@ class ExportUser extends ContentEntityBase {
    *   Context of the operation.
    */
   public static function exportUserOperation(UserInterface $entity, array &$context) {
+    $moduleHandler = \Drupal::service('module_handler');
+
     if (empty($context['results']['file_path'])) {
       $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
@@ -41,7 +43,6 @@ class ExportUser extends ContentEntityBase {
         t('Registration date'),
         t('Status'),
         t('Roles'),
-        t('Number of Private Messages'),
         t('Posts created'),
         t('Comments created'),
         t('Topics created'),
@@ -50,6 +51,12 @@ class ExportUser extends ContentEntityBase {
         t('Groups created'),
         t('Number of Likes'),
       ];
+
+      // Add number of private messages row header if the module is turned on.
+      if ($moduleHandler->moduleExists('social_private_message')) {
+        $headers[] = t('Number of Private Messages');
+      }
+
       $csv->insertOne($headers);
     }
     else {
@@ -79,7 +86,7 @@ class ExportUser extends ContentEntityBase {
     }
 
     // Add row.
-    $csv->insertOne([
+    $row = [
       $entity->id(),
       $entity->uuid(),
       $entity->getEmail(),
@@ -88,7 +95,6 @@ class ExportUser extends ContentEntityBase {
       \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
       !empty($status[0]['value']) ? t('Active') : t('Blocked'),
       implode(', ', $roles),
-      social_user_export_number_of_private_messages($entity),
       social_user_export_posts_count($entity),
       social_user_export_comments_count($entity),
       social_user_export_nodes_count($entity, 'topic'),
@@ -96,7 +102,14 @@ class ExportUser extends ContentEntityBase {
       social_user_export_nodes_count($entity, 'event'),
       social_user_export_groups_count($entity),
       social_user_export_likes_count($entity),
-    ]);
+    ];
+
+    // Add number of private messages if the module is turned on.
+    if ($moduleHandler->moduleExists('social_private_message')) {
+      $row[] = social_user_export_number_of_private_messages($entity);
+    }
+
+    $csv->insertOne($row);
 
     $context['message'] = t('Exporting: @name', [
       '@name' => $entity->getAccountName(),
