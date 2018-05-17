@@ -29,7 +29,7 @@
   <div class="teaser__body">
     <div class="teaser__content">
       <h4 class="teaser__title">
-        {{ profile_name|render }}
+        {{ profile_name }}
       </h4>
       {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="teaser__content-line">
@@ -37,10 +37,10 @@
             <use xlink:href="#icon-business_center"></use>
           </svg>
           <span class="teaser__content-text">
-            {{ content.field_profile_function }}
             {% if content.field_profile_organization|render %}
-              at
-              {{ content.field_profile_organization }}
+              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+            {% else %}
+              {{ content.field_profile_function }}
             {% endif %}
           </span>
         </div>

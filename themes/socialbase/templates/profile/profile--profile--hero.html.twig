@@ -26,10 +26,10 @@
 {% else %}
   <div class="cover">
 {% endif %}
-
+    <div class="hero__bgimage-overlay"></div>
 {% if profile_edit_url %}
   <div class="hero-action-button">
-    <a href="{{ profile_edit_url }}" title="Edit profile information" class="btn btn-raised btn-default btn-floating">
+    <a href="{{ profile_edit_url }}" title="{% trans %}Edit profile information{% endtrans %}" class="btn btn-raised btn-default btn-floating">
       <svg class="icon-medium">
         <use xlink:href="#icon-edit"></use>
       </svg>
@@ -40,10 +40,10 @@
   <div class="cover-wrap">
 
     <header>
+      {{ content.field_profile_image }}
       <h1 class="page-title">
         {{ profile_name }}
       </h1>
-      {{ content.field_profile_image }}
     </header>
 
 
@@ -53,12 +53,12 @@
 
     <div class="hero-footer__text">
       {% if content.field_profile_function|render %}
-        <strong>{{ content.field_profile_function|render }}</strong>
+        <strong>{{ content.field_profile_function }}</strong>
       {% endif %}
       {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
       &nbsp;-&nbsp;
       {% endif %}
-        {{ content.field_profile_organization|render }}
+        {{ content.field_profile_organization }}
     </div>
 
     {% if profile_contact_label == 'private_message' %}

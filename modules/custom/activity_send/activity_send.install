@@ -118,3 +118,14 @@ function activity_send_update_8001() {
   $schema->dropField('user_activity_send', 'status');
   $schema->dropIndex('user_activity_send', 'uasstatus');
 }
+
+/**
+ * Reduce delay time for immediate email notification to 90 seconds.
+ */
+function activity_send_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('activity_send.settings');
+
+  if ($config->get('activity_send_offline_window') == 900) {
+    $config->set('activity_send_offline_window', 90)->save();
+  }
+}
