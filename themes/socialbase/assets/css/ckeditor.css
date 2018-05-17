@@ -446,8 +446,6 @@ th {
 .table-responsive {
   display: block;
   width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
 .table-responsive .table-bordered {
@@ -926,7 +924,6 @@ img.align-center {
   cursor: pointer;
   background-image: none;
   border: 1px solid transparent;
-  white-space: nowrap;
   padding: 6px 12px;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -1407,6 +1404,12 @@ body {
   }
   figure.align-left figcaption, figure.align-right figcaption, figure.align-center figcaption {
     padding: 0;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    padding-bottom: 100px;
+    margin-bottom: -100px;
   }
   .hidden-for-phone-only {
     display: none;

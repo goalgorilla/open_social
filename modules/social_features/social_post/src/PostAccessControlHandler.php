@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Access controller for the Post entity.
@@ -130,8 +131,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     // If group context is active.
-    $group = \Drupal::routeMatch()->getParameter('group');
-    if ($group) {
+    $group = _social_group_get_current_group();
+    if ($group instanceof GroupInterface) {
       if ($group->hasPermission('add post entities in group', $account)) {
         return AccessResult::allowed();
       }

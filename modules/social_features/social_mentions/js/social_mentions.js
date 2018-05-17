@@ -47,6 +47,9 @@
         return item.value;
       }
     });
+
+    // Hook up the autogrow resize event to the highligher resize event handler.
+    $(element).on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
   };
 
   // Adds mention input config for the textarea.
