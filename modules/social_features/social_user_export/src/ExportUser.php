@@ -37,6 +37,10 @@ class ExportUser extends ContentEntityBase {
       $headers = [
         t('ID'),
         t('UUID'),
+        t('First name'),
+        t('Last name'),
+        t('Username'),
+        t('Display name'),
         t('Email'),
         t('Last login'),
         t('Last access'),
@@ -89,6 +93,10 @@ class ExportUser extends ContentEntityBase {
     $row = [
       $entity->id(),
       $entity->uuid(),
+      social_user_export_first_name($entity),
+      social_user_export_last_name($entity),
+      $entity->getAccountName(),
+      $entity->getDisplayName(),
       $entity->getEmail(),
       $last_login,
       $last_access,
