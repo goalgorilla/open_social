@@ -69,7 +69,7 @@ function _social_mentions_set_default_config() {
   $allowed_entity_types = array_combine($allowed_entity_types, $allowed_entity_types);
   $config->set('supported_entity_types', $allowed_entity_types);
 
-  $config->set('suggestions_format', SOCIAL_MENTIONS_SUGGESTIONS_ALL);
+  $config->set('suggestions_format', SOCIAL_PROFILE_SUGGESTIONS_ALL);
 
   $config->save();
 }
