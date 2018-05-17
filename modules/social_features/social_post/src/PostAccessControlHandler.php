@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Access controller for the Post entity.
@@ -23,16 +24,51 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         // Public = ALL.
-        $visibility = $entity->field_visibility->value;
+        if ($entity->isPublished()) {
+          $visibility = $entity->field_visibility->value;
 
-        switch ($visibility) {
-          // Recipient.
-          case "0":
+          switch ($visibility) {
+            // Recipient.
+            case "0":
 
-            if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
+              if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
+                // Check if the post has been posted in a group.
+                $group_id = $entity->field_recipient_group->target_id;
+                if ($group_id) {
+                  $group = entity_load('group', $group_id);
+                  if ($group !== NULL && $group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                    return AccessResult::allowed();
+                  }
+                  else {
+                    return AccessResult::forbidden();
+                  }
+                }
+                // Fallback for invalid groups or if there is no group
+                // recipient.
+                return $this->checkDefaultAccess($entity, $operation, $account);
+              }
+              return AccessResult::forbidden();
+
+            // Public.
+            case "1":
+              if (AccessResult::allowedIfHasPermission($account, 'view public posts')->isAllowed()) {
+                return $this->checkDefaultAccess($entity, $operation, $account);
+              }
+              return AccessResult::forbidden();
+
+            // Community.
+            case "2":
+              if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
+                return $this->checkDefaultAccess($entity, $operation, $account);
+              }
+              return AccessResult::forbidden();
+
+            // Group.
+            case "3":
               // Check if the post has been posted in a group.
               $group_id = $entity->field_recipient_group->target_id;
               if ($group_id) {
+                /* @var \Drupal\group\Entity\Group; $group */
                 $group = entity_load('group', $group_id);
                 if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                   return AccessResult::allowed();
@@ -41,41 +77,17 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
                   return AccessResult::forbidden();
                 }
               }
-              // Fallback for invalid groups or if there is no group recipient.
-              return $this->checkDefaultAccess($entity, $operation, $account);
-            }
-            return AccessResult::forbidden();
+              return AccessResult::forbidden();
 
-          // Public.
-          case "1":
-            if (AccessResult::allowedIfHasPermission($account, 'view public posts')->isAllowed()) {
-              return $this->checkDefaultAccess($entity, $operation, $account);
-            }
-            return AccessResult::forbidden();
-
-          // Community.
-          case "2":
-            if (AccessResult::allowedIfHasPermission($account, 'view community posts')->isAllowed()) {
-              return $this->checkDefaultAccess($entity, $operation, $account);
-            }
-            return AccessResult::forbidden();
-
-          // Group.
-          case "3":
-            // Check if the post has been posted in a group.
-            $group_id = $entity->field_recipient_group->target_id;
-            if ($group_id) {
-              /* @var \Drupal\group\Entity\Group; $group */
-              $group = entity_load('group', $group_id);
-              if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
-                return AccessResult::allowed();
-              }
-              else {
-                return AccessResult::forbidden();
-              }
-            }
-            return AccessResult::forbidden();
-
+          }
+        }
+        else {
+          // Fetch information from the entity object if possible.
+          $uid = $entity->getOwnerId();
+          // Check if authors can view their own unpublished posts.
+          if ($operation === 'view' && $account->hasPermission('view own unpublished post entities') && $account->isAuthenticated() && $account->id() == $uid) {
+            return AccessResult::allowed()->cachePerPermissions()->cachePerUser()->addCacheableDependency($entity);
+          }
         }
 
       case 'update':
@@ -110,6 +122,9 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
+          if ($account->hasPermission('view own unpublished post entities', $account) && ($account->id() == $entity->getOwnerId())) {
+            return AccessResult::allowed();
+          }
           return AccessResult::allowedIfHasPermission($account, 'view unpublished post entities');
         }
         return AccessResult::allowedIfHasPermission($account, 'view published post entities');
@@ -130,8 +145,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     // If group context is active.
-    $group = \Drupal::routeMatch()->getParameter('group');
-    if ($group) {
+    $group = _social_group_get_current_group();
+    if ($group instanceof GroupInterface) {
       if ($group->hasPermission('add post entities in group', $account)) {
         return AccessResult::allowed();
       }

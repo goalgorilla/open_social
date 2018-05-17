@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export;
 
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 use League\Csv\Writer;
@@ -12,7 +13,7 @@ use Drupal\Core\Link;
  *
  * @package Drupal\social_user_export
  */
-class ExportUser {
+class ExportUser extends ContentEntityBase {
 
   /**
    * Callback of one operation.
@@ -23,6 +24,8 @@ class ExportUser {
    *   Context of the operation.
    */
   public static function exportUserOperation(UserInterface $entity, array &$context) {
+    $moduleHandler = \Drupal::service('module_handler');
+
     if (empty($context['results']['file_path'])) {
       $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
@@ -50,7 +53,14 @@ class ExportUser {
         t('Events enrollments'),
         t('Events created'),
         t('Groups created'),
+        t('Number of Likes'),
       ];
+
+      // Add number of private messages row header if the module is turned on.
+      if ($moduleHandler->moduleExists('social_private_message')) {
+        $headers[] = t('Number of Private Messages');
+      }
+
       $csv->insertOne($headers);
     }
     else {
@@ -80,7 +90,7 @@ class ExportUser {
     }
 
     // Add row.
-    $csv->insertOne([
+    $row = [
       $entity->id(),
       $entity->uuid(),
       social_user_export_first_name($entity),
@@ -99,7 +109,15 @@ class ExportUser {
       social_user_export_events_enrollments_count($entity),
       social_user_export_nodes_count($entity, 'event'),
       social_user_export_groups_count($entity),
-    ]);
+      social_user_export_likes_count($entity),
+    ];
+
+    // Add number of private messages if the module is turned on.
+    if ($moduleHandler->moduleExists('social_private_message')) {
+      $row[] = social_user_export_number_of_private_messages($entity);
+    }
+
+    $csv->insertOne($row);
 
     $context['message'] = t('Exporting: @name', [
       '@name' => $entity->getAccountName(),
@@ -117,7 +135,6 @@ class ExportUser {
   public static function exportUsersAllOperation(array $conditions, array &$context) {
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
-      $context['sandbox']['current_id'] = 0;
 
       // Get max uid.
       $view = _social_user_export_get_view($conditions);
@@ -132,9 +149,8 @@ class ExportUser {
         'direction' => 'ASC',
       ],
     ];
-    $view->setOffset(0);
+    $view->setOffset($context['sandbox']['progress']);
     $view->setItemsPerPage(1);
-    $view->query->addWhere(1, 'users_field_data.uid', $context['sandbox']['current_id'], '>');
     $view->preExecute();
     $view->execute();
 
@@ -147,7 +163,6 @@ class ExportUser {
 
     if ($account) {
       self::exportUserOperation($account, $context);
-      $context['sandbox']['current_id'] = $account->id();
     }
 
     $context['sandbox']['progress']++;

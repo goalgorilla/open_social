@@ -18,3 +18,14 @@
   }
 
 }
+.dropdown {
+  &.has-alert {
+    > a {
+      @include for-phone-only {
+        &:before {
+          background-color: $brand-accent;
+        }
+      }
+    }
+  }
+}

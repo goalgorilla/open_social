@@ -37,6 +37,11 @@
         cursor: $cursor-disabled;
       }
     }
+    &.desktop {
+      @include for-phone-only {
+        display: none;
+      }
+    }
   }
 
 }
@@ -51,6 +56,14 @@
 //
 // Provide a static navbar from which we expand to create full-width, fixed, and
 // other navbar variations.
+
+.page-preview .navbar-default {
+  position: relative;
+  z-index: 10;
+}
+.page-preview .main-container {
+  padding-top: 0;
+}
 
 .navbar {
   position: relative;
@@ -246,6 +259,10 @@
   width: 24px;
   height: 24px;
   display: inline-block;
+
+  // Click events are swallowed by SVG <use> elements in IE/Edge.
+  // See https://github.com/facebook/react/issues/4963
+  pointer-events: none;
 
   + .badge {
     position: absolute;

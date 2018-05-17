@@ -1,9 +1,14 @@
 {% extends 'node--featured.html.twig' %}
 
   {% block card_hero_image %}
-    <div class="img_wrapper">{{ content.field_event_image }}</div>
+    <div class="img_wrapper">
+      {% if content.field_event_image|render %}
+        {{ content.field_event_image }}
+      {% else %}
+        <hr class="no-feature-image">
+      {% endif %}
+    </div>
   {% endblock %}
-
 
   {% block card_body %}
     <small class="text-muted">
@@ -11,7 +16,6 @@
         {%- block field_icon -%} event {%- endblock -%}
         {%- block field_value %} {{ event_date }} {%- endblock -%}
       {% endembed %}
-
       {% embed "node--teaser__field.html.twig" %}
         {%- block field_icon -%} location {%- endblock -%}
         {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
@@ -22,4 +26,10 @@
         </span>
       {% endif %}
     </small>
+
+    <div class="card__link">
+      <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+        <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+      </a>
+    </div>
   {% endblock %}

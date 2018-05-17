@@ -52,20 +52,36 @@
       display: block;
       height: 0;
       padding-bottom: 33.3%;
-      background-color: #e6e6e6;
       border-radius: inherit; }
+    .teaser.teaser--tile .teaser__image .no-feature-image {
+      border: 0 none;
+      border-bottom: 2px solid #777;
+      padding: 0;
+      position: absolute;
+      bottom: 0;
+      left: 1rem;
+      right: 1rem;
+      margin: 0; }
     .teaser.teaser--tile .teaser__image img {
       position: absolute;
       top: 0;
       left: 0;
       width: auto;
       border-radius: inherit; }
+  .teaser.teaser--tile .teaser__content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column; }
+  .teaser.teaser--tile .card__link {
+    align-self: flex-end; }
   .teaser.teaser--tile .teaser__image a {
     display: block;
     border-radius: inherit; }
   .teaser.teaser--tile .teaser__teaser-type {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.5); }
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px 0 8px 0;
+    left: 0; }
 
 .paragraph--section .paragraph--featured {
   background-color: #f3f3f3;
@@ -78,6 +94,30 @@
       padding: 50px 0;
       margin-left: calc(-100vw / 2 + 1200px / 2);
       margin-right: calc(-100vw / 2 + 1200px / 2); } }
+.paragraph--featured.multiple {
+  padding: 0 1em; }
+  @media (min-width: 900px) {
+    .paragraph--featured.multiple {
+      padding: 0 1em; } }
+  @media (min-width: 1200px) {
+    .paragraph--featured.multiple {
+      padding: 0; } }
+.paragraph--featured.multiple.first {
+  padding: 30px 1em 0; }
+  @media (min-width: 900px) {
+    .paragraph--featured.multiple.first {
+      padding: 50px 1em 0; } }
+  @media (min-width: 1200px) {
+    .paragraph--featured.multiple.first {
+      padding: 50px 0 0; } }
+.paragraph--featured.multiple.last {
+  padding: 0 1em 30px; }
+  @media (min-width: 900px) {
+    .paragraph--featured.multiple.last {
+      padding: 0 1em 50px; } }
+  @media (min-width: 1200px) {
+    .paragraph--featured.multiple.last {
+      padding: 0 0 50px; } }
 .paragraph--featured .title {
   margin-top: 25px;
   font-size: 24px;
@@ -86,5 +126,7 @@
 .paragraph--featured .field--name-field-featured-items {
   margin-top: 30px;
   margin-bottom: 0.75rem; }
+.paragraph--featured .card__actionbar {
+  padding-right: 0; }
 
 /*# sourceMappingURL=social_landing_page.featured.css.map */
