@@ -4,7 +4,6 @@ namespace Drupal\social_group;
 
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
 /**
@@ -24,15 +23,28 @@ class SetGroupsForNodeService {
   /**
    * Save groups for a given node.
    */
-  public static function setGroupsForNode(Node $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
-    // Remove the notifications related to the node if a group is added.
-    if (empty($original_groups) && !empty($groups_to_add)) {
+  public static function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
+    $moved = FALSE;
+
+    // Remove the notifications related to the node if a group is added or
+    // moved.
+    if ((empty($original_groups) || $original_groups != $groups_to_add) && !empty($groups_to_add)) {
       $entity_query = \Drupal::entityQuery('activity');
       $entity_query->condition('field_activity_entity.target_id', $node->id(), '=');
       $entity_query->condition('field_activity_entity.target_type', 'node', '=');
-      $ids = $entity_query->execute();
-      if (!empty($ids)) {
-        entity_delete_multiple('activity', $ids);
+
+      if (!empty($original_groups)) {
+        $template = 'create_' . $node->bundle() . '_group';
+        $messages = \Drupal::entityTypeManager()->getStorage('message')
+          ->loadByProperties(['template' => $template]);
+        $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+
+        $moved = TRUE;
+      }
+
+      if (!empty($ids = $entity_query->execute())) {
+        $controller = \Drupal::entityTypeManager()->getStorage('activity');
+        $controller->delete($controller->loadMultiple($ids));
       }
     }
 
@@ -44,6 +56,16 @@ class SetGroupsForNodeService {
       $group = Group::load($group_id);
       self::addGroupContent($node, $group);
     }
+
+    if ($moved) {
+      $hook = 'social_group_move';
+
+      foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+        $function = $module . '_' . $hook;
+        $function($node);
+      }
+    }
+
     return $node;
   }
 
@@ -58,7 +80,7 @@ class SetGroupsForNodeService {
   public static function addGroupContent(NodeInterface $node, Group $group) {
     // TODO Check if group plugin id exists.
     $plugin_id = 'group_node:' . $node->bundle();
-    $group->addContent($node, $plugin_id);
+    $group->addContent($node, $plugin_id, ['uid' => $node->getOwnerId()]);
   }
 
   /**

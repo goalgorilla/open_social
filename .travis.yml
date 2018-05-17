@@ -31,31 +31,36 @@ matrix:
   - env: TEST_SUITE=install_stability_3-4-5
   - env: TEST_SUITE=install_update
   - env: TEST_SUITE=drush_make
+  - env: TEST_SUITE=accessibility
 
 services:
   - docker
 
 before_install:
-  # Kill the install_update and drush_make jobs if it is not a PR build.
+  # Kill the install_update, drush_make and accessibility jobs if it is not a PR build.
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then exit 0; fi
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
   - git clone --branch master https://github.com/goalgorilla/drupal_social.git install
   - cd install
   - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - export COMMIT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_COMMIT; else echo $TRAVIS_PULL_REQUEST_SHA; fi)
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:1.6.0 --prefer-dist; fi
-  - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${TRAVIS_COMMIT} --prefer-dist; fi
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
+  - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
 
 install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $TRAVIS_COMMIT; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
 script:
@@ -68,6 +73,7 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
+  - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
