@@ -136,14 +136,15 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
 }
 
 /**
- * Implements hook_menu_local_tasks_alter().
+ * Implements hook_local_tasks_alter().
  */
-function social_profile_menu_local_tasks_alter(&$data, $route_name) {
-  if (isset($data['tabs'][0]['entity.user.edit_form'])) {
-    unset($data['tabs'][0]['entity.user.edit_form']);
+function social_profile_local_tasks_alter(&$local_tasks) {
+  // Remove the profile main "Profile information" from the local tabs.
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.main'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.main']);
   }
-  if (isset($data['tabs'][0]['entity.profile.user_profile_form:profile.type.profile'])) {
-    unset($data['tabs'][0]['entity.profile.user_profile_form:profile.type.profile']);
+  if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
+    unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
   }
 }
 
