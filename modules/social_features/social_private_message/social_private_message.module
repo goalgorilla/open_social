@@ -10,6 +10,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -62,16 +63,38 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form['#attached']['library'][] = 'social_private_message/validator';
   $form['#attached']['drupalSettings']['social_private_message']['validator'] = t('Please select an item in the list.');
 
+  // Determine if the form is an PMT edit form.
+  $form_is_edit_form = $form_state->has('thread_members');
+
   // There's an alternative submit. We need to change its value.
   foreach ($form['actions'] as $key => &$actions) {
     // Must be pretty sure it's a submit button.
-    if (is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit'])) {
-      // Key must have submit in it.
-      if (strpos($key, 'submit-') !== FALSE) {
-        $actions['#value'] = t('Send');
-        $actions['#submit'][] = 'social_private_message_redirect';
-        unset($actions['#ajax']);
+    if (!(is_array($actions) && isset($actions['#submit']) && is_array($actions['#submit']))) {
+      continue;
+    }
+
+    // Key must have submit in it.
+    if (strpos($key, 'submit-') === FALSE) {
+      continue;
+    }
+
+    $actions['#value'] = t('Send');
+    $actions['#submit'][] = 'social_private_message_redirect';
+    unset($actions['#ajax']);
+
+    if (!($form_is_edit_form && \Drupal::routeMatch()->getRouteName() == 'entity.private_message_thread.canonical' && \Drupal::routeMatch()->getParameter('private_message_thread')->get('members')->count() != count($form_state->get('thread_members')))) {
+      continue;
+    }
+
+    $callbacks = $actions['#submit'];
+    $actions['#submit'] = [];
+
+    foreach ($callbacks as $callback) {
+      if ($callback == '::save') {
+        $actions['#submit'][] = '_social_private_message_members';
       }
+
+      $actions['#submit'][] = $callback;
     }
   }
 
@@ -93,19 +116,18 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
   $form['actions']['submit']['#value'] = t('Send');
   $form['actions']['submit']['#submit'][] = 'social_private_message_redirect';
 
-  // Determine if the form is an PMT edit form.
-  $form_is_edit_form = !is_null($form_state->get('thread_members'));
   // Add form class based on form type (create/edit).
-  $form_class = 'message__thread_edit';
   if ($form_is_edit_form) {
     $form_class = 'message__thread_create';
-  }
-  $form['#attributes']['class'][] = $form_class;
 
-  if ($form_is_edit_form) {
     // In edit mode, remove the label from the message field.
     $form['message']['widget'][0]['#title'] = '';
   }
+  else {
+    $form_class = 'message__thread_edit';
+  }
+
+  $form['#attributes']['class'][] = $form_class;
 }
 
 /**
@@ -118,7 +140,7 @@ function social_private_message_form_private_message_add_form_alter(&$form, Form
  */
 function social_private_message_thread_delete_redirect(array $form, FormStateInterface $form_state) {
   // Set a nice message.
-  drupal_set_message(t('Your message has been deleted.'));
+  \Drupal::messenger()->addStatus(t('Your message has been deleted.'));
   // Force redirect to the inbox.
   $url = Url::fromRoute('social_private_message.inbox');
   $form_state->setRedirectUrl($url);
@@ -138,6 +160,45 @@ function social_private_message_redirect(array $form, FormStateInterface $form_s
   // Force redirect to the inbox.
   $url = Url::fromRoute('social_private_message.inbox');
   $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Add deleted users to list of thread members.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
+ */
+function _social_private_message_members(array $form, FormStateInterface $form_state) {
+  $only_exist_members = $form_state->get('thread_members');
+
+  $members_with_deleted = \Drupal::routeMatch()->getParameter('private_message_thread')
+    ->get('members')
+    ->getValue();
+
+  $thread_members = [];
+
+  foreach ($members_with_deleted as $value) {
+    $found = FALSE;
+
+    /** @var \Drupal\user\UserInterface $member */
+    foreach ($only_exist_members as $member) {
+      if ($value['target_id'] == $member->id()) {
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if ($found) {
+      $thread_members[] = $member;
+    }
+    else {
+      $thread_members[] = new DeletedUser($value['target_id']);
+    }
+  }
+
+  $form_state->set('thread_members', $thread_members);
 }
 
 /**
