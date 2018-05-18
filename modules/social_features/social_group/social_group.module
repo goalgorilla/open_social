@@ -166,12 +166,8 @@ function _social_group_visibility_settings_submit(array $form, FormStateInterfac
 
   /** @var \Drupal\user\Entity\Role $role */
   $role = Role::load('authenticated');
-  if (in_array('create public_group group', $role->getPermissions())) {
-    $current_permission = TRUE;
-  }
-  else {
-    $current_permission = FALSE;
-  }
+  $current_permission = $role->hasPermission('create public_group group');
+
   $disable_public_visibility = $form_state->getValue('disable_public_visibility');
 
   if ($disable_public_visibility === 1 && $current_permission === TRUE) {
