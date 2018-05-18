@@ -2,14 +2,12 @@
 
 namespace Drupal\social_private_message;
 
-use Drupal\Core\Session\AccountInterface;
-
 /**
  * Class DeletedUser.
  *
  * @package Drupal\social_private_message
  */
-class DeletedUser implements AccountInterface {
+class DeletedUser {
 
   /**
    * The user ID.
