@@ -10,28 +10,20 @@ namespace Drupal\social_profile;
 trait SocialProfileTrait {
 
   /**
-   * Get a list of account IDs whose account names begin with the given string.
+   * Builds an query to get referenceable entities.
    *
    * @param string $name
    *   The string to search for.
-   * @param int $count
-   *   The number of results to return.
    * @param string $suggestion_format
    *   (optional) The suggestion format.
    *
-   * @return int[]
-   *   An array of account IDs for accounts whose account names begin with the
-   *   given string.
+   * @return \Drupal\Core\Database\Query\Select
+   *   The select query object.
    */
-  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+  public function buildUserQuery($name, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $connection = \Drupal::database();
-
-    $query = $connection->select('users', 'u')
-      ->fields('u', ['uid'])
-      ->condition('uf.status', 1);
-
+    $query = $connection->select('users', 'u')->condition('uf.status', 1);
     $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
-
     $name = $connection->escapeLike($name);
 
     switch ($suggestion_format) {
@@ -65,7 +57,26 @@ trait SocialProfileTrait {
         break;
     }
 
-    $result = $query
+    return $query;
+  }
+
+  /**
+   * Get a list of account IDs whose account names begin with the given string.
+   *
+   * @param string $name
+   *   The string to search for.
+   * @param int $count
+   *   The number of results to return.
+   * @param string $suggestion_format
+   *   (optional) The suggestion format.
+   *
+   * @return int[]
+   *   An array of account IDs for accounts whose account names begin with the
+   *   given string.
+   */
+  public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+    $result = $this->buildUserQuery($name, $suggestion_format)
+      ->fields('u', ['uid'])
       ->range(0, $count)
       ->execute()
       ->fetchCol();
