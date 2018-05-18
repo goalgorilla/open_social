@@ -349,3 +349,14 @@ function social_private_message_pm_thread_delete_time_update(EntityInterface $en
 function social_private_message_user_cancel_methods_alter(&$methods) {
   $methods['user_cancel_reassign']['title'] = t('Delete your account, delete private messages, and anonymize all other content.');
 }
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_private_message_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If our create_private_message template is enabled for email then we add it
+  // to the "Message to Me" section.
+  if (isset($email_message_templates['create_private_message'])) {
+    $items['message_to_me']['templates'][] = 'create_private_message';
+  }
+}
