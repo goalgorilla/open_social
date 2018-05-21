@@ -58,6 +58,7 @@ class UserSelection extends UserSelectionBase {
     $or->condition('uid', $ids, 'IN');
 
     $query->condition($or);
+    $query->condition('uid', $this->currentUser->id(), '!=');
 
     return $query;
   }
