@@ -75,7 +75,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
-    // Join node table.
+    // Join node table(s).
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
@@ -92,6 +92,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 
+    if ($account->isAnonymous()) {
+      $configuration['table'] = 'node_field_data';
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+      $this->query->addRelationship('node_field_data', $join, 'node_field_data');
+    }
+
     // Add queries.
     $and_wrapper = db_and();
     $or = db_or();
@@ -105,6 +111,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
         $and = db_and();
+
+        if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
+          $and->condition('node_field_data.uid', 0, '!=');
+        }
+
         $grants->condition($and
           ->condition('node_access.gid', $gids, 'IN')
           ->condition('node_access.realm', $realm)
