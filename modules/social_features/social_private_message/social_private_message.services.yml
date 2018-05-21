@@ -11,5 +11,7 @@ services:
       - '@current_user'
       - '@config.factory'
       - '@user.data'
-      - '@database'
+      - '@cache_tags.invalidator'
+      - '@entity_type.manager'
       - '@datetime.time'
+      - '@database'

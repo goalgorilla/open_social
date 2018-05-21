@@ -2,12 +2,15 @@
 
 namespace Drupal\social_private_message\Service;
 
-use Drupal\Component\Datetime\Time;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
 use Drupal\private_message\Service\PrivateMessageService;
 use Drupal\user\UserDataInterface;
 
@@ -26,19 +29,12 @@ class SocialPrivateMessageService extends PrivateMessageService {
   protected $database;
 
   /**
-   * The Time service.
-   *
-   * @var \Drupal\Component\Datetime\Time
-   */
-  protected $time;
-
-  /**
    * {@inheritdoc}
    */
-  public function __construct($mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, Connection $database, Time $time) {
-    parent::__construct($mapper, $currentUser, $configFactory, $userData);
+  public function __construct(PrivateMessageMapperInterface $mapper, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, UserDataInterface $userData, CacheTagsInvalidatorInterface $cacheTagsInvalidator, EntityTypeManagerInterface $entityTypeManager, TimeInterface $time, Connection $database) {
+    parent::__construct($mapper, $currentUser, $configFactory, $userData, $cacheTagsInvalidator, $entityTypeManager, $time);
+
     $this->database = $database;
-    $this->time = $time;
   }
 
   /**

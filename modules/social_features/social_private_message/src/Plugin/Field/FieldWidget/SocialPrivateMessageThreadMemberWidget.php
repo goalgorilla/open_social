@@ -27,6 +27,7 @@ class SocialPrivateMessageThreadMemberWidget extends PrivateMessageThreadMemberW
     $element['#selection_handler'] = 'social';
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $element['target_id']['#type'] = 'social_private_message_entity_autocomplete';
+    $element['target_id']['#tags'] = TRUE;
     return $element;
   }
 

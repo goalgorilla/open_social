@@ -23,8 +23,43 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    $configuration = parent::defaultConfiguration();
+    $configuration['include_anonymous'] = FALSE;
+    return $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-    return $this->buildUserQuery($match);
+    $query = $this->connection->select('profile', 'p')
+      ->fields('p', ['uid']);
+
+    $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
+    $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+
+    $name = $this->connection->escapeLike($match);
+
+    $or = $query->orConditionGroup();
+    $or->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE');
+    $or->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+
+    $ids = $query->condition($or)->execute()->fetchCol();
+
+    if (empty($ids)) {
+      return parent::buildEntityQuery($match, $match_operator);
+    }
+
+    $query = parent::buildEntityQuery(NULL, $match_operator);
+
+    $or = $query->orConditionGroup();
+    $or->condition('name', $match, $match_operator);
+    $or->condition('uid', $ids, 'IN');
+
+    $query->condition($or);
+
+    return $query;
   }
 
 }

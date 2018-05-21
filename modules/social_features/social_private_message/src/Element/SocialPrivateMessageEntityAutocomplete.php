@@ -16,16 +16,13 @@ use Drupal\social_core\Entity\Element\EntityAutocomplete;
 class SocialPrivateMessageEntityAutocomplete extends EntityAutocomplete {
 
   /**
-   * {@inheritdoc}
+   * Form element validation handler for entity_autocomplete elements.
    */
-  public function getInfo() {
-    return parent::getInfo();
-  }
+  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    parent::validateEntityAutocomplete($element, $form_state, $complete_form);
 
-  public static function processEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $element = parent::processEntityAutocomplete($element, $form_state, $complete_form);
-//    $element['#autocomplete_route_name'] = 'private_message.members_widget_callback';
-    return $element;
+    $value = $form_state->getValue('members');
+    $form_state->setValue('members', $value['target_id']);
   }
 
 }
