@@ -48,9 +48,10 @@
               var commentTextarea = $(this).offset().top + $(this).height();
               var userList = $(this).siblings(".ui-autocomplete");
               var userListHeight = $(userList).innerHeight();
+              var mainHeight = $('.main-container').innerHeight();
               var documentHeight = $(document).scrollTop() + $(window).height();
               var distanceFromBottom = (documentHeight - commentTextarea);
-              if (distanceFromBottom < userListHeight) {
+              if ((distanceFromBottom < userListHeight) || (mainHeight < (commentTextarea + userListHeight))) {
                 // class rule set bottom and top position
                 // so list displays above the textarea
                 $(userList).addClass("upward");
@@ -88,9 +89,10 @@
               var commentTextarea = $(this).offset().top + $(this).height();
               var userList = $(this).siblings(".ui-autocomplete");
               var userListHeight = $(userList).innerHeight();
+              var mainHeight = $('.main-container').innerHeight();
               var documentHeight = $(document).scrollTop() + $(window).height();
               var distanceFromBottom = (documentHeight - commentTextarea);
-              if (distanceFromBottom < userListHeight) {
+              if ((distanceFromBottom < userListHeight) || (mainHeight < (commentTextarea + userListHeight))) {
                 // class rule set bottom and top position
                 // so list displays above the textarea
                 $(userList).addClass("upward");
