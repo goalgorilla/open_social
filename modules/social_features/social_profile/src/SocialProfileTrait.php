@@ -26,11 +26,9 @@ trait SocialProfileTrait {
   public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $connection = \Drupal::database();
 
-    $query = $connection->select('users', 'u')
-      ->fields('u', ['uid'])
-      ->condition('uf.status', 1);
-
+    $query = $connection->select('users', 'u')->fields('u', ['uid']);
     $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
+    $query->condition('uf.status', 1);
 
     $name = $connection->escapeLike($name);
 
