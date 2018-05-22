@@ -57,6 +57,8 @@ function social_private_message_form_private_message_thread_delete_form_alter(&$
  * Implements hook_form_FORMID_alter().
  */
 function social_private_message_form_private_message_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['members']['widget']['target_id']['#description'] = t('The member(s) of the private message thread. Add multiple members by seperating them with a comma.');
+
   // Add CTRL/CMD + Enter is submit.
   $form['#attached']['library'][] = 'social_post/keycode-submit';
 
