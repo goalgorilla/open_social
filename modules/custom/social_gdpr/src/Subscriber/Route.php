@@ -16,7 +16,7 @@ class Route extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    if ($route = $collection->get('gdpr_consent.data_policy')) {
+    if ($route = $collection->get('data_policy.data_policy')) {
       $route->setRequirement('_custom_access', '\Drupal\social_gdpr\Controller\DataPolicy::entityOverviewAccess');
     }
   }

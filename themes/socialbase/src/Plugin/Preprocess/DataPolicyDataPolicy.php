@@ -6,13 +6,13 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Utility\Variables;
 
 /**
- * Pre-processes variables for the "gdpr_consent_data_policy" theme hook.
+ * Pre-processes variables for the "data_policy_data_policy" theme hook.
  *
  * @ingroup plugins_preprocess
  *
- * @BootstrapPreprocess("gdpr_consent_data_policy")
+ * @BootstrapPreprocess("data_policy_data_policy")
  */
-class GdprConsentDataPolicy extends PreprocessBase {
+class DataPolicyDataPolicy extends PreprocessBase {
 
   /**
    * {@inheritdoc}

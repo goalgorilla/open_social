@@ -3,7 +3,7 @@
 namespace Drupal\social_gdpr\Form;
 
 use Drupal\Core\Url;
-use Drupal\gdpr_consent\Form\DataPolicyRevisionDeleteForm as DataPolicyRevisionDeleteFormBase;
+use Drupal\data_policy\Form\DataPolicyRevisionDeleteForm as DataPolicyRevisionDeleteFormBase;
 
 /**
  * Provides a form for deleting a Data policy revision.

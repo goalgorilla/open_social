@@ -3,7 +3,7 @@
 namespace Drupal\social_gdpr\Form;
 
 use Drupal\Core\Url;
-use Drupal\gdpr_consent\Form\DataPolicyRevisionRevertForm as DataPolicyRevisionRevertFormBase;
+use Drupal\data_policy\Form\DataPolicyRevisionRevertForm as DataPolicyRevisionRevertFormBase;
 
 /**
  * Provides a form for reverting a Data policy revision.

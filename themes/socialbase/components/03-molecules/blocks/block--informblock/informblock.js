@@ -5,7 +5,7 @@
 (function ($, Drupal) {
 
   window.informBlockClick = (function() {
-    $('.block-gdpr-consent').on('click', function() {
+    $('.block-data-policy').on('click', function() {
 
       var viewportWidth = window.innerWidth;
       var tabletLandscapeUpBreakpoint = 900;

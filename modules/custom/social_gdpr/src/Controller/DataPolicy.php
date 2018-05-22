@@ -5,7 +5,7 @@ namespace Drupal\social_gdpr\Controller;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
-use Drupal\gdpr_consent\Controller\DataPolicy as DataPolicyBase;
+use Drupal\data_policy\Controller\DataPolicy as DataPolicyBase;
 
 /**
  * Class DataPolicy.
@@ -31,7 +31,7 @@ class DataPolicy extends DataPolicyBase {
    * {@inheritdoc}
    */
   public function revisionOverviewTitle($data_policy_revision) {
-    /** @var \Drupal\gdpr_consent\Entity\DataPolicyInterface $data_policy */
+    /** @var \Drupal\data_policy\Entity\DataPolicyInterface $data_policy */
     $data_policy = $this->entityTypeManager()->getStorage('data_policy')
       ->loadRevision($data_policy_revision);
 

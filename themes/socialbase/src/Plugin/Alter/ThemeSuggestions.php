@@ -70,7 +70,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'confirm_form':
 
-        if (isset($variables['form']['#form_id']) && $variables['form']['#form_id'] == 'gdpr_consent_data_policy_revision_revert_confirm') {
+        if (isset($variables['form']['#form_id']) && $variables['form']['#form_id'] == 'data_policy_data_policy_revision_revert_confirm') {
           $suggestions[] = $variables['theme_hook_original'] . '__modal';
         }
 

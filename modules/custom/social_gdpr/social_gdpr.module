@@ -8,7 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\gdpr_consent\Entity\DataPolicy;
+use Drupal\data_policy\Entity\DataPolicy;
 
 /**
  * Implements hook_help().
@@ -19,7 +19,7 @@ function social_gdpr_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.social_gdpr':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Integrate GDPR Inform and Consent module.') . '</p>';
+      $output .= '<p>' . t('Integrate Data Policy module.') . '</p>';
       return $output;
   }
 }
@@ -36,7 +36,7 @@ function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_gdpr_form_gdpr_consent_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_gdpr_form_data_policy_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.revision_edit') {
     $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
   }
@@ -45,9 +45,9 @@ function social_gdpr_form_gdpr_consent_data_policy_revision_edit_alter(&$form, F
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_gdpr_form_data_policy_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Get the active data policy and display a message that it was updated.
-  $entity_id = \Drupal::config('gdpr_consent.data_policy')->get('entity_id');
+  $entity_id = \Drupal::config('data_policy.data_policy')->get('entity_id');
   $timestamp = DataPolicy::load($entity_id)->getChangedTime();
   $date = \Drupal::service('date.formatter')->format($timestamp, 'social_medium_date');
   $form['date'] = [
@@ -77,10 +77,10 @@ function social_gdpr_form_gdpr_consent_data_policy_agreement_alter(&$form, FormS
 function social_gdpr_social_user_account_header_links() {
   $items = [];
 
-  if (\Drupal::service('gdpr_consent.manager')->needConsent()) {
+  if (\Drupal::service('data_policy.manager')->needConsent()) {
     $items['data_policy_agreement'] = [
       'title' => t('Data policy agreement'),
-      'url' => Url::fromRoute('gdpr_consent.data_policy.agreement'),
+      'url' => Url::fromRoute('data_policy.data_policy.agreement'),
       'after' => 'edit_profile',
       'divider' => 'before',
     ];
