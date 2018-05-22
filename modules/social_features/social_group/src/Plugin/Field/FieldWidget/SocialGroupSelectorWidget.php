@@ -176,7 +176,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       }
     }
     else {
-      $config = \Drupal::config('entity_access_by_field.settings');
+      $config = $this->configFactory->get('entity_access_by_field.settings');
       $default_visibility = $config->get('default_visibility');
       $entity = $form_state->getFormObject()->getEntity();
 
@@ -260,6 +260,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     $group = Group::load($gid);
 
     if ($group->hasPermission('create group_' . $entity->getEntityTypeId() . ':' . $entity->bundle() . ' entity', $account)) {
+      if ($group->getGroupType()->id() === 'public_group') {
+        $config = $this->configFactory->get('entity_access_by_field.settings');
+        if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+          return FALSE;
+        }
+      }
       return TRUE;
     }
     return FALSE;

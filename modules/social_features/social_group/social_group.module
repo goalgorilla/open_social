@@ -27,6 +27,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -143,6 +144,43 @@ function _social_group_edit_submit_redirect(array $form, FormStateInterface $for
     'view.group_information.page_group_about',
     $form_state->getRedirect()->getRouteParameters()
   );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_form_entity_access_by_field_visibility_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add option to disable public group creation.
+  $form['#submit'][] = '_social_group_visibility_settings_submit';
+}
+
+/**
+ * Form submit for visibility settings.
+ *
+ * @param array $form
+ *   Group add or group edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_group_visibility_settings_submit(array $form, FormStateInterface $form_state) {
+
+  /** @var \Drupal\user\Entity\Role $role */
+  $role = Role::load('authenticated');
+  $current_permission = $role->hasPermission('create public_group group');
+
+  $disable_public_visibility = $form_state->getValue('disable_public_visibility');
+
+  if ($disable_public_visibility === 1 && $current_permission === TRUE) {
+    user_role_revoke_permissions($role->id(), [
+      'create public_group group',
+    ]);
+  }
+  if ($disable_public_visibility === 0 && $current_permission === FALSE) {
+    user_role_grant_permissions($role->id(), [
+      'create public_group group',
+    ]);
+  }
+
 }
 
 /**
