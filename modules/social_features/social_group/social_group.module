@@ -1291,3 +1291,10 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     }
   }
 }
+
+/**
+ * Implements hook_user_cancel_methods_alter().
+ */
+function social_group_user_cancel_methods_alter(&$methods) {
+  $methods['user_cancel_reassign']['title'] .= ' ' . t('Reassign your groups to the super administrator.');
+}

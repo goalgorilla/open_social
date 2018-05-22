@@ -78,6 +78,7 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
+  $account = \Drupal::routeMatch()->getParameter('user');
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
@@ -119,8 +120,6 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
       // There are no fields the user can edit here. Set an explanatory message
       // and disable the Save button.
       if ($empty_profile === TRUE) {
-        $account = \Drupal::routeMatch()->getParameter('user');
-
         $form['empty_profile'] = [
           '#type' => 'fieldset',
         ];
@@ -140,6 +139,13 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Add custom submit handler just for redirect purposes. We don't want to
   // override the form::save in profile.
   $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+
+  // Add cancel button, so user can easily navigate form edit form to profile.
+  $form['actions']['cancel'] = [
+    '#type' => 'link',
+    '#title' => t('Cancel'),
+    '#url' => Url::fromRoute('view.user_information.user_information', ['user' => $account->id()]),
+  ];
 }
 
 /**
