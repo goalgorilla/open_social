@@ -28,6 +28,7 @@ define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
  * Fix theme issues in profile fields.
  */
 function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
     case 'field_profile_phone_number':
@@ -39,6 +40,12 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       // @todo: remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
+  }
+  // This replaces all user entity references with our EntityReferenceSelection.
+  if ($field_definition->getType() === 'entity_reference') {
+    if (isset($element['target_id']['#target_type']) && $element['target_id']['#target_type'] === 'user') {
+      $element['target_id']['#selection_handler'] = 'social';
+    }
   }
 }
 
