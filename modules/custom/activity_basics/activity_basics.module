@@ -12,22 +12,6 @@ use Drupal\node\NodeInterface;
  * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity) {
-  switch ($entity->getEntityTypeId()) {
-    case 'comment':
-      $related_entity = $entity->getCommentedEntity();
-      break;
-
-    case 'vote':
-      $related_entity = \Drupal::entityTypeManager()
-        ->getStorage($entity->getVotedEntityType())
-        ->load($entity->getVotedEntityId());
-      break;
-  }
-
-  if (isset($related_entity) && $related_entity->getOwner()->isBlocked()) {
-    return;
-  }
-
   _activity_basics_entity_action($entity, 'create_entitiy_action');
 }
 
