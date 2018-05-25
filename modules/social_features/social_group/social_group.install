@@ -53,6 +53,9 @@ function social_group_install() {
 
   // Set default group settings.
   _social_group_set_default_configuration();
+
+  // Set module weight.
+  module_set_weight('social_group', 2);
 }
 
 /**
@@ -93,6 +96,12 @@ function _social_group_get_permissions($role) {
     'create closed_group group',
     'create public_group group',
   ]);
+
+  $config = \Drupal::config('entity_access_by_field.settings');
+  $disable_public_visibility = $config->get('disable_public_visibility');
+  if ($disable_public_visibility === 0) {
+    $permissions['authenticated'][] = 'create public_group group';
+  }
 
   // Content manager.
   $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
@@ -348,4 +357,11 @@ function social_group_update_8010() {
  */
 function social_group_update_8011() {
   node_access_rebuild(TRUE);
+}
+
+/**
+ * Set module weight.
+ */
+function social_group_update_8012() {
+  module_set_weight('social_group', 2);
 }

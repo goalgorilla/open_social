@@ -52,14 +52,9 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
 
           $config = \Drupal::config('mentions.settings');
           switch ($config->get('suggestions_format')) {
-            case SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME:
-            case SOCIAL_MENTIONS_SUGGESTIONS_ALL:
-              if (!empty($profile->field_profile_first_name->value) && !empty($profile->field_profile_last_name->value)) {
-                $user_name = t('@first @last', [
-                  '@first' => $profile->field_profile_first_name->value,
-                  '@last' => $profile->field_profile_last_name->value,
-                ]);
-              }
+            case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
+            case SOCIAL_PROFILE_SUGGESTIONS_ALL:
+              $user_name = $profile->getOwner()->getDisplayName();
           }
           if (empty($user_name)) {
             $user_name = $profile->getOwner()->getAccountName();

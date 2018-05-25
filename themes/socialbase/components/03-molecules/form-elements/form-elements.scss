@@ -139,7 +139,6 @@ span.form-required {
   margin: 0 3px;
 }
 
-
 // Help text
 //
 // Apply to any element you wish to create light text for placement immediately
@@ -170,7 +169,7 @@ span.form-required {
 .views-exposed-form__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 0;
 
   // The primary button will align right
@@ -181,7 +180,6 @@ span.form-required {
   // the flat button (reset button) will align left
   .btn-flat {
     margin-left: 0;
-    margin-right: auto;
   }
 }
 
@@ -224,9 +222,9 @@ span.form-required {
     position: absolute;
     left: 20px;
     top: -7px;
-    border-bottom:  8px dashed;
-    border-right:   8px solid transparent;
-    border-left:    8px solid transparent;
+    border-bottom: 8px dashed;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
   }
 }
 
@@ -275,5 +273,21 @@ span.form-required {
 
   .has-error & {
     margin-bottom: 0;
+  }
+}
+
+.field--label-inline {
+  .field--label {
+    font-weight: 500;
+    display: inline-block;
+    &:after {
+      content: ':';
+    }
+    & + .field--item {
+      display: inline-block;
+      a {
+        font-weight: 300;
+      }
+    }
   }
 }

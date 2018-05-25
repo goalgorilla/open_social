@@ -3,21 +3,23 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit_Framework_Assert as PHPUnit;
-use Drupal\profile\Entity\Profile;
-use Drupal\group\Entity\Group;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\group\Entity\Group;
+use Drupal\locale\SourceString;
+use PHPUnit_Framework_Assert as PHPUnit;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext extends RawMinkContext implements Context, SnippetAcceptingContext
 {
+
+    protected $minkContext;
+
     /**
      * Initializes context.
      *
@@ -38,11 +40,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     /**
      * @BeforeScenario
      *
-     * @param $event
+     * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
      */
-    public function before($event) {
+    public function before(BeforeScenarioScope $scope) {
       // Let's disable the tour module for all tests by default.
       \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+
+      /** @var \Behat\Testwork\Environment\Environment $environment */
+      $environment = $scope->getEnvironment();
+      $this->minkContext = $environment->getContext('SocialMinkContext');
     }
 
   /**
@@ -807,5 +813,131 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       // Now click the element.
       $element->click();
+    }
+
+    /**
+     * Turn off translations import.
+     *
+     * @Given I turn off translations import
+     */
+    public function turnOffTranslationsImport()
+    {
+      // Let's disable translation.path for now.
+      \Drupal::configFactory()->getEditable('locale.settings')->set('translation.import_enabled', FALSE)->save();
+    }
+
+    /**
+     * Translate a string.
+     *
+     * @Given /I translate "(?P<source>[^"]+)" to "(?P<translation>[^"]+)" for "(?P<langcode>[^"]+)"$/
+     */
+    public function iTranslate($source, $translation, $langcode)
+    {
+      $this->addTranslation($source, $translation, $langcode);
+    }
+
+    /**
+     * Helper function to add translation.
+     *
+     * @param $source_string
+     * @param $translated_string
+     * @param $langcode
+     */
+    public function addTranslation($source_string, $translated_string, $langcode) {
+      // Find existing source string.
+      $storage = \Drupal::service('locale.storage');
+      $string = $storage->findString(array('source' => $source_string));
+      if (is_null($string)) {
+        $string = new SourceString();
+        $string->setString($source_string);
+        $string->setStorage($storage);
+        $string->save();
+      }
+
+
+      // Create translation. If one already exists, it will be replaced.
+      $translation = $storage->createTranslation(array(
+        'lid' => $string->lid,
+        'language' => $langcode,
+        'translation' => $translated_string,
+      ))->save();
+      return $translation;
+    }
+
+    /**
+     * Fill multiple autocomplete field.
+     *
+     * @param string $field
+     *   The field identifier.
+     * @param string $text
+     *   The typed text in field.
+     * @param string $item
+     *   The item for drop-down list.
+     * @param bool $next
+     *   (optional) TRUE if it is not first value.
+     */
+    public function fillAutocompleteField($field, $text, $item, $next = FALSE) {
+      $element = $this->getSession()->getPage()->findField($field);
+
+      if (null === $element) {
+        throw new \Exception(sprintf('Field %s not found', $field));
+      }
+
+      if ($next) {
+        $text = $element->getValue() . ', ' . $text;
+      }
+
+      $element->setValue($text);
+      $element->keyDown(' ');
+      sleep(1); // Wait timeout before sending an AJAX request.
+      $this->minkContext->iWaitForAjaxToFinish();
+      $id = $element->getAttribute('id');
+      $index = $this->getSession()->evaluateScript('return jQuery(".ui-autocomplete-input").index(jQuery("#' . $id . '"));');
+      $autocomplete = $this->getSession()->getPage()->find('xpath', '//ul[contains(@class, "ui-autocomplete")][' . ($index + 1) . ']');
+
+      if (null === $autocomplete) {
+        throw new \Exception('Could not find the autocomplete popup box');
+      }
+
+      $popup_element = $autocomplete->find('xpath', "//li[text()='{$item}']");
+
+      // If "li" was not found, try to find "a" inside a "li".
+      if (null === $popup_element) {
+        $popup_element = $autocomplete->find('xpath', "//li/a[text()='{$item}']");
+      }
+
+      // If "li" was not found, try to find "div" inside a "li".
+      if (null === $popup_element) {
+        $popup_element = $autocomplete->find('xpath', "//li/div[text()='{$item}']");
+      }
+
+      if (null === $popup_element) {
+        throw new \Exception(sprintf('Could not find autocomplete item with text %s', $item));
+      }
+
+      if (!empty($popup_element_id = $popup_element->getAttribute('id'))) {
+        $this->getSession()->evaluateScript('jQuery("#' . $popup_element_id . '").click();');
+      }
+      else {
+        $popup_element->click();
+      }
+
+      if ($next) {
+        $this->getSession()->evaluateScript('jQuery("#' . $id . '").val(jQuery("#' . $id . '").val().replace(/\s(\d+\)\,\s)/g, " ($1"));');
+      }
+    }
+
+    /**
+     * @Given I fill in :field with :text and select :item
+     */
+    public function iFillInWithAndSelect($field, $text, $item) {
+      $this->fillAutocompleteField($field, $text, $item);
+    }
+
+    /**
+     * @Given I fill next in :field with :text and select :item
+     */
+    public function iFillNextInWithAndSelect($field, $text, $item) {
+      $this->fillAutocompleteField($field, $text, $item, TRUE);
     }
 }

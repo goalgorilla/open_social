@@ -57,6 +57,23 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $suggestions = [$variables['theme_hook_original'] . '__' . 'charts'];
         }
 
+        if (isset($variables['elements']['#id'])) {
+          $theme = \Drupal::theme()->getActiveTheme()->getName();
+          $name = 'data_policy_page_title_block';
+
+          if ($variables['elements']['#id'] == $theme . '_' . $name) {
+            $suggestions[] = $variables['theme_hook_original'] . '__' . $name;
+          }
+        };
+
+        break;
+
+      case 'confirm_form':
+
+        if (isset($variables['form']['#form_id']) && $variables['form']['#form_id'] == 'data_policy_data_policy_revision_revert_confirm') {
+          $suggestions[] = $variables['theme_hook_original'] . '__modal';
+        }
+
         break;
 
       case 'container':
@@ -244,8 +261,28 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'profile':
 
+        // Add an anonymous variant to all the default profile theme
+        // suggestions.
         if (\Drupal::currentUser()->isAnonymous()) {
-          $suggestions[] = $hook . '__' . $variables['elements']['#entity_type'] . '__' . $variables['elements']['#view_mode'] . '__anonymous';
+          $default_suggestions = profile_theme_suggestions_profile($variables->getArrayCopy());
+
+          foreach ($default_suggestions as $suggestion) {
+            // Find the position of the original suggestion.
+            $reference_pos = array_search($suggestion, $suggestions);
+
+            $anonymous_suggestion = $suggestion . '__anonymous';
+
+            // If we can't find the reference suggestion we just add it to the
+            // most important spot in the suggestions list.
+            if ($reference_pos === FALSE) {
+              $suggestions[] = $anonymous_suggestion;
+            }
+            // Otherwise ensure that our anonymous version has the same level
+            // of preference as the original suggestion it extends.
+            else {
+              array_splice($suggestions, $reference_pos + 1, 0, $anonymous_suggestion);
+            }
+          }
         }
 
         break;
