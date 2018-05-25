@@ -67,6 +67,7 @@
 #}
 
 {{ attach_library('socialbase/teaser')}}
+{{ attach_library('socialbase/page-node')}}
 
 {%
   set classes = [
@@ -81,6 +82,11 @@
 %}
 
 <div{{ attributes.addClass(classes) }}>
+  {% if status_label %}
+    <div class="node--unpublished__label">
+      {{ status_label }}
+    </div>
+  {% endif %}
 
   <div class='teaser__image'>
 
@@ -105,11 +111,6 @@
       {{ content.field_image }}
     {% endblock %}
 
-    {% if status_label %}
-      <div class="status">
-        {{ status_label }}
-      </div>
-    {% endif %}
 
   </div>
 

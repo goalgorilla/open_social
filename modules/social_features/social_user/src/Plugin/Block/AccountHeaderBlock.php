@@ -113,7 +113,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     $navigation_settings_config = $this->configFactory->get('social_user.navigation.settings');
 
     if ($account->id() !== 0) {
-      $account_name = $account->getAccountName();
+      $account_name = $account->getDisplayName();
 
       $links = [
         'add' => [
@@ -501,6 +501,50 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ->getViewBuilder('profile')
           ->view($profile, 'small');
         $links['account_box']['icon_image'] = $content;
+      }
+
+      $hook = 'social_user_account_header_links';
+
+      $divider = [
+        'divider' => 'true',
+        'classes' => 'divider',
+        'attributes' => 'role=separator',
+      ];
+
+      foreach ($this->moduleHandler->invokeAll($hook) as $key => $item) {
+        if (!isset($links['account_box']['below'][$item['after']]) || isset($links['account_box']['below'][$key])) {
+          continue;
+        }
+
+        $list = $links['account_box']['below'];
+
+        $links['account_box']['below'] = [];
+
+        foreach ($list as $exist_key => $exist_item) {
+          $links['account_box']['below'][$exist_key] = $exist_item;
+
+          if ($item['after'] == $exist_key) {
+            if (isset($item['divider']) && $item['divider'] == 'before') {
+              $links['account_box']['below'][$key . '_divider'] = $divider;
+            }
+
+            $links['account_box']['below'][$key] = [
+              'classes' => '',
+              'link_attributes' => '',
+              'link_classes' => '',
+              'icon_classes' => '',
+              'icon_label' => '',
+              'title' => $item['title'],
+              'label' => $item['title'],
+              'title_classes' => '',
+              'url' => $item['url'],
+            ];
+
+            if (isset($item['divider']) && $item['divider'] == 'after') {
+              $links['account_box']['below'][$key . '_divider'] = $divider;
+            }
+          }
+        }
       }
     }
     else {

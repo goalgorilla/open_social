@@ -285,6 +285,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'node_topic_delete_form',
       'profile_profile_delete_form',
       'private_message_thread_delete_form',
+      'data_policy_edit_form',
+      'data_policy_data_policy_agreement',
+      'data_policy_data_policy_revision_edit',
     ]);
 
   if (in_array($form_id, $default_forms)) {
@@ -325,6 +328,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_register_form',
     'user_pass_reset',
     'social_user_password_form',
+    'data_policy_edit_form',
+    'data_policy_data_policy_agreement',
+    'data_policy_data_policy_revision_edit',
   ]);
 
   if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {
