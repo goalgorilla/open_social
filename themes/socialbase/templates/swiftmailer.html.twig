@@ -245,6 +245,10 @@
         .mb0 {
             margin-bottom: 0; }
 
+        .logo {
+            max-height: 80px;
+            max-width: 160px; }
+
         .preheader {
             color: transparent;
             display: none;
@@ -340,7 +344,7 @@
                 <span class="preheader"></span>
 
                 <div class="header">
-                    <img height="42" src="{{ logo }}" alt="Logo" />
+                    <img src="{{ logo }}" alt="Logo" class="logo" />
                 </div>
 
                 <div class="postheader">
@@ -370,13 +374,11 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <td class="content-block">
-                                <img height="42" src="{{ logo }}" alt="Logo" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="content-block">
-                                <strong class="brand">Open Social</strong><br />
-                                <span class="tagline">"Make your people bloom"</span>
+                                <strong class="brand"><a href="{{ base_url }}">{{ site_name }}</a></strong>
+                                {% if site_slogan %}
+                                    <br />
+                                    <span class="tagline">{{ site_slogan }}</span>
+                                {% endif %}
                             </td>
                         </tr>
                         <tr>
