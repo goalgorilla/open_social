@@ -120,7 +120,7 @@ abstract class DemoSystem extends DemoContent {
       }
 
       // Logo.
-      $logo = $this->preparePicture($data['theme']['logo']);
+      $logo = $this->prepareImage($data['theme']['logo']);
       // Must be a valid file.
       if ($logo instanceof File) {
         $theme_logo = [
@@ -236,16 +236,16 @@ abstract class DemoSystem extends DemoContent {
   /**
    * Prepares data about an image.
    *
-   * @param string $picture
-   *   The picture by uuid.
+   * @param string $image
+   *   The image by uuid.
    *
    * @return array
    *   Returns an array.
    */
-  protected function preparePicture($picture) {
+  protected function prepareImage($image) {
     $value = NULL;
     $files = $this->fileStorage->loadByProperties([
-      'uuid' => $picture,
+      'uuid' => $image,
     ]);
 
     if ($files) {
@@ -302,7 +302,7 @@ abstract class DemoSystem extends DemoContent {
     ];
 
     /* @var \Drupal\file\Entity\File $file */
-    $file = $this->preparePicture($data['image']);
+    $file = $this->prepareImage($data['image']);
 
     $block_image = [
       'target_id' => $file->id(),

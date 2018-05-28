@@ -242,6 +242,35 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
   }
 
   /**
+   * Prepares data about an image.
+   *
+   * @param string $picture
+   *   The image uuid.
+   * @param string $alt
+   *   The image alt text.
+   *
+   * @return array
+   *   Returns an array for the image field.
+   */
+  protected function prepareImage($picture, $alt) {
+    $value = NULL;
+    $files = $this->fileStorage->loadByProperties([
+      'uuid' => $picture,
+    ]);
+
+    if ($files) {
+      $value = [
+        [
+          'target_id' => current($files)->id(),
+          'alt' => !empty($alt) ? $alt : 'file' . current($files)->id(),
+        ],
+      ];
+    }
+
+    return $value;
+  }
+
+  /**
    * Makes an array with data of an entity.
    *
    * @param array $item
