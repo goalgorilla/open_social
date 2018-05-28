@@ -47,7 +47,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     // Add tables and joins.
     $this->query->addTable('activity__field_activity_recipient_group');
-
     $this->query->addTable('activity__field_activity_entity');
 
     $configuration = [
@@ -76,7 +75,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('post__field_visibility', $join, 'post__field_visibility');
 
-    // Join node table.
+    // Join node table(s).
     $configuration = [
       'left_table' => 'activity__field_activity_entity',
       'left_field' => 'field_activity_entity_target_id',
@@ -93,6 +92,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $join = Views::pluginManager('join')->createInstance('standard', $configuration);
     $this->query->addRelationship('node_access', $join, 'node_access_relationship');
 
+    if ($account->isAnonymous()) {
+      $configuration['table'] = 'node_field_data';
+      $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+      $this->query->addRelationship('node_field_data', $join, 'node_field_data');
+    }
+
     // Add queries.
     $and_wrapper = db_and();
     $or = db_or();
@@ -106,6 +111,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
         $and = db_and();
+
+        if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
+          $and->condition('node_field_data.uid', 0, '!=');
+        }
+
         $grants->condition($and
           ->condition('node_access.gid', $gids, 'IN')
           ->condition('node_access.realm', $realm)
@@ -128,6 +138,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_access = db_and();
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
     $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
+
     if (!$account->hasPermission('view public posts')) {
       $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
     }
@@ -138,6 +149,11 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     }
 
     $or->condition($post_access);
+
+    $post_status = db_or();
+    $post_status->condition('post.status', 1, '=');
+    $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
+    $and_wrapper->condition($post_status);
 
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
