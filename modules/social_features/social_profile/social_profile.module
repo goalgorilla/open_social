@@ -543,7 +543,7 @@ function _social_profile_form_pre_render($element) {
 /**
  * Implements hook_entity_operation_alter().
  */
-function social_profile_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity) {
+function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity) {
   if ($entity->getEntityTypeId() === 'user') {
     if (isset($operations['edit'])) {
       $operations['edit']['title'] = t('Edit account');
