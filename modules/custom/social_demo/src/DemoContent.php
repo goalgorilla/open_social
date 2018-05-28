@@ -5,6 +5,7 @@ namespace Drupal\social_demo;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\user\Entity\User;
@@ -252,17 +253,15 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    * @return array
    *   Returns an array for the image field.
    */
-  protected function prepareImage($picture, $alt) {
+  protected function prepareImage($picture, $alt = '') {
     $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $picture,
-    ]);
+    $files = $this->loadByUuid('file', $picture);
 
-    if ($files) {
+    if ($files instanceof File) {
       $value = [
         [
-          'target_id' => current($files)->id(),
-          'alt' => !empty($alt) ? $alt : 'file' . current($files)->id(),
+          'target_id' => $files->id(),
+          'alt' => $alt ?: 'file' . $files->id(),
         ],
       ];
     }
