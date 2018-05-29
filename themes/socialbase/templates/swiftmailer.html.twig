@@ -374,7 +374,13 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <td class="content-block">
-                                <strong class="brand"><a href="{{ base_url }}">{{ site_name }}</a></strong>
+                                <strong class="brand">
+                                    {% if site_link %}
+                                        <a href="{{ base_url }}">{{ site_name }}</a>
+                                    {% else %}
+                                        {{ site_name }}
+                                    {% endif %}
+                                </strong>
                                 {% if site_slogan %}
                                     <br />
                                     <span class="tagline">{{ site_slogan }}</span>

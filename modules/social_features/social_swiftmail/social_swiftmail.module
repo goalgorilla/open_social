@@ -12,9 +12,6 @@ use Drupal\file\Entity\File;
  * Preprocess swift template.
  */
 function social_swiftmail_preprocess_swiftmailer(array &$variables) {
-  global $base_url;
-  $variables['base_url'] = $base_url;
-
   // Load default theme (not active).
   $theme_id = \Drupal::config('system.theme')->get('default');
 
@@ -40,12 +37,12 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $variables['link'] = $link;
   $variables['border_radius'] = $border_radius;
 
-
   $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
   if ($social_swiftmail_config->get('remove_open_social_branding') === 1) {
     $site_config = \Drupal::config('system.site');
 
     if ($site_config) {
+      $variables['site_link'] = TRUE;
       $variables['site_name'] = $site_config->get('name');
       if ($site_config->get('slogan')) {
         $variables['site_slogan'] = $site_config->get('slogan');
@@ -56,7 +53,6 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['site_name'] = t('Open Social');
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
   }
-
 
   // Try to add a heading message.
   if ($user = user_load_by_mail($variables['message']['to'])) {
