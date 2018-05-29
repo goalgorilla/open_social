@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Here we define a constant for our node access grant ID.
@@ -198,7 +199,7 @@ function entity_access_by_field_field_widget_form_alter(&$element, FormStateInte
   $entity = $form_object->getEntity();
   $field_name = $field_definition->getName();
 
-  if (!$entity->hasField($field_name)) {
+  if (($entity instanceof FieldConfig) || !$entity->hasField($field_name)) {
     return;
   }
 

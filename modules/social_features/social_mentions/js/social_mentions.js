@@ -37,8 +37,28 @@
   var initMentions = function(element, context, settings) {
     $(element).mentionsInput({
       source: settings.path.baseUrl + "mentions-autocomplete",
-      renderItem: function(ul, item) {
-        return renderMentionItem(ul, item);
+      autocomplete: {
+        renderItem: function(ul, item) {
+          return renderMentionItem(ul, item);
+        },
+        open: function(event, ui) {
+          if (!CKEDITOR.instances[this.id]) {
+
+            if (window.matchMedia("(min-width: 600px)").matches) {
+              var commentTextarea = $(this).offset().top + $(this).height();
+              var userList = $(this).siblings(".ui-autocomplete");
+              var userListHeight = $(userList).innerHeight();
+              var mainHeight = $('.main-container').innerHeight();
+              var documentHeight = $(document).scrollTop() + $(window).height();
+              var distanceFromBottom = (documentHeight - commentTextarea);
+              if ((distanceFromBottom < userListHeight) || (mainHeight < (commentTextarea + userListHeight))) {
+                // class rule set bottom and top position
+                // so list displays above the textarea
+                $(userList).addClass("upward");
+              }
+            }
+          }
+        }
       },
       markup: function(item) {
         return markupMentionItem(item, settings);
@@ -47,6 +67,9 @@
         return item.value;
       }
     });
+
+    // Hook up the autogrow resize event to the highligher resize event handler.
+    $(element).on('autosize:resized', function () { $(element).trigger('resize.mentionsInput'); });
   };
 
   // Adds mention input config for the textarea.
@@ -66,9 +89,10 @@
               var commentTextarea = $(this).offset().top + $(this).height();
               var userList = $(this).siblings(".ui-autocomplete");
               var userListHeight = $(userList).innerHeight();
-              var documentHeight = $(document).height();
+              var mainHeight = $('.main-container').innerHeight();
+              var documentHeight = $(document).scrollTop() + $(window).height();
               var distanceFromBottom = (documentHeight - commentTextarea);
-              if (distanceFromBottom < userListHeight) {
+              if ((distanceFromBottom < userListHeight) || (mainHeight < (commentTextarea + userListHeight))) {
                 // class rule set bottom and top position
                 // so list displays above the textarea
                 $(userList).addClass("upward");
