@@ -60,8 +60,8 @@ class Page extends DemoNode {
     $entry['field_content_visibility'] = $item['field_content_visibility'];
 
     // Load image by uuid and set to node.
-    if (!empty($item['field_page_image'])) {
-      $entry['field_page_image'] = $this->prepareImage($item['field_page_image']);
+    if (!empty($item['image'])) {
+      $entry['field_page_image'] = $this->prepareImage($item['image'], $item['image_alt']);
     }
 
     if (!empty($item['alias'])) {
@@ -71,32 +71,6 @@ class Page extends DemoNode {
     }
 
     return $entry;
-  }
-
-  /**
-   * Prepares data about an image of node.
-   *
-   * @param string $uuid
-   *   The uuid for the image.
-   *
-   * @return array|null
-   *   Returns an array or null.
-   */
-  protected function prepareImage($uuid) {
-    $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $uuid,
-    ]);
-
-    if ($files) {
-      $value = [
-        [
-          'target_id' => current($files)->id(),
-        ],
-      ];
-    }
-
-    return $value;
   }
 
 }
