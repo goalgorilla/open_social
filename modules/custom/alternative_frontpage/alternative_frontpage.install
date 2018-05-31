@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the alternative_frontpage module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of Alternative Frontpage.
+ */
+function alternative_frontpage_install() {
+  // Set some default permissions for the site_manager and administrator.
+  $permissions = ['administer alternative frontpage settings'];
+
+  user_role_grant_permissions('administrator', $permissions);
+  user_role_grant_permissions('sitemanager', $permissions);
+}

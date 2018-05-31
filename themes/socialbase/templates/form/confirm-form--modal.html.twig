@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Theme override for modal confirm form.
+ *
+ * Available variables:
+ * - form: The confirm form.
+ * - title: The title of form.
+ *
+ * @ingroup themeable
+ */
+#}
+
+{% if title %}
+  <h3 class="ui-dialog-message-title">{{ title }}</h3>
+{% endif %}
+
+<p>{{ form.description }}</p>
+
+{{ form|without('description') }}

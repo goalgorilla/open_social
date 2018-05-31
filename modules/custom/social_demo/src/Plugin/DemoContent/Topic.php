@@ -75,8 +75,8 @@ class Topic extends DemoNode {
     }
 
     // Load image by uuid and set to node.
-    if (!empty($item['field_topic_image'])) {
-      $entry['field_topic_image'] = $this->prepareImage($item['field_topic_image']);
+    if (!empty($item['image'])) {
+      $entry['field_topic_image'] = $this->prepareImage($item['image'], $item['image_alt']);
     }
 
     // Load attachments to node.
@@ -85,32 +85,6 @@ class Topic extends DemoNode {
     }
 
     return $entry;
-  }
-
-  /**
-   * Prepares data about an image of node.
-   *
-   * @param string $uuid
-   *   Type of uuid.
-   *
-   * @return array|null
-   *   Returns array|null
-   */
-  protected function prepareImage($uuid) {
-    $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $uuid,
-    ]);
-
-    if ($files) {
-      $value = [
-        [
-          'target_id' => current($files)->id(),
-        ],
-      ];
-    }
-
-    return $value;
   }
 
   /**
