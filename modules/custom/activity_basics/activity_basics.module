@@ -31,16 +31,6 @@ function activity_basics_node_presave(EntityInterface $entity) {
  * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity) {
-  $source_entity = $entity;
-
-  if ($entity->getEntityTypeId() == 'group_content') {
-    $source_entity = $entity->getEntity();
-  }
-
-  if ($source_entity->getEntityTypeId() == 'node' && !$source_entity->isPublished()) {
-    return;
-  }
-
   _activity_basics_entity_action($entity, 'create_entitiy_action');
 }
 
