@@ -583,6 +583,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
    * @param $topic
    *
    * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityStorageException|\Exception|static
+   * @throws \Exception
    */
   public function topicCreate($topic) {
 
@@ -595,13 +596,20 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         return $e;
       }
 
+      $terms = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadByProperties(['name' => "Discussion"]);
+      $term = current($terms);
+
+      if (!$term instanceof \Drupal\taxonomy\Entity\Term) {
+        throw new \Exception(sprintf("Topic type '%s' does not exist.", $topic->type));
+      }
+
       // Let's create some topics.
       $node = Node::create([
         'langcode' => $topic->language,
         'uid' => $account_uid,
         'type' => 'topic',
-        'field_topic_type' => $topic->type,
-        'label' => $topic->title,
+        'field_topic_type' => $term->id(),
+        'title' => $topic->title,
       ]);
 
       try {
@@ -636,7 +644,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         'type' => 'event',
         'field_event_date' => $event->startdate,
         'field_event_date_end' => $event->enddate,
-        'label' => $event->title,
+        'title' => $event->title,
       ]);
 
       try {
