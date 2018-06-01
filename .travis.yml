@@ -66,7 +66,7 @@ install:
 script:
   - set -e
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
-#  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_web sh /var/www/scripts/social/unit-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ] ; then docker exec -i social_web bash /var/www/scripts/social/check-feature-state.sh social; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_web sh /var/www/scripts/social/behatstability.sh stability-1; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_web sh /var/www/scripts/social/behatstability.sh notifications; fi
