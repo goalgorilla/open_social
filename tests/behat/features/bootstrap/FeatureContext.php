@@ -7,6 +7,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\node\Entity\Node;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
@@ -35,6 +36,12 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * @var array
      */
     protected $groups = array();
+    /**
+     * Keep track of all topics that are created so they can easily be removed.
+     *
+     * @var array
+     */
+    protected $nodes = array();
 
     /**
      * @BeforeScenario
@@ -476,6 +483,26 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Creates topics of a given type provided in the form:
+     * | title    | description     | author   | type        | language
+     * | My title | My description  | username | open_group  | en
+     * | ...      | ...             | ...      | ...         | ...
+     *
+     * @Given groups:
+     */
+    public function createTopics(TableNode $groupsTable) {
+      foreach ($groupsTable->getHash() as $groupHash) {
+        $topicFields = (object) $groupHash;
+        try {
+          $topics = $this->topicCreate($topicFields);
+          $this->nodes[$topicFields->title] = $topics;
+        } catch (Exception $e) {
+
+        }
+      }
+    }
+
+    /**
      * Remove any groups that were created.
      *
      * @AfterScenario
@@ -484,6 +511,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       if (!empty($this->groups)) {
         foreach ($this->groups as $group) {
           $group->delete();
+        }
+      }
+    }
+
+  /**
+   * Remove any nodes that were created.
+   *
+   * @AfterScenario
+   *
+   * @param \Behat\Behat\Hook\Scope\AfterScenarioScope $scope
+   */
+    public function cleanupNodes(AfterScenarioScope $scope) {
+      if (!empty($this->nodes)) {
+        foreach ($this->nodes as $node) {
+          $node->delete();
         }
       }
     }
@@ -516,6 +558,40 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $group_object->save();
 
       return $group_object;
+    }
+
+  /**
+   * @param $topic
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityStorageException|\Exception|static
+   */
+  public function topicCreate($topic) {
+
+      // Load user.
+      $account = user_load_by_name($topic->author);
+
+      try {
+        $account_uid = $account->id();
+      } catch (Exception $e) {
+        return $e;
+      }
+
+      // Let's create some topics.
+      $node = Node::create([
+        'langcode' => $topic->language,
+        'uid' => $account_uid,
+        'type' => 'topic',
+        'field_topic_type' => $topic->type,
+        'label' => $topic->title,
+      ]);
+
+      try {
+        $node->save();
+      } catch (\Drupal\Core\Entity\EntityStorageException $e) {
+        return $e;
+      }
+
+      return $node;
     }
 
     /**

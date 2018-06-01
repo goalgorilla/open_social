@@ -9,18 +9,9 @@ Feature: Create topic like
      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
      | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   |
      | user_2   | mail_2@example.com | 1      | Charles                  | Darwin                  |
-     And I am logged in as "user_1"
-     And I am on "user"
-     And I click "Topics"
-     And I click "Create Topic"
-
-    When I fill in the following:
-      | Title | Topic for likes |
-     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-     And I click radio button "Discussion"
-     And I press "Save"
-    Then I should see "Topic for likes has been created."
-
+   Given topics:
+    | title           | description            | author | type        | language |
+    | Topic for likes | Body description text. | user_1 | Discussion  | en       |
    Given I am logged in as "user_2"
      And I am at "all-topics"
     Then I should see "Topic for likes"
