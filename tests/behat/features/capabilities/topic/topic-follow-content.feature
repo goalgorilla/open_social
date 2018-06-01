@@ -5,27 +5,31 @@ Feature: Follow Content
   Goal/desire: I want to be able to subscribe to content
 
   Scenario: Follow content
-    Given I am logged in as an "authenticated user"
-    And I am on "user"
-    And I click "Topics"
-    And I click "Create Topic"
-    When I fill in "Title" with "This is a follow topic"
-    When I fill in the following:
-      | Title | This is a follow topic |
-     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Discussion"
-    And I press "Save"
-    And I should see "Topic This is a follow topic has been created."
-    And I should see "This is a follow topic" in the "Hero block"
-    And I should see "Body description text" in the "Main content"
-    And I should see the link "Follow content" in the "Main content"
-    And I should not see the link "Unfollow content" in the "Main content"
-    And I click "Follow content"
-    And I wait for AJAX to finish
-    And I should see the link "Unfollow content" in the "Main content"
-    And I should not see the link "Follow content" in the "Main content"
-    And I click "Unfollow content"
-    And I wait for AJAX to finish
-    And I should see the link "Follow content" in the "Main content"
-    And I should not see the link "Unfollow content" in the "Main content"
+    Given users:
+      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
+      | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   |
+      | user_2   | mail_2@example.com | 1      | Charles                  | Darwin                  |
+    Given topics:
+      | title            | description            | author | type        | language |
+      | Topic for follow | Body description text. | user_1 | Discussion  | en       |
+
+    When I am logged in as "user_2"
+     And I am on "/all-topics"
+    Then I should see "Topic for follow"
+
+    When I click "Topic for follow"
+    Then I should see "Topic for follow" in the "Hero block"
+     And I should see "Body description text." in the "Main content"
+     And I should see the link "Follow content" in the "Main content"
+     And I should not see the link "Unfollow content" in the "Main content"
+
+    When I click "Follow content"
+     And I wait for AJAX to finish
+    Then I should see the link "Unfollow content" in the "Main content"
+     And I should not see the link "Follow content" in the "Main content"
+
+    When I click "Unfollow content"
+     And I wait for AJAX to finish
+    Then I should see the link "Follow content" in the "Main content"
+     And I should not see the link "Unfollow content" in the "Main content"
 
