@@ -490,12 +490,31 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      *
      * @Given topics:
      */
-    public function createTopics(TableNode $groupsTable) {
-      foreach ($groupsTable->getHash() as $groupHash) {
-        $topicFields = (object) $groupHash;
+    public function createTopics(TableNode $topicsTable) {
+      foreach ($topicsTable->getHash() as $topicsHash) {
+        $topicFields = (object) $topicsHash;
         try {
           $topics = $this->topicCreate($topicFields);
           $this->nodes[$topicFields->title] = $topics;
+        } catch (Exception $e) {
+
+        }
+      }
+    }
+
+    /**
+     * Creates events of a given type provided in the form:
+     * | title    | description     | author   | startdate            | enddate             | language
+     * | My title | My description  | username | 2018-06-01 10:39:08  | 2018-06-01 10:39:08 | en
+     *
+     * @Given events:
+     */
+    public function createEvents(TableNode $eventsTable) {
+      foreach ($eventsTable->getHash() as $eventHash) {
+        $eventFields = (object) $eventHash;
+        try {
+          $events = $this->eventCreate($eventFields);
+          $this->nodes[$eventFields->title] = $events;
         } catch (Exception $e) {
 
         }
@@ -543,7 +562,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         $account_uid = $account->id();
       }
       else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $group->author));
       }
 
       // Let's create some groups.
@@ -583,6 +602,41 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         'type' => 'topic',
         'field_topic_type' => $topic->type,
         'label' => $topic->title,
+      ]);
+
+      try {
+        $node->save();
+      } catch (\Drupal\Core\Entity\EntityStorageException $e) {
+        return $e;
+      }
+
+      return $node;
+    }
+
+  /**
+   * @param $event
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityStorageException|\Exception|static
+   */
+  public function eventCreate($event) {
+
+      // Load user.
+      $account = user_load_by_name($event->author);
+
+      try {
+        $account_uid = $account->id();
+      } catch (Exception $e) {
+        return $e;
+      }
+
+      // Let's create some topics.
+      $node = Node::create([
+        'langcode' => $event->language,
+        'uid' => $account_uid,
+        'type' => 'event',
+        'field_event_date' => $event->startdate,
+        'field_event_date_end' => $event->enddate,
+        'label' => $event->title,
       ]);
 
       try {
