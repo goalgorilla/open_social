@@ -488,7 +488,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * | My title | My description  | username | open_group  | en
      * | ...      | ...             | ...      | ...         | ...
      *
-     * @Given groups:
+     * @Given topics:
      */
     public function createTopics(TableNode $groupsTable) {
       foreach ($groupsTable->getHash() as $groupHash) {
