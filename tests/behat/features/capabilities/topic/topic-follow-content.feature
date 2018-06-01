@@ -10,8 +10,8 @@ Feature: Follow Content
       | user_1   | mail_1@example.com | 1      | Marie                    | Curie                   |
       | user_2   | mail_2@example.com | 1      | Charles                  | Darwin                  |
     Given topics:
-      | title            | description            | author | type        | language |
-      | Topic for follow | Body description text. | user_1 | Discussion  | en       |
+      | title            | description           | author | type        | language |
+      | Topic for follow | Body description text | user_1 | Discussion  | en       |
 
     When I am logged in as "user_2"
      And I am on "/all-topics"
@@ -19,7 +19,7 @@ Feature: Follow Content
 
     When I click "Topic for follow"
     Then I should see "Topic for follow" in the "Hero block"
-     And I should see "Body description text." in the "Main content"
+     And I should see "Body description text" in the "Main content"
      And I should see the link "Follow content" in the "Main content"
      And I should not see the link "Unfollow content" in the "Main content"
 

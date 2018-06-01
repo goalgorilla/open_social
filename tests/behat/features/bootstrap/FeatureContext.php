@@ -610,6 +610,10 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         'type' => 'topic',
         'field_topic_type' => $term->id(),
         'title' => $topic->title,
+        'body' => [
+          'value' => $topic->description,
+          'format' => 'basic_html',
+        ],
       ]);
 
       try {
@@ -645,6 +649,10 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         'field_event_date' => $event->startdate,
         'field_event_date_end' => $event->enddate,
         'title' => $event->title,
+        'body' => [
+          'value' => $event->description,
+          'format' => 'basic_html',
+        ],
       ]);
 
       try {
