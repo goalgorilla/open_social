@@ -16,7 +16,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 /**
  * Defines application features from the specific context.
  */
-class SocialMinkContext extends MinkContext{
+class SocialMinkContext extends MinkContext {
 
 
   /**
@@ -39,6 +39,22 @@ class SocialMinkContext extends MinkContext{
     }
 
     throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * @override MinkContext::assertCheckBox()
+   */
+  public function assertCheckBox($checkbox) {
+    $this->getSession()->executeScript("
+      var inputs = document.getElementsByTagName('input');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].style.opacity = 1;
+        inputs[i].style.left = 0;
+        inputs[i].style.position = 'relative';
+      }
+    ");
+
+    parent::assertCheckBox($checkbox);
   }
 
 

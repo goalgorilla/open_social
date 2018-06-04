@@ -19,6 +19,7 @@ Feature: Manage data policy revisions
     And I press "Save"
     Then I should be on "data-policy/revisions"
     And I should see "(current revision)" in the ".revision-1" element
+    And I should not see "(current revision)" in the ".revision-2" element
     When I click the xth "0" element with the css ".revision-2 .dropdown-toggle"
     Then I should see the link "Edit" in the "Main content" region
     And I should see the link "Revert" in the "Main content" region
@@ -33,3 +34,38 @@ Feature: Manage data policy revisions
     And I click "Edit" in the "Main content" region
     And I check the box "Active"
     And I press "Save"
+    Then I should not see "(current revision)" in the ".revision-1" element
+    And I should see "(current revision)" in the ".revision-2" element
+    When I logout
+    And I click "Sign up"
+    And I click "data policy"
+    And I wait for AJAX to finish
+    Then I should see the text "Second version of the data policy."
+    When I am logged in as "behatsitemanager"
+    And I am on "data-policy/revisions/add"
+    And I fill in the "Description" WYSIWYG editor with "Third version of the data policy."
+    And I check the box "Active"
+    And I press "Save"
+    Then I should not see "(current revision)" in the ".revision-1" element
+    And I should not see "(current revision)" in the ".revision-2" element
+    And I should see "(current revision)" in the ".revision-3" element
+    When I am logged in as "behatsitemanager"
+    And I am on "data-policy/revisions"
+    And I click the xth "0" element with the css ".revision-1 .dropdown-toggle"
+    And I click "Revert" in the "Main content" region
+    And I wait for AJAX to finish
+    Then I should not see the text "Are you sure to revert this revision"
+    And I should not see the text "After making this revision active users will be asked again to agree with this revision."
+    And I should see the link "Cancel"
+    And I should see "Yes" in the ".ui-dialog .form-submit" element
+    When I press "Yes"
+    Then I should not see the success message containing "Data policy has been reverted to the revision from"
+    And I should not see "(current revision)" in the ".revision-1" element
+    And I should not see "(current revision)" in the ".revision-2" element
+    And I should see "(current revision)" in the ".revision-3" element
+    And I should not see "(current revision)" in the ".revision-4" element
+    When I logout
+    And I click "Sign up"
+    And I click "data policy"
+    And I wait for AJAX to finish
+    Then I should see the text "Third version of the data policy."
