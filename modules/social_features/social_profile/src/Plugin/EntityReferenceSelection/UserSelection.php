@@ -36,14 +36,24 @@ class UserSelection extends UserSelectionBase {
     $query = $this->connection->select('profile', 'p')
       ->fields('p', ['uid']);
 
+    $addNickName = $this->moduleHandler->moduleExists('social_profile_fields');
+
     $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
     $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+
+    if ($addNickName === TRUE) {
+      $query->join('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+    }
 
     $name = $this->connection->escapeLike($match);
 
     $or = $query->orConditionGroup();
     $or->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE');
     $or->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+
+    if ($addNickName === TRUE) {
+      $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+    }
 
     $ids = $query->condition($or)->execute()->fetchCol();
 
