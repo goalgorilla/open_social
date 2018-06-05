@@ -52,14 +52,15 @@ Feature: Manage data policy revisions
     When I am logged in as "behatsitemanager"
     And I am on "data-policy/revisions"
     And I click the xth "0" element with the css ".revision-1 .dropdown-toggle"
-    And I click "Revert" in the "Main content" region
+    # Press "Revert" button in operations drop-down menu
+    And I click the xth "1" element with the css ".revision-1 .dropdown-menu a"
     And I wait for AJAX to finish
-    Then I should not see the text "Are you sure to revert this revision"
-    And I should not see the text "After making this revision active users will be asked again to agree with this revision."
+    Then I should see the text "Are you sure to revert this revision"
+    And I should see the text "After making this revision active users will be asked again to agree with this revision."
     And I should see the link "Cancel"
     And I should see "Yes" in the ".ui-dialog .form-submit" element
     When I press "Yes"
-    Then I should not see the success message containing "Data policy has been reverted to the revision from"
+    Then I should see the success message containing "Data policy has been reverted to the revision from"
     And I should not see "(current revision)" in the ".revision-1" element
     And I should not see "(current revision)" in the ".revision-2" element
     And I should see "(current revision)" in the ".revision-3" element
