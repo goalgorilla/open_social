@@ -1,4 +1,4 @@
-@api @gdpr @data-policy @DS-5586 @stability @stability-4
+@api @gdpr @data-policy @data-policy-create @DS-5586 @stability @stability-4
 Feature: Create data policy
   Benefit: In order to create data policy
   Role: As a LU

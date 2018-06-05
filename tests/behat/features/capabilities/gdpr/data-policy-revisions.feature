@@ -1,4 +1,4 @@
-@api @gdpr @data-policy @DS-5586 @stability @stability-4
+@api @gdpr @data-policy @data-policy-revisions @DS-5586 @stability @stability-4
 Feature: Manage data policy revisions
   Benefit: In order to manage data policy revisions
   Role: As a LU
@@ -31,6 +31,8 @@ Feature: Manage data policy revisions
     When I am logged in as "behatsitemanager"
     And I am on "data-policy/revisions"
     And I click the xth "0" element with the css ".revision-2 .dropdown-toggle"
+    # Press "Edit" button in operations drop-down menu
+    And I click the xth "1" element with the css ".revision-1 .dropdown-menu a"
     And I click "Edit" in the "Main content" region
     And I check the box "Active"
     And I press "Save"
