@@ -10,9 +10,6 @@ Feature: Manage data policy revisions
     Given I am logged in as a user with the "sitemanager" role and I have the following fields:
       | name | behatsitemanager |
     When I am on "data-policy/revisions/add"
-    And I fill in the "Description" WYSIWYG editor with "First version of the data policy."
-    Then I press "Save"
-    When I click "Add new revision"
     Then I should see "Active" in the ".form-item-active-revision:not(.form-disabled) .control-label" element
     And I should see "Create new revision" in the ".form-item-new-revision.form-disabled .control-label" element
     When I fill in the "Description" WYSIWYG editor with "Second version of the data policy."
@@ -32,8 +29,7 @@ Feature: Manage data policy revisions
     And I am on "data-policy/revisions"
     And I click the xth "0" element with the css ".revision-2 .dropdown-toggle"
     # Press "Edit" button in operations drop-down menu
-    And I click the xth "1" element with the css ".revision-1 .dropdown-menu a"
-    And I click "Edit" in the "Main content" region
+    And I click the xth "1" element with the css ".revision-2 .dropdown-menu a"
     And I check the box "Active"
     And I press "Save"
     Then I should not see "(current revision)" in the ".revision-1" element
