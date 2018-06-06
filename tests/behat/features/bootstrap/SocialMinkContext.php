@@ -114,4 +114,41 @@ class SocialMinkContext extends MinkContext {
 
     $this->attachFileToField($field, $path);
   }
+
+  /**
+   * @Then I should see checked the box :checkbox
+   */
+  public function iShouldSeeCheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasCheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is not checked', $checkbox));
+      }
+    }
+  }
+
+  /**
+   * @Then I should see unchecked the box :checkbox
+   */
+  public function iShouldSeeUncheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasUncheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is checked', $checkbox));
+      }
+    }
+  }
+
 }
