@@ -14,6 +14,9 @@ Feature: Give user consent
     Given I enable the module "social_gdpr"
 
     Given I am logged in as "behatadministrator"
+    When I am on "admin/config/people/data-policy/settings"
+    And I uncheck the box "Enforce consent"
+    Then I press "Save configuration"
     When I am on "admin/structure/block"
     And I click "Place block"
     And I wait for AJAX to finish
@@ -80,3 +83,7 @@ Feature: Give user consent
     And I click "Settings"
     Then I should not see the text "Inform block title for user edit page"
     And I should not see the text "Inform block summary for user edit page"
+    When I am logged in as "behatadministrator"
+    And I am on "admin/config/people/data-policy/settings"
+    And I check the box "Enforce consent"
+    Then I press "Save configuration"
