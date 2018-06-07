@@ -6,9 +6,15 @@ Feature: Give user consent
 
   Scenario: Successfully give user consent
 
+    Given users:
+      | name             | mail                         | status | roles       |
+      | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
+      | behatuser1       | behatuser1@example.com       | 1      |             |
+      | behatuser2       | behatuser2@example.com       | 1      |             |
+      | behatuser3       | behatuser3@example.com       | 1      |             |
+
     Given I enable the module "social_gdpr"
-    Given I am logged in as a user with the "sitemanager" role and I have the following fields:
-      | name | behatsitemanager |
+    Given I am logged in as "behatsitemanager"
     When I am on "admin/config/people/data-policy/settings"
     Then I should see the heading "Data policy settings" in the "Admin page title block" region
     And I should see checked the box "Enforce consent"
@@ -24,8 +30,7 @@ Feature: Give user consent
     And I should see unchecked the box "Not agree"
     And I should see unchecked the box "Undecided"
     And I should see the text "User consents not found."
-    Given I am logged in as a user with the "authenticated user" role and I have the following fields:
-      | name | behatuser |
+    Given I am logged in as "behatuser1"
     Then I should be on the homepage
     And I should see the success message "We published a new version of the data policy. You can review the data policy here."
     When I click "here"
@@ -34,7 +39,7 @@ Feature: Give user consent
     And I am on "admin/reports/data-policy-agreements"
     Then I should not see the text "User consents not found."
     And I should see "Undecided" in the "td.views-field-state" element
-    When I am logged in as "behatuser"
+    When I am logged in as "behatuser1"
     Then I should not see the success message "We published a new version of the data policy. You can review the data policy here."
     When I am on "data-policy-agreement"
     And I press "Save"
@@ -42,7 +47,7 @@ Feature: Give user consent
     When I am logged in as "behatsitemanager"
     And I am on "admin/reports/data-policy-agreements"
     Then I should see "Not agree" in the "td.views-field-state" element
-    When I am logged in as "behatuser"
+    When I am logged in as "behatuser1"
     And I am on "data-policy-agreement"
     And I check the box "data_policy"
     And I press "Save"
@@ -50,3 +55,45 @@ Feature: Give user consent
     When I am logged in as "behatsitemanager"
     And I am on "admin/reports/data-policy-agreements"
     Then I should see "Agree" in the "td.views-field-state" element
+    When I am logged in as "behatuser2"
+    And I click "here"
+    And I am logged in as "behatuser3"
+    And I click "here"
+    And I press "Save"
+    And I am logged in as "behatsitemanager"
+    And I am on "admin/reports/data-policy-agreements"
+    Then I should see the link "behatuser1"
+    And I should see the link "behatuser2"
+    And I should see the link "behatuser3"
+    When I check the box "Agree"
+    And I press "Apply"
+    Then I should see the link "behatuser1"
+    And I should not see the link "behatuser2"
+    And I should not see the link "behatuser3"
+    When I uncheck the box "Agree"
+    And I check the box "Not agree"
+    And I press "Apply"
+    Then I should not see the link "behatuser1"
+    And I should not see the link "behatuser2"
+    And I should see the link "behatuser3"
+    When I uncheck the box "Not agree"
+    And I check the box "Undecided"
+    And I press "Apply"
+    Then I should not see the link "behatuser1"
+    And I should see the link "behatuser2"
+    And I should not see the link "behatuser3"
+    When I check the box "Not agree"
+    And I press "Apply"
+    Then I should not see the link "behatuser1"
+    And I should see the link "behatuser2"
+    And I should see the link "behatuser3"
+    When I check the box "Agree"
+    And I press "Apply"
+    Then I should see the link "behatuser1"
+    And I should see the link "behatuser2"
+    And I should see the link "behatuser3"
+    When I uncheck the box "Undecided"
+    And I press "Apply"
+    Then I should see the link "behatuser1"
+    And I should not see the link "behatuser2"
+    And I should see the link "behatuser3"
