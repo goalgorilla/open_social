@@ -53,7 +53,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function build() {
-    return [
+    $content = [
       [
         '#type' => 'container',
         '#attributes' => [
@@ -274,6 +274,9 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
       ],
     ];
 
+    \Drupal::moduleHandler()->alter('social_landing_page_activity_overview', $content);
+
+    return $content;
   }
 
   /**
