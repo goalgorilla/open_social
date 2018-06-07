@@ -6,12 +6,16 @@ Feature: Create data policy
 
   Scenario: Successfully create data policy
 
+    Given users:
+      | name             | mail                         | status | roles       |
+      | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
+      | behatuser        | behatuser@example.com        | 1      |             |
+
     Given I enable the module "social_gdpr"
-    Given I am logged in as a user with the "authenticated user" role and I have the following fields:
-      | name | behatuser |
+
+    Given I am logged in as "behatuser"
     Then I should be on the homepage
-    Given I am logged in as a user with the "sitemanager" role and I have the following fields:
-      | name | behatsitemanager |
+    Given I am logged in as "behatsitemanager"
     And I am on "admin/config/people/data-policy"
     Then I should be on "data-policy/revisions"
     And I should see the heading "Data Policy" in the "Hero block" region
