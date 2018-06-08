@@ -25,7 +25,7 @@ class FollowContentActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_entity = ActivityFactory::getActivityRelatedEntity($data);
 
-      if ($related_entity['target_type'] == 'node') {
+      if (in_array($related_entity['target_type'], ['node', 'post'])) {
         $recipients += $this->getRecipientsWhoFollowContent($related_entity, $data);
       }
     }
@@ -39,20 +39,21 @@ class FollowContentActivityContext extends ActivityContextBase {
   public function getRecipientsWhoFollowContent(array $related_entity, array $data) {
     $recipients = [];
 
-    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
-    $flaggings = $storage->loadByProperties([
-      'flag_id' => 'follow_content',
-      'entity_type' => $related_entity['target_type'],
-      'entity_id' => $related_entity['target_id'],
-    ]);
+    $storage = $this->entityTypeManager->getStorage('flagging');
+
+    $flaggings = $storage->getQuery()
+      ->condition('flag_id', ['follow_content', 'follow_post'], 'IN')
+      ->condition('entity_type', $related_entity['target_type'])
+      ->condition('entity_id', $related_entity['target_id'])
+      ->execute();
 
     // We don't send notifications to users about their own comments.
     $original_related_object = $data['related_object'][0];
-    $storage = \Drupal::entityTypeManager()
-      ->getStorage($original_related_object['target_type']);
-    $original_related_entity = $storage->load($original_related_object['target_id']);
+    $original_related_entity = $this->entityTypeManager
+      ->getStorage($original_related_object['target_type'])
+      ->load($original_related_object['target_id']);
 
-    foreach ($flaggings as $flagging) {
+    foreach ($storage->loadMultiple($flaggings) as $flagging) {
       $recipient = $flagging->getOwner();
       if ($recipient->id() != $original_related_entity->getOwnerId()) {
         if ($original_related_entity->access('view', $recipient)) {

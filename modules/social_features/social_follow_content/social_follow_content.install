@@ -19,6 +19,13 @@ function social_follow_content_install() {
 }
 
 /**
+ * Set permissions for the follow_post flag.
+ */
+function social_follow_content_update_8001() {
+  _social_follow_content_set_permissions();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_follow_content_set_permissions() {
@@ -53,7 +60,9 @@ function _social_follow_content_get_permissions($role) {
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'flag follow_content',
+    'flag follow_post',
     'unflag follow_content',
+    'unflag follow_post',
   ]);
 
   // Content manager.
