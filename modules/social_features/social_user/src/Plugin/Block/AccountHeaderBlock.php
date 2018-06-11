@@ -109,6 +109,82 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function build() {
+    $block = [
+      '#attributes' => [
+        'class' => ['navbar-user'],
+      ],
+      'menu_items' => [
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#attributes' => [
+          'class' => ['nav', 'navbar-nav'],
+        ],
+        '#items' => [],
+      ],
+    ];
+
+    $menu_items = &$block['menu_items'];
+
+    $menu_items['#items'][] = [
+      // AccountHeaderElement form
+//      '#type' => 'account_header_element',
+//      '#title' => $this->t('Create New Content'),
+//      '#url' => Url::fromRoute('<none>'),
+//      '#icon' => 'add_box',
+//      '#label' => 'New Content',
+      // Original render array for the preferred output.
+      '#wrapper_attributes' => [
+        'class' => ['dropdown'],
+      ],
+      'value' => [
+        '#type' => 'unwrapped_container',
+        'link' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'data-toggle' => 'dropdown',
+            'aria-expanded' => 'true',
+            'aria-haspopup' => 'true',
+            'role' => 'button',
+            'class' => 'dropdown-toggle clearfix',
+            'title' => $this->t('Create New Content'),
+          ],
+          '#url' => Url::fromRoute('<none>'),
+          '#title' => [
+            [
+              '#markup' => "<svg class='navbar-nav__icon icon-add_box'><use xlink:href='#icon-add_box' /></svg>",
+              '#allowed_tags' => ['svg', 'use', 'span'],
+            ],
+            [
+              '#markup' => "<span class='sr-only'>New Content</span>",
+            ]
+          ]
+        ],
+        // Previously Below
+        'menu_links' => [
+          '#theme' => 'item_list',
+          '#list_type' => 'ul',
+          '#attributes' => [
+            'class' => ['dropdown-menu'],
+          ],
+          '#items' => [
+            // Only the first "Add Event" item
+            [
+              'value' => [
+                '#type' => 'link',
+                '#attributes' => [
+                  'title' => $this->t('Create New Event'),
+                ],
+                '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
+                '#title' => $this->t('New Event')
+              ]
+            ]
+          ],
+        ]
+      ]
+    ];
+
+    return $block;
+
     $account = $this->getContextValue('user');
     $navigation_settings_config = $this->configFactory->get('social_user.navigation.settings');
 

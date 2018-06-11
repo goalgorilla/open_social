@@ -231,6 +231,9 @@ function social_user_theme() {
         'links' => NULL,
       ],
     ],
+    'unwrapped_container' => [
+      'render element' => 'element',
+    ],
   ];
 }
 
@@ -254,6 +257,26 @@ function template_preprocess_account_header_links(array &$variables) {
     $variables['links']['search_block'] = $block_output;
   }
 
+}
+
+/**
+ * Prepares variables for unwrapped container templates.
+ *
+ * Default template: unwrapped-container.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ *
+ * @see \template_preprocess_container()
+ */
+function template_preprocess_unwrapped_container(&$variables) {
+  // The UnwrappedContaienr element exists to provide a different template from
+  // the container which is used by the AccountHeaderElement which is why we the
+  // original container implementation works fine for us. The div is then simply
+  // not added in the template.
+  template_preprocess_container($variables);
 }
 
 /**

@@ -13,6 +13,48 @@ use Drupal\Core\Url;
  */
 
 /**
+ * Allows a module to add a link in the account header block.
+ *
+ * @return array
+ *   An associative array of items that should be added in the account header
+ *   block. The key of the items should be a unique item name.
+ *   Each header item should have the following elements in its array:
+ *   - classes
+ *   - url
+ *   - link_classes
+ *   - link_attributes
+ *   - title
+ *   - icon_image
+ *   - icon_classes
+ *   - title_classes
+ *   - label
+ *   - access
+ *   - below (iterable or renderable)
+ *     - url
+ *     ( if URL )
+ *     - classes
+ *     - link_classes
+ *     - link_attributes
+ *     - title
+ *     - title_classes
+ *     - label
+ *     - count_icon
+ *     - count_classes
+ *     ( endif )
+ *     - divider
+ *     ( elseif divider )
+ *     -  classes
+ *     ( else )
+ *     - classes
+ *     - attributes
+ *     - tagline
+ *     - object
+ */
+function hook_social_user_account_header_items() {
+
+}
+
+/**
  * Provide a method to create additional items from the user menu.
  *
  * @return array
