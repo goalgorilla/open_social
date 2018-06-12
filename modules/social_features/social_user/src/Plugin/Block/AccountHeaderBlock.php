@@ -127,60 +127,35 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
     $menu_items['#items'][] = [
       // AccountHeaderElement form
-//      '#type' => 'account_header_element',
-//      '#title' => $this->t('Create New Content'),
-//      '#url' => Url::fromRoute('<none>'),
-//      '#icon' => 'add_box',
-//      '#label' => 'New Content',
-      // Original render array for the preferred output.
-      '#wrapper_attributes' => [
-        'class' => ['dropdown'],
-      ],
-      'value' => [
-        '#type' => 'unwrapped_container',
-        'link' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'data-toggle' => 'dropdown',
-            'aria-expanded' => 'true',
-            'aria-haspopup' => 'true',
-            'role' => 'button',
-            'class' => 'dropdown-toggle clearfix',
-            'title' => $this->t('Create New Content'),
-          ],
-          '#url' => Url::fromRoute('<none>'),
-          '#title' => [
-            [
-              '#markup' => "<svg class='navbar-nav__icon icon-add_box'><use xlink:href='#icon-add_box' /></svg>",
-              '#allowed_tags' => ['svg', 'use', 'span'],
-            ],
-            [
-              '#markup' => "<span class='sr-only'>New Content</span>",
-            ]
-          ]
+      '#type' => 'account_header_element',
+      '#title' => $this->t('Create New Content'),
+      '#url' => Url::fromRoute('<none>'),
+      '#icon' => 'add_box',
+      '#label' => 'New Content',
+      'add_event' => [
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => $this->t('Create New Event'),
         ],
-        // Previously Below
-        'menu_links' => [
-          '#theme' => 'item_list',
-          '#list_type' => 'ul',
-          '#attributes' => [
-            'class' => ['dropdown-menu'],
-          ],
-          '#items' => [
-            // Only the first "Add Event" item
-            [
-              'value' => [
-                '#type' => 'link',
-                '#attributes' => [
-                  'title' => $this->t('Create New Event'),
-                ],
-                '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
-                '#title' => $this->t('New Event')
-              ]
-            ]
-          ],
-        ]
-      ]
+        '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
+        '#title' => $this->t('New Event')
+      ],
+      'add_topic' => [
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => $this->t('Create New Topic'),
+        ],
+        '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
+        '#title' => $this->t('New Topic')
+      ],
+      'add_group' => [
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => $this->t('Create New Group'),
+        ],
+        '#url' => Url::fromRoute('entity.group.add_page'),
+        '#title' => $this->t('New Group')
+      ],
     ];
 
     return $block;
