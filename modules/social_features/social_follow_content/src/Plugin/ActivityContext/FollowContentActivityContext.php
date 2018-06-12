@@ -41,11 +41,11 @@ class FollowContentActivityContext extends ActivityContextBase {
 
     $storage = $this->entityTypeManager->getStorage('flagging');
 
-    $flaggings = $storage->getQuery()
-      ->condition('flag_id', ['follow_content', 'follow_post'], 'IN')
-      ->condition('entity_type', $related_entity['target_type'])
-      ->condition('entity_id', $related_entity['target_id'])
-      ->execute();
+    $flaggings = $storage->loadByProperties([
+      'flag_id' => ['follow_content', 'follow_post'],
+      'entity_type' => $related_entity['target_type'],
+      'entity_id' => $related_entity['target_id'],
+    ]);
 
     // We don't send notifications to users about their own comments.
     $original_related_object = $data['related_object'][0];
@@ -53,7 +53,7 @@ class FollowContentActivityContext extends ActivityContextBase {
       ->getStorage($original_related_object['target_type'])
       ->load($original_related_object['target_id']);
 
-    foreach ($storage->loadMultiple($flaggings) as $flagging) {
+    foreach ($flaggings as $flagging) {
       $recipient = $flagging->getOwner();
       if ($recipient->id() != $original_related_entity->getOwnerId()) {
         if ($original_related_entity->access('view', $recipient)) {
