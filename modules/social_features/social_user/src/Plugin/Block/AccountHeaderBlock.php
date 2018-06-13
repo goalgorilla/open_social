@@ -174,22 +174,22 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       // TODO: account_box requires 'profile' class
       $menu_items['account_box'] = [
         '#type' => 'account_header_element',
-//        'classes' => 'dropdown profile',
+        '#wrapper_attributes' => [
+          'class' => ['profile'],
+        ],
         '#icon' => 'account_circle',
         '#title' => $this->t('Profile of @account', ['@account' => $account_name]),
         '#label' => $account_name,
         '#url' => Url::fromRoute('<none>'),
         'signed_in_as' => [
-          'attributes' => [
+          '#wrapper_attributes' => [
             'class' => [ 'dropdown-header', 'header-nav-current-user' ],
           ],
-          'value' => [
-            '#type' => 'inline_template',
-            '#template' => '{{ tagline }} <strong class="text-truncate">{{ object }} </strong>',
-            '#context' => [
-              'tagline' => $this->t('Signed in as'),
-              'object'  => $account_name,
-            ],
+          '#type' => 'inline_template',
+          '#template' => '{{ tagline }} <strong class="text-truncate">{{ object }} </strong>',
+          '#context' => [
+            'tagline' => $this->t('Signed in as'),
+            'object'  => $account_name,
           ],
         ],
 //        'divide_mobile' => [

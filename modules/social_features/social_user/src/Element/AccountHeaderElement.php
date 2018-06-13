@@ -119,21 +119,22 @@ class AccountHeaderElement extends RenderElement {
     ];
 
     $element = [
-      "#wrapper_attributes" => $wrapper_attributes,
-      "value" => [
-        "#type" => "unwrapped_container",
-        "link" => [
-          "#type" => "link",
-          "#attributes" => $link_attributes,
-          "#url" => $item["#url"],
-          "#title" => $link_text,
-        ],
-      ]
+      "#type" => "unwrapped_container",
+      "link" => [
+        "#type" => "link",
+        "#attributes" => $link_attributes,
+        "#url" => $item["#url"],
+        "#title" => $link_text,
+      ],
     ];
+
+    if (!empty($wrapper_attributes)) {
+      $element["#wrapper_attributes"] = $wrapper_attributes;
+    }
 
     // If there are children we add them to a sublist.
     if (!empty($children)) {
-      $element["value"]["menu_links"] = [
+      $element["menu_links"] = [
         "#theme" => "item_list",
         '#list_type' => 'ul',
         '#attributes' => [
