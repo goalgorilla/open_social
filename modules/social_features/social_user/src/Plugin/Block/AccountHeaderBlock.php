@@ -109,6 +109,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function build() {
+    // TODO: Remove hook_social_user_account_header_links as it's replaced by menu specific hooks.
+
     $block = [
       '#attributes' => [
         'class' => ['navbar-user'],
@@ -123,143 +125,221 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       ],
     ];
 
-    $menu_items = &$block['menu_items'];
+    // Create a convenience shortcut for later code.
+    $menu_items = &$block['menu_items']['#items'];
 
-    $menu_items['#items'][] = [
-      // AccountHeaderElement form
-      '#type' => 'account_header_element',
-      '#title' => $this->t('Create New Content'),
-      '#url' => Url::fromRoute('<none>'),
-      '#icon' => 'add_box',
-      '#label' => 'New Content',
-      'add_event' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => $this->t('Create New Event'),
-        ],
-        '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
-        '#title' => $this->t('New Event')
-      ],
-      'add_topic' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => $this->t('Create New Topic'),
-        ],
-        '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
-        '#title' => $this->t('New Topic')
-      ],
-      'add_group' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => $this->t('Create New Group'),
-        ],
-        '#url' => Url::fromRoute('entity.group.add_page'),
-        '#title' => $this->t('New Group')
-      ],
-    ];
-
-    return $block;
-
+    /** @var \Drupal\Core\Session\AccountInterface $account */
     $account = $this->getContextValue('user');
-    $navigation_settings_config = $this->configFactory->get('social_user.navigation.settings');
 
-    if ($account->id() !== 0) {
-      $account_name = $account->getDisplayName();
-
-      $links = [
-        'add' => [
-          'classes' => 'dropdown',
-          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-          'link_classes' => 'dropdown-toggle clearfix',
-          'icon_classes' => 'icon-add_box',
-          'title' => $this->t('Create New Content'),
-          'label' => $this->t('New content'),
-          'title_classes' => 'sr-only',
-          'url' => '#',
-          'below' => [
-            'add_event' => [
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Event'),
-              'label' => $this->t('New event'),
-              'title_classes' => '',
-              'url' => Url::fromRoute('node.add', [
-                'node_type' => 'event',
-              ]),
-            ],
-            'add_topic' => [
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Topic'),
-              'label' => $this->t('New topic'),
-              'title_classes' => '',
-              'url' => Url::fromRoute('node.add', [
-                'node_type' => 'topic',
-              ]),
-            ],
-            'add_group' => [
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $this->t('Create New Group'),
-              'label' => $this->t('New group'),
-              'title_classes' => '',
-              'url' => Url::fromRoute('entity.group.add_page'),
-            ],
+    if ($account->isAuthenticated()) {
+      $menu_items['create'] = [
+        '#type' => 'account_header_element',
+        '#title' => $this->t('Create New Content'),
+        '#url' => Url::fromRoute('<none>'),
+        '#icon' => 'add_box',
+        '#label' => $this->t('New Content'),
+        'add_event' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('Create New Event'),
           ],
+          '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
+          '#title' => $this->t('New Event')
+        ],
+        'add_topic' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('Create New Topic'),
+          ],
+          '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
+          '#title' => $this->t('New Topic')
+        ],
+        'add_group' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('Create New Group'),
+          ],
+          '#url' => Url::fromRoute('entity.group.add_page'),
+          '#title' => $this->t('New Group')
         ],
       ];
 
-      if ($this->moduleHandler->moduleExists('social_group')) {
-        if ($navigation_settings_config->get('display_my_groups_icon') === 1) {
-          $links['groups'] = [
-            'classes' => 'desktop',
-            'link_attributes' => '',
-            'icon_classes' => 'icon-group',
-            'title' => $this->t('My Groups'),
-            'label' => $this->t('My Groups'),
-            'title_classes' => 'sr-only',
-            'url' => Url::fromRoute('view.groups.page_user_groups', [
-              'user' => $account->id(),
-            ]),
-          ];
-        }
-      }
+      // Weights can be used to order the subitems of an account_header_element.
+      // TODO: Invoke hook_social_user_account_header_create_links()
 
-      if ($this->moduleHandler->moduleExists('social_private_message')) {
-        if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
-          // Fetch the amount of unread items.
-          $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+      // TODO: Invoke hook_social_user_account_header_create_links_alter().
 
-          // Default icon values.
-          $message_icon = 'icon-mail_outline';
-          $label_classes = 'hidden';
-          // Override icons when there are unread items.
-          if ($num_account_messages > 0) {
-            $message_icon = 'icon-mail';
-            $label_classes = 'badge badge-accent badge--pill';
-          }
+      $account_name = $account->getDisplayName();
 
-          $links['messages'] = [
-            'classes' => 'desktop',
-            'link_attributes' => '',
-            'icon_classes' => $message_icon,
-            'title' => $this->t('Inbox'),
-            'label' => (string) $num_account_messages,
-            'title_classes' => $label_classes,
-            'url' => Url::fromRoute('social_private_message.inbox'),
-          ];
-        }
-      }
+      // TODO: account_box requires 'profile' class
+      $menu_items['account_box'] = [
+        '#type' => 'account_header_element',
+//        'classes' => 'dropdown profile',
+        '#icon' => 'account_circle',
+        '#title' => $this->t('Profile of @account', ['@account' => $account_name]),
+        '#label' => $account_name,
+        '#url' => Url::fromRoute('<none>'),
+        'signed_in_as' => [
+          'attributes' => [
+            'class' => [ 'dropdown-header', 'header-nav-current-user' ],
+          ],
+          'value' => [
+            '#type' => 'inline_template',
+            '#template' => '{{ tagline }} <strong class="text-truncate">{{ object }} </strong>',
+            '#context' => [
+              'tagline' => $this->t('Signed in as'),
+              'object'  => $account_name,
+            ],
+          ],
+        ],
+//        'divide_mobile' => [
+//          'divider' => 'true',
+//          'classes' => 'divider mobile',
+//          'attributes' => 'role=separator',
+//        ],
+//        'messages_mobile' => [],
+//        'notification_mobile' => [],
+//        'divide_profile' => [
+//          'divider' => 'true',
+//          'classes' => 'divider',
+//          'attributes' => 'role=separator',
+//        ],
+//        'my_profile' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('View my profile'),
+//          'label' => $this->t('My profile'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('user.page'),
+//        ],
+//        'my_events' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('View my events'),
+//          'label' => $this->t('My events'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('view.events.events_overview', [
+//            'user' => $account->id(),
+//          ]),
+//        ],
+//        'my_topics' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('View my topics'),
+//          'label' => $this->t('My topics'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('view.topics.page_profile', [
+//            'user' => $account->id(),
+//          ]),
+//        ],
+//        'my_groups' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('View my groups'),
+//          'label' => $this->t('My groups'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('view.groups.page_user_groups', [
+//            'user' => $account->id(),
+//          ]),
+//        ],
+//        'divide_content' => [
+//          'divider' => 'true',
+//          'classes' => 'divider',
+//          'attributes' => 'role=separator',
+//        ],
+//        'my_content' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t("View content I'm following"),
+//          'label' => $this->t('Following'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('view.following.following'),
+//        ],
+//        'divide_account' => [
+//          'divider' => 'true',
+//          'classes' => 'divider',
+//          'attributes' => 'role=separator',
+//        ],
+//        'my_account' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('Settings'),
+//          'label' => $this->t('Settings'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('entity.user.edit_form', [
+//            'user' => $account->id(),
+//          ]),
+//        ],
+//        'edit_profile' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('Edit profile'),
+//          'label' => $this->t('Edit profile'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('entity.profile.type.user_profile_form', [
+//            'user' => $account->id(),
+//            'profile_type' => 'profile',
+//          ]),
+//          'access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
+//        ],
+//        'divide_logout' => [
+//          'divider' => 'true',
+//          'classes' => 'divider',
+//          'attributes' => 'role=separator',
+//        ],
+//        'logout' => [
+//          'classes' => '',
+//          'link_attributes' => '',
+//          'link_classes' => '',
+//          'icon_classes' => '',
+//          'icon_label' => '',
+//          'title' => $this->t('Logout'),
+//          'label' => $this->t('Logout'),
+//          'title_classes' => '',
+//          'url' => Url::fromRoute('user.logout'),
+//        ],
+      ];
 
+      // Weights can be used to order the subitems of an account_header_element.
+      // TODO: Invoke hook_social_user_account_header_account_links()
+
+      // TODO: Invoke hook_social_user_account_header_account_links_alter().
+    }
+
+    // TODO: Implement dependency injection here.
+    // We allow modules to add their items to the account header block.
+    // We use the union operator (+) to ensure modules can't overwrite items
+    // defined above. They should use the alter hook for that.
+    $context = $this->getContextValues();
+    $menu_items += \Drupal::moduleHandler()->invokeAll('social_user_account_header_items', [$context]);
+
+    // Allow modules to alter the defined account header block items.
+    \Drupal::moduleHandler()->alter('social_user_account_header_items', $menu_items, $context);
+
+    return $block;
+
+    if ($account->id() !== 0) {
       // Check if the current user is allowed to create new books.
       if ($this->moduleHandler->moduleExists('social_book')) {
         $links['add']['below']['add_book'] = [
@@ -312,183 +392,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ];
       }
 
-      if ($this->moduleHandler->moduleExists('activity_creator')) {
-        $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-        $notifications = $this->renderer->render($notifications_view);
 
-        $account_notifications = $this->activityNotifications;
-        $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
-
-        if ($num_notifications === 0) {
-          $notifications_icon = 'icon-notifications_none';
-          $label_classes = 'hidden';
-        }
-        else {
-          $notifications_icon = 'icon-notifications';
-          $label_classes = 'badge badge-accent badge--pill';
-
-          if ($num_notifications > 99) {
-            $num_notifications = '99+';
-          }
-        }
-
-        $links['notifications'] = [
-          'classes' => 'dropdown notification-bell desktop',
-          'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-          'link_classes' => 'dropdown-toggle clearfix',
-          'icon_classes' => $notifications_icon,
-          'title' => $this->t('Notification Centre'),
-          'label' => (string) $num_notifications,
-          'title_classes' => $label_classes,
-          'url' => '#',
-          'below' => $notifications,
-        ];
-      }
-
-      $links['account_box'] = [
-        'classes' => 'dropdown profile',
-        'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-        'link_classes' => 'dropdown-toggle clearfix',
-        'icon_classes' => 'icon-account_circle',
-        'title' => $this->t('Profile of @account', ['@account' => $account_name]),
-        'label' => $account_name,
-        'title_classes' => 'sr-only',
-        'url' => '#',
-        'below' => [
-          'signed_in_as' => [
-            'classes' => 'dropdown-header header-nav-current-user',
-            'tagline' => $this->t('Signed in as'),
-            'object'  => $account_name,
-          ],
-          'divide_mobile' => [
-            'divider' => 'true',
-            'classes' => 'divider mobile',
-            'attributes' => 'role=separator',
-          ],
-          'messages_mobile' => [],
-          'notification_mobile' => [],
-          'divide_profile' => [
-            'divider' => 'true',
-            'classes' => 'divider',
-            'attributes' => 'role=separator',
-          ],
-          'my_profile' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('View my profile'),
-            'label' => $this->t('My profile'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('user.page'),
-          ],
-          'my_events' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('View my events'),
-            'label' => $this->t('My events'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('view.events.events_overview', [
-              'user' => $account->id(),
-            ]),
-          ],
-          'my_topics' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('View my topics'),
-            'label' => $this->t('My topics'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('view.topics.page_profile', [
-              'user' => $account->id(),
-            ]),
-          ],
-          'my_groups' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('View my groups'),
-            'label' => $this->t('My groups'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('view.groups.page_user_groups', [
-              'user' => $account->id(),
-            ]),
-          ],
-          'divide_content' => [
-            'divider' => 'true',
-            'classes' => 'divider',
-            'attributes' => 'role=separator',
-          ],
-          'my_content' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t("View content I'm following"),
-            'label' => $this->t('Following'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('view.following.following'),
-          ],
-          'divide_account' => [
-            'divider' => 'true',
-            'classes' => 'divider',
-            'attributes' => 'role=separator',
-          ],
-          'my_account' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('Settings'),
-            'label' => $this->t('Settings'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('entity.user.edit_form', [
-              'user' => $account->id(),
-            ]),
-          ],
-          'edit_profile' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('Edit profile'),
-            'label' => $this->t('Edit profile'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('entity.profile.type.user_profile_form', [
-              'user' => $account->id(),
-              'profile_type' => 'profile',
-            ]),
-            'access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
-          ],
-          'divide_logout' => [
-            'divider' => 'true',
-            'classes' => 'divider',
-            'attributes' => 'role=separator',
-          ],
-          'logout' => [
-            'classes' => '',
-            'link_attributes' => '',
-            'link_classes' => '',
-            'icon_classes' => '',
-            'icon_label' => '',
-            'title' => $this->t('Logout'),
-            'label' => $this->t('Logout'),
-            'title_classes' => '',
-            'url' => Url::fromRoute('user.logout'),
-          ],
-        ],
-      ];
       if ($this->moduleHandler->moduleExists('social_private_message')) {
         if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {
           // Fetch the amount of unread items.

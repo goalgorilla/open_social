@@ -31,6 +31,7 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -1255,4 +1256,34 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  */
 function social_group_user_cancel_methods_alter(&$methods) {
   $methods['user_cancel_reassign']['title'] .= ' ' . t('Reassign your groups to the super administrator.');
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the My Groups button to the account header block if it's enabled by a
+ * site manager.
+ */
+function social_group_social_user_account_header_items(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+    return [];
+  }
+
+  // We can't create a "My Groups" link without user.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+
+  // TODO: This should have the "desktop" class when rendered.
+  return [ 'groups' => [
+      '#type' => 'account_header_element',
+      '#title' => new TranslatableMarkup('My Groups'),
+      '#url' => Url::fromRoute('view.groups.page_user_groups', [
+        'user' => $context['user']->id(),
+      ]),
+      '#icon' => 'group',
+      '#label' => new TranslatableMarkup('My Groups'),
+    ],
+  ];
 }

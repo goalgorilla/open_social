@@ -15,6 +15,10 @@ use Drupal\Core\Url;
 /**
  * Allows a module to add a link in the account header block.
  *
+ * @param array $context
+ *   The context that was passed to the header block which can be used to
+ *   determine whether to display a menu item.
+ *
  * @return array
  *   An associative array of items that should be added in the account header
  *   block. The key of the items should be a unique item name.
@@ -50,7 +54,19 @@ use Drupal\Core\Url;
  *     - tagline
  *     - object
  */
-function hook_social_user_account_header_items() {
+function hook_social_user_account_header_items(array $context) {
+
+}
+
+/**
+ * Allows you to alter the results of hook_social_user_account_header_items.
+ *
+ * @param array $items
+ * @param array $context
+ *
+ * @see hook_social_user_account_header_items.
+ */
+function hook_social_user_account_header_items_alter(array &$items, array $context) {
 
 }
 

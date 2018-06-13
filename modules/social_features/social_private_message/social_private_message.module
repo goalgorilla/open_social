@@ -13,6 +13,7 @@ use Drupal\Core\Url;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_element_info_alter().
@@ -428,4 +429,43 @@ function social_private_message_activity_send_email_notifications_alter(array &$
   if (isset($email_message_templates['create_private_message'])) {
     $items['message_to_me']['templates'][] = 'create_private_message';
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the Private Message button and indicator to the account header block if
+ * it's enabled by the site manager.
+ */
+function social_private_message_social_user_account_header_items(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+    return [];
+  }
+
+  // We require a logged in user for this button.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return [];
+  }
+
+  // Fetch the amount of unread items.
+  $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+  // Default icon values.
+  $message_icon = 'mail_outline';
+  $label_classes = 'hidden';
+  // Override icons when there are unread items.
+  if ($num_account_messages > 0) {
+    $message_icon = 'mail';
+    // TODO: These label classes overwrite aren't possible at the moment.
+    $label_classes = 'badge badge-accent badge--pill';
+  }
+
+  // TODO: This should have the "desktop" class when rendered.
+  return [ 'messages' => [
+    '#type' => 'account_header_element',
+    '#title' => new TranslatableMarkup('Inbox'),
+    '#url' =>  Url::fromRoute('social_private_message.inbox'),
+    '#icon' => $message_icon,
+    '#label' => (string) $num_account_messages,
+  ];
 }

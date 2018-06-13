@@ -4,3 +4,50 @@
  * @file
  * The Social activity module.
  */
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the Notification Center to the account header block.
+ */
+function social_activity_social_user_account_header_items(array $context) {
+  // We require a valid user to load the notifications for.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+  $account = $context['user'];
+
+  $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
+  $notifications = \Drupal::service('renderer')->render($notifications_view);
+
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+  $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
+
+  // Todo: Find a way to automate these badge classes as social_private_message uses them too.
+  if ($num_notifications === 0) {
+    $notifications_icon = 'notifications_none';
+    $label_classes = 'hidden';
+  }
+  else {
+    $notifications_icon = 'notifications';
+    $label_classes = 'badge badge-accent badge--pill';
+
+    if ($num_notifications > 99) {
+      $num_notifications = '99+';
+    }
+  }
+
+  // TODO: This should have the "desktop notification-bell" class when rendered.
+  return [ 'notifications' => [
+    '#type' => 'account_header_element',
+    '#title' => new TranslatableMarkup('Notification Centre'),
+    '#url' => Url::fromRoute('<none>'),
+    '#icon' => $notifications_icon,
+    '#label' => (string) $num_notifications,
+    'notifications' => $notifications,
+  ]];
+}
