@@ -25,12 +25,9 @@ Feature: Use a landing page as 404 page
     And I fill in "URL alias" with "page-not-found"
     And I press "Save"
     And I wait for "3" seconds
-    # Ses as LU
+    # See as LU
     Then I should see "Landing page Page not found has been created."
-    When I am on "/admin/config/system/site-information"
-    And I fill in the following:
-      | edit-site-404 | /page-not-found |
-    And I press "Save configuration"
-    Given I am on "this-is-a-page-that-should-never-exist-thats-why-its-so-long-if-this-does-exist-then-this-test-breaks"
+    Given I set the configuration item "system.site" with key "page.404" to "/page-not-found"
+    And I am on "this-is-a-page-that-should-never-exist-thats-why-its-so-long-if-this-does-exist-then-this-test-breaks"
     Then I should see "Hero title"
     And I should not see an ".block-social-page-title-block" element
