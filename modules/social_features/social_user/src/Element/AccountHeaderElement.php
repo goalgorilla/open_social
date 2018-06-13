@@ -62,9 +62,6 @@ class AccountHeaderElement extends RenderElement {
     // Retrieve the item children, if any, sorted by weight.
     $children = Element::children($item, TRUE);
 
-    // The wrapper attributes are for the <li> tag.
-    $wrapper_attributes = [];
-
     // The link attributes are for the top level link containe in the <li>.
     $link_attributes = [];
     
@@ -74,10 +71,6 @@ class AccountHeaderElement extends RenderElement {
 
     // If this link has children then it"s a dropdown.
     if (!empty($children)) {
-      $wrapper_attributes = [
-        "class" => ["dropdown"],
-      ];
-
       $link_attributes = [
         "data-toggle" => "dropdown",
         "aria-expanded" => "true",
@@ -127,10 +120,6 @@ class AccountHeaderElement extends RenderElement {
         "#title" => $link_text,
       ],
     ];
-
-    if (!empty($wrapper_attributes)) {
-      $element["#wrapper_attributes"] = $wrapper_attributes;
-    }
 
     // If there are children we add them to a sublist.
     if (!empty($children)) {

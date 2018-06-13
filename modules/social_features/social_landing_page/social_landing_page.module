@@ -261,5 +261,22 @@ function _social_landing_page_get_hero_image(Node $node) {
   }
 
   return [];
+}
 
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Landing Page" link to the content creation menu.
+ */
+function social_landing_page_social_user_account_header_create_links($context) {
+  return [
+    'add_landing_page' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => $this->t('Create New Landing Page'),
+      ],
+      '#url' => Url::fromRoute('node.add', ['node_type' => 'landing_page']),
+      '#title' => $this->t('New Landing Page'),
+    ],
+  ];
 }

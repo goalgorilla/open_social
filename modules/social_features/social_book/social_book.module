@@ -6,6 +6,7 @@
  */
 
 use Drupal\node\NodeInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_node_links_alter().
@@ -24,4 +25,30 @@ function social_book_menu_local_tasks_alter(&$data, $route_name) {
   if (isset($data['tabs'][0]['entity.node.book_outline_form'])) {
     unset($data['tabs'][0]['entity.node.book_outline_form']);
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Book" link to the content creation menu if the user is
+ * allowed to create new books.
+ */
+function social_book_social_user_account_header_create_links($context) {
+  // We require a valid user to load the notifications for.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+  return [
+    'add_book' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => $this->t('Create New Book Page'),
+      ],
+      '#url' => Url::fromRoute('node.add', ['node_type' => 'book']),
+      '#title' => $this->t('New Book Page'),
+      // TODO: Move this permission to the route so the URL doesn't render.
+      '#access' => $context['user']->hasPermission('create new books')
+    ],
+  ];
 }

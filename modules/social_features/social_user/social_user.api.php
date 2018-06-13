@@ -71,6 +71,16 @@ function hook_social_user_account_header_items_alter(array &$items, array $conte
 }
 
 /**
+ * Allows a module to provide links for the create content menu item.
+ *
+ * @return array
+ *   Items in this array will be used as list items in a dropdown list.
+ */
+function hook_social_user_account_header_create_links() {
+
+}
+
+/**
  * Provide a method to create additional items from the user menu.
  *
  * @return array

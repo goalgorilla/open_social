@@ -7,6 +7,7 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_help().
@@ -30,4 +31,22 @@ function social_page_help($route_name, RouteMatchInterface $route_match) {
 function social_page_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
   // Remove the add new comment link.
   unset($links['comment__field_page_comments']['#links']['comment-add']);
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Page" link to the content creation menu.
+ */
+function social_page_social_user_account_header_create_links($context) {
+  return [
+    'add_page' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => $this->t('Create New Page'),
+      ],
+      '#url' => Url::fromRoute('node.add', ['node_type' => 'page']),
+      '#title' => $this->t('New Page'),
+    ],
+  ];
 }

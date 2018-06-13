@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -110,6 +111,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function build() {
     // TODO: Remove hook_social_user_account_header_links as it's replaced by menu specific hooks.
+    // This context is used to pass the block context to hooks.
+    $context = $this->getContextValues();
 
     $block = [
       '#attributes' => [
@@ -138,6 +141,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         '#url' => Url::fromRoute('<none>'),
         '#icon' => 'add_box',
         '#label' => $this->t('New Content'),
+      ];
+
+      // Weights can be used to order the subitems of an account_header_element.
+      $create_links = [
         'add_event' => [
           '#type' => 'link',
           '#attributes' => [
@@ -164,14 +171,17 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ],
       ];
 
-      // Weights can be used to order the subitems of an account_header_element.
-      // TODO: Invoke hook_social_user_account_header_create_links()
+      // Gather the content creation links from all modules.
+      $create_links += \Drupal::moduleHandler()->invokeAll('social_user_account_header_create_links', [$context]);
 
-      // TODO: Invoke hook_social_user_account_header_create_links_alter().
+      // Allow modules to alter the defined content creation links.
+      \Drupal::moduleHandler()->alter('social_user_account_header_create_links', $create_links, $context);
+
+      // Add the create links as children of the create content menu item.
+      $menu_items['create'] += $create_links;
 
       $account_name = $account->getDisplayName();
 
-      // TODO: account_box requires 'profile' class
       $menu_items['account_box'] = [
         '#type' => 'account_header_element',
         '#wrapper_attributes' => [
@@ -181,6 +191,9 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         '#title' => $this->t('Profile of @account', ['@account' => $account_name]),
         '#label' => $account_name,
         '#url' => Url::fromRoute('<none>'),
+      ];
+
+      $account_links = [
         'signed_in_as' => [
           '#wrapper_attributes' => [
             'class' => [ 'dropdown-header', 'header-nav-current-user' ],
@@ -192,11 +205,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'object'  => $account_name,
           ],
         ],
-//        'divide_mobile' => [
-//          'divider' => 'true',
-//          'classes' => 'divider mobile',
-//          'attributes' => 'role=separator',
-//        ],
+        'divider_mobile' => [
+          "#wrapper_attributes" => [
+            "class" => ["divider", "mobile"],
+            "role" => "separator",
+          ],
+        ],
 //        'messages_mobile' => [],
 //        'notification_mobile' => [],
 //        'divide_profile' => [
@@ -321,77 +335,53 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 //        ],
       ];
 
-      // Weights can be used to order the subitems of an account_header_element.
-      // TODO: Invoke hook_social_user_account_header_account_links()
+      // TODO: API docs for these hooks
+      // Gather the account related links from extending modules.
+      $account_links += \Drupal::moduleHandler()->invokeAll('social_user_account_header_account_links', [$context]);
 
-      // TODO: Invoke hook_social_user_account_header_account_links_alter().
+      // Allow modules to alter the defined account related links.
+      \Drupal::moduleHandler()->alter('social_user_account_header_account_links', $account_links, $context);
+
+      // Append the account links as children to the account menu.
+      $menu_items['account_box'] += $account_links;
     }
 
     // TODO: Implement dependency injection here.
     // We allow modules to add their items to the account header block.
     // We use the union operator (+) to ensure modules can't overwrite items
     // defined above. They should use the alter hook for that.
-    $context = $this->getContextValues();
     $menu_items += \Drupal::moduleHandler()->invokeAll('social_user_account_header_items', [$context]);
 
     // Allow modules to alter the defined account header block items.
     \Drupal::moduleHandler()->alter('social_user_account_header_items', $menu_items, $context);
 
+    // The item_list theme function gets the wrapper_attributes before the
+    // AccountHeaderElement::preRender is called. Therefor we provide some
+    // assisting classes here.
+    foreach ($menu_items as &$item) {
+      if (empty($item['#type']) || $item['#type'] !== 'account_header_element') {
+        continue;
+      }
+
+      $children = Element::children($item);
+
+      // If this element has children then it's a dropdown.
+      if (!empty($children)) {
+        if (empty($item['#wrapper_attributes'])) {
+          $item['#wrapper_attributes'] = [];
+        }
+
+        if (empty($item['#wrapper_attributes']['class'])) {
+          $item['#wrapper_attributes']['class'] = [];
+        }
+
+        $item['#wrapper_attributes']['class'][] = 'dropdown';
+      }
+    }
+
     return $block;
 
     if ($account->id() !== 0) {
-      // Check if the current user is allowed to create new books.
-      if ($this->moduleHandler->moduleExists('social_book')) {
-        $links['add']['below']['add_book'] = [
-          'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
-          'icon_classes' => '',
-          'icon_label' => '',
-          'title' => $this->t('Create New Book page'),
-          'label' => $this->t('New book page'),
-          'title_classes' => '',
-          'url' => Url::fromRoute('node.add', [
-            'node_type' => 'book',
-          ]),
-          'access' => $account->hasPermission('create new books'),
-        ];
-      }
-
-      // Check if the current user is allowed to create new pages.
-      if ($this->moduleHandler->moduleExists('social_page')) {
-        $links['add']['below']['add_page'] = [
-          'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
-          'icon_classes' => '',
-          'icon_label' => '',
-          'title' => $this->t('Create New Page'),
-          'label' => $this->t('New page'),
-          'title_classes' => '',
-          'url' => Url::fromRoute('node.add', [
-            'node_type' => 'page',
-          ]),
-        ];
-      }
-
-      // Check if the current user is allowed to create new landing pages.
-      if ($this->moduleHandler->moduleExists('social_landing_page')) {
-        $links['add']['below']['add_landing_page'] = [
-          'classes' => '',
-          'link_attributes' => '',
-          'link_classes' => '',
-          'icon_classes' => '',
-          'icon_label' => '',
-          'title' => $this->t('Create New Landing Page'),
-          'label' => $this->t('New landing page'),
-          'title_classes' => '',
-          'url' => Url::fromRoute('node.add', [
-            'node_type' => 'landing_page',
-          ]),
-        ];
-      }
-
 
       if ($this->moduleHandler->moduleExists('social_private_message')) {
         if ($navigation_settings_config->get('display_social_private_message_icon') === 1) {

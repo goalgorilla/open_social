@@ -44,6 +44,9 @@ function social_activity_social_user_account_header_items(array $context) {
   // TODO: This should have the "desktop notification-bell" class when rendered.
   return [ 'notifications' => [
     '#type' => 'account_header_element',
+    '#wrapper_attributes' => [
+      'class' => ['desktop', 'notification-bell'],
+    ],
     '#title' => new TranslatableMarkup('Notification Centre'),
     '#url' => Url::fromRoute('<none>'),
     '#icon' => $notifications_icon,
