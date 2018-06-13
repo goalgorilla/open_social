@@ -111,6 +111,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    */
   public function build() {
     // TODO: Remove hook_social_user_account_header_links as it's replaced by menu specific hooks.
+    // TODO: This block takes care of the anonyomous mobile menu and should still render a home link in that case.
     // This context is used to pass the block context to hooks.
     $context = $this->getContextValues();
 
@@ -505,22 +506,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           'url' => Url::fromRoute('<front>'),
         ],
       ];
-    }
-
-    foreach (['add', 'account_box'] as $key) {
-      if (!isset($links[$key]['below'])) {
-        continue;
-      }
-
-      foreach ($links[$key]['below'] as &$item) {
-        if (!isset($item['access']) && isset($item['url']) && $item['url'] instanceof Url) {
-          $item['access'] = $item['url']->access($account);
-        }
-      }
-    }
-
-    if (isset($links['groups']['url']) && $links['groups']['url'] instanceof Url) {
-      $links['groups']['access'] = $links['groups']['url']->access($account);
     }
 
     return [
