@@ -214,126 +214,113 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ],
 //        'messages_mobile' => [],
 //        'notification_mobile' => [],
-//        'divide_profile' => [
-//          'divider' => 'true',
-//          'classes' => 'divider',
-//          'attributes' => 'role=separator',
-//        ],
-//        'my_profile' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('View my profile'),
-//          'label' => $this->t('My profile'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('user.page'),
-//        ],
-//        'my_events' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('View my events'),
-//          'label' => $this->t('My events'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('view.events.events_overview', [
-//            'user' => $account->id(),
-//          ]),
-//        ],
-//        'my_topics' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('View my topics'),
-//          'label' => $this->t('My topics'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('view.topics.page_profile', [
-//            'user' => $account->id(),
-//          ]),
-//        ],
-//        'my_groups' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('View my groups'),
-//          'label' => $this->t('My groups'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('view.groups.page_user_groups', [
-//            'user' => $account->id(),
-//          ]),
-//        ],
-//        'divide_content' => [
-//          'divider' => 'true',
-//          'classes' => 'divider',
-//          'attributes' => 'role=separator',
-//        ],
-//        'my_content' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t("View content I'm following"),
-//          'label' => $this->t('Following'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('view.following.following'),
-//        ],
-//        'divide_account' => [
-//          'divider' => 'true',
-//          'classes' => 'divider',
-//          'attributes' => 'role=separator',
-//        ],
-//        'my_account' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('Settings'),
-//          'label' => $this->t('Settings'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('entity.user.edit_form', [
-//            'user' => $account->id(),
-//          ]),
-//        ],
-//        'edit_profile' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('Edit profile'),
-//          'label' => $this->t('Edit profile'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('entity.profile.type.user_profile_form', [
-//            'user' => $account->id(),
-//            'profile_type' => 'profile',
-//          ]),
-//          'access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
-//        ],
-//        'divide_logout' => [
-//          'divider' => 'true',
-//          'classes' => 'divider',
-//          'attributes' => 'role=separator',
-//        ],
-//        'logout' => [
-//          'classes' => '',
-//          'link_attributes' => '',
-//          'link_classes' => '',
-//          'icon_classes' => '',
-//          'icon_label' => '',
-//          'title' => $this->t('Logout'),
-//          'label' => $this->t('Logout'),
-//          'title_classes' => '',
-//          'url' => Url::fromRoute('user.logout'),
-//        ],
+        'divide_profile' => [
+          "#wrapper_attributes" => [
+            "class" => ["divider"],
+            "role" => "separator",
+          ],
+        ],
+        // TODO: Move to the social_profile module.
+        'my_profile' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('View my profile'),
+          ],
+          '#url' => Url::fromRoute('user.page'),
+          '#title' => $this->t('My profile')
+        ],
+        // TODO: Move to the social_events module.
+        'my_events' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('View my events'),
+          ],
+          '#url' => Url::fromRoute('view.events.events_overview', [
+            'user' => $account->id(),
+          ]),
+          '#title' => $this->t('My events')
+        ],
+        // TODO: Move this to the social_topics module.
+        'my_topics' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('View my topics'),
+          ],
+          '#url' => Url::fromRoute('view.topics.page_profile', [
+            'user' => $account->id(),
+          ]),
+          '#title' => $this->t('My topics')
+        ],
+        // TODO: Move this to social_groups module.
+        'my_groups' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t('View my groups'),
+          ],
+          '#url' => Url::fromRoute('view.groups.page_user_groups', [
+            'user' => $account->id(),
+          ]),
+          '#title' => $this->t('My groups')
+        ],
+        'divide_content' => [
+          "#wrapper_attributes" => [
+            "class" => ["divider"],
+            "role" => "separator",
+          ],
+        ],
+        // TODO: Figure out which module this belongs to.
+        'my_content' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t("View content I'm following"),
+          ],
+          '#url' => Url::fromRoute('view.following.following'),
+          '#title' => $this->t('Following')
+        ],
+        'divide_account' => [
+          "#wrapper_attributes" => [
+            "class" => ["divider"],
+            "role" => "separator",
+          ],
+        ],
+        // TODO: Move to social_user module.
+        'my_account' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t("Settings"),
+          ],
+          '#url' => Url::fromRoute('entity.user.edit_form', [
+            'user' => $account->id(),
+          ]),
+          '#title' => $this->t("Settings")
+        ],
+        // TODO: Move to social_profile module.
+        'edit_profile' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t("Edit profile"),
+          ],
+          '#url' => Url::fromRoute('entity.profile.type.user_profile_form', [
+            'user' => $account->id(),
+            'profile_type' => 'profile',
+          ]),
+          '#title' => $this->t("Edit profile"),
+          '#access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
+        ],
+        'divide_logout' => [
+          "#wrapper_attributes" => [
+            "class" => ["divider"],
+            "role" => "separator",
+          ],
+        ],
+        'logout' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => $this->t("Logout"),
+          ],
+          '#url' => Url::fromRoute('user.logout'),
+          '#title' => $this->t("Logout")
+        ],
       ];
 
       // TODO: API docs for these hooks
