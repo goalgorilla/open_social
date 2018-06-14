@@ -12,6 +12,8 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_form_alter().
@@ -273,10 +275,10 @@ function social_landing_page_social_user_account_header_create_links($context) {
     'add_landing_page' => [
       '#type' => 'link',
       '#attributes' => [
-        'title' => $this->t('Create New Landing Page'),
+        'title' => new TranslatableMarkup('Create New Landing Page'),
       ],
       '#url' => Url::fromRoute('node.add', ['node_type' => 'landing_page']),
-      '#title' => $this->t('New Landing Page'),
+      '#title' => new TranslatableMarkup('New Landing Page'),
     ],
   ];
 }
