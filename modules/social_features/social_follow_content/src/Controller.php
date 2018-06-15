@@ -28,6 +28,10 @@ class Controller extends ControllerBase {
     $rows = [];
 
     if (!empty($flaggings)) {
+      $node_types = $this->entityTypeManager()
+        ->getStorage('node_type')
+        ->loadMultiple();
+
       /** @var \Drupal\flag\FlaggingInterface $flagging */
       foreach ($storage->loadMultiple($flaggings) as $flagging) {
         $row = [];
@@ -35,7 +39,7 @@ class Controller extends ControllerBase {
 
         if ($flagging->getFlaggableType() == 'node') {
           $row['title'] = $entity->label();
-          $row['type'] = $entity->getType();
+          $row['type'] = $node_types[$entity->bundle()]->label();
         }
         else {
           $row['title'] = $entity->id();
