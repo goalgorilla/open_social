@@ -167,8 +167,13 @@ th {
 .table-responsive {
   display: block;
   width: 100%;
-  overflow-x: auto;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  @include for-phone-only {
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    padding-bottom: 100px;
+    margin-bottom: -100px;
+  }
 
   // Prevent double border on horizontal scroll due to use of `display: block;`
   .table-bordered {

@@ -2,9 +2,12 @@
 
 namespace Drupal\social_post\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for Post edit forms.
@@ -16,6 +19,36 @@ class PostForm extends ContentEntityForm {
   private $postViewDefault;
   private $postViewProfile;
   private $postViewGroup;
+
+  /**
+   * The Current User object.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a NodeForm object.
+   *
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
+  public function __construct(TimeInterface $time = NULL, AccountInterface $current_user) {
+    $this->time = $time ?: \Drupal::service('datetime.time');
+    $this->currentUser = $current_user;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('datetime.time'),
+      $container->get('current_user')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -126,6 +159,12 @@ class PostForm extends ContentEntityForm {
         $form['field_visibility']['widget'][0]['#edit_mode'] = TRUE;
       }
     }
+    if ($this->entity->isNew()) {
+      unset($form['status']);
+    }
+    else {
+      $form['status']['#access'] = $this->currentUser->hasPermission('edit any post entities');
+    }
 
     return $form;
   }
@@ -139,14 +178,16 @@ class PostForm extends ContentEntityForm {
 
     $display = $this->getFormDisplay($form_state);
 
-    if (isset($display) && ($display_id = $display->get('id'))) {
-      if ($display_id === $this->postViewProfile) {
-        $account_profile = \Drupal::routeMatch()->getParameter('user');
-        $this->entity->get('field_recipient_user')->setValue($account_profile);
-      }
-      elseif ($display_id === $this->postViewGroup) {
-        $group = \Drupal::routeMatch()->getParameter('group');
-        $this->entity->get('field_recipient_group')->setValue($group);
+    if ($this->entity->isNew()) {
+      if (isset($display) && ($display_id = $display->get('id'))) {
+        if ($display_id === $this->postViewProfile) {
+          $account_profile = \Drupal::routeMatch()->getParameter('user');
+          $this->entity->get('field_recipient_user')->setValue($account_profile);
+        }
+        elseif ($display_id === $this->postViewGroup) {
+          $group = \Drupal::routeMatch()->getParameter('group');
+          $this->entity->get('field_recipient_group')->setValue($group);
+        }
       }
     }
 
@@ -168,15 +209,18 @@ class PostForm extends ContentEntityForm {
 
   /**
    * Function to set the current form modes.
+   *
+   * Retrieve the form display before it is overwritten in the parent.
    */
   protected function setFormMode() {
-    // Retrieve the form display before it is overwritten in the parent.
-    $bundle = $this->getBundleEntity()->id();
+    if ($this->getBundleEntity() !== NULL) {
+      $bundle = $this->getBundleEntity()->id();
 
-    // Set as variables, since the bundle might be different.
-    $this->postViewDefault = 'post.' . $bundle . '.default';
-    $this->postViewProfile = 'post.' . $bundle . '.profile';
-    $this->postViewGroup = 'post.' . $bundle . '.group';
+      // Set as variables, since the bundle might be different.
+      $this->postViewDefault = 'post.' . $bundle . '.default';
+      $this->postViewProfile = 'post.' . $bundle . '.profile';
+      $this->postViewGroup = 'post.' . $bundle . '.group';
+    }
   }
 
 }

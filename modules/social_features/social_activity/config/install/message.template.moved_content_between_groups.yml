@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      node-event: node-event
+      node-topic: node-topic
+    activity_action: move_entity_action
+    activity_context: group_activity_context
+    activity_destinations:
+      stream_home: stream_home
+      stream_group: stream_group
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: ''
+template: moved_content_between_groups
+label: 'Moved event or topic between groups'
+description: 'A person moved event or topic to other group'
+text:
+  -
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> created [social_group:content_type] in <a href="[message:gurl]">[message:gtitle]</a></p>'
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

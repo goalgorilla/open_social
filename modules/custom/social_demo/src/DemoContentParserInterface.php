@@ -37,6 +37,6 @@ interface DemoContentParserInterface {
    * @return mixed
    *   The YAML converted to a PHP value.
    */
-  public function parseFile($file, $module, $profile);
+  public function parseFileFromModule($file, $module, $profile);
 
 }

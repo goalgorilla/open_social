@@ -26,6 +26,10 @@ class Immediately extends EmailFrequencyBase {
    * {@inheritdoc}
    */
   public function processItem(Activity $activity, Message $message, User $target) {
+    if ($target->isBlocked()) {
+      return;
+    }
+
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
