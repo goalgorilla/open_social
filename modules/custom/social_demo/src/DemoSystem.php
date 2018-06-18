@@ -120,7 +120,7 @@ abstract class DemoSystem extends DemoContent {
       }
 
       // Logo.
-      $logo = $this->preparePicture($data['theme']['logo']);
+      $logo = $this->fetchImage($data['theme']['logo']);
       // Must be a valid file.
       if ($logo instanceof File) {
         $theme_logo = [
@@ -236,16 +236,16 @@ abstract class DemoSystem extends DemoContent {
   /**
    * Prepares data about an image.
    *
-   * @param string $picture
-   *   The picture by uuid.
+   * @param string $image
+   *   The image by uuid.
    *
    * @return array
    *   Returns an array.
    */
-  protected function preparePicture($picture) {
+  protected function fetchImage($image) {
     $value = NULL;
     $files = $this->fileStorage->loadByProperties([
-      'uuid' => $picture,
+      'uuid' => $image,
     ]);
 
     if ($files) {
@@ -302,12 +302,8 @@ abstract class DemoSystem extends DemoContent {
     ];
 
     /* @var \Drupal\file\Entity\File $file */
-    $file = $this->preparePicture($data['image']);
-
-    $block_image = [
-      'target_id' => $file->id(),
-      'alt' => "Anonymous front page image homepage'",
-    ];
+    $block_image = $this->prepareImage($data['image'], 'Anonymous front page image homepage');
+    // Insert is in the hero image field.
     $block->field_hero_image = $block_image;
 
     // Set the links.

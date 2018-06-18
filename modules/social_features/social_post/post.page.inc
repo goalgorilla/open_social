@@ -56,4 +56,7 @@ function template_preprocess_post(array &$variables) {
   if ($post->getCreatedTime() != $post->getChangedTime()) {
     $variables['modified'] = TRUE;
   }
+
+  $variables['published'] = $post->isPublished();
+
 }

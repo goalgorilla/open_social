@@ -65,6 +65,14 @@ field_settings:
     dependencies:
       module:
         - user
+  user_status:
+    label: 'Owner » User » User status'
+    datasource_id: 'entity:profile'
+    property_path: 'uid:entity:status'
+    type: boolean
+    dependencies:
+      module:
+        - user
 datasource_settings:
   'entity:profile':
     plugin_id: 'entity:profile'
@@ -241,6 +249,9 @@ processor_settings:
   super_user:
     weights:
       preprocess_query: 30
+  blocked_users:
+    weights:
+      preprocess_query: -30
 tracker_settings:
   default:
     plugin_id: default
