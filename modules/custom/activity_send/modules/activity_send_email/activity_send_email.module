@@ -42,7 +42,6 @@ function activity_send_email_cron() {
         $query = $db->select('user_activity_digest', 'uad')
           ->fields('uad', ['uid', 'activity'])
           ->condition('uad.frequency', $frequency['id'])
-          ->condition('uad.timestamp', time() - $interval, '<=')
           ->orderBy('uad.timestamp', 'DESC');
         $activitities = $query->execute()->fetchAll();
 
