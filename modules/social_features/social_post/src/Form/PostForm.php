@@ -56,7 +56,7 @@ class PostForm extends ContentEntityForm {
       unset($form['status']);
     }
     else {
-      $form['status']['#access'] = $this->currentUser->hasPermission('edit any post entities');
+      $form['status']['#access'] = \Drupal::currentUser()->hasPermission('edit any post entities');
     }
 
     return $form;
