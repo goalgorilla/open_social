@@ -18,6 +18,9 @@ function social_private_message_install() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('private_message.settings');
   $config->set('enable_email_notifications', FALSE)->save();
   $config->set('send_by_default', FALSE)->save();
+
+  // Set module weight.
+  module_set_weight('social_private_message', 1);
 }
 
 /**
@@ -66,4 +69,11 @@ function _social_private_message_get_permissions($role) {
   }
 
   return [];
+}
+
+/**
+ * Set module weight.
+ */
+function social_private_message_update_8001() {
+  module_set_weight('social_private_message', 1);
 }

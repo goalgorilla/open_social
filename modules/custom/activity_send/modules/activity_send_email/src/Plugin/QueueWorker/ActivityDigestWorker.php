@@ -32,7 +32,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase {
       $target = User::load($data['uid']);
 
       // Make sure we have an actual user account to work with.
-      if ($target instanceof User) {
+      if ($target instanceof User && $target->isActive()) {
         $langcode = $target->getPreferredLangcode();
         $digest_notifications = [
           '#theme' => 'digestmail',
