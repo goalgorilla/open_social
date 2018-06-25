@@ -17,6 +17,7 @@
 #}
 
 {{ attach_library('socialbase/comment') }}
+{{ attach_library('socialbase/page-node')}}
 <div class="card">
   <div class="card__block">
 
@@ -37,8 +38,13 @@
         </div>
       </div>
 
-      {{ content.links }}
+      {% if published %}
+        {{ content.links }}
+      {% endif %}
   </div>
+    {% if not published %}
+    <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
+    {% endif %}
 
     <div class="margin-top-s iframe-container">
 

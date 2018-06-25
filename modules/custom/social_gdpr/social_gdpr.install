@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_gdpr module.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function social_gdpr_install() {
+  // Set some default permissions.
+  _social_gdpr_set_permissions();
+
+  \Drupal::configFactory()->getEditable('data_policy.data_policy')
+    ->set('enforce_consent', TRUE)
+    ->save();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_gdpr_set_permissions() {
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->id() !== 'administrator') {
+      $permissions = _social_gdpr_get_permissions($role->id());
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Build the permissions.
+ *
+ * @param string $role
+ *   The role.
+ *
+ * @return array
+ *   Returns an array containing the permissions.
+ */
+function _social_gdpr_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [
+    'without consent',
+  ];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer data policy settings',
+    'edit data policy',
+    'view all data policy revisions',
+    'access data policy revisions',
+    'revert all data policy revisions',
+    'overview user consents',
+  ]);
+
+  // An authenticated user should give consent when it necessary.
+  $id = array_search('without consent', $permissions['authenticated']);
+  unset($permissions['authenticated'][$id]);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+
+  return [];
+}

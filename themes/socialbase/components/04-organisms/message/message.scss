@@ -46,7 +46,6 @@
     display: flex;
   }
 
-
   p {
     margin: 0;
   }
@@ -106,6 +105,9 @@
   .message__owner {
     font-weight: $font-weight-strong;
     padding-right: 1em;
+    .message__deleted & {
+      color: #9b9b9b;
+    }
   }
 }
 
@@ -124,6 +126,11 @@
   padding: 1.25rem;
   border: $gray-lighter 2px solid;
   margin-top: 0.625em;
+  .message__deleted & {
+    text-align: center;
+    color: $gray-light-1;
+    font-size: 0.85em;
+  }
 
   p:last-child {
     margin-bottom: 0;

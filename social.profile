@@ -140,6 +140,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     'social_event_type' => t('Categorize events in event types'),
     'social_sso' => t('Registration with social networks'),
     'social_file_private' => t('Use the private file system for uploaded files (highly recommended)'),
+    'inline_form_errors' => t('Inline Form Errors'),
+    'page_cache' => t('Cache page for anonymous users (highly recommended)'),
+    'dynamic_page_cache' => t('Cache pages for any user (highly recommended)'),
   ];
 
   // Checkboxes to enable Optional modules.
@@ -149,6 +152,9 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     '#options' => $social_optional_modules,
     '#default_value' => [
       'social_file_private',
+      'inline_form_errors',
+      'page_cache',
+      'dynamic_page_cache',
     ],
   ];
 

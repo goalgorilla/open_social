@@ -106,7 +106,8 @@
   &:hover,
   &:focus,
   .open .dropdown-toggle & {
-    border-color: transparent;
+    //border-color: transparent;
+    @include button-variant(inherit, $btn-default-bg, $btn-default-border);
     color: darken($brand-primary, 10%);
     fill: darken($brand-primary, 10%);
 

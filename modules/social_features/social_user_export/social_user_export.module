@@ -5,6 +5,7 @@
  * The Social User Export module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\Views;
@@ -83,6 +84,60 @@ function _social_user_export_get_view(array $query = [], $execute = TRUE) {
   }
 
   return $view;
+}
+
+/**
+ * Returns first name of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return string
+ *   Returns first name of the use.
+ */
+function social_user_export_first_name(UserInterface $account) {
+  $first_name = '';
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  // Check if entity type 'profile' exists.
+  try {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+        $first_name = $user_profile->get('field_profile_first_name')->value;
+      }
+    }
+  }
+  catch (InvalidPluginDefinitionException $e) {
+    $first_name = '';
+  }
+  return $first_name;
+}
+
+/**
+ * Returns last name of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return string
+ *   Returns last name of the user.
+ */
+function social_user_export_last_name(UserInterface $account) {
+  $last_name = '';
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  // Check if entity type 'profile' exists.
+  try {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+        $last_name = $user_profile->get('field_profile_last_name')->value;
+      }
+    }
+  }
+  catch (InvalidPluginDefinitionException $e) {
+    $last_name = '';
+  }
+  return $last_name;
 }
 
 /**
@@ -182,6 +237,41 @@ function social_user_export_groups_count(UserInterface $account) {
   $query = \Drupal::database()->select('groups', 'g');
   $query->join('groups_field_data', 'gfd', 'gfd.id = g.id');
   $query->condition('gfd.uid', $account->id());
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns number of private messages sent per user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account that sends messages.
+ *
+ * @return int
+ *   The number of private messages.
+ */
+function social_user_export_number_of_private_messages(UserInterface $account) {
+  return $private_messages = \Drupal::entityQuery('private_message')
+    ->condition('owner', $account->id())
+    ->count()
+    ->execute();
+}
+
+/**
+ * Returns the quantity of likes by a user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return int
+ *   number of likes
+ */
+function social_user_export_likes_count(UserInterface $account) {
+  $query = \Drupal::database()->select('votingapi_vote', 'v');
+  $query->condition('v.user_id', $account->id());
 
   return (int) $query
     ->countQuery()
