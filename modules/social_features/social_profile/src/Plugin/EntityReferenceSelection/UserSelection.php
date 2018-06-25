@@ -41,12 +41,12 @@ class UserSelection extends UserSelectionBase {
     // Give the query a tag to identify it for altering.
     $query->addTag('social_entityreference');
 
-    $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-    $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+    $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
+    $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
     $query->join('users_field_data', 'ufd', 'ufd.uid = p.uid');
 
     if ($addNickName === TRUE) {
-      $query->join('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+      $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
     }
 
     $name = $this->connection->escapeLike($match);
