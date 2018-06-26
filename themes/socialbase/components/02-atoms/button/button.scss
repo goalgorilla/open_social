@@ -1,6 +1,5 @@
 @import 'settings';
 
-
 // Button
 //
 // In addition to the default styling of `<button>` and
@@ -14,7 +13,6 @@
 // or section within the current page – they should also be given an appropriate `role="button"`.
 //
 // Style guide: atoms.button
-
 
 // Button types
 //
@@ -85,9 +83,6 @@
   cursor: pointer;
 }
 
-
-
-
 // Base styles
 // --------------------------------------------------
 
@@ -146,6 +141,10 @@
     font-weight: $btn-font-weight;
   }
 
+}
+
+.btn.btn-full {
+  display: block;
 }
 
 .btn-non-clickable,
@@ -213,7 +212,6 @@ a.btn {
   margin: 5px 5px 5px 0;
 }
 
-
 // Button Sizes
 // --------------------------------------------------
 
@@ -222,6 +220,7 @@ a.btn {
   font-size: $button-font-size-large;
   line-height: $line-height-large;
 }
+
 .btn-sm {
   padding: $padding-small-vertical $padding-small-horizontal;
   font-size: $button-font-size-small;
@@ -238,7 +237,6 @@ a.btn {
   font-size: $button-font-size-extrasmall;
   line-height: $line-height-small;
 }
-
 
 // Block button
 // --------------------------------------------------
@@ -266,13 +264,12 @@ input[type="button"] {
   margin-left: 0;
 }
 
-
 // Button raised
 // --------------------------------------------------
 
 .btn-raised {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
-	transition: box-shadow, .15s ease-out;
+  transition: box-shadow, .15s ease-out;
 
   &:active,
   &.active,
@@ -292,13 +289,13 @@ input[type="button"] {
 
 .btn-icon-toggle {
   background-color: transparent;
-	border-radius: 50% !important;
+  border-radius: 50% !important;
   padding: 4px;
 
   &:hover,
   &:focus {
     background-color: rgba(0, 0, 0, 0.07);
-		border-color: transparent;
+    border-color: transparent;
   }
 
   &:active,
@@ -332,7 +329,6 @@ input[type="button"] {
   }
 
 }
-
 
 // Floating button
 // --------------------------------------------------
@@ -420,10 +416,11 @@ input[type="button"] {
 // Set corners individual because sometimes a single button can be in a .btn-group and we need :first-child and :last-child to both match
 .btn-group > .btn:first-child {
   margin-left: 0;
-  &:not(:last-child):not(.dropdown-toggle) {
+  &:not(:last-of-type):not(.dropdown-toggle) {
     @include border-right-radius(0);
   }
 }
+
 // Need .dropdown-toggle since :last-child doesn't apply, given that a .dropdown-menu is used immediately after it
 .btn-group > .btn:last-child:not(:first-child),
 .btn-group > .dropdown-toggle:not(:first-child) {
@@ -434,15 +431,18 @@ input[type="button"] {
 .btn-group > .btn-group {
   float: left;
 }
+
 .btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
   border-radius: 0;
 }
+
 .btn-group > .btn-group:first-child:not(:last-child) {
   > .btn:last-child,
   > .dropdown-toggle {
     @include border-right-radius(0);
   }
 }
+
 .btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
   @include border-left-radius(0);
 }
@@ -453,15 +453,21 @@ input[type="button"] {
   outline: 0;
 }
 
-
 // Sizing
 //
 // Remix the default button sizing classes into new ones for easier manipulation.
 
-.btn-group-xs > .btn { @extend .btn-xs; }
-.btn-group-sm > .btn { @extend .btn-sm; }
-.btn-group-lg > .btn { @extend .btn-lg; }
+.btn-group-xs > .btn {
+  @extend .btn-xs;
+}
 
+.btn-group-sm > .btn {
+  @extend .btn-sm;
+}
+
+.btn-group-lg > .btn {
+  @extend .btn-lg;
+}
 
 // Split button dropdowns
 // ----------------------
@@ -471,6 +477,7 @@ input[type="button"] {
   padding-left: 8px;
   padding-right: 8px;
 }
+
 .btn-group > .btn-lg + .dropdown-toggle {
   padding-left: 12px;
   padding-right: 12px;
@@ -500,11 +507,11 @@ input[type="button"] {
 .btn-lg .caret {
   border-width: $caret-width-large $caret-width-large 0;
 }
+
 // Upside down carets for .dropup
 .dropup .btn-lg .caret {
   border-width: 0 $caret-width-large $caret-width-large;
 }
-
 
 // Vertical button groups
 // ----------------------
@@ -543,7 +550,6 @@ input[type="button"] {
   display: flex;
   justify-content: center;
 }
-
 
 // on mobile we want to "add" and "filter" buttons to be on one row
 // We need to add these selectors here now, because they need to be loaded regardless of other libraries being loaded

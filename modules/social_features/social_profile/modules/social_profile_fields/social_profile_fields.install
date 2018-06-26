@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * The social profile fields install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_profile_fields_install() {
+  // Set some default permissions.
+  _social_profile_fields_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_profile_fields_set_permissions() {
+  user_role_grant_permissions('sitemanager', ['social profile fields change used profile fields']);
+}
