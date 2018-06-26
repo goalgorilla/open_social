@@ -488,7 +488,7 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
 
-    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
+    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
