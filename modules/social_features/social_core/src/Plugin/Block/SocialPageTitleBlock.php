@@ -54,7 +54,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   protected $titleResolver;
 
   /**
-   * EventAddBlock constructor.
+   * SocialPageTitleBlock constructor.
    *
    * @param array $configuration
    *   The given configuration.
@@ -165,7 +165,8 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
     else {
 
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
-        $title = $this->titleResolver->getTitle($request, $route);
+        $title = $this->title;
+
         return [
           '#type' => 'page_title',
           '#title' => $title,
