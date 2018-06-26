@@ -84,5 +84,5 @@ projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha5
 projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2018-03-29/delete-everywhere-2957067-2.patch"
 projects[bootstrap][type] = theme
-projects[bootstrap][version] = 3.9
-projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/bootstrap-vertical-tabs-menu-items-accessibility-2949112-2.patch"
+projects[bootstrap][version] = 3.11
+projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-05-10/2969106-4.patch"
