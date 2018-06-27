@@ -54,8 +54,9 @@ class SocialMinkContext extends MinkContext{
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    if (is_dir('/var/www/travis_artifacts')) {
-      $file_and_path = '/var/www/travis_artifacts/' . $filename . '.jpg';
+    $dir = '/var/www/travis_artifacts';
+    if (is_writeable($dir)) {
+      $file_and_path = $dir . '/' . $filename . '.jpg';
       file_put_contents($file_and_path, $screenshot);
     }
   }
