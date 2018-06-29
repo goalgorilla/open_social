@@ -1,4 +1,4 @@
-@api @embed @stability @perfect @critical @DS-3666 @stability-4
+@api @embed @stability @perfect @critical @DS-3666 @DS-5350 @stability-4
 Feature: Embed
   Benefit: More dynamic look and feel in the platform
   Role: As a LU
@@ -19,7 +19,7 @@ Feature: Embed
     And I click on the embed icon in the WYSIWYG editor
     And I wait for AJAX to finish
     And I fill in "URL" with "https://www.youtube.com/watch?v=kgE9QNX8f3c"
-    And I press "Embed" in the "WYSIWYG Embed dialog"
+    And I click the xth "0" element with the css ".url-select-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Save"

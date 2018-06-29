@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file
+ * Contains social_gdpr.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\data_policy\Entity\DataPolicy;
+
+/**
+ * Implements hook_help().
+ */
+function social_gdpr_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_gdpr module.
+    case 'help.page.social_gdpr':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Integrate Data Policy module.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_gdpr_form_data_policy_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.add') {
+    $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_gdpr_form_data_policy_data_policy_revision_edit_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() == 'social_gdpr.data_policy.revision_edit') {
+    $form['actions']['submit']['#submit'][] = '_social_gdpr_data_policy_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_gdpr_form_data_policy_data_policy_agreement_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Get the active data policy and display a message that it was updated.
+  $entity_id = \Drupal::config('data_policy.data_policy')->get('entity_id');
+  $timestamp = DataPolicy::load($entity_id)->getChangedTime();
+  $date = \Drupal::service('date.formatter')->format($timestamp, 'social_medium_date');
+  $form['date'] = [
+    '#theme' => 'status_messages',
+    '#message_list' => [
+      'info' => [
+        [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => t('Our data policy has been updated on %date', [
+            '%date' => $date,
+          ]),
+        ],
+      ],
+    ],
+    '#weight' => -1,
+  ];
+
+  if (isset($form['not_agree'])) {
+    $form['not_agree']['#tag'] = 'small';
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_links().
+ */
+function social_gdpr_social_user_account_header_links() {
+  $items = [];
+
+  if (\Drupal::service('data_policy.manager')->needConsent()) {
+    $items['data_policy_agreement'] = [
+      'title' => t('Data policy agreement'),
+      'url' => Url::fromRoute('data_policy.data_policy.agreement'),
+      'after' => 'edit_profile',
+      'divider' => 'before',
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Form submit redirect for data policy.
+ *
+ * @param array $form
+ *   Data policy form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state interface.
+ */
+function _social_gdpr_data_policy_submit(array $form, FormStateInterface $form_state) {
+  $form_state->setRedirect('social_gdpr.data_policy.revisions');
+}

@@ -6,6 +6,7 @@
  */
 
 use Drupal\message\Entity\Message;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Url;
@@ -234,16 +235,36 @@ function activity_creator_preprocess_views_view_unformatted(&$variables) {
 }
 
 /**
+ * Implements hook_entity_update().
+ *
+ * Clear cache tags for related activities.
+ */
+function activity_creator_entity_update(EntityInterface $entity) {
+  _activity_creator_activity_for_entity_updater('update', $entity);
+}
+
+/**
  * Implements hook_entity_delete().
  *
  * Delete activity items when related entities are deleted.
+ */
+function activity_creator_entity_delete(EntityInterface $entity) {
+  _activity_creator_activity_for_entity_updater('delete', $entity);
+}
+
+/**
+ * Update and or delete activities for given entity.
+ *
+ * @param string $action
+ *   A string containing the action. Can be delete or update.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity object which is updated or deleted.
  *
  * @TODO: When group is deleted delete activities where group is recipient.
  * @TODO: When user is deleted delete activities where user is recipient.
+ * @TODO: Move this to a service.
  */
-function activity_creator_entity_delete(EntityInterface $entity) {
-
-  // TODO Move this into a service.
+function _activity_creator_activity_for_entity_updater($action, EntityInterface $entity) {
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
@@ -253,18 +274,11 @@ function activity_creator_entity_delete(EntityInterface $entity) {
       $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
       $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
       $ids = $entity_query->execute();
-      if (!empty($ids)) {
-        entity_delete_multiple('activity', $ids);
-      }
     }
-
     if ($entity_type == 'user' || $entity_type == 'group') {
       $entity_query = \Drupal::entityQuery('activity');
       $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
       $ids = $entity_query->execute();
-      if (!empty($ids)) {
-        entity_delete_multiple('activity', $ids);
-      }
     }
     if ($entity_type == 'group_content') {
       /** @var \Drupal\group\Entity\GroupContent $group_content */
@@ -277,13 +291,24 @@ function activity_creator_entity_delete(EntityInterface $entity) {
         $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
         $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
         $ids = $entity_query->execute();
-        if (!empty($ids)) {
-          entity_delete_multiple('activity', $ids);
-        }
       }
     }
-  }
 
+    if (empty($ids)) {
+      return;
+    }
+
+    if ($action === 'update') {
+      $tags = [];
+      foreach ($ids as $id) {
+        $tags[] = 'activity:' . $id;
+      }
+      Cache::invalidateTags($tags);
+    }
+    elseif ($action === 'delete') {
+      entity_delete_multiple('activity', $ids);
+    }
+  }
 }
 
 /**

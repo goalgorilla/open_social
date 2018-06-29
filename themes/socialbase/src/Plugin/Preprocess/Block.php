@@ -72,6 +72,7 @@ class Block extends PreprocessBase {
         $prefix . 'group_add_block',
         $prefix . 'group_add_event_block',
         $prefix . 'group_add_topic_block',
+        $prefix . 'add_data_policy_revision',
       ];
 
       if (in_array($variables['elements']['#id'], $block_buttons)) {
@@ -85,8 +86,21 @@ class Block extends PreprocessBase {
     }
 
     // Wrap the group/membership table in a card element.
-    if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block' && $route_name == 'entity.group_content.collection') {
-      $variables['card'] = TRUE;
+    if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block') {
+      $route_names = [
+        'entity.group_content.collection',
+        'data_policy.data_policy',
+        'social_gdpr.data_policy.revision',
+        'social_gdpr.data_policy.revisions',
+      ];
+
+      if (in_array($route_name, $route_names)) {
+        $variables['card'] = TRUE;
+
+        if ($route_name == 'social_gdpr.data_policy.revision') {
+          $variables['attributes']['class'][] = 'card__body';
+        }
+      }
     }
 
     // Show group managers block in a card.
