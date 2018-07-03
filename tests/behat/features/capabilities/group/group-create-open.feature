@@ -73,8 +73,7 @@ Feature: Create Open Group
     And I should see the button "Cancel"
     And I should see the button "Join group"
     And I press "Join group"
-    And I should see "Test open group"
-    And I click "Test open group"
+    And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
 
   # DS-643 As a LU I want to see the events of a group

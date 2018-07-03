@@ -5,6 +5,7 @@ namespace Drupal\social_demo;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\user\Entity\User;
@@ -122,7 +123,7 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   protected function fetchData() {
     if (!$this->data) {
-      $this->data = $this->parser->parseFile($this->getSource(), $this->getModule(), $this->getProfile());
+      $this->data = $this->parser->parseFileFromModule($this->getSource(), $this->getModule(), $this->getProfile());
     }
 
     return $this->data;
@@ -239,6 +240,33 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
 
     // Return the content as it was given.
     return $content;
+  }
+
+  /**
+   * Prepares data about an image.
+   *
+   * @param string $picture
+   *   The image uuid.
+   * @param string $alt
+   *   The image alt text.
+   *
+   * @return array
+   *   Returns an array for the image field.
+   */
+  protected function prepareImage($picture, $alt = '') {
+    $value = NULL;
+    $files = $this->loadByUuid('file', $picture);
+
+    if ($files instanceof File) {
+      $value = [
+        [
+          'target_id' => $files->id(),
+          'alt' => $alt ?: 'file' . $files->id(),
+        ],
+      ];
+    }
+
+    return $value;
   }
 
   /**

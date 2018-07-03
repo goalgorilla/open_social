@@ -28,6 +28,12 @@ class GroupAddEventBlock extends BlockBase {
 
     if (is_object($group)) {
       if ($group->hasPermission('create group_node:event entity', $account)) {
+        if ($group->getGroupType()->id() === 'public_group') {
+          $config = \Drupal::config('entity_access_by_field.settings');
+          if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {
+            return AccessResult::forbidden();
+          }
+        }
         return AccessResult::allowed();
       }
     }

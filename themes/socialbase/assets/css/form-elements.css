@@ -91,7 +91,7 @@ span.form-required {
   display: block;
   margin-top: 5px;
   font-size: 0.75rem;
-  color: #777777;
+  color: #464545;
 }
 
 .radio .help-block {
@@ -181,6 +181,23 @@ span.form-required {
 
 .has-error .form-inline {
   margin-bottom: 0;
+}
+
+.field--label-inline .field--label {
+  font-weight: 500;
+  display: inline-block;
+}
+
+.field--label-inline .field--label:after {
+  content: ':';
+}
+
+.field--label-inline .field--label + .field--item {
+  display: inline-block;
+}
+
+.field--label-inline .field--label + .field--item a {
+  font-weight: 300;
 }
 
 @media (min-width: 600px) {

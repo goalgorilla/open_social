@@ -5,6 +5,7 @@ namespace Drupal\social_group\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,10 +26,18 @@ class SocialGroupAddForm extends FormBase {
   protected $entityTypeManager;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * Constructs a new GroupContentController.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -36,7 +45,8 @@ class SocialGroupAddForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('renderer')
     );
   }
 
@@ -106,26 +116,32 @@ class SocialGroupAddForm extends FormBase {
    *   Returns an array containing the group type element and descriptions.
    */
   public function getGroupTypeElement() {
+    $element = [
+      '#type' => 'radios',
+      '#title' => $this->t('Group type'),
+      '#description' => $this->t('Can not be changed once a group is created.'),
+      '#default_value' => 'open_group',
+      '#required' => TRUE,
+      '#cache' => [
+        'tags' => $this->entityTypeManager->getDefinition('group_type')->getListCacheTags(),
+      ],
+    ];
 
     $group_types_options = [];
     $group_types_descriptions = [];
     $group_types = $this->entityTypeManager->getStorage('group_type')->loadMultiple();
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach ($group_types as $group_type) {
-      $group_types_options[$group_type->id()] = $group_type->label();
-      $group_types_descriptions[$group_type->id()] = ['#description' => $group_type->getDescription()];
+      $access = $this->entityTypeManager->getAccessControlHandler('group')->createAccess($group_type->id(), NULL, [], TRUE);
+      if ($access->isAllowed()) {
+        $group_types_options[$group_type->id()] = $group_type->label();
+        $group_types_descriptions[$group_type->id()] = ['#description' => $group_type->getDescription()];
+      }
+      $this->renderer->addCacheableDependency($element, $access);
     }
     arsort($group_types_options);
 
-    $element = [
-      '#type' => 'radios',
-      '#title' => $this->t('Group type'),
-      '#description' => $this->t('Can not be changed once a group is created.'),
-      '#default_value' => 'open_group',
-      '#options' => $group_types_options,
-      '#required' => TRUE,
-    ];
-
+    $element['#options'] = $group_types_options;
     return $element + $group_types_descriptions;
   }
 
