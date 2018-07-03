@@ -6,13 +6,45 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\group\Entity\GroupContent;
 use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function activity_basics_node_presave(EntityInterface $entity) {
+  if ($entity->isNew()) {
+    if (!$entity->isPublished()) {
+      $entity->set('was_published', FALSE);
+    }
+  }
+  else {
+    if (!$entity->get('was_published')->value && $entity->original->isPublished() != $entity->isPublished()) {
+      $entity->set('was_published', TRUE);
+    }
+  }
+}
 
 /**
  * Implements hook_entity_insert().
  */
 function activity_basics_entity_insert(EntityInterface $entity) {
   _activity_basics_entity_action($entity, 'create_entitiy_action');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function activity_basics_node_update(EntityInterface $entity) {
+  if (!$entity->original->get('was_published')->value && !$entity->original->isPublished() && $entity->isPublished()) {
+    if ($group_contents = GroupContent::loadByEntity($entity)) {
+      $entity = reset($group_contents);
+    }
+
+    _activity_basics_entity_action($entity, 'create_entitiy_action');
+  }
 }
 
 /**
@@ -35,4 +67,21 @@ function _activity_basics_entity_action(EntityInterface $entity, $instance) {
   \Drupal::service('plugin.manager.activity_action.processor')
     ->createInstance($instance)
     ->create($entity);
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function activity_basics_entity_base_field_info(EntityTypeInterface $entity_type) {
+  if ($entity_type->id() != 'node') {
+    return;
+  }
+
+  $fields['was_published'] = BaseFieldDefinition::create('boolean')
+    ->setLabel(t('Was published'))
+    ->setRevisionable(TRUE)
+    ->setTranslatable(TRUE)
+    ->setDefaultValue(TRUE);
+
+  return $fields;
 }

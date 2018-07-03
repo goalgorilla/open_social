@@ -5,6 +5,7 @@ namespace Drupal\activity_send_email\Plugin\QueueWorker;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\group\Entity\GroupContent;
 use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
@@ -27,6 +28,15 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
   public function processItem($data) {
     // First make sure it's an actual Activity entity.
     if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
+      if ($activity->getFieldValue('field_activity_entity', 'target_type') == 'group_content') {
+        $entity = GroupContent::load($activity->getFieldValue('field_activity_entity', 'target_id'))
+          ->getEntity();
+
+        if ($entity->getEntityTypeId() == 'node' && !$entity->isPublished()) {
+          return;
+        }
+      }
+
       // Get target account.
       $target_account = EmailActivityDestination::getSendTargetUser($activity);
 
