@@ -72,7 +72,7 @@ class Book extends DemoNode {
 
     // Load image by uuid and set to node.
     if (!empty($item['field_book_image'])) {
-      $entry['field_book_image'] = $this->prepareImage($item['field_book_image']);
+      $entry['field_book_image'] = $this->prepareImage($item['image'], $item['image_alt']);
     }
 
     // Load attachments to node.
@@ -115,32 +115,6 @@ class Book extends DemoNode {
       }
     }
     return $entry;
-  }
-
-  /**
-   * Prepares data about an image of node.
-   *
-   * @param string $uuid
-   *   The uuid for the image.
-   *
-   * @return array|null
-   *   Returns an array or null.
-   */
-  protected function prepareImage($uuid) {
-    $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $uuid,
-    ]);
-
-    if ($files) {
-      $value = [
-        [
-          'target_id' => current($files)->id(),
-        ],
-      ];
-    }
-
-    return $value;
   }
 
 }
