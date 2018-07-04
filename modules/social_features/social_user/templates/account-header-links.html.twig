@@ -16,7 +16,7 @@
 <ul class="nav navbar-nav">
 {% for item in links|without('search_block') if item.access is not defined or item.access %}
     <li class="{{ item.classes }}">
-        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
+        <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title|striptags }}" {% endif %}>
           {% if item.icon_image %}
             {{ item.icon_image }}
           {% elseif item.icon_classes %}
@@ -32,7 +32,7 @@
                 {% for item in item.below if item.access is not defined or item.access %}
                   {% if item.url %}
                     <li class="{{ item.classes }}">
-                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title }}" {% endif %}>
+                      <a href="{{ item.url }}" class="{{ item.link_classes }}" {{ item.link_attributes }} {% if item.title %} title="{{ item.title|striptags }}" {% endif %}>
                         <span class="{{item.title_classes}}">{{ item.label }}</span>
                         {% if item.count_icon %}
                           <span class="{{item.count_classes}}">{{ item.count_icon }}</span>
