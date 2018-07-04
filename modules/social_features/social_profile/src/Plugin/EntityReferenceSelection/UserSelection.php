@@ -36,14 +36,34 @@ class UserSelection extends UserSelectionBase {
     $query = $this->connection->select('profile', 'p')
       ->fields('p', ['uid']);
 
-    $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-    $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+    $addNickName = $this->moduleHandler->moduleExists('social_profile_fields');
+
+    // Give the query a tag to identify it for altering.
+    $query->addTag('social_entityreference');
+
+    $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
+    $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+    $query->join('users_field_data', 'ufd', 'ufd.uid = p.uid');
+
+    if ($addNickName === TRUE) {
+      $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+    }
 
     $name = $this->connection->escapeLike($match);
 
     $or = $query->orConditionGroup();
+    $or->condition('ufd.name', '%' . $name . '%', 'LIKE');
     $or->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE');
     $or->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+
+    if ($addNickName === TRUE) {
+      $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+    }
+
+    // Only allow searching when user has permission to view.
+    if ($this->currentUser->hasPermission('view profile email')) {
+      $or->condition('ufd.mail', '%' . $name . '%', 'LIKE');
+    }
 
     $ids = $query->condition($or)->execute()->fetchCol();
 
@@ -54,7 +74,6 @@ class UserSelection extends UserSelectionBase {
     $query = parent::buildEntityQuery(NULL, $match_operator);
 
     $or = $query->orConditionGroup();
-    $or->condition('name', $match, $match_operator);
     $or->condition('uid', $ids, 'IN');
 
     $query->condition($or);

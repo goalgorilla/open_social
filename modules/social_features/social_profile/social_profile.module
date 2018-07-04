@@ -28,6 +28,7 @@ define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
  * Fix theme issues in profile fields.
  */
 function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
     case 'field_profile_phone_number':
@@ -39,6 +40,12 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       // @todo: remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
+  }
+  // This replaces all user entity references with our EntityReferenceSelection.
+  if ($field_definition->getType() === 'entity_reference') {
+    if (isset($element['target_id']['#target_type']) && $element['target_id']['#target_type'] === 'user') {
+      $element['target_id']['#selection_handler'] = 'social';
+    }
   }
 }
 
@@ -538,4 +545,20 @@ function social_profile_user_format_name_alter(&$name, $account) {
 function _social_profile_form_pre_render($element) {
   $element['group_locale_settings']['timezone']['#title'] = NULL;
   return $element;
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'user') {
+    if (isset($operations['edit'])) {
+      $operations['edit']['title'] = t('Edit account');
+      $operations['edit_profile'] = [
+        'title' => t('Edit profile'),
+        'weight' => (isset($operations['edit']['weight'])) ? $operations['edit']['weight']-- : 0,
+        'url' => Url::fromUserInput('/user/' . $entity->id() . '/profile'),
+      ];
+    }
+  }
 }
