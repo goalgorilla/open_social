@@ -285,6 +285,23 @@ function _social_user_search_content_pre_render(array $build) {
 }
 
 /**
+ * Implements hook_user_format_name_alter().
+ */
+function social_user_user_format_name_alter(&$name, $account) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  $accountname = '';
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  if (!empty($storage)) {
+    // Returns false.
+    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
+      $accountname = trim($accountname);
+    }
+  }
+  $name = ($accountname !== '') ? $accountname : $name;
+}
+
+/**
  * Implements hook_menu_local_tasks_alter().
  */
 function social_user_menu_local_tasks_alter(&$data, $route_name) {
