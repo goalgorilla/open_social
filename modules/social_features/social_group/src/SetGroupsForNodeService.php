@@ -28,13 +28,21 @@ class SetGroupsForNodeService {
 
     // Remove the notifications related to the node if a group is added or
     // moved.
-    if ((empty($original_groups) || $original_groups != $groups_to_add) && !empty($groups_to_add)) {
+    if ((empty($original_groups) || $original_groups != $groups_to_add)) {
       $entity_query = \Drupal::entityQuery('activity');
       $entity_query->condition('field_activity_entity.target_id', $node->id(), '=');
       $entity_query->condition('field_activity_entity.target_type', 'node', '=');
 
       if (!empty($original_groups)) {
         $template = 'create_' . $node->bundle() . '_group';
+        $messages = \Drupal::entityTypeManager()->getStorage('message')
+          ->loadByProperties(['template' => $template]);
+        $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+
+        $moved = TRUE;
+      }
+      elseif (empty($original_groups) && !empty($groups_to_add)) {
+        $template = 'create_' . $node->bundle() . '_community';
         $messages = \Drupal::entityTypeManager()->getStorage('message')
           ->loadByProperties(['template' => $template]);
         $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
@@ -48,13 +56,18 @@ class SetGroupsForNodeService {
       }
     }
 
-    foreach ($groups_to_remove as $group_id) {
-      $group = Group::load($group_id);
-      self::removeGroupContent($node, $group);
+    if (!empty($groups_to_remove)) {
+      foreach ($groups_to_remove as $group_id) {
+        $group = Group::load($group_id);
+        self::removeGroupContent($node, $group);
+      }
     }
-    foreach ($groups_to_add as $group_id) {
-      $group = Group::load($group_id);
-      self::addGroupContent($node, $group);
+
+    if (!empty($groups_to_add)) {
+      foreach ($groups_to_add as $group_id) {
+        $group = Group::load($group_id);
+        self::addGroupContent($node, $group);
+      }
     }
 
     if ($moved) {
