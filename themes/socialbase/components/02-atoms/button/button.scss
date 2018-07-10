@@ -559,6 +559,9 @@ input[type="button"] {
 .block-topic-add-block,
 .block-group-add-block {
   display: inline-block;
+  @include for-tablet-landscape-down {
+    margin-top: 1rem;
+  }
 
   @include for-tablet-landscape-up {
     display: block;
