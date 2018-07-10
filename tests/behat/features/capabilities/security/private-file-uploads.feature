@@ -1,4 +1,4 @@
-@api @security @stability @perfect @critical @DS-3605 @stability-1
+@api @security @stability @perfect @critical @DS-3605 @DS-5350 @stability-1
 Feature: Private files
   Benefit: Upload files to private file directory
   Role: As a LU
@@ -75,7 +75,7 @@ Feature: Private files
     And I attach the file "/files/opensocial.jpg" to "files[fid]"
     And I wait for AJAX to finish
     And I fill in "Alternative text" with "Just a private image test"
-    And I press "Save" in the "WYSIWYG Image dialog"
+    And I click the xth "0" element with the css ".editor-image-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
     And I wait for "3" seconds
     And I press "Save"

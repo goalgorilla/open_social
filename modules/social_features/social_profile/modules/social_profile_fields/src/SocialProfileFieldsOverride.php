@@ -53,7 +53,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return 'SocialCommentUploadConfigOverride';
+    return 'SocialProfileFieldsOverride';
   }
 
   /**
