@@ -187,7 +187,7 @@ Feature: Create Closed Group
 
   # As a member of this closed group I want to leave the group
     And I should see the button "Joined"
-    When I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "Test closed group 2" in the "Hero block"
