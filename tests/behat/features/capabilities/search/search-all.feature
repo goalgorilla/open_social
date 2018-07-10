@@ -1,4 +1,4 @@
-@api @search @stability @DS-3624 @stability-3
+@api @search @stability @DS-3624 @stability-3 @search-all
 Feature: Search
   Benefit: In order to find specific content of any type
   Role: As a LU

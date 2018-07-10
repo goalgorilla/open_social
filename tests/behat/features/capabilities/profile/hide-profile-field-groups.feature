@@ -1,4 +1,4 @@
-@account @profile @AN @perfect @api @DS-3440 @stability @stability-4
+@account @profile @AN @perfect @api @DS-3440 @stability @stability-4 @hide-profile-field-groups
 Feature: I want to be able to hide certain profile information
   Benefit: In order to have better privacy
   Role: LU

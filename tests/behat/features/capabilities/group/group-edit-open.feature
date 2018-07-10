@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @DS-4211 @stability-2
+@api @group @stability @DS-956 @DS-4211 @stability-2 @group-edit-open
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM

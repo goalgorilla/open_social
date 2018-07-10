@@ -1,4 +1,4 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1
+@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU

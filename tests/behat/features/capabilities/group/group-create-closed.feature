@@ -1,4 +1,4 @@
-@api @group @DS-3428 @DS-4211 @stability @stability-1
+@api @group @DS-3428 @DS-4211 @stability @stability-1 @group-create-closed
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
   Role: As a LU

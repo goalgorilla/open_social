@@ -1,4 +1,4 @@
-@api @group @DS-3801 @DS-3776 @DS-3976 @DS-4211 @stability @stability-1
+@api @group @DS-3801 @DS-3776 @DS-3976 @DS-4211 @stability @stability-1 @group-access-roles
 Feature: Group access roles
   Benefit: As a CM+ I want to have full control over groups
   Role: As a CM+

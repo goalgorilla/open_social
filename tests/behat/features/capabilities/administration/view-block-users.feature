@@ -1,4 +1,4 @@
-@account @profile @stability @stability-4 @perfect @api @2840664
+@account @profile @stability @stability-4 @perfect @api @2840664 @view-block-users
 Feature: View and block users as site manager
   Benefit: In order to see user list at
   Role: SM
