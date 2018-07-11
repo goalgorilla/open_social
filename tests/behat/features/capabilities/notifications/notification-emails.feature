@@ -6,7 +6,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
@@ -23,7 +24,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to get no emails for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
@@ -42,7 +44,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to set a daily mail for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
@@ -75,7 +78,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to set a weekly mail for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
