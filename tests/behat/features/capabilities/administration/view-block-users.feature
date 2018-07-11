@@ -10,5 +10,3 @@ Feature: View and block users as site manager
     And I should see "Name or email contains"
     And I should see "Block the selected user(s)"
     And I should see "Cancel the selected user account(s)"
-    And I should not see "Add the Administrator role to the selected users"
-
