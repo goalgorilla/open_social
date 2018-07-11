@@ -105,14 +105,14 @@ Feature: Enroll for an event
       | status           | 1                     |
     And I click "eventenrollment" in the "Main content"
     And I click "Events"
-    Then I should not see "Enrolled"
+    Then I should not see "You are enrolled"
 
     When I click "Enrollment test event"
     And I press the "Enroll" button
     Then I should see the button "Enrolled"
     And I click "eventenrollment" in the "Main content"
     And I click "Events"
-    Then I should see "Enrolled"
+    Then I should see "You are enrolled"
 
   @closed_enrollments
   Scenario: Can no longer enroll to an event when it has finished.
