@@ -2,6 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_last_name
     - profile.type.profile
   module:
     - profile
@@ -143,6 +145,132 @@ display:
           entity_type: user
           entity_field: name
           plugin_id: field
+        field_profile_first_name:
+          id: field_profile_first_name
+          table: profile__field_profile_first_name
+          field: field_profile_first_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_profile_last_name:
+          id: field_profile_last_name
+          table: profile__field_profile_last_name
+          field: field_profile_last_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         type:
           id: type
@@ -177,7 +305,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url.query_args
-      tags: {  }
+      tags:
+        - 'config:field.storage.profile.field_profile_first_name'
+        - 'config:field.storage.profile.field_profile_last_name'
   entity_reference_1:
     display_plugin: entity_reference
     id: entity_reference_1
@@ -190,14 +320,17 @@ display:
         options:
           search_fields:
             name: name
-            uid: '0'
+            field_profile_first_name: field_profile_first_name
+            field_profile_last_name: field_profile_last_name
       row:
         type: entity_reference
         options:
           default_field_elements: true
           inline:
             name: name
-          separator: ' '
+            field_profile_first_name: field_profile_first_name
+            field_profile_last_name: field_profile_last_name
+          separator: '  - '
           hide_empty: false
       pager:
         type: none
@@ -208,4 +341,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-      tags: {  }
+      tags:
+        - 'config:field.storage.profile.field_profile_first_name'
+        - 'config:field.storage.profile.field_profile_last_name'
