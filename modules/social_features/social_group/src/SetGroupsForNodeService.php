@@ -5,6 +5,8 @@ namespace Drupal\social_group;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class SetGroupsForNodeService.
@@ -14,48 +16,79 @@ use Drupal\node\NodeInterface;
 class SetGroupsForNodeService {
 
   /**
-   * Constructor.
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public function __construct() {
+  protected $entityTypeManager;
 
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructor.
+   *
+   * @param EntityTypeManagerInterface
+   *   The entity manager.
+   * @param ModuleHandlerInterface
+   *   The module handler.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
    * Save groups for a given node.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
+  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
     $moved = FALSE;
 
     // Remove the notifications related to the node if a group is added or
     // moved.
     if ((empty($original_groups) || $original_groups != $groups_to_add)) {
-      $entity_query = \Drupal::entityQuery('activity');
+      $entity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
       $entity_query->condition('field_activity_entity.target_id', $node->id(), '=');
       $entity_query->condition('field_activity_entity.target_type', 'node', '=');
 
+      // 1. From Group -> Community OR Group.
+      // If there are original groups, it means content is removed from
+      // inside a group. So we can remove the create_node-bundle_group
+      // message from the streams.
       if (!empty($original_groups)) {
         $template = 'create_' . $node->bundle() . '_group';
-        $messages = \Drupal::entityTypeManager()->getStorage('message')
+        $messages = $this->entityTypeManager->getStorage('message')
           ->loadByProperties(['template' => $template]);
         $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
 
         $moved = TRUE;
       }
+      // 1. From Community -> GROUP
+      // If there are no original groups, and there are groups we should add the
+      // piece of content to it means content is placed from the community
+      // in to a group and we remove the "create_node-bundle_community
+      // message from the streams.
       elseif (empty($original_groups) && !empty($groups_to_add)) {
         $template = 'create_' . $node->bundle() . '_community';
-        $messages = \Drupal::entityTypeManager()->getStorage('message')
+        $messages = $this->entityTypeManager->getStorage('message')
           ->loadByProperties(['template' => $template]);
         $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
 
         $moved = TRUE;
       }
 
+      // Delete all activity items connected to our query.
       if (!empty($ids = $entity_query->execute())) {
-        $controller = \Drupal::entityTypeManager()->getStorage('activity');
+        $controller = $this->entityTypeManager->getStorage('activity');
         $controller->delete($controller->loadMultiple($ids));
       }
     }
 
+    // Remove all the group content references from the Group as well if we
+    // moved it out of the group.
     if (!empty($groups_to_remove)) {
       foreach ($groups_to_remove as $group_id) {
         $group = Group::load($group_id);
@@ -63,6 +96,7 @@ class SetGroupsForNodeService {
       }
     }
 
+    // Add the content to the Group if we placed it in a group.
     if (!empty($groups_to_add)) {
       foreach ($groups_to_add as $group_id) {
         $group = Group::load($group_id);
@@ -70,10 +104,11 @@ class SetGroupsForNodeService {
       }
     }
 
+    // Invoke hook_social_group_move.
     if ($moved) {
       $hook = 'social_group_move';
 
-      foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+      foreach ($this->moduleHandler->getImplementations($hook) as $module) {
         $function = $module . '_' . $hook;
         $function($node);
       }
