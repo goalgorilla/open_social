@@ -295,7 +295,7 @@ function _social_event_format_date($event, $view_mode) {
     // Date are the same or there are no end date.
     if (empty($end_datetime) || $start_datetime == $end_datetime) {
       // Default time should not be displayed.
-      if ($start_time === '00:01') {
+      if (date('i:s', $start_datetime) === '01:01') {
         $event_date = "$start_date";
       }
       else {
@@ -309,7 +309,7 @@ function _social_event_format_date($event, $view_mode) {
     // They are not the same day (or empty?).
     elseif (!empty($end_datetime)) {
       // Default time should not be displayed.
-      if ($start_time === '00:01' && $end_time === '00:01') {
+      if (date('i:s', $start_datetime) === '01:01' && date('i:s', $end_datetime) === '01:01') {
         $event_date = "$start_date - $end_date";
       }
       else {
@@ -353,7 +353,7 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
     $input['time'] = '00:01:01';
     $format = 'Y-m-d H:i:s';
     $datetime = trim($input['date'] . ' ' . $input['time']);
-    $timezone = !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL;
+    $timezone = 'UTC';
     $input['object'] = DrupalDateTime::createFromFormat($format, $datetime, $timezone);
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
