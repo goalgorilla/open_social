@@ -46,6 +46,22 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       $overrides[$config_name]['content'] = $content;
     }
 
+    // Add field_group and field_comment_files.
+    $config_name = 'search_api.index.social_users';
+
+    if (in_array($config_name, $names)) {
+      $field_settings['field_profile_nick_name'] = [
+        'label' => 'Nickname',
+        'datasource_id' => 'entity:profile',
+        'property_path' => 'field_profile_nick_name',
+        'type' => 'text',
+        'dependecies' => [
+          'config' => 'field.storage.profile.field_profile_nick_name',
+        ],
+      ];
+      $overrides[$config_name]['field_settings'] = $field_settings;
+    }
+
     return $overrides;
   }
 
