@@ -1,4 +1,4 @@
-@api @javascript @event @eventenrollment @stability @perfect @PAC-423 @profile @stability-3
+@api @javascript @event @eventenrollment @stability @perfect @PAC-423 @profile @stability-3 @event-an-enroll
 Feature: Enroll for an event without an account
   Benefit: In order to attend an Event
   Role: AN
@@ -9,7 +9,7 @@ Feature: Enroll for an event without an account
     Given I enable the module "social_event_an_enroll"
     Given event content:
       | title         | field_event_date | status | field_content_visibility |
-      | AN Event 1    | +10 minutes      | 1      | public                   |
+      | AN Event 1    | +2 days          | 1      | public                   |
     Given I open the "event" node with title "AN Event 1"
     Then I should see "AN Event 1" in the "Hero block"
     And I should see the link "Enroll" in the "Hero block"
