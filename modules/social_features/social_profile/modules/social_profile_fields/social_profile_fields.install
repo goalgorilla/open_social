@@ -14,12 +14,27 @@ use Drupal\user\Entity\User;
 function social_profile_fields_install() {
   // Set some default permissions.
   _social_profile_fields_set_permissions();
+  _social_profile_fields_update_search_index();
 }
 
 /**
  * Disable and enable the search index, so the nickname field is added.
  */
 function social_profile_fields_update_8001() {
+  _social_profile_fields_update_search_index();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_profile_fields_set_permissions() {
+  user_role_grant_permissions('sitemanager', ['social profile fields change used profile fields']);
+}
+
+/**
+ * Disable and enable the search index, so the nickname field is added.
+ */
+function _social_profile_fields_update_search_index() {
   /* @var Drupal\search_api\Entity\Index $index */
   $index = Index::load('social_users');
   \Drupal::logger('social_profile_fields')->info('Loaded search index');
@@ -42,11 +57,4 @@ function social_profile_fields_update_8001() {
     // Restore user account.
     $accountSwitcher->switchBack();
   }
-}
-
-/**
- * Function to set permissions.
- */
-function _social_profile_fields_set_permissions() {
-  user_role_grant_permissions('sitemanager', ['social profile fields change used profile fields']);
 }
