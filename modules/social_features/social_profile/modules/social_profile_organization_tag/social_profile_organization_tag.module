@@ -47,7 +47,7 @@ function social_profile_organization_tag_user_format_name_alter(&$name, $account
         $organization_tag_entities = $organization_tag->referencedEntities();
         if (count($organization_tag_entities) === 1) {
           foreach ($organization_tag_entities as $organization) {
-            $value = '@name <span class="profile-organization-tag"><span class="text">from @org</span></span>';
+            $value = '@name <span class="profile-organization-tag"><span class="text">@org</span></span>';
             $arguments = [
               '@name' => $name,
               '@org' => $organization->label(),
