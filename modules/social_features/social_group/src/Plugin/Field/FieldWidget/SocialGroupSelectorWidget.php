@@ -84,11 +84,15 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   protected function getOptions(FieldableEntityInterface $entity) {
     if (!isset($this->options)) {
 
-      // Get the bundle fron the node.
-      $entity_type = '';
-      if ($entity->getEntityTypeId() == 'node') {
-        $entity_type = $entity->bundle();
+      // Must be a node.
+      if ($entity->getEntityTypeId() !== 'node') {
+        // We only handle nodes. When using this widget on other content types,
+        // we simply return the normal options.
+        return parent::getOptions($entity);
       }
+
+      // Get the bundle fron the node.
+      $entity_type = $entity->bundle();
 
       $account = $entity->getOwner();
       // Limit the settable options for the current user account.
