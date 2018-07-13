@@ -367,7 +367,7 @@ function social_event_field_widget_form_alter(&$element, FormStateInterface $for
 function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
   $element['all_day'] = [
     '#type' => 'checkbox',
-    '#title' => t('All day')
+    '#title' => t('All day'),
   ];
 
   // Time field should disappear when 'All day' is checked.
