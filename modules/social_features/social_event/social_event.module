@@ -285,22 +285,18 @@ function _social_event_format_date($event, $view_mode) {
 
   if (!empty($start_datetime)) {
     $start_date = $date_formatter->format($start_datetime, $date_format);
-    $start_time = $date_formatter->format($start_datetime, $time_format);
+    // Default time should not be displayed.
+    $start_time = $date_formatter->format($start_datetime, $time_format, '', 'UTC') === '00:01' ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
       $end_date = $date_formatter->format($end_datetime, $date_format);
-      $end_time = $date_formatter->format($end_datetime, $time_format);
+      // Default time should not be displayed.
+      $end_time = $date_formatter->format($end_datetime, $time_format, '', 'UTC') === '00:01' ? '' : $date_formatter->format($end_datetime, $time_format);
     }
 
     // Date are the same or there are no end date.
     if (empty($end_datetime) || $start_datetime == $end_datetime) {
-      // Default time should not be displayed.
-      if (date('i:s', $start_datetime) === '01:01') {
-        $event_date = "$start_date";
-      }
-      else {
-        $event_date = "$start_date - $start_time";
-      }
+      $event_date = empty($start_time) ? $start_date : "$start_date - $start_time";
     }
     // The date is the same, the time is different.
     elseif (date('Y-m-d', $start_datetime) == date('Y-m-d', $end_datetime)) {
@@ -308,13 +304,7 @@ function _social_event_format_date($event, $view_mode) {
     }
     // They are not the same day (or empty?).
     elseif (!empty($end_datetime)) {
-      // Default time should not be displayed.
-      if (date('i:s', $start_datetime) === '01:01' && date('i:s', $end_datetime) === '01:01') {
-        $event_date = "$start_date - $end_date";
-      }
-      else {
-        $event_date = "$start_date $start_time - $end_date $end_time";
-      }
+      $event_date = "$start_date $start_time - $end_date $end_time";
     }
   }
 
@@ -345,12 +335,12 @@ function social_event_date_after_build($form, &$form_state) {
 }
 
 /**
- * Set default time to date field if time was not set.
+ * Set default time to the date field if time was not set.
  */
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
   $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
-  if (empty($input['time']) && !empty($input['date'])) {
-    $input['time'] = '00:01:01';
+  if (!empty($input['date']) && (empty($input['time']) || !empty($input['all_day']))) {
+    $input['time'] = '00:01:00';
     $format = 'Y-m-d H:i:s';
     $datetime = trim($input['date'] . ' ' . $input['time']);
     $timezone = 'UTC';
@@ -358,5 +348,41 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
     }
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_event_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+  if ($field_definition->getName() == 'field_event_date' || $field_definition->getName() == 'field_event_date_end') {
+    $element['value']['#date_time_callbacks'][] = 'social_event_date_all_day_checkbox';
+  }
+}
+
+/**
+ * Add 'All day' checkbox to event datetime field.
+ */
+function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
+  $element['all_day'] = [
+    '#type' => 'checkbox',
+    '#title' => t('All day')
+  ];
+
+  // Time field should disappear when 'All day' is checked.
+  $input_name = ':input[name="' . $element['#name'] . '[all_day]"]';
+  $element['time']['#states'] = [
+    'invisible' => [
+      $input_name => [
+        'checked' => TRUE,
+      ],
+    ],
+  ];
+
+  $date = $element['#value']['object'];
+  if ($date instanceof DrupalDateTime && $date->format('H:i', ['timezone' => 'UTC']) == '00:01') {
+    $element['time']['#value'] = '';
+    $element['all_day']['#value'] = TRUE;
   }
 }
