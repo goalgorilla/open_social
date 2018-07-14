@@ -40,6 +40,8 @@ class SocialGroupListBuilder extends EntityListBuilder {
    *   The entity storage class.
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
    *   The redirect destination service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_time
+   *   The datetime formatter service.
    */
   public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RedirectDestinationInterface $redirect_destination, DateFormatterInterface $date_time) {
     parent::__construct($entity_type, $storage);
@@ -96,8 +98,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity)
-  {
+  public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\group\Entity\GroupInterface $entity */
     // EntityListBuilder sets the table rows using the #rows property, so we
     // need to add the render array using the 'data' key.
