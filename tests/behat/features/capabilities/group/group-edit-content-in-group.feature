@@ -64,6 +64,7 @@ Feature: Move content after creation
     And I select group "- None -"
     And I wait for AJAX to finish
     And I press "Save"
+    And I run cron
     Then I should not see "Motorboats" in the "Main content"
     And I should not see "Kayaking" in the "Main content"
 
@@ -73,7 +74,6 @@ Feature: Move content after creation
     And I should not see "I love this sport"
     And I am on the stream of group "Kayaking"
     And I should not see "I love this sport"
-    And I run cron
     And I click "Home"
     Then I should see "harry created a topic"
     And I should see "I love this sport"
