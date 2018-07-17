@@ -26,4 +26,10 @@
     {% endembed %}
   {% endif %}
 
+  {% if content.enrolled %}
+    <span class="badge badge-secondary teaser__badge">
+      {%- trans -%} You are enrolled {%- endtrans -%}
+    </span>
+  {% endif %}
+
 {% endblock %}
