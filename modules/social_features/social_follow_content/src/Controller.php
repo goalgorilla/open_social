@@ -2,6 +2,7 @@
 
 namespace Drupal\social_follow_content;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
@@ -42,7 +43,7 @@ class Controller extends ControllerBase {
           $row['type'] = $node_types[$entity->bundle()]->label();
         }
         else {
-          $row['title'] = $entity->id();
+          $row['title'] = Unicode::truncate($entity->field_post->value, 50, TRUE, TRUE, 3);
           $row['type'] = $this->t('Post');
         }
 
