@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - system
   theme:
     - socialblue
 id: socialblue_local_actions
@@ -14,4 +16,9 @@ settings:
   label: 'Primary admin actions'
   provider: core
   label_display: '0'
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '/admin/reports/*'
+    negate: true
+    context_mapping: {  }
