@@ -29,7 +29,7 @@ Feature: Like post stream
     And I should see "Isaac Newton likes your post"
     And I click "Isaac Newton likes your post"
 
-  @AN
+  @AN @like-post-stream-anonymous
   Scenario: As an anonymous user I want to see the amount of likes of public content
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name |
@@ -41,7 +41,7 @@ Feature: Like post stream
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
-    And I should be on "/stream"
+    And I should be on the homepage
 
     Given I am an anonymous user
     And I am on "/stream"
