@@ -18,9 +18,28 @@ class Table extends BaseTable {
    * {@inheritdoc}
    */
   public function preprocessVariables(Variables $variables) {
-    if (isset($variables['attributes']['id']) && strpos($variables['attributes']['id'], 'edit-field-files') !== FALSE) {
-      $variables['attributes']['class'][] = 'tablesaw';
-      $variables['attributes']['data-tablesaw-mode'] = 'stack';
+    if (isset($variables['attributes']['id'])) {
+      if (strpos($variables['attributes']['id'], 'edit-field-files') !== FALSE) {
+        $variables['attributes']['class'][] = 'tablesaw';
+        $variables['attributes']['data-tablesaw-mode'] = 'stack';
+      }
+      elseif ($variables['attributes']['id'] === 'social-follow-content-table') {
+        $variables->header['operations']['attributes']->addClass('text-right');
+
+        foreach ($variables->rows as &$row) {
+          $row['cells']['operations']['attributes']->addClass('text-right');
+
+          $row['cells']['operations']['content']['#attributes'] = [
+            'class' => [
+              'btn',
+              'btn-default',
+              'btn-sm',
+              'waves-effect',
+              'waves-btn',
+            ],
+          ];
+        }
+      }
     }
 
     parent::preprocessVariables($variables);

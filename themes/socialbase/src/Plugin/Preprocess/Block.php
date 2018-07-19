@@ -92,13 +92,19 @@ class Block extends PreprocessBase {
         'data_policy.data_policy',
         'social_gdpr.data_policy.revision',
         'social_gdpr.data_policy.revisions',
+        'social_follow_content.overview',
       ];
 
       if (in_array($route_name, $route_names)) {
         $variables['card'] = TRUE;
 
-        if ($route_name == 'social_gdpr.data_policy.revision') {
-          $variables['attributes']['class'][] = 'card__body';
+        $extra_class = [
+          'social_gdpr.data_policy.revision' => 'card__body',
+          'social_follow_content.overview' => 'card__block--table',
+        ];
+
+        if (isset($extra_class[$route_name])) {
+          $variables['attributes']['class'][] = $extra_class[$route_name];
         }
       }
     }

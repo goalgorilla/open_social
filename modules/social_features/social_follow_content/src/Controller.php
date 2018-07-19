@@ -38,17 +38,27 @@ class Controller extends ControllerBase {
         $row = [];
         $entity = $flagging->getFlaggable();
 
-        if ($flagging->getFlaggableType() == 'node') {
-          $row['title'] = $entity->label();
+        if ($flagging->getFlaggableType() === 'node') {
+          $title = NULL;
+        }
+        else {
+          $title = Unicode::truncate($entity->field_post->value, 50, TRUE, TRUE, 3);
+        }
+
+        $row['title'] = $entity->toLink($title);
+
+        if ($flagging->getFlaggableType() === 'node') {
           $row['type'] = $node_types[$entity->bundle()]->label();
         }
         else {
-          $row['title'] = Unicode::truncate($entity->field_post->value, 50, TRUE, TRUE, 3);
           $row['type'] = $this->t('Post');
         }
 
         $flag = $flagging->getFlag();
-        $row['operations'] = $flag->getLinkTypePlugin()->getAsLink($flag, $entity);
+
+        $row['operations']['data'] = $flag->getLinkTypePlugin()
+          ->getAsLink($flag, $entity)
+          ->toRenderable();
 
         $rows[] = $row;
       }
@@ -63,6 +73,9 @@ class Controller extends ControllerBase {
           'operations' => $this->t('Operations'),
         ],
         '#rows' => $rows,
+        '#attributes' => [
+          'id' => 'social-follow-content-table',
+        ],
       ],
       'pager' => [
         '#type' => 'pager',
