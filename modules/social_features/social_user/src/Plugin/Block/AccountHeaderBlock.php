@@ -260,38 +260,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     }
 
     return $block;
-
-    if ($account->id() === 0) {
-      // TODO: Find where this link is rendered and make it happen.
-      $links = [
-        'home' => [
-          'classes' => 'hidden-xs',
-          'link_attributes' => '',
-          'icon_classes' => '',
-          'icon_label' => 'Home',
-          'title' => $this->t('Home'),
-          'label' => $this->t('Home'),
-          'title_classes' => '',
-          'url' => Url::fromRoute('<front>'),
-        ],
-      ];
-    }
-
-    return [
-      '#theme' => 'account_header_links',
-      '#links' => $links,
-      '#cache' => [
-        'contexts' => [
-          'user',
-        ],
-      ],
-      '#attached' => [
-        // TODO: This library is probably required by the notification view?
-        'library' => [
-          'activity_creator/activity_creator.notifications',
-        ],
-      ],
-    ];
   }
 
 }
