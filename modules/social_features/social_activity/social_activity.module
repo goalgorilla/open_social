@@ -28,12 +28,80 @@ function social_activity_social_user_account_header_items(array $context) {
   $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
 
   // Todo: Find a way to automate these badge classes as social_private_message uses them too.
-  if ($num_notifications === 0) {
-    $notifications_icon = 'notifications_none';
-    $label_classes = 'hidden';
-  }
-  else {
+  $notifications_icon = 'notifications_none';
+
+  if ($num_notifications > 0) {
     $notifications_icon = 'notifications';
+
+    if ($num_notifications > 99) {
+      $num_notifications = '99+';
+    }
+  }
+
+  return [
+    'notifications' => [
+      '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop', 'notification-bell'],
+      ],
+      '#title' => new TranslatableMarkup('Notification Centre'),
+      '#url' => Url::fromRoute('<none>'),
+      '#icon' => $notifications_icon,
+      '#label' => (string) $num_notifications,
+      '#weight' => 800,
+      'header' => [
+        '#wrapper_attributes' => ['class' => 'dropdown-header'],
+        '#markup' => new TranslatableMarkup('Notification Centre'),
+      ],
+      'header-divider' => [
+        '#wrapper_attributes' => ['class' => 'divider'],
+        '#markup' => '',
+      ],
+      'notifications' => $notifications_view,
+      'footer-divider' => [
+        '#wrapper_attributes' => ['class' => 'divider'],
+        '#markup' => '',
+      ],
+      'footer' => [
+        '#wrapper_attributes' => ['class' => 'dropdown-header'],
+        '#type' => 'link',
+        '#title' => [
+          '#type' => 'inline_template',
+          '#template' => "{% trans %}All notifications{% endtrans %} <svg class='btn-icon icon-black pull-right'><use xlink:href='#icon-navigate_next'></use></svg>",
+          '#allowed_tags' => ['use', 'svg'],
+        ],
+        '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
+        '#attributes' => [
+          'title' => new TranslatableMarkup('View all notifications'),
+          'class' => ['block', 'clearfix'],
+        ],
+        // The link is wrapped in a container to avoid .dropdown-menu > li > a
+        // styling.
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the mobile indicator for activity notifications under the profile icon
+ * menu.
+ */
+function social_activity_social_user_account_header_account_links(array $context) {
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return [];
+  }
+
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
+
+  $label_classes = 'hidden';
+
+  if ($num_notifications > 0) {
     $label_classes = 'badge badge-accent badge--pill';
 
     if ($num_notifications > 99) {
@@ -41,16 +109,42 @@ function social_activity_social_user_account_header_items(array $context) {
     }
   }
 
-  // TODO: This should have the "desktop notification-bell" class when rendered.
-  return [ 'notifications' => [
-    '#type' => 'account_header_element',
-    '#wrapper_attributes' => [
-      'class' => ['desktop', 'notification-bell'],
+  return [
+    'notification_mobile' => [
+      'classes' => 'mobile notification-bell',
+      'link_attributes' => '',
+      'icon_classes' => '',
+      'title' => new TranslatableMarkup('Notification Centre'),
+      'label' => new TranslatableMarkup('Notification Centre'),
+      'title_classes' => '',
+      'count_classes' => $label_classes,
+      'count_icon' => (string) $num_notifications,
+      'url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
     ],
-    '#title' => new TranslatableMarkup('Notification Centre'),
-    '#url' => Url::fromRoute('<none>'),
-    '#icon' => $notifications_icon,
-    '#label' => (string) $num_notifications,
-    'notifications' => $notifications,
-  ]];
+  ];
+
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds an indicator to the user account menu on mobile.
+ */
+function social_activity_social_user_account_header_items_alter(array &$menu_links, array $context) {
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return;
+  }
+
+  // If the account_box link was removed we have nothing to do.
+  if (!isset($menu_links['account_box'])) {
+    return;
+  }
+
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
+
+  if ($num_notifications > 0) {
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
+  }
 }

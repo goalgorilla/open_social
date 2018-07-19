@@ -535,6 +535,6 @@ function social_private_message_social_user_account_header_items_alter(array &$m
   $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
 
   if ($num_account_messages > 0) {
-    $menu_links['account_box']['classes'] .= ' has-alert';
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
   }
 }

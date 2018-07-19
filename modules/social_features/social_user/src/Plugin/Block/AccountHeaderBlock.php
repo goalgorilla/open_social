@@ -144,6 +144,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         '#label' => $this->t('New Content'),
       ];
 
+      // TODO: Move this to the various social_x modules.
       // Weights can be used to order the subitems of an account_header_element.
       $create_links = [
         'add_event' => [
@@ -192,6 +193,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         '#title' => $this->t('Profile of @account', ['@account' => $account_name]),
         '#label' => $account_name,
         '#url' => Url::fromRoute('<none>'),
+        '#weight' => 1000,
       ];
 
       $account_links = [
@@ -343,6 +345,11 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     // Allow modules to alter the defined account header block items.
     \Drupal::moduleHandler()->alter('social_user_account_header_items', $menu_items, $context);
 
+
+    // We render this element as an item_list (template_preprocess_item_list)
+    // which doesn't sort. Therefore it happens here.
+    Element::children($menu_items, TRUE);
+
     // The item_list theme function gets the wrapper_attributes before the
     // AccountHeaderElement::preRender is called. Therefor we provide some
     // assisting classes here.
@@ -351,7 +358,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         continue;
       }
 
-      $children = Element::children($item);
+      // Sort the children according to their weight.
+      $children = Element::children($item, TRUE);
 
       // If this element has children then it's a dropdown.
       if (!empty($children)) {
@@ -370,35 +378,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     return $block;
 
     if ($account->id() !== 0) {
-
-      if ($this->moduleHandler->moduleExists('activity_creator')) {
-        $account_notifications = $this->activityNotifications;
-        $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
-
-        if ($num_notifications === 0) {
-          $label_classes = 'hidden';
-        }
-        else {
-          $label_classes = 'badge badge-accent badge--pill';
-          $links['account_box']['classes'] = $links['account_box']['classes'] . ' has-alert';
-
-          if ($num_notifications > 99) {
-            $num_notifications = '99+';
-          }
-        }
-
-        $links['account_box']['below']['notification_mobile'] = [
-          'classes' => 'mobile notification-bell',
-          'link_attributes' => '',
-          'icon_classes' => '',
-          'title' => $this->t('Notification Centre'),
-          'label' => $this->t('Notification Centre'),
-          'title_classes' => '',
-          'count_classes' => $label_classes,
-          'count_icon' => (string) $num_notifications,
-          'url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
-        ];
-      }
 
       $storage = $this->entityTypeManager->getStorage('profile');
       $profile = $storage->loadByUser($account, 'profile');
