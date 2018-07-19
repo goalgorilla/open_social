@@ -177,7 +177,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
           ],
-          '#weight' => 1,
+          '#weight' => 0,
         ],
         // TODO: Figure out how move these dividers to the right modules.
         'divider_mobile' => [
@@ -261,54 +261,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
     return $block;
 
-    if ($account->id() !== 0) {
-
-      // TODO: Write a glue layer for this deprecated hook.
-      $hook = 'social_user_account_header_links';
-
-      $divider = [
-        'divider' => 'true',
-        'classes' => 'divider',
-        'attributes' => 'role=separator',
-      ];
-
-      foreach ($this->moduleHandler->invokeAll($hook) as $key => $item) {
-        if (!isset($links['account_box']['below'][$item['after']]) || isset($links['account_box']['below'][$key])) {
-          continue;
-        }
-
-        $list = $links['account_box']['below'];
-
-        $links['account_box']['below'] = [];
-
-        foreach ($list as $exist_key => $exist_item) {
-          $links['account_box']['below'][$exist_key] = $exist_item;
-
-          if ($item['after'] == $exist_key) {
-            if (isset($item['divider']) && $item['divider'] == 'before') {
-              $links['account_box']['below'][$key . '_divider'] = $divider;
-            }
-
-            $links['account_box']['below'][$key] = [
-              'classes' => '',
-              'link_attributes' => '',
-              'link_classes' => '',
-              'icon_classes' => '',
-              'icon_label' => '',
-              'title' => $item['title'],
-              'label' => $item['title'],
-              'title_classes' => '',
-              'url' => $item['url'],
-            ];
-
-            if (isset($item['divider']) && $item['divider'] == 'after') {
-              $links['account_box']['below'][$key . '_divider'] = $divider;
-            }
-          }
-        }
-      }
-    }
-    else {
+    if ($account->id() === 0) {
       // TODO: Find where this link is rendered and make it happen.
       $links = [
         'home' => [
