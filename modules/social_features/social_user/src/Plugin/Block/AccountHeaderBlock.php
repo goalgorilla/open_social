@@ -144,10 +144,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
       // Gather the content creation links from all modules.
       // Weights can be used to order the subitems of an account_header_element.
-      $create_links = \Drupal::moduleHandler()->invokeAll('social_user_account_header_create_links', [$context]);
+      $create_links = $this->moduleHandler->invokeAll('social_user_account_header_create_links', [$context]);
 
       // Allow modules to alter the defined content creation links.
-      \Drupal::moduleHandler()->alter('social_user_account_header_create_links', $create_links, $context);
+      $this->moduleHandler->alter('social_user_account_header_create_links', $create_links, $context);
 
       // Add the create links as children of the create content menu item.
       $menu_items['create'] += $create_links;
@@ -213,23 +213,22 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
       // TODO: API docs for these hooks
       // Gather the account related links from extending modules.
-      $account_links += \Drupal::moduleHandler()->invokeAll('social_user_account_header_account_links', [$context]);
+      $account_links += $this->moduleHandler->invokeAll('social_user_account_header_account_links', [$context]);
 
       // Allow modules to alter the defined account related links.
-      \Drupal::moduleHandler()->alter('social_user_account_header_account_links', $account_links, $context);
+      $this->moduleHandler->alter('social_user_account_header_account_links', $account_links, $context);
 
       // Append the account links as children to the account menu.
       $menu_items['account_box'] += $account_links;
     }
 
-    // TODO: Implement dependency injection here.
     // We allow modules to add their items to the account header block.
     // We use the union operator (+) to ensure modules can't overwrite items
     // defined above. They should use the alter hook for that.
-    $menu_items += \Drupal::moduleHandler()->invokeAll('social_user_account_header_items', [$context]);
+    $menu_items += $this->moduleHandler->invokeAll('social_user_account_header_items', [$context]);
 
     // Allow modules to alter the defined account header block items.
-    \Drupal::moduleHandler()->alter('social_user_account_header_items', $menu_items, $context);
+    $this->moduleHandler->alter('social_user_account_header_items', $menu_items, $context);
 
     // We render this element as an item_list (template_preprocess_item_list)
     // which doesn't sort. Therefore it happens here.
