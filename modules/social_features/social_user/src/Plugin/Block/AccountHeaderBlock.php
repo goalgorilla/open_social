@@ -187,7 +187,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 100,
         ],
-        'divide_profile' => [
+        'divider_profile' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
@@ -195,14 +195,14 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           '#weight' => 400,
         ],
 
-        'divide_content' => [
+        'divider_content' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
           ],
           '#weight' => 900,
         ],
-        'divide_account' => [
+        'divider_account' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
@@ -211,7 +211,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ],
       ];
 
-      // TODO: API docs for these hooks
       // Gather the account related links from extending modules.
       $account_links += $this->moduleHandler->invokeAll('social_user_account_header_account_links', [$context]);
 
