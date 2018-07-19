@@ -28,7 +28,10 @@ class InputButton extends BaseInputButton {
       $variables->map([$variables::SPLIT_BUTTON]);
     }
     parent::preprocessElement($element, $variables);
-    $variables['attributes']->removeClass('btn-default');
+
+    if (!$element->hasProperty('leave-class') || !$element->getProperty('leave-class')) {
+      $variables['attributes']->removeClass('btn-default');
+    }
   }
 
 }

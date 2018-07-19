@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_follow_content
+    - system
+    - user
+  theme:
+    - socialblue
+id: following_filter
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: social_follow_content_filter
+settings:
+  id: social_follow_content_filter
+  label: Filter
+  provider: social_follow_content
+  label_display: visible
+visibility:
+  request_path:
+    id: request_path
+    pages: /following
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
