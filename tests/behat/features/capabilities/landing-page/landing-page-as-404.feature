@@ -8,7 +8,7 @@ Feature: Use a landing page as 404 page
 
     Given I enable the module "social_landing_page"
     # Create Landing Page Hero
-    Given I am logged in as an "sitemanager"
+    Given I am logged in as an "contentmanager"
     When I am on "node/add/landing_page"
     And I fill in the following:
       | Title | Page not found |
