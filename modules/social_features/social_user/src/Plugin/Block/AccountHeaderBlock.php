@@ -110,8 +110,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    * {@inheritdoc}
    */
   public function build() {
-    // TODO: Remove hook_social_user_account_header_links as it's replaced by menu specific hooks.
-    // TODO: This block takes care of the anonyomous mobile menu and should still render a home link in that case.
     // This context is used to pass the block context to hooks.
     $context = $this->getContextValues();
 
@@ -144,37 +142,9 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         '#label' => $this->t('New Content'),
       ];
 
-      // TODO: Move this to the various social_x modules.
-      // Weights can be used to order the subitems of an account_header_element.
-      $create_links = [
-        'add_event' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('Create New Event'),
-          ],
-          '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
-          '#title' => $this->t('New Event')
-        ],
-        'add_topic' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('Create New Topic'),
-          ],
-          '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
-          '#title' => $this->t('New Topic')
-        ],
-        'add_group' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('Create New Group'),
-          ],
-          '#url' => Url::fromRoute('entity.group.add_page'),
-          '#title' => $this->t('New Group')
-        ],
-      ];
-
       // Gather the content creation links from all modules.
-      $create_links += \Drupal::moduleHandler()->invokeAll('social_user_account_header_create_links', [$context]);
+      // Weights can be used to order the subitems of an account_header_element.
+      $create_links = \Drupal::moduleHandler()->invokeAll('social_user_account_header_create_links', [$context]);
 
       // Allow modules to alter the defined content creation links.
       \Drupal::moduleHandler()->alter('social_user_account_header_create_links', $create_links, $context);
@@ -199,7 +169,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $account_links = [
         'signed_in_as' => [
           '#wrapper_attributes' => [
-            'class' => [ 'dropdown-header', 'header-nav-current-user' ],
+            'class' => ['dropdown-header', 'header-nav-current-user'],
           ],
           '#type' => 'inline_template',
           '#template' => '{{ tagline }} <strong class="text-truncate">{{ object }} </strong>',
@@ -209,6 +179,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 1,
         ],
+        // TODO: Figure out how move these dividers to the right modules.
         'divider_mobile' => [
           "#wrapper_attributes" => [
             "class" => ["divider", "mobile"],
@@ -216,8 +187,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 100,
         ],
-//        'messages_mobile' => [],
-//        'notification_mobile' => [],
         'divide_profile' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
@@ -225,52 +194,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 400,
         ],
-        // TODO: Move to the social_profile module.
-        'my_profile' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('View my profile'),
-          ],
-          '#url' => Url::fromRoute('user.page'),
-          '#title' => $this->t('My profile'),
-          '#weight' => 500,
-        ],
-        // TODO: Move to the social_events module.
-        'my_events' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('View my events'),
-          ],
-          '#url' => Url::fromRoute('view.events.events_overview', [
-            'user' => $account->id(),
-          ]),
-          '#title' => $this->t('My events'),
-          '#weight' => 600,
-        ],
-        // TODO: Move this to the social_topics module.
-        'my_topics' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('View my topics'),
-          ],
-          '#url' => Url::fromRoute('view.topics.page_profile', [
-            'user' => $account->id(),
-          ]),
-          '#title' => $this->t('My topics'),
-          '#weight' => 700,
-        ],
-        // TODO: Move this to social_groups module.
-        'my_groups' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t('View my groups'),
-          ],
-          '#url' => Url::fromRoute('view.groups.page_user_groups', [
-            'user' => $account->id(),
-          ]),
-          '#title' => $this->t('My groups'),
-          '#weight' => 800,
-        ],
+
         'divide_content' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
@@ -278,64 +202,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 900,
         ],
-        // TODO: Figure out which module this belongs to.
-        'my_content' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t("View content I'm following"),
-          ],
-          '#url' => Url::fromRoute('view.following.following'),
-          '#title' => $this->t('Following'),
-          '#weight' => 1000,
-        ],
         'divide_account' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
           ],
           '#weight' => 1100,
-        ],
-        // TODO: Move to social_user module.
-        'my_account' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t("Settings"),
-          ],
-          '#url' => Url::fromRoute('entity.user.edit_form', [
-            'user' => $account->id(),
-          ]),
-          '#title' => $this->t("Settings"),
-          '#weight' => 1200,
-        ],
-        // TODO: Move to social_profile module.
-        'edit_profile' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t("Edit profile"),
-          ],
-          '#url' => Url::fromRoute('entity.profile.type.user_profile_form', [
-            'user' => $account->id(),
-            'profile_type' => 'profile',
-          ]),
-          '#title' => $this->t("Edit profile"),
-          '#access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
-          '#weight' => 1300,
-        ],
-        'divide_logout' => [
-          "#wrapper_attributes" => [
-            "class" => ["divider"],
-            "role" => "separator",
-          ],
-          '#weight' => 1400,
-        ],
-        'logout' => [
-          '#type' => 'link',
-          '#attributes' => [
-            'title' => $this->t("Logout"),
-          ],
-          '#url' => Url::fromRoute('user.logout'),
-          '#title' => $this->t("Logout"),
-          '#weight' => 1500,
         ],
       ];
 
@@ -358,7 +230,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
     // Allow modules to alter the defined account header block items.
     \Drupal::moduleHandler()->alter('social_user_account_header_items', $menu_items, $context);
-
 
     // We render this element as an item_list (template_preprocess_item_list)
     // which doesn't sort. Therefore it happens here.
@@ -393,16 +264,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
 
     if ($account->id() !== 0) {
 
-      $storage = $this->entityTypeManager->getStorage('profile');
-      $profile = $storage->loadByUser($account, 'profile');
-
-      if ($profile) {
-        $content = $this->entityTypeManager
-          ->getViewBuilder('profile')
-          ->view($profile, 'small');
-        $links['account_box']['icon_image'] = $content;
-      }
-
+      // TODO: Write a glue layer for this deprecated hook.
       $hook = 'social_user_account_header_links';
 
       $divider = [
@@ -448,6 +310,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
     }
     else {
+      // TODO: Find where this link is rendered and make it happen.
       $links = [
         'home' => [
           'classes' => 'hidden-xs',
@@ -471,6 +334,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
         ],
       ],
       '#attached' => [
+        // TODO: This library is probably required by the notification view?
         'library' => [
           'activity_creator/activity_creator.notifications',
         ],

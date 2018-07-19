@@ -1259,6 +1259,25 @@ function social_group_user_cancel_methods_alter(&$methods) {
 }
 
 /**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Group" link to the content creation menu.
+ */
+function social_group_social_user_account_header_create_links($context) {
+  return [
+    'add_group' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Group'),
+      ],
+      '#url' => Url::fromRoute('entity.group.add_page'),
+      '#title' => new TranslatableMarkup('New Group'),
+      '#weight' => 500,
+    ],
+  ];
+}
+
+/**
  * Implements hook_social_user_account_header_items().
  *
  * Adds the My Groups button to the account header block if it's enabled by a
@@ -1287,6 +1306,32 @@ function social_group_social_user_account_header_items(array $context) {
       ]),
       '#icon' => 'group',
       '#label' => new TranslatableMarkup('My Groups'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my groups" link to the user menu.
+ */
+function social_group_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_groups' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my groups'),
+      ],
+      '#url' => Url::fromRoute('view.groups.page_user_groups', [
+        'user' => $context['user']->id(),
+      ]),
+      '#title' => new TranslatableMarkup('My groups'),
+      '#weight' => 800,
     ],
   ];
 }

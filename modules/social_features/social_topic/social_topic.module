@@ -7,8 +7,10 @@
 
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
@@ -162,4 +164,49 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
       ];
     }
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Topic" link to the content creation menu.
+ */
+function social_topic_social_user_account_header_create_links($context) {
+  return [
+    'add_topic' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Topic'),
+      ],
+      '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
+      '#title' => new TranslatableMarkup('New Topic'),
+      '#weight' => 200,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my topics" link to the user menu.
+ */
+function social_topic_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_topics' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my topics'),
+      ],
+      '#url' => Url::fromRoute('view.topics.page_profile', [
+        'user' => $context['user']->id(),
+      ]),
+      '#title' => new TranslatableMarkup('My topics'),
+      '#weight' => 700,
+    ],
+  ];
 }

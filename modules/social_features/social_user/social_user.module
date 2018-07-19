@@ -9,6 +9,9 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\user\Plugin\Action\BlockUser;
@@ -271,7 +274,7 @@ function template_preprocess_account_header_links(array &$variables) {
  *
  * @see \template_preprocess_container()
  */
-function template_preprocess_unwrapped_container(&$variables) {
+function template_preprocess_unwrapped_container(array &$variables) {
   // The UnwrappedContaienr element exists to provide a different template from
   // the container which is used by the AccountHeaderElement which is why we the
   // original container implementation works fine for us. The div is then simply
@@ -351,4 +354,46 @@ function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata
     (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
     $replacements[$context['tokens']['url:absolute']] = NULL;
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my profile" and "Edit profile" link to the user menu.
+ */
+function social_user_social_user_account_header_account_links(array $context) {
+  // We require a user for these links.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_account' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("Settings"),
+      ],
+      '#url' => Url::fromRoute('entity.user.edit_form', [
+        'user' => $context['user']->id(),
+      ]),
+      '#title' => new TranslatableMarkup("Settings"),
+      '#weight' => 1200,
+    ],
+    'divide_logout' => [
+      "#wrapper_attributes" => [
+        "class" => ["divider"],
+        "role" => "separator",
+      ],
+      '#weight' => 1400,
+    ],
+    'logout' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("Logout"),
+      ],
+      '#url' => Url::fromRoute('user.logout'),
+      '#title' => new TranslatableMarkup("Logout"),
+      '#weight' => 1500,
+    ],
+  ];
 }
