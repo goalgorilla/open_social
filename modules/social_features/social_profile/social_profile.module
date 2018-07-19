@@ -592,9 +592,6 @@ function social_profile_social_user_account_header_account_links(array $context)
         'profile_type' => 'profile',
       ]),
       '#title' => new TranslatableMarkup("Edit profile"),
-      // TODO: This access is probably not needed and can be managed by the
-      // route itself.
-      '#access' => $context['user']->hasPermission('add own profile profile') || $context['user']->hasPermission('bypass profile access'),
       '#weight' => 1300,
     ],
   ];
