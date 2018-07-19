@@ -1274,11 +1274,13 @@ function social_group_social_user_account_header_items(array $context) {
     return [];
   }
 
-
-  // TODO: This should have the "desktop" class when rendered.
   // TODO: Check that access is managed properly here.
-  return [ 'groups' => [
+  return [
+    'groups' => [
       '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop'],
+      ],
       '#title' => new TranslatableMarkup('My Groups'),
       '#url' => Url::fromRoute('view.groups.page_user_groups', [
         'user' => $context['user']->id(),

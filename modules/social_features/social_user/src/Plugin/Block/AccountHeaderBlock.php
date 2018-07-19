@@ -207,12 +207,14 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
           ],
+          '#weight' => 1,
         ],
         'divider_mobile' => [
           "#wrapper_attributes" => [
             "class" => ["divider", "mobile"],
             "role" => "separator",
           ],
+          '#weight' => 100,
         ],
 //        'messages_mobile' => [],
 //        'notification_mobile' => [],
@@ -221,6 +223,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             "class" => ["divider"],
             "role" => "separator",
           ],
+          '#weight' => 400,
         ],
         // TODO: Move to the social_profile module.
         'my_profile' => [
@@ -229,7 +232,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'title' => $this->t('View my profile'),
           ],
           '#url' => Url::fromRoute('user.page'),
-          '#title' => $this->t('My profile')
+          '#title' => $this->t('My profile'),
+          '#weight' => 500,
         ],
         // TODO: Move to the social_events module.
         'my_events' => [
@@ -240,7 +244,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           '#url' => Url::fromRoute('view.events.events_overview', [
             'user' => $account->id(),
           ]),
-          '#title' => $this->t('My events')
+          '#title' => $this->t('My events'),
+          '#weight' => 600,
         ],
         // TODO: Move this to the social_topics module.
         'my_topics' => [
@@ -251,7 +256,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           '#url' => Url::fromRoute('view.topics.page_profile', [
             'user' => $account->id(),
           ]),
-          '#title' => $this->t('My topics')
+          '#title' => $this->t('My topics'),
+          '#weight' => 700,
         ],
         // TODO: Move this to social_groups module.
         'my_groups' => [
@@ -262,13 +268,15 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           '#url' => Url::fromRoute('view.groups.page_user_groups', [
             'user' => $account->id(),
           ]),
-          '#title' => $this->t('My groups')
+          '#title' => $this->t('My groups'),
+          '#weight' => 800,
         ],
         'divide_content' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
           ],
+          '#weight' => 900,
         ],
         // TODO: Figure out which module this belongs to.
         'my_content' => [
@@ -277,13 +285,15 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'title' => $this->t("View content I'm following"),
           ],
           '#url' => Url::fromRoute('view.following.following'),
-          '#title' => $this->t('Following')
+          '#title' => $this->t('Following'),
+          '#weight' => 1000,
         ],
         'divide_account' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
           ],
+          '#weight' => 1100,
         ],
         // TODO: Move to social_user module.
         'my_account' => [
@@ -294,7 +304,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           '#url' => Url::fromRoute('entity.user.edit_form', [
             'user' => $account->id(),
           ]),
-          '#title' => $this->t("Settings")
+          '#title' => $this->t("Settings"),
+          '#weight' => 1200,
         ],
         // TODO: Move to social_profile module.
         'edit_profile' => [
@@ -308,12 +319,14 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ]),
           '#title' => $this->t("Edit profile"),
           '#access' => $account->hasPermission('add own profile profile') || $account->hasPermission('bypass profile access'),
+          '#weight' => 1300,
         ],
         'divide_logout' => [
           "#wrapper_attributes" => [
             "class" => ["divider"],
             "role" => "separator",
           ],
+          '#weight' => 1400,
         ],
         'logout' => [
           '#type' => 'link',
@@ -321,7 +334,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'title' => $this->t("Logout"),
           ],
           '#url' => Url::fromRoute('user.logout'),
-          '#title' => $this->t("Logout")
+          '#title' => $this->t("Logout"),
+          '#weight' => 1500,
         ],
       ];
 

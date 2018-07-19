@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 
 /**
@@ -22,7 +23,6 @@ function social_activity_social_user_account_header_items(array $context) {
   $account = $context['user'];
 
   $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-  $notifications = \Drupal::service('renderer')->render($notifications_view);
 
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
   $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
@@ -111,18 +111,25 @@ function social_activity_social_user_account_header_account_links(array $context
 
   return [
     'notification_mobile' => [
-      'classes' => 'mobile notification-bell',
-      'link_attributes' => '',
-      'icon_classes' => '',
-      'title' => new TranslatableMarkup('Notification Centre'),
-      'label' => new TranslatableMarkup('Notification Centre'),
-      'title_classes' => '',
-      'count_classes' => $label_classes,
-      'count_icon' => (string) $num_notifications,
-      'url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
+      '#wrapper_attributes' => [
+        'class' => ['mobile notification-bell'],
+      ],
+      '#weight' => 300,
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Notification Centre'),
+      ],
+      '#title' => [
+        '#type' => 'inline_template',
+        '#template' => '{% trans %}Notification Centre{% endtrans %}<span{{ attributes }}>{{ icon }}</span>',
+        '#context' => [
+          'attributes' => new Attribute(['class' => $label_classes]),
+          'icon' => (string) $num_notifications,
+        ],
+      ],
+      '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
     ],
   ];
-
 }
 
 /**

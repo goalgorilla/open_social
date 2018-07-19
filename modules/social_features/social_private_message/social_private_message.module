@@ -9,6 +9,7 @@ use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
@@ -458,10 +459,12 @@ function social_private_message_social_user_account_header_items(array $context)
     $message_icon = 'mail';
   }
 
-  // TODO: This should have the "desktop" class when rendered.
   return [
     'messages' => [
       '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop'],
+      ],
       '#title' => new TranslatableMarkup('Inbox'),
       '#url' => Url::fromRoute('social_private_message.inbox'),
       '#icon' => $message_icon,
@@ -497,15 +500,23 @@ function social_private_message_social_user_account_header_account_links(array $
 
   return [
     'messages_mobile' => [
-      'classes' => 'mobile',
-      'link_attributes' => '',
-      'icon_classes' => '',
-      'title' => new TranslatableMarkup('Inbox'),
-      'label' => new TranslatableMarkup('Inbox'),
-      'title_classes' => '',
-      'count_classes' => $label_classes,
-      'count_icon' => (string) $num_account_messages,
-      'url' => Url::fromRoute('social_private_message.inbox'),
+      '#wrapper_attributes' => [
+        'class' => ['mobile'],
+      ],
+      '#weight' => 200,
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Inbox'),
+      ],
+      '#title' => [
+        '#type' => 'inline_template',
+        '#template' => '{% trans %}Inbox{% endtrans %}<span{{ attributes }}>{{ icon }}</span>',
+        '#context' => [
+          'attributes' => new Attribute(['class' => $label_classes]),
+          'icon' => (string) $num_account_messages,
+        ],
+      ],
+      '#url' => Url::fromRoute('social_private_message.inbox'),
     ],
   ];
 
