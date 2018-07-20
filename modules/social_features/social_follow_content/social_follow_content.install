@@ -19,16 +19,11 @@ function social_follow_content_install() {
 }
 
 /**
- * Set permissions for the follow_post flag.
+ * Set permissions and delete old functionality.
  */
 function social_follow_content_update_8001() {
   _social_follow_content_set_permissions();
-}
 
-/**
- * Delete the page and the block only for content types.
- */
-function social_follow_content_update_8002() {
   $block = \Drupal::entityTypeManager()->getStorage('block')
     ->load('exposedformfollowingfollowing');
 
