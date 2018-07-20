@@ -34,8 +34,11 @@ Feature: Event Management
     And I should not see the link "All Organisers"
 
     # Create event in group.
-    Given I am on "all-groups"
-    And I click "Springfield local business collaboration"
+    Given groups:
+      | title        | description                | author             | type                | language |
+      | Open groupie | Open group for groupies    | event_organiser_1  | open_group          | en       |
+    When I am on "all-groups"
+    And I click "Open groupie"
     And I click "Join"
     And I press "Join group"
     And I click "Events"
