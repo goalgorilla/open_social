@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
@@ -45,7 +45,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactory $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
@@ -142,6 +142,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       }
     }
 
+    // Unfortunately it's a static function validateGroupSelection
+    // So I have to add this setting to the form in order to use it later on.
+    $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
+      ->get('default_visibility');
+    $form['field_content_visibility']['standard_default'] = $default_visibility;
+
     return $element;
   }
 
@@ -156,7 +162,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Response changing values of the visibility field and set status message.
    */
-  public function validateGroupSelection(array $form, FormStateInterface $form_state) {
+  public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
 
     $ajax_response = new AjaxResponse();
 
@@ -176,8 +182,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       }
     }
     else {
-      $config = $this->configFactory->get('entity_access_by_field.settings');
-      $default_visibility = $config->get('default_visibility');
+      $default_visibility = $form['field_content_visibility']['standard_default'];
       $entity = $form_state->getFormObject()->getEntity();
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
@@ -188,7 +193,9 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
       if ($allowed === TRUE) {
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        if (empty($default_visibility) || $visibility === $default_visibility) {
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        }
       }
       else {
         if ($selected_visibility && $selected_visibility === $visibility) {
