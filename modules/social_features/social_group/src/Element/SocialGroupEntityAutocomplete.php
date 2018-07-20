@@ -33,14 +33,23 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       }
 
       if ($match !== NULL) {
-        $value[] = [
+        $value[$match] = [
           'target_id' => $match,
         ];
+
+        // Validate input for every single user. This way we make sure that
+        // The element validates one, two or more users added in the autocomplete.
+        // This is because Group doesnt allow adding multiple users at once,
+        // so we need to validate single users, if they all pass we can add
+        // them all in the _social_group_action_form_submit.
+
+        $form_state->setValue('entity_id', $value[$match]['target_id']);
+        parent::validateEntityAutocomplete($element, $form_state, $complete_form);
       }
     }
 
     if ($value !== null) {
-      $form_state->setValue('entity_id_new', $value['target_id']);
+      $form_state->setValue('entity_id_new', $value);
     }
 
 //    parent::validateEntityAutocomplete($element, $form_state, $complete_form);
