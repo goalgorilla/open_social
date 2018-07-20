@@ -66,6 +66,28 @@ var onError = function(err) {
 };
 
 
+
+// ######################
+//
+// Clean all directories.
+//
+// ######################
+
+// Clean CSS files.
+gulp.task('clean:css', function () {
+  return del([
+    options.basetheme.css + '**/*.css',
+    options.basetheme.css + '**/*.map'
+  ], {force: true});
+});
+
+// Clean JS files.
+gulp.task('clean:js', function () {
+  return del([
+    options.basetheme.js + '**/*.js'
+  ], {force: true});
+});
+
 // #################
 //
 // Compile the Sass
@@ -78,7 +100,7 @@ var onError = function(err) {
 // At the end we check if we should inject new styles in the browser
 // ===================================================
 
-gulp.task('styles', ['clean:css'], function () {
+gulp.task('styles', gulp.series('clean:css', function () {
   return gulp.src(sassFiles)
     .pipe($.sass(options.sass).on('error', sass.logError))
     .pipe($.plumber({ errorHandler: onError }) )
@@ -87,7 +109,8 @@ gulp.task('styles', ['clean:css'], function () {
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.basetheme.css))
     .pipe(browserSync.reload({stream:true}));
-});
+}));
+
 
 
 
@@ -102,7 +125,7 @@ gulp.task('styles', ['clean:css'], function () {
 // the browser will fetch the changes.
 // ===================================================
 
-gulp.task('scripts', ['clean:js'], function () {
+gulp.task('scripts', gulp.series('clean:js', function () {
   return gulp.src(options.basetheme.components + '**/*.js')
     .pipe($.uglify())
     .pipe($.flatten())
@@ -111,7 +134,7 @@ gulp.task('scripts', ['clean:js'], function () {
     }))
     .pipe(gulp.dest(options.basetheme.js))
     .pipe(browserSync.reload({stream:true}));
-});
+}));
 
 
 // #################
@@ -190,7 +213,21 @@ gulp.task('mime-image-icons', function () {
 //
 // ##############################
 
-gulp.task('watch', ['watch:css', 'watch:js', 'watch:icons'], function () {
+gulp.task('watch:css', gulp.series('styles', function () {
+  return gulp.watch(options.basetheme.components + '**/*.scss', gulp.series('styles'));
+}));
+
+
+gulp.task('watch:js', gulp.series('scripts', function () {
+  return gulp.watch(options.basetheme.components + '**/*.js', gulp.series('scripts'));
+}));
+
+
+gulp.task('watch:icons', function () {
+  return gulp.watch(options.icons.src + '**/*.svg', gulp.series('sprite-icons', 'image-icons'));
+});
+
+gulp.task('watch', gulp.series('watch:css', 'watch:js', 'watch:icons', function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -198,44 +235,8 @@ gulp.task('watch', ['watch:css', 'watch:js', 'watch:icons'], function () {
     proxy: options.drupalURL,
     open: false
   });
-});
+}));
 
-gulp.task('watch:css', ['styles'], function () {
-  return gulp.watch(options.basetheme.components + '**/*.scss', ['styles']);
-});
-
-
-gulp.task('watch:js', ['scripts'], function () {
-  return gulp.watch(options.basetheme.components + '**/*.js', ['scripts']);
-});
-
-
-gulp.task('watch:icons', function () {
-  return gulp.watch(options.icons.src + '**/*.svg', ['sprite-icons', 'image-icons'] );
-});
-
-
-
-// ######################
-//
-// Clean all directories.
-//
-// ######################
-
-// Clean CSS files.
-gulp.task('clean:css', function () {
-  return del([
-    options.basetheme.css + '**/*.css',
-    options.basetheme.css + '**/*.map'
-  ], {force: true});
-});
-
-// Clean JS files.
-gulp.task('clean:js', function () {
-  return del([
-    options.basetheme.js + '**/*.js'
-  ], {force: true});
-});
 
 // ######################
 //
@@ -243,4 +244,4 @@ gulp.task('clean:js', function () {
 //
 // ######################
 
-gulp.task('default', ['styles', 'image-icons', 'sprite-icons', 'scripts']);
+gulp.task('default', gulp.series('styles', 'image-icons', 'sprite-icons', 'scripts'));
