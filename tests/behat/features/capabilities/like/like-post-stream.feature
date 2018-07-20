@@ -34,13 +34,13 @@ Feature: Like post stream
       | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
     Given I set the configuration item "system.site" with key "page.front" to "/stream"
     Given I am logged in as "user_1"
-    And I am on the homepage
+    And I am on "/stream"
     When I fill in "Say something to the Community" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
-    Then I should be on the homepage
+    Then I should be on "/stream"
 
     Given I am an anonymous user
     And I am on the homepage
