@@ -1,7 +1,7 @@
 <?php
+
 /**
  * @file
- *
  * Add support for Bigpipe in Behat tests.
  *
  * Original PR here:
@@ -22,8 +22,7 @@ class BigPipeContext extends RawDrupalContext {
    *
    * @BeforeScenario
    */
-  public function prepareBigPipeNoJsCookie()
-  {
+  public function prepareBigPipeNoJsCookie() {
     try {
       // Check if JavaScript can be executed by Driver.
       $this->getSession()->getDriver()->executeScript('true');
@@ -32,7 +31,7 @@ class BigPipeContext extends RawDrupalContext {
       // Set NOJS cookie.
       $this
         ->getSession()
-        ->setCookie(BigPipeStrategy::NOJS_COOKIE, true);
+        ->setCookie(BigPipeStrategy::NOJS_COOKIE, TRUE);
     }
     catch (\Exception $e) {
       // Mute exceptions.
