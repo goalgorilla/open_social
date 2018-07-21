@@ -33,9 +33,9 @@ Feature: Visibility
     Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "public"
     And I am logged in as an "authenticated user"
     And I am on "node/add/topic"
-    Then the "Public - visible to everyone including people who are not a member" checkbox should be checked
+    Then the "public" checkbox should be checked
 
     Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "Community"
     And I am logged in as an "authenticated user"
     And I am on "node/add/topic"
-    Then the "Community - visible only to logged in members" checkbox should be checked
+    Then the "community" checkbox should be checked
