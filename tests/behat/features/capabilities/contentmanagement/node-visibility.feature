@@ -31,11 +31,17 @@ Feature: Visibility
 
     # Check default visibility
     Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "public"
-    And I am logged in as an "authenticated user"
-    And I am on "node/add/topic"
-    Then the "public" checkbox should be checked
+    Given topic content:
+      | title              | field_topic_type | status |
+      | Behat Topic public | Blog             | 1      |
+    Given I am on the homepage
+    Then I should see "All topics"
+    And I should see "Behat Topic public"
 
     Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "Community"
-    And I am logged in as an "authenticated user"
-    And I am on "node/add/topic"
-    Then the "community" checkbox should be checked
+    Given topic content:
+      | title                 | field_topic_type | status |
+      | Behat Topic community | Blog             | 1      |
+    Given I am on the homepage
+    Then I should see "All topics"
+    And I should not see "Behat Topic community"
