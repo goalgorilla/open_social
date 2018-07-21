@@ -123,6 +123,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       'event' => 'change',
     ];
 
+    // Unfortunately validateGroupSelection is cast as a static function
+    // So I have to add this setting to the form in order to use it later on.
+    $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
+      ->get('default_visibility');
+    $form['field_content_visibility']['standard_default'] = $default_visibility;
+
     $change_group_node = $this->configFactory->get('social_group.settings')
       ->get('allow_group_selection_in_node');
     /* @var \Drupal\Core\Entity\EntityInterface $entity */
@@ -141,12 +147,6 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         $element['#description'] = t('Moving content after creation function has been disabled. In order to move this content, please contact a site manager.');
       }
     }
-
-    // Unfortunately it's a static function validateGroupSelection
-    // So I have to add this setting to the form in order to use it later on.
-    $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
-      ->get('default_visibility');
-    $form['field_content_visibility']['standard_default'] = $default_visibility;
 
     return $element;
   }
