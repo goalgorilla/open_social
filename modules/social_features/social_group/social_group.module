@@ -727,9 +727,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
   }
 
-  // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['group.view']['#link'])) {
-    $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
+  // Remove the default View tab.
+  if (isset($data['tabs'][0]['group.view'])) {
+    unset($data['tabs'][0]['group.view']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.
