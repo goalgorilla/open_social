@@ -339,6 +339,8 @@ function social_event_date_after_build($form, &$form_state) {
  */
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
   $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+  // Skip default validation for required time when date is required.
+  ksm($input);
   if (!empty($input['date']) && (empty($input['time']) || !empty($input['all_day']))) {
     $input['time'] = '00:01:00';
     $format = 'Y-m-d H:i:s';
@@ -365,19 +367,22 @@ function social_event_field_widget_form_alter(&$element, FormStateInterface $for
  * Add 'All day' checkbox to event datetime field.
  */
 function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
-  $element['all_day'] = [
-    '#type' => 'checkbox',
-    '#title' => t('All day'),
-  ];
+  if ($element['#name'] == 'field_event_date[0][value]') {
+    $element['all_day'] = [
+      '#type' => 'checkbox',
+      '#title' => t('All day'),
+    ];
+  }
 
   // Time field should disappear when 'All day' is checked.
-  $input_name = ':input[name="' . $element['#name'] . '[all_day]"]';
-  $element['time']['#states'] = [
-    'invisible' => [
-      $input_name => [
-        'checked' => TRUE,
-      ],
+  $state = [
+    ':input[name$="[all_day]"]' => [
+      'checked' => TRUE,
     ],
+  ];
+  $element['time']['#states'] = [
+    'disabled' => $state,
+    'invisible' => $state,
   ];
 
   $date = $element['#value']['object'];

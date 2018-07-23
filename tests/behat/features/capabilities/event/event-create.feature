@@ -42,7 +42,6 @@ Feature: Create Event
       | Title | This is a test event - edit |
     And I show hidden checkboxes
     And I check the box "edit-field-event-date-0-value-all-day"
-    And I check the box "edit-field-event-date-end-0-value-all-day"
     And I press "Save"
     Then I should see "Event This is a test event - edit has been updated"
     And I should see "THIS IS A TEST EVENT - EDIT"
