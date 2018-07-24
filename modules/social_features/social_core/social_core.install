@@ -835,3 +835,13 @@ function social_core_update_8026() {
     }
   }
 }
+
+/**
+ * Install exif_orientation module.
+ */
+function social_core_update_8027() {
+  $modules = array(
+      'exif_orientation',
+    );
+  \Drupal::service('module_installer')->install($modules);
+}

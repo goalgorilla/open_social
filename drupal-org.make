@@ -86,3 +86,5 @@ projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2018-03-29/d
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.11
 projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-05-10/2969106-4.patch"
+projects[exif_orientation][type] = module
+projects[exif_orientation][version] = 1.0
