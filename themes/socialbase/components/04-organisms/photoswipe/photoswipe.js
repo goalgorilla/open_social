@@ -29,8 +29,7 @@
           src: el.getAttribute('href'),
           w: parseInt(size[0], 10),
           h: parseInt(size[1], 10),
-          author: el.getAttribute('data-author'),
-          exif_orientation: 6
+          author: el.getAttribute('data-author')
         };
 
         item.el = el; // save link to element for getThumbBoundsFn
@@ -50,16 +49,14 @@
           item.m = {
             src: mediumSrc,
             w: parseInt(size[0], 10),
-            h: parseInt(size[1], 10),
-            exif_orientation : item.exif_orientation
+            h: parseInt(size[1], 10)
           };
         }
         // original image
         item.o = {
           src: item.src,
           w: item.w,
-          h: item.h,
-          exif_orientation : item.exif_orientation
+          h: item.h
         };
 
         items.push(item);
