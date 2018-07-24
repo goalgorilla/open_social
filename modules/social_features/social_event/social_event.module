@@ -321,6 +321,12 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
   ];
 
   if (in_array($form_id, $event_forms)) {
+    $form['event_all_day'] = [
+      '#type' => 'checkbox',
+      '#title' => t('All day'),
+    ];
+    $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+    $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
   }
 }
@@ -340,8 +346,7 @@ function social_event_date_after_build($form, &$form_state) {
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
   $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
   // Skip default validation for required time when date is required.
-  ksm($input);
-  if (!empty($input['date']) && (empty($input['time']) || !empty($input['all_day']))) {
+  if (!empty($input['date']) && (empty($input['time']))) {
     $input['time'] = '00:01:00';
     $format = 'Y-m-d H:i:s';
     $datetime = trim($input['date'] . ' ' . $input['time']);
@@ -367,16 +372,9 @@ function social_event_field_widget_form_alter(&$element, FormStateInterface $for
  * Add 'All day' checkbox to event datetime field.
  */
 function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_state, $date) {
-  if ($element['#name'] == 'field_event_date[0][value]') {
-    $element['all_day'] = [
-      '#type' => 'checkbox',
-      '#title' => t('All day'),
-    ];
-  }
-
   // Time field should disappear when 'All day' is checked.
   $state = [
-    ':input[name$="[all_day]"]' => [
+    ':input[name="event_all_day"]' => [
       'checked' => TRUE,
     ],
   ];
@@ -388,6 +386,6 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
   $date = $element['#value']['object'];
   if ($date instanceof DrupalDateTime && $date->format('H:i', ['timezone' => 'UTC']) == '00:01') {
     $element['time']['#value'] = '';
-    $element['all_day']['#value'] = TRUE;
+    $element['event_all_day']['#value'] = TRUE;
   }
 }
