@@ -18,11 +18,11 @@ var importOnce    = require('node-sass-import-once'),
 var options = {};
 
 options.basetheme = {
-  root       : __dirname,
-  components : __dirname + '/components/',
-  build      : __dirname + '/assets/',
-  css        : __dirname + '/assets/css/',
-  js         : __dirname + '/assets/js/'
+  root       : '',
+  components : 'components/',
+  build      : 'assets/',
+  css        : 'assets/css/',
+  js         : 'assets/js/'
 };
 
 options.icons = {
@@ -213,21 +213,21 @@ gulp.task('mime-image-icons', function () {
 //
 // ##############################
 
-gulp.task('watch:css', gulp.series('styles', function () {
-  return gulp.watch(options.basetheme.components + '**/*.scss', gulp.series('styles'));
+gulp.task('watch:css', gulp.parallel('styles', function () {
+  return gulp.watch(options.basetheme.components + '**/*.scss', { usePolling: true }, gulp.parallel('styles'));
 }));
 
 
-gulp.task('watch:js', gulp.series('scripts', function () {
-  return gulp.watch(options.basetheme.components + '**/*.js', gulp.series('scripts'));
+gulp.task('watch:js', gulp.parallel('scripts', function () {
+  return gulp.watch(options.basetheme.components + '**/*.js', { usePolling: true }, gulp.parallel('scripts'));
 }));
 
 
 gulp.task('watch:icons', function () {
-  return gulp.watch(options.icons.src + '**/*.svg', gulp.series('sprite-icons', 'image-icons'));
+  return gulp.watch(options.icons.src + '**/*.svg', { usePolling: true }, gulp.parallel('sprite-icons', 'image-icons'));
 });
 
-gulp.task('watch', gulp.series('watch:css', 'watch:js', 'watch:icons', function () {
+gulp.task('watch', gulp.parallel('watch:css', 'watch:js', 'watch:icons', function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
