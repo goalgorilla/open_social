@@ -50,14 +50,16 @@
           item.m = {
             src: mediumSrc,
             w: parseInt(size[0], 10),
-            h: parseInt(size[1], 10)
+            h: parseInt(size[1], 10),
+            exif_orientation : item.exif_orientation
           };
         }
         // original image
         item.o = {
           src: item.src,
           w: item.w,
-          h: item.h
+          h: item.h,
+          exif_orientation : item.exif_orientation
         };
 
         items.push(item);
