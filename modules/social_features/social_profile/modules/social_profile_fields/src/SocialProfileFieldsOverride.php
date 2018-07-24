@@ -55,7 +55,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
         'datasource_id' => 'entity:profile',
         'property_path' => 'field_profile_nick_name',
         'type' => 'text',
-        'dependecies' => [
+        'dependencies' => [
           'config' => 'field.storage.profile.field_profile_nick_name',
         ],
       ];
