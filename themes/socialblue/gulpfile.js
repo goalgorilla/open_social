@@ -9,17 +9,17 @@
 // ################################
 
 var importOnce  = require('node-sass-import-once'),
-    gulp        = require('gulp'),
-    $           = require('gulp-load-plugins')(),
-    browserSync = require('browser-sync').create(),
-    del         = require('del'),
-    // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
-    sass        = require('gulp-sass'),
-    kss         = require('kss'),
-    autoprefixer= require('autoprefixer'),
-    mqpacker    = require('css-mqpacker'),
-    concat      = require('gulp-concat'),
-    runSequence = require('run-sequence');
+  gulp        = require('gulp'),
+  $           = require('gulp-load-plugins')(),
+  browserSync = require('browser-sync').create(),
+  del         = require('del'),
+  // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
+  sass        = require('gulp-sass'),
+  kss         = require('kss'),
+  autoprefixer= require('autoprefixer'),
+  mqpacker    = require('css-mqpacker'),
+  concat      = require('gulp-concat'),
+  runSequence = require('run-sequence');
 
 var options = {};
 
@@ -33,12 +33,12 @@ var options = {};
 // (and the package.json) in your project's root folder and edit the paths
 // accordingly.
 options.rootPath = {
-  project     : __dirname + '/',
-  styleGuide  : __dirname + '/styleguide/',
-  theme       : __dirname + '/',
-  basetheme   : __dirname + '/../socialbase/',
-  drupal      : __dirname + '/../../../../../core/',
-  libraries   : __dirname + '/../../../../../libraries/'
+  project     : '',
+  styleGuide  : 'styleguide/',
+  theme       : '',
+  basetheme   : '../socialbase/',
+  drupal      : '../../../../../core/',
+  libraries   : '../../../../../libraries/'
 };
 
 options.theme = {
@@ -220,7 +220,7 @@ var sassProcessors = [
 // At the end we check if we should inject new styles in the browser
 // ===================================================
 
-gulp.task('styles', function () {
+gulp.task('styles', function (done) {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe($.plumber({errorHandler: onError}))
@@ -232,6 +232,7 @@ gulp.task('styles', function () {
     .pipe($.size({showFiles: true}))
     .pipe(gulp.dest(options.theme.css))
     .pipe($.if(browserSync.active, browserSync.stream({match: '**/*.css'})));
+  done();
 });
 
 
@@ -247,7 +248,7 @@ gulp.task('styles', function () {
 // save them to the assets folder.
 // ===================================================
 
-gulp.task('scripts', function () {
+gulp.task('scripts', function (done) {
   return gulp.src(options.theme.components + '**/*.js')
     .pipe($.uglify())
     .pipe($.flatten())
@@ -256,7 +257,36 @@ gulp.task('scripts', function () {
     }))
     .pipe(gulp.dest(options.theme.js))
     .pipe(browserSync.reload({stream:true}));
+  done();
 });
+
+
+
+// ######################
+//
+// Clean all directories.
+//
+// ######################
+
+// Clean style guide files.
+gulp.task('clean:styleguide', function () {
+  // You can use multiple globbing patterns as you would with `gulp.src`
+  return del([
+    options.styleGuide.destination + '*.html',
+    options.styleGuide.destination + 'kss-assets',
+    options.theme.build + 'twig/*.twig'
+  ], {force: true});
+});
+
+// Clean CSS files.
+gulp.task('clean:css', function () {
+  return del([
+    options.theme.css + '**/*.css',
+    options.theme.css + '**/*.map'
+  ], {force: true});
+});
+
+gulp.task('clean', gulp.series('clean:css', 'clean:styleguide'));
 
 
 
@@ -265,16 +295,9 @@ gulp.task('scripts', function () {
 // ##################
 
 // Main styleguide task
-gulp.task('styleguide', ['clean:styleguide'], function () {
+gulp.task('styleguide', gulp.series('clean:styleguide', function () {
   return kss(options.styleGuide);
-});
-
-// Before deploying create a fresh build
-gulp.task('build-styleguide', function (callback) {
-  runSequence('styleguide',
-    ['base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal'],
-    callback);
-});
+}));
 
 // Compile and copy the socialbase styles to the style guide
 gulp.task('base-assets', function () {
@@ -341,6 +364,14 @@ gulp.task('kss', function () {
     .pipe(gulp.dest(options.rootPath.styleGuide + 'kss-assets/kss/'));
 });
 
+
+// Before deploying create a fresh build
+gulp.task('build-styleguide', gulp.series(
+  'styleguide',
+  gulp.parallel('base-assets', 'blue-assets', 'brand', 'libraries', 'kss', 'scripts-drupal')
+  )
+);
+
 // #########################
 // Color preview
 //
@@ -385,13 +416,12 @@ gulp.task('preview-blue', function () {
     .pipe(gulp.dest(options.theme.css));
 });
 
-gulp.task('preview', ['preview-base', 'preview-blue']);
+gulp.task('preview', gulp.series('preview-base', 'preview-blue'));
 
 // #########################
 // Lint Sass and JavaScript.
 // #########################
 
-gulp.task('lint', ['lint:sass', 'lint:js']);
 
 // Lint JavaScript.
 gulp.task('lint:js', function () {
@@ -423,6 +453,7 @@ gulp.task('lint:sass-with-fail', function () {
     .pipe($.sassLint.failOnError());
 });
 
+gulp.task('lint', gulp.series('lint:sass', 'lint:js'));
 
 
 // ##############################
@@ -431,7 +462,22 @@ gulp.task('lint:sass-with-fail', function () {
 //
 // ##############################
 
-gulp.task('watch', ['watch:css', 'watch:styleguide', 'watch:js'], function () {
+gulp.task('watch:css', gulp.parallel('styles', function () {
+  return gulp.watch(options.theme.components + '**/*.scss', gulp.parallel('styles'));
+}));
+
+gulp.task('watch:js', gulp.parallel('scripts', function () {
+  return gulp.watch(options.theme.components + '**/*.js', gulp.parallel('scripts'));
+}));
+
+gulp.task('watch:styleguide', gulp.parallel('build-styleguide', function () {
+  return gulp.watch([
+    options.basetheme.components + '**/*',
+    options.theme.components + '**/*',
+  ], options.gulpWatchOptions, gulp.parallel('build-styleguide'));
+}));
+
+gulp.task('watch', gulp.parallel('watch:css', 'watch:styleguide', 'watch:js', function () {
   if (!options.drupalURL) {
     return Promise.resolve();
   }
@@ -439,50 +485,11 @@ gulp.task('watch', ['watch:css', 'watch:styleguide', 'watch:js'], function () {
     proxy: options.drupalURL,
     noOpen: false
   });
-});
-
-gulp.task('watch:css', ['styles'], function () {
-  return gulp.watch(options.theme.components + '**/*.scss', ['styles']);
-});
-
-gulp.task('watch:js', ['scripts'], function () {
-  return gulp.watch(options.theme.components + '**/*.js', ['scripts']);
-});
-
-gulp.task('watch:styleguide', ['build-styleguide'], function () {
-  return gulp.watch([
-    options.basetheme.components + '**/*',
-    options.theme.components + '**/*',
-  ], options.gulpWatchOptions, ['build-styleguide']);
-});
+}));
 
 
 
-// ######################
-//
-// Clean all directories.
-//
-// ######################
 
-gulp.task('clean', ['clean:css', 'clean:styleguide']);
-
-// Clean style guide files.
-gulp.task('clean:styleguide', function () {
-  // You can use multiple globbing patterns as you would with `gulp.src`
-  return del([
-    options.styleGuide.destination + '*.html',
-    options.styleGuide.destination + 'kss-assets',
-    options.theme.build + 'twig/*.twig'
-  ], {force: true});
-});
-
-// Clean CSS files.
-gulp.task('clean:css', function () {
-  return del([
-    options.theme.css + '**/*.css',
-    options.theme.css + '**/*.map'
-  ], {force: true});
-});
 
 
 // ######################
@@ -503,7 +510,7 @@ catch (error) {
 }
 
 // Before deploying create a fresh build
-gulp.task('deploy', ['build-styleguide'], function () {
+gulp.task('deploy', gulp.series('build-styleguide', function () {
 
   // Default options for rsync
   var rsyncConf = {
@@ -532,7 +539,7 @@ gulp.task('deploy', ['build-styleguide'], function () {
     )
     .pipe(rsync(rsyncConf));
 
-});
+}));
 
 
 
@@ -541,4 +548,4 @@ gulp.task('deploy', ['build-styleguide'], function () {
 // Default task (no watching)
 //
 // ######################
-gulp.task('default', ['styles', 'styleguide']);
+gulp.task('default', gulp.parallel('styles', 'styleguide'));
