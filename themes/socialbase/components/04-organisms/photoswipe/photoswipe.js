@@ -29,7 +29,8 @@
           src: el.getAttribute('href'),
           w: parseInt(size[0], 10),
           h: parseInt(size[1], 10),
-          author: el.getAttribute('data-author')
+          author: el.getAttribute('data-author'),
+          exif_orientation: 6
         };
 
         item.el = el; // save link to element for getThumbBoundsFn
